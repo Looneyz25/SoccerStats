@@ -1,0 +1,18 @@
+# Excel lock files (created when Excel has a file open)
+.~lock.*#
+~$*
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.env
+
+# Editor
+.vscode/
+.idea/
