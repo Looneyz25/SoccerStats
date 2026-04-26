@@ -1,15 +1,13 @@
 name: Daily Predictions
 on:
   schedule:
-    # 06:00 UTC daily = 16:00 AEST (Sydney) / 17:00 AEDT in summer
-    - cron: '0 6 * * *'
-    # Optional: a second run later in the day to catch evening AU games + settle
-    - cron: '0 18 * * *'
-  # Manual trigger button in the Actions tab
+    # Every 3 hours - 8 runs/day for tightest coverage
+    # In Adelaide ACST (UTC+9:30): 09:30, 12:30, 15:30, 18:30, 21:30, 00:30, 03:30, 06:30
+    - cron: '0 */3 * * *'
   workflow_dispatch:
 
 permissions:
-  contents: write   # needed to commit + push back
+  contents: write
 
 concurrency:
   group: daily-predictions
@@ -43,6 +41,6 @@ jobs:
             echo "No changes to commit"
             exit 0
           fi
-          DATE=$(date -u +%Y-%m-%d)
-          git commit -m "Daily run ${DATE}: settle results + 7-day forecasts + odds refresh"
+          DATE=$(date -u +%Y-%m-%dT%H:%M)
+          git commit -m "Auto-run ${DATE}: settle results + new forecasts + odds refresh"
           git push origin main
