@@ -1,5 +1,5 @@
 {
-  "captured_at": "2026-04-26",
+  "captured_at": "2026-04-27",
   "source": "sofascore.com",
   "leagues": [
     {
@@ -1892,17 +1892,19 @@
         {
           "id": 14083239,
           "date": "2026-04-26",
-          "time": "12:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Rayo Vallecano",
             "short": "Rayo Vallecano",
-            "team_id": 2818
+            "team_id": 2818,
+            "goals": 3
           },
           "away": {
             "name": "Real Sociedad",
             "short": "Real Sociedad",
-            "team_id": 2824
+            "team_id": 2824,
+            "goals": 3
           },
           "odds": {
             "home": 2.88,
@@ -1951,21 +1953,28 @@
             "winner": {
               "pick": "Rayo Vallecano",
               "type": "home",
-              "odds": 2.8
+              "odds": 2.8,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.7
+              "odds": 1.7,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.91
+              "odds": 1.91,
+              "actual": 6,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.67
+              "odds": 1.67,
+              "actual": 11,
+              "result": "hit"
             }
           },
           "sportsbet_odds": {
@@ -1978,17 +1987,19 @@
         {
           "id": 14083252,
           "date": "2026-04-26",
-          "time": "14:15",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Real Oviedo",
             "short": "Real Oviedo",
-            "team_id": 2851
+            "team_id": 2851,
+            "goals": 1
           },
           "away": {
             "name": "Elche",
             "short": "Elche",
-            "team_id": 2846
+            "team_id": 2846,
+            "goals": 2
           },
           "odds": {
             "home": 2.3,
@@ -2037,21 +2048,28 @@
             "winner": {
               "pick": "Real Oviedo",
               "type": "home",
-              "odds": 2.25
+              "odds": 2.25,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.8
+              "odds": 1.8,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 2.0
+              "odds": 2.0,
+              "actual": 3,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 2.2
+              "odds": 2.2,
+              "actual": 3,
+              "result": "miss"
             }
           },
           "sportsbet_odds": {
@@ -2988,17 +3006,19 @@
         {
           "id": 13980110,
           "date": "2026-04-26",
-          "time": "10:30",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Fiorentina",
             "short": "Fiorentina",
-            "team_id": 2693
+            "team_id": 2693,
+            "goals": 0
           },
           "away": {
             "name": "Sassuolo",
             "short": "Sassuolo",
-            "team_id": 2793
+            "team_id": 2793,
+            "goals": 0
           },
           "odds": {
             "home": 1.91,
@@ -3059,21 +3079,28 @@
             "winner": {
               "pick": "Fiorentina",
               "type": "home",
-              "odds": 2.0
+              "odds": 2.0,
+              "result": "miss"
             },
             "btts": {
               "pick": "No",
-              "odds": 2.05
+              "odds": 2.05,
+              "actual_btts": false,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Under",
               "line": 2.5,
-              "odds": 2.0
+              "odds": 2.0,
+              "actual": 0,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 2.1
+              "odds": 2.1,
+              "actual": 3,
+              "result": "miss"
             }
           },
           "sportsbet_odds": {
@@ -3086,17 +3113,19 @@
         {
           "id": 13980109,
           "date": "2026-04-26",
-          "time": "13:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Genoa",
             "short": "Genoa",
-            "team_id": 2713
+            "team_id": 2713,
+            "goals": 0
           },
           "away": {
             "name": "Como",
             "short": "Como",
-            "team_id": 2704
+            "team_id": 2704,
+            "goals": 2
           },
           "odds": {
             "home": 4.33,
@@ -3157,21 +3186,28 @@
             "winner": {
               "pick": "Genoa",
               "type": "home",
-              "odds": 5.0
+              "odds": 5.0,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.91
+              "odds": 1.91,
+              "actual_btts": false,
+              "result": "miss"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 2.0
+              "odds": 2.0,
+              "actual": 2,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.62
+              "odds": 1.62,
+              "actual": 4,
+              "result": "miss"
             }
           },
           "sportsbet_odds": {
@@ -4646,17 +4682,19 @@
         {
           "id": 14065256,
           "date": "2026-04-26",
-          "time": "13:30",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "VfB Stuttgart",
             "short": "VfB Stuttgart",
-            "team_id": 2677
+            "team_id": 2677,
+            "goals": 1
           },
           "away": {
             "name": "SV Werder Bremen",
             "short": "SV",
-            "team_id": 2534
+            "team_id": 2534,
+            "goals": 1
           },
           "odds": {
             "home": 1.53,
@@ -4681,21 +4719,28 @@
             "winner": {
               "pick": "VfB Stuttgart",
               "type": "home",
-              "odds": 1.53
+              "odds": 1.53,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.53
+              "odds": 1.53,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.44
+              "odds": 1.44,
+              "actual": 2,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.73
+              "odds": 1.73,
+              "actual": 1,
+              "result": "miss"
             }
           },
           "sportsbet_odds": {
@@ -5469,17 +5514,19 @@
         {
           "id": 14167979,
           "date": "2026-04-26",
-          "time": "13:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Lorient",
             "short": "Lorient",
-            "team_id": 1656
+            "team_id": 1656,
+            "goals": 2
           },
           "away": {
             "name": "RC Strasbourg",
             "short": "RC Strasbourg",
-            "team_id": 1659
+            "team_id": 1659,
+            "goals": 3
           },
           "odds": {
             "home": 1.95,
@@ -5516,21 +5563,28 @@
             "winner": {
               "pick": "Lorient",
               "type": "home",
-              "odds": 1.91
+              "odds": 1.91,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.67
+              "odds": 1.67,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Under",
               "line": 2.5,
-              "odds": 2.1
+              "odds": 2.1,
+              "actual": 5,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.67
+              "odds": 1.67,
+              "actual": 3,
+              "result": "miss"
             }
           },
           "sportsbet_odds": {
@@ -10287,17 +10341,19 @@
         {
           "id": 14028547,
           "date": "2026-04-26",
-          "time": "10:15",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Excelsior",
             "short": "Excelsior",
-            "team_id": 2967
+            "team_id": 2967,
+            "goals": 5
           },
           "away": {
             "name": "FC Utrecht",
             "short": "Utrecht",
-            "team_id": 2948
+            "team_id": 2948,
+            "goals": 0
           },
           "odds": {
             "home": 3.2,
@@ -10363,20 +10419,27 @@
             "winner": {
               "pick": "FC Utrecht",
               "type": "away",
-              "odds": 2.2
+              "odds": 2.2,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.62
+              "odds": 1.62,
+              "actual_btts": false,
+              "result": "miss"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.75
+              "odds": 1.75,
+              "actual": 5,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5
+              "line": 4.5,
+              "actual": 4,
+              "result": "miss"
             }
           },
           "sportsbet_odds": {
@@ -10389,17 +10452,19 @@
         {
           "id": 14028535,
           "date": "2026-04-26",
-          "time": "12:30",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Heracles Almelo",
             "short": "Heracles",
-            "team_id": 2977
+            "team_id": 2977,
+            "goals": 0
           },
           "away": {
             "name": "FC Volendam",
             "short": "Volendam",
-            "team_id": 2968
+            "team_id": 2968,
+            "goals": 2
           },
           "odds": {
             "home": 2.15,
@@ -10465,20 +10530,27 @@
             "winner": {
               "pick": "FC Volendam",
               "type": "away",
-              "odds": 2.88
+              "odds": 2.88,
+              "result": "hit"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.57
+              "odds": 1.57,
+              "actual_btts": false,
+              "result": "miss"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.62
+              "odds": 1.62,
+              "actual": 2,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5
+              "line": 4.5,
+              "actual": 1,
+              "result": "miss"
             }
           },
           "sportsbet_odds": {
@@ -11837,17 +11909,19 @@
         {
           "id": 14059994,
           "date": "2026-04-26",
-          "time": "11:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Coventry City",
             "short": "Coventry City",
-            "team_id": 11
+            "team_id": 11,
+            "goals": 3
           },
           "away": {
             "name": "Wrexham",
             "short": "Wrexham",
-            "team_id": 64
+            "team_id": 64,
+            "goals": 1
           },
           "odds": {
             "home": 2.05,
@@ -11896,21 +11970,28 @@
             "winner": {
               "pick": "Coventry City",
               "type": "home",
-              "odds": 2.0
+              "odds": 2.0,
+              "result": "hit"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.62
+              "odds": 1.62,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.73
+              "odds": 1.73,
+              "actual": 4,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 2.2
+              "odds": 2.2,
+              "actual": 4,
+              "result": "miss"
             }
           },
           "sportsbet_odds": {
