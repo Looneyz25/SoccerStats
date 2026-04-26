@@ -195,7 +195,23 @@
   }
 
   /* ================== MOBILE MASTER-DETAIL ================== */
-  .back-btn { display: none; }
+    /* Master-detail pattern (desktop + mobile): schedule on one screen, card on another */
+  .back-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--sofa-panel); color: var(--sofa-text);
+    border: 1px solid var(--sofa-line); border-radius: 8px;
+    padding: 8px 14px; font-size: 13px; font-weight: 700;
+    cursor: pointer; margin: 14px 14px 0;
+  }
+  .back-btn:hover { background: var(--sofa-panel-2); border-color: var(--sofa-accent); }
+  .back-btn::before { content: "‹"; font-size: 18px; line-height: 1; }
+  /* Universal master-detail: list mode shows only sidebar full-width; detail mode shows only card */
+  .layout.view-list { grid-template-columns: 1fr; }
+  .layout.view-list aside.left { display: flex; max-width: 800px; margin: 0 auto; width: 100%; height: calc(100vh - 90px); }
+  .layout.view-list main.right { display: none; }
+  .layout.view-detail { grid-template-columns: 1fr; }
+  .layout.view-detail aside.left { display: none; }
+  .layout.view-detail main.right { display: block; max-width: 900px; margin: 0 auto; width: 100%; height: auto; max-height: none; }
   @media (max-width: 720px) {
     .back-btn {
       display: inline-flex; align-items: center; gap: 6px;
@@ -206,16 +222,29 @@
     }
     .back-btn:hover { background: var(--sofa-panel-2); border-color: var(--sofa-accent); }
     .back-btn::before { content: "‹"; font-size: 18px; line-height: 1; }
-    /* In list mode (default on mobile), show only the sidebar */
-    .layout.view-list aside.left { display: flex; }
-    .layout.view-list main.right { display: none; }
-    /* In detail mode, show only the right card with back button */
-    .layout.view-detail aside.left { display: none; }
-    .layout.view-detail main.right { display: block; height: auto; max-height: none; }
-    /* Make the sidebar use full visible space when alone */
-    .layout.view-list aside.left { max-height: calc(100vh - 90px); height: auto; }
     .layout.view-list .matches-list { max-height: calc(100vh - 230px); }
   }
+
+  /* League grouping (when ALL leagues selected) */
+  .lg-section-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 8px 6px; margin-top: 12px;
+    border-bottom: 1px solid var(--sofa-line);
+    background: linear-gradient(90deg, rgba(46,179,96,.08) 0%, transparent 100%);
+    border-radius: 6px 6px 0 0;
+  }
+  .lg-section-head .nm {
+    font-size: 12px; font-weight: 800; color: var(--sofa-text);
+    text-transform: uppercase; letter-spacing: .8px;
+  }
+  .lg-section-head .star {
+    cursor: pointer; font-size: 16px; line-height: 1;
+    color: var(--sofa-muted); padding: 4px 6px; border-radius: 4px;
+    user-select: none; transition: color .15s;
+  }
+  .lg-section-head .star:hover { color: var(--sofa-pend); background: rgba(255,255,255,.04); }
+  .lg-section-head .star.fav { color: var(--sofa-pend); }
+  .lg-section-head .count { color: var(--sofa-muted); font-size: 11px; font-weight: 600; margin-left: 8px; }
 </style>
 </head>
 <body>
@@ -322,41 +351,102 @@ function renderMatches(){
   if (!all.length) return;
   const sel = $dateSel.value;
   let matches = sel ? all.filter(function(m){ return m.date === sel; }) : all;
-  // Sort matches by date+time for chronological view across leagues
+  // Sort matches chronologically
   matches.sort(function(a,b){
     const da = (a.date||'') + ' ' + (a.time||'');
     const db = (b.date||'') + ' ' + (b.time||'');
     return da.localeCompare(db);
   });
+  const isAll = $leagueSel.value === 'ALL';
+  if (isAll) {
+    // Group by league, with favourites first
+    const favs = getFavouriteLeagues();
+    const byLeague = {};
+    matches.forEach(function(m){
+      const k = m._league || 'Unknown';
+      if (!byLeague[k]) byLeague[k] = [];
+      byLeague[k].push(m);
+    });
+    // Order: favourites first, then by league index in DATA
+    const allLeagueNames = DATA.leagues.map(function(L){ return L.name; });
+    const favOrdered = allLeagueNames.filter(function(n){ return favs.indexOf(n) !== -1 && byLeague[n]; });
+    const nonFav = allLeagueNames.filter(function(n){ return favs.indexOf(n) === -1 && byLeague[n]; });
+    [].concat(favOrdered, nonFav).forEach(function(lgName){
+      renderLeagueSection(lgName, byLeague[lgName]);
+    });
+  } else {
+    // Single league mode: simple chronological list with day headers
+    let lastDate = '';
+    matches.forEach(function(m){
+      const localDate = matchLocalDateStr(m);
+      if (localDate !== lastDate){
+        const h = document.createElement('div'); h.className = 'day-header';
+        h.textContent = fmtDate(localDate); $list.appendChild(h); lastDate = localDate;
+      }
+      $list.appendChild(buildMatchRow(m));
+    });
+  }
+}
+
+function getFavouriteLeagues(){
+  try { return JSON.parse(localStorage.getItem('looneyz_fav_leagues') || '[]'); }
+  catch(e) { return []; }
+}
+function setFavouriteLeagues(list){
+  try { localStorage.setItem('looneyz_fav_leagues', JSON.stringify(list)); } catch(e) {}
+}
+function toggleFavouriteLeague(name){
+  const favs = getFavouriteLeagues();
+  const idx = favs.indexOf(name);
+  if (idx === -1) favs.push(name); else favs.splice(idx, 1);
+  setFavouriteLeagues(favs);
+  renderMatches();
+}
+
+function renderLeagueSection(lgName, matches){
+  const head = document.createElement('div');
+  head.className = 'lg-section-head';
+  const isFav = getFavouriteLeagues().indexOf(lgName) !== -1;
+  head.innerHTML = '<div><span class="nm">' + lgName + '</span><span class="count">(' + matches.length + ')</span></div>' +
+                   '<span class="star ' + (isFav ? 'fav' : '') + '" data-lg="' + lgName.replace(/"/g,'') + '" title="Toggle favourite">' + (isFav ? '★' : '☆') + '</span>';
+  head.querySelector('.star').addEventListener('click', function(e){
+    e.stopPropagation();
+    toggleFavouriteLeague(lgName);
+  });
+  $list.appendChild(head);
   let lastDate = '';
-  matches.forEach(function(m, idx){
+  matches.forEach(function(m){
     const localDate = matchLocalDateStr(m);
     if (localDate !== lastDate){
       const h = document.createElement('div'); h.className = 'day-header';
       h.textContent = fmtDate(localDate); $list.appendChild(h); lastDate = localDate;
     }
-    const isFT = m.status === 'FT';
-    let ind = 'upcoming';
-    if (isFT){ ind = (m.predictions && m.predictions.winner && m.predictions.winner.result) || 'pending'; }
-    const homeScore = (m.home && typeof m.home.goals === 'number') ? m.home.goals : '';
-    const awayScore = (m.away && typeof m.away.goals === 'number') ? m.away.goals : '';
-    const ko = isFT ? '<div>FT</div>' : '<div>' + matchLocalTimeStr(m) + '</div>';
-    const row = document.createElement('div');
-    row.className = 'match-row';
-    const showLeagueLabel = $leagueSel.value === 'ALL';
-    const lgLabel = showLeagueLabel ? '<div class="lg-tag">' + (m._league || '') + '</div>' : '';
-    row.innerHTML = '<div class="ko">' + ko + lgLabel + '</div>' +
-      '<div class="teams"><div class="t"><span class="name">' + (m.home && m.home.name) + '</span><span class="score' + (isFT?'':' dim') + '">' + homeScore + '</span></div>' +
-      '<div class="t"><span class="name">' + (m.away && m.away.name) + '</span><span class="score' + (isFT?'':' dim') + '">' + awayScore + '</span></div></div>' +
-      '<div class="indicator ' + ind + '"></div>';
-    row.addEventListener('click', function(){
-      document.querySelectorAll('.match-row').forEach(function(r){ r.classList.remove('active'); });
-      row.classList.add('active');
-      _currentLeagueIdx = m._leagueIdx;
-      renderCard(m);
-    });
-    $list.appendChild(row);
+    $list.appendChild(buildMatchRow(m));
   });
+}
+
+function buildMatchRow(m){
+  const isFT = m.status === 'FT';
+  let ind = 'upcoming';
+  if (isFT){ ind = (m.predictions && m.predictions.winner && m.predictions.winner.result) || 'pending'; }
+  const homeScore = (m.home && typeof m.home.goals === 'number') ? m.home.goals : '';
+  const awayScore = (m.away && typeof m.away.goals === 'number') ? m.away.goals : '';
+  const ko = isFT ? '<div>FT</div>' : '<div>' + matchLocalTimeStr(m) + '</div>';
+  const showLeagueLabel = $leagueSel.value === 'ALL';
+  const lgLabel = showLeagueLabel ? '<div class="lg-tag">' + (m._league || '') + '</div>' : '';
+  const row = document.createElement('div');
+  row.className = 'match-row';
+  row.innerHTML = '<div class="ko">' + ko + lgLabel + '</div>' +
+    '<div class="teams"><div class="t"><span class="name">' + (m.home && m.home.name) + '</span><span class="score' + (isFT?'':' dim') + '">' + homeScore + '</span></div>' +
+    '<div class="t"><span class="name">' + (m.away && m.away.name) + '</span><span class="score' + (isFT?'':' dim') + '">' + awayScore + '</span></div></div>' +
+    '<div class="indicator ' + ind + '"></div>';
+  row.addEventListener('click', function(){
+    document.querySelectorAll('.match-row').forEach(function(r){ r.classList.remove('active'); });
+    row.classList.add('active');
+    _currentLeagueIdx = m._leagueIdx;
+    renderCard(m);
+  });
+  return row;
 }
 
 function predResult(p, key){
@@ -677,11 +767,22 @@ $dateToday.addEventListener('click', function(){
 
 refreshLeague();
 document.querySelector('.layout').classList.add('view-list');
-// On desktop, auto-open first match for convenience; on mobile, stay on list
-if (window.matchMedia('(min-width: 721px)').matches){
-  const first = $list.querySelector('.match-row');
-  if (first) first.click();
-}
+// Restore saved selection (league + date) so the schedule view is sticky across sessions
+try {
+  const savedLg = localStorage.getItem('looneyz_league');
+  if (savedLg !== null) {
+    const opt = Array.from($leagueSel.options).find(function(o){return o.value === savedLg;});
+    if (opt) { $leagueSel.value = savedLg; refreshLeague(); }
+  }
+  const savedDate = localStorage.getItem('looneyz_date');
+  if (savedDate) {
+    const dopt = Array.from($dateSel.options).find(function(o){return o.value === savedDate;});
+    if (dopt) { $dateSel.value = savedDate; renderMatches(); }
+  }
+} catch (e) {}
+// Save on change
+$leagueSel.addEventListener('change', function(){ try{ localStorage.setItem('looneyz_league', $leagueSel.value); }catch(e){} });
+$dateSel.addEventListener('change', function(){ try{ localStorage.setItem('looneyz_date', $dateSel.value); }catch(e){} });
 </script>
 </body>
 </html>
