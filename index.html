@@ -270,11 +270,14 @@
     .player-row .pl-edge { font-size: 11px; min-width: 60px; }
     .player-list .pl-head { padding: 12px 14px; font-size: 13px; }
   }
+  .brand#homeBrand:hover .sub{color:var(--sofa-accent)}
+  .brand#homeBrand:hover .dot{transform:scale(1.2)}
+  .brand#homeBrand .dot{transition:transform .15s}
 </style>
 </head>
 <body>
 <header class="topbar">
-  <div class="brand"><span class="dot"></span> Looneyz <span class="sub">Predictions</span></div>
+  <div class="brand" id="homeBrand" style="cursor:pointer" title="Back to schedule"><span class="dot"></span> Looneyz <span class="sub">Predictions</span></div>
   <div class="meta" id="meta-info">Loading...</div>
 </header>
 <div class="layout">
@@ -833,11 +836,48 @@ function renderCard(m){
   // Wire up the in-app Back button (re-bound every render since innerHTML replaces it)
   const $back = document.getElementById('backBtn');
   if ($back){
-    $back.addEventListener('click', function(){
-      // Trigger native back so popstate handler runs - keeps history clean
-      history.back();
+    $back.addEventListener('click', function(e){
+      e.preventDefault();
+      // Use history.back() if there's a history entry to pop; else direct swap
+      if (history.state && history.state.view === 'detail') {
+        history.back();
+      } else {
+        goHome();
+      }
     });
   }
+}
+
+// Universal "go home" — swaps back to the schedule list. Used by back btn, popstate, and home banner.
+function goHome(){
+  const layout = document.querySelector('.layout');
+  if (!layout) return;
+  layout.classList.remove('view-detail');
+  layout.classList.add('view-list');
+  window.scrollTo(0, 0);
+  document.querySelectorAll('.match-row').forEach(function(r){ r.classList.remove('active'); });
+}
+
+// Phone hardware back button + browser back: pop history -> goHome
+window.addEventListener('popstate', function(ev){
+  const layout = document.querySelector('.layout');
+  if (layout && layout.classList.contains('view-detail')){
+    goHome();
+  }
+});
+
+// Top brand: click to return to schedule
+const $homeBrand = document.getElementById('homeBrand');
+if ($homeBrand){
+  $homeBrand.addEventListener('click', function(){
+    if (document.querySelector('.layout').classList.contains('view-detail')){
+      // Pop the pushed history entry too so URL stays clean
+      if (history.state && history.state.view === 'detail') history.back();
+      else goHome();
+    } else {
+      window.scrollTo(0, 0);
+    }
+  });
 }
 
 

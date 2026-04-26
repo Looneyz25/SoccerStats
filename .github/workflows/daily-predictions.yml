@@ -1,0 +1,48 @@
+name: Daily Predictions
+on:
+  schedule:
+    # 06:00 UTC daily = 16:00 AEST (Sydney) / 17:00 AEDT in summer
+    - cron: '0 6 * * *'
+    # Optional: a second run later in the day to catch evening AU games + settle
+    - cron: '0 18 * * *'
+  # Manual trigger button in the Actions tab
+  workflow_dispatch:
+
+permissions:
+  contents: write   # needed to commit + push back
+
+concurrency:
+  group: daily-predictions
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install --quiet curl_cffi
+
+      - name: Run daily routine
+        run: python scripts/run_routine.py
+
+      - name: Commit & push changes
+        run: |
+          git config user.name "soccer-stats-bot"
+          git config user.email "actions@github.com"
+          git add index.html match_data.json match_data_afl.json predictions_*.json predictions_*.md 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          DATE=$(date -u +%Y-%m-%d)
+          git commit -m "Daily run ${DATE}: settle results + 7-day forecasts + odds refresh"
+          git push origin main
