@@ -356,18 +356,26 @@ DATA.leagues.forEach(function(L,i){
   return L.matches.map(function(m){ return Object.assign({_league: L.name, _leagueIdx: parseInt(sel)}, m); });
 }
 
+function todayLocalStr(){
+  const d = new Date();
+  const y = d.getFullYear();
+  const mo = String(d.getMonth()+1).padStart(2,'0');
+  const da = String(d.getDate()).padStart(2,'0');
+  return y+'-'+mo+'-'+da;
+}
+
 function refreshLeague(){
   $list.innerHTML = '';
   const matches = getCurrentMatches();
   if (!matches.length){ $dateSel.innerHTML = ''; return; }
-  const dates = Array.from(new Set(matches.map(function(m){ return m.date; }))).sort();
+  // IMPORTANT: build date selector from LOCAL dates so it matches the day headers
+  const dates = Array.from(new Set(matches.map(function(m){ return matchLocalDateStr(m); }))).sort();
   const prev = $dateSel.value;
   $dateSel.innerHTML = dates.map(function(d){ return '<option value="'+d+'">'+fmtDate(d)+' ('+d+')</option>'; }).join('');
-  // Keep the previously selected date if still available, else jump to today (or closest future, then closest past)
   if (prev && dates.indexOf(prev) !== -1){
     $dateSel.value = prev;
   } else {
-    const today = (DATA.captured_at || new Date().toISOString().slice(0,10));
+    const today = todayLocalStr();
     let target = dates.find(function(d){ return d === today; });
     if (!target) target = dates.find(function(d){ return d >= today; });
     if (!target) target = dates[dates.length - 1];
@@ -381,7 +389,7 @@ function renderMatches(){
   const all = getCurrentMatches();
   if (!all.length) return;
   const sel = $dateSel.value;
-  let matches = sel ? all.filter(function(m){ return m.date === sel; }) : all;
+  let matches = sel ? all.filter(function(m){ return matchLocalDateStr(m) === sel; }) : all;
   // Sort matches chronologically
   matches.sort(function(a,b){
     const da = (a.date||'') + ' ' + (a.time||'');
@@ -927,7 +935,7 @@ $datePrev.addEventListener('click', function(){ navDate(-1); });
 $dateNext.addEventListener('click', function(){ navDate(1); });
 const $dateToday = document.getElementById('dateToday');
 $dateToday.addEventListener('click', function(){
-  const today = (DATA.captured_at || new Date().toISOString().slice(0,10));
+  const today = todayLocalStr();
   const opts = Array.from($dateSel.options);
   let target = opts.find(function(o){ return o.value === today; });
   if (!target) target = opts.find(function(o){ return o.value >= today; });
