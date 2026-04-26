@@ -193,6 +193,29 @@
     .team-block .name { font-size: 12px; }
     .summary-bar { grid-template-columns: repeat(2, 1fr); }
   }
+
+  /* ================== MOBILE MASTER-DETAIL ================== */
+  .back-btn { display: none; }
+  @media (max-width: 720px) {
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--sofa-panel); color: var(--sofa-text);
+      border: 1px solid var(--sofa-line); border-radius: 8px;
+      padding: 8px 12px; font-size: 13px; font-weight: 700;
+      cursor: pointer; margin-bottom: 12px;
+    }
+    .back-btn:hover { background: var(--sofa-panel-2); border-color: var(--sofa-accent); }
+    .back-btn::before { content: "‹"; font-size: 18px; line-height: 1; }
+    /* In list mode (default on mobile), show only the sidebar */
+    .layout.view-list aside.left { display: flex; }
+    .layout.view-list main.right { display: none; }
+    /* In detail mode, show only the right card with back button */
+    .layout.view-detail aside.left { display: none; }
+    .layout.view-detail main.right { display: block; height: auto; max-height: none; }
+    /* Make the sidebar use full visible space when alone */
+    .layout.view-list aside.left { max-height: calc(100vh - 90px); height: auto; }
+    .layout.view-list .matches-list { max-height: calc(100vh - 230px); }
+  }
 </style>
 </head>
 <body>
@@ -602,6 +625,7 @@ function renderCard(m){
   const awayMeta = (m.away.rank ? '#' + m.away.rank : '') + ' ' + (m.away.pts ? '- ' + m.away.pts + ' pts' : '');
 
   $card.innerHTML =
+    '<button class="back-btn" id="backBtn">Back to schedule</button>' +
     '<div class="card-hero">' +
       '<div class="crumbs">' + lg.name + ' - ' + (lg.season || '') + ' - ' + fmtDate(matchLocalDateStr(m)) + ' - ' + matchLocalTimeStr(m) + (m.venue ? ' - ' + m.venue : '') + '</div>' +
       '<div class="row">' +
@@ -611,6 +635,18 @@ function renderCard(m){
       '</div>' +
     '</div>' +
     summaryBar + sportsbetBlock + predBlock + statsBlock + streaksBlock;
+  // Switch to detail view (only matters on mobile - desktop ignores due to media query)
+  document.querySelector('.layout').classList.remove('view-list');
+  document.querySelector('.layout').classList.add('view-detail');
+  // Wire up back button (re-bind every time since innerHTML replaces it)
+  const $back = document.getElementById('backBtn');
+  if ($back){
+    $back.addEventListener('click', function(){
+      document.querySelector('.layout').classList.remove('view-detail');
+      document.querySelector('.layout').classList.add('view-list');
+      window.scrollTo(0, 0);
+    });
+  }
 }
 
 $leagueSel.addEventListener('change', refreshLeague);
@@ -640,8 +676,12 @@ $dateToday.addEventListener('click', function(){
 
 
 refreshLeague();
-const first = $list.querySelector('.match-row');
-if (first) first.click();
+document.querySelector('.layout').classList.add('view-list');
+// On desktop, auto-open first match for convenience; on mobile, stay on list
+if (window.matchMedia('(min-width: 721px)').matches){
+  const first = $list.querySelector('.match-row');
+  if (first) first.click();
+}
 </script>
 </body>
 </html>
