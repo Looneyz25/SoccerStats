@@ -1951,7 +1951,7 @@
             "winner": {
               "pick": "Rayo Vallecano",
               "type": "home",
-              "odds": 2.88
+              "odds": 2.8
             },
             "btts": {
               "pick": "Yes",
@@ -1969,9 +1969,9 @@
             }
           },
           "sportsbet_odds": {
-            "home": 2.75,
+            "home": 2.8,
             "draw": 3.3,
-            "away": 2.55,
+            "away": 2.45,
             "event_id": 10367025
           }
         },
@@ -2037,7 +2037,7 @@
             "winner": {
               "pick": "Real Oviedo",
               "type": "home",
-              "odds": 2.3
+              "odds": 2.25
             },
             "btts": {
               "pick": "Yes",
@@ -2055,7 +2055,7 @@
             }
           },
           "sportsbet_odds": {
-            "home": 2.3,
+            "home": 2.25,
             "draw": 3.4,
             "away": 3.1,
             "event_id": 10367028
@@ -2161,7 +2161,7 @@
           "sportsbet_odds": {
             "home": 1.95,
             "draw": 3.4,
-            "away": 3.9,
+            "away": 4.0,
             "event_id": 10367037
           }
         },
@@ -2251,7 +2251,7 @@
             "winner": {
               "pick": "Villarreal",
               "type": "home",
-              "odds": 1.95
+              "odds": 1.9
             },
             "btts": {
               "pick": "Yes",
@@ -2269,9 +2269,9 @@
             }
           },
           "sportsbet_odds": {
-            "home": 1.95,
-            "draw": 3.4,
-            "away": 3.9,
+            "home": 1.9,
+            "draw": 3.5,
+            "away": 4.0,
             "event_id": 10367032
           }
         },
@@ -2721,7 +2721,7 @@
             "winner": {
               "pick": "Villarreal",
               "type": "home",
-              "odds": 1.75
+              "odds": 1.7
             },
             "btts": {
               "pick": "Yes",
@@ -2738,9 +2738,9 @@
             }
           },
           "sportsbet_odds": {
-            "home": 1.75,
-            "draw": 4.0,
-            "away": 3.9,
+            "home": 1.7,
+            "draw": 3.9,
+            "away": 4.33,
             "event_id": 10411529
           }
         },
@@ -2956,7 +2956,8 @@
           "predictions": {
             "winner": {
               "pick": "FC Barcelona",
-              "type": "away"
+              "type": "away",
+              "odds": 1.61
             },
             "btts": {
               "pick": "Yes"
@@ -3058,7 +3059,7 @@
             "winner": {
               "pick": "Fiorentina",
               "type": "home",
-              "odds": 1.95
+              "odds": 2.0
             },
             "btts": {
               "pick": "No",
@@ -3076,9 +3077,9 @@
             }
           },
           "sportsbet_odds": {
-            "home": 1.95,
+            "home": 2.0,
             "draw": 3.25,
-            "away": 4.2,
+            "away": 4.0,
             "event_id": 10367287
           }
         },
@@ -3156,7 +3157,7 @@
             "winner": {
               "pick": "Genoa",
               "type": "home",
-              "odds": 4.6
+              "odds": 5.0
             },
             "btts": {
               "pick": "Yes",
@@ -3174,9 +3175,9 @@
             }
           },
           "sportsbet_odds": {
-            "home": 4.6,
-            "draw": 3.6,
-            "away": 1.75,
+            "home": 5.0,
+            "draw": 3.75,
+            "away": 1.7,
             "event_id": 10367601
           }
         },
@@ -3242,7 +3243,7 @@
             "winner": {
               "pick": "Inter",
               "type": "away",
-              "odds": 1.4
+              "odds": 1.36
             },
             "btts": {
               "pick": "Yes",
@@ -3260,9 +3261,9 @@
             }
           },
           "sportsbet_odds": {
-            "home": 7.5,
-            "draw": 4.75,
-            "away": 1.4,
+            "home": 8.0,
+            "draw": 5.0,
+            "away": 1.36,
             "event_id": 10367625
           }
         },
@@ -3377,8 +3378,8 @@
           },
           "sportsbet_odds": {
             "home": 2.88,
-            "draw": 3.1,
-            "away": 2.55,
+            "draw": 3.0,
+            "away": 2.62,
             "event_id": 10367622
           }
         },
@@ -3462,8 +3463,8 @@
             }
           },
           "sportsbet_odds": {
-            "home": 4.75,
-            "draw": 3.75,
+            "home": 4.6,
+            "draw": 3.7,
             "away": 1.75,
             "event_id": 10367315
           }
@@ -4680,7 +4681,7 @@
             "winner": {
               "pick": "VfB Stuttgart",
               "type": "home",
-              "odds": 1.55
+              "odds": 1.53
             },
             "btts": {
               "pick": "Yes",
@@ -4698,7 +4699,7 @@
             }
           },
           "sportsbet_odds": {
-            "home": 1.55,
+            "home": 1.53,
             "draw": 4.33,
             "away": 5.5,
             "event_id": 10366615
@@ -4766,7 +4767,7 @@
             "winner": {
               "pick": "Borussia Dortmund",
               "type": "home",
-              "odds": 1.36
+              "odds": 1.4
             },
             "btts": {
               "pick": "Yes",
@@ -4784,9 +4785,9 @@
             }
           },
           "sportsbet_odds": {
-            "home": 1.36,
+            "home": 1.4,
             "draw": 5.0,
-            "away": 7.5,
+            "away": 7.0,
             "event_id": 10366659
           }
         },
@@ -5515,7 +5516,7 @@
             "winner": {
               "pick": "Lorient",
               "type": "home",
-              "odds": 1.95
+              "odds": 1.91
             },
             "btts": {
               "pick": "Yes",
@@ -5534,7 +5535,7 @@
           },
           "sportsbet_odds": {
             "home": 1.91,
-            "draw": 3.7,
+            "draw": 3.6,
             "away": 3.9,
             "event_id": 10368077
           }
@@ -5625,7 +5626,7 @@
             "winner": {
               "pick": "Le Havre",
               "type": "home",
-              "odds": 1.61
+              "odds": 1.57
             },
             "btts": {
               "pick": "Yes",
@@ -5643,7 +5644,7 @@
             }
           },
           "sportsbet_odds": {
-            "home": 1.6,
+            "home": 1.57,
             "draw": 4.0,
             "away": 5.5,
             "event_id": 10368069
@@ -5735,7 +5736,7 @@
             "winner": {
               "pick": "Paris FC",
               "type": "home",
-              "odds": 4.0
+              "odds": 4.4
             },
             "btts": {
               "pick": "Yes",
@@ -5753,9 +5754,9 @@
             }
           },
           "sportsbet_odds": {
-            "home": 4.1,
-            "draw": 3.7,
-            "away": 1.85,
+            "home": 4.4,
+            "draw": 3.6,
+            "away": 1.8,
             "event_id": 10368083
           }
         },
@@ -5913,7 +5914,7 @@
             "winner": {
               "pick": "Olympique de Marseille",
               "type": "home",
-              "odds": 1.47
+              "odds": 1.57
             },
             "btts": {
               "pick": "No",
@@ -5931,9 +5932,9 @@
             }
           },
           "sportsbet_odds": {
-            "home": 1.47,
-            "draw": 4.5,
-            "away": 6.0,
+            "home": 1.57,
+            "draw": 4.33,
+            "away": 5.0,
             "event_id": 10368086
           }
         },
@@ -6522,7 +6523,7 @@
             "winner": {
               "pick": "Nottingham Forest",
               "type": "home",
-              "odds": 2.55
+              "odds": 2.5
             },
             "btts": {
               "pick": "Yes",
@@ -6539,7 +6540,7 @@
             }
           },
           "sportsbet_odds": {
-            "home": 2.55,
+            "home": 2.5,
             "draw": 3.2,
             "away": 2.8,
             "event_id": 10383602
@@ -7298,166 +7299,6 @@
           }
         },
         {
-          "id": 15171502,
-          "date": "2026-04-26",
-          "time": "02:30",
-          "status": "upcoming",
-          "home": {
-            "name": "Seattle Sounders FC",
-            "short": "Seattle",
-            "team_id": 22009
-          },
-          "away": {
-            "name": "FC Dallas",
-            "short": "Dallas",
-            "team_id": 2512
-          },
-          "odds": {
-            "home": 1.61,
-            "draw": 3.9,
-            "away": 5.25
-          },
-          "h2h_streaks": [
-            {
-              "team": "away",
-              "label": "No wins",
-              "value": "3",
-              "odds": 1.17
-            },
-            {
-              "team": "both",
-              "label": "Without clean sheet",
-              "value": "3",
-              "odds": 1.67
-            },
-            {
-              "team": "away",
-              "label": "First to score",
-              "value": "4/5",
-              "odds": 2.6
-            }
-          ],
-          "predictions": {
-            "winner": {
-              "pick": "Seattle Sounders FC",
-              "type": "home",
-              "odds": 1.61
-            },
-            "btts": {
-              "pick": "Yes",
-              "odds": 1.67
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5,
-              "odds": 1.67
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5,
-              "odds": 2.2
-            }
-          }
-        },
-        {
-          "id": 15171496,
-          "date": "2026-04-26",
-          "time": "02:30",
-          "status": "upcoming",
-          "home": {
-            "name": "Vancouver Whitecaps",
-            "short": "Vancouver",
-            "team_id": 22010
-          },
-          "away": {
-            "name": "Colorado Rapids",
-            "short": "Colorado",
-            "team_id": 2510
-          },
-          "odds": {
-            "home": 1.33,
-            "draw": 5.5,
-            "away": 7.0
-          },
-          "h2h_streaks": [
-            {
-              "team": "home",
-              "label": "Wins",
-              "value": "3",
-              "odds": 1.33
-            },
-            {
-              "team": "home",
-              "label": "More than 2.5 goals",
-              "value": "7/9",
-              "odds": 1.4
-            },
-            {
-              "team": "away",
-              "label": "More than 2.5 goals",
-              "value": "6/8",
-              "odds": 1.4
-            },
-            {
-              "team": "away",
-              "label": "Both teams scoring",
-              "value": "6/8",
-              "odds": 1.62
-            },
-            {
-              "team": "home",
-              "label": "First to score",
-              "value": "5/6",
-              "odds": 1.36
-            },
-            {
-              "team": "away",
-              "label": "More than 4.5 cards",
-              "value": "5/6",
-              "odds": 2.1
-            },
-            {
-              "team": "home",
-              "label": "Less than 4.5 cards",
-              "value": "6/7",
-              "odds": 1.67
-            },
-            {
-              "team": "home",
-              "label": "Less than 10.5 corners",
-              "value": "5/6",
-              "odds": 2.1
-            },
-            {
-              "team": "away",
-              "label": "Less than 10.5 corners",
-              "value": "7/8",
-              "odds": 2.1
-            }
-          ],
-          "predictions": {
-            "winner": {
-              "pick": "Vancouver Whitecaps",
-              "type": "home",
-              "odds": 1.33
-            },
-            "btts": {
-              "pick": "Yes",
-              "odds": 1.62
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5,
-              "odds": 1.4
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5,
-              "odds": 2.1
-            }
-          }
-        },
-        {
           "id": 15171501,
           "date": "2026-04-26",
           "time": "23:00",
@@ -7559,6 +7400,216 @@
               "line": 4.5,
               "odds": 1.8
             }
+          }
+        },
+        {
+          "id": 15171502,
+          "date": "2026-04-26",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Seattle Sounders FC",
+            "short": "Seattle",
+            "team_id": 22009,
+            "goals": 2
+          },
+          "away": {
+            "name": "FC Dallas",
+            "short": "Dallas",
+            "team_id": 2512,
+            "goals": 1
+          },
+          "odds": {
+            "home": 1.61,
+            "draw": 3.9,
+            "away": 5.25
+          },
+          "h2h_streaks": [
+            {
+              "team": "away",
+              "label": "No wins",
+              "value": "3",
+              "odds": 1.17
+            },
+            {
+              "team": "both",
+              "label": "Without clean sheet",
+              "value": "3",
+              "odds": 1.67
+            },
+            {
+              "team": "away",
+              "label": "First to score",
+              "value": "4/5",
+              "odds": 2.6
+            }
+          ],
+          "predictions": {
+            "winner": {
+              "pick": "Seattle Sounders FC",
+              "type": "home",
+              "odds": 1.61,
+              "result": "hit"
+            },
+            "btts": {
+              "pick": "Yes",
+              "odds": 1.67,
+              "actual_btts": true,
+              "result": "hit"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "odds": 1.67,
+              "actual": 3,
+              "result": "hit"
+            },
+            "ou_cards": {
+              "pick": "Over",
+              "line": 4.5,
+              "odds": 2.2,
+              "actual": 5,
+              "result": "hit"
+            }
+          },
+          "settled_at": "2026-04-26",
+          "actuals": {
+            "home_corners": 4,
+            "away_corners": 7,
+            "corners_total": 11,
+            "home_fouls": 5,
+            "away_fouls": 12,
+            "fouls_total": 17,
+            "home_sot": 6,
+            "away_sot": 5,
+            "first_to_score": "home",
+            "first_scorer": "Jesús Ferreira",
+            "ht_home": 2,
+            "ht_away": 1,
+            "ht_winner": "home"
+          }
+        },
+        {
+          "id": 15171496,
+          "date": "2026-04-26",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Vancouver Whitecaps",
+            "short": "Vancouver",
+            "team_id": 22010,
+            "goals": 3
+          },
+          "away": {
+            "name": "Colorado Rapids",
+            "short": "Colorado",
+            "team_id": 2510,
+            "goals": 1
+          },
+          "odds": {
+            "home": 1.33,
+            "draw": 5.5,
+            "away": 7.0
+          },
+          "h2h_streaks": [
+            {
+              "team": "home",
+              "label": "Wins",
+              "value": "3",
+              "odds": 1.33
+            },
+            {
+              "team": "home",
+              "label": "More than 2.5 goals",
+              "value": "7/9",
+              "odds": 1.4
+            },
+            {
+              "team": "away",
+              "label": "More than 2.5 goals",
+              "value": "6/8",
+              "odds": 1.4
+            },
+            {
+              "team": "away",
+              "label": "Both teams scoring",
+              "value": "6/8",
+              "odds": 1.62
+            },
+            {
+              "team": "home",
+              "label": "First to score",
+              "value": "5/6",
+              "odds": 1.36
+            },
+            {
+              "team": "away",
+              "label": "More than 4.5 cards",
+              "value": "5/6",
+              "odds": 2.1
+            },
+            {
+              "team": "home",
+              "label": "Less than 4.5 cards",
+              "value": "6/7",
+              "odds": 1.67
+            },
+            {
+              "team": "home",
+              "label": "Less than 10.5 corners",
+              "value": "5/6",
+              "odds": 2.1
+            },
+            {
+              "team": "away",
+              "label": "Less than 10.5 corners",
+              "value": "7/8",
+              "odds": 2.1
+            }
+          ],
+          "predictions": {
+            "winner": {
+              "pick": "Vancouver Whitecaps",
+              "type": "home",
+              "odds": 1.33,
+              "result": "hit"
+            },
+            "btts": {
+              "pick": "Yes",
+              "odds": 1.62,
+              "actual_btts": true,
+              "result": "hit"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "odds": 1.4,
+              "actual": 4,
+              "result": "hit"
+            },
+            "ou_cards": {
+              "pick": "Over",
+              "line": 4.5,
+              "odds": 2.1,
+              "actual": 2,
+              "result": "miss"
+            }
+          },
+          "settled_at": "2026-04-26",
+          "actuals": {
+            "home_corners": 8,
+            "away_corners": 3,
+            "corners_total": 11,
+            "home_fouls": 24,
+            "away_fouls": 12,
+            "fouls_total": 36,
+            "home_sot": 8,
+            "away_sot": 3,
+            "first_to_score": "home",
+            "first_scorer": "Cheick Tidiane Sabaly",
+            "ht_home": 2,
+            "ht_away": 1,
+            "ht_winner": "home"
           }
         },
         {
@@ -9582,208 +9633,6 @@
           }
         },
         {
-          "id": 15239047,
-          "date": "2026-04-26",
-          "time": "03:00",
-          "status": "upcoming",
-          "home": {
-            "name": "FC Juárez",
-            "short": "Juárez",
-            "team_id": 201624
-          },
-          "away": {
-            "name": "Atlético San Luis",
-            "short": "Atlético",
-            "team_id": 1950
-          },
-          "odds": {
-            "home": 1.86,
-            "draw": 3.6,
-            "away": 3.9
-          },
-          "h2h_streaks": [
-            {
-              "team": "home",
-              "label": "Losses",
-              "value": "3",
-              "odds": 3.9
-            },
-            {
-              "team": "home",
-              "label": "No wins",
-              "value": "5",
-              "odds": 1.83
-            },
-            {
-              "team": "home",
-              "label": "Without clean sheet",
-              "value": "17",
-              "odds": 1.57
-            },
-            {
-              "team": "home",
-              "label": "More than 2.5 goals",
-              "value": "8/10",
-              "odds": 1.67
-            },
-            {
-              "team": "home",
-              "label": "Both teams scoring",
-              "value": "10/10",
-              "odds": 1.57
-            },
-            {
-              "team": "home",
-              "label": "First to concede",
-              "value": "7/8",
-              "odds": 2.3
-            },
-            {
-              "team": "away",
-              "label": "First to concede",
-              "value": "4/5",
-              "odds": 1.67
-            },
-            {
-              "team": "away",
-              "label": "More than 4.5 cards",
-              "value": "8/10",
-              "odds": 2.1
-            },
-            {
-              "team": "home",
-              "label": "More than 10.5 corners",
-              "value": "4/5",
-              "odds": 2.0
-            }
-          ],
-          "predictions": {
-            "winner": {
-              "pick": "Atlético San Luis",
-              "type": "away",
-              "odds": 3.9
-            },
-            "btts": {
-              "pick": "Yes",
-              "odds": 1.57
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5,
-              "odds": 1.67
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5,
-              "odds": 2.1
-            }
-          }
-        },
-        {
-          "id": 15239045,
-          "date": "2026-04-26",
-          "time": "03:10",
-          "status": "upcoming",
-          "home": {
-            "name": "Club América",
-            "short": "Club América",
-            "team_id": 1939
-          },
-          "away": {
-            "name": "Atlas FC",
-            "short": "Atlas",
-            "team_id": 1949
-          },
-          "odds": {
-            "home": 1.56,
-            "draw": 3.7,
-            "away": 6.5
-          },
-          "h2h_streaks": [
-            {
-              "team": "away",
-              "label": "No losses",
-              "value": "3",
-              "odds": 2.3
-            },
-            {
-              "team": "away",
-              "label": "No goals conceded",
-              "value": "3",
-              "odds": 1.7
-            },
-            {
-              "team": "home",
-              "label": "Without clean sheet",
-              "value": "4",
-              "odds": 2.05
-            },
-            {
-              "team": "home",
-              "label": "Less than 2.5 goals",
-              "value": "8/10",
-              "odds": 1.7
-            },
-            {
-              "team": "away",
-              "label": "Less than 2.5 goals",
-              "value": "7/7",
-              "odds": 1.7
-            },
-            {
-              "team": "home",
-              "label": "Both teams scoring",
-              "value": "5/7",
-              "odds": 2.05
-            },
-            {
-              "team": "home",
-              "label": "First to score",
-              "value": "5/7",
-              "odds": 1.5
-            },
-            {
-              "team": "home",
-              "label": "Less than 4.5 cards",
-              "value": "5/5",
-              "odds": 1.83
-            },
-            {
-              "team": "home",
-              "label": "Less than 10.5 corners",
-              "value": "7/9",
-              "odds": 1.8
-            },
-            {
-              "team": "away",
-              "label": "Less than 10.5 corners",
-              "value": "5/6",
-              "odds": 1.8
-            }
-          ],
-          "predictions": {
-            "winner": {
-              "pick": "Club América",
-              "type": "home",
-              "odds": 1.56
-            },
-            "btts": {
-              "pick": "No",
-              "odds": 1.7
-            },
-            "ou_goals": {
-              "pick": "Under",
-              "line": 2.5,
-              "odds": 1.7
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5,
-              "odds": 1.83
-            }
-          }
-        },
-        {
           "id": 15239048,
           "date": "2026-04-26",
           "time": "23:00",
@@ -9867,6 +9716,258 @@
               "line": 4.5,
               "odds": 1.91
             }
+          }
+        },
+        {
+          "id": 15239047,
+          "date": "2026-04-26",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "FC Juárez",
+            "short": "Juárez",
+            "team_id": 201624,
+            "goals": 2
+          },
+          "away": {
+            "name": "Atlético San Luis",
+            "short": "Atlético",
+            "team_id": 1950,
+            "goals": 1
+          },
+          "odds": {
+            "home": 1.86,
+            "draw": 3.6,
+            "away": 3.9
+          },
+          "h2h_streaks": [
+            {
+              "team": "home",
+              "label": "Losses",
+              "value": "3",
+              "odds": 3.9
+            },
+            {
+              "team": "home",
+              "label": "No wins",
+              "value": "5",
+              "odds": 1.83
+            },
+            {
+              "team": "home",
+              "label": "Without clean sheet",
+              "value": "17",
+              "odds": 1.57
+            },
+            {
+              "team": "home",
+              "label": "More than 2.5 goals",
+              "value": "8/10",
+              "odds": 1.67
+            },
+            {
+              "team": "home",
+              "label": "Both teams scoring",
+              "value": "10/10",
+              "odds": 1.57
+            },
+            {
+              "team": "home",
+              "label": "First to concede",
+              "value": "7/8",
+              "odds": 2.3
+            },
+            {
+              "team": "away",
+              "label": "First to concede",
+              "value": "4/5",
+              "odds": 1.67
+            },
+            {
+              "team": "away",
+              "label": "More than 4.5 cards",
+              "value": "8/10",
+              "odds": 2.1
+            },
+            {
+              "team": "home",
+              "label": "More than 10.5 corners",
+              "value": "4/5",
+              "odds": 2.0
+            }
+          ],
+          "predictions": {
+            "winner": {
+              "pick": "Atlético San Luis",
+              "type": "away",
+              "odds": 3.9,
+              "result": "miss"
+            },
+            "btts": {
+              "pick": "Yes",
+              "odds": 1.57,
+              "actual_btts": true,
+              "result": "hit"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "odds": 1.67,
+              "actual": 3,
+              "result": "hit"
+            },
+            "ou_cards": {
+              "pick": "Over",
+              "line": 4.5,
+              "odds": 2.1,
+              "actual": 1,
+              "result": "miss"
+            }
+          },
+          "settled_at": "2026-04-26",
+          "actuals": {
+            "home_corners": 4,
+            "away_corners": 4,
+            "corners_total": 8,
+            "home_fouls": 5,
+            "away_fouls": 10,
+            "fouls_total": 15,
+            "home_sot": 4,
+            "away_sot": 4,
+            "first_to_score": "home",
+            "first_scorer": "Ettson Ayón",
+            "ht_home": 2,
+            "ht_away": 1,
+            "ht_winner": "home"
+          }
+        },
+        {
+          "id": 15239045,
+          "date": "2026-04-26",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Club América",
+            "short": "Club América",
+            "team_id": 1939,
+            "goals": 0
+          },
+          "away": {
+            "name": "Atlas FC",
+            "short": "Atlas",
+            "team_id": 1949,
+            "goals": 1
+          },
+          "odds": {
+            "home": 1.56,
+            "draw": 3.7,
+            "away": 6.5
+          },
+          "h2h_streaks": [
+            {
+              "team": "away",
+              "label": "No losses",
+              "value": "3",
+              "odds": 2.3
+            },
+            {
+              "team": "away",
+              "label": "No goals conceded",
+              "value": "3",
+              "odds": 1.7
+            },
+            {
+              "team": "home",
+              "label": "Without clean sheet",
+              "value": "4",
+              "odds": 2.05
+            },
+            {
+              "team": "home",
+              "label": "Less than 2.5 goals",
+              "value": "8/10",
+              "odds": 1.7
+            },
+            {
+              "team": "away",
+              "label": "Less than 2.5 goals",
+              "value": "7/7",
+              "odds": 1.7
+            },
+            {
+              "team": "home",
+              "label": "Both teams scoring",
+              "value": "5/7",
+              "odds": 2.05
+            },
+            {
+              "team": "home",
+              "label": "First to score",
+              "value": "5/7",
+              "odds": 1.5
+            },
+            {
+              "team": "home",
+              "label": "Less than 4.5 cards",
+              "value": "5/5",
+              "odds": 1.83
+            },
+            {
+              "team": "home",
+              "label": "Less than 10.5 corners",
+              "value": "7/9",
+              "odds": 1.8
+            },
+            {
+              "team": "away",
+              "label": "Less than 10.5 corners",
+              "value": "5/6",
+              "odds": 1.8
+            }
+          ],
+          "predictions": {
+            "winner": {
+              "pick": "Club América",
+              "type": "home",
+              "odds": 1.56,
+              "result": "miss"
+            },
+            "btts": {
+              "pick": "No",
+              "odds": 1.7,
+              "actual_btts": false,
+              "result": "hit"
+            },
+            "ou_goals": {
+              "pick": "Under",
+              "line": 2.5,
+              "odds": 1.7,
+              "actual": 1,
+              "result": "hit"
+            },
+            "ou_cards": {
+              "pick": "Over",
+              "line": 4.5,
+              "odds": 1.83,
+              "actual": 3,
+              "result": "miss"
+            }
+          },
+          "settled_at": "2026-04-26",
+          "actuals": {
+            "home_corners": 5,
+            "away_corners": 2,
+            "corners_total": 7,
+            "home_fouls": 7,
+            "away_fouls": 12,
+            "fouls_total": 19,
+            "home_sot": 3,
+            "away_sot": 2,
+            "first_to_score": "away",
+            "first_scorer": "Arturo Gonzalez",
+            "ht_home": 0,
+            "ht_away": 0,
+            "ht_winner": "draw"
           }
         },
         {
@@ -10279,9 +10380,9 @@
             }
           },
           "sportsbet_odds": {
-            "home": 2.9,
-            "draw": 3.7,
-            "away": 2.15,
+            "home": 3.1,
+            "draw": 3.4,
+            "away": 2.2,
             "event_id": 10342066
           }
         },
@@ -10364,7 +10465,7 @@
             "winner": {
               "pick": "FC Volendam",
               "type": "away",
-              "odds": 3.1
+              "odds": 2.88
             },
             "btts": {
               "pick": "Yes",
@@ -10381,9 +10482,9 @@
             }
           },
           "sportsbet_odds": {
-            "home": 2.15,
-            "draw": 3.5,
-            "away": 3.1,
+            "home": 2.2,
+            "draw": 3.75,
+            "away": 2.88,
             "event_id": 10341864
           }
         },
@@ -10719,7 +10820,8 @@
           "predictions": {
             "winner": {
               "pick": "AFC Ajax",
-              "type": "home"
+              "type": "home",
+              "odds": 2.4
             },
             "btts": {
               "pick": "Yes"
@@ -10815,7 +10917,8 @@
           "predictions": {
             "winner": {
               "pick": "NEC Nijmegen",
-              "type": "home"
+              "type": "home",
+              "odds": 1.33
             },
             "btts": {
               "pick": "Yes"
@@ -11793,7 +11896,7 @@
             "winner": {
               "pick": "Coventry City",
               "type": "home",
-              "odds": 2.1
+              "odds": 2.0
             },
             "btts": {
               "pick": "Yes",
@@ -11811,9 +11914,9 @@
             }
           },
           "sportsbet_odds": {
-            "home": 2.1,
+            "home": 2.0,
             "draw": 3.7,
-            "away": 3.2,
+            "away": 3.4,
             "event_id": 10401488
           }
         },
@@ -11982,7 +12085,8 @@
           "predictions": {
             "winner": {
               "pick": "Blackburn Rovers",
-              "type": "home"
+              "type": "home",
+              "odds": 2.2
             },
             "btts": {
               "pick": "No"
@@ -12073,7 +12177,8 @@
           "predictions": {
             "winner": {
               "pick": "Bristol City",
-              "type": "home"
+              "type": "home",
+              "odds": 1.95
             },
             "btts": {
               "pick": "Yes"
@@ -12088,9 +12193,9 @@
             }
           },
           "sportsbet_odds": {
-            "home": 2.1,
-            "draw": 3.7,
-            "away": 3.3,
+            "home": 1.95,
+            "draw": 3.75,
+            "away": 3.5,
             "event_id": 10415532
           }
         },
@@ -12209,7 +12314,8 @@
           "predictions": {
             "winner": {
               "pick": "Norwich City",
-              "type": "away"
+              "type": "away",
+              "odds": 3.3
             },
             "btts": {
               "pick": "Yes"
@@ -12360,7 +12466,8 @@
           "predictions": {
             "winner": {
               "pick": "Millwall",
-              "type": "home"
+              "type": "home",
+              "odds": 1.36
             },
             "btts": {
               "pick": "Yes"
@@ -12441,7 +12548,8 @@
           "predictions": {
             "winner": {
               "pick": "Portsmouth",
-              "type": "home"
+              "type": "home",
+              "odds": 2.4
             },
             "btts": {
               "pick": "Yes"
@@ -12602,7 +12710,8 @@
           "predictions": {
             "winner": {
               "pick": "West Bromwich Albion",
-              "type": "away"
+              "type": "away",
+              "odds": 1.44
             },
             "btts": {
               "pick": "No"
@@ -12615,6 +12724,12 @@
               "pick": "Over",
               "line": 4.5
             }
+          },
+          "sportsbet_odds": {
+            "home": 7.0,
+            "draw": 4.5,
+            "away": 1.44,
+            "event_id": 10415177
           }
         },
         {
@@ -12682,7 +12797,8 @@
           "predictions": {
             "winner": {
               "pick": "Swansea City",
-              "type": "home"
+              "type": "home",
+              "odds": 1.8
             },
             "btts": {
               "pick": "Yes"
@@ -12697,9 +12813,9 @@
             }
           },
           "sportsbet_odds": {
-            "home": 1.87,
-            "draw": 3.6,
-            "away": 4.1,
+            "home": 1.8,
+            "draw": 3.7,
+            "away": 4.33,
             "event_id": 10415530
           }
         },

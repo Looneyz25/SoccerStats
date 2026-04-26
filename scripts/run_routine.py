@@ -33,6 +33,33 @@ DAYS = [(TODAY + datetime.timedelta(days=i)).isoformat() for i in range(7)]
 ERRORS = []
 
 def log(msg): print(msg, flush=True)
+try:
+    from zoneinfo import ZoneInfo
+    ADL = ZoneInfo("Australia/Adelaide")
+except ImportError:
+    ADL = None
+
+def to_adl_str(date_str, time_str):
+    """Convert UTC date+time to Adelaide HH:MM string."""
+    if not date_str or not time_str or time_str == "FT" or ADL is None: return time_str or ""
+    try:
+        dt = datetime.datetime.strptime(date_str + " " + time_str, "%Y-%m-%d %H:%M")
+        dt = dt.replace(tzinfo=datetime.timezone.utc).astimezone(ADL)
+        return dt.strftime("%H:%M")
+    except Exception:
+        return time_str
+
+def to_adl_date(date_str, time_str):
+    """Convert UTC date+time to Adelaide YYYY-MM-DD string (may shift day)."""
+    if not date_str or not time_str or time_str == "FT" or ADL is None: return date_str
+    try:
+        dt = datetime.datetime.strptime(date_str + " " + time_str, "%Y-%m-%d %H:%M")
+        dt = dt.replace(tzinfo=datetime.timezone.utc).astimezone(ADL)
+        return dt.strftime("%Y-%m-%d")
+    except Exception:
+        return date_str
+
+
 
 def fetch(path, retries=2):
     for attempt in range(retries):
@@ -755,6 +782,81 @@ def update_dashboard(soccer, afl):
 # MAIN
 # ============================================================
 
+
+def write_md_report(soccer, afl):
+    """Generate predictions_{TODAY_ADL}.md with all times in Adelaide local."""
+    if ADL is None:
+        log("zoneinfo unavailable - skipping md report"); return
+    now_adl = datetime.datetime.now(datetime.timezone.utc).astimezone(ADL)
+    today_adl = now_adl.strftime("%Y-%m-%d")
+    md = ["# Looneyz Predictions - " + today_adl + " (Adelaide local time)", ""]
+    md.append("_Generated " + now_adl.strftime("%Y-%m-%d %H:%M %Z") + "_")
+    md.append("")
+    # Settled this run
+    md.append("## Settled this run")
+    settled = []
+    for L in soccer.get("leagues", []):
+        for m in L.get("matches", []):
+            if m.get("settled_at") == TODAY_STR:
+                preds = m.get("predictions", {})
+                def ico(x): return {"hit":"X","miss":"x","pending":"?"}.get(x,"-")
+                settled.append(f"- **{m['home']['name']} {m['home'].get('goals','?')}-{m['away'].get('goals','?')} {m['away']['name']}** ({L['name']}) - W {ico((preds.get('winner') or {}).get('result'))} | BTTS {ico((preds.get('btts') or {}).get('result'))} | OU2.5 {ico((preds.get('ou_goals') or {}).get('result'))} | Cards {ico((preds.get('ou_cards') or {}).get('result'))}")
+    if not settled: md.append("_No matches settled this run._")
+    md.extend(settled)
+    md.append("")
+    # Upcoming today/tomorrow in Adelaide time
+    tomorrow_adl = (now_adl + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+    for label, day in [("Upcoming today", today_adl), ("Upcoming tomorrow", tomorrow_adl)]:
+        md.append("## " + label + " (" + day + " ACST)")
+        any_match = False
+        for L in soccer.get("leagues", []):
+            for m in L.get("matches", []):
+                if m.get("status") == "FT": continue
+                m_date_adl = to_adl_date(m.get("date"), m.get("time"))
+                if m_date_adl != day: continue
+                m_time_adl = to_adl_str(m.get("date"), m.get("time"))
+                any_match = True
+                sb = m.get("sportsbet_odds") or {}
+                sb_str = f"SB {sb.get('home')}/{sb.get('draw')}/{sb.get('away')}" if sb.get('home') else "no SB"
+                preds = m.get("predictions", {})
+                pw = (preds.get('winner') or {}).get('pick','?')
+                pg = (preds.get('ou_goals') or {}).get('pick','?')
+                pb = (preds.get('btts') or {}).get('pick','?')
+                md.append(f"- {m_time_adl} **{m['home']['name']} vs {m['away']['name']}** ({L['name']}) - {sb_str} - Pred: {pw} / {pg} 2.5 / BTTS {pb}")
+        # AFL too
+        for L in afl.get("leagues", []):
+            for m in L.get("matches", []):
+                if m.get("status") == "FT": continue
+                m_date_adl = to_adl_date(m.get("date"), m.get("time"))
+                if m_date_adl != day: continue
+                m_time_adl = to_adl_str(m.get("date"), m.get("time"))
+                any_match = True
+                preds = m.get("predictions", {})
+                pw = (preds.get("winner") or {}).get("pick","?")
+                tp = preds.get("total_points") or {}
+                tp_str = f"{tp.get('pick','?')} {tp.get('line','?')}" if tp.get('pick') else f"~{tp.get('estimate','?')} pts"
+                md.append(f"- {m_time_adl} **{m['home']['name']} vs {m['away']['name']}** (AFL) - Pred: {pw} / Total {tp_str}")
+        if not any_match: md.append("_None._")
+        md.append("")
+    # Accuracy
+    md.append("## Model accuracy to date")
+    counts = {k: {"hit":0,"miss":0,"pending":0} for k in ("winner","btts","ou_goals","ou_cards")}
+    for L in soccer.get("leagues", []):
+        for m in L.get("matches", []):
+            for k in counts:
+                r = ((m.get("predictions") or {}).get(k) or {}).get("result")
+                if r in counts[k]: counts[k][r] += 1
+    md.append("")
+    md.append("| Pick | Hit | Miss | Pending | Hit % |")
+    md.append("|------|-----|------|---------|-------|")
+    for k in ("winner","btts","ou_goals","ou_cards"):
+        c = counts[k]; denom = c["hit"]+c["miss"]; pct = (c["hit"]/denom*100) if denom else 0
+        md.append(f"| {k} | {c['hit']} | {c['miss']} | {c['pending']} | {pct:.0f}% |")
+    md.append("")
+    out = REPO / f"predictions_{today_adl}.md"
+    out.write_text("\n".join(md), encoding="utf-8")
+    log(f"  Adelaide-time MD report: {out.name}")
+
 def main():
     log(f"Daily routine starting {TODAY_STR}")
     soccer = soccer_routine()
@@ -764,6 +866,7 @@ def main():
         log(f"AFL routine failed: {e}"); traceback.print_exc()
         afl = json.loads(AFL_PATH.read_text()) if AFL_PATH.exists() else {"sport":"afl","leagues":[{"name":"AFL","matches":[]}]}
     update_dashboard(soccer, afl)
+    write_md_report(soccer, afl)
     snap = REPO / f"predictions_{TODAY_STR}.json"
     snap.write_text(json.dumps(soccer, indent=2, ensure_ascii=False))
     log(f"Snapshot written: {snap.name}")

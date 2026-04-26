@@ -10,17 +10,19 @@
         {
           "id": 16033015,
           "date": "2026-04-26",
-          "time": "05:15",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Brisbane Lions",
             "short": "Brisbane Lions",
-            "team_id": 4444
+            "team_id": 4444,
+            "points": 127
           },
           "away": {
             "name": "Adelaide Crows",
             "short": "Adelaide Crows",
-            "team_id": 4442
+            "team_id": 4442,
+            "points": 75
           },
           "odds": {
             "home": 1.25,
@@ -35,7 +37,8 @@
             "winner": {
               "pick": "Brisbane Lions",
               "type": "home",
-              "odds": 1.24
+              "odds": 1.24,
+              "result": "hit"
             },
             "total_points": {
               "estimate": 185.2
@@ -836,22 +839,25 @@
                 }
               ]
             }
-          }
+          },
+          "settled_at": "2026-04-26"
         },
         {
           "id": 16033016,
           "date": "2026-04-26",
-          "time": "06:40",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "GWS Giants",
             "short": "GWS Giants",
-            "team_id": 60170
+            "team_id": 60170,
+            "points": 105
           },
           "away": {
             "name": "North Melbourne",
             "short": "North Melbourne",
-            "team_id": 4454
+            "team_id": 4454,
+            "points": 98
           },
           "odds": {
             "home": 1.47,
@@ -866,7 +872,8 @@
             "winner": {
               "pick": "North Melbourne",
               "type": "away",
-              "odds": 2.6
+              "odds": 2.6,
+              "result": "miss"
             },
             "total_points": {
               "estimate": 183.0
@@ -1667,7 +1674,8 @@
                 }
               ]
             }
-          }
+          },
+          "settled_at": "2026-04-26"
         },
         {
           "id": 16055886,
