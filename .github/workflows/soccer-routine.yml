@@ -22,7 +22,8 @@ jobs:
     timeout-minutes: 15
     defaults:
       run:
-        shell: powershell
+        # PowerShell 5.1 with execution policy bypass so the runner's temp .ps1 files run.
+        shell: 'powershell -NoLogo -NoProfile -ExecutionPolicy Bypass -File "{0}"'
 
     steps:
       - name: Checkout repo
