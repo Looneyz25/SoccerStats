@@ -22,7 +22,7 @@ jobs:
     timeout-minutes: 15
     defaults:
       run:
-        shell: pwsh
+        shell: powershell
 
     steps:
       - name: Checkout repo
@@ -44,8 +44,8 @@ jobs:
           if (Test-Path match_data.json) {
             $h = (Get-FileHash match_data.json -Algorithm SHA256).Hash.ToLower()
             $s = (Get-Item match_data.json).Length
-            "hash=$h" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
-            "size=$s" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+            Add-Content -Path $env:GITHUB_OUTPUT -Value "hash=$h"
+            Add-Content -Path $env:GITHUB_OUTPUT -Value "size=$s"
           }
 
       - name: Run the master soccer routine
