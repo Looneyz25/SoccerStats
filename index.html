@@ -346,7 +346,7 @@ function teamBadgeContent(team){
   var init = teamInitial(team && team.name);
   var safe = init.replace(/'/g, "&#39;");
   if (team && team.team_id) {
-    return '<img class="badge-img" src="https://api.sofascore.app/api/v1/team/' + team.team_id + '/image" alt="" loading="lazy" onerror="this.outerHTML=\'' + safe + '\';" />';
+    return '<img class="badge-img" referrerpolicy="no-referrer" src="https://api.sofascore.app/api/v1/team/' + team.team_id + '/image" alt="" loading="lazy" onerror="this.outerHTML=\'' + safe + '\';" />';
   }
   return safe;
 }
