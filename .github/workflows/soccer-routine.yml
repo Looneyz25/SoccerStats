@@ -16,14 +16,13 @@ concurrency:
 
 jobs:
   run:
-    # Targets a self-hosted runner registered on the user's PC.
-    # SofaScore blocks GitHub-hosted (Azure datacenter) IPs at the Cloudflare layer,
-    # so we run from the home IP instead.
+    # Self-hosted runner on the user's PC. SofaScore blocks GitHub-hosted (Azure
+    # datacenter) IPs at the Cloudflare layer, so we use the home IP instead.
     runs-on: [self-hosted, Windows]
     timeout-minutes: 15
     defaults:
       run:
-        shell: bash
+        shell: pwsh
 
     steps:
       - name: Checkout repo
@@ -42,48 +41,61 @@ jobs:
       - name: Snapshot match_data.json before run
         id: pre
         run: |
-          if [ -f match_data.json ]; then
-            echo "hash=$(sha256sum match_data.json | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
-            echo "size=$(wc -c < match_data.json)" >> "$GITHUB_OUTPUT"
-          fi
+          if (Test-Path match_data.json) {
+            $h = (Get-FileHash match_data.json -Algorithm SHA256).Hash.ToLower()
+            $s = (Get-Item match_data.json).Length
+            "hash=$h" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+            "size=$s" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          }
 
       - name: Run the master soccer routine
         run: python scripts/soccer_routine.py
 
       - name: Verify routine actually changed data
         run: |
-          POST_HASH=$(sha256sum match_data.json | cut -d' ' -f1)
-          POST_SIZE=$(wc -c < match_data.json)
-          PRE_HASH="${{ steps.pre.outputs.hash }}"
-          echo "pre  size=${{ steps.pre.outputs.size }}  hash=${PRE_HASH:-none}"
-          echo "post size=$POST_SIZE  hash=$POST_HASH"
-          if [ -n "$PRE_HASH" ] && [ "$PRE_HASH" = "$POST_HASH" ]; then
-            FINISHED_TODAY=$(python -c "import json,datetime; d=json.load(open('match_data.json')); t=datetime.date.today().isoformat(); print(sum(1 for lg in d['leagues'] for m in lg['matches'] if m.get('settled_at')==t))")
-            if [ "$FINISHED_TODAY" = "0" ]; then
-              echo "::warning::match_data.json unchanged AND zero settlements today — possible silent fetch failure (SofaScore reachable from this runner?)"
-            else
-              echo "match_data.json unchanged but $FINISHED_TODAY settlements recorded today, OK"
-            fi
-          fi
+          $postHash = (Get-FileHash match_data.json -Algorithm SHA256).Hash.ToLower()
+          $postSize = (Get-Item match_data.json).Length
+          $preHash  = "${{ steps.pre.outputs.hash }}"
+          $preSize  = "${{ steps.pre.outputs.size }}"
+          Write-Host "pre  size=$preSize  hash=$preHash"
+          Write-Host "post size=$postSize hash=$postHash"
+          if ($preHash -and ($preHash -eq $postHash)) {
+            $finishedToday = python -c "import json,datetime; d=json.load(open('match_data.json')); t=datetime.date.today().isoformat(); print(sum(1 for lg in d['leagues'] for m in lg['matches'] if m.get('settled_at')==t))"
+            if ($finishedToday.Trim() -eq "0") {
+              Write-Host "::warning::match_data.json unchanged AND zero settlements today — possible silent fetch failure"
+            } else {
+              Write-Host "match_data.json unchanged but $finishedToday settlements recorded today — OK"
+            }
+          }
 
       - name: Verify index.html integrity
         run: |
-          for tag in '</script>' '</body>' '</html>'; do
-            grep -F "$tag" index.html > /dev/null || { echo "::error::index.html missing $tag — refusing to commit"; exit 1; }
-          done
-          echo "index.html closing tags intact"
+          $html = Get-Content -Raw -Path index.html
+          foreach ($tag in '</script>', '</body>', '</html>') {
+            if (-not $html.Contains($tag)) {
+              Write-Host "::error::index.html missing $tag — refusing to commit"
+              exit 1
+            }
+          }
+          Write-Host "index.html closing tags intact"
 
-      - name: Commit & push changes
+      - name: Commit and push changes
         run: |
-          git config user.name "soccer-stats-bot"
+          git config user.name  "soccer-stats-bot"
           git config user.email "actions@github.com"
-          git add index.html match_data.json predictions_*.json predictions_*.md scripts/ 2>/dev/null || true
-          if git diff --cached --quiet; then
-            echo "No changes to commit"
+          git add index.html match_data.json "predictions_*.json" "predictions_*.md" scripts/ 2>$null
+          git diff --cached --quiet
+          if ($LASTEXITCODE -eq 0) {
+            Write-Host "No changes to commit"
             exit 0
-          fi
-          DATE=$(date -u +%Y-%m-%dT%H:%M)
-          git commit -m "Auto-run ${DATE}: settle results + new forecasts + odds refresh"
+          }
+          $stamp = Get-Date -Format 'yyyy-MM-ddTHH:mm'
+          git commit -m "Auto-run ${stamp}: settle results + new forecasts + odds refresh"
           # Pull-rebase first in case auto_push.bat (Windows Task Scheduler) committed in parallel
-          git pull --rebase --strategy-option=ours origin main || git rebase --abort
+          git pull --rebase --strategy-option=ours origin main
+          if ($LASTEXITCODE -ne 0) {
+            git rebase --abort
+            Write-Host "::error::pull-rebase failed"
+            exit 1
+          }
           git push origin main
