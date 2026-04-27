@@ -59,7 +59,8 @@
   .team-block.winner .name{color:var(--sofa-accent)}
   .team-block.loser{opacity:.55}
   .team-block.draw{background:rgba(242,169,59,.10)}
-  .team-block .badge{width:70px;height:70px;margin:0 auto 10px;background:var(--sofa-panel);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:var(--sofa-accent);border:2px solid var(--sofa-line)}
+  .team-block .badge{width:70px;height:70px;margin:0 auto 10px;background:var(--sofa-panel);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:var(--sofa-accent);border:2px solid var(--sofa-line);overflow:hidden}
+  .badge-img{width:80%;height:80%;object-fit:contain;display:block}
   .team-block .name{font-size:20px;font-weight:700;line-height:1.25}
   .team-block .meta{color:var(--sofa-muted);font-size:13px;margin-top:4px}
   .score-block{text-align:center;min-width:170px}
@@ -341,6 +342,14 @@ function matchLocalDateStr(m){
 
 function fmtDate(d){ if(!d) return ''; const dd = new Date(d + 'T00:00:00'); return dd.toLocaleDateString('en-GB', {weekday:'short', day:'numeric', month:'short'}); }
 function teamInitial(n){ if(!n) return '?'; return n.split(' ').map(function(x){return x[0]||''}).join('').slice(0,3).toUpperCase(); }
+function teamBadgeContent(team){
+  var init = teamInitial(team && team.name);
+  var safe = init.replace(/'/g, "&#39;");
+  if (team && team.team_id) {
+    return '<img class="badge-img" src="https://api.sofascore.app/api/v1/team/' + team.team_id + '/image" alt="" loading="lazy" onerror="this.outerHTML=\'' + safe + '\';" />';
+  }
+  return safe;
+}
 
 function getCurrentMatches(){
   const sel = $leagueSel.value;
@@ -827,9 +836,9 @@ function renderCard(m){
     '<div class="card-hero">' +
       '<div class="crumbs">' + lg.name + ' - ' + (lg.season || '') + ' - ' + fmtDate(matchLocalDateStr(m)) + ' - ' + matchLocalTimeStr(m) + (m.venue ? ' - ' + m.venue : '') + '</div>' +
       '<div class="row">' +
-        '<div class="team-block' + homeClass + '"><div class="badge">' + teamInitial(m.home.name) + '</div><div class="name">' + m.home.name + '</div><div class="meta">' + homeMeta + '</div></div>' +
+        '<div class="team-block' + homeClass + '"><div class="badge">' + teamBadgeContent(m.home) + '</div><div class="name">' + m.home.name + '</div><div class="meta">' + homeMeta + '</div></div>' +
         '<div class="score-block"><div class="ko">' + (isFT ? 'Score' : matchLocalTimeStr(m)) + '</div>' + heroScore + '</div>' +
-        '<div class="team-block away' + awayClass + '"><div class="badge">' + teamInitial(m.away.name) + '</div><div class="name">' + m.away.name + '</div><div class="meta">' + awayMeta + '</div></div>' +
+        '<div class="team-block away' + awayClass + '"><div class="badge">' + teamBadgeContent(m.away) + '</div><div class="name">' + m.away.name + '</div><div class="meta">' + awayMeta + '</div></div>' +
       '</div>' +
     '</div>' +
     summaryBar + sportsbetBlock + predBlock + statsBlock + playerBlock + streaksBlock;
