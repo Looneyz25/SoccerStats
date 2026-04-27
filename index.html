@@ -4,6 +4,9 @@
 <meta charset="utf-8" />
 <title>Looneyz Predictions</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
   :root {
     --sofa-bg:#14181f; --sofa-bg-2:#1a1f2e; --sofa-panel:#242938;
@@ -12,7 +15,7 @@
     --sofa-hit:#2eb360; --sofa-miss:#e5444b; --sofa-pend:#f2a93b; --sofa-blue:#3478f6;
   }
   *,*::before,*::after{box-sizing:border-box}
-  html,body{margin:0;min-height:100%;background:var(--sofa-bg);color:var(--sofa-text);font-family:"Inter","Helvetica Neue",Arial,sans-serif;font-size:15px}
+  html,body{margin:0;min-height:100%;background:var(--sofa-bg);color:var(--sofa-text);font-family:"IBM Plex Sans","Inter","Helvetica Neue",Arial,sans-serif;font-size:15px}
   header.topbar{height:56px;background:linear-gradient(180deg,#11161e 0%,#1a1f2e 100%);display:flex;align-items:center;padding:0 20px;border-bottom:1px solid var(--sofa-line);position:sticky;top:0;z-index:10}
   .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px}
   .brand .dot{width:10px;height:10px;background:var(--sofa-accent);border-radius:50%}
@@ -100,7 +103,7 @@
   .stat-cell .lbl{color:var(--sofa-muted);font-size:13px;text-transform:uppercase;letter-spacing:.5px}
   .stat-cell .val{font-weight:700;font-size:18px}
   .stat-cell .split{font-size:13px;color:var(--sofa-muted)}
-  .streak-tables{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .streak-tables{display:grid;grid-template-columns:repeat(auto-fit,minmax(450px,1fr));gap:14px}
   @media(max-width:1100px){.streak-tables{grid-template-columns:1fr}}
   .streak-table{background:var(--sofa-panel);border:1px solid var(--sofa-line);border-radius:8px;overflow:hidden}
   .streak-table .st-head{padding:14px 16px;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--sofa-text);border-bottom:1px solid var(--sofa-line);background:rgba(255,255,255,.03);text-align:center}
