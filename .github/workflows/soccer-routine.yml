@@ -1,0 +1,89 @@
+name: Soccer Stats Routine
+
+on:
+  schedule:
+    # Every 3 hours, on the hour UTC: 00, 03, 06, 09, 12, 15, 18, 21
+    # In Adelaide (ACST UTC+9:30): 09:30, 12:30, 15:30, 18:30, 21:30, 00:30, 03:30, 06:30
+    - cron: '0 */3 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: soccer-routine
+  cancel-in-progress: false
+
+jobs:
+  run:
+    # Targets a self-hosted runner registered on the user's PC.
+    # SofaScore blocks GitHub-hosted (Azure datacenter) IPs at the Cloudflare layer,
+    # so we run from the home IP instead.
+    runs-on: [self-hosted, Windows]
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Verify Python
+        run: |
+          python --version
+          python -c "import sys; assert sys.version_info >= (3, 9), 'need Python 3.9+'"
+
+      - name: Install dependencies
+        run: python -m pip install --quiet --upgrade pip curl_cffi
+
+      - name: Snapshot match_data.json before run
+        id: pre
+        run: |
+          if [ -f match_data.json ]; then
+            echo "hash=$(sha256sum match_data.json | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+            echo "size=$(wc -c < match_data.json)" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run the master soccer routine
+        run: python scripts/soccer_routine.py
+
+      - name: Verify routine actually changed data
+        run: |
+          POST_HASH=$(sha256sum match_data.json | cut -d' ' -f1)
+          POST_SIZE=$(wc -c < match_data.json)
+          PRE_HASH="${{ steps.pre.outputs.hash }}"
+          echo "pre  size=${{ steps.pre.outputs.size }}  hash=${PRE_HASH:-none}"
+          echo "post size=$POST_SIZE  hash=$POST_HASH"
+          if [ -n "$PRE_HASH" ] && [ "$PRE_HASH" = "$POST_HASH" ]; then
+            FINISHED_TODAY=$(python -c "import json,datetime; d=json.load(open('match_data.json')); t=datetime.date.today().isoformat(); print(sum(1 for lg in d['leagues'] for m in lg['matches'] if m.get('settled_at')==t))")
+            if [ "$FINISHED_TODAY" = "0" ]; then
+              echo "::warning::match_data.json unchanged AND zero settlements today — possible silent fetch failure (SofaScore reachable from this runner?)"
+            else
+              echo "match_data.json unchanged but $FINISHED_TODAY settlements recorded today, OK"
+            fi
+          fi
+
+      - name: Verify index.html integrity
+        run: |
+          for tag in '</script>' '</body>' '</html>'; do
+            grep -F "$tag" index.html > /dev/null || { echo "::error::index.html missing $tag — refusing to commit"; exit 1; }
+          done
+          echo "index.html closing tags intact"
+
+      - name: Commit & push changes
+        run: |
+          git config user.name "soccer-stats-bot"
+          git config user.email "actions@github.com"
+          git add index.html match_data.json predictions_*.json predictions_*.md scripts/ 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          DATE=$(date -u +%Y-%m-%dT%H:%M)
+          git commit -m "Auto-run ${DATE}: settle results + new forecasts + odds refresh"
+          # Pull-rebase first in case auto_push.bat (Windows Task Scheduler) committed in parallel
+          git pull --rebase --strategy-option=ours origin main || git rebase --abort
+          git push origin main
