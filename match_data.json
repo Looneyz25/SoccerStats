@@ -1890,25 +1890,6 @@
           ]
         },
         {
-          "id": 14081732,
-          "date": "2026-04-25",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Real Valladolid",
-            "short": "Real",
-            "team_id": 2831,
-            "goals": 1
-          },
-          "away": {
-            "name": "Real Sociedad B U21",
-            "short": "Real",
-            "team_id": 24360,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
           "id": 14083239,
           "date": "2026-04-26",
           "time": "FT",
@@ -2539,101 +2520,6 @@
           ]
         },
         {
-          "id": 14081729,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Burgos Club de Fútbol",
-            "short": "Burgos",
-            "team_id": 2854,
-            "goals": 1
-          },
-          "away": {
-            "name": "Deportivo La Coruña",
-            "short": "Deportivo",
-            "team_id": 2832,
-            "goals": 1
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 14081724,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Málaga CF",
-            "short": "Málaga",
-            "team_id": 2830,
-            "goals": 2
-          },
-          "away": {
-            "name": "CD Castellón",
-            "short": "Castellón",
-            "team_id": 5067,
-            "goals": 3
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 14081745,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Córdoba",
-            "short": "Córdoba",
-            "team_id": 2850,
-            "goals": 3
-          },
-          "away": {
-            "name": "Sporting Gijón",
-            "short": "Sporting",
-            "team_id": 2852,
-            "goals": 2
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 14081750,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Granada",
-            "short": "Granada",
-            "team_id": 33779,
-            "goals": 2
-          },
-          "away": {
-            "name": "Almería",
-            "short": "Almería",
-            "team_id": 2858,
-            "goals": 4
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 14081748,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Mirandés",
-            "short": "Mirandés",
-            "team_id": 35092,
-            "goals": 2
-          },
-          "away": {
-            "name": "Cultural Leonesa",
-            "short": "Cultural",
-            "team_id": 2868,
-            "goals": 1
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
           "id": 14083221,
           "date": "2026-04-27",
           "time": "19:00",
@@ -2721,148 +2607,6 @@
             "away": 3.7,
             "event_id": 10367029
           }
-        },
-        {
-          "id": 14081740,
-          "date": "2026-04-27",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Huesca",
-            "short": "Huesca",
-            "team_id": 24265,
-            "goals": 1
-          },
-          "away": {
-            "name": "Real Zaragoza",
-            "short": "Real",
-            "team_id": 2815,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 14081739,
-          "date": "2026-04-27",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Leganés",
-            "short": "Leganés",
-            "team_id": 2845,
-            "goals": 0
-          },
-          "away": {
-            "name": "FC Andorra",
-            "short": "FC Andorra",
-            "team_id": 324871,
-            "goals": 4
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 14081737,
-          "date": "2026-04-27",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "AD Ceuta",
-            "short": "Ceuta",
-            "team_id": 2869,
-            "goals": 0
-          },
-          "away": {
-            "name": "Real Racing Club",
-            "short": "R. Racing",
-            "team_id": 2835,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 14081749,
-          "date": "2026-04-28",
-          "time": "04:00",
-          "status": "upcoming",
-          "home": {
-            "name": "Cádiz",
-            "short": "Cádiz",
-            "team_id": 4488
-          },
-          "away": {
-            "name": "Las Palmas",
-            "short": "Las Palmas",
-            "team_id": 6577
-          },
-          "predictions": {
-            "winner": {
-              "pick": "Las Palmas",
-              "type": "away"
-            },
-            "btts": {
-              "pick": "No"
-            },
-            "ou_goals": {
-              "pick": "Under",
-              "line": 2.5
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5
-            }
-          },
-          "odds": {
-            "home": 3.8,
-            "draw": 3.2,
-            "away": 1.96
-          },
-          "h2h_streaks": [
-            {
-              "team": "both",
-              "label": "Losses",
-              "value": "6"
-            },
-            {
-              "team": "both",
-              "label": "Without clean sheet",
-              "value": "6"
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "5/6"
-            },
-            {
-              "team": "both",
-              "label": "First to concede",
-              "value": "6/6"
-            },
-            {
-              "team": "both",
-              "label": "First half loser",
-              "value": "6/6"
-            },
-            {
-              "team": "both",
-              "label": "More than 4.5 cards",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "5/6"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "9/9"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "8/10"
-            }
-          ]
         },
         {
           "id": 14083457,
@@ -3268,1253 +3012,6 @@
             "draw": 4.4,
             "away": 1.61,
             "event_id": 10411530
-          }
-        }
-      ]
-    },
-    {
-      "id": 23,
-      "name": "Serie A",
-      "season": "2025/26",
-      "matches": [
-        {
-          "id": 13980107,
-          "date": "2026-04-25",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Parma",
-            "short": "Parma",
-            "team_id": 2690,
-            "goals": 1
-          },
-          "away": {
-            "name": "Pisa",
-            "short": "Pisa",
-            "team_id": 2737,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 14287069,
-          "date": "2026-04-25",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "FC Como",
-            "short": "FC Como",
-            "team_id": 404899,
-            "goals": 1
-          },
-          "away": {
-            "name": "Parma",
-            "short": "Parma",
-            "team_id": 424787,
-            "goals": 1
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 14287070,
-          "date": "2026-04-25",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Juventus",
-            "short": "Juventus",
-            "team_id": 269824,
-            "goals": 0
-          },
-          "away": {
-            "name": "AS Roma",
-            "short": "Roma",
-            "team_id": 301414,
-            "goals": 1
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 14287071,
-          "date": "2026-04-25",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Lazio",
-            "short": "Lazio",
-            "team_id": 389322,
-            "goals": 0
-          },
-          "away": {
-            "name": "Sassuolo",
-            "short": "Sassuolo",
-            "team_id": 269819,
-            "goals": 3
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 14287068,
-          "date": "2026-04-25",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Milan",
-            "short": "Milan",
-            "team_id": 298858,
-            "goals": 0
-          },
-          "away": {
-            "name": "Napoli",
-            "short": "Napoli",
-            "team_id": 354947,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 13980110,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Fiorentina",
-            "short": "Fiorentina",
-            "team_id": 2693,
-            "goals": 0
-          },
-          "away": {
-            "name": "Sassuolo",
-            "short": "Sassuolo",
-            "team_id": 2793,
-            "goals": 0
-          },
-          "odds": {
-            "home": 1.91,
-            "draw": 3.3,
-            "away": 4.33
-          },
-          "h2h_streaks": [
-            {
-              "team": "home",
-              "label": "No losses",
-              "value": "3",
-              "odds": 1.2
-            },
-            {
-              "team": "away",
-              "label": "Without clean sheet",
-              "value": "7",
-              "odds": 1.7
-            },
-            {
-              "team": "away",
-              "label": "More than 2.5 goals",
-              "value": "8/10",
-              "odds": 1.8
-            },
-            {
-              "team": "away",
-              "label": "Both teams scoring",
-              "value": "6/7",
-              "odds": 1.7
-            },
-            {
-              "team": "away",
-              "label": "First to concede",
-              "value": "5/6",
-              "odds": 1.67
-            },
-            {
-              "team": "away",
-              "label": "First half loser",
-              "value": "4/5",
-              "odds": 2.5
-            },
-            {
-              "team": "home",
-              "label": "More than 4.5 cards",
-              "value": "6/7",
-              "odds": 2.1
-            },
-            {
-              "team": "home",
-              "label": "Less than 10.5 corners",
-              "value": "7/8",
-              "odds": 1.67
-            }
-          ],
-          "predictions": {
-            "winner": {
-              "pick": "Fiorentina",
-              "type": "home",
-              "odds": 2.0,
-              "result": "miss"
-            },
-            "btts": {
-              "pick": "No",
-              "odds": 2.05,
-              "actual_btts": false,
-              "result": "hit"
-            },
-            "ou_goals": {
-              "pick": "Under",
-              "line": 2.5,
-              "odds": 2.0,
-              "actual": 0,
-              "result": "hit"
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5,
-              "odds": 2.1,
-              "actual": 3,
-              "result": "miss"
-            }
-          },
-          "sportsbet_odds": {
-            "home": 2.0,
-            "draw": 3.25,
-            "away": 4.0,
-            "event_id": 10367287
-          }
-        },
-        {
-          "id": 13980109,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Genoa",
-            "short": "Genoa",
-            "team_id": 2713,
-            "goals": 0
-          },
-          "away": {
-            "name": "Como",
-            "short": "Como",
-            "team_id": 2704,
-            "goals": 2
-          },
-          "odds": {
-            "home": 4.33,
-            "draw": 3.75,
-            "away": 1.8
-          },
-          "h2h_streaks": [
-            {
-              "team": "away",
-              "label": "Losses",
-              "value": "3",
-              "odds": 4.33
-            },
-            {
-              "team": "away",
-              "label": "No wins",
-              "value": "4",
-              "odds": 1.95
-            },
-            {
-              "team": "home",
-              "label": "Without clean sheet",
-              "value": "4",
-              "odds": 1.91
-            },
-            {
-              "team": "away",
-              "label": "Without clean sheet",
-              "value": "3",
-              "odds": 1.91
-            },
-            {
-              "team": "away",
-              "label": "More than 2.5 goals",
-              "value": "6/7",
-              "odds": 2.0
-            },
-            {
-              "team": "away",
-              "label": "Both teams scoring",
-              "value": "5/7",
-              "odds": 1.91
-            },
-            {
-              "team": "home",
-              "label": "Less than 10.5 corners",
-              "value": "6/6",
-              "odds": 1.83
-            },
-            {
-              "team": "away",
-              "label": "Less than 10.5 corners",
-              "value": "8/10",
-              "odds": 1.83
-            }
-          ],
-          "predictions": {
-            "winner": {
-              "pick": "Genoa",
-              "type": "home",
-              "odds": 5.0,
-              "result": "miss"
-            },
-            "btts": {
-              "pick": "Yes",
-              "odds": 1.91,
-              "actual_btts": false,
-              "result": "miss"
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5,
-              "odds": 2.0,
-              "actual": 2,
-              "result": "miss"
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5,
-              "odds": 1.62,
-              "actual": 4,
-              "result": "miss"
-            }
-          },
-          "sportsbet_odds": {
-            "home": 5.0,
-            "draw": 3.75,
-            "away": 1.7,
-            "event_id": 10367601
-          }
-        },
-        {
-          "id": 13980104,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Torino",
-            "short": "Torino",
-            "team_id": 2696,
-            "goals": 2
-          },
-          "away": {
-            "name": "Inter",
-            "short": "Inter",
-            "team_id": 2697,
-            "goals": 2
-          },
-          "odds": {
-            "home": 7.0,
-            "draw": 5.0,
-            "away": 1.42
-          },
-          "h2h_streaks": [
-            {
-              "team": "away",
-              "label": "Wins",
-              "value": "4",
-              "odds": 1.42
-            },
-            {
-              "team": "home",
-              "label": "No losses",
-              "value": "3",
-              "odds": 2.75
-            },
-            {
-              "team": "away",
-              "label": "No losses",
-              "value": "6",
-              "odds": 1.1
-            },
-            {
-              "team": "away",
-              "label": "More than 2.5 goals",
-              "value": "4/5",
-              "odds": 1.57
-            },
-            {
-              "team": "away",
-              "label": "Both teams scoring",
-              "value": "5/6",
-              "odds": 1.8
-            },
-            {
-              "team": "home",
-              "label": "Less than 10.5 corners",
-              "value": "5/5",
-              "odds": 2.0
-            }
-          ],
-          "predictions": {
-            "winner": {
-              "pick": "Inter",
-              "type": "away",
-              "odds": 1.36,
-              "result": "miss"
-            },
-            "btts": {
-              "pick": "Yes",
-              "odds": 1.8,
-              "result": "hit"
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5,
-              "odds": 1.57,
-              "actual": 4,
-              "result": "hit"
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5,
-              "odds": 1.57,
-              "actual": 3,
-              "result": "miss"
-            }
-          },
-          "sportsbet_odds": {
-            "home": 8.0,
-            "draw": 5.0,
-            "away": 1.36,
-            "event_id": 10367625
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 13980106,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Milan",
-            "short": "Milan",
-            "team_id": 2692,
-            "goals": 0
-          },
-          "away": {
-            "name": "Juventus",
-            "short": "Juventus",
-            "team_id": 2687,
-            "goals": 0
-          },
-          "odds": {
-            "home": 2.88,
-            "draw": 3.2,
-            "away": 2.6
-          },
-          "h2h_streaks": [
-            {
-              "team": "away",
-              "label": "Wins",
-              "value": "3",
-              "odds": 2.6
-            },
-            {
-              "team": "away",
-              "label": "No losses",
-              "value": "8",
-              "odds": 1.4
-            },
-            {
-              "team": "away",
-              "label": "No goals conceded",
-              "value": "3",
-              "odds": 2.05
-            },
-            {
-              "team": "home",
-              "label": "Less than 2.5 goals",
-              "value": "7/9",
-              "odds": 1.8
-            },
-            {
-              "team": "away",
-              "label": "Less than 2.5 goals",
-              "value": "5/5",
-              "odds": 1.8
-            },
-            {
-              "team": "away",
-              "label": "First to score",
-              "value": "6/6",
-              "odds": 1.95
-            },
-            {
-              "team": "away",
-              "label": "First half winner",
-              "value": "4/5",
-              "odds": 3.1
-            },
-            {
-              "team": "home",
-              "label": "Less than 4.5 cards",
-              "value": "6/8",
-              "odds": 1.91
-            },
-            {
-              "team": "away",
-              "label": "Less than 4.5 cards",
-              "value": "6/7",
-              "odds": 1.91
-            },
-            {
-              "team": "home",
-              "label": "Less than 10.5 corners",
-              "value": "6/6",
-              "odds": 1.73
-            },
-            {
-              "team": "away",
-              "label": "Less than 10.5 corners",
-              "value": "5/7",
-              "odds": 1.73
-            }
-          ],
-          "predictions": {
-            "winner": {
-              "pick": "Juventus",
-              "type": "away",
-              "odds": 2.62,
-              "result": "miss"
-            },
-            "btts": {
-              "pick": "No",
-              "odds": 2.05,
-              "result": "hit"
-            },
-            "ou_goals": {
-              "pick": "Under",
-              "line": 2.5,
-              "odds": 1.8,
-              "actual": 0,
-              "result": "hit"
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5,
-              "odds": 1.8,
-              "actual": 5,
-              "result": "hit"
-            }
-          },
-          "sportsbet_odds": {
-            "home": 2.88,
-            "draw": 3.0,
-            "away": 2.62,
-            "event_id": 10367622
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 13980113,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Bologna",
-            "short": "Bologna",
-            "team_id": 2685,
-            "goals": 0
-          },
-          "away": {
-            "name": "Roma",
-            "short": "Roma",
-            "team_id": 2702,
-            "goals": 2
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 13980114,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Hellas Verona",
-            "short": "Verona",
-            "team_id": 2701,
-            "goals": 0
-          },
-          "away": {
-            "name": "Lecce",
-            "short": "Lecce",
-            "team_id": 2689,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15502533,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Mushuc Runa SC",
-            "short": "Mushuc",
-            "team_id": 134976,
-            "goals": 4
-          },
-          "away": {
-            "name": "Deportivo Cuenca",
-            "short": "Cuenca",
-            "team_id": 5251,
-            "goals": 1
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15502535,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Independiente del Valle",
-            "short": "Ind.",
-            "team_id": 39723,
-            "goals": 2
-          },
-          "away": {
-            "name": "Leones del Norte",
-            "short": "Leones",
-            "team_id": 388234,
-            "goals": 1
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15502529,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Emelec",
-            "short": "Emelec",
-            "team_id": 5255,
-            "goals": 1
-          },
-          "away": {
-            "name": "LDU",
-            "short": "LDU",
-            "team_id": 5257,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 14290370,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Genoa",
-            "short": "Genoa",
-            "team_id": 923850,
-            "goals": 1
-          },
-          "away": {
-            "name": "Inter",
-            "short": "Inter",
-            "team_id": 325685,
-            "goals": 2
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 13980111,
-          "date": "2026-04-27",
-          "time": "16:30",
-          "status": "upcoming",
-          "home": {
-            "name": "Cagliari",
-            "short": "Cagliari",
-            "team_id": 2719
-          },
-          "away": {
-            "name": "Atalanta",
-            "short": "Atalanta",
-            "team_id": 2686
-          },
-          "odds": {
-            "home": 4.5,
-            "draw": 3.8,
-            "away": 1.75
-          },
-          "h2h_streaks": [
-            {
-              "team": "away",
-              "label": "No wins",
-              "value": "3",
-              "odds": 2.0
-            },
-            {
-              "team": "away",
-              "label": "Without clean sheet",
-              "value": "3",
-              "odds": 1.8
-            },
-            {
-              "team": "away",
-              "label": "Less than 2.5 goals",
-              "value": "4/5",
-              "odds": 1.91
-            },
-            {
-              "team": "home",
-              "label": "Less than 4.5 cards",
-              "value": "5/6",
-              "odds": 2.2
-            },
-            {
-              "team": "away",
-              "label": "Less than 4.5 cards",
-              "value": "6/6",
-              "odds": 2.2
-            },
-            {
-              "team": "home",
-              "label": "Less than 10.5 corners",
-              "value": "8/10",
-              "odds": 1.67
-            }
-          ],
-          "predictions": {
-            "winner": {
-              "pick": "Atalanta",
-              "type": "away",
-              "odds": 1.75
-            },
-            "btts": {
-              "pick": "Yes",
-              "odds": 1.8
-            },
-            "ou_goals": {
-              "pick": "Under",
-              "line": 2.5,
-              "odds": 1.91
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5,
-              "odds": 1.62
-            }
-          },
-          "sportsbet_odds": {
-            "home": 4.6,
-            "draw": 3.7,
-            "away": 1.75,
-            "event_id": 10367315
-          }
-        },
-        {
-          "id": 13980112,
-          "date": "2026-04-27",
-          "time": "18:45",
-          "status": "upcoming",
-          "home": {
-            "name": "Lazio",
-            "short": "Lazio",
-            "team_id": 2699
-          },
-          "away": {
-            "name": "Udinese",
-            "short": "Udinese",
-            "team_id": 2695
-          },
-          "odds": {
-            "home": 2.0,
-            "draw": 3.3,
-            "away": 4.0
-          },
-          "h2h_streaks": [
-            {
-              "team": "home",
-              "label": "Less than 2.5 goals",
-              "value": "6/6",
-              "odds": 1.67
-            },
-            {
-              "team": "away",
-              "label": "Less than 2.5 goals",
-              "value": "4/5",
-              "odds": 1.67
-            },
-            {
-              "team": "home",
-              "label": "First to score",
-              "value": "6/8",
-              "odds": 1.73
-            },
-            {
-              "team": "home",
-              "label": "Less than 4.5 cards",
-              "value": "4/5",
-              "odds": 1.62
-            },
-            {
-              "team": "away",
-              "label": "Less than 10.5 corners",
-              "value": "4/5",
-              "odds": 1.83
-            }
-          ],
-          "predictions": {
-            "winner": {
-              "pick": "Lazio",
-              "type": "home",
-              "odds": 2.0
-            },
-            "btts": {
-              "pick": "No",
-              "odds": 1.8
-            },
-            "ou_goals": {
-              "pick": "Under",
-              "line": 2.5,
-              "odds": 1.67
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5,
-              "odds": 2.2
-            }
-          },
-          "sportsbet_odds": {
-            "home": 2.0,
-            "draw": 3.25,
-            "away": 3.9,
-            "event_id": 10367288
-          }
-        },
-        {
-          "id": 15502534,
-          "date": "2026-04-27",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Macará",
-            "short": "Macará",
-            "team_id": 6001,
-            "goals": 3
-          },
-          "away": {
-            "name": "Libertad",
-            "short": "Libertad",
-            "team_id": 394127,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15502531,
-          "date": "2026-04-27",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Guayaquil City",
-            "short": "Guayaquil",
-            "team_id": 188850,
-            "goals": 1
-          },
-          "away": {
-            "name": "Técnico Universitario",
-            "short": "Técnico",
-            "team_id": 21941,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15502528,
-          "date": "2026-04-27",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Orense SC",
-            "short": "Orense",
-            "team_id": 277525,
-            "goals": 1
-          },
-          "away": {
-            "name": "Barcelona SC Guayaquil",
-            "short": "Barcelona",
-            "team_id": 5250,
-            "goals": 1
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 14287066,
-          "date": "2026-04-27",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Ternana",
-            "short": "Ternana",
-            "team_id": 492465,
-            "goals": 2
-          },
-          "away": {
-            "name": "Fiorentina",
-            "short": "Fiorentina",
-            "team_id": 264911,
-            "goals": 2
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 13980097,
-          "date": "2026-05-01",
-          "time": "18:45",
-          "status": "upcoming",
-          "home": {
-            "name": "Pisa",
-            "short": "Pisa",
-            "team_id": 2737
-          },
-          "away": {
-            "name": "Lecce",
-            "short": "Lecce",
-            "team_id": 2689
-          },
-          "h2h_streaks": [
-            {
-              "team": "home",
-              "label": "Losses",
-              "value": "5"
-            },
-            {
-              "team": "away",
-              "label": "No wins",
-              "value": "6"
-            },
-            {
-              "team": "home",
-              "label": "Without clean sheet",
-              "value": "10"
-            },
-            {
-              "team": "home",
-              "label": "More than 2.5 goals",
-              "value": "5/7"
-            },
-            {
-              "team": "away",
-              "label": "Less than 2.5 goals",
-              "value": "4/5"
-            },
-            {
-              "team": "home",
-              "label": "First to concede",
-              "value": "8/10"
-            },
-            {
-              "team": "away",
-              "label": "First to concede",
-              "value": "4/5"
-            },
-            {
-              "team": "home",
-              "label": "Less than 4.5 cards",
-              "value": "5/5"
-            },
-            {
-              "team": "home",
-              "label": "Less than 10.5 corners",
-              "value": "6/7"
-            }
-          ],
-          "predictions": {
-            "winner": {
-              "pick": "Pisa",
-              "type": "home"
-            },
-            "btts": {
-              "pick": "Yes"
-            },
-            "ou_goals": {
-              "pick": "Under",
-              "line": 2.5
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5
-            }
-          }
-        },
-        {
-          "id": 13980095,
-          "date": "2026-05-02",
-          "time": "13:00",
-          "status": "upcoming",
-          "home": {
-            "name": "Udinese",
-            "short": "Udinese",
-            "team_id": 2695
-          },
-          "away": {
-            "name": "Torino",
-            "short": "Torino",
-            "team_id": 2696
-          },
-          "h2h_streaks": [
-            {
-              "team": "away",
-              "label": "No losses",
-              "value": "3"
-            },
-            {
-              "team": "home",
-              "label": "Less than 2.5 goals",
-              "value": "4/5"
-            },
-            {
-              "team": "home",
-              "label": "Less than 10.5 corners",
-              "value": "4/5"
-            },
-            {
-              "team": "away",
-              "label": "Less than 10.5 corners",
-              "value": "5/5"
-            }
-          ],
-          "predictions": {
-            "winner": {
-              "pick": "Udinese",
-              "type": "home"
-            },
-            "btts": {
-              "pick": "Yes"
-            },
-            "ou_goals": {
-              "pick": "Under",
-              "line": 2.5
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5
-            }
-          }
-        },
-        {
-          "id": 13980081,
-          "date": "2026-05-02",
-          "time": "16:00",
-          "status": "upcoming",
-          "home": {
-            "name": "Como",
-            "short": "Como",
-            "team_id": 2704
-          },
-          "away": {
-            "name": "Napoli",
-            "short": "Napoli",
-            "team_id": 2714
-          },
-          "h2h_streaks": [
-            {
-              "team": "home",
-              "label": "Losses",
-              "value": "3"
-            },
-            {
-              "team": "home",
-              "label": "No wins",
-              "value": "4"
-            },
-            {
-              "team": "home",
-              "label": "Without clean sheet",
-              "value": "3"
-            },
-            {
-              "team": "home",
-              "label": "More than 2.5 goals",
-              "value": "6/7"
-            },
-            {
-              "team": "away",
-              "label": "Less than 2.5 goals",
-              "value": "4/5"
-            },
-            {
-              "team": "home",
-              "label": "Both teams scoring",
-              "value": "5/7"
-            },
-            {
-              "team": "away",
-              "label": "Less than 4.5 cards",
-              "value": "7/7"
-            },
-            {
-              "team": "home",
-              "label": "Less than 10.5 corners",
-              "value": "7/9"
-            }
-          ],
-          "predictions": {
-            "winner": {
-              "pick": "Como",
-              "type": "home"
-            },
-            "btts": {
-              "pick": "Yes"
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5
-            }
-          }
-        },
-        {
-          "id": 13980083,
-          "date": "2026-05-02",
-          "time": "18:45",
-          "status": "upcoming",
-          "home": {
-            "name": "Atalanta",
-            "short": "Atalanta",
-            "team_id": 2686
-          },
-          "away": {
-            "name": "Genoa",
-            "short": "Genoa",
-            "team_id": 2713
-          },
-          "h2h_streaks": [
-            {
-              "team": "home",
-              "label": "No wins",
-              "value": "3"
-            },
-            {
-              "team": "home",
-              "label": "Without clean sheet",
-              "value": "3"
-            },
-            {
-              "team": "away",
-              "label": "Without clean sheet",
-              "value": "4"
-            },
-            {
-              "team": "home",
-              "label": "Less than 2.5 goals",
-              "value": "4/5"
-            },
-            {
-              "team": "home",
-              "label": "Less than 4.5 cards",
-              "value": "6/6"
-            },
-            {
-              "team": "away",
-              "label": "Less than 10.5 corners",
-              "value": "6/6"
-            }
-          ],
-          "predictions": {
-            "winner": {
-              "pick": "Atalanta",
-              "type": "home"
-            },
-            "btts": {
-              "pick": "Yes"
-            },
-            "ou_goals": {
-              "pick": "Under",
-              "line": 2.5
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5
-            }
-          }
-        },
-        {
-          "id": 13980082,
-          "date": "2026-05-03",
-          "time": "10:30",
-          "status": "upcoming",
-          "home": {
-            "name": "Bologna",
-            "short": "Bologna",
-            "team_id": 2685
-          },
-          "away": {
-            "name": "Cagliari",
-            "short": "Cagliari",
-            "team_id": 2719
-          },
-          "h2h_streaks": [
-            {
-              "team": "home",
-              "label": "Losses",
-              "value": "3"
-            },
-            {
-              "team": "home",
-              "label": "No goals scored",
-              "value": "3"
-            },
-            {
-              "team": "home",
-              "label": "Without clean sheet",
-              "value": "3"
-            },
-            {
-              "team": "home",
-              "label": "First to concede",
-              "value": "4/5"
-            },
-            {
-              "team": "home",
-              "label": "First half loser",
-              "value": "4/5"
-            },
-            {
-              "team": "home",
-              "label": "Less than 4.5 cards",
-              "value": "5/5"
-            },
-            {
-              "team": "away",
-              "label": "Less than 4.5 cards",
-              "value": "5/6"
-            },
-            {
-              "team": "home",
-              "label": "Less than 10.5 corners",
-              "value": "6/8"
-            },
-            {
-              "team": "away",
-              "label": "Less than 10.5 corners",
-              "value": "7/9"
-            }
-          ],
-          "predictions": {
-            "winner": {
-              "pick": "Bologna",
-              "type": "home"
-            },
-            "btts": {
-              "pick": "Yes"
-            },
-            "ou_goals": {
-              "pick": "Under",
-              "line": 2.5
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5
-            }
           }
         }
       ]
@@ -5257,44 +3754,6 @@
           ]
         },
         {
-          "id": 14422161,
-          "date": "2026-04-25",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "SGS Essen",
-            "short": "SGS Essen",
-            "team_id": 5551,
-            "goals": 4
-          },
-          "away": {
-            "name": "FC Carl Zeiss Jena",
-            "short": "FC Carl",
-            "team_id": 354615,
-            "goals": 3
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 14433018,
-          "date": "2026-04-25",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "RB Leipzig",
-            "short": "Leipzig",
-            "team_id": 322623,
-            "goals": 1
-          },
-          "away": {
-            "name": "SV Werder Bremen",
-            "short": "Werder",
-            "team_id": 36656,
-            "goals": 1
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
           "id": 14065256,
           "date": "2026-04-26",
           "time": "FT",
@@ -5585,209 +4044,6 @@
               "label": "Less than 10.5 corners",
               "value": "5/6",
               "odds": 1.73
-            }
-          ]
-        },
-        {
-          "id": 15690645,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "SK Rapid Wien",
-            "short": "Rapid",
-            "team_id": 2055,
-            "goals": 1
-          },
-          "away": {
-            "name": "Red Bull Salzburg",
-            "short": "RB Salzburg",
-            "team_id": 2046,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15690628,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "TSV Hartberg",
-            "short": "Hartberg",
-            "team_id": 2075,
-            "goals": 1
-          },
-          "away": {
-            "name": "LASK",
-            "short": "LASK",
-            "team_id": 2058,
-            "goals": 5
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15690658,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "WSG Tirol",
-            "short": "Tirol",
-            "team_id": 5405,
-            "goals": 1
-          },
-          "away": {
-            "name": "SV Ried",
-            "short": "Ried",
-            "team_id": 2049,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15690661,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Wolfsberger AC",
-            "short": "WAC",
-            "team_id": 2076,
-            "goals": 1
-          },
-          "away": {
-            "name": "Grazer AK 1902",
-            "short": "GAK 1902",
-            "team_id": 2052,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 14420189,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Eintracht Frankfurt",
-            "short": "Frankfurt",
-            "team_id": 108685,
-            "goals": 3
-          },
-          "away": {
-            "name": "VfL Wolfsburg",
-            "short": "Wolfsburg",
-            "team_id": 5556,
-            "goals": 1
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 14420690,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Bayer Leverkusen",
-            "short": "Leverkusen",
-            "team_id": 36623,
-            "goals": 4
-          },
-          "away": {
-            "name": "SC Freiburg",
-            "short": "Freiburg",
-            "team_id": 5550,
-            "goals": 1
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15697647,
-          "date": "2026-04-27",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "SK Sturm Graz",
-            "short": "Sturm",
-            "team_id": 2051,
-            "goals": 1
-          },
-          "away": {
-            "name": "FK Austria Wien",
-            "short": "Austria",
-            "team_id": 2203,
-            "goals": 1
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 14422895,
-          "date": "2026-04-28",
-          "time": "01:30",
-          "status": "upcoming",
-          "home": {
-            "name": "TSG Hoffenheim",
-            "short": "Hoffenheim",
-            "team_id": 36652
-          },
-          "away": {
-            "name": "1. FC Köln",
-            "short": "Köln",
-            "team_id": 229794
-          },
-          "predictions": {
-            "winner": {
-              "pick": "TSG Hoffenheim",
-              "type": "home"
-            },
-            "btts": {
-              "pick": "Yes"
-            },
-            "ou_goals": {
-              "pick": "Under",
-              "line": 2.5
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5
-            }
-          },
-          "odds": {
-            "home": 1.7,
-            "draw": 3.7,
-            "away": 4.0
-          },
-          "h2h_streaks": [
-            {
-              "team": "both",
-              "label": "Without clean sheet",
-              "value": "3"
-            },
-            {
-              "team": "both",
-              "label": "Without clean sheet",
-              "value": "5"
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "5/5"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "7/9"
             }
           ]
         },
@@ -6913,158 +5169,6 @@
           "settled_at": "2026-04-27"
         },
         {
-          "id": 16026652,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Avenir Sportif De Gabes",
-            "short": "AS Gabès",
-            "team_id": 59616,
-            "goals": 1
-          },
-          "away": {
-            "name": "ES Métlaoui",
-            "short": "Métlaoui",
-            "team_id": 112647,
-            "goals": 1
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 16026651,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Etoile Sportive Du Sahel",
-            "short": "Étoile",
-            "team_id": 35188,
-            "goals": 1
-          },
-          "away": {
-            "name": "Avenir Sportif De La Marsa",
-            "short": "Marsa",
-            "team_id": 59614,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 16029406,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "JS Omrane",
-            "short": "JS Omrane",
-            "team_id": 341145,
-            "goals": 0
-          },
-          "away": {
-            "name": "AS Soliman",
-            "short": "AS Soliman",
-            "team_id": 274247,
-            "goals": 1
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 16026653,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "US Ben Guerdane",
-            "short": "Ben Guerdane",
-            "team_id": 148874,
-            "goals": 2
-          },
-          "away": {
-            "name": "US Monastir",
-            "short": "Monastir",
-            "team_id": 59638,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 16026654,
-          "date": "2026-04-27",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "CA Bizertin",
-            "short": "Bizertin",
-            "team_id": 59618,
-            "goals": 1
-          },
-          "away": {
-            "name": "Espérance Tunis",
-            "short": "Espérance",
-            "team_id": 59628,
-            "goals": 1
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 16026655,
-          "date": "2026-04-27",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "CS Sfaxien",
-            "short": "CS Sfaxien",
-            "team_id": 44463,
-            "goals": 1
-          },
-          "away": {
-            "name": "Stade Tunisien",
-            "short": "S. Tunisien",
-            "team_id": 59636,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 16029632,
-          "date": "2026-04-27",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Club Africain",
-            "short": "Club",
-            "team_id": 39618,
-            "goals": 2
-          },
-          "away": {
-            "name": "JS Kairouanaise",
-            "short": "Kairouanaise",
-            "team_id": 59632,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 16026656,
-          "date": "2026-04-27",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "ES Zarzis",
-            "short": "Zarzis",
-            "team_id": 59630,
-            "goals": 2
-          },
-          "away": {
-            "name": "Olympique Béja",
-            "short": "Béja",
-            "team_id": 59634,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
           "id": 14167985,
           "date": "2026-05-02",
           "time": "13:00",
@@ -7396,25 +5500,6 @@
       "season": "2025/26",
       "matches": [
         {
-          "id": 15426974,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Al-Ahli",
-            "short": "Al-Ahli",
-            "team_id": 34469,
-            "goals": 1
-          },
-          "away": {
-            "name": "Machida Zelvia",
-            "short": "Machida",
-            "team_id": 44409,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
           "id": 15632632,
           "date": "2026-04-28",
           "time": "19:00",
@@ -7605,86 +5690,625 @@
       ]
     },
     {
-      "id": 679,
-      "name": "UEFA Europa League",
+      "id": 37,
+      "name": "Eredivisie",
       "season": "2025/26",
       "matches": [
         {
-          "id": 16033285,
-          "date": "2026-04-25",
+          "id": 14028547,
+          "date": "2026-04-26",
           "time": "FT",
           "status": "FT",
           "home": {
-            "name": "Colwyn Bay",
-            "short": "Colwyn",
-            "team_id": 45005,
-            "goals": 3
-          },
-          "away": {
-            "name": "Penybont",
-            "short": "Penybont",
-            "team_id": 115185,
+            "name": "Excelsior",
+            "short": "Excelsior",
+            "team_id": 2967,
             "goals": 5
           },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 16033284,
-          "date": "2026-04-27",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Barry Town",
-            "short": "Barry",
-            "team_id": 35186,
-            "goals": 2
-          },
           "away": {
-            "name": "Haverfordwest County AFC",
-            "short": "Haverfordwest",
-            "team_id": 4915,
-            "goals": 4
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15632623,
-          "date": "2026-04-30",
-          "time": "19:00",
-          "status": "upcoming",
-          "home": {
-            "name": "Nottingham Forest",
-            "short": "Nottingham",
-            "team_id": 14
-          },
-          "away": {
-            "name": "Aston Villa",
-            "short": "Aston Villa",
-            "team_id": 40
+            "name": "FC Utrecht",
+            "short": "Utrecht",
+            "team_id": 2948,
+            "goals": 0
           },
           "odds": {
-            "home": 2.55,
-            "draw": 3.2,
-            "away": 2.75
+            "home": 3.2,
+            "draw": 3.5,
+            "away": 2.2
           },
           "h2h_streaks": [
             {
               "team": "home",
-              "label": "Wins",
-              "value": "3",
-              "odds": 2.55
+              "label": "No wins",
+              "value": "8",
+              "odds": 1.36
             },
             {
               "team": "home",
-              "label": "No losses",
+              "label": "Without clean sheet",
               "value": "8",
-              "odds": 1.4
+              "odds": 1.62
+            },
+            {
+              "team": "away",
+              "label": "Less than 2.5 goals",
+              "value": "5/7",
+              "odds": 2.05
+            },
+            {
+              "team": "home",
+              "label": "Both teams scoring",
+              "value": "4/5",
+              "odds": 1.62
             },
             {
               "team": "away",
               "label": "First to score",
-              "value": "7/8",
+              "value": "6/7",
+              "odds": 1.8
+            },
+            {
+              "team": "home",
+              "label": "First to concede",
+              "value": "6/7",
+              "odds": 1.8
+            },
+            {
+              "team": "away",
+              "label": "First half winner",
+              "value": "6/7",
+              "odds": 2.75
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "8/8"
+            },
+            {
+              "team": "home",
+              "label": "Less than 10.5 corners",
+              "value": "5/7",
               "odds": 2.0
+            }
+          ],
+          "predictions": {
+            "winner": {
+              "pick": "FC Utrecht",
+              "type": "away",
+              "odds": 2.2,
+              "result": "miss"
+            },
+            "btts": {
+              "pick": "Yes",
+              "odds": 1.62,
+              "actual_btts": false,
+              "result": "miss"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "odds": 1.75,
+              "actual": 5,
+              "result": "hit"
+            },
+            "ou_cards": {
+              "pick": "Over",
+              "line": 4.5,
+              "actual": 4,
+              "result": "miss"
+            }
+          },
+          "sportsbet_odds": {
+            "home": 3.1,
+            "draw": 3.4,
+            "away": 2.2,
+            "event_id": 10342066
+          }
+        },
+        {
+          "id": 14028535,
+          "date": "2026-04-26",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Heracles Almelo",
+            "short": "Heracles",
+            "team_id": 2977,
+            "goals": 0
+          },
+          "away": {
+            "name": "FC Volendam",
+            "short": "Volendam",
+            "team_id": 2968,
+            "goals": 2
+          },
+          "odds": {
+            "home": 2.15,
+            "draw": 4.0,
+            "away": 3.0
+          },
+          "h2h_streaks": [
+            {
+              "team": "home",
+              "label": "No wins",
+              "value": "9",
+              "odds": 1.67
+            },
+            {
+              "team": "away",
+              "label": "No wins",
+              "value": "6",
+              "odds": 1.36
+            },
+            {
+              "team": "home",
+              "label": "Without clean sheet",
+              "value": "4",
+              "odds": 1.57
+            },
+            {
+              "team": "home",
+              "label": "More than 2.5 goals",
+              "value": "5/7",
+              "odds": 1.62
+            },
+            {
+              "team": "away",
+              "label": "First to concede",
+              "value": "6/8",
+              "odds": 1.73
+            },
+            {
+              "team": "home",
+              "label": "First half loser",
+              "value": "5/7",
+              "odds": 3.5
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "10/10"
+            },
+            {
+              "team": "home",
+              "label": "Less than 10.5 corners",
+              "value": "8/10",
+              "odds": 1.8
+            },
+            {
+              "team": "away",
+              "label": "Less than 10.5 corners",
+              "value": "4/5",
+              "odds": 1.8
+            }
+          ],
+          "predictions": {
+            "winner": {
+              "pick": "FC Volendam",
+              "type": "away",
+              "odds": 2.88,
+              "result": "hit"
+            },
+            "btts": {
+              "pick": "Yes",
+              "odds": 1.57,
+              "actual_btts": false,
+              "result": "miss"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "odds": 1.62,
+              "actual": 2,
+              "result": "miss"
+            },
+            "ou_cards": {
+              "pick": "Over",
+              "line": 4.5,
+              "actual": 1,
+              "result": "miss"
+            }
+          },
+          "sportsbet_odds": {
+            "home": 2.2,
+            "draw": 3.75,
+            "away": 2.88,
+            "event_id": 10341864
+          }
+        },
+        {
+          "id": 14028532,
+          "date": "2026-04-26",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Feyenoord",
+            "short": "Feyenoord",
+            "team_id": 2959,
+            "goals": 3
+          },
+          "away": {
+            "name": "FC Groningen",
+            "short": "Groningen",
+            "team_id": 2951,
+            "goals": 1
+          },
+          "settled_at": "2026-04-27"
+        },
+        {
+          "id": 14028542,
+          "date": "2026-04-26",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "SC Heerenveen",
+            "short": "Heerenveen",
+            "team_id": 2964,
+            "goals": 2
+          },
+          "away": {
+            "name": "Fortuna Sittard",
+            "short": "Fortuna",
+            "team_id": 2957,
+            "goals": 1
+          },
+          "settled_at": "2026-04-27"
+        },
+        {
+          "id": 14028527,
+          "date": "2026-04-26",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "NAC Breda",
+            "short": "NAC Breda",
+            "team_id": 2947,
+            "goals": 0
+          },
+          "away": {
+            "name": "AFC Ajax",
+            "short": "Ajax",
+            "team_id": 2953,
+            "goals": 2
+          },
+          "settled_at": "2026-04-27"
+        },
+        {
+          "id": 14028538,
+          "date": "2026-04-26",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "FC Twente",
+            "short": "Twente",
+            "team_id": 2955,
+            "goals": 1
+          },
+          "away": {
+            "name": "NEC Nijmegen",
+            "short": "NEC",
+            "team_id": 2962,
+            "goals": 1
+          },
+          "settled_at": "2026-04-27"
+        },
+        {
+          "id": 16072779,
+          "date": "2026-04-28",
+          "time": "16:45",
+          "status": "upcoming",
+          "home": {
+            "name": "Roda JC Kerkrade",
+            "short": "Roda",
+            "team_id": 2954
+          },
+          "away": {
+            "name": "RKC Waalwijk",
+            "short": "RKC Waalwijk",
+            "team_id": 2956
+          },
+          "predictions": {
+            "winner": {
+              "pick": "RKC Waalwijk",
+              "type": "away"
+            },
+            "btts": {
+              "pick": "Yes"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5
+            },
+            "ou_cards": {
+              "pick": "Over",
+              "line": 4.5
+            }
+          }
+        },
+        {
+          "id": 16072839,
+          "date": "2026-04-29",
+          "time": "16:45",
+          "status": "upcoming",
+          "home": {
+            "name": "FC Den Bosch",
+            "short": "Den Bosch",
+            "team_id": 2963
+          },
+          "away": {
+            "name": "Almere City FC",
+            "short": "Almere City",
+            "team_id": 2990
+          },
+          "predictions": {
+            "winner": {
+              "pick": "Almere City FC",
+              "type": "away"
+            },
+            "btts": {
+              "pick": "Yes"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5
+            },
+            "ou_cards": {
+              "pick": "Over",
+              "line": 4.5
+            }
+          }
+        },
+        {
+          "id": 16072837,
+          "date": "2026-05-01",
+          "time": "18:00",
+          "status": "upcoming",
+          "home": {
+            "name": "RKC Waalwijk",
+            "short": "RKC Waalwijk",
+            "team_id": 2956
+          },
+          "away": {
+            "name": "Roda JC Kerkrade",
+            "short": "Roda",
+            "team_id": 2954
+          },
+          "predictions": {
+            "winner": {
+              "pick": "RKC Waalwijk",
+              "type": "home"
+            },
+            "btts": {
+              "pick": "Yes"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5
+            },
+            "ou_cards": {
+              "pick": "Over",
+              "line": 4.5
+            }
+          }
+        },
+        {
+          "id": 16072838,
+          "date": "2026-05-02",
+          "time": "12:00",
+          "status": "upcoming",
+          "home": {
+            "name": "Roda JC Kerkrade",
+            "short": "Roda",
+            "team_id": 2954
+          },
+          "away": {
+            "name": "RKC Waalwijk",
+            "short": "RKC Waalwijk",
+            "team_id": 2956
+          },
+          "predictions": {
+            "winner": {
+              "pick": "RKC Waalwijk",
+              "type": "away"
+            },
+            "btts": {
+              "pick": "Yes"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5
+            },
+            "ou_cards": {
+              "pick": "Over",
+              "line": 4.5
+            }
+          }
+        },
+        {
+          "id": 14028549,
+          "date": "2026-05-02",
+          "time": "14:30",
+          "status": "upcoming",
+          "home": {
+            "name": "FC Utrecht",
+            "short": "Utrecht",
+            "team_id": 2948
+          },
+          "away": {
+            "name": "NAC Breda",
+            "short": "NAC Breda",
+            "team_id": 2947
+          },
+          "h2h_streaks": [
+            {
+              "team": "away",
+              "label": "No wins",
+              "value": "7"
+            },
+            {
+              "team": "home",
+              "label": "Less than 2.5 goals",
+              "value": "5/7"
+            },
+            {
+              "team": "home",
+              "label": "First to score",
+              "value": "6/7"
+            },
+            {
+              "team": "away",
+              "label": "First to concede",
+              "value": "6/7"
+            },
+            {
+              "team": "home",
+              "label": "First half winner",
+              "value": "6/7"
+            },
+            {
+              "team": "home",
+              "label": "Less than 4.5 cards",
+              "value": "8/8"
+            },
+            {
+              "team": "away",
+              "label": "Less than 4.5 cards",
+              "value": "5/5"
+            },
+            {
+              "team": "away",
+              "label": "More than 10.5 corners",
+              "value": "6/7"
+            }
+          ],
+          "predictions": {
+            "winner": {
+              "pick": "FC Utrecht",
+              "type": "home"
+            },
+            "btts": {
+              "pick": "No"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5
+            },
+            "ou_cards": {
+              "pick": "Over",
+              "line": 4.5
+            }
+          }
+        },
+        {
+          "id": 14028540,
+          "date": "2026-05-02",
+          "time": "16:45",
+          "status": "upcoming",
+          "home": {
+            "name": "FC Groningen",
+            "short": "Groningen",
+            "team_id": 2951
+          },
+          "away": {
+            "name": "Excelsior",
+            "short": "Excelsior",
+            "team_id": 2967
+          },
+          "h2h_streaks": [
+            {
+              "team": "away",
+              "label": "No wins",
+              "value": "8"
+            },
+            {
+              "team": "away",
+              "label": "Without clean sheet",
+              "value": "8"
+            },
+            {
+              "team": "away",
+              "label": "Both teams scoring",
+              "value": "4/5"
+            },
+            {
+              "team": "away",
+              "label": "First to concede",
+              "value": "6/7"
+            },
+            {
+              "team": "home",
+              "label": "Less than 4.5 cards",
+              "value": "10/10"
+            },
+            {
+              "team": "away",
+              "label": "Less than 4.5 cards",
+              "value": "8/8"
+            },
+            {
+              "team": "home",
+              "label": "More than 10.5 corners",
+              "value": "5/7"
+            },
+            {
+              "team": "away",
+              "label": "Less than 10.5 corners",
+              "value": "5/7"
+            }
+          ],
+          "predictions": {
+            "winner": {
+              "pick": "FC Groningen",
+              "type": "home"
+            },
+            "btts": {
+              "pick": "No"
+            },
+            "ou_goals": {
+              "pick": "Under",
+              "line": 2.5
+            },
+            "ou_cards": {
+              "pick": "Over",
+              "line": 4.5
+            }
+          }
+        },
+        {
+          "id": 14028539,
+          "date": "2026-05-02",
+          "time": "18:00",
+          "status": "upcoming",
+          "home": {
+            "name": "AFC Ajax",
+            "short": "AAjax",
+            "team_id": 2953
+          },
+          "away": {
+            "name": "PSV Eindhoven",
+            "short": "PSV Eindhoven",
+            "team_id": 2952
+          },
+          "h2h_streaks": [
+            {
+              "team": "away",
+              "label": "Wins",
+              "value": "3"
+            },
+            {
+              "team": "away",
+              "label": "More than 2.5 goals",
+              "value": "9/10"
+            },
+            {
+              "team": "away",
+              "label": "Both teams scoring",
+              "value": "9/10"
+            },
+            {
+              "team": "away",
+              "label": "First to concede",
+              "value": "5/7"
             },
             {
               "team": "home",
@@ -7694,28 +6318,21 @@
             {
               "team": "away",
               "label": "Less than 4.5 cards",
-              "value": "8/8"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "5/5"
+              "value": "9/10"
             }
           ],
           "predictions": {
             "winner": {
-              "pick": "Nottingham Forest",
+              "pick": "AFC Ajax",
               "type": "home",
-              "odds": 2.5
+              "odds": 2.4
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.75
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 2.0
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -7723,105 +6340,96 @@
             }
           },
           "sportsbet_odds": {
-            "home": 2.5,
-            "draw": 3.2,
-            "away": 2.8,
-            "event_id": 10383602
+            "home": 2.4,
+            "draw": 4.0,
+            "away": 2.4,
+            "event_id": 10415790
           }
         },
         {
-          "id": 15632622,
-          "date": "2026-04-30",
+          "id": 14028537,
+          "date": "2026-05-02",
           "time": "19:00",
           "status": "upcoming",
           "home": {
-            "name": "Sporting Braga",
-            "short": "Sporting Braga",
-            "team_id": 2999
+            "name": "NEC Nijmegen",
+            "short": "NEC Nijmegen",
+            "team_id": 2962
           },
           "away": {
-            "name": "SC Freiburg",
-            "short": "SC Freiburg",
-            "team_id": 2538
-          },
-          "odds": {
-            "home": 2.38,
-            "draw": 3.25,
-            "away": 3.0
+            "name": "SC Telstar",
+            "short": "SC Telstar",
+            "team_id": 2972
           },
           "h2h_streaks": [
             {
               "team": "home",
-              "label": "No losses",
-              "value": "6",
-              "odds": 1.36
+              "label": "No wins",
+              "value": "3"
+            },
+            {
+              "team": "home",
+              "label": "Without clean sheet",
+              "value": "3"
             },
             {
               "team": "away",
               "label": "Without clean sheet",
-              "value": "3",
-              "odds": 1.91
+              "value": "7"
             },
             {
               "team": "away",
               "label": "More than 2.5 goals",
-              "value": "6/8",
-              "odds": 2.2
+              "value": "8/9"
+            },
+            {
+              "team": "home",
+              "label": "Both teams scoring",
+              "value": "5/6"
             },
             {
               "team": "away",
               "label": "Both teams scoring",
-              "value": "6/8",
-              "odds": 1.91
-            },
-            {
-              "team": "home",
-              "label": "First to score",
-              "value": "7/8",
-              "odds": 1.91
+              "value": "5/7"
             },
             {
               "team": "away",
-              "label": "First to score",
-              "value": "6/6",
-              "odds": 2.2
-            },
-            {
-              "team": "away",
-              "label": "First half winner",
-              "value": "4/5",
-              "odds": 3.6
+              "label": "First to concede",
+              "value": "4/5"
             },
             {
               "team": "home",
-              "label": "More than 4.5 cards",
+              "label": "Less than 4.5 cards",
+              "value": "8/10"
+            },
+            {
+              "team": "away",
+              "label": "Less than 4.5 cards",
+              "value": "6/7"
+            },
+            {
+              "team": "away",
+              "label": "More than 10.5 corners",
               "value": "4/5"
             },
             {
               "team": "home",
               "label": "Less than 10.5 corners",
               "value": "4/5"
-            },
-            {
-              "team": "away",
-              "label": "Less than 10.5 corners",
-              "value": "5/5"
             }
           ],
           "predictions": {
             "winner": {
-              "pick": "Sporting Braga",
+              "pick": "NEC Nijmegen",
               "type": "home",
-              "odds": 2.38
+              "odds": 1.33
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.91
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 2.2
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -7829,221 +6437,90 @@
             }
           },
           "sportsbet_odds": {
-            "home": 2.38,
-            "draw": 3.2,
-            "away": 3.0,
-            "event_id": 10383610
+            "home": 1.33,
+            "draw": 5.0,
+            "away": 7.0,
+            "event_id": 10415870
           }
-        }
-      ]
-    },
-    {
-      "id": 17015,
-      "name": "UEFA Europa Conference League",
-      "season": "2025/26",
-      "matches": [
-        {
-          "id": 15858585,
-          "date": "2026-04-25",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Oud-Heverlee Leuven",
-            "short": "OH Leuven",
-            "team_id": 2918,
-            "goals": 0
-          },
-          "away": {
-            "name": "RC Sporting Charleroi",
-            "short": "Charleroi",
-            "team_id": 2898,
-            "goals": 2
-          },
-          "settled_at": "2026-04-27"
         },
         {
-          "id": 15858584,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "KRC Genk",
-            "short": "Genk",
-            "team_id": 2890,
-            "goals": 1
-          },
-          "away": {
-            "name": "Standard Liège",
-            "short": "Standard",
-            "team_id": 2901,
-            "goals": 1
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15858589,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "KVC Westerlo",
-            "short": "Westerlo",
-            "team_id": 2893,
-            "goals": 2
-          },
-          "away": {
-            "name": "Royal Antwerp FC",
-            "short": "Royal",
-            "team_id": 2889,
-            "goals": 4
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15632646,
-          "date": "2026-04-30",
-          "time": "19:00",
+          "id": 14028552,
+          "date": "2026-05-03",
+          "time": "10:15",
           "status": "upcoming",
           "home": {
-            "name": "Rayo Vallecano",
-            "short": "Rayo Vallecano",
-            "team_id": 2818
+            "name": "FC Volendam",
+            "short": "Volendam",
+            "team_id": 2968
           },
           "away": {
-            "name": "RC Strasbourg",
-            "short": "RC Strasbourg",
-            "team_id": 1659
-          },
-          "odds": {
-            "home": 2.2,
-            "draw": 3.3,
-            "away": 3.2
+            "name": "SC Heerenveen",
+            "short": "SC Heerenveen",
+            "team_id": 2964
           },
           "h2h_streaks": [
             {
+              "team": "home",
+              "label": "No wins",
+              "value": "6"
+            },
+            {
               "team": "away",
+              "label": "Without clean sheet",
+              "value": "4"
+            },
+            {
+              "team": "away",
+              "label": "More than 2.5 goals",
+              "value": "10/10"
+            },
+            {
+              "team": "away",
+              "label": "Both teams scoring",
+              "value": "8/10"
+            },
+            {
+              "team": "home",
               "label": "First to concede",
-              "value": "5/7",
-              "odds": 1.8
-            },
-            {
-              "team": "home",
-              "label": "More than 4.5 cards",
-              "value": "8/9"
-            },
-            {
-              "team": "home",
-              "label": "More than 10.5 corners",
               "value": "6/8"
             },
             {
               "team": "away",
-              "label": "More than 10.5 corners",
+              "label": "First to concede",
               "value": "4/5"
-            }
-          ],
-          "predictions": {
-            "winner": {
-              "pick": "Rayo Vallecano",
-              "type": "home",
-              "odds": 2.2
-            },
-            "btts": {
-              "pick": "Yes",
-              "odds": 1.8
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5,
-              "odds": 2.05
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5
-            }
-          }
-        },
-        {
-          "id": 15632645,
-          "date": "2026-04-30",
-          "time": "19:00",
-          "status": "upcoming",
-          "home": {
-            "name": "Shakhtar Donetsk",
-            "short": "Shakhtar",
-            "team_id": 3313
-          },
-          "away": {
-            "name": "Crystal Palace",
-            "short": "Crystal Palace",
-            "team_id": 7
-          },
-          "odds": {
-            "home": 3.7,
-            "draw": 3.3,
-            "away": 2.05
-          },
-          "h2h_streaks": [
-            {
-              "team": "home",
-              "label": "No losses",
-              "value": "6",
-              "odds": 1.73
             },
             {
               "team": "away",
-              "label": "No wins",
-              "value": "3",
-              "odds": 1.73
+              "label": "First half winner",
+              "value": "5/7"
             },
             {
               "team": "home",
-              "label": "More than 2.5 goals",
-              "value": "6/7",
-              "odds": 2.1
-            },
-            {
-              "team": "away",
-              "label": "More than 2.5 goals",
-              "value": "4/5",
-              "odds": 2.1
-            },
-            {
-              "team": "home",
-              "label": "First to score",
-              "value": "6/6",
-              "odds": 2.38
+              "label": "Less than 4.5 cards",
+              "value": "9/9"
             },
             {
               "team": "away",
               "label": "Less than 4.5 cards",
-              "value": "4/5"
-            },
-            {
-              "team": "home",
-              "label": "Less than 10.5 corners",
-              "value": "6/8"
-            },
-            {
-              "team": "away",
-              "label": "Less than 10.5 corners",
               "value": "5/6"
+            },
+            {
+              "team": "both",
+              "label": "Less than 10.5 corners",
+              "value": "4/5"
             }
           ],
           "predictions": {
             "winner": {
-              "pick": "Shakhtar Donetsk",
-              "type": "home",
-              "odds": 3.7
+              "pick": "SC Heerenveen",
+              "type": "away"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.83
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 2.1
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -9471,6 +7948,63 @@
           }
         },
         {
+          "id": 15171493,
+          "date": "2026-04-26",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Toronto FC",
+            "short": "Toronto",
+            "team_id": 7080,
+            "goals": 1
+          },
+          "away": {
+            "name": "Atlanta United",
+            "short": "Atlanta",
+            "team_id": 243211,
+            "goals": 2
+          },
+          "settled_at": "2026-04-27"
+        },
+        {
+          "id": 15171494,
+          "date": "2026-04-26",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "CF Montréal",
+            "short": "Montréal",
+            "team_id": 22006,
+            "goals": 1
+          },
+          "away": {
+            "name": "New York City FC",
+            "short": "NY City",
+            "team_id": 187643,
+            "goals": 0
+          },
+          "settled_at": "2026-04-27"
+        },
+        {
+          "id": 15171503,
+          "date": "2026-04-26",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Minnesota United",
+            "short": "Minnesota",
+            "team_id": 41618,
+            "goals": 0
+          },
+          "away": {
+            "name": "Los Angeles FC",
+            "short": "Los Angeles",
+            "team_id": 274650,
+            "goals": 1
+          },
+          "settled_at": "2026-04-27"
+        },
+        {
           "id": 15171510,
           "date": "2026-05-02",
           "time": "17:00",
@@ -10637,1832 +9171,6 @@
       ]
     },
     {
-      "id": 11621,
-      "name": "Liga MX",
-      "season": "2025/26",
-      "matches": [
-        {
-          "id": 15239041,
-          "date": "2026-04-25",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "CF Pachuca",
-            "short": "CF Pachuca",
-            "team_id": 1936,
-            "goals": 0
-          },
-          "away": {
-            "name": "Pumas UNAM",
-            "short": "Pumas UNAM",
-            "team_id": 1933,
-            "goals": 2
-          },
-          "odds": {
-            "home": 1.86,
-            "draw": 3.7,
-            "away": 3.9
-          },
-          "h2h_streaks": [
-            {
-              "team": "away",
-              "label": "Wins",
-              "value": "3",
-              "odds": 3.9
-            },
-            {
-              "team": "away",
-              "label": "No losses",
-              "value": "7",
-              "odds": 1.06
-            },
-            {
-              "team": "home",
-              "label": "Without clean sheet",
-              "value": "11",
-              "odds": 1.62
-            },
-            {
-              "team": "home",
-              "label": "More than 2.5 goals",
-              "value": "4/5",
-              "odds": 1.73
-            },
-            {
-              "team": "home",
-              "label": "Both teams scoring",
-              "value": "8/8",
-              "odds": 1.62
-            },
-            {
-              "team": "away",
-              "label": "First to score",
-              "value": "4/5",
-              "odds": 2.3
-            },
-            {
-              "team": "home",
-              "label": "First to concede",
-              "value": "5/6",
-              "odds": 2.3
-            },
-            {
-              "team": "home",
-              "label": "More than 4.5 cards",
-              "value": "7/9",
-              "odds": 1.83
-            },
-            {
-              "team": "home",
-              "label": "Less than 10.5 corners",
-              "value": "5/7",
-              "odds": 2.1
-            },
-            {
-              "team": "away",
-              "label": "Less than 10.5 corners",
-              "value": "5/6",
-              "odds": 2.1
-            }
-          ],
-          "predictions": {
-            "winner": {
-              "pick": "Pumas UNAM",
-              "type": "away",
-              "odds": 3.9,
-              "result": "hit"
-            },
-            "btts": {
-              "pick": "Yes",
-              "odds": 1.95,
-              "actual_btts": false,
-              "result": "miss"
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5,
-              "actual": 2,
-              "result": "miss",
-              "odds": 1.67
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5,
-              "odds": 2.0,
-              "actual": 6,
-              "result": "hit"
-            }
-          },
-          "settled_at": "2026-04-26",
-          "actuals": {
-            "home_corners": 8,
-            "away_corners": 4,
-            "corners_total": 12,
-            "home_fouls": 12,
-            "away_fouls": 7,
-            "fouls_total": 19,
-            "home_sot": 4,
-            "away_sot": 4,
-            "first_to_score": "away",
-            "first_scorer": "Uriel Antuna",
-            "ht_home": 0,
-            "ht_away": 2,
-            "ht_winner": "away"
-          }
-        },
-        {
-          "id": 15239042,
-          "date": "2026-04-25",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Tigres UANL",
-            "short": "Tigres UANL",
-            "team_id": 1940,
-            "goals": 5
-          },
-          "away": {
-            "name": "Mazatlán FC",
-            "short": "Mazatlán",
-            "team_id": 1946,
-            "goals": 1
-          },
-          "odds": {
-            "home": 1.17,
-            "draw": 6.5,
-            "away": 13.0
-          },
-          "h2h_streaks": [
-            {
-              "team": "home",
-              "label": "No wins",
-              "value": "3",
-              "odds": 10.0
-            },
-            {
-              "team": "away",
-              "label": "Without clean sheet",
-              "value": "8",
-              "odds": 2.0
-            },
-            {
-              "team": "home",
-              "label": "Less than 2.5 goals",
-              "value": "5/7",
-              "odds": 2.5
-            },
-            {
-              "team": "away",
-              "label": "Both teams scoring",
-              "value": "5/5",
-              "odds": 2.0
-            },
-            {
-              "team": "home",
-              "label": "More than 4.5 cards",
-              "value": "5/6",
-              "odds": 1.67
-            },
-            {
-              "team": "away",
-              "label": "More than 10.5 corners",
-              "value": "5/5",
-              "odds": 1.67
-            },
-            {
-              "team": "home",
-              "label": "Less than 10.5 corners",
-              "value": "6/7",
-              "odds": 2.1
-            }
-          ],
-          "predictions": {
-            "winner": {
-              "pick": "Tigres UANL",
-              "type": "home",
-              "odds": 1.17,
-              "result": "hit"
-            },
-            "btts": {
-              "pick": "Yes",
-              "odds": 2.62,
-              "actual_btts": true,
-              "result": "hit"
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5,
-              "odds": 1.62,
-              "actual": 6,
-              "result": "hit"
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5,
-              "odds": 1.67,
-              "actual": 2,
-              "result": "miss"
-            }
-          },
-          "settled_at": "2026-04-26",
-          "actuals": {
-            "home_corners": 6,
-            "away_corners": 1,
-            "corners_total": 7,
-            "home_fouls": 5,
-            "away_fouls": 3,
-            "fouls_total": 8,
-            "home_sot": 13,
-            "away_sot": 3,
-            "first_to_score": "home",
-            "first_scorer": "Juan Brunetta",
-            "ht_home": 1,
-            "ht_away": 0,
-            "ht_winner": "home"
-          }
-        },
-        {
-          "id": 15239048,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Santos Laguna",
-            "short": "Santos Laguna",
-            "team_id": 1948,
-            "goals": 3
-          },
-          "away": {
-            "name": "CF Monterrey",
-            "short": "CF Monterrey",
-            "team_id": 1932,
-            "goals": 0
-          },
-          "odds": {
-            "home": 3.6,
-            "draw": 3.75,
-            "away": 1.91
-          },
-          "h2h_streaks": [
-            {
-              "team": "home",
-              "label": "Losses",
-              "value": "3",
-              "odds": 1.91
-            },
-            {
-              "team": "home",
-              "label": "No wins",
-              "value": "4",
-              "odds": 1.29
-            },
-            {
-              "team": "home",
-              "label": "Without clean sheet",
-              "value": "19",
-              "odds": 1.5
-            },
-            {
-              "team": "away",
-              "label": "More than 2.5 goals",
-              "value": "4/5",
-              "odds": 1.53
-            },
-            {
-              "team": "away",
-              "label": "Both teams scoring",
-              "value": "7/8",
-              "odds": 1.5
-            },
-            {
-              "team": "away",
-              "label": "First half winner",
-              "value": "6/8",
-              "odds": 2.5
-            },
-            {
-              "team": "home",
-              "label": "More than 4.5 cards",
-              "value": "5/6",
-              "odds": 1.91
-            }
-          ],
-          "predictions": {
-            "winner": {
-              "pick": "CF Monterrey",
-              "type": "away",
-              "odds": 1.91,
-              "result": "miss"
-            },
-            "btts": {
-              "pick": "Yes",
-              "odds": 1.5,
-              "result": "miss"
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5,
-              "odds": 1.53,
-              "actual": 3,
-              "result": "hit"
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5,
-              "odds": 1.91,
-              "actual": 7,
-              "result": "hit"
-            }
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15239047,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "FC Juárez",
-            "short": "Juárez",
-            "team_id": 201624,
-            "goals": 2
-          },
-          "away": {
-            "name": "Atlético San Luis",
-            "short": "Atlético",
-            "team_id": 1950,
-            "goals": 1
-          },
-          "odds": {
-            "home": 1.86,
-            "draw": 3.6,
-            "away": 3.9
-          },
-          "h2h_streaks": [
-            {
-              "team": "home",
-              "label": "Losses",
-              "value": "3",
-              "odds": 3.9
-            },
-            {
-              "team": "home",
-              "label": "No wins",
-              "value": "5",
-              "odds": 1.83
-            },
-            {
-              "team": "home",
-              "label": "Without clean sheet",
-              "value": "17",
-              "odds": 1.57
-            },
-            {
-              "team": "home",
-              "label": "More than 2.5 goals",
-              "value": "8/10",
-              "odds": 1.67
-            },
-            {
-              "team": "home",
-              "label": "Both teams scoring",
-              "value": "10/10",
-              "odds": 1.57
-            },
-            {
-              "team": "home",
-              "label": "First to concede",
-              "value": "7/8",
-              "odds": 2.3
-            },
-            {
-              "team": "away",
-              "label": "First to concede",
-              "value": "4/5",
-              "odds": 1.67
-            },
-            {
-              "team": "away",
-              "label": "More than 4.5 cards",
-              "value": "8/10",
-              "odds": 2.1
-            },
-            {
-              "team": "home",
-              "label": "More than 10.5 corners",
-              "value": "4/5",
-              "odds": 2.0
-            }
-          ],
-          "predictions": {
-            "winner": {
-              "pick": "Atlético San Luis",
-              "type": "away",
-              "odds": 3.9,
-              "result": "miss"
-            },
-            "btts": {
-              "pick": "Yes",
-              "odds": 1.57,
-              "actual_btts": true,
-              "result": "hit"
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5,
-              "odds": 1.67,
-              "actual": 3,
-              "result": "hit"
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5,
-              "odds": 2.1,
-              "actual": 1,
-              "result": "miss"
-            }
-          },
-          "settled_at": "2026-04-26",
-          "actuals": {
-            "home_corners": 4,
-            "away_corners": 4,
-            "corners_total": 8,
-            "home_fouls": 5,
-            "away_fouls": 10,
-            "fouls_total": 15,
-            "home_sot": 4,
-            "away_sot": 4,
-            "first_to_score": "home",
-            "first_scorer": "Ettson Ayón",
-            "ht_home": 2,
-            "ht_away": 1,
-            "ht_winner": "home"
-          }
-        },
-        {
-          "id": 15239045,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Club América",
-            "short": "Club América",
-            "team_id": 1939,
-            "goals": 0
-          },
-          "away": {
-            "name": "Atlas FC",
-            "short": "Atlas",
-            "team_id": 1949,
-            "goals": 1
-          },
-          "odds": {
-            "home": 1.56,
-            "draw": 3.7,
-            "away": 6.5
-          },
-          "h2h_streaks": [
-            {
-              "team": "away",
-              "label": "No losses",
-              "value": "3",
-              "odds": 2.3
-            },
-            {
-              "team": "away",
-              "label": "No goals conceded",
-              "value": "3",
-              "odds": 1.7
-            },
-            {
-              "team": "home",
-              "label": "Without clean sheet",
-              "value": "4",
-              "odds": 2.05
-            },
-            {
-              "team": "home",
-              "label": "Less than 2.5 goals",
-              "value": "8/10",
-              "odds": 1.7
-            },
-            {
-              "team": "away",
-              "label": "Less than 2.5 goals",
-              "value": "7/7",
-              "odds": 1.7
-            },
-            {
-              "team": "home",
-              "label": "Both teams scoring",
-              "value": "5/7",
-              "odds": 2.05
-            },
-            {
-              "team": "home",
-              "label": "First to score",
-              "value": "5/7",
-              "odds": 1.5
-            },
-            {
-              "team": "home",
-              "label": "Less than 4.5 cards",
-              "value": "5/5",
-              "odds": 1.83
-            },
-            {
-              "team": "home",
-              "label": "Less than 10.5 corners",
-              "value": "7/9",
-              "odds": 1.8
-            },
-            {
-              "team": "away",
-              "label": "Less than 10.5 corners",
-              "value": "5/6",
-              "odds": 1.8
-            }
-          ],
-          "predictions": {
-            "winner": {
-              "pick": "Club América",
-              "type": "home",
-              "odds": 1.56,
-              "result": "miss"
-            },
-            "btts": {
-              "pick": "No",
-              "odds": 1.7,
-              "actual_btts": false,
-              "result": "hit"
-            },
-            "ou_goals": {
-              "pick": "Under",
-              "line": 2.5,
-              "odds": 1.7,
-              "actual": 1,
-              "result": "hit"
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5,
-              "odds": 1.83,
-              "actual": 3,
-              "result": "miss"
-            }
-          },
-          "settled_at": "2026-04-26",
-          "actuals": {
-            "home_corners": 5,
-            "away_corners": 2,
-            "corners_total": 7,
-            "home_fouls": 7,
-            "away_fouls": 12,
-            "fouls_total": 19,
-            "home_sot": 3,
-            "away_sot": 2,
-            "first_to_score": "away",
-            "first_scorer": "Arturo Gonzalez",
-            "ht_home": 0,
-            "ht_away": 0,
-            "ht_winner": "draw"
-          }
-        },
-        {
-          "id": 15239044,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "CD Toluca",
-            "short": "CD Toluca",
-            "team_id": 1931,
-            "goals": 4
-          },
-          "away": {
-            "name": "Club León",
-            "short": "Club León",
-            "team_id": 36534,
-            "goals": 1
-          },
-          "odds": {
-            "home": 1.57,
-            "draw": 4.0,
-            "away": 5.25
-          },
-          "h2h_streaks": [
-            {
-              "team": "home",
-              "label": "More than 2.5 goals",
-              "value": "4/5",
-              "odds": 1.5
-            },
-            {
-              "team": "away",
-              "label": "More than 2.5 goals",
-              "value": "8/10",
-              "odds": 1.5
-            },
-            {
-              "team": "home",
-              "label": "Both teams scoring",
-              "value": "4/5",
-              "odds": 1.53
-            },
-            {
-              "team": "home",
-              "label": "First to score",
-              "value": "8/10",
-              "odds": 1.5
-            },
-            {
-              "team": "away",
-              "label": "First to score",
-              "value": "4/5",
-              "odds": 2.5
-            },
-            {
-              "team": "home",
-              "label": "Less than 4.5 cards",
-              "value": "5/6",
-              "odds": 2.0
-            },
-            {
-              "team": "away",
-              "label": "More than 10.5 corners",
-              "value": "5/6",
-              "odds": 1.73
-            },
-            {
-              "team": "home",
-              "label": "Less than 10.5 corners",
-              "value": "7/8",
-              "odds": 2.0
-            }
-          ],
-          "predictions": {
-            "winner": {
-              "pick": "CD Toluca",
-              "type": "home",
-              "odds": 1.57,
-              "result": "hit"
-            },
-            "btts": {
-              "pick": "Yes",
-              "odds": 1.53,
-              "actual_btts": true,
-              "result": "hit"
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5,
-              "odds": 1.5,
-              "actual": 5,
-              "result": "hit"
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5,
-              "odds": 1.73,
-              "actual": 9,
-              "result": "hit"
-            }
-          },
-          "settled_at": "2026-04-26",
-          "actuals": {
-            "home_corners": 2,
-            "away_corners": 7,
-            "corners_total": 9,
-            "home_fouls": 14,
-            "away_fouls": 14,
-            "fouls_total": 28,
-            "home_sot": 7,
-            "away_sot": 5,
-            "first_to_score": "home",
-            "first_scorer": "Sebastián Córdova",
-            "ht_home": 1,
-            "ht_away": 1,
-            "ht_winner": "draw"
-          }
-        },
-        {
-          "id": 15239043,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "CD Guadalajara",
-            "short": "CD Guadalajara",
-            "team_id": 1938,
-            "goals": 0
-          },
-          "away": {
-            "name": "Club Tijuana",
-            "short": "Club Tijuana",
-            "team_id": 36525,
-            "goals": 0
-          },
-          "odds": {
-            "home": 1.37,
-            "draw": 5.0,
-            "away": 7.0
-          },
-          "h2h_streaks": [
-            {
-              "team": "away",
-              "label": "No losses",
-              "value": "4",
-              "odds": 2.75
-            },
-            {
-              "team": "away",
-              "label": "Without clean sheet",
-              "value": "3",
-              "odds": 1.7
-            },
-            {
-              "team": "home",
-              "label": "More than 2.5 goals",
-              "value": "7/9",
-              "odds": 1.5
-            },
-            {
-              "team": "away",
-              "label": "More than 2.5 goals",
-              "value": "6/8",
-              "odds": 1.5
-            },
-            {
-              "team": "home",
-              "label": "Less than 10.5 corners",
-              "value": "5/5",
-              "odds": 1.83
-            },
-            {
-              "team": "away",
-              "label": "Less than 10.5 corners",
-              "value": "5/6",
-              "odds": 1.83
-            }
-          ],
-          "predictions": {
-            "winner": {
-              "pick": "CD Guadalajara",
-              "type": "home",
-              "odds": 1.39,
-              "result": "miss"
-            },
-            "btts": {
-              "pick": "Yes",
-              "odds": 1.7,
-              "actual_btts": false,
-              "result": "miss"
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5,
-              "odds": 1.5,
-              "actual": 0,
-              "result": "miss"
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5,
-              "odds": 1.8,
-              "actual": 4,
-              "result": "miss"
-            }
-          },
-          "settled_at": "2026-04-26",
-          "actuals": {
-            "home_corners": 8,
-            "away_corners": 2,
-            "corners_total": 10,
-            "home_fouls": 8,
-            "away_fouls": 8,
-            "fouls_total": 16,
-            "home_sot": 4,
-            "away_sot": 3,
-            "first_to_score": null,
-            "ht_home": 0,
-            "ht_away": 0,
-            "ht_winner": "draw"
-          }
-        },
-        {
-          "id": 16042981,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Club Atlético Morelia",
-            "short": "Atl.",
-            "team_id": 36529,
-            "goals": 2
-          },
-          "away": {
-            "name": "Mineros de Zacatecas",
-            "short": "Mineros",
-            "team_id": 159946,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 16042984,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Club Atletico La Paz",
-            "short": "CA La",
-            "team_id": 419928,
-            "goals": 1
-          },
-          "away": {
-            "name": "CDS Tampico Madero",
-            "short": "CDS Tampico",
-            "team_id": 227164,
-            "goals": 2
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15239049,
-          "date": "2026-04-27",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Cruz Azul",
-            "short": "Cruz Azul",
-            "team_id": 1947,
-            "goals": 4
-          },
-          "away": {
-            "name": "Club Necaxa",
-            "short": "Club Necaxa",
-            "team_id": 1944,
-            "goals": 1
-          },
-          "odds": {
-            "home": 1.33,
-            "draw": 5.0,
-            "away": 8.0
-          },
-          "h2h_streaks": [
-            {
-              "team": "home",
-              "label": "No losses",
-              "value": "4",
-              "odds": 1.08
-            },
-            {
-              "team": "home",
-              "label": "No wins",
-              "value": "6",
-              "odds": 3.0
-            },
-            {
-              "team": "away",
-              "label": "No wins",
-              "value": "3",
-              "odds": 1.08
-            },
-            {
-              "team": "home",
-              "label": "Without clean sheet",
-              "value": "6",
-              "odds": 1.75
-            },
-            {
-              "team": "home",
-              "label": "Less than 2.5 goals",
-              "value": "4/5",
-              "odds": 2.5
-            },
-            {
-              "team": "home",
-              "label": "Both teams scoring",
-              "value": "5/6",
-              "odds": 1.75
-            },
-            {
-              "team": "home",
-              "label": "Less than 4.5 cards",
-              "value": "5/7",
-              "odds": 1.8
-            }
-          ],
-          "predictions": {
-            "winner": {
-              "pick": "Club Necaxa",
-              "type": "away",
-              "odds": 8.0,
-              "result": "miss"
-            },
-            "btts": {
-              "pick": "No",
-              "odds": 2.0,
-              "actual_btts": true,
-              "result": "miss"
-            },
-            "ou_goals": {
-              "pick": "Under",
-              "line": 2.5,
-              "odds": 2.5,
-              "actual": 5,
-              "result": "miss"
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5,
-              "odds": 1.91
-            }
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 16042982,
-          "date": "2026-04-27",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Tepatitlán FC",
-            "short": "Tepatitlán",
-            "team_id": 283681,
-            "goals": 2
-          },
-          "away": {
-            "name": "Atlante FC",
-            "short": "Atlante",
-            "team_id": 1943,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 16042985,
-          "date": "2026-04-27",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Cancún FC",
-            "short": "Cancún",
-            "team_id": 354926,
-            "goals": 1
-          },
-          "away": {
-            "name": "CD Tapatío",
-            "short": "Tapatío",
-            "team_id": 354925,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        }
-      ]
-    },
-    {
-      "id": 37,
-      "name": "Eredivisie",
-      "season": "2025/26",
-      "matches": [
-        {
-          "id": 14028547,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Excelsior",
-            "short": "Excelsior",
-            "team_id": 2967,
-            "goals": 5
-          },
-          "away": {
-            "name": "FC Utrecht",
-            "short": "Utrecht",
-            "team_id": 2948,
-            "goals": 0
-          },
-          "odds": {
-            "home": 3.2,
-            "draw": 3.5,
-            "away": 2.2
-          },
-          "h2h_streaks": [
-            {
-              "team": "home",
-              "label": "No wins",
-              "value": "8",
-              "odds": 1.36
-            },
-            {
-              "team": "home",
-              "label": "Without clean sheet",
-              "value": "8",
-              "odds": 1.62
-            },
-            {
-              "team": "away",
-              "label": "Less than 2.5 goals",
-              "value": "5/7",
-              "odds": 2.05
-            },
-            {
-              "team": "home",
-              "label": "Both teams scoring",
-              "value": "4/5",
-              "odds": 1.62
-            },
-            {
-              "team": "away",
-              "label": "First to score",
-              "value": "6/7",
-              "odds": 1.8
-            },
-            {
-              "team": "home",
-              "label": "First to concede",
-              "value": "6/7",
-              "odds": 1.8
-            },
-            {
-              "team": "away",
-              "label": "First half winner",
-              "value": "6/7",
-              "odds": 2.75
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "8/8"
-            },
-            {
-              "team": "home",
-              "label": "Less than 10.5 corners",
-              "value": "5/7",
-              "odds": 2.0
-            }
-          ],
-          "predictions": {
-            "winner": {
-              "pick": "FC Utrecht",
-              "type": "away",
-              "odds": 2.2,
-              "result": "miss"
-            },
-            "btts": {
-              "pick": "Yes",
-              "odds": 1.62,
-              "actual_btts": false,
-              "result": "miss"
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5,
-              "odds": 1.75,
-              "actual": 5,
-              "result": "hit"
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5,
-              "actual": 4,
-              "result": "miss"
-            }
-          },
-          "sportsbet_odds": {
-            "home": 3.1,
-            "draw": 3.4,
-            "away": 2.2,
-            "event_id": 10342066
-          }
-        },
-        {
-          "id": 14028535,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Heracles Almelo",
-            "short": "Heracles",
-            "team_id": 2977,
-            "goals": 0
-          },
-          "away": {
-            "name": "FC Volendam",
-            "short": "Volendam",
-            "team_id": 2968,
-            "goals": 2
-          },
-          "odds": {
-            "home": 2.15,
-            "draw": 4.0,
-            "away": 3.0
-          },
-          "h2h_streaks": [
-            {
-              "team": "home",
-              "label": "No wins",
-              "value": "9",
-              "odds": 1.67
-            },
-            {
-              "team": "away",
-              "label": "No wins",
-              "value": "6",
-              "odds": 1.36
-            },
-            {
-              "team": "home",
-              "label": "Without clean sheet",
-              "value": "4",
-              "odds": 1.57
-            },
-            {
-              "team": "home",
-              "label": "More than 2.5 goals",
-              "value": "5/7",
-              "odds": 1.62
-            },
-            {
-              "team": "away",
-              "label": "First to concede",
-              "value": "6/8",
-              "odds": 1.73
-            },
-            {
-              "team": "home",
-              "label": "First half loser",
-              "value": "5/7",
-              "odds": 3.5
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "10/10"
-            },
-            {
-              "team": "home",
-              "label": "Less than 10.5 corners",
-              "value": "8/10",
-              "odds": 1.8
-            },
-            {
-              "team": "away",
-              "label": "Less than 10.5 corners",
-              "value": "4/5",
-              "odds": 1.8
-            }
-          ],
-          "predictions": {
-            "winner": {
-              "pick": "FC Volendam",
-              "type": "away",
-              "odds": 2.88,
-              "result": "hit"
-            },
-            "btts": {
-              "pick": "Yes",
-              "odds": 1.57,
-              "actual_btts": false,
-              "result": "miss"
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5,
-              "odds": 1.62,
-              "actual": 2,
-              "result": "miss"
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5,
-              "actual": 1,
-              "result": "miss"
-            }
-          },
-          "sportsbet_odds": {
-            "home": 2.2,
-            "draw": 3.75,
-            "away": 2.88,
-            "event_id": 10341864
-          }
-        },
-        {
-          "id": 14028532,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Feyenoord",
-            "short": "Feyenoord",
-            "team_id": 2959,
-            "goals": 3
-          },
-          "away": {
-            "name": "FC Groningen",
-            "short": "Groningen",
-            "team_id": 2951,
-            "goals": 1
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 14028542,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "SC Heerenveen",
-            "short": "Heerenveen",
-            "team_id": 2964,
-            "goals": 2
-          },
-          "away": {
-            "name": "Fortuna Sittard",
-            "short": "Fortuna",
-            "team_id": 2957,
-            "goals": 1
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 14028527,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "NAC Breda",
-            "short": "NAC Breda",
-            "team_id": 2947,
-            "goals": 0
-          },
-          "away": {
-            "name": "AFC Ajax",
-            "short": "Ajax",
-            "team_id": 2953,
-            "goals": 2
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 14028538,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "FC Twente",
-            "short": "Twente",
-            "team_id": 2955,
-            "goals": 1
-          },
-          "away": {
-            "name": "NEC Nijmegen",
-            "short": "NEC",
-            "team_id": 2962,
-            "goals": 1
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 16072779,
-          "date": "2026-04-28",
-          "time": "16:45",
-          "status": "upcoming",
-          "home": {
-            "name": "Roda JC Kerkrade",
-            "short": "Roda",
-            "team_id": 2954
-          },
-          "away": {
-            "name": "RKC Waalwijk",
-            "short": "RKC Waalwijk",
-            "team_id": 2956
-          },
-          "predictions": {
-            "winner": {
-              "pick": "RKC Waalwijk",
-              "type": "away"
-            },
-            "btts": {
-              "pick": "Yes"
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5
-            }
-          }
-        },
-        {
-          "id": 16072839,
-          "date": "2026-04-29",
-          "time": "16:45",
-          "status": "upcoming",
-          "home": {
-            "name": "FC Den Bosch",
-            "short": "Den Bosch",
-            "team_id": 2963
-          },
-          "away": {
-            "name": "Almere City FC",
-            "short": "Almere City",
-            "team_id": 2990
-          },
-          "predictions": {
-            "winner": {
-              "pick": "Almere City FC",
-              "type": "away"
-            },
-            "btts": {
-              "pick": "Yes"
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5
-            }
-          }
-        },
-        {
-          "id": 16072837,
-          "date": "2026-05-01",
-          "time": "18:00",
-          "status": "upcoming",
-          "home": {
-            "name": "RKC Waalwijk",
-            "short": "RKC Waalwijk",
-            "team_id": 2956
-          },
-          "away": {
-            "name": "Roda JC Kerkrade",
-            "short": "Roda",
-            "team_id": 2954
-          },
-          "predictions": {
-            "winner": {
-              "pick": "RKC Waalwijk",
-              "type": "home"
-            },
-            "btts": {
-              "pick": "Yes"
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5
-            }
-          }
-        },
-        {
-          "id": 16072838,
-          "date": "2026-05-02",
-          "time": "12:00",
-          "status": "upcoming",
-          "home": {
-            "name": "Roda JC Kerkrade",
-            "short": "Roda",
-            "team_id": 2954
-          },
-          "away": {
-            "name": "RKC Waalwijk",
-            "short": "RKC Waalwijk",
-            "team_id": 2956
-          },
-          "predictions": {
-            "winner": {
-              "pick": "RKC Waalwijk",
-              "type": "away"
-            },
-            "btts": {
-              "pick": "Yes"
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5
-            }
-          }
-        },
-        {
-          "id": 14028549,
-          "date": "2026-05-02",
-          "time": "14:30",
-          "status": "upcoming",
-          "home": {
-            "name": "FC Utrecht",
-            "short": "Utrecht",
-            "team_id": 2948
-          },
-          "away": {
-            "name": "NAC Breda",
-            "short": "NAC Breda",
-            "team_id": 2947
-          },
-          "h2h_streaks": [
-            {
-              "team": "away",
-              "label": "No wins",
-              "value": "7"
-            },
-            {
-              "team": "home",
-              "label": "Less than 2.5 goals",
-              "value": "5/7"
-            },
-            {
-              "team": "home",
-              "label": "First to score",
-              "value": "6/7"
-            },
-            {
-              "team": "away",
-              "label": "First to concede",
-              "value": "6/7"
-            },
-            {
-              "team": "home",
-              "label": "First half winner",
-              "value": "6/7"
-            },
-            {
-              "team": "home",
-              "label": "Less than 4.5 cards",
-              "value": "8/8"
-            },
-            {
-              "team": "away",
-              "label": "Less than 4.5 cards",
-              "value": "5/5"
-            },
-            {
-              "team": "away",
-              "label": "More than 10.5 corners",
-              "value": "6/7"
-            }
-          ],
-          "predictions": {
-            "winner": {
-              "pick": "FC Utrecht",
-              "type": "home"
-            },
-            "btts": {
-              "pick": "No"
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5
-            }
-          }
-        },
-        {
-          "id": 14028540,
-          "date": "2026-05-02",
-          "time": "16:45",
-          "status": "upcoming",
-          "home": {
-            "name": "FC Groningen",
-            "short": "Groningen",
-            "team_id": 2951
-          },
-          "away": {
-            "name": "Excelsior",
-            "short": "Excelsior",
-            "team_id": 2967
-          },
-          "h2h_streaks": [
-            {
-              "team": "away",
-              "label": "No wins",
-              "value": "8"
-            },
-            {
-              "team": "away",
-              "label": "Without clean sheet",
-              "value": "8"
-            },
-            {
-              "team": "away",
-              "label": "Both teams scoring",
-              "value": "4/5"
-            },
-            {
-              "team": "away",
-              "label": "First to concede",
-              "value": "6/7"
-            },
-            {
-              "team": "home",
-              "label": "Less than 4.5 cards",
-              "value": "10/10"
-            },
-            {
-              "team": "away",
-              "label": "Less than 4.5 cards",
-              "value": "8/8"
-            },
-            {
-              "team": "home",
-              "label": "More than 10.5 corners",
-              "value": "5/7"
-            },
-            {
-              "team": "away",
-              "label": "Less than 10.5 corners",
-              "value": "5/7"
-            }
-          ],
-          "predictions": {
-            "winner": {
-              "pick": "FC Groningen",
-              "type": "home"
-            },
-            "btts": {
-              "pick": "No"
-            },
-            "ou_goals": {
-              "pick": "Under",
-              "line": 2.5
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5
-            }
-          }
-        },
-        {
-          "id": 14028539,
-          "date": "2026-05-02",
-          "time": "18:00",
-          "status": "upcoming",
-          "home": {
-            "name": "AFC Ajax",
-            "short": "AAjax",
-            "team_id": 2953
-          },
-          "away": {
-            "name": "PSV Eindhoven",
-            "short": "PSV Eindhoven",
-            "team_id": 2952
-          },
-          "h2h_streaks": [
-            {
-              "team": "away",
-              "label": "Wins",
-              "value": "3"
-            },
-            {
-              "team": "away",
-              "label": "More than 2.5 goals",
-              "value": "9/10"
-            },
-            {
-              "team": "away",
-              "label": "Both teams scoring",
-              "value": "9/10"
-            },
-            {
-              "team": "away",
-              "label": "First to concede",
-              "value": "5/7"
-            },
-            {
-              "team": "home",
-              "label": "Less than 4.5 cards",
-              "value": "6/7"
-            },
-            {
-              "team": "away",
-              "label": "Less than 4.5 cards",
-              "value": "9/10"
-            }
-          ],
-          "predictions": {
-            "winner": {
-              "pick": "AFC Ajax",
-              "type": "home",
-              "odds": 2.4
-            },
-            "btts": {
-              "pick": "Yes"
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5
-            }
-          },
-          "sportsbet_odds": {
-            "home": 2.4,
-            "draw": 4.0,
-            "away": 2.4,
-            "event_id": 10415790
-          }
-        },
-        {
-          "id": 14028537,
-          "date": "2026-05-02",
-          "time": "19:00",
-          "status": "upcoming",
-          "home": {
-            "name": "NEC Nijmegen",
-            "short": "NEC Nijmegen",
-            "team_id": 2962
-          },
-          "away": {
-            "name": "SC Telstar",
-            "short": "SC Telstar",
-            "team_id": 2972
-          },
-          "h2h_streaks": [
-            {
-              "team": "home",
-              "label": "No wins",
-              "value": "3"
-            },
-            {
-              "team": "home",
-              "label": "Without clean sheet",
-              "value": "3"
-            },
-            {
-              "team": "away",
-              "label": "Without clean sheet",
-              "value": "7"
-            },
-            {
-              "team": "away",
-              "label": "More than 2.5 goals",
-              "value": "8/9"
-            },
-            {
-              "team": "home",
-              "label": "Both teams scoring",
-              "value": "5/6"
-            },
-            {
-              "team": "away",
-              "label": "Both teams scoring",
-              "value": "5/7"
-            },
-            {
-              "team": "away",
-              "label": "First to concede",
-              "value": "4/5"
-            },
-            {
-              "team": "home",
-              "label": "Less than 4.5 cards",
-              "value": "8/10"
-            },
-            {
-              "team": "away",
-              "label": "Less than 4.5 cards",
-              "value": "6/7"
-            },
-            {
-              "team": "away",
-              "label": "More than 10.5 corners",
-              "value": "4/5"
-            },
-            {
-              "team": "home",
-              "label": "Less than 10.5 corners",
-              "value": "4/5"
-            }
-          ],
-          "predictions": {
-            "winner": {
-              "pick": "NEC Nijmegen",
-              "type": "home",
-              "odds": 1.33
-            },
-            "btts": {
-              "pick": "Yes"
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5
-            }
-          },
-          "sportsbet_odds": {
-            "home": 1.33,
-            "draw": 5.0,
-            "away": 7.0,
-            "event_id": 10415870
-          }
-        },
-        {
-          "id": 14028552,
-          "date": "2026-05-03",
-          "time": "10:15",
-          "status": "upcoming",
-          "home": {
-            "name": "FC Volendam",
-            "short": "Volendam",
-            "team_id": 2968
-          },
-          "away": {
-            "name": "SC Heerenveen",
-            "short": "SC Heerenveen",
-            "team_id": 2964
-          },
-          "h2h_streaks": [
-            {
-              "team": "home",
-              "label": "No wins",
-              "value": "6"
-            },
-            {
-              "team": "away",
-              "label": "Without clean sheet",
-              "value": "4"
-            },
-            {
-              "team": "away",
-              "label": "More than 2.5 goals",
-              "value": "10/10"
-            },
-            {
-              "team": "away",
-              "label": "Both teams scoring",
-              "value": "8/10"
-            },
-            {
-              "team": "home",
-              "label": "First to concede",
-              "value": "6/8"
-            },
-            {
-              "team": "away",
-              "label": "First to concede",
-              "value": "4/5"
-            },
-            {
-              "team": "away",
-              "label": "First half winner",
-              "value": "5/7"
-            },
-            {
-              "team": "home",
-              "label": "Less than 4.5 cards",
-              "value": "9/9"
-            },
-            {
-              "team": "away",
-              "label": "Less than 4.5 cards",
-              "value": "5/6"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "4/5"
-            }
-          ],
-          "predictions": {
-            "winner": {
-              "pick": "SC Heerenveen",
-              "type": "away"
-            },
-            "btts": {
-              "pick": "Yes"
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5
-            }
-          }
-        }
-      ]
-    },
-    {
       "id": 18,
       "name": "Championship",
       "season": "2025/26",
@@ -13328,139 +10036,6 @@
           "settled_at": "2026-04-27"
         },
         {
-          "id": 16029424,
-          "date": "2026-04-25",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Ludogorets",
-            "short": "Ludogorets",
-            "team_id": 43840,
-            "goals": 1
-          },
-          "away": {
-            "name": "FC CSKA 1948 Sofia",
-            "short": "CSKA",
-            "team_id": 252080,
-            "goals": 2
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 16029425,
-          "date": "2026-04-25",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "CSKA Sofia",
-            "short": "CSKA",
-            "team_id": 3275,
-            "goals": 1
-          },
-          "away": {
-            "name": "Levski Sofia",
-            "short": "Levski",
-            "team_id": 3273,
-            "goals": 3
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 16044351,
-          "date": "2026-04-25",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Chanmari FC",
-            "short": "Chanmari",
-            "team_id": 830777,
-            "goals": 0
-          },
-          "away": {
-            "name": "Diamond Harbour FC",
-            "short": "Diamond",
-            "team_id": 936343,
-            "goals": 2
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 14031891,
-          "date": "2026-04-25",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Airdrieonians",
-            "short": "Airdrieonians",
-            "team_id": 2367,
-            "goals": 2
-          },
-          "away": {
-            "name": "Ayr United",
-            "short": "Ayr",
-            "team_id": 2364,
-            "goals": 1
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 14031899,
-          "date": "2026-04-25",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Arbroath",
-            "short": "Arbroath",
-            "team_id": 2366,
-            "goals": 0
-          },
-          "away": {
-            "name": "Partick Thistle",
-            "short": "Partick",
-            "team_id": 2358,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 14031890,
-          "date": "2026-04-25",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Queen's Park FC",
-            "short": "Queen's",
-            "team_id": 2379,
-            "goals": 0
-          },
-          "away": {
-            "name": "Dunfermline Athletic",
-            "short": "Dunfermline",
-            "team_id": 2350,
-            "goals": 2
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 14031885,
-          "date": "2026-04-25",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Ross County",
-            "short": "Ross",
-            "team_id": 2365,
-            "goals": 4
-          },
-          "away": {
-            "name": "Greenock Morton",
-            "short": "Greenock",
-            "team_id": 2374,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
           "id": 14059994,
           "date": "2026-04-26",
           "time": "FT",
@@ -13554,595 +10129,6 @@
             "away": 3.4,
             "event_id": 10401488
           }
-        },
-        {
-          "id": 15858619,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "KAA Gent",
-            "short": "Gent",
-            "team_id": 2903,
-            "goals": 0
-          },
-          "away": {
-            "name": "Club Brugge KV",
-            "short": "Club",
-            "team_id": 2888,
-            "goals": 2
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15858571,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "KV Mechelen",
-            "short": "Mechelen",
-            "team_id": 5044,
-            "goals": 1
-          },
-          "away": {
-            "name": "Sint-Truidense VV",
-            "short": "St. Truidense",
-            "team_id": 2895,
-            "goals": 4
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15981424,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Celtic",
-            "short": "Celtic",
-            "team_id": 2352,
-            "goals": 3
-          },
-          "away": {
-            "name": "Falkirk FC",
-            "short": "Falkirk",
-            "team_id": 2363,
-            "goals": 1
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15981425,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Rangers",
-            "short": "Rangers",
-            "team_id": 2351,
-            "goals": 2
-          },
-          "away": {
-            "name": "Motherwell",
-            "short": "Motherwell",
-            "team_id": 2346,
-            "goals": 3
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15986031,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "OFK Beograd",
-            "short": "OFK Beograd",
-            "team_id": 5153,
-            "goals": 1
-          },
-          "away": {
-            "name": "FK Radnik Surdulica",
-            "short": "Radnik",
-            "team_id": 111127,
-            "goals": 1
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15676232,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Sønderjyske Fodbold",
-            "short": "Sønderjyske",
-            "team_id": 1295,
-            "goals": 3
-          },
-          "away": {
-            "name": "Brøndby IF",
-            "short": "Brøndby",
-            "team_id": 1281,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15698607,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "CFR 1907 Cluj",
-            "short": "CFR Cluj",
-            "team_id": 5287,
-            "goals": 1
-          },
-          "away": {
-            "name": "FC Universitatea Cluj",
-            "short": "U. Cluj",
-            "team_id": 7734,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15866845,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "AEK Larnaca",
-            "short": "AEK Larnaca",
-            "team_id": 3404,
-            "goals": 2
-          },
-          "away": {
-            "name": "Aris Limassol",
-            "short": "Aris",
-            "team_id": 3397,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15866836,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "APOEL Nicosia",
-            "short": "APOEL",
-            "team_id": 3398,
-            "goals": 3
-          },
-          "away": {
-            "name": "Pafos FC",
-            "short": "Pafos",
-            "team_id": 171626,
-            "goals": 3
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 16039689,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Shillong Lajong FC",
-            "short": "Shillong",
-            "team_id": 58741,
-            "goals": 0
-          },
-          "away": {
-            "name": "Dempo SC",
-            "short": "Dempo",
-            "team_id": 34217,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15525814,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Dacia Buiucani",
-            "short": "Dacia",
-            "team_id": 54679,
-            "goals": 0
-          },
-          "away": {
-            "name": "FC Zimbru Chişinău",
-            "short": "Zimbru",
-            "team_id": 5265,
-            "goals": 3
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15853536,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Coleraine FC",
-            "short": "Coleraine",
-            "team_id": 5270,
-            "goals": 6
-          },
-          "away": {
-            "name": "Glentoran FC",
-            "short": "Glentoran",
-            "team_id": 5179,
-            "goals": 2
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15853534,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Larne FC",
-            "short": "Larne",
-            "team_id": 5184,
-            "goals": 8
-          },
-          "away": {
-            "name": "Dungannon Swifts",
-            "short": "Dungannon",
-            "team_id": 5271,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15853530,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Linfield FC",
-            "short": "Linfield",
-            "team_id": 5272,
-            "goals": 1
-          },
-          "away": {
-            "name": "Cliftonville FC",
-            "short": "Cliftonville",
-            "team_id": 5181,
-            "goals": 2
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15643898,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "MFK Zemplín Michalovce",
-            "short": "Michalovce",
-            "team_id": 7885,
-            "goals": 1
-          },
-          "away": {
-            "name": "FK Železiarne Podbrezová",
-            "short": "Podbrezová",
-            "team_id": 7887,
-            "goals": 2
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15643893,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "DAC 1904",
-            "short": "DAC 1904",
-            "team_id": 23833,
-            "goals": 3
-          },
-          "away": {
-            "name": "MŠK Žilina",
-            "short": "Žilina",
-            "team_id": 2402,
-            "goals": 1
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15916395,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "FC Thun",
-            "short": "Thun",
-            "team_id": 2454,
-            "goals": 0
-          },
-          "away": {
-            "name": "FC Lugano",
-            "short": "Lugano",
-            "team_id": 2443,
-            "goals": 1
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15916411,
-          "date": "2026-04-26",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Basel",
-            "short": "Basel",
-            "team_id": 2501,
-            "goals": 0
-          },
-          "away": {
-            "name": "FC Sion",
-            "short": "Sion",
-            "team_id": 2452,
-            "goals": 2
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15858562,
-          "date": "2026-04-27",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "RSC Anderlecht",
-            "short": "Anderlecht",
-            "team_id": 2900,
-            "goals": 1
-          },
-          "away": {
-            "name": "Royale Union Saint-Gilloise",
-            "short": "USG",
-            "team_id": 4860,
-            "goals": 3
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15981429,
-          "date": "2026-04-27",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Hibernian",
-            "short": "Hibernian",
-            "team_id": 2354,
-            "goals": 1
-          },
-          "away": {
-            "name": "Heart of Midlothian",
-            "short": "Hearts",
-            "team_id": 2353,
-            "goals": 2
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15986028,
-          "date": "2026-04-27",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "FK Novi Pazar",
-            "short": "Novi",
-            "team_id": 25736,
-            "goals": 2
-          },
-          "away": {
-            "name": "FK Čukarički",
-            "short": "Čukarički",
-            "team_id": 5148,
-            "goals": 2
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15986021,
-          "date": "2026-04-27",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "FK Crvena zvezda",
-            "short": "Crvena",
-            "team_id": 5149,
-            "goals": 3
-          },
-          "away": {
-            "name": "FK Partizan",
-            "short": "Partizan",
-            "team_id": 5152,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15986024,
-          "date": "2026-04-27",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "FK Vojvodina",
-            "short": "Vojvodina",
-            "team_id": 5150,
-            "goals": 0
-          },
-          "away": {
-            "name": "FK Železničar Pančevo",
-            "short": "Železničar",
-            "team_id": 282203,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15676234,
-          "date": "2026-04-27",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Viborg FF",
-            "short": "Viborg",
-            "team_id": 1288,
-            "goals": 1
-          },
-          "away": {
-            "name": "FC Nordsjælland",
-            "short": "Nordsjælland",
-            "team_id": 1292,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15676236,
-          "date": "2026-04-27",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "AGF",
-            "short": "AGF",
-            "team_id": 1291,
-            "goals": 0
-          },
-          "away": {
-            "name": "FC Midtjylland",
-            "short": "Midtjylland",
-            "team_id": 1289,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15698603,
-          "date": "2026-04-27",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "FC Dinamo București",
-            "short": "Dinamo",
-            "team_id": 3292,
-            "goals": 3
-          },
-          "away": {
-            "name": "FC Rapid București",
-            "short": "Rapid",
-            "team_id": 295403,
-            "goals": 1
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15866833,
-          "date": "2026-04-27",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "Apollon Limassol",
-            "short": "Apollon",
-            "team_id": 3402,
-            "goals": 2
-          },
-          "away": {
-            "name": "Omonia Nicosia",
-            "short": "Omonia",
-            "team_id": 3395,
-            "goals": 3
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15525811,
-          "date": "2026-04-27",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "FC Bălți",
-            "short": "Bălți",
-            "team_id": 353848,
-            "goals": 1
-          },
-          "away": {
-            "name": "FC Milsami Orhei",
-            "short": "Milsami",
-            "team_id": 53475,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15525821,
-          "date": "2026-04-27",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "FC Petrocub Hîncesti",
-            "short": "Petrocub",
-            "team_id": 167232,
-            "goals": 1
-          },
-          "away": {
-            "name": "Sheriff Tiraspol",
-            "short": "Sheriff",
-            "team_id": 5173,
-            "goals": 0
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15643891,
-          "date": "2026-04-27",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "FC Spartak Trnava",
-            "short": "FC Spartak",
-            "team_id": 2406,
-            "goals": 0
-          },
-          "away": {
-            "name": "ŠK Slovan Bratislava",
-            "short": "Slovan",
-            "team_id": 2404,
-            "goals": 1
-          },
-          "settled_at": "2026-04-27"
-        },
-        {
-          "id": 15916388,
-          "date": "2026-04-27",
-          "time": "FT",
-          "status": "FT",
-          "home": {
-            "name": "BSC Young Boys",
-            "short": "Young",
-            "team_id": 2445,
-            "goals": 1
-          },
-          "away": {
-            "name": "FC St. Gallen 1879",
-            "short": "St. Gallen",
-            "team_id": 2442,
-            "goals": 2
-          },
-          "settled_at": "2026-04-27"
         },
         {
           "id": 15715159,
@@ -15172,6 +11158,699 @@
               "line": 4.5
             }
           }
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "name": "League One",
+      "season": "2025/26",
+      "round": null,
+      "matches": [
+        {
+          "id": 14061409,
+          "date": "2026-04-25",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Doncaster Rovers",
+            "short": "Doncaster",
+            "team_id": 84,
+            "goals": 1
+          },
+          "away": {
+            "name": "Stevenage",
+            "short": "Stevenage",
+            "team_id": 133,
+            "goals": 1
+          },
+          "settled_at": "2026-04-27"
+        },
+        {
+          "id": 14060391,
+          "date": "2026-04-25",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Stockport County",
+            "short": "Stockport",
+            "team_id": 10,
+            "goals": 3
+          },
+          "away": {
+            "name": "Peterborough United",
+            "short": "Peterborough",
+            "team_id": 54,
+            "goals": 1
+          },
+          "settled_at": "2026-04-27"
+        },
+        {
+          "id": 14061433,
+          "date": "2026-04-25",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Blackpool",
+            "short": "Blackpool",
+            "team_id": 67,
+            "goals": 1
+          },
+          "away": {
+            "name": "Leyton Orient",
+            "short": "Leyton",
+            "team_id": 83,
+            "goals": 0
+          },
+          "settled_at": "2026-04-27"
+        },
+        {
+          "id": 14061427,
+          "date": "2026-04-25",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Bradford City",
+            "short": "Bradford",
+            "team_id": 22,
+            "goals": 1
+          },
+          "away": {
+            "name": "Bolton Wanderers",
+            "short": "Bolton",
+            "team_id": 5,
+            "goals": 1
+          },
+          "settled_at": "2026-04-27"
+        },
+        {
+          "id": 14061421,
+          "date": "2026-04-25",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Burton Albion",
+            "short": "Burton",
+            "team_id": 134,
+            "goals": 1
+          },
+          "away": {
+            "name": "Exeter City",
+            "short": "Exeter",
+            "team_id": 86,
+            "goals": 1
+          },
+          "settled_at": "2026-04-27"
+        },
+        {
+          "id": 14061415,
+          "date": "2026-04-25",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Cardiff City",
+            "short": "Cardiff",
+            "team_id": 61,
+            "goals": 5
+          },
+          "away": {
+            "name": "Northampton Town",
+            "short": "Northampton",
+            "team_id": 57,
+            "goals": 1
+          },
+          "settled_at": "2026-04-27"
+        },
+        {
+          "id": 14061439,
+          "date": "2026-04-25",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Huddersfield Town",
+            "short": "Huddersfield",
+            "team_id": 59,
+            "goals": 1
+          },
+          "away": {
+            "name": "Mansfield Town",
+            "short": "Mansfield",
+            "team_id": 70,
+            "goals": 4
+          },
+          "settled_at": "2026-04-27"
+        },
+        {
+          "id": 14061403,
+          "date": "2026-04-25",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Lincoln City",
+            "short": "Lincoln",
+            "team_id": 92,
+            "goals": 4
+          },
+          "away": {
+            "name": "Wycombe Wanderers",
+            "short": "Wycombe",
+            "team_id": 62,
+            "goals": 3
+          },
+          "settled_at": "2026-04-27"
+        },
+        {
+          "id": 14061397,
+          "date": "2026-04-25",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Luton Town",
+            "short": "Luton",
+            "team_id": 72,
+            "goals": 2
+          },
+          "away": {
+            "name": "Barnsley",
+            "short": "Barnsley",
+            "team_id": 23,
+            "goals": 1
+          },
+          "settled_at": "2026-04-27"
+        },
+        {
+          "id": 14061391,
+          "date": "2026-04-25",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Plymouth Argyle",
+            "short": "Plymouth",
+            "team_id": 71,
+            "goals": 2
+          },
+          "away": {
+            "name": "Port Vale",
+            "short": "Port",
+            "team_id": 55,
+            "goals": 1
+          },
+          "settled_at": "2026-04-27"
+        },
+        {
+          "id": 14060281,
+          "date": "2026-04-25",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Rotherham United",
+            "short": "Rotherham",
+            "team_id": 13,
+            "goals": 1
+          },
+          "away": {
+            "name": "Reading",
+            "short": "Reading",
+            "team_id": 28,
+            "goals": 1
+          },
+          "settled_at": "2026-04-27"
+        },
+        {
+          "id": 14060390,
+          "date": "2026-04-25",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Wigan Athletic",
+            "short": "Wigan",
+            "team_id": 49,
+            "goals": 0
+          },
+          "away": {
+            "name": "AFC Wimbledon",
+            "short": "Wimbledon",
+            "team_id": 23957,
+            "goals": 1
+          },
+          "settled_at": "2026-04-27"
+        },
+        {
+          "id": 15794169,
+          "date": "2026-04-29",
+          "time": "04:15",
+          "status": "upcoming",
+          "home": {
+            "name": "Northampton Town",
+            "short": "Northampton",
+            "team_id": 57
+          },
+          "away": {
+            "name": "Barnsley",
+            "short": "Barnsley",
+            "team_id": 23
+          },
+          "predictions": {
+            "winner": {
+              "pick": "Barnsley",
+              "type": "away"
+            },
+            "btts": {
+              "pick": "Yes"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5
+            },
+            "ou_cards": {
+              "pick": "Over",
+              "line": 4.5
+            }
+          },
+          "odds": {
+            "home": 2.65,
+            "draw": 3.6,
+            "away": 2.3
+          },
+          "h2h_streaks": [
+            {
+              "team": "both",
+              "label": "Losses",
+              "value": "10"
+            },
+            {
+              "team": "both",
+              "label": "No wins",
+              "value": "15"
+            },
+            {
+              "team": "both",
+              "label": "No wins",
+              "value": "4"
+            },
+            {
+              "team": "both",
+              "label": "Without clean sheet",
+              "value": "14"
+            },
+            {
+              "team": "both",
+              "label": "Without clean sheet",
+              "value": "3"
+            },
+            {
+              "team": "both",
+              "label": "More than 2.5 goals",
+              "value": "6/7"
+            },
+            {
+              "team": "both",
+              "label": "Both teams scoring",
+              "value": "6/7"
+            },
+            {
+              "team": "both",
+              "label": "First to concede",
+              "value": "8/9"
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "8/10"
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "6/8"
+            }
+          ]
+        },
+        {
+          "id": 15840464,
+          "date": "2026-04-29",
+          "time": "04:15",
+          "status": "upcoming",
+          "home": {
+            "name": "Peterborough United",
+            "short": "Peterborough",
+            "team_id": 54
+          },
+          "away": {
+            "name": "Mansfield Town",
+            "short": "Mansfield",
+            "team_id": 70
+          },
+          "predictions": {
+            "winner": {
+              "pick": "Mansfield Town",
+              "type": "away"
+            },
+            "btts": {
+              "pick": "Yes"
+            },
+            "ou_goals": {
+              "pick": "Under",
+              "line": 2.5
+            },
+            "ou_cards": {
+              "pick": "Over",
+              "line": 4.5
+            }
+          },
+          "odds": {
+            "home": 2.45,
+            "draw": 3.6,
+            "away": 2.45
+          },
+          "h2h_streaks": [
+            {
+              "team": "both",
+              "label": "No losses",
+              "value": "4"
+            },
+            {
+              "team": "both",
+              "label": "No wins",
+              "value": "7"
+            },
+            {
+              "team": "both",
+              "label": "Without clean sheet",
+              "value": "7"
+            },
+            {
+              "team": "both",
+              "label": "Both teams scoring",
+              "value": "7/7"
+            },
+            {
+              "team": "both",
+              "label": "First to concede",
+              "value": "6/7"
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "5/5"
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "4/5"
+            },
+            {
+              "team": "both",
+              "label": "More than 10.5 corners",
+              "value": "5/7"
+            }
+          ]
+        },
+        {
+          "id": 15832959,
+          "date": "2026-04-29",
+          "time": "04:15",
+          "status": "upcoming",
+          "home": {
+            "name": "Stockport County",
+            "short": "Stockport",
+            "team_id": 10
+          },
+          "away": {
+            "name": "Port Vale",
+            "short": "Port",
+            "team_id": 55
+          },
+          "predictions": {
+            "winner": {
+              "pick": "Stockport County",
+              "type": "home"
+            },
+            "btts": {
+              "pick": "Yes"
+            },
+            "ou_goals": {
+              "pick": "Under",
+              "line": 2.5
+            },
+            "ou_cards": {
+              "pick": "Over",
+              "line": 4.5
+            }
+          },
+          "odds": {
+            "home": 1.37,
+            "draw": 4.75,
+            "away": 6.25
+          },
+          "h2h_streaks": [
+            {
+              "team": "both",
+              "label": "No wins",
+              "value": "3"
+            },
+            {
+              "team": "both",
+              "label": "Without clean sheet",
+              "value": "3"
+            },
+            {
+              "team": "both",
+              "label": "More than 2.5 goals",
+              "value": "6/8"
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "7/9"
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "8/9"
+            },
+            {
+              "team": "both",
+              "label": "More than 10.5 corners",
+              "value": "4/5"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 25,
+      "name": "League Two",
+      "season": "2025/26",
+      "round": null,
+      "matches": [
+        {
+          "id": 14060280,
+          "date": "2026-04-25",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Grimsby Town",
+            "short": "Grimsby",
+            "team_id": 18,
+            "goals": 4
+          },
+          "away": {
+            "name": "Swindon Town",
+            "short": "Swindon",
+            "team_id": 53,
+            "goals": 0
+          },
+          "settled_at": "2026-04-27"
+        },
+        {
+          "id": 14060289,
+          "date": "2026-04-25",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Milton Keynes Dons",
+            "short": "MK Dons",
+            "team_id": 4,
+            "goals": 3
+          },
+          "away": {
+            "name": "Tranmere Rovers",
+            "short": "Tranmere",
+            "team_id": 51,
+            "goals": 0
+          },
+          "settled_at": "2026-04-27"
+        },
+        {
+          "id": 14060292,
+          "date": "2026-04-25",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Accrington Stanley",
+            "short": "Accrington",
+            "team_id": 187,
+            "goals": 3
+          },
+          "away": {
+            "name": "Crawley Town",
+            "short": "Crawley",
+            "team_id": 4875,
+            "goals": 3
+          },
+          "settled_at": "2026-04-27"
+        },
+        {
+          "id": 14060283,
+          "date": "2026-04-25",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Barnet",
+            "short": "Barnet",
+            "team_id": 77,
+            "goals": 6
+          },
+          "away": {
+            "name": "Gillingham",
+            "short": "Gillingham",
+            "team_id": 20,
+            "goals": 2
+          },
+          "settled_at": "2026-04-27"
+        },
+        {
+          "id": 14060393,
+          "date": "2026-04-25",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Bristol Rovers",
+            "short": "Bristol",
+            "team_id": 76,
+            "goals": 4
+          },
+          "away": {
+            "name": "Cheltenham Town",
+            "short": "Cheltenham",
+            "team_id": 69,
+            "goals": 0
+          },
+          "settled_at": "2026-04-27"
+        },
+        {
+          "id": 14060279,
+          "date": "2026-04-25",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Cambridge United",
+            "short": "Cambridge",
+            "team_id": 63,
+            "goals": 3
+          },
+          "away": {
+            "name": "Barrow AFC",
+            "short": "Barrow",
+            "team_id": 97,
+            "goals": 0
+          },
+          "settled_at": "2026-04-27"
+        },
+        {
+          "id": 14060287,
+          "date": "2026-04-25",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Chesterfield",
+            "short": "Chesterfield",
+            "team_id": 68,
+            "goals": 2
+          },
+          "away": {
+            "name": "Crewe Alexandra",
+            "short": "Crewe",
+            "team_id": 19,
+            "goals": 0
+          },
+          "settled_at": "2026-04-27"
+        },
+        {
+          "id": 14060392,
+          "date": "2026-04-25",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Colchester United",
+            "short": "Colchester",
+            "team_id": 66,
+            "goals": 0
+          },
+          "away": {
+            "name": "Notts County",
+            "short": "Notts",
+            "team_id": 56,
+            "goals": 1
+          },
+          "settled_at": "2026-04-27"
+        },
+        {
+          "id": 14060288,
+          "date": "2026-04-25",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Newport County",
+            "short": "Newport",
+            "team_id": 79,
+            "goals": 3
+          },
+          "away": {
+            "name": "Oldham Athletic",
+            "short": "Oldham",
+            "team_id": 65,
+            "goals": 2
+          },
+          "settled_at": "2026-04-27"
+        },
+        {
+          "id": 14060298,
+          "date": "2026-04-25",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Shrewsbury Town",
+            "short": "Shrewsbury",
+            "team_id": 82,
+            "goals": 2
+          },
+          "away": {
+            "name": "Fleetwood Town",
+            "short": "Fleetwood",
+            "team_id": 23959,
+            "goals": 2
+          },
+          "settled_at": "2026-04-27"
+        },
+        {
+          "id": 14060299,
+          "date": "2026-04-25",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Walsall",
+            "short": "Walsall",
+            "team_id": 26,
+            "goals": 0
+          },
+          "away": {
+            "name": "Harrogate Town",
+            "short": "Harrogate",
+            "team_id": 159,
+            "goals": 2
+          },
+          "settled_at": "2026-04-27"
         }
       ]
     }
