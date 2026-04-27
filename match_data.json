@@ -881,28 +881,24 @@
             "winner": {
               "pick": "Arsenal",
               "type": "home",
-              "result": "hit",
-              "odds": 1.4
+              "result": "hit"
             },
             "btts": {
               "pick": "No",
               "actual_btts": false,
-              "result": "hit",
-              "odds": 1.8
+              "result": "hit"
             },
             "ou_goals": {
-              "pick": "Over",
+              "pick": "Under",
               "line": 2.5,
               "actual": 1,
-              "result": "miss",
-              "odds": 1.67
+              "result": "hit"
             },
             "ou_cards": {
-              "pick": "Under",
+              "pick": "Over",
               "line": 4.5,
               "actual": 4,
-              "result": "hit",
-              "odds": 1.73
+              "result": "miss"
             }
           },
           "id": 14025045,
@@ -1953,26 +1949,22 @@
             "winner": {
               "pick": "Rayo Vallecano",
               "type": "home",
-              "odds": 2.8,
               "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.7,
               "actual_btts": true,
               "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.91,
               "actual": 6,
               "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.67,
               "actual": 11,
               "result": "hit"
             }
@@ -1982,6 +1974,21 @@
             "draw": 3.3,
             "away": 2.45,
             "event_id": 10367025
+          },
+          "actuals": {
+            "home_corners": 6,
+            "away_corners": 4,
+            "corners_total": 10,
+            "home_fouls": 14,
+            "away_fouls": 12,
+            "fouls_total": 26,
+            "home_sot": 9,
+            "away_sot": 8,
+            "first_to_score": "away",
+            "first_scorer": "Mikel Oyarzabal",
+            "ht_home": 1,
+            "ht_away": 1,
+            "ht_winner": "draw"
           }
         },
         {
@@ -2048,26 +2055,22 @@
             "winner": {
               "pick": "Real Oviedo",
               "type": "home",
-              "odds": 2.25,
               "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.8,
               "actual_btts": true,
               "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 2.0,
               "actual": 3,
               "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 2.2,
               "actual": 3,
               "result": "miss"
             }
@@ -2077,6 +2080,21 @@
             "draw": 3.4,
             "away": 3.1,
             "event_id": 10367028
+          },
+          "actuals": {
+            "home_corners": 6,
+            "away_corners": 1,
+            "corners_total": 7,
+            "home_fouls": 21,
+            "away_fouls": 14,
+            "fouls_total": 35,
+            "home_sot": 3,
+            "away_sot": 4,
+            "first_to_score": "away",
+            "first_scorer": "Pedro Bigas",
+            "ht_home": 0,
+            "ht_away": 2,
+            "ht_winner": "away"
           }
         },
         {
@@ -2161,25 +2179,22 @@
             "winner": {
               "pick": "Osasuna",
               "type": "home",
-              "odds": 1.95,
               "result": "hit"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.91,
+              "actual_btts": true,
               "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 2.0,
               "actual": 3,
               "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 2.0,
               "actual": 4,
               "result": "miss"
             }
@@ -2190,7 +2205,22 @@
             "away": 4.0,
             "event_id": 10367037
           },
-          "settled_at": "2026-04-27"
+          "settled_at": "2026-04-27",
+          "actuals": {
+            "home_corners": 4,
+            "away_corners": 4,
+            "corners_total": 8,
+            "home_fouls": 11,
+            "away_fouls": 13,
+            "fouls_total": 24,
+            "home_sot": 7,
+            "away_sot": 2,
+            "first_to_score": "away",
+            "first_scorer": "Neal Maupay",
+            "ht_home": 0,
+            "ht_away": 0,
+            "ht_winner": "draw"
+          }
         },
         {
           "id": 14083248,
@@ -2280,25 +2310,22 @@
             "winner": {
               "pick": "Villarreal",
               "type": "home",
-              "odds": 1.9,
               "result": "hit"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.67,
+              "actual_btts": true,
               "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.8,
               "actual": 3,
               "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.91,
               "actual": 9,
               "result": "hit"
             }
@@ -2309,7 +2336,22 @@
             "away": 4.0,
             "event_id": 10367032
           },
-          "settled_at": "2026-04-27"
+          "settled_at": "2026-04-27",
+          "actuals": {
+            "home_corners": 7,
+            "away_corners": 5,
+            "corners_total": 12,
+            "home_fouls": 13,
+            "away_fouls": 16,
+            "fouls_total": 29,
+            "home_sot": 4,
+            "away_sot": 3,
+            "first_to_score": "home",
+            "first_scorer": "Gerard Moreno",
+            "ht_home": 2,
+            "ht_away": 0,
+            "ht_winner": "home"
+          }
         },
         {
           "date": "2026-04-26",
@@ -2331,28 +2373,24 @@
             "winner": {
               "pick": "Valencia",
               "type": "home",
-              "result": "hit",
-              "odds": 2.25
+              "result": "hit"
             },
             "btts": {
               "pick": "Yes",
               "actual_btts": true,
-              "result": "hit",
-              "odds": 1.8
+              "result": "hit"
             },
             "ou_goals": {
-              "pick": "Over",
+              "pick": "Under",
               "line": 2.5,
               "actual": 3,
-              "result": "hit",
-              "odds": 2.0
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
               "actual": 4,
-              "result": "miss",
-              "odds": 1.73
+              "result": "miss"
             }
           },
           "id": 14083255,
@@ -2429,28 +2467,22 @@
             "winner": {
               "pick": "Atl. Madrid",
               "type": "home",
-              "result": "hit",
-              "odds": 1.91
+              "result": "hit"
             },
             "btts": {
-              "pick": "No",
+              "pick": "Yes",
               "actual_btts": true,
-              "result": "miss",
-              "odds": 2.1
+              "result": "hit"
             },
             "ou_goals": {
-              "pick": "Under",
+              "pick": "Over",
               "line": 2.5,
               "actual": 5,
-              "result": "miss",
-              "odds": 2.0
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "actual": 0,
-              "result": "miss",
-              "odds": 1.83
+              "line": 4.5
             }
           },
           "id": 14083242,
@@ -3793,26 +3825,22 @@
             "winner": {
               "pick": "VfB Stuttgart",
               "type": "home",
-              "odds": 1.53,
               "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.53,
               "actual_btts": true,
               "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.44,
               "actual": 2,
               "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.73,
               "actual": 1,
               "result": "miss"
             }
@@ -3822,6 +3850,21 @@
             "draw": 4.33,
             "away": 5.5,
             "event_id": 10366615
+          },
+          "actuals": {
+            "home_corners": 14,
+            "away_corners": 2,
+            "corners_total": 16,
+            "home_fouls": 8,
+            "away_fouls": 10,
+            "fouls_total": 18,
+            "home_sot": 4,
+            "away_sot": 3,
+            "first_to_score": "away",
+            "first_scorer": "Jens Stage",
+            "ht_home": 0,
+            "ht_away": 1,
+            "ht_winner": "away"
           }
         },
         {
@@ -3888,25 +3931,22 @@
             "winner": {
               "pick": "Borussia Dortmund",
               "type": "home",
-              "odds": 1.4,
               "result": "hit"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.8,
+              "actual_btts": false,
               "result": "miss"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.53,
               "actual": 4,
               "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.8,
               "actual": 1,
               "result": "miss"
             }
@@ -3917,7 +3957,22 @@
             "away": 7.0,
             "event_id": 10366659
           },
-          "settled_at": "2026-04-27"
+          "settled_at": "2026-04-27",
+          "actuals": {
+            "home_corners": 5,
+            "away_corners": 0,
+            "corners_total": 5,
+            "home_fouls": 19,
+            "away_fouls": 10,
+            "fouls_total": 29,
+            "home_sot": 5,
+            "away_sot": 4,
+            "first_to_score": "home",
+            "first_scorer": "Maximilian Beier",
+            "ht_home": 3,
+            "ht_away": 0,
+            "ht_winner": "home"
+          }
         },
         {
           "date": "2026-04-26",
@@ -3937,30 +3992,26 @@
           },
           "predictions": {
             "winner": {
-              "pick": "Hoffenheim",
-              "type": "away",
-              "result": "hit",
-              "odds": 1.65
+              "pick": "HSV",
+              "type": "home",
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
               "actual_btts": true,
-              "result": "hit",
-              "odds": 1.5
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
               "actual": 3,
-              "result": "hit",
-              "odds": 1.44
+              "result": "hit"
             },
             "ou_cards": {
-              "pick": "Under",
+              "pick": "Over",
               "line": 4.5,
               "actual": 6,
-              "result": "miss",
-              "odds": 1.67
+              "result": "hit"
             }
           },
           "id": 14065237,
@@ -4665,26 +4716,22 @@
             "winner": {
               "pick": "Lorient",
               "type": "home",
-              "odds": 1.91,
               "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.67,
               "actual_btts": true,
               "result": "hit"
             },
             "ou_goals": {
               "pick": "Under",
               "line": 2.5,
-              "odds": 2.1,
               "actual": 5,
               "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.67,
               "actual": 3,
               "result": "miss"
             }
@@ -4694,6 +4741,21 @@
             "draw": 3.6,
             "away": 3.9,
             "event_id": 10368077
+          },
+          "actuals": {
+            "home_corners": 9,
+            "away_corners": 7,
+            "corners_total": 16,
+            "home_fouls": 9,
+            "away_fouls": 16,
+            "fouls_total": 25,
+            "home_sot": 6,
+            "away_sot": 5,
+            "first_to_score": "home",
+            "first_scorer": "Noah Cadiou",
+            "ht_home": 1,
+            "ht_away": 0,
+            "ht_winner": "home"
           }
         },
         {
@@ -4784,25 +4846,22 @@
             "winner": {
               "pick": "Le Havre",
               "type": "home",
-              "odds": 1.57,
               "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.95,
+              "actual_btts": true,
               "result": "hit"
             },
             "ou_goals": {
               "pick": "Under",
               "line": 2.5,
-              "odds": 1.91,
               "actual": 8,
               "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 2.2,
               "actual": 4,
               "result": "miss"
             }
@@ -4813,7 +4872,22 @@
             "away": 5.5,
             "event_id": 10368069
           },
-          "settled_at": "2026-04-27"
+          "settled_at": "2026-04-27",
+          "actuals": {
+            "home_corners": 6,
+            "away_corners": 4,
+            "corners_total": 10,
+            "home_fouls": 12,
+            "away_fouls": 12,
+            "fouls_total": 24,
+            "home_sot": 5,
+            "away_sot": 5,
+            "first_to_score": "home",
+            "first_scorer": "Ally Samatta",
+            "ht_home": 2,
+            "ht_away": 2,
+            "ht_winner": "draw"
+          }
         },
         {
           "id": 14167978,
@@ -4903,25 +4977,22 @@
             "winner": {
               "pick": "Paris FC",
               "type": "home",
-              "odds": 4.4,
               "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.75,
+              "actual_btts": false,
               "result": "miss"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.8,
               "actual": 1,
               "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.67,
               "actual": 10,
               "result": "hit"
             }
@@ -4932,7 +5003,22 @@
             "away": 1.8,
             "event_id": 10368083
           },
-          "settled_at": "2026-04-27"
+          "settled_at": "2026-04-27",
+          "actuals": {
+            "home_corners": 7,
+            "away_corners": 3,
+            "corners_total": 10,
+            "home_fouls": 12,
+            "away_fouls": 10,
+            "fouls_total": 22,
+            "home_sot": 2,
+            "away_sot": 4,
+            "first_to_score": "away",
+            "first_scorer": "Matías Fernández",
+            "ht_home": 0,
+            "ht_away": 1,
+            "ht_winner": "away"
+          }
         },
         {
           "id": 14167975,
@@ -5016,25 +5102,22 @@
             "winner": {
               "pick": "Stade Rennais",
               "type": "home",
-              "odds": 1.36,
               "result": "hit"
             },
             "btts": {
               "pick": "No",
-              "odds": 1.95,
+              "actual_btts": true,
               "result": "miss"
             },
             "ou_goals": {
               "pick": "Under",
               "line": 2.5,
-              "odds": 2.2,
               "actual": 3,
               "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.91,
               "actual": 5,
               "result": "hit"
             }
@@ -5045,7 +5128,22 @@
             "away": 7.5,
             "event_id": 10368078
           },
-          "settled_at": "2026-04-27"
+          "settled_at": "2026-04-27",
+          "actuals": {
+            "home_corners": 6,
+            "away_corners": 8,
+            "corners_total": 14,
+            "home_fouls": 15,
+            "away_fouls": 15,
+            "fouls_total": 30,
+            "home_sot": 5,
+            "away_sot": 8,
+            "first_to_score": "home",
+            "first_scorer": "Esteban Lepaul",
+            "ht_home": 1,
+            "ht_away": 1,
+            "ht_winner": "draw"
+          }
         },
         {
           "id": 14167983,
@@ -5099,25 +5197,22 @@
             "winner": {
               "pick": "Olympique de Marseille",
               "type": "home",
-              "odds": 1.57,
               "result": "miss"
             },
             "btts": {
               "pick": "No",
-              "odds": 2.25,
+              "actual_btts": true,
               "result": "miss"
             },
             "ou_goals": {
               "pick": "Under",
               "line": 2.5,
-              "odds": 2.75,
               "actual": 2,
               "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.83,
               "actual": 5,
               "result": "hit"
             }
@@ -5128,7 +5223,22 @@
             "away": 5.0,
             "event_id": 10368086
           },
-          "settled_at": "2026-04-27"
+          "settled_at": "2026-04-27",
+          "actuals": {
+            "home_corners": 7,
+            "away_corners": 1,
+            "corners_total": 8,
+            "home_fouls": 14,
+            "away_fouls": 7,
+            "fouls_total": 21,
+            "home_sot": 6,
+            "away_sot": 2,
+            "first_to_score": "home",
+            "first_scorer": "Pierre-Emile Højbjerg",
+            "ht_home": 0,
+            "ht_away": 0,
+            "ht_winner": "draw"
+          }
         },
         {
           "id": 14167976,
@@ -5147,7 +5257,98 @@
             "team_id": 1644,
             "goals": 3
           },
-          "settled_at": "2026-04-27"
+          "settled_at": "2026-04-27",
+          "odds": {
+            "home": 10.0,
+            "draw": 6.0,
+            "away": 1.25
+          },
+          "h2h_streaks": [
+            {
+              "team": "both",
+              "label": "No wins",
+              "value": "5"
+            },
+            {
+              "team": "both",
+              "label": "More than 2.5 goals",
+              "value": "7/9"
+            },
+            {
+              "team": "both",
+              "label": "Less than 2.5 goals",
+              "value": "8/10"
+            },
+            {
+              "team": "both",
+              "label": "First to score",
+              "value": "7/8"
+            },
+            {
+              "team": "both",
+              "label": "First to concede",
+              "value": "4/5"
+            },
+            {
+              "team": "both",
+              "label": "First half winner",
+              "value": "6/8"
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "7/9"
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "8/9"
+            },
+            {
+              "team": "both",
+              "label": "Less than 10.5 corners",
+              "value": "8/10"
+            }
+          ],
+          "actuals": {
+            "home_corners": 5,
+            "away_corners": 4,
+            "corners_total": 9,
+            "home_fouls": 9,
+            "away_fouls": 3,
+            "fouls_total": 12,
+            "home_sot": 1,
+            "away_sot": 10,
+            "first_to_score": "away",
+            "first_scorer": "Kang-in Lee",
+            "ht_home": 0,
+            "ht_away": 2,
+            "ht_winner": "away"
+          },
+          "predictions": {
+            "winner": {
+              "pick": "Paris Saint-Germain",
+              "type": "away",
+              "result": "hit"
+            },
+            "btts": {
+              "pick": "No",
+              "actual_btts": false,
+              "result": "hit"
+            },
+            "ou_goals": {
+              "pick": "Under",
+              "line": 2.5,
+              "actual": 3,
+              "result": "miss"
+            },
+            "ou_cards": {
+              "pick": "Over",
+              "line": 4.5,
+              "actual": 3,
+              "result": "miss"
+            }
+          }
         },
         {
           "id": 14167981,
@@ -5166,7 +5367,88 @@
             "team_id": 1653,
             "goals": 2
           },
-          "settled_at": "2026-04-27"
+          "settled_at": "2026-04-27",
+          "odds": {
+            "home": 4.33,
+            "draw": 4.1,
+            "away": 1.73
+          },
+          "h2h_streaks": [
+            {
+              "team": "both",
+              "label": "Losses",
+              "value": "4"
+            },
+            {
+              "team": "both",
+              "label": "Without clean sheet",
+              "value": "4"
+            },
+            {
+              "team": "both",
+              "label": "More than 2.5 goals",
+              "value": "5/6"
+            },
+            {
+              "team": "both",
+              "label": "Both teams scoring",
+              "value": "5/6"
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "5/6"
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "5/7"
+            },
+            {
+              "team": "both",
+              "label": "Less than 10.5 corners",
+              "value": "6/7"
+            }
+          ],
+          "actuals": {
+            "home_corners": 4,
+            "away_corners": 2,
+            "corners_total": 6,
+            "home_fouls": 17,
+            "away_fouls": 10,
+            "fouls_total": 27,
+            "home_sot": 5,
+            "away_sot": 5,
+            "first_to_score": "away",
+            "first_scorer": "Jordan Teze",
+            "ht_home": 0,
+            "ht_away": 2,
+            "ht_winner": "away"
+          },
+          "predictions": {
+            "winner": {
+              "pick": "AS Monaco",
+              "type": "away",
+              "result": "miss"
+            },
+            "btts": {
+              "pick": "Yes",
+              "actual_btts": true,
+              "result": "hit"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "actual": 4,
+              "result": "hit"
+            },
+            "ou_cards": {
+              "pick": "Over",
+              "line": 4.5,
+              "actual": 5,
+              "result": "hit"
+            }
+          }
         },
         {
           "id": 14167985,
@@ -5775,19 +6057,16 @@
             "winner": {
               "pick": "FC Utrecht",
               "type": "away",
-              "odds": 2.2,
               "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.62,
               "actual_btts": false,
               "result": "miss"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.75,
               "actual": 5,
               "result": "hit"
             },
@@ -5803,6 +6082,21 @@
             "draw": 3.4,
             "away": 2.2,
             "event_id": 10342066
+          },
+          "actuals": {
+            "home_corners": 3,
+            "away_corners": 2,
+            "corners_total": 5,
+            "home_fouls": 12,
+            "away_fouls": 8,
+            "fouls_total": 20,
+            "home_sot": 9,
+            "away_sot": 3,
+            "first_to_score": "home",
+            "first_scorer": "Noah Naujoks",
+            "ht_home": 2,
+            "ht_away": 0,
+            "ht_winner": "home"
           }
         },
         {
@@ -5886,19 +6180,16 @@
             "winner": {
               "pick": "FC Volendam",
               "type": "away",
-              "odds": 2.88,
               "result": "hit"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.57,
               "actual_btts": false,
               "result": "miss"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.62,
               "actual": 2,
               "result": "miss"
             },
@@ -5914,6 +6205,21 @@
             "draw": 3.75,
             "away": 2.88,
             "event_id": 10341864
+          },
+          "actuals": {
+            "home_corners": 5,
+            "away_corners": 9,
+            "corners_total": 14,
+            "home_fouls": 17,
+            "away_fouls": 11,
+            "fouls_total": 28,
+            "home_sot": 4,
+            "away_sot": 7,
+            "first_to_score": "away",
+            "first_scorer": "Anthony Descotte",
+            "ht_home": 0,
+            "ht_away": 0,
+            "ht_winner": "draw"
           }
         },
         {
@@ -5933,7 +6239,103 @@
             "team_id": 2951,
             "goals": 1
           },
-          "settled_at": "2026-04-27"
+          "settled_at": "2026-04-27",
+          "odds": {
+            "home": 1.7,
+            "draw": 4.33,
+            "away": 4.1
+          },
+          "h2h_streaks": [
+            {
+              "team": "both",
+              "label": "No losses",
+              "value": "5"
+            },
+            {
+              "team": "both",
+              "label": "No losses",
+              "value": "5"
+            },
+            {
+              "team": "both",
+              "label": "No wins",
+              "value": "3"
+            },
+            {
+              "team": "both",
+              "label": "No goals conceded",
+              "value": "3"
+            },
+            {
+              "team": "both",
+              "label": "Both teams scoring",
+              "value": "4/5"
+            },
+            {
+              "team": "both",
+              "label": "First to score",
+              "value": "7/9"
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "5/7"
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "9/9"
+            },
+            {
+              "team": "both",
+              "label": "More than 10.5 corners",
+              "value": "5/6"
+            },
+            {
+              "team": "both",
+              "label": "Less than 10.5 corners",
+              "value": "5/7"
+            }
+          ],
+          "actuals": {
+            "home_corners": 3,
+            "away_corners": 3,
+            "corners_total": 6,
+            "home_fouls": 10,
+            "away_fouls": 15,
+            "fouls_total": 25,
+            "home_sot": 4,
+            "away_sot": 2,
+            "first_to_score": "home",
+            "first_scorer": "Jordan Bos",
+            "ht_home": 2,
+            "ht_away": 0,
+            "ht_winner": "home"
+          },
+          "predictions": {
+            "winner": {
+              "pick": "FC Groningen",
+              "type": "away",
+              "result": "miss"
+            },
+            "btts": {
+              "pick": "Yes",
+              "actual_btts": true,
+              "result": "hit"
+            },
+            "ou_goals": {
+              "pick": "Under",
+              "line": 2.5,
+              "actual": 4,
+              "result": "miss"
+            },
+            "ou_cards": {
+              "pick": "Over",
+              "line": 4.5,
+              "actual": 2,
+              "result": "miss"
+            }
+          }
         },
         {
           "id": 14028542,
@@ -5952,7 +6354,103 @@
             "team_id": 2957,
             "goals": 1
           },
-          "settled_at": "2026-04-27"
+          "settled_at": "2026-04-27",
+          "odds": {
+            "home": 1.44,
+            "draw": 5.25,
+            "away": 6.0
+          },
+          "h2h_streaks": [
+            {
+              "team": "both",
+              "label": "No wins",
+              "value": "3"
+            },
+            {
+              "team": "both",
+              "label": "Without clean sheet",
+              "value": "3"
+            },
+            {
+              "team": "both",
+              "label": "Without clean sheet",
+              "value": "19"
+            },
+            {
+              "team": "both",
+              "label": "More than 2.5 goals",
+              "value": "10/10"
+            },
+            {
+              "team": "both",
+              "label": "More than 2.5 goals",
+              "value": "8/10"
+            },
+            {
+              "team": "both",
+              "label": "Both teams scoring",
+              "value": "7/9"
+            },
+            {
+              "team": "both",
+              "label": "Both teams scoring",
+              "value": "9/10"
+            },
+            {
+              "team": "both",
+              "label": "First half winner",
+              "value": "5/6"
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "8/10"
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "10/10"
+            }
+          ],
+          "actuals": {
+            "home_corners": 7,
+            "away_corners": 0,
+            "corners_total": 7,
+            "home_fouls": 10,
+            "away_fouls": 6,
+            "fouls_total": 16,
+            "home_sot": 5,
+            "away_sot": 7,
+            "first_to_score": "away",
+            "first_scorer": "Philip Brittijn",
+            "ht_home": 1,
+            "ht_away": 1,
+            "ht_winner": "draw"
+          },
+          "predictions": {
+            "winner": {
+              "pick": "SC Heerenveen",
+              "type": "home",
+              "result": "hit"
+            },
+            "btts": {
+              "pick": "Yes",
+              "actual_btts": true,
+              "result": "hit"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "actual": 3,
+              "result": "hit"
+            },
+            "ou_cards": {
+              "pick": "Over",
+              "line": 4.5,
+              "actual": 4,
+              "result": "miss"
+            }
+          }
         },
         {
           "id": 14028527,
@@ -5971,7 +6469,78 @@
             "team_id": 2953,
             "goals": 2
           },
-          "settled_at": "2026-04-27"
+          "settled_at": "2026-04-27",
+          "odds": {
+            "home": 3.5,
+            "draw": 3.9,
+            "away": 1.95
+          },
+          "h2h_streaks": [
+            {
+              "team": "both",
+              "label": "No wins",
+              "value": "6"
+            },
+            {
+              "team": "both",
+              "label": "First to concede",
+              "value": "5/6"
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "4/5"
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "5/6"
+            },
+            {
+              "team": "both",
+              "label": "More than 10.5 corners",
+              "value": "5/6"
+            }
+          ],
+          "actuals": {
+            "home_corners": 11,
+            "away_corners": 2,
+            "corners_total": 13,
+            "home_fouls": 6,
+            "away_fouls": 11,
+            "fouls_total": 17,
+            "home_sot": 3,
+            "away_sot": 6,
+            "first_to_score": "away",
+            "first_scorer": "Oscar Gloukh",
+            "ht_home": 0,
+            "ht_away": 2,
+            "ht_winner": "away"
+          },
+          "predictions": {
+            "winner": {
+              "pick": "AFC Ajax",
+              "type": "away",
+              "result": "hit"
+            },
+            "btts": {
+              "pick": "Yes",
+              "actual_btts": false,
+              "result": "miss"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "actual": 2,
+              "result": "miss"
+            },
+            "ou_cards": {
+              "pick": "Over",
+              "line": 4.5,
+              "actual": 2,
+              "result": "miss"
+            }
+          }
         },
         {
           "id": 14028538,
@@ -5990,7 +6559,108 @@
             "team_id": 2962,
             "goals": 1
           },
-          "settled_at": "2026-04-27"
+          "settled_at": "2026-04-27",
+          "odds": {
+            "home": 1.65,
+            "draw": 4.33,
+            "away": 4.75
+          },
+          "h2h_streaks": [
+            {
+              "team": "both",
+              "label": "Wins",
+              "value": "3"
+            },
+            {
+              "team": "both",
+              "label": "Without clean sheet",
+              "value": "5"
+            },
+            {
+              "team": "both",
+              "label": "More than 2.5 goals",
+              "value": "4/5"
+            },
+            {
+              "team": "both",
+              "label": "More than 2.5 goals",
+              "value": "6/8"
+            },
+            {
+              "team": "both",
+              "label": "Both teams scoring",
+              "value": "4/5"
+            },
+            {
+              "team": "both",
+              "label": "Both teams scoring",
+              "value": "8/10"
+            },
+            {
+              "team": "both",
+              "label": "First to score",
+              "value": "6/8"
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "9/10"
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "7/9"
+            },
+            {
+              "team": "both",
+              "label": "Less than 10.5 corners",
+              "value": "7/9"
+            },
+            {
+              "team": "both",
+              "label": "Less than 10.5 corners",
+              "value": "4/5"
+            }
+          ],
+          "actuals": {
+            "home_corners": 3,
+            "away_corners": 9,
+            "corners_total": 12,
+            "home_fouls": 6,
+            "away_fouls": 16,
+            "fouls_total": 22,
+            "home_sot": 8,
+            "away_sot": 6,
+            "first_to_score": "home",
+            "first_scorer": "Sondre Ørjasæter",
+            "ht_home": 1,
+            "ht_away": 1,
+            "ht_winner": "draw"
+          },
+          "predictions": {
+            "winner": {
+              "pick": "FC Twente",
+              "type": "home",
+              "result": "miss"
+            },
+            "btts": {
+              "pick": "Yes",
+              "actual_btts": true,
+              "result": "hit"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "actual": 2,
+              "result": "miss"
+            },
+            "ou_cards": {
+              "pick": "Over",
+              "line": 4.5,
+              "actual": 3,
+              "result": "miss"
+            }
+          }
         },
         {
           "id": 16072779,
@@ -7103,30 +7773,42 @@
             "winner": {
               "pick": "Real Salt Lake",
               "type": "away",
-              "odds": 3.0,
               "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.5,
+              "actual_btts": true,
               "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.53,
               "actual": 3,
               "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.8,
               "actual": 8,
               "result": "hit"
             }
           },
-          "settled_at": "2026-04-27"
+          "settled_at": "2026-04-27",
+          "actuals": {
+            "home_corners": 7,
+            "away_corners": 0,
+            "corners_total": 7,
+            "home_fouls": 16,
+            "away_fouls": 14,
+            "fouls_total": 30,
+            "home_sot": 7,
+            "away_sot": 8,
+            "first_to_score": "home",
+            "first_scorer": "Marco Reus",
+            "ht_home": 1,
+            "ht_away": 1,
+            "ht_winner": "draw"
+          }
         },
         {
           "id": 15171502,
@@ -7174,26 +7856,22 @@
             "winner": {
               "pick": "Seattle Sounders FC",
               "type": "home",
-              "odds": 1.61,
               "result": "hit"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.67,
               "actual_btts": true,
               "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.67,
               "actual": 3,
               "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 2.2,
               "actual": 5,
               "result": "hit"
             }
@@ -7297,26 +7975,22 @@
             "winner": {
               "pick": "Vancouver Whitecaps",
               "type": "home",
-              "odds": 1.33,
               "result": "hit"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.62,
               "actual_btts": true,
               "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.4,
               "actual": 4,
               "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 2.1,
               "actual": 2,
               "result": "miss"
             }
@@ -7420,26 +8094,22 @@
             "winner": {
               "pick": "Houston Dynamo",
               "type": "away",
-              "odds": 2.25,
               "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.62,
               "actual_btts": false,
               "result": "miss"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.75,
               "actual": 2,
               "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.83,
               "actual": 6,
               "result": "hit"
             }
@@ -7555,26 +8225,22 @@
             "winner": {
               "pick": "Chicago Fire",
               "type": "home",
-              "odds": 1.25,
               "result": "hit"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.67,
               "actual_btts": false,
               "result": "miss"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.33,
               "actual": 5,
               "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.73,
               "actual": 1,
               "result": "miss"
             }
@@ -7672,26 +8338,22 @@
             "winner": {
               "pick": "Nashville SC",
               "type": "home",
-              "odds": 1.56,
               "result": "hit"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.8,
               "actual_btts": true,
               "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.7,
               "actual": 6,
               "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 2.1,
               "actual": 3,
               "result": "miss"
             }
@@ -7771,26 +8433,22 @@
             "winner": {
               "pick": "San Jose Earthquakes",
               "type": "away",
-              "odds": 2.55,
               "result": "hit"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.5,
               "actual_btts": true,
               "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.57,
               "actual": 5,
               "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 2.0,
               "actual": 5,
               "result": "hit"
             }
@@ -7906,26 +8564,22 @@
             "winner": {
               "pick": "Portland Timbers",
               "type": "away",
-              "odds": 4.0,
               "result": "hit"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.44,
               "actual_btts": true,
               "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.4,
               "actual": 3,
               "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.67,
               "actual": 3,
               "result": "miss"
             }
@@ -7964,7 +8618,113 @@
             "team_id": 243211,
             "goals": 2
           },
-          "settled_at": "2026-04-27"
+          "settled_at": "2026-04-27",
+          "odds": {
+            "home": 1.79,
+            "draw": 3.7,
+            "away": 4.2
+          },
+          "h2h_streaks": [
+            {
+              "team": "both",
+              "label": "No losses",
+              "value": "7"
+            },
+            {
+              "team": "both",
+              "label": "No wins",
+              "value": "3"
+            },
+            {
+              "team": "both",
+              "label": "Without clean sheet",
+              "value": "6"
+            },
+            {
+              "team": "both",
+              "label": "Without clean sheet",
+              "value": "5"
+            },
+            {
+              "team": "both",
+              "label": "More than 2.5 goals",
+              "value": "4/5"
+            },
+            {
+              "team": "both",
+              "label": "Both teams scoring",
+              "value": "6/6"
+            },
+            {
+              "team": "both",
+              "label": "First to concede",
+              "value": "4/5"
+            },
+            {
+              "team": "both",
+              "label": "First to concede",
+              "value": "4/5"
+            },
+            {
+              "team": "both",
+              "label": "More than 4.5 cards",
+              "value": "4/5"
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "5/6"
+            },
+            {
+              "team": "both",
+              "label": "More than 10.5 corners",
+              "value": "6/7"
+            },
+            {
+              "team": "both",
+              "label": "More than 10.5 corners",
+              "value": "4/5"
+            }
+          ],
+          "actuals": {
+            "home_corners": 8,
+            "away_corners": 7,
+            "corners_total": 15,
+            "home_fouls": 10,
+            "away_fouls": 15,
+            "fouls_total": 25,
+            "home_sot": 2,
+            "away_sot": 2,
+            "first_to_score": "away",
+            "first_scorer": "Aleksey Miranchuk",
+            "ht_home": 0,
+            "ht_away": 0,
+            "ht_winner": "draw"
+          },
+          "predictions": {
+            "winner": {
+              "pick": "Toronto FC",
+              "type": "home",
+              "result": "miss"
+            },
+            "btts": {
+              "pick": "Yes",
+              "actual_btts": true,
+              "result": "hit"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "actual": 3,
+              "result": "hit"
+            },
+            "ou_cards": {
+              "pick": "Over",
+              "line": 4.5,
+              "actual": 2,
+              "result": "miss"
+            }
+          }
         },
         {
           "id": 15171494,
@@ -7983,7 +8743,103 @@
             "team_id": 187643,
             "goals": 0
           },
-          "settled_at": "2026-04-27"
+          "settled_at": "2026-04-27",
+          "odds": {
+            "home": 2.82,
+            "draw": 3.5,
+            "away": 2.35
+          },
+          "h2h_streaks": [
+            {
+              "team": "both",
+              "label": "Without clean sheet",
+              "value": "5"
+            },
+            {
+              "team": "both",
+              "label": "Without clean sheet",
+              "value": "7"
+            },
+            {
+              "team": "both",
+              "label": "More than 2.5 goals",
+              "value": "10/10"
+            },
+            {
+              "team": "both",
+              "label": "More than 2.5 goals",
+              "value": "7/9"
+            },
+            {
+              "team": "both",
+              "label": "Both teams scoring",
+              "value": "4/5"
+            },
+            {
+              "team": "both",
+              "label": "Both teams scoring",
+              "value": "6/7"
+            },
+            {
+              "team": "both",
+              "label": "More than 4.5 cards",
+              "value": "4/5"
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "4/5"
+            },
+            {
+              "team": "both",
+              "label": "Less than 10.5 corners",
+              "value": "4/5"
+            },
+            {
+              "team": "both",
+              "label": "Less than 10.5 corners",
+              "value": "8/10"
+            }
+          ],
+          "actuals": {
+            "home_corners": 3,
+            "away_corners": 1,
+            "corners_total": 4,
+            "home_fouls": 18,
+            "away_fouls": 15,
+            "fouls_total": 33,
+            "home_sot": 5,
+            "away_sot": 2,
+            "first_to_score": "home",
+            "first_scorer": "Prince-Osei Owusu",
+            "ht_home": 1,
+            "ht_away": 0,
+            "ht_winner": "home"
+          },
+          "predictions": {
+            "winner": {
+              "pick": "CF Montréal",
+              "type": "home",
+              "result": "hit"
+            },
+            "btts": {
+              "pick": "Yes",
+              "actual_btts": false,
+              "result": "miss"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "actual": 1,
+              "result": "miss"
+            },
+            "ou_cards": {
+              "pick": "Over",
+              "line": 4.5,
+              "actual": 10,
+              "result": "hit"
+            }
+          }
         },
         {
           "id": 15171503,
@@ -8002,7 +8858,88 @@
             "team_id": 274650,
             "goals": 1
           },
-          "settled_at": "2026-04-27"
+          "settled_at": "2026-04-27",
+          "odds": {
+            "home": 2.65,
+            "draw": 3.4,
+            "away": 2.5
+          },
+          "h2h_streaks": [
+            {
+              "team": "both",
+              "label": "Wins",
+              "value": "5"
+            },
+            {
+              "team": "both",
+              "label": "No losses",
+              "value": "6"
+            },
+            {
+              "team": "both",
+              "label": "No wins",
+              "value": "4"
+            },
+            {
+              "team": "both",
+              "label": "No goals conceded",
+              "value": "3"
+            },
+            {
+              "team": "both",
+              "label": "More than 4.5 cards",
+              "value": "7/8"
+            },
+            {
+              "team": "both",
+              "label": "Less than 10.5 corners",
+              "value": "5/5"
+            },
+            {
+              "team": "both",
+              "label": "Less than 10.5 corners",
+              "value": "4/5"
+            }
+          ],
+          "actuals": {
+            "home_corners": 11,
+            "away_corners": 2,
+            "corners_total": 13,
+            "home_fouls": 11,
+            "away_fouls": 9,
+            "fouls_total": 20,
+            "home_sot": 4,
+            "away_sot": 7,
+            "first_to_score": "away",
+            "first_scorer": "David Martínez Morales",
+            "ht_home": 0,
+            "ht_away": 1,
+            "ht_winner": "away"
+          },
+          "predictions": {
+            "winner": {
+              "pick": "Minnesota United",
+              "type": "home",
+              "result": "miss"
+            },
+            "btts": {
+              "pick": "Yes",
+              "actual_btts": false,
+              "result": "miss"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "actual": 1,
+              "result": "miss"
+            },
+            "ou_cards": {
+              "pick": "Over",
+              "line": 4.5,
+              "actual": 4,
+              "result": "miss"
+            }
+          }
         },
         {
           "id": 15171510,
@@ -10099,26 +11036,22 @@
             "winner": {
               "pick": "Coventry City",
               "type": "home",
-              "odds": 2.0,
               "result": "hit"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.62,
               "actual_btts": true,
               "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.73,
               "actual": 4,
               "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 2.2,
               "actual": 4,
               "result": "miss"
             }
@@ -10128,6 +11061,21 @@
             "draw": 3.7,
             "away": 3.4,
             "event_id": 10401488
+          },
+          "actuals": {
+            "home_corners": 5,
+            "away_corners": 4,
+            "corners_total": 9,
+            "home_fouls": 6,
+            "away_fouls": 18,
+            "fouls_total": 24,
+            "home_sot": 6,
+            "away_sot": 2,
+            "first_to_score": "home",
+            "first_scorer": "Brandon Thomas-Asante",
+            "ht_home": 1,
+            "ht_away": 1,
+            "ht_winner": "draw"
           }
         },
         {
