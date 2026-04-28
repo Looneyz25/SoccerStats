@@ -24,10 +24,15 @@ from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 try:
-    from zoneinfo import ZoneInfo
-    ADL = ZoneInfo("Australia/Adelaide")
+    from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+    try:
+        ADL = ZoneInfo("Australia/Adelaide")
+    except ZoneInfoNotFoundError:
+        # Windows ships no IANA data; fall back to fixed ACST offset.
+        # User can pip install tzdata for DST-aware behaviour.
+        ADL = timezone(timedelta(hours=9, minutes=30))
 except ImportError:
-    ADL = timezone(timedelta(hours=9, minutes=30))  # ACST fallback
+    ADL = timezone(timedelta(hours=9, minutes=30))
 
 from curl_cffi import requests
 
