@@ -67,7 +67,7 @@ def fetch(path, retries=2):
     for i in range(retries + 1):
         try:
             r = requests.get(f"https://api.sofascore.com{path}", impersonate="chrome120", timeout=15)
-            if r.status_code == 404: return None
+            if r.status_code in (403, 404): return None
             r.raise_for_status()
             return r.json()
         except Exception as e:
@@ -128,19 +128,37 @@ def phase_0_validate(store):
     by_name = {L["name"]: L for L in store["leagues"]}
 
     # Per-match validation + re-date. Cache the event fetch for later phases.
+    # Parallelized to fit within tight runtime budgets.
     drops_no_id = 0; drops_foreign = 0; moved = 0; re_dated = 0
     cache = {}
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    all_eids = []
+    for L in store["leagues"]:
+        for m in L["matches"]:
+            eid = m.get("id")
+            if eid and eid not in cache:
+                all_eids.append(eid)
+    if all_eids:
+        with ThreadPoolExecutor(max_workers=30) as ex:
+            futs = {ex.submit(fetch, f"/api/v1/event/{eid}"): eid for eid in all_eids}
+            for f in as_completed(futs):
+                eid = futs[f]
+                try:
+                    ev = f.result()
+                except Exception:
+                    ev = None
+                if ev is not None:
+                    cache[eid] = ev
     for L in list(store["leagues"]):
         keep = []
         for m in L["matches"]:
             eid = m.get("id")
             if not eid:
                 drops_no_id += 1; continue
-            ev = fetch(f"/api/v1/event/{eid}"); time.sleep(0.06)
+            ev = cache.get(eid)
             if ev is None:
                 # network blip — keep the match, will be re-validated on next run
                 keep.append(m); continue
-            cache[eid] = ev
             e = ev.get("event") or ev
             utid = ((e.get("tournament") or {}).get("uniqueTournament") or {}).get("id")
             if utid not in TOURNAMENTS:
@@ -529,6 +547,23 @@ def main():
     # Final tally
     total = 0; ft = 0; up = 0
     hit = miss = pending = 0
+    for L in store["leagues"]:
+        total += len(L["matches"])
+        for m in L["matches"]:
+            if m.get("status") == "FT": ft += 1
+            else: up += 1
+            r = (m.get("predictions", {}).get("winner", {}) or {}).get("result")
+            if r == "hit": hit += 1
+            elif r == "miss": miss += 1
+    pct = (hit / (hit + miss) * 100) if (hit + miss) else 0
+    print(f"\n=== DONE ===")
+    print(f"Store: {total} matches ({ft} FT / {up} upcoming)")
+    print(f"Winner accuracy to date: {hit} hit / {miss} miss  ({pct:.0f}%)")
+    print("auto_push.bat will commit + push within 15 min.")
+
+
+if __name__ == "__main__":
+    main() = miss = pending = 0
     for L in store["leagues"]:
         total += len(L["matches"])
         for m in L["matches"]:
