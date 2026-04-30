@@ -541,6 +541,12 @@ def main():
     print("\n[Phase B.7] prediction odds")
     run_helper("soccer_fetch_pred_odds.py")
 
+    print("\n[Phase B.8] TheSportsDB fallback (records score hint when SofaScore was 403)")
+    run_helper("soccer_fetch_thesportsdb.py")
+
+    print("\n[Phase B.9] Understat xG enrichment")
+    run_helper("soccer_fetch_understat.py")
+
     print("\n[Phase C] update index.html")
     run_helper("soccer_update_index.py")
 
