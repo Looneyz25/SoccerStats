@@ -6036,19 +6036,17 @@
         {
           "id": 15632632,
           "date": "2026-04-29",
-          "time": "FT",
-          "status": "FT",
+          "time": "04:30",
+          "status": "upcoming",
           "home": {
             "name": "Paris Saint-Germain",
             "short": "Paris",
-            "team_id": 1644,
-            "goals": 5
+            "team_id": 1644
           },
           "away": {
             "name": "FC Bayern München",
             "short": "Bayern München",
-            "team_id": 2672,
-            "goals": 4
+            "team_id": 2672
           },
           "odds": {
             "home": 2.3,
@@ -6115,46 +6113,38 @@
             "winner": {
               "pick": "Paris Saint-Germain",
               "type": "home",
-              "odds": 2.3,
-              "result": "hit"
+              "odds": 2.3
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.36,
-              "actual_btts": true,
-              "result": "hit"
+              "odds": 1.36
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.4,
-              "actual": 9,
-              "result": "hit"
+              "odds": 1.4
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
               "odds": 1.62
             }
-          },
-          "settled_at": "2026-04-30"
+          }
         },
         {
           "id": 15632633,
           "date": "2026-04-30",
-          "time": "FT",
-          "status": "FT",
+          "time": "04:30",
+          "status": "upcoming",
           "home": {
             "name": "Atlético Madrid",
             "short": "Atlético",
-            "team_id": 2836,
-            "goals": 1
+            "team_id": 2836
           },
           "away": {
             "name": "Arsenal",
             "short": "Arsenal",
-            "team_id": 42,
-            "goals": 1
+            "team_id": 42
           },
           "odds": {
             "home": 2.8,
@@ -6219,28 +6209,22 @@
             "winner": {
               "pick": "Atlético Madrid",
               "type": "home",
-              "odds": 2.8,
-              "result": "miss"
+              "odds": 2.8
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.91,
-              "actual_btts": true,
-              "result": "hit"
+              "odds": 1.91
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 2.2,
-              "actual": 2,
-              "result": "miss"
+              "odds": 2.2
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5
             }
-          },
-          "settled_at": "2026-04-30"
+          }
         }
       ]
     },
@@ -6974,90 +6958,74 @@
         {
           "id": 16072779,
           "date": "2026-04-29",
-          "time": "FT",
-          "status": "FT",
+          "time": "02:15",
+          "status": "upcoming",
           "home": {
             "name": "Roda JC Kerkrade",
             "short": "Roda",
-            "team_id": 2954,
-            "goals": 1
+            "team_id": 2954
           },
           "away": {
             "name": "RKC Waalwijk",
             "short": "RKC Waalwijk",
-            "team_id": 2956,
-            "goals": 1
+            "team_id": 2956
           },
           "predictions": {
             "winner": {
               "pick": "RKC Waalwijk",
               "type": "away",
-              "odds": 2.65,
-              "result": "miss"
+              "odds": 2.65
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.5,
-              "actual_btts": true,
-              "result": "hit"
+              "odds": 1.5
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.57,
-              "actual": 2,
-              "result": "miss"
+              "odds": 1.57
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5
             }
-          },
-          "settled_at": "2026-04-30"
+          }
         },
         {
           "id": 16072839,
           "date": "2026-04-30",
-          "time": "FT",
-          "status": "FT",
+          "time": "02:15",
+          "status": "upcoming",
           "home": {
             "name": "FC Den Bosch",
             "short": "Den Bosch",
-            "team_id": 2963,
-            "goals": 2
+            "team_id": 2963
           },
           "away": {
             "name": "Almere City FC",
             "short": "Almere City",
-            "team_id": 2990,
-            "goals": 3
+            "team_id": 2990
           },
           "predictions": {
             "winner": {
               "pick": "Almere City FC",
               "type": "away",
-              "odds": 2.5,
-              "result": "hit"
+              "odds": 2.5
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.4,
-              "actual_btts": true,
-              "result": "hit"
+              "odds": 1.4
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.48,
-              "actual": 5,
-              "result": "hit"
+              "odds": 1.48
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5
             }
-          },
-          "settled_at": "2026-04-30"
+          }
         },
         {
           "id": 16072837,
@@ -11842,19 +11810,17 @@
         {
           "id": 15715159,
           "date": "2026-04-29",
-          "time": "FT",
-          "status": "FT",
+          "time": "04:15",
+          "status": "upcoming",
           "home": {
             "name": "Southampton",
             "short": "Southampton",
-            "team_id": 45,
-            "goals": 2
+            "team_id": 45
           },
           "away": {
             "name": "Ipswich Town",
             "short": "Ipswich Town",
-            "team_id": 32,
-            "goals": 2
+            "team_id": 32
           },
           "odds": {
             "home": 2.1,
@@ -11915,21 +11881,16 @@
             "winner": {
               "pick": "Southampton",
               "type": "home",
-              "odds": 2.2,
-              "result": "miss"
+              "odds": 2.2
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.67,
-              "actual_btts": true,
-              "result": "hit"
+              "odds": 1.67
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.8,
-              "actual": 4,
-              "result": "hit"
+              "odds": 1.8
             },
             "ou_cards": {
               "pick": "Over",
@@ -11942,8 +11903,7 @@
             "draw": 3.5,
             "away": 3.25,
             "event_id": 10414213
-          },
-          "settled_at": "2026-04-30"
+          }
         },
         {
           "id": 14060009,
@@ -14311,39 +14271,32 @@
         {
           "id": 15794169,
           "date": "2026-04-29",
-          "time": "FT",
-          "status": "FT",
+          "time": "04:15",
+          "status": "upcoming",
           "home": {
             "name": "Northampton Town",
             "short": "Northampton",
-            "team_id": 57,
-            "goals": 0
+            "team_id": 57
           },
           "away": {
             "name": "Barnsley",
             "short": "Barnsley",
-            "team_id": 23,
-            "goals": 1
+            "team_id": 23
           },
           "predictions": {
             "winner": {
               "pick": "Barnsley",
               "type": "away",
-              "odds": 2.3,
-              "result": "hit"
+              "odds": 2.3
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.62,
-              "actual_btts": false,
-              "result": "miss"
+              "odds": 1.62
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.73,
-              "actual": 1,
-              "result": "miss"
+              "odds": 1.73
             },
             "ou_cards": {
               "pick": "Over",
@@ -14410,45 +14363,37 @@
               "label": "Less than 4.5 cards",
               "value": "6/8"
             }
-          ],
-          "settled_at": "2026-04-30"
+          ]
         },
         {
           "id": 15840464,
           "date": "2026-04-29",
-          "time": "FT",
-          "status": "FT",
+          "time": "04:15",
+          "status": "upcoming",
           "home": {
             "name": "Peterborough United",
             "short": "Peterborough",
-            "team_id": 54,
-            "goals": 0
+            "team_id": 54
           },
           "away": {
             "name": "Mansfield Town",
             "short": "Mansfield",
-            "team_id": 70,
-            "goals": 0
+            "team_id": 70
           },
           "predictions": {
             "winner": {
               "pick": "Mansfield Town",
               "type": "away",
-              "odds": 2.45,
-              "result": "miss"
+              "odds": 2.45
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.5,
-              "actual_btts": false,
-              "result": "miss"
+              "odds": 1.5
             },
             "ou_goals": {
               "pick": "Under",
               "line": 2.5,
-              "odds": 2.3,
-              "actual": 0,
-              "result": "hit"
+              "odds": 2.3
             },
             "ou_cards": {
               "pick": "Over",
@@ -14504,45 +14449,37 @@
               "value": "5/7",
               "odds": 2.1
             }
-          ],
-          "settled_at": "2026-04-30"
+          ]
         },
         {
           "id": 15832959,
           "date": "2026-04-29",
-          "time": "FT",
-          "status": "FT",
+          "time": "04:15",
+          "status": "upcoming",
           "home": {
             "name": "Stockport County",
             "short": "Stockport",
-            "team_id": 10,
-            "goals": 1
+            "team_id": 10
           },
           "away": {
             "name": "Port Vale",
             "short": "Port",
-            "team_id": 55,
-            "goals": 2
+            "team_id": 55
           },
           "predictions": {
             "winner": {
               "pick": "Stockport County",
               "type": "home",
-              "odds": 1.37,
-              "result": "miss"
+              "odds": 1.37
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.8,
-              "actual_btts": true,
-              "result": "hit"
+              "odds": 1.8
             },
             "ou_goals": {
               "pick": "Under",
               "line": 2.5,
-              "odds": 2.25,
-              "actual": 3,
-              "result": "miss"
+              "odds": 2.25
             },
             "ou_cards": {
               "pick": "Over",
@@ -14588,8 +14525,7 @@
               "value": "4/5",
               "odds": 2.0
             }
-          ],
-          "settled_at": "2026-04-30"
+          ]
         }
       ]
     },

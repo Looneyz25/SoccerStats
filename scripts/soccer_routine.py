@@ -563,21 +563,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main() = miss = pending = 0
-    for L in store["leagues"]:
-        total += len(L["matches"])
-        for m in L["matches"]:
-            if m.get("status") == "FT": ft += 1
-            else: up += 1
-            r = (m.get("predictions", {}).get("winner", {}) or {}).get("result")
-            if r == "hit": hit += 1
-            elif r == "miss": miss += 1
-    pct = (hit / (hit + miss) * 100) if (hit + miss) else 0
-    print(f"\n=== DONE ===")
-    print(f"Store: {total} matches ({ft} FT / {up} upcoming)")
-    print(f"Winner accuracy to date: {hit} hit / {miss} miss  ({pct:.0f}%)")
-    print("auto_push.bat will commit + push within 15 min.")
-
-
-if __name__ == "__main__":
     main()
