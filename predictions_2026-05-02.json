@@ -1099,20 +1099,17 @@
             {
               "team": "home",
               "label": "Less than 4.5 cards",
-              "value": "7/8",
-              "odds": 1.62
+              "value": "7/8"
             },
             {
               "team": "away",
               "label": "Less than 4.5 cards",
-              "value": "6/7",
-              "odds": 1.62
+              "value": "6/7"
             },
             {
               "team": "away",
               "label": "Less than 10.5 corners",
-              "value": "4/5",
-              "odds": 1.73
+              "value": "4/5"
             }
           ],
           "predictions": {
@@ -1132,8 +1129,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 2.2
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -1203,14 +1199,12 @@
             {
               "team": "home",
               "label": "Less than 4.5 cards",
-              "value": "6/8",
-              "odds": 1.73
+              "value": "6/8"
             },
             {
               "team": "home",
               "label": "Less than 10.5 corners",
-              "value": "5/6",
-              "odds": 1.73
+              "value": "5/6"
             }
           ],
           "predictions": {
@@ -1230,8 +1224,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 2.0
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -1306,8 +1299,7 @@
             {
               "team": "away",
               "label": "Less than 10.5 corners",
-              "value": "4/5",
-              "odds": 1.73
+              "value": "4/5"
             }
           ],
           "predictions": {
@@ -1327,8 +1319,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.83
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -1394,14 +1385,12 @@
             {
               "team": "home",
               "label": "Less than 4.5 cards",
-              "value": "4/5",
-              "odds": 2.1
+              "value": "4/5"
             },
             {
               "team": "away",
               "label": "Less than 4.5 cards",
-              "value": "6/7",
-              "odds": 2.1
+              "value": "6/7"
             }
           ],
           "predictions": {
@@ -1428,8 +1417,7 @@
               "pick": "Over",
               "line": 4.5,
               "actual": 7,
-              "result": "hit",
-              "odds": 1.67
+              "result": "hit"
             }
           },
           "sportsbet_odds": {
@@ -1485,14 +1473,12 @@
             {
               "team": "home",
               "label": "Less than 4.5 cards",
-              "value": "5/6",
-              "odds": 1.73
+              "value": "5/6"
             },
             {
               "team": "away",
               "label": "More than 10.5 corners",
-              "value": "6/8",
-              "odds": 2.1
+              "value": "6/8"
             }
           ],
           "predictions": {
@@ -1512,8 +1498,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 2.0
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -1541,22 +1526,18 @@
           "predictions": {
             "winner": {
               "pick": "Bournemouth",
-              "type": "home",
-              "odds": 1.61
+              "type": "home"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.7
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Under",
-              "line": 2.5,
-              "odds": 2.2
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 2.1
+              "line": 4.5
             }
           },
           "odds": {
@@ -1573,38 +1554,32 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "4",
-              "odds": 1.7
+              "value": "4"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "4/5",
-              "odds": 1.67
+              "value": "4/5"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "5/6",
-              "odds": 1.67
+              "value": "5/6"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "4/5",
-              "odds": 1.7
+              "value": "4/5"
             },
             {
               "team": "both",
               "label": "More than 10.5 corners",
-              "value": "4/5",
-              "odds": 1.73
+              "value": "4/5"
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "5/7",
-              "odds": 2.0
+              "value": "5/7"
             }
           ],
           "sportsbet_odds": {
@@ -1632,22 +1607,18 @@
           "predictions": {
             "winner": {
               "pick": "Manchester United",
-              "type": "home",
-              "odds": 2.2
+              "type": "home"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.44
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.5
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.83
+              "line": 4.5
             }
           },
           "odds": {
@@ -1659,20 +1630,17 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "3",
-              "odds": 1.44
+              "value": "3"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "6/7",
-              "odds": 1.5
+              "value": "6/7"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "6/7",
-              "odds": 1.44
+              "value": "6/7"
             },
             {
               "team": "both",
@@ -1682,20 +1650,17 @@
             {
               "team": "both",
               "label": "More than 4.5 cards",
-              "value": "7/8",
-              "odds": 1.83
+              "value": "7/8"
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "5/5",
-              "odds": 1.83
+              "value": "5/5"
             },
             {
               "team": "both",
               "label": "More than 10.5 corners",
-              "value": "4/5",
-              "odds": 2.1
+              "value": "4/5"
             }
           ],
           "sportsbet_odds": {
@@ -1723,22 +1688,18 @@
           "predictions": {
             "winner": {
               "pick": "Aston Villa",
-              "type": "home",
-              "odds": 2.2
+              "type": "home"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.62
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.73
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 2.2
+              "line": 4.5
             }
           },
           "odds": {
@@ -1750,8 +1711,7 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "3",
-              "odds": 1.62
+              "value": "3"
             },
             {
               "team": "both",
@@ -1761,20 +1721,17 @@
             {
               "team": "both",
               "label": "More than 4.5 cards",
-              "value": "4/5",
-              "odds": 2.2
+              "value": "4/5"
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "9/9",
-              "odds": 1.62
+              "value": "9/9"
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "5/6",
-              "odds": 1.73
+              "value": "5/6"
             }
           ],
           "sportsbet_odds": {
@@ -3025,8 +2982,7 @@
             {
               "team": "away",
               "label": "More than 4.5 cards",
-              "value": "7/7",
-              "odds": 1.67
+              "value": "7/7"
             },
             {
               "team": "home",
@@ -3052,8 +3008,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.67
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -3118,8 +3073,7 @@
             {
               "team": "home",
               "label": "Less than 4.5 cards",
-              "value": "5/5",
-              "odds": 2.1
+              "value": "5/5"
             },
             {
               "team": "away",
@@ -3145,8 +3099,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.67
+              "line": 4.5
             }
           }
         },
@@ -3206,14 +3159,12 @@
             {
               "team": "away",
               "label": "More than 4.5 cards",
-              "value": "5/7",
-              "odds": 2.0
+              "value": "5/7"
             },
             {
               "team": "home",
               "label": "Less than 4.5 cards",
-              "value": "6/6",
-              "odds": 1.73
+              "value": "6/6"
             }
           ],
           "predictions": {
@@ -3240,8 +3191,7 @@
               "pick": "Over",
               "line": 4.5,
               "actual": 6,
-              "result": "hit",
-              "odds": 2.0
+              "result": "hit"
             }
           },
           "sportsbet_odds": {
@@ -3315,8 +3265,7 @@
             {
               "team": "away",
               "label": "Less than 4.5 cards",
-              "value": "5/7",
-              "odds": 1.83
+              "value": "5/7"
             }
           ],
           "predictions": {
@@ -3336,8 +3285,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.83
+              "line": 4.5
             }
           }
         },
@@ -3396,8 +3344,7 @@
             {
               "team": "home",
               "label": "More than 4.5 cards",
-              "value": "7/9",
-              "odds": 2.2
+              "value": "7/9"
             },
             {
               "team": "home",
@@ -3429,8 +3376,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 2.2
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -3458,17 +3404,14 @@
           "predictions": {
             "winner": {
               "pick": "Elche",
-              "type": "away",
-              "odds": 4.5
+              "type": "away"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.67
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.73
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -3494,26 +3437,22 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "7",
-              "odds": 1.67
+              "value": "7"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "6/7",
-              "odds": 1.73
+              "value": "6/7"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "8/10",
-              "odds": 1.73
+              "value": "8/10"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "8/10",
-              "odds": 1.67
+              "value": "8/10"
             },
             {
               "team": "both",
@@ -3543,14 +3482,12 @@
             {
               "team": "both",
               "label": "More than 10.5 corners",
-              "value": "4/5",
-              "odds": 1.8
+              "value": "4/5"
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "9/10",
-              "odds": 1.91
+              "value": "9/10"
             }
           ],
           "sportsbet_odds": {
@@ -3578,17 +3515,14 @@
           "predictions": {
             "winner": {
               "pick": "Getafe",
-              "type": "home",
-              "odds": 1.91
+              "type": "home"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 2.25
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Under",
-              "line": 2.5,
-              "odds": 1.44
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -3609,8 +3543,7 @@
             {
               "team": "both",
               "label": "Less than 2.5 goals",
-              "value": "8/9",
-              "odds": 1.44
+              "value": "8/9"
             },
             {
               "team": "both",
@@ -3625,8 +3558,7 @@
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "4/5",
-              "odds": 1.73
+              "value": "4/5"
             }
           ],
           "sportsbet_odds": {
@@ -3654,17 +3586,14 @@
           "predictions": {
             "winner": {
               "pick": "Real Betis",
-              "type": "home",
-              "odds": 1.55
+              "type": "home"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.95
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.91
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -3680,26 +3609,22 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "5",
-              "odds": 1.95
+              "value": "5"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "5/5",
-              "odds": 1.95
+              "value": "5/5"
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "5/6",
-              "odds": 1.83
+              "value": "5/6"
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "4/5",
-              "odds": 1.83
+              "value": "4/5"
             }
           ],
           "sportsbet_odds": {
@@ -3727,17 +3652,14 @@
           "predictions": {
             "winner": {
               "pick": "Real Madrid",
-              "type": "away",
-              "odds": 1.73
+              "type": "away"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.53
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Under",
-              "line": 2.5,
-              "odds": 2.38
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -3758,20 +3680,17 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "9",
-              "odds": 1.53
+              "value": "9"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "8/10",
-              "odds": 1.57
+              "value": "8/10"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "9/9",
-              "odds": 1.53
+              "value": "9/9"
             },
             {
               "team": "both",
@@ -3786,8 +3705,7 @@
             {
               "team": "both",
               "label": "More than 10.5 corners",
-              "value": "5/5",
-              "odds": 1.8
+              "value": "5/5"
             }
           ],
           "sportsbet_odds": {
@@ -4945,8 +4863,7 @@
             {
               "team": "home",
               "label": "Less than 4.5 cards",
-              "value": "6/6",
-              "odds": 2.2
+              "value": "6/6"
             }
           ],
           "predictions": {
@@ -4966,8 +4883,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.62
+              "line": 4.5
             }
           }
         },
@@ -5043,14 +4959,12 @@
             {
               "team": "away",
               "label": "More than 4.5 cards",
-              "value": "6/7",
-              "odds": 2.2
+              "value": "6/7"
             },
             {
               "team": "home",
               "label": "Less than 4.5 cards",
-              "value": "5/5",
-              "odds": 1.62
+              "value": "5/5"
             }
           ],
           "predictions": {
@@ -5070,8 +4984,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 2.2
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -5147,14 +5060,12 @@
             {
               "team": "home",
               "label": "Less than 4.5 cards",
-              "value": "4/5",
-              "odds": 1.62
+              "value": "4/5"
             },
             {
               "team": "away",
               "label": "Less than 4.5 cards",
-              "value": "8/10",
-              "odds": 1.62
+              "value": "8/10"
             },
             {
               "team": "away",
@@ -5180,8 +5091,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 2.2
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -5239,8 +5149,7 @@
             {
               "team": "away",
               "label": "Less than 4.5 cards",
-              "value": "5/7",
-              "odds": 1.62
+              "value": "5/7"
             },
             {
               "team": "away",
@@ -5266,8 +5175,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 2.2
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -5325,8 +5233,7 @@
             {
               "team": "home",
               "label": "More than 4.5 cards",
-              "value": "4/5",
-              "odds": 1.83
+              "value": "4/5"
             },
             {
               "team": "both",
@@ -5352,8 +5259,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.83
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -5411,14 +5317,12 @@
             {
               "team": "home",
               "label": "Less than 4.5 cards",
-              "value": "4/5",
-              "odds": 1.73
+              "value": "4/5"
             },
             {
               "team": "away",
               "label": "Less than 4.5 cards",
-              "value": "6/7",
-              "odds": 1.73
+              "value": "6/7"
             }
           ],
           "predictions": {
@@ -5438,8 +5342,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 2.0
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -5467,22 +5370,18 @@
           "predictions": {
             "winner": {
               "pick": "1. FSV Mainz 05",
-              "type": "away",
-              "odds": 2.5
+              "type": "away"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.8
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 2.1
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.8
+              "line": 4.5
             }
           },
           "odds": {
@@ -5504,38 +5403,32 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "6",
-              "odds": 1.8
+              "value": "6"
             },
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "4",
-              "odds": 1.8
+              "value": "4"
             },
             {
               "team": "both",
               "label": "Less than 2.5 goals",
-              "value": "6/8",
-              "odds": 1.73
+              "value": "6/8"
             },
             {
               "team": "both",
               "label": "More than 4.5 cards",
-              "value": "5/6",
-              "odds": 1.8
+              "value": "5/6"
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "7/8",
-              "odds": 1.91
+              "value": "7/8"
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "7/8",
-              "odds": 1.8
+              "value": "7/8"
             }
           ],
           "sportsbet_odds": {
@@ -5563,22 +5456,18 @@
           "predictions": {
             "winner": {
               "pick": "Borussia Dortmund",
-              "type": "away",
-              "odds": 1.91
+              "type": "away"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.53
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.57
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.62
+              "line": 4.5
             }
           },
           "odds": {
@@ -5595,8 +5484,7 @@
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "4/5",
-              "odds": 1.8
+              "value": "4/5"
             }
           ],
           "sportsbet_odds": {
@@ -5624,22 +5512,18 @@
           "predictions": {
             "winner": {
               "pick": "SC Freiburg",
-              "type": "home",
-              "odds": 2.5
+              "type": "home"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.53
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.67
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.91
+              "line": 4.5
             }
           },
           "odds": {
@@ -5656,26 +5540,22 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "5",
-              "odds": 1.53
+              "value": "5"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "8/10",
-              "odds": 1.67
+              "value": "8/10"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "4/5",
-              "odds": 1.53
+              "value": "4/5"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "5/7",
-              "odds": 1.53
+              "value": "5/7"
             },
             {
               "team": "both",
@@ -5685,14 +5565,12 @@
             {
               "team": "both",
               "label": "More than 10.5 corners",
-              "value": "6/6",
-              "odds": 1.83
+              "value": "6/6"
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "7/7",
-              "odds": 1.83
+              "value": "7/7"
             }
           ],
           "sportsbet_odds": {
@@ -6690,14 +6568,12 @@
             {
               "team": "home",
               "label": "Less than 4.5 cards",
-              "value": "5/7",
-              "odds": 2.1
+              "value": "5/7"
             },
             {
               "team": "away",
               "label": "Less than 4.5 cards",
-              "value": "4/5",
-              "odds": 2.1
+              "value": "4/5"
             },
             {
               "team": "home",
@@ -6723,8 +6599,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.67
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -6782,8 +6657,7 @@
             {
               "team": "home",
               "label": "Less than 4.5 cards",
-              "value": "7/8",
-              "odds": 2.1
+              "value": "7/8"
             },
             {
               "team": "home",
@@ -6815,8 +6689,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.67
+              "line": 4.5
             }
           }
         },
@@ -6880,8 +6753,7 @@
             {
               "team": "home",
               "label": "Less than 4.5 cards",
-              "value": "8/8",
-              "odds": 1.62
+              "value": "8/8"
             }
           ],
           "predictions": {
@@ -6901,8 +6773,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 2.2
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -6959,8 +6830,7 @@
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "4/5",
-              "odds": 2.0
+              "value": "4/5"
             },
             {
               "team": "away",
@@ -6986,8 +6856,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.73
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -7015,22 +6884,18 @@
           "predictions": {
             "winner": {
               "pick": "Lille",
-              "type": "home",
-              "odds": 1.36
+              "type": "home"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 2.05
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Under",
-              "line": 2.5,
-              "odds": 1.91
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 2.1
+              "line": 4.5
             }
           },
           "odds": {
@@ -7057,50 +6922,42 @@
             {
               "team": "both",
               "label": "No goals conceded",
-              "value": "4",
-              "odds": 1.7
+              "value": "4"
             },
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "5",
-              "odds": 2.05
+              "value": "5"
             },
             {
               "team": "both",
               "label": "Less than 2.5 goals",
-              "value": "7/9",
-              "odds": 1.91
+              "value": "7/9"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "5/5",
-              "odds": 2.05
+              "value": "5/5"
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "5/6",
-              "odds": 1.67
+              "value": "5/6"
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "4/5",
-              "odds": 1.67
+              "value": "4/5"
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "10/10",
-              "odds": 1.73
+              "value": "10/10"
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "7/8",
-              "odds": 1.73
+              "value": "7/8"
             }
           ],
           "sportsbet_odds": {
@@ -7128,22 +6985,18 @@
           "predictions": {
             "winner": {
               "pick": "Auxerre",
-              "type": "home",
-              "odds": 1.67
+              "type": "home"
             },
             "btts": {
-              "pick": "No",
-              "odds": 1.7
+              "pick": "No"
             },
             "ou_goals": {
               "pick": "Under",
-              "line": 2.5,
-              "odds": 1.67
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.83
+              "line": 4.5
             }
           },
           "odds": {
@@ -7165,8 +7018,7 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "3",
-              "odds": 2.05
+              "value": "3"
             },
             {
               "team": "both",
@@ -7176,14 +7028,12 @@
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "8/10",
-              "odds": 1.83
+              "value": "8/10"
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "8/10",
-              "odds": 1.8
+              "value": "8/10"
             }
           ],
           "sportsbet_odds": {
@@ -7211,22 +7061,18 @@
           "predictions": {
             "winner": {
               "pick": "Paris FC",
-              "type": "home",
-              "odds": 2.05
+              "type": "home"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.7
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.91
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.57
+              "line": 4.5
             }
           },
           "odds": {
@@ -7243,14 +7089,12 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "5",
-              "odds": 1.7
+              "value": "5"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "4/5",
-              "odds": 1.7
+              "value": "4/5"
             },
             {
               "team": "both",
@@ -7260,20 +7104,17 @@
             {
               "team": "both",
               "label": "More than 4.5 cards",
-              "value": "4/5",
-              "odds": 1.57
+              "value": "4/5"
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "6/7",
-              "odds": 2.25
+              "value": "6/7"
             },
             {
               "team": "both",
               "label": "More than 10.5 corners",
-              "value": "5/6",
-              "odds": 1.91
+              "value": "5/6"
             }
           ],
           "sportsbet_odds": {
@@ -7301,22 +7142,18 @@
           "predictions": {
             "winner": {
               "pick": "RC Strasbourg",
-              "type": "home",
-              "odds": 2.88
+              "type": "home"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.62
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.8
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.83
+              "line": 4.5
             }
           },
           "odds": {
@@ -7333,26 +7170,22 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "4",
-              "odds": 1.62
+              "value": "4"
             },
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "5",
-              "odds": 1.62
+              "value": "5"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "5/5",
-              "odds": 1.8
+              "value": "5/5"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "4/5",
-              "odds": 1.62
+              "value": "4/5"
             },
             {
               "team": "both",
@@ -7372,20 +7205,17 @@
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "4/5",
-              "odds": 1.83
+              "value": "4/5"
             },
             {
               "team": "both",
               "label": "More than 10.5 corners",
-              "value": "5/7",
-              "odds": 1.83
+              "value": "5/7"
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "7/8",
-              "odds": 1.83
+              "value": "7/8"
             }
           ],
           "sportsbet_odds": {
@@ -7413,22 +7243,18 @@
           "predictions": {
             "winner": {
               "pick": "Stade Rennais",
-              "type": "away",
-              "odds": 3.0
+              "type": "away"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.57
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.67
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 2.2
+              "line": 4.5
             }
           },
           "odds": {
@@ -7460,8 +7286,7 @@
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "6/7",
-              "odds": 1.67
+              "value": "6/7"
             },
             {
               "team": "both",
@@ -7471,14 +7296,12 @@
             {
               "team": "both",
               "label": "More than 4.5 cards",
-              "value": "6/8",
-              "odds": 2.2
+              "value": "6/8"
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "8/9",
-              "odds": 1.8
+              "value": "8/9"
             }
           ],
           "sportsbet_odds": {
@@ -7672,14 +7495,12 @@
             {
               "team": "home",
               "label": "More than 4.5 cards",
-              "value": "7/9",
-              "odds": 1.83
+              "value": "7/9"
             },
             {
               "team": "away",
               "label": "Less than 4.5 cards",
-              "value": "4/5",
-              "odds": 1.83
+              "value": "4/5"
             },
             {
               "team": "away",
@@ -7716,8 +7537,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.83
+              "line": 4.5
             }
           },
           "settled_at": "2026-04-30",
@@ -8518,20 +8338,17 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "4",
-              "odds": 1.57
+              "value": "4"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "10/10",
-              "odds": 1.73
+              "value": "10/10"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "7/8",
-              "odds": 1.57
+              "value": "7/8"
             },
             {
               "team": "both",
@@ -8551,8 +8368,7 @@
             {
               "team": "both",
               "label": "More than 10.5 corners",
-              "value": "5/7",
-              "odds": 1.8
+              "value": "5/7"
             }
           ],
           "actuals": {
@@ -8628,14 +8444,12 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "6",
-              "odds": 1.3
+              "value": "6"
             },
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "5",
-              "odds": 1.3
+              "value": "5"
             },
             {
               "team": "both",
@@ -8645,14 +8459,12 @@
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "6/6",
-              "odds": 1.3
+              "value": "6/6"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "5/5",
-              "odds": 1.3
+              "value": "5/5"
             },
             {
               "team": "both",
@@ -8672,8 +8484,7 @@
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "6/7",
-              "odds": 2.0
+              "value": "6/7"
             }
           ],
           "actuals": {
@@ -8743,17 +8554,14 @@
           "predictions": {
             "winner": {
               "pick": "Almere City FC",
-              "type": "home",
-              "odds": 1.66
+              "type": "home"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.36
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.33
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -8774,38 +8582,32 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "6",
-              "odds": 1.36
+              "value": "6"
             },
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "7",
-              "odds": 1.36
+              "value": "7"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "6/6",
-              "odds": 1.33
+              "value": "6/6"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "5/7",
-              "odds": 1.33
+              "value": "5/7"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "6/6",
-              "odds": 1.36
+              "value": "6/6"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "7/7",
-              "odds": 1.36
+              "value": "7/7"
             },
             {
               "team": "both",
@@ -8835,14 +8637,12 @@
             {
               "team": "both",
               "label": "More than 10.5 corners",
-              "value": "4/5",
-              "odds": 1.83
+              "value": "4/5"
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "6/8",
-              "odds": 1.83
+              "value": "6/8"
             }
           ]
         },
@@ -8867,21 +8667,18 @@
             "winner": {
               "pick": "RKC Waalwijk",
               "type": "home",
-              "result": "hit",
-              "odds": 1.86
+              "result": "hit"
             },
             "btts": {
               "pick": "Yes",
               "actual_btts": true,
-              "result": "hit",
-              "odds": 1.53
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
               "actual": 6,
-              "result": "hit",
-              "odds": 1.57
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
@@ -8905,26 +8702,22 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "3",
-              "odds": 1.53
+              "value": "3"
             },
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "5",
-              "odds": 1.53
+              "value": "5"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "9/10",
-              "odds": 1.57
+              "value": "9/10"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "8/9",
-              "odds": 1.53
+              "value": "8/9"
             },
             {
               "team": "both",
@@ -9176,14 +8969,12 @@
             {
               "team": "home",
               "label": "Less than 4.5 cards",
-              "value": "6/7",
-              "odds": 2.2
+              "value": "6/7"
             },
             {
               "team": "away",
               "label": "Less than 4.5 cards",
-              "value": "9/10",
-              "odds": 2.2
+              "value": "9/10"
             }
           ],
           "predictions": {
@@ -9203,8 +8994,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.62
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -9442,22 +9232,18 @@
           "predictions": {
             "winner": {
               "pick": "Feyenoord",
-              "type": "away",
-              "odds": 1.47
+              "type": "away"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.67
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.5
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 2.0
+              "line": 4.5
             }
           },
           "odds": {
@@ -9479,26 +9265,22 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "20",
-              "odds": 1.67
+              "value": "20"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "8/10",
-              "odds": 1.5
+              "value": "8/10"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "9/10",
-              "odds": 1.67
+              "value": "9/10"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "5/6",
-              "odds": 1.67
+              "value": "5/6"
             },
             {
               "team": "both",
@@ -9508,20 +9290,17 @@
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "10/10",
-              "odds": 1.73
+              "value": "10/10"
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "4/5",
-              "odds": 1.73
+              "value": "4/5"
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "4/5",
-              "odds": 1.67
+              "value": "4/5"
             }
           ],
           "sportsbet_odds": {
@@ -9549,17 +9328,14 @@
           "predictions": {
             "winner": {
               "pick": "PEC Zwolle",
-              "type": "home",
-              "odds": 1.4
+              "type": "home"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.62
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.44
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -9590,26 +9366,22 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "6",
-              "odds": 1.62
+              "value": "6"
             },
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "5",
-              "odds": 1.62
+              "value": "5"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "4/5",
-              "odds": 1.44
+              "value": "4/5"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "5/6",
-              "odds": 1.62
+              "value": "5/6"
             },
             {
               "team": "both",
@@ -9647,17 +9419,14 @@
           "predictions": {
             "winner": {
               "pick": "AZ Alkmaar",
-              "type": "home",
-              "odds": 2.62
+              "type": "home"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.4
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.44
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -9678,20 +9447,17 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "6",
-              "odds": 1.4
+              "value": "6"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "8/10",
-              "odds": 1.44
+              "value": "8/10"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "5/6",
-              "odds": 1.4
+              "value": "5/6"
             },
             {
               "team": "both",
@@ -9734,17 +9500,14 @@
           "predictions": {
             "winner": {
               "pick": "Go Ahead Eagles",
-              "type": "away",
-              "odds": 3.1
+              "type": "away"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.5
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.53
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -9770,8 +9533,7 @@
             {
               "team": "both",
               "label": "No goals conceded",
-              "value": "3",
-              "odds": 2.5
+              "value": "3"
             },
             {
               "team": "both",
@@ -9786,8 +9548,7 @@
             {
               "team": "both",
               "label": "More than 10.5 corners",
-              "value": "5/6",
-              "odds": 1.83
+              "value": "5/6"
             }
           ],
           "sportsbet_odds": {
@@ -11672,8 +11433,7 @@
             {
               "team": "home",
               "label": "More than 4.5 cards",
-              "value": "4/5",
-              "odds": 1.83
+              "value": "4/5"
             },
             {
               "team": "home",
@@ -11699,8 +11459,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.83
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -11791,8 +11550,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 2.2
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -11862,8 +11620,7 @@
             {
               "team": "away",
               "label": "More than 4.5 cards",
-              "value": "5/7",
-              "odds": 2.1
+              "value": "5/7"
             }
           ],
           "predictions": {
@@ -11883,8 +11640,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 2.1
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -11957,8 +11713,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.91
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -12016,14 +11771,12 @@
             {
               "team": "away",
               "label": "More than 4.5 cards",
-              "value": "5/5",
-              "odds": 2.1
+              "value": "5/5"
             },
             {
               "team": "home",
               "label": "Less than 4.5 cards",
-              "value": "5/5",
-              "odds": 1.67
+              "value": "5/5"
             },
             {
               "team": "home",
@@ -12055,8 +11808,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 2.1
+              "line": 4.5
             }
           }
         },
@@ -12129,8 +11881,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.62
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -12221,8 +11972,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.73
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -12291,8 +12041,7 @@
             {
               "team": "home",
               "label": "Less than 4.5 cards",
-              "value": "6/8",
-              "odds": 1.91
+              "value": "6/8"
             },
             {
               "team": "home",
@@ -12318,8 +12067,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.8
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -12395,8 +12143,7 @@
             {
               "team": "away",
               "label": "Less than 4.5 cards",
-              "value": "7/7",
-              "odds": 1.83
+              "value": "7/7"
             },
             {
               "team": "home",
@@ -12428,8 +12175,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.83
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -12523,14 +12269,12 @@
             {
               "team": "away",
               "label": "More than 4.5 cards",
-              "value": "5/7",
-              "odds": 1.83
+              "value": "5/7"
             },
             {
               "team": "home",
               "label": "Less than 4.5 cards",
-              "value": "5/6",
-              "odds": 1.83
+              "value": "5/6"
             },
             {
               "team": "home",
@@ -12562,8 +12306,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.83
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -12615,14 +12358,12 @@
             {
               "team": "away",
               "label": "More than 4.5 cards",
-              "value": "5/6",
-              "odds": 1.67
+              "value": "5/6"
             },
             {
               "team": "home",
               "label": "Less than 4.5 cards",
-              "value": "4/5",
-              "odds": 2.1
+              "value": "4/5"
             },
             {
               "team": "home",
@@ -12654,8 +12395,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.67
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -12725,14 +12465,12 @@
             {
               "team": "home",
               "label": "More than 4.5 cards",
-              "value": "8/9",
-              "odds": 1.83
+              "value": "8/9"
             },
             {
               "team": "away",
               "label": "More than 4.5 cards",
-              "value": "4/5",
-              "odds": 1.83
+              "value": "4/5"
             },
             {
               "team": "home",
@@ -12758,8 +12496,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.83
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -12841,14 +12578,12 @@
             {
               "team": "home",
               "label": "Less than 4.5 cards",
-              "value": "4/5",
-              "odds": 1.8
+              "value": "4/5"
             },
             {
               "team": "away",
               "label": "Less than 4.5 cards",
-              "value": "6/7",
-              "odds": 1.8
+              "value": "6/7"
             },
             {
               "team": "both",
@@ -12874,8 +12609,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.91
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -12903,22 +12637,18 @@
           "predictions": {
             "winner": {
               "pick": "New York City FC",
-              "type": "home",
-              "odds": 1.67
+              "type": "home"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.8
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.85
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.73
+              "line": 4.5
             }
           },
           "odds": {
@@ -12935,44 +12665,37 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "9",
-              "odds": 1.8
+              "value": "9"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "4/5",
-              "odds": 1.85
+              "value": "4/5"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "4/5",
-              "odds": 1.8
+              "value": "4/5"
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "5/7",
-              "odds": 2.0
+              "value": "5/7"
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "8/9",
-              "odds": 2.0
+              "value": "8/9"
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "4/5",
-              "odds": 2.1
+              "value": "4/5"
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "7/9",
-              "odds": 2.1
+              "value": "7/9"
             }
           ],
           "sportsbet_odds": {
@@ -13000,22 +12723,18 @@
           "predictions": {
             "winner": {
               "pick": "St.Louis City",
-              "type": "away",
-              "odds": 2.62
+              "type": "away"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.57
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.75
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 2.2
+              "line": 4.5
             }
           },
           "odds": {
@@ -13027,32 +12746,27 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "3",
-              "odds": 1.57
+              "value": "3"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "5/6",
-              "odds": 1.75
+              "value": "5/6"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "4/5",
-              "odds": 1.75
+              "value": "4/5"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "5/6",
-              "odds": 1.57
+              "value": "5/6"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "6/7",
-              "odds": 1.57
+              "value": "6/7"
             },
             {
               "team": "both",
@@ -13062,14 +12776,12 @@
             {
               "team": "both",
               "label": "More than 4.5 cards",
-              "value": "5/5",
-              "odds": 2.2
+              "value": "5/5"
             },
             {
               "team": "both",
               "label": "More than 10.5 corners",
-              "value": "4/5",
-              "odds": 2.0
+              "value": "4/5"
             }
           ],
           "sportsbet_odds": {
@@ -14440,14 +14152,12 @@
             {
               "team": "home",
               "label": "More than 4.5 cards",
-              "value": "4/5",
-              "odds": 1.8
+              "value": "4/5"
             },
             {
               "team": "away",
               "label": "Less than 4.5 cards",
-              "value": "4/5",
-              "odds": 1.91
+              "value": "4/5"
             },
             {
               "team": "away",
@@ -14479,8 +14189,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.8
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -14551,8 +14260,7 @@
             {
               "team": "away",
               "label": "Less than 4.5 cards",
-              "value": "6/7",
-              "odds": 1.91
+              "value": "6/7"
             },
             {
               "team": "home",
@@ -14584,8 +14292,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.8
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -14659,8 +14366,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.8
+              "line": 4.5
             }
           }
         },
@@ -14740,8 +14446,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.83
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -14770,71 +14475,59 @@
             {
               "team": "away",
               "label": "Losses",
-              "value": "3",
-              "odds": 1.24
+              "value": "3"
             },
             {
               "team": "home",
               "label": "No losses",
-              "value": "3",
-              "odds": 1.06
+              "value": "3"
             },
             {
               "team": "away",
               "label": "No wins",
-              "value": "5",
-              "odds": 1.06
+              "value": "5"
             },
             {
               "team": "away",
               "label": "Without clean sheet",
-              "value": "3",
-              "odds": 1.8
+              "value": "3"
             },
             {
               "team": "away",
               "label": "Both teams scoring",
-              "value": "6/8",
-              "odds": 1.8
+              "value": "6/8"
             },
             {
               "team": "away",
               "label": "Less than 4.5 cards",
-              "value": "4/5",
-              "odds": 1.8
+              "value": "4/5"
             },
             {
               "team": "home",
               "label": "Less than 10.5 corners",
-              "value": "5/6",
-              "odds": 1.8
+              "value": "5/6"
             },
             {
               "team": "away",
               "label": "Less than 10.5 corners",
-              "value": "6/8",
-              "odds": 1.8
+              "value": "6/8"
             }
           ],
           "predictions": {
             "winner": {
               "pick": "Ipswich Town",
-              "type": "home",
-              "odds": 1.24
+              "type": "home"
             },
             "btts": {
-              "pick": "No",
-              "odds": 1.91
+              "pick": "No"
             },
             "ou_goals": {
               "pick": "Under",
-              "line": 2.5,
-              "odds": 2.75
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.91
+              "line": 4.5
             }
           }
         },
@@ -14887,8 +14580,7 @@
             {
               "team": "home",
               "label": "Less than 4.5 cards",
-              "value": "9/9",
-              "odds": 1.67
+              "value": "9/9"
             },
             {
               "team": "home",
@@ -14914,8 +14606,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 2.1
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -14974,14 +14665,12 @@
             {
               "team": "home",
               "label": "Less than 4.5 cards",
-              "value": "4/5",
-              "odds": 2.1
+              "value": "4/5"
             },
             {
               "team": "away",
               "label": "Less than 4.5 cards",
-              "value": "5/6",
-              "odds": 2.1
+              "value": "5/6"
             },
             {
               "team": "away",
@@ -15007,8 +14696,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.67
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -15037,71 +14725,59 @@
             {
               "team": "home",
               "label": "Without clean sheet",
-              "value": "14",
-              "odds": 1.53
+              "value": "14"
             },
             {
               "team": "away",
               "label": "Without clean sheet",
-              "value": "3",
-              "odds": 1.53
+              "value": "3"
             },
             {
               "team": "home",
               "label": "More than 2.5 goals",
-              "value": "5/7",
-              "odds": 1.53
+              "value": "5/7"
             },
             {
               "team": "away",
               "label": "More than 2.5 goals",
-              "value": "7/7",
-              "odds": 1.53
+              "value": "7/7"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "6/7",
-              "odds": 1.53
+              "value": "6/7"
             },
             {
               "team": "home",
               "label": "First to concede",
-              "value": "8/10",
-              "odds": 1.62
+              "value": "8/10"
             },
             {
               "team": "home",
               "label": "Less than 4.5 cards",
-              "value": "8/10",
-              "odds": 1.73
+              "value": "8/10"
             },
             {
               "team": "away",
               "label": "Less than 4.5 cards",
-              "value": "4/5",
-              "odds": 1.73
+              "value": "4/5"
             }
           ],
           "predictions": {
             "winner": {
               "pick": "Southampton",
-              "type": "away",
-              "odds": 1.83
+              "type": "away"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.53
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.53
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 2.0
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -15166,8 +14842,7 @@
             {
               "team": "home",
               "label": "Less than 4.5 cards",
-              "value": "8/8",
-              "odds": 1.67
+              "value": "8/8"
             },
             {
               "team": "home",
@@ -15199,8 +14874,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 2.1
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -15271,14 +14945,12 @@
             {
               "team": "home",
               "label": "Less than 4.5 cards",
-              "value": "7/9",
-              "odds": 1.62
+              "value": "7/9"
             },
             {
               "team": "away",
               "label": "Less than 4.5 cards",
-              "value": "4/5",
-              "odds": 1.62
+              "value": "4/5"
             }
           ],
           "predictions": {
@@ -15298,8 +14970,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 2.2
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -15358,8 +15029,7 @@
             {
               "team": "away",
               "label": "Less than 4.5 cards",
-              "value": "5/6",
-              "odds": 1.67
+              "value": "5/6"
             },
             {
               "team": "away",
@@ -15385,8 +15055,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 2.1
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -15433,8 +15102,7 @@
             {
               "team": "home",
               "label": "Less than 4.5 cards",
-              "value": "6/8",
-              "odds": 1.91
+              "value": "6/8"
             },
             {
               "team": "home",
@@ -15460,8 +15128,7 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.8
+              "line": 4.5
             }
           },
           "sportsbet_odds": {
@@ -17143,17 +16810,14 @@
           "predictions": {
             "winner": {
               "pick": "Huddersfield Town",
-              "type": "away",
-              "odds": 2.05
+              "type": "away"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.62
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.73
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -17174,20 +16838,17 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "8",
-              "odds": 1.62
+              "value": "8"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "4/5",
-              "odds": 1.73
+              "value": "4/5"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "8/8",
-              "odds": 1.62
+              "value": "8/8"
             },
             {
               "team": "both",
@@ -17207,14 +16868,12 @@
             {
               "team": "both",
               "label": "More than 10.5 corners",
-              "value": "4/5",
-              "odds": 1.73
+              "value": "4/5"
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "8/10",
-              "odds": 2.0
+              "value": "8/10"
             }
           ]
         },
@@ -17236,17 +16895,14 @@
           "predictions": {
             "winner": {
               "pick": "Barnsley",
-              "type": "home",
-              "odds": 3.5
+              "type": "home"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.5
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.53
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -17262,20 +16918,17 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "4",
-              "odds": 1.5
+              "value": "4"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "7/9",
-              "odds": 1.53
+              "value": "7/9"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "5/7",
-              "odds": 1.5
+              "value": "5/7"
             },
             {
               "team": "both",
@@ -17302,17 +16955,14 @@
           "predictions": {
             "winner": {
               "pick": "Luton Town",
-              "type": "away",
-              "odds": 2.4
+              "type": "away"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.5
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.53
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -17338,26 +16988,22 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "7",
-              "odds": 1.5
+              "value": "7"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "6/7",
-              "odds": 1.53
+              "value": "6/7"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "5/6",
-              "odds": 1.5
+              "value": "5/6"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "8/10",
-              "odds": 1.5
+              "value": "8/10"
             },
             {
               "team": "both",
@@ -17372,8 +17018,7 @@
             {
               "team": "both",
               "label": "More than 10.5 corners",
-              "value": "6/8",
-              "odds": 2.0
+              "value": "6/8"
             }
           ]
         },
@@ -17395,22 +17040,18 @@
           "predictions": {
             "winner": {
               "pick": "Exeter City",
-              "type": "home",
-              "odds": 3.0
+              "type": "home"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.7
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Under",
-              "line": 2.5,
-              "odds": 2.0
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 2.1
+              "line": 4.5
             }
           },
           "odds": {
@@ -17437,20 +17078,17 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "3",
-              "odds": 1.7
+              "value": "3"
             },
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "5",
-              "odds": 1.7
+              "value": "5"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "4/5",
-              "odds": 1.7
+              "value": "4/5"
             },
             {
               "team": "both",
@@ -17460,8 +17098,7 @@
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "4/5",
-              "odds": 1.67
+              "value": "4/5"
             }
           ]
         },
@@ -17483,17 +17120,14 @@
           "predictions": {
             "winner": {
               "pick": "Burton Albion",
-              "type": "away",
-              "odds": 3.75
+              "type": "away"
             },
             "btts": {
-              "pick": "No",
-              "odds": 2.0
+              "pick": "No"
             },
             "ou_goals": {
               "pick": "Under",
-              "line": 2.5,
-              "odds": 1.95
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -17519,14 +17153,12 @@
             {
               "team": "both",
               "label": "No goals scored",
-              "value": "3",
-              "odds": 2.0
+              "value": "3"
             },
             {
               "team": "both",
               "label": "Less than 2.5 goals",
-              "value": "6/6",
-              "odds": 1.95
+              "value": "6/6"
             },
             {
               "team": "both",
@@ -17536,14 +17168,12 @@
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "5/7",
-              "odds": 2.0
+              "value": "5/7"
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "4/5",
-              "odds": 2.0
+              "value": "4/5"
             }
           ]
         },
@@ -17565,17 +17195,14 @@
           "predictions": {
             "winner": {
               "pick": "Cardiff City",
-              "type": "away",
-              "odds": 1.86
+              "type": "away"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.44
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Under",
-              "line": 2.5,
-              "odds": 2.6
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -17606,8 +17233,7 @@
             {
               "team": "both",
               "label": "Less than 2.5 goals",
-              "value": "6/8",
-              "odds": 2.6
+              "value": "6/8"
             },
             {
               "team": "both",
@@ -17627,14 +17253,12 @@
             {
               "team": "both",
               "label": "More than 10.5 corners",
-              "value": "4/5",
-              "odds": 1.73
+              "value": "4/5"
             },
             {
               "team": "both",
               "label": "More than 10.5 corners",
-              "value": "6/8",
-              "odds": 1.73
+              "value": "6/8"
             }
           ]
         },
@@ -17656,17 +17280,14 @@
           "predictions": {
             "winner": {
               "pick": "Plymouth Argyle",
-              "type": "away",
-              "odds": 1.39
+              "type": "away"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.75
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.53
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -17697,38 +17318,32 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "15",
-              "odds": 1.75
+              "value": "15"
             },
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "4",
-              "odds": 1.75
+              "value": "4"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "4/5",
-              "odds": 1.53
+              "value": "4/5"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "6/7",
-              "odds": 1.53
+              "value": "6/7"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "4/5",
-              "odds": 1.75
+              "value": "4/5"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "6/7",
-              "odds": 1.75
+              "value": "6/7"
             },
             {
               "team": "both",
@@ -17758,14 +17373,12 @@
             {
               "team": "both",
               "label": "More than 10.5 corners",
-              "value": "4/5",
-              "odds": 1.67
+              "value": "4/5"
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "4/5",
-              "odds": 2.1
+              "value": "4/5"
             }
           ]
         },
@@ -17787,17 +17400,14 @@
           "predictions": {
             "winner": {
               "pick": "Peterborough United",
-              "type": "home",
-              "odds": 2.4
+              "type": "home"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.44
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Under",
-              "line": 2.5,
-              "odds": 2.4
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -17818,20 +17428,17 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "3",
-              "odds": 1.44
+              "value": "3"
             },
             {
               "team": "both",
               "label": "Less than 2.5 goals",
-              "value": "7/9",
-              "odds": 2.4
+              "value": "7/9"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "7/8",
-              "odds": 1.44
+              "value": "7/8"
             },
             {
               "team": "both",
@@ -17851,14 +17458,12 @@
             {
               "team": "both",
               "label": "More than 10.5 corners",
-              "value": "6/8",
-              "odds": 1.91
+              "value": "6/8"
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "7/8",
-              "odds": 1.8
+              "value": "7/8"
             }
           ]
         },
@@ -17880,17 +17485,14 @@
           "predictions": {
             "winner": {
               "pick": "Lincoln City",
-              "type": "away",
-              "odds": 1.71
+              "type": "away"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.8
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Under",
-              "line": 2.5,
-              "odds": 1.95
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -17911,20 +17513,17 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "3",
-              "odds": 1.8
+              "value": "3"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "4/5",
-              "odds": 1.85
+              "value": "4/5"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "4/5",
-              "odds": 1.8
+              "value": "4/5"
             },
             {
               "team": "both",
@@ -17949,8 +17548,7 @@
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "5/6",
-              "odds": 1.83
+              "value": "5/6"
             }
           ]
         },
@@ -17972,17 +17570,14 @@
           "predictions": {
             "winner": {
               "pick": "Blackpool",
-              "type": "away",
-              "odds": 3.0
+              "type": "away"
             },
             "btts": {
-              "pick": "No",
-              "odds": 2.1
+              "pick": "No"
             },
             "ou_goals": {
               "pick": "Under",
-              "line": 2.5,
-              "odds": 1.95
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -18008,20 +17603,17 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "5",
-              "odds": 1.67
+              "value": "5"
             },
             {
               "team": "both",
               "label": "Less than 2.5 goals",
-              "value": "6/7",
-              "odds": 1.95
+              "value": "6/7"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "4/5",
-              "odds": 1.67
+              "value": "4/5"
             },
             {
               "team": "both",
@@ -18041,14 +17633,12 @@
             {
               "team": "both",
               "label": "More than 10.5 corners",
-              "value": "6/8",
-              "odds": 1.8
+              "value": "6/8"
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "4/5",
-              "odds": 1.91
+              "value": "4/5"
             }
           ]
         },
@@ -18070,17 +17660,14 @@
           "predictions": {
             "winner": {
               "pick": "Wigan Athletic",
-              "type": "away",
-              "odds": 6.0
+              "type": "away"
             },
             "btts": {
-              "pick": "No",
-              "odds": 1.5
+              "pick": "No"
             },
             "ou_goals": {
               "pick": "Under",
-              "line": 2.5,
-              "odds": 1.53
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -18101,8 +17688,7 @@
             {
               "team": "both",
               "label": "Less than 2.5 goals",
-              "value": "8/10",
-              "odds": 1.53
+              "value": "8/10"
             },
             {
               "team": "both",
@@ -18122,8 +17708,7 @@
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "7/8",
-              "odds": 1.83
+              "value": "7/8"
             }
           ]
         },
@@ -18145,17 +17730,14 @@
           "predictions": {
             "winner": {
               "pick": "Wycombe Wanderers",
-              "type": "home",
-              "odds": 1.42
+              "type": "home"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.8
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.65
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -18176,20 +17758,17 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "5",
-              "odds": 1.8
+              "value": "5"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "5/6",
-              "odds": 1.65
+              "value": "5/6"
             },
             {
               "team": "both",
               "label": "Less than 2.5 goals",
-              "value": "5/7",
-              "odds": 2.2
+              "value": "5/7"
             },
             {
               "team": "both",
@@ -18204,14 +17783,12 @@
             {
               "team": "both",
               "label": "More than 10.5 corners",
-              "value": "4/5",
-              "odds": 1.73
+              "value": "4/5"
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "5/7",
-              "odds": 2.0
+              "value": "5/7"
             }
           ]
         }
@@ -19464,17 +19041,14 @@
           "predictions": {
             "winner": {
               "pick": "Newport County",
-              "type": "away",
-              "odds": 2.32
+              "type": "away"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.8
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 2.05
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -19490,14 +19064,12 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "5",
-              "odds": 1.8
+              "value": "5"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "4/5",
-              "odds": 2.05
+              "value": "4/5"
             },
             {
               "team": "both",
@@ -19534,17 +19106,14 @@
           "predictions": {
             "winner": {
               "pick": "Bromley",
-              "type": "home",
-              "odds": 1.56
+              "type": "home"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.8
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.73
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -19565,20 +19134,17 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "7",
-              "odds": 1.8
+              "value": "7"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "4/5",
-              "odds": 1.73
+              "value": "4/5"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "5/7",
-              "odds": 1.8
+              "value": "5/7"
             },
             {
               "team": "both",
@@ -19588,8 +19154,7 @@
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "5/6",
-              "odds": 2.0
+              "value": "5/6"
             }
           ]
         },
@@ -19611,17 +19176,14 @@
           "predictions": {
             "winner": {
               "pick": "Cheltenham Town",
-              "type": "home",
-              "odds": 3.2
+              "type": "home"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.73
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Under",
-              "line": 2.5,
-              "odds": 1.9
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -19637,14 +19199,12 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "3",
-              "odds": 1.73
+              "value": "3"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "4/5",
-              "odds": 1.9
+              "value": "4/5"
             },
             {
               "team": "both",
@@ -19659,8 +19219,7 @@
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "8/9",
-              "odds": 1.83
+              "value": "8/9"
             }
           ]
         },
@@ -19682,17 +19241,14 @@
           "predictions": {
             "winner": {
               "pick": "Salford City",
-              "type": "away",
-              "odds": 1.91
+              "type": "away"
             },
             "btts": {
-              "pick": "No",
-              "odds": 2.2
+              "pick": "No"
             },
             "ou_goals": {
               "pick": "Under",
-              "line": 2.5,
-              "odds": 2.05
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -19718,14 +19274,12 @@
             {
               "team": "both",
               "label": "Less than 2.5 goals",
-              "value": "7/9",
-              "odds": 2.05
+              "value": "7/9"
             },
             {
               "team": "both",
               "label": "Less than 2.5 goals",
-              "value": "5/7",
-              "odds": 2.05
+              "value": "5/7"
             },
             {
               "team": "both",
@@ -19740,14 +19294,12 @@
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "5/6",
-              "odds": 2.0
+              "value": "5/6"
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "7/8",
-              "odds": 2.0
+              "value": "7/8"
             }
           ]
         },
@@ -19769,17 +19321,14 @@
           "predictions": {
             "winner": {
               "pick": "Cambridge United",
-              "type": "away",
-              "odds": 1.45
+              "type": "away"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 2.1
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.9
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -19795,8 +19344,7 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "4",
-              "odds": 2.1
+              "value": "4"
             },
             {
               "team": "both",
@@ -19816,8 +19364,7 @@
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "5/6",
-              "odds": 1.8
+              "value": "5/6"
             }
           ]
         },
@@ -19839,17 +19386,14 @@
           "predictions": {
             "winner": {
               "pick": "Milton Keynes Dons",
-              "type": "away",
-              "odds": 1.81
+              "type": "away"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.73
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Under",
-              "line": 2.5,
-              "odds": 1.95
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -19880,14 +19424,12 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "6",
-              "odds": 1.73
+              "value": "6"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "5/6",
-              "odds": 1.73
+              "value": "5/6"
             },
             {
               "team": "both",
@@ -19907,8 +19449,7 @@
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "7/8",
-              "odds": 1.8
+              "value": "7/8"
             }
           ]
         },
@@ -19930,17 +19471,14 @@
           "predictions": {
             "winner": {
               "pick": "Shrewsbury Town",
-              "type": "away",
-              "odds": 3.6
+              "type": "away"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.83
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Under",
-              "line": 2.5,
-              "odds": 1.73
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -19971,8 +19509,7 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "3",
-              "odds": 1.83
+              "value": "3"
             },
             {
               "team": "both",
@@ -19987,14 +19524,12 @@
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "6/8",
-              "odds": 1.67
+              "value": "6/8"
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "6/6",
-              "odds": 1.67
+              "value": "6/6"
             }
           ]
         },
@@ -20016,17 +19551,14 @@
           "predictions": {
             "winner": {
               "pick": "Barnet",
-              "type": "away",
-              "odds": 2.4
+              "type": "away"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.53
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.65
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -20052,20 +19584,17 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "5",
-              "odds": 1.53
+              "value": "5"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "5/5",
-              "odds": 1.65
+              "value": "5/5"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "5/5",
-              "odds": 1.53
+              "value": "5/5"
             },
             {
               "team": "both",
@@ -20085,8 +19614,7 @@
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "5/7",
-              "odds": 1.73
+              "value": "5/7"
             }
           ]
         },
@@ -20108,17 +19636,14 @@
           "predictions": {
             "winner": {
               "pick": "Bristol Rovers",
-              "type": "away",
-              "odds": 4.1
+              "type": "away"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.67
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.62
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -20139,14 +19664,12 @@
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "8/10",
-              "odds": 1.62
+              "value": "8/10"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "4/5",
-              "odds": 1.62
+              "value": "4/5"
             },
             {
               "team": "both",
@@ -20166,14 +19689,12 @@
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "7/8",
-              "odds": 1.83
+              "value": "7/8"
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "5/5",
-              "odds": 1.83
+              "value": "5/5"
             }
           ]
         },
@@ -20195,17 +19716,14 @@
           "predictions": {
             "winner": {
               "pick": "Oldham Athletic",
-              "type": "home",
-              "odds": 1.76
+              "type": "home"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.67
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.7
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -20231,38 +19749,32 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "7",
-              "odds": 1.67
+              "value": "7"
             },
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "5",
-              "odds": 1.67
+              "value": "5"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "6/8",
-              "odds": 1.7
+              "value": "6/8"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "4/5",
-              "odds": 1.7
+              "value": "4/5"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "6/7",
-              "odds": 1.67
+              "value": "6/7"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "4/5",
-              "odds": 1.67
+              "value": "4/5"
             },
             {
               "team": "both",
@@ -20277,8 +19789,7 @@
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "7/9",
-              "odds": 1.83
+              "value": "7/9"
             }
           ]
         },
@@ -20300,17 +19811,14 @@
           "predictions": {
             "winner": {
               "pick": "Chesterfield",
-              "type": "away",
-              "odds": 2.2
+              "type": "away"
             },
             "btts": {
-              "pick": "No",
-              "odds": 2.38
+              "pick": "No"
             },
             "ou_goals": {
               "pick": "Under",
-              "line": 2.5,
-              "odds": 2.2
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -20336,20 +19844,17 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "6",
-              "odds": 1.53
+              "value": "6"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "4/5",
-              "odds": 1.65
+              "value": "4/5"
             },
             {
               "team": "both",
               "label": "Less than 2.5 goals",
-              "value": "6/7",
-              "odds": 2.2
+              "value": "6/7"
             },
             {
               "team": "both",
@@ -20374,8 +19879,7 @@
             {
               "team": "both",
               "label": "More than 10.5 corners",
-              "value": "10/10",
-              "odds": 2.1
+              "value": "10/10"
             }
           ]
         },
@@ -20397,17 +19901,14 @@
           "predictions": {
             "winner": {
               "pick": "Grimsby Town",
-              "type": "away",
-              "odds": 2.05
+              "type": "away"
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.62
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.75
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -20428,20 +19929,17 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "8",
-              "odds": 1.62
+              "value": "8"
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "5/5",
-              "odds": 1.75
+              "value": "5/5"
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "4/5",
-              "odds": 1.62
+              "value": "4/5"
             },
             {
               "team": "both",
