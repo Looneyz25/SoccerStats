@@ -1,0 +1,6 @@
+run_timestamp,event_id,league,date,time,home,away,top_side,top_market_odds,top_p,top_edge,top_stake,phase5_status,actual_status,actual_home_score,actual_away_score,actual_outcome,phase6_status,realized_return,phase6_notes
+2026-05-04 06:57:12 ACST,flashscore:2qevfSqS,MLS,2026-05-04,07:00,Austin FC,St. Louis City,away,2.62,0.4436,0.0619,20.0,bet,live,,,,pending,0.0,Match status live; not yet settled.
+2026-05-04 06:57:12 ACST,flashscore:n1pZG14F,Premier League,2026-05-04,23:30,Chelsea,Nottingham,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-04 06:57:12 ACST,flashscore:GOQASy66,LaLiga,2026-05-05,04:00,Almeria,Mirandes,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-04 06:57:12 ACST,flashscore:rTwrFuZR,Premier League,2026-05-05,04:30,Everton,Manchester City,home,6.5,0.2111,0.0573,16.93,bet,live,,,,pending,0.0,Match status live; not yet settled.
+2026-05-04 06:57:12 ACST,flashscore:zs3PZaZa,LaLiga,2026-05-05,04:30,Sevilla,Real Sociedad,away,2.88,0.4819,0.1347,20.0,bet,live,,,,pending,0.0,Match status live; not yet settled.
