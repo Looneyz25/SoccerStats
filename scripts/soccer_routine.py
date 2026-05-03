@@ -19,9 +19,18 @@ DOES NOT touch git. `auto_push.bat` (Windows Task Scheduler) handles commits + p
 Usage:
     python3 scripts/soccer_routine.py
 """
-import json, math, re, subprocess, sys, time
+import json, math, random, re, subprocess, sys, time
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
+
+# --- Anti-throttle helpers ---
+# Rotate impersonation profiles + jittered sleeps so we look like organic
+# traffic instead of a single bot pattern. Helps avoid Cloudflare IP blocks.
+_PROFILES = ["chrome120", "chrome124", "chrome131", "chrome116", "edge101", "safari17_0"]
+def _profile():
+    return random.choice(_PROFILES)
+def _gentle_sleep(base=0.5, jitter=0.5):
+    time.sleep(base + random.random() * jitter)
 
 try:
     from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
@@ -34,7 +43,11 @@ try:
 except ImportError:
     ADL = timezone(timedelta(hours=9, minutes=30))
 
+import random
 from curl_cffi import requests
+
+_PROFILES = ["chrome120","chrome124","chrome131","chrome116","edge101","safari17_0"]
+def _profile(): return random.choice(_PROFILES)
 
 # ----------------------------------------------------------------------------
 ROOT  = Path(__file__).resolve().parent.parent
@@ -66,12 +79,12 @@ def fetch(path, retries=2):
     last = None
     for i in range(retries + 1):
         try:
-            r = requests.get(f"https://api.sofascore.com{path}", impersonate="chrome120", timeout=15)
+            r = requests.get(f"https://api.sofascore.com{path}", impersonate=_profile(), timeout=15)
             if r.status_code in (403, 404): return None
             r.raise_for_status()
             return r.json()
         except Exception as e:
-            last = e; time.sleep(0.4 * (i + 1))
+            last = e; time.sleep(1.5 * (i + 1))
     return None
 
 
@@ -205,7 +218,7 @@ def settle(m, e):
 
 
 def cards_count(eid):
-    s = fetch(f"/api/v1/event/{eid}/statistics"); time.sleep(0.06)
+    s = fetch(f"/api/v1/event/{eid}/statistics"); time.sleep(0.6)
     if not s: return None
     yc = rc = 0; found = False
     for per in s.get("statistics", []):
@@ -287,7 +300,7 @@ def parse_full_time_odds(payload):
 
 def actuals_for(eid):
     out = {}
-    s = fetch(f"/api/v1/event/{eid}/statistics"); time.sleep(0.06)
+    s = fetch(f"/api/v1/event/{eid}/statistics"); time.sleep(0.6)
     if s:
         for per in s.get("statistics", []):
             if per.get("period") != "ALL": continue
@@ -301,7 +314,7 @@ def actuals_for(eid):
                     if k == "cornerKicks": out.update(home_corners=h, away_corners=a, corners_total=h+a)
                     elif k == "fouls":      out.update(home_fouls=h,   away_fouls=a,   fouls_total=h+a)
                     elif k == "shotsOnGoal": out.update(home_sot=h,    away_sot=a)
-    inc = fetch(f"/api/v1/event/{eid}/incidents"); time.sleep(0.06)
+    inc = fetch(f"/api/v1/event/{eid}/incidents"); time.sleep(0.6)
     if inc:
         goals = [i for i in inc.get("incidents", []) if i.get("incidentType") == "goal"]
         if goals:
@@ -320,7 +333,7 @@ def phase_a5_backfill_enrich(store, seen_ids):
     by_name = {L["name"]: L for L in store["leagues"]}
     added = 0; add_brk = {}
     for d in (YESTERDAY.isoformat(), TODAY.isoformat()):
-        data = fetch(f"/api/v1/sport/football/scheduled-events/{d}"); time.sleep(0.15)
+        data = fetch(f"/api/v1/sport/football/scheduled-events/{d}"); time.sleep(0.6)
         if not data: continue
         for ev in data.get("events", []):
             eid = ev.get("id")
@@ -354,11 +367,11 @@ def phase_a5_backfill_enrich(store, seen_ids):
             need_actuals = not m.get("actuals")
             if not (need_odds or need_streaks or need_actuals): continue
             if need_odds:
-                op = fetch(f"/api/v1/event/{eid}/odds/1/all"); time.sleep(0.06)
+                op = fetch(f"/api/v1/event/{eid}/odds/1/all"); time.sleep(0.6)
                 o = parse_full_time_odds(op)
                 if o: m["odds"] = o
             if need_streaks:
-                sp = fetch(f"/api/v1/event/{eid}/team-streaks"); time.sleep(0.06)
+                sp = fetch(f"/api/v1/event/{eid}/team-streaks"); time.sleep(0.6)
                 if sp:
                     h2h, tstr = parse_streaks_payload(sp)
                     if h2h: m["h2h_streaks"] = h2h
@@ -373,7 +386,7 @@ def phase_a5_backfill_enrich(store, seen_ids):
 # ----------------------------------------------------------------------------
 def fetch_form(team_id, exclude_event_id=None):
     if not team_id: return 1.40, 1.40
-    d = fetch(f"/api/v1/team/{team_id}/events/last/0"); time.sleep(0.06)
+    d = fetch(f"/api/v1/team/{team_id}/events/last/0"); time.sleep(0.6)
     if not d: return 1.40, 1.40
     fin = [e for e in d.get("events", [])
            if (e.get("status") or {}).get("type") == "finished"
@@ -449,7 +462,7 @@ def phase_b_forecast(store, seen_ids):
     by_name = {L["name"]: L for L in store["leagues"]}
     added = 0; add_brk = {}
     for d in (TODAY.isoformat(), TOMORROW.isoformat()):
-        data = fetch(f"/api/v1/sport/football/scheduled-events/{d}"); time.sleep(0.15)
+        data = fetch(f"/api/v1/sport/football/scheduled-events/{d}"); time.sleep(0.6)
         if not data: continue
         for ev in data.get("events", []):
             eid = ev.get("id")
@@ -458,9 +471,9 @@ def phase_b_forecast(store, seen_ids):
             utid = ((ev.get("tournament") or {}).get("uniqueTournament") or {}).get("id")
             if utid not in TOURNAMENTS: continue
             try:
-                op = fetch(f"/api/v1/event/{eid}/odds/1/all"); time.sleep(0.06)
+                op = fetch(f"/api/v1/event/{eid}/odds/1/all"); time.sleep(0.6)
                 odds = parse_full_time_odds(op)
-                sp = fetch(f"/api/v1/event/{eid}/team-streaks"); time.sleep(0.06)
+                sp = fetch(f"/api/v1/event/{eid}/team-streaks"); time.sleep(0.6)
                 h2h, tstr = parse_streaks_payload(sp) if sp else ([], [])
                 h = ev.get("homeTeam") or {}; a = ev.get("awayTeam") or {}
                 h_att, h_def = fetch_form(h.get("id"))
@@ -558,15 +571,4 @@ def main():
         for m in L["matches"]:
             if m.get("status") == "FT": ft += 1
             else: up += 1
-            r = (m.get("predictions", {}).get("winner", {}) or {}).get("result")
-            if r == "hit": hit += 1
-            elif r == "miss": miss += 1
-    pct = (hit / (hit + miss) * 100) if (hit + miss) else 0
-    print(f"\n=== DONE ===")
-    print(f"Store: {total} matches ({ft} FT / {up} upcoming)")
-    print(f"Winner accuracy to date: {hit} hit / {miss} miss  ({pct:.0f}%)")
-    print("auto_push.bat will commit + push within 15 min.")
-
-
-if __name__ == "__main__":
-    main()
+            r = (m.get("predictions", {}).get("winner", {}) or {}

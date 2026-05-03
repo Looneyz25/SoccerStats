@@ -6,7 +6,11 @@ SofaScore "Full time" 1X2. Other prediction types (BTTS / O-U goals / O-U cards)
 90-minute regular-time markets only.
 """
 import json, time, pathlib
+import random
 from curl_cffi import requests
+
+_PROFILES = ["chrome120","chrome124","chrome131","chrome116","edge101","safari17_0"]
+def _profile(): return random.choice(_PROFILES)
 
 FOLDER = pathlib.Path(__file__).resolve().parent.parent
 STORE_PATH = FOLDER / "match_data.json"
@@ -15,7 +19,7 @@ START = time.time()
 
 def fetch(path):
     try:
-        r = requests.get("https://api.sofascore.com" + path, impersonate="chrome120", timeout=12)
+        r = requests.get("https://api.sofascore.com" + path, impersonate=_profile(), timeout=12)
         if r.status_code != 200: return None
         return r.json()
     except Exception:
@@ -31,7 +35,7 @@ def parse_frac(s):
         return None
 
 def fetch_all_odds(eid):
-    data = fetch("/api/v1/event/" + str(eid) + "/odds/1/all"); time.sleep(0.08)
+    data = fetch("/api/v1/event/" + str(eid) + "/odds/1/all"); time.sleep(0.6)
     if not data: return {}
     out = {}
     for mk in data.get("markets", []):

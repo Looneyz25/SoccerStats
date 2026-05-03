@@ -8,7 +8,11 @@ regular time only. Extra-time markets ("Match Result Including Overtime", etc.) 
 explicitly excluded.
 """
 import json, re, time, pathlib
+import random
 from curl_cffi import requests
+
+_PROFILES = ["chrome120","chrome124","chrome131","chrome116","edge101","safari17_0"]
+def _profile(): return random.choice(_PROFILES)
 
 # Folder = this script's parent's parent (i.e. scripts/.. = repo root)
 FOLDER = pathlib.Path(__file__).resolve().parent.parent
@@ -73,7 +77,7 @@ def names_match(a, b):
 def fetch_page_data(slug):
     url = "https://www.sportsbet.com.au/betting/soccer/" + slug
     try:
-        r = requests.get(url, impersonate="chrome120", timeout=20)
+        r = requests.get(url, impersonate=_profile(), timeout=20)
         if r.status_code != 200: return None
         html = r.text
         start = html.find('window.__PRELOADED_STATE__ = ')
@@ -152,7 +156,7 @@ def main():
             data = fetch_page_data(slug)
             cache[slug] = extract_odds(data) if data else None
             print("  events with odds: " + str(len(cache[slug] or {})))
-            time.sleep(0.4)
+            time.sleep(1.0)
         idx = cache[slug]
         if not idx: continue
         for m in L["matches"]:

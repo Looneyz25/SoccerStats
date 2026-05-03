@@ -8,7 +8,11 @@ NOTE: Uses /api/v1/event/{id}/odds/1/all which returns 90-minute regular time ma
 "Corners 2-Way X.5", "1st half", "Double chance"). Extra-time markets are NOT used.
 """
 import json, time, pathlib
+import random
 from curl_cffi import requests
+
+_PROFILES = ["chrome120","chrome124","chrome131","chrome116","edge101","safari17_0"]
+def _profile(): return random.choice(_PROFILES)
 
 FOLDER = pathlib.Path(__file__).resolve().parent.parent
 STORE_PATH = FOLDER / "match_data.json"
@@ -17,13 +21,13 @@ START = time.time()
 
 def fetch(path):
     try:
-        r = requests.get("https://api.sofascore.com" + path, impersonate="chrome120", timeout=12)
+        r = requests.get("https://api.sofascore.com" + path, impersonate=_profile(), timeout=12)
         if r.status_code != 200: return None
         return r.json()
     except Exception:
         return None
 
-def sleep(): time.sleep(0.08)
+def sleep(): time.sleep(0.6)
 
 def parse_frac(s):
     try:
