@@ -98,6 +98,7 @@ HEADERS = [
     "h2h_home_wins",
     "h2h_away_wins",
     "h2h_draws",
+    "h2h_labels",
     "source_health",
     "phase3_status",
     "phase3_notes",
@@ -256,25 +257,67 @@ def fetch_team_form(session, team_id, stats, n=FORM_MAX):
     return events[-n:][::-1]
 
 
-def derive_h2h(home_events, away_events, home_id, away_id):
-    """SofaScore lacks a public team-vs-team H2H endpoint, so we derive recent
-    H2H from each team's last-N completed matches by intersecting on event ID."""
+def find_upcoming_event_id(session, home_id, away_id, stats):
+    """Locate the SofaScore event ID for the upcoming match between these two
+    teams by walking the home team's next events."""
+    if not home_id or not away_id:
+        return None
+    data = get_json(session, f"/api/v1/team/{home_id}/events/next/0", stats, "team_events_next")
+    if not data:
+        return None
+    for e in data.get("events") or []:
+        h = (e.get("homeTeam") or {}).get("id")
+        a = (e.get("awayTeam") or {}).get("id")
+        if {h, a} == {home_id, away_id}:
+            return e.get("id")
+    return None
+
+
+def fetch_event_h2h_labels(session, event_id, stats):
+    """SofaScore exposes H2H summary labels via /event/{id}/team-streaks under the
+    `head2head` key. Returns the raw label list; counts are derived from `X/N`
+    label values."""
+    if not event_id:
+        return []
+    data = get_json(session, f"/api/v1/event/{event_id}/team-streaks", stats, "h2h")
+    if not data:
+        return []
+    return data.get("head2head") or []
+
+
+def summarize_h2h_labels(labels):
+    """Pull a meeting count out of `X/N` style label values; return the largest N
+    seen (best estimate of recent H2H sample) and a pipe-joined label string."""
+    max_n = 0
+    pretty = []
+    for label in labels:
+        name = label.get("name", "")
+        value = label.get("value", "")
+        team = label.get("team", "")
+        if "/" in str(value):
+            try:
+                _, n_str = value.split("/", 1)
+                max_n = max(max_n, int(n_str))
+            except ValueError:
+                pass
+        pretty.append(f"{team}: {name} {value}".strip())
+    return max_n, " | ".join(pretty)
+
+
+def derive_h2h_from_form(home_events, away_events, home_id, away_id):
+    """Fallback recent-H2H from intersecting last-N form events."""
     if not home_id or not away_id:
         return []
     away_event_ids = {e.get("id") for e in away_events if e.get("id") is not None}
     matched = []
-    seen = set()
     for e in home_events:
         eid = e.get("id")
-        if eid is None or eid in seen:
-            continue
-        if eid not in away_event_ids:
+        if eid is None or eid not in away_event_ids:
             continue
         h_id = (e.get("homeTeam") or {}).get("id")
         a_id = (e.get("awayTeam") or {}).get("id")
         if {h_id, a_id} != {home_id, away_id}:
             continue
-        seen.add(eid)
         matched.append(e)
     return matched
 
@@ -596,12 +639,21 @@ def main():
         out["away_streaks"] = " | ".join(streak_labels(a_events, a_team["id"]))
 
         if not args.no_h2h:
-            h2h_events = derive_h2h(h_events, a_events, h_team["id"], a_team["id"])
-            n, hw, aw, dr = h2h_summary(h2h_events, h_team["id"], a_team["id"])
-            out["h2h_count"] = n
+            event_id = find_upcoming_event_id(session, h_team["id"], a_team["id"], stats)
+            _gentle_sleep()
+            label_n = 0
+            label_str = ""
+            if event_id:
+                labels = fetch_event_h2h_labels(session, event_id, stats)
+                _gentle_sleep()
+                label_n, label_str = summarize_h2h_labels(labels)
+            recent = derive_h2h_from_form(h_events, a_events, h_team["id"], a_team["id"])
+            n_recent, hw, aw, dr = h2h_summary(recent, h_team["id"], a_team["id"])
+            out["h2h_count"] = label_n if label_n else n_recent
             out["h2h_home_wins"] = hw
             out["h2h_away_wins"] = aw
             out["h2h_draws"] = dr
+            out["h2h_labels"] = label_str
 
         if (h_form.get("n", 0) >= MIN_FORM_FOR_READY and
                 a_form.get("n", 0) >= MIN_FORM_FOR_READY):
@@ -619,7 +671,7 @@ def main():
     rows.sort(key=lambda r: (r.get("date", ""), r.get("time", ""), r.get("league", ""), r.get("home", "")))
 
     health_rows = []
-    for label in ("search", "team_events"):
+    for label in ("search", "team_events", "team_events_next", "h2h"):
         calls = stats.calls.get(label, 0)
         ok = stats.ok.get(label, 0)
         errors = stats.errors.get(label, 0)

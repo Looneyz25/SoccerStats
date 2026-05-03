@@ -60,17 +60,21 @@ LEAGUE_BY_API = {x["api_id"]: x for x in LEAGUES}
 LEAGUE_BY_NAME = {x["name"]: x for x in LEAGUES}
 READY = "ready_for_phase_2"
 
-FLASHSCORE_LEAGUE_HINTS = {
-    "Premier League": ("england", "premier league"),
-    "Championship": ("england", "championship"),
-    "League One": ("england", "league one"),
-    "League Two": ("england", "league two"),
-    "LaLiga": ("spain", "laliga"),
-    "Bundesliga": ("germany", "bundesliga"),
-    "Ligue 1": ("france", "ligue 1"),
-    "Eredivisie": ("netherlands", "eredivisie"),
-    "UEFA Champions League": ("europe", "champions league"),
-    "MLS": ("usa", "mls"),
+# Exact Flashscore league names (after stripping the country prefix). Some
+# Flashscore feeds prepend "COUNTRY: " (e.g. "ENGLAND: Premier League"); we
+# strip that before comparison. Exact match prevents LaLiga2/MLS Next Pro
+# style leaks where substring matches succeed.
+FLASHSCORE_LEAGUE_NAMES = {
+    "Premier League": ("england", {"premier league"}),
+    "Championship": ("england", {"championship"}),
+    "League One": ("england", {"league one"}),
+    "League Two": ("england", {"league two"}),
+    "LaLiga": ("spain", {"laliga"}),
+    "Bundesliga": ("germany", {"bundesliga"}),
+    "Ligue 1": ("france", {"ligue 1"}),
+    "Eredivisie": ("netherlands", {"eredivisie"}),
+    "UEFA Champions League": ("europe", {"champions league"}),
+    "MLS": ("usa", {"mls", "major league soccer"}),
 }
 
 # Tokens that indicate a competition is NOT one of the listed top-flight men's leagues.
@@ -304,11 +308,14 @@ def flashscore_league(event):
         return None
     if any(tok in country for tok in LEAGUE_EXCLUSION_TOKENS):
         return None
-    compact_league = norm_text(league)
-    for name, (country_hint, league_hint) in FLASHSCORE_LEAGUE_HINTS.items():
-        country_ok = not country_hint or country_hint in country
-        league_ok = league_hint in league or norm_text(league_hint) in compact_league
-        if country_ok and league_ok:
+    # Strip leading "COUNTRY: " prefix that Flashscore feeds sometimes add.
+    bare_league = league
+    if ":" in bare_league:
+        bare_league = bare_league.split(":", 1)[1].strip()
+    for name, (country_hint, accepted_names) in FLASHSCORE_LEAGUE_NAMES.items():
+        if country_hint and country_hint not in country:
+            continue
+        if bare_league in accepted_names:
             return LEAGUE_BY_NAME[name]
     return None
 

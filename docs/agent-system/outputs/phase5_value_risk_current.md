@@ -6,7 +6,7 @@ Timezone: Australia/Adelaide
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-04 06:57:12 ACST |
+| run_timestamp | 2026-05-04 07:11:43 ACST |
 | bankroll | 1000.0 |
 | kelly_fraction | 0.25 |
 | min_edge | 0.05 |
@@ -19,7 +19,7 @@ Timezone: Australia/Adelaide
 | bets | 3 |
 | leans | 0 |
 | no_value | 0 |
-| upstream_blocked | 2 |
+| upstream_blocked | 1 |
 | next_action | Phase 6 will settle results once matches are FT. |
 
 ## Picks
@@ -28,6 +28,5 @@ Timezone: Australia/Adelaide
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 2026-05-04 | MLS | Austin FC vs St. Louis City | bet | away | 2.62 | 0.4436 | 0.0619 | 20.0 | bet |
 | 2026-05-04 | Premier League | Chelsea vs Nottingham |  |  |  |  |  |  | upstream_blocked |
-| 2026-05-05 | LaLiga | Almeria vs Mirandes |  |  |  |  |  |  | upstream_blocked |
 | 2026-05-05 | LaLiga | Sevilla vs Real Sociedad | bet | away | 2.88 | 0.4819 | 0.1347 | 20.0 | bet |
 | 2026-05-05 | Premier League | Everton vs Manchester City | bet | home | 6.5 | 0.2111 | 0.0573 | 16.93 | bet |
