@@ -401,11 +401,100 @@ def fetch_form(team_id, exclude_event_id=None):
     return sum(att)/len(att), sum(df)/len(df)
 
 
-def predict_poisson(h_att, h_def, a_att, a_def, h_name, a_name, streaks):
-    lh = max(0.20, (h_att + a_def)/2 + 0.20)
-    la = max(0.20, (a_att + h_def)/2 - 0.05)
-    pmf = lambda k, l: math.exp(-l)*(l**k)/math.factorial(k)
-    grid = [[pmf(i, lh)*pmf(j, la) for j in range(7)] for i in range(7)]
+def fetch_h2h(home_id, away_id, exclude_event_id=None, max_n=6):
+    """Past meetings between two specific teams. Returns list of {h_scored, a_scored}
+    from the home-team's perspective. Empty if data unavailable.
+    """
+    if not home_id or not away_id:
+        return []
+    # SofaScore exposes h2h on a known event between the two teams; we'll just walk
+    # the home team's last 30 and filter to ones vs away_id.
+    d = fetch(f"/api/v1/team/{home_id}/events/last/0?page=0"); time.sleep(0.6)
+    if not d: return []
+    out = []
+    for e in d.get("events", []):
+        if (e.get("status") or {}).get("type") != "finished": continue
+        if e.get("id") == exclude_event_id: continue
+        h_team = (e.get("homeTeam") or {}).get("id")
+        a_team = (e.get("awayTeam") or {}).get("id")
+        if h_team == home_id and a_team == away_id:
+            out.append({"h_scored": (e.get("homeScore") or {}).get("current", 0),
+                        "a_scored": (e.get("awayScore") or {}).get("current", 0)})
+        elif a_team == home_id and h_team == away_id:
+            out.append({"h_scored": (e.get("awayScore") or {}).get("current", 0),
+                        "a_scored": (e.get("homeScore") or {}).get("current", 0)})
+    return out[:max_n]
+
+
+_STANDINGS_CACHE = {}
+def fetch_standings(unique_tournament_id, season_id):
+    """Returns dict {team_id: {"rank": int, "pts": int}} for that league season.
+    Cached per process so we hit the API once per league per run.
+    """
+    if not unique_tournament_id or not season_id:
+        return {}
+    key = (unique_tournament_id, season_id)
+    if key in _STANDINGS_CACHE:
+        return _STANDINGS_CACHE[key]
+    d = fetch(f"/api/v1/unique-tournament/{unique_tournament_id}/season/{season_id}/standings/total")
+    time.sleep(0.6)
+    out = {}
+    if d:
+        for st in d.get("standings", []):
+            for row in st.get("rows", []):
+                tid = ((row.get("team") or {}).get("id"))
+                if tid:
+                    out[tid] = {"rank": row.get("position"), "pts": row.get("points")}
+    _STANDINGS_CACHE[key] = out
+    return out
+
+
+def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
+                    h2h=None, h_rank=None, h_pts=None, a_rank=None, a_pts=None):
+    """Poisson prediction enhanced with H2H trend and standings differential.
+
+    Lambda construction:
+      base_h = (h_attack + a_defence) / 2
+      base_a = (a_attack + h_defence) / 2
+
+      H2H adjustment (weight 0.25): bias toward team that has historically scored
+      more in this matchup, capped at ±0.5 goals.
+
+      Standings adjustment (weight 0.20): teams with better league position
+      (lower rank, higher pts) get a small lambda bump. ±0.4 cap.
+
+      Home advantage: +0.20 to home, -0.05 to away.
+
+    All adjustments clipped, then floor at 0.20.
+    """
+    base_h = (h_att + a_def) / 2
+    base_a = (a_att + h_def) / 2
+
+    # H2H: average goals each side scored when these two played
+    h2h_h = h2h_a = 0.0
+    if h2h:
+        h2h_h = sum(m["h_scored"] for m in h2h) / len(h2h)
+        h2h_a = sum(m["a_scored"] for m in h2h) / len(h2h)
+        # Delta from current base — capped weighting
+        h2h_delta_h = max(-0.5, min(0.5, (h2h_h - base_h) * 0.25))
+        h2h_delta_a = max(-0.5, min(0.5, (h2h_a - base_a) * 0.25))
+    else:
+        h2h_delta_h = h2h_delta_a = 0.0
+
+    # Standings: rank/pts differential. Lower rank = stronger.
+    rank_h = h_rank or 10; rank_a = a_rank or 10
+    pts_h = h_pts or 0; pts_a = a_pts or 0
+    rank_diff = rank_a - rank_h  # positive = home better
+    pts_diff = (pts_h - pts_a) / 50.0  # ~50 pts table gap = 1 lambda goal
+    table_adj_h = max(-0.4, min(0.4, rank_diff * 0.03 + pts_diff * 0.20))
+    table_adj_a = -table_adj_h
+
+    # Final lambdas
+    lh = max(0.20, base_h + 0.20 + h2h_delta_h + table_adj_h)
+    la = max(0.20, base_a - 0.05 + h2h_delta_a + table_adj_a)
+
+    pmf = lambda k, l: math.exp(-l) * (l ** k) / math.factorial(k)
+    grid = [[pmf(i, lh) * pmf(j, la) for j in range(7)] for i in range(7)]
     p_h = sum(grid[i][j] for i in range(7) for j in range(7) if i > j)
     p_d = sum(grid[i][i] for i in range(7))
     p_a = sum(grid[i][j] for i in range(7) for j in range(7) if j > i)
@@ -415,13 +504,25 @@ def predict_poisson(h_att, h_def, a_att, a_def, h_name, a_name, streaks):
         w = {"pick": a_name, "type": "away"}
     else:
         w = {"pick": "Draw", "type": "draw"}
-    btts = {"pick": "Yes" if (1 - math.exp(-lh))*(1 - math.exp(-la)) >= 0.50 else "No"}
+    btts = {"pick": "Yes" if (1 - math.exp(-lh)) * (1 - math.exp(-la)) >= 0.50 else "No"}
     p_under_25 = sum(grid[i][j] for i in range(7) for j in range(7) if i + j < 3)
     ou_goals = {"pick": "Over" if (1 - p_under_25) >= 0.55 else "Under", "line": 2.5}
     over = sum(1 for s in (streaks or []) if "more than 4.5 cards" in (s.get("label") or "").lower())
     under = sum(1 for s in (streaks or []) if "less than 4.5 cards" in (s.get("label") or "").lower())
     cards = {"pick": "Over" if over >= under else "Under", "line": 4.5}
-    return {"winner": w, "btts": btts, "ou_goals": ou_goals, "ou_cards": cards}
+    factors = {
+        "lambda_home": round(lh, 3),
+        "lambda_away": round(la, 3),
+        "h2h_n": len(h2h or []),
+        "h_rank": h_rank, "a_rank": a_rank,
+    }
+    return {"winner": w, "btts": btts, "ou_goals": ou_goals, "ou_cards": cards,
+            "factors": factors}
+
+
+# Backwards-compat shim — soccer_routine still calls predict_poisson() inside Phase B
+def predict_poisson(h_att, h_def, a_att, a_def, h_name, a_name, streaks):
+    return predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks)
 
 
 def phase_a6_retro(store):
@@ -478,7 +579,18 @@ def phase_b_forecast(store, seen_ids):
                 h = ev.get("homeTeam") or {}; a = ev.get("awayTeam") or {}
                 h_att, h_def = fetch_form(h.get("id"))
                 a_att, a_def = fetch_form(a.get("id"))
-                pred = predict_poisson(h_att, h_def, a_att, a_def, h.get("name",""), a.get("name",""), tstr)
+                # NEW: H2H + standings inputs for the enhanced predictor
+                h2h_history = fetch_h2h(h.get("id"), a.get("id"), exclude_event_id=eid)
+                ut = (ev.get("tournament") or {}).get("uniqueTournament") or {}
+                season = ev.get("season") or {}
+                stand = fetch_standings(ut.get("id"), season.get("id"))
+                hr = stand.get(h.get("id"), {})
+                ar = stand.get(a.get("id"), {})
+                pred = predict_enhanced(h_att, h_def, a_att, a_def,
+                                        h.get("name",""), a.get("name",""), tstr,
+                                        h2h=h2h_history,
+                                        h_rank=hr.get("rank"), h_pts=hr.get("pts"),
+                                        a_rank=ar.get("rank"), a_pts=ar.get("pts"))
                 ts = ev.get("startTimestamp")
                 rec = {
                     "id": eid, "date": adl_date(ts) if ts else d, "time": adl_time(ts) if ts else "00:00",
@@ -545,6 +657,9 @@ def main():
     # Persist before invoking helpers (they read match_data.json)
     save_store(store)
 
+    print("\n[Phase B.4] computed team streaks (PRIMARY) — derived from team match history")
+    run_helper("soccer_compute_streaks.py")
+
     print("\n[Phase B.5] sportsbet odds")
     run_helper("soccer_fetch_sportsbet.py")
 
@@ -563,12 +678,27 @@ def main():
     print("\n[Phase C] update index.html")
     run_helper("soccer_update_index.py")
 
-    # Final tally
+
+    # Final tally — reload store after helpers (they mutate match_data.json)
+    store = load_store()
     total = 0; ft = 0; up = 0
     hit = miss = pending = 0
     for L in store["leagues"]:
         total += len(L["matches"])
         for m in L["matches"]:
-            if m.get("status") == "FT": ft += 1
-            else: up += 1
-            r = (m.get("predictions", {}).get("winner", {}) or {}
+            if m.get("status") == "FT":
+                ft += 1
+            else:
+                up += 1
+            r = ((m.get("predictions", {}) or {}).get("winner", {}) or {}).get("result")
+            if r == "hit":
+                hit += 1
+            elif r == "miss":
+                miss += 1
+            else:
+                pending += 1
+    print(f"\n=== TOTAL: {total}  FT: {ft}  upcoming: {up}  | winner hit: {hit}  miss: {miss}  pending: {pending} ===")
+
+
+if __name__ == "__main__":
+    main()
