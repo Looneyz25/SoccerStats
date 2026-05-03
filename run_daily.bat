@@ -22,11 +22,20 @@ if errorlevel 1 (
 
 REM Run the master routine
 echo. >> "%LOG%"
-echo [%date% %time%] running soccer_routine.py >> "%LOG%"
+echo [%date% %time%] running soccer_routine.py (live dashboard pipeline) >> "%LOG%"
 python scripts\soccer_routine.py >> "%LOG%" 2>&1
 if errorlevel 1 (
   echo [%date% %time%] routine failed with errorlevel %errorlevel% >> "%LOG%"
   exit /b 2
+)
+
+REM Run the agent-system orchestrator (Phases 1-7). Non-fatal if it fails;
+REM the live dashboard above is the source of truth for index.html.
+echo. >> "%LOG%"
+echo [%date% %time%] running soccer_phases_routine.py (Phases 1-7) >> "%LOG%"
+python scripts\soccer_phases_routine.py >> "%LOG%" 2>&1
+if errorlevel 1 (
+  echo [%date% %time%] phases routine failed with errorlevel %errorlevel% (continuing) >> "%LOG%"
 )
 
 REM Push changes
