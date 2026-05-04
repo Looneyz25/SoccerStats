@@ -14,7 +14,7 @@ REM Clear stale lock if a previous run was interrupted
 if exist .git\index.lock del /f /q .git\index.lock >nul 2>&1
 
 REM Stage files. index.html is the live app on GH Pages.
-git add index.html match_data.json predictions_*.json predictions_*.md scripts/ auto_push.bat run_daily.bat
+git add index.html match_data.json predictions_*.json predictions_*.md scripts/ docs/ auto_push.bat run_daily.bat
 if errorlevel 1 (
   echo [%date% %time%] git add failed
   exit /b 2

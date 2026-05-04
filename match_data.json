@@ -1533,17 +1533,19 @@
         {
           "id": 14023931,
           "date": "2026-05-03",
-          "time": "02:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Arsenal",
             "short": "Arsenal",
-            "team_id": 42
+            "team_id": 42,
+            "goals": 3
           },
           "away": {
             "name": "Fulham",
             "short": "Fulham",
-            "team_id": 43
+            "team_id": 43,
+            "goals": 0
           },
           "odds": {
             "home": 1.4,
@@ -1574,21 +1576,28 @@
             "winner": {
               "pick": "Arsenal",
               "type": "home",
-              "odds": 1.4
+              "odds": 1.4,
+              "result": "hit"
             },
             "btts": {
               "pick": "No",
-              "odds": 1.8
+              "odds": 1.8,
+              "actual_btts": false,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Under",
               "line": 2.5,
-              "odds": 2.1
+              "odds": 2.1,
+              "actual": 3,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 2.0
+              "odds": 2.0,
+              "actual": 1,
+              "result": "miss"
             }
           },
           "sportsbet_odds": {
@@ -1596,42 +1605,67 @@
             "draw": 8.0,
             "away": 23.0,
             "event_id": 10389897
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 3,
+            "away_corners": 4,
+            "corners_total": 7,
+            "home_fouls": 7,
+            "away_fouls": 12,
+            "fouls_total": 19,
+            "home_sot": 9,
+            "away_sot": 1,
+            "first_to_score": "home",
+            "first_scorer": "Viktor Gyökeres",
+            "ht_home": 3,
+            "ht_away": 0,
+            "ht_winner": "home"
           }
         },
         {
           "id": 14024023,
           "date": "2026-05-03",
-          "time": "22:30",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Bournemouth",
             "short": "Bournemouth",
-            "team_id": 60
+            "team_id": 60,
+            "goals": 3
           },
           "away": {
             "name": "Crystal Palace",
             "short": "Crystal",
-            "team_id": 7
+            "team_id": 7,
+            "goals": 0
           },
           "predictions": {
             "winner": {
               "pick": "Bournemouth",
               "type": "home",
-              "odds": 1.61
+              "odds": 1.61,
+              "result": "hit"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.7
+              "odds": 1.7,
+              "actual_btts": false,
+              "result": "miss"
             },
             "ou_goals": {
               "pick": "Under",
               "line": 2.5,
-              "odds": 2.2
+              "odds": 2.2,
+              "actual": 3,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 2.1
+              "odds": 2.1,
+              "actual": 2,
+              "result": "miss"
             }
           },
           "odds": {
@@ -1687,176 +1721,22 @@
             "draw": 4.0,
             "away": 5.0,
             "event_id": 10389896
-          }
-        },
-        {
-          "id": 14023939,
-          "date": "2026-05-04",
-          "time": "00:00",
-          "status": "upcoming",
-          "home": {
-            "name": "Manchester United",
-            "short": "Man Utd",
-            "team_id": 35
           },
-          "away": {
-            "name": "Liverpool FC",
-            "short": "Liverpool",
-            "team_id": 44
-          },
-          "predictions": {
-            "winner": {
-              "pick": "Manchester United",
-              "type": "home",
-              "odds": 2.2
-            },
-            "btts": {
-              "pick": "Yes",
-              "odds": 1.44
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5,
-              "odds": 1.5
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5,
-              "odds": 1.83
-            }
-          },
-          "odds": {
-            "home": 2.25,
-            "draw": 3.8,
-            "away": 2.88
-          },
-          "h2h_streaks": [
-            {
-              "team": "both",
-              "label": "Without clean sheet",
-              "value": "3",
-              "odds": 1.44
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "6/7",
-              "odds": 1.5
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "6/7",
-              "odds": 1.44
-            },
-            {
-              "team": "both",
-              "label": "First to score",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "More than 4.5 cards",
-              "value": "7/8",
-              "odds": 1.83
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "5/5",
-              "odds": 1.83
-            },
-            {
-              "team": "both",
-              "label": "More than 10.5 corners",
-              "value": "4/5",
-              "odds": 2.1
-            }
-          ],
-          "sportsbet_odds": {
-            "home": 2.2,
-            "draw": 3.8,
-            "away": 2.88,
-            "event_id": 10390284
-          }
-        },
-        {
-          "id": 14023927,
-          "date": "2026-05-04",
-          "time": "03:30",
-          "status": "upcoming",
-          "home": {
-            "name": "Aston Villa",
-            "short": "Aston",
-            "team_id": 40
-          },
-          "away": {
-            "name": "Tottenham Hotspur",
-            "short": "Tottenham",
-            "team_id": 33
-          },
-          "predictions": {
-            "winner": {
-              "pick": "Aston Villa",
-              "type": "home",
-              "odds": 2.2
-            },
-            "btts": {
-              "pick": "Yes",
-              "odds": 1.62
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5,
-              "odds": 1.73
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5,
-              "odds": 2.2
-            }
-          },
-          "odds": {
-            "home": 2.15,
-            "draw": 3.6,
-            "away": 3.2
-          },
-          "h2h_streaks": [
-            {
-              "team": "both",
-              "label": "Without clean sheet",
-              "value": "3",
-              "odds": 1.62
-            },
-            {
-              "team": "both",
-              "label": "First to score",
-              "value": "7/9"
-            },
-            {
-              "team": "both",
-              "label": "More than 4.5 cards",
-              "value": "4/5",
-              "odds": 2.2
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "9/9",
-              "odds": 1.62
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "5/6",
-              "odds": 1.73
-            }
-          ],
-          "sportsbet_odds": {
-            "home": 2.15,
-            "draw": 3.5,
-            "away": 3.2,
-            "event_id": 10389733
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 7,
+            "away_corners": 1,
+            "corners_total": 8,
+            "home_fouls": 10,
+            "away_fouls": 11,
+            "fouls_total": 21,
+            "home_sot": 5,
+            "away_sot": 1,
+            "first_to_score": "home",
+            "first_scorer": "Jefferson Lerma",
+            "ht_home": 2,
+            "ht_away": 0,
+            "ht_winner": "home"
           }
         },
         {
@@ -1942,10 +1822,246 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 1.65,
-            "draw": 4.0,
-            "away": 5.0,
+            "home": 1.67,
+            "draw": 3.9,
+            "away": 4.75,
             "event_id": 10389887
+          },
+          "team_streaks": [
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "Wins",
+              "value": "4",
+              "odds": 5.0
+            },
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "No Losses",
+              "value": "9",
+              "odds": 2.1
+            }
+          ]
+        },
+        {
+          "id": 14023939,
+          "date": "2026-05-04",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Manchester United",
+            "short": "Man Utd",
+            "team_id": 35,
+            "goals": 3
+          },
+          "away": {
+            "name": "Liverpool FC",
+            "short": "Liverpool",
+            "team_id": 44,
+            "goals": 2
+          },
+          "predictions": {
+            "winner": {
+              "pick": "Manchester United",
+              "type": "home",
+              "odds": 2.2,
+              "result": "hit"
+            },
+            "btts": {
+              "pick": "Yes",
+              "odds": 1.44,
+              "actual_btts": true,
+              "result": "hit"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "odds": 1.5,
+              "actual": 5,
+              "result": "hit"
+            },
+            "ou_cards": {
+              "pick": "Over",
+              "line": 4.5,
+              "odds": 1.83,
+              "actual": 4,
+              "result": "miss"
+            }
+          },
+          "odds": {
+            "home": 2.25,
+            "draw": 3.8,
+            "away": 2.88
+          },
+          "h2h_streaks": [
+            {
+              "team": "both",
+              "label": "Without clean sheet",
+              "value": "3",
+              "odds": 1.44
+            },
+            {
+              "team": "both",
+              "label": "More than 2.5 goals",
+              "value": "6/7",
+              "odds": 1.5
+            },
+            {
+              "team": "both",
+              "label": "Both teams scoring",
+              "value": "6/7",
+              "odds": 1.44
+            },
+            {
+              "team": "both",
+              "label": "First to score",
+              "value": "4/5"
+            },
+            {
+              "team": "both",
+              "label": "More than 4.5 cards",
+              "value": "7/8",
+              "odds": 1.83
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "5/5",
+              "odds": 1.83
+            },
+            {
+              "team": "both",
+              "label": "More than 10.5 corners",
+              "value": "4/5",
+              "odds": 2.1
+            }
+          ],
+          "sportsbet_odds": {
+            "home": 2.2,
+            "draw": 3.8,
+            "away": 2.88,
+            "event_id": 10390284
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 3,
+            "away_corners": 2,
+            "corners_total": 5,
+            "home_fouls": 12,
+            "away_fouls": 11,
+            "fouls_total": 23,
+            "home_sot": 6,
+            "away_sot": 5,
+            "first_to_score": "home",
+            "first_scorer": "Matheus Cunha",
+            "ht_home": 2,
+            "ht_away": 0,
+            "ht_winner": "home"
+          }
+        },
+        {
+          "id": 14023927,
+          "date": "2026-05-04",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Aston Villa",
+            "short": "Aston",
+            "team_id": 40,
+            "goals": 1
+          },
+          "away": {
+            "name": "Tottenham Hotspur",
+            "short": "Tottenham",
+            "team_id": 33,
+            "goals": 2
+          },
+          "predictions": {
+            "winner": {
+              "pick": "Aston Villa",
+              "type": "home",
+              "odds": 2.2,
+              "result": "miss"
+            },
+            "btts": {
+              "pick": "Yes",
+              "odds": 1.62,
+              "actual_btts": true,
+              "result": "hit"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "odds": 1.73,
+              "actual": 3,
+              "result": "hit"
+            },
+            "ou_cards": {
+              "pick": "Over",
+              "line": 4.5,
+              "odds": 2.2,
+              "actual": 7,
+              "result": "hit"
+            }
+          },
+          "odds": {
+            "home": 2.15,
+            "draw": 3.6,
+            "away": 3.2
+          },
+          "h2h_streaks": [
+            {
+              "team": "both",
+              "label": "Without clean sheet",
+              "value": "3",
+              "odds": 1.62
+            },
+            {
+              "team": "both",
+              "label": "First to score",
+              "value": "7/9"
+            },
+            {
+              "team": "both",
+              "label": "More than 4.5 cards",
+              "value": "4/5",
+              "odds": 2.2
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "9/9",
+              "odds": 1.62
+            },
+            {
+              "team": "both",
+              "label": "Less than 10.5 corners",
+              "value": "5/6",
+              "odds": 1.73
+            }
+          ],
+          "sportsbet_odds": {
+            "home": 2.15,
+            "draw": 3.5,
+            "away": 3.2,
+            "event_id": 10389733
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 5,
+            "away_corners": 5,
+            "corners_total": 10,
+            "home_fouls": 12,
+            "away_fouls": 12,
+            "fouls_total": 24,
+            "home_sot": 1,
+            "away_sot": 5,
+            "first_to_score": "away",
+            "first_scorer": "Conor Gallagher",
+            "ht_home": 0,
+            "ht_away": 2,
+            "ht_winner": "away"
           }
         },
         {
@@ -2043,10 +2159,54 @@
           ],
           "sportsbet_odds": {
             "home": 6.5,
-            "draw": 4.75,
+            "draw": 4.5,
             "away": 1.44,
             "event_id": 10390285
-          }
+          },
+          "team_streaks": [
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "No Wins",
+              "value": "3",
+              "odds": 1.11
+            },
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "Without Clean Sheet",
+              "value": "3",
+              "odds": 1.75
+            },
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "More than 2.5 goals",
+              "value": "4/5",
+              "odds": 1.62
+            },
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "Wins",
+              "value": "6",
+              "odds": 1.48
+            },
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "No Losses",
+              "value": "6",
+              "odds": 1.11
+            },
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "More than 2.5 goals",
+              "value": "4/5",
+              "odds": 1.62
+            }
+          ]
         }
       ]
     },
@@ -3589,17 +3749,19 @@
         {
           "id": 14083364,
           "date": "2026-05-03",
-          "time": "02:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Deportivo Alavés",
             "short": "Deportivo",
-            "team_id": 2885
+            "team_id": 2885,
+            "goals": 2
           },
           "away": {
             "name": "Athletic Club",
             "short": "Athletic Club",
-            "team_id": 2825
+            "team_id": 2825,
+            "goals": 4
           },
           "odds": {
             "home": 2.63,
@@ -3642,38 +3804,63 @@
             "winner": {
               "pick": "Deportivo Alavés",
               "type": "home",
-              "odds": 2.63
+              "odds": 2.63,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.75
+              "odds": 1.75,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 2.0
+              "odds": 2.0,
+              "actual": 6,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.83
+              "odds": 1.83,
+              "actual": 7,
+              "result": "hit"
             }
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 4,
+            "away_corners": 7,
+            "corners_total": 11,
+            "home_fouls": 8,
+            "away_fouls": 13,
+            "fouls_total": 21,
+            "home_sot": 4,
+            "away_sot": 4,
+            "first_to_score": "home",
+            "first_scorer": "Antonio Blanco",
+            "ht_home": 1,
+            "ht_away": 0,
+            "ht_winner": "home"
           }
         },
         {
           "id": 14083495,
           "date": "2026-05-03",
-          "time": "04:30",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Osasuna",
             "short": "Osasuna",
-            "team_id": 2820
+            "team_id": 2820,
+            "goals": 1
           },
           "away": {
             "name": "FC Barcelona",
             "short": "Barcelona",
-            "team_id": 2817
+            "team_id": 2817,
+            "goals": 2
           },
           "h2h_streaks": [
             {
@@ -3735,21 +3922,28 @@
             "winner": {
               "pick": "FC Barcelona",
               "type": "away",
-              "odds": 1.61
+              "odds": 1.61,
+              "result": "hit"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.5
+              "odds": 1.5,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Under",
               "line": 2.5,
-              "odds": 2.62
+              "odds": 2.62,
+              "actual": 3,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 2.2
+              "odds": 2.2,
+              "actual": 4,
+              "result": "miss"
             }
           },
           "sportsbet_odds": {
@@ -3757,42 +3951,72 @@
             "draw": 3.0,
             "away": 1.83,
             "event_id": 10411530
+          },
+          "settled_at": "2026-05-04",
+          "odds": {
+            "home": 4.6,
+            "draw": 4.2,
+            "away": 1.67
+          },
+          "actuals": {
+            "home_corners": 3,
+            "away_corners": 7,
+            "corners_total": 10,
+            "home_fouls": 9,
+            "away_fouls": 10,
+            "fouls_total": 19,
+            "home_sot": 4,
+            "away_sot": 4,
+            "first_to_score": "away",
+            "first_scorer": "Robert Lewandowski",
+            "ht_home": 0,
+            "ht_away": 0,
+            "ht_winner": "draw"
           }
         },
         {
           "id": 14083401,
           "date": "2026-05-03",
-          "time": "21:30",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Celta Vigo",
             "short": "Celta",
-            "team_id": 2821
+            "team_id": 2821,
+            "goals": 3
           },
           "away": {
             "name": "Elche",
             "short": "Elche",
-            "team_id": 2846
+            "team_id": 2846,
+            "goals": 1
           },
           "predictions": {
             "winner": {
               "pick": "Elche",
               "type": "away",
-              "odds": 4.5
+              "odds": 4.5,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.67
+              "odds": 1.67,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.73
+              "odds": 1.73,
+              "actual": 4,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.62
+              "odds": 1.62,
+              "actual": 3,
+              "result": "miss"
             }
           },
           "odds": {
@@ -3880,42 +4104,67 @@
             "draw": 3.8,
             "away": 4.2,
             "event_id": 10411532
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 4,
+            "away_corners": 2,
+            "corners_total": 6,
+            "home_fouls": 14,
+            "away_fouls": 15,
+            "fouls_total": 29,
+            "home_sot": 4,
+            "away_sot": 4,
+            "first_to_score": "home",
+            "first_scorer": "Hugo Álvarez",
+            "ht_home": 2,
+            "ht_away": 0,
+            "ht_winner": "home"
           }
         },
         {
           "id": 14083440,
           "date": "2026-05-03",
-          "time": "23:45",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Getafe",
             "short": "Getafe",
-            "team_id": 2859
+            "team_id": 2859,
+            "goals": 0
           },
           "away": {
             "name": "Rayo Vallecano",
             "short": "Rayo",
-            "team_id": 2818
+            "team_id": 2818,
+            "goals": 2
           },
           "predictions": {
             "winner": {
               "pick": "Getafe",
               "type": "home",
-              "odds": 1.91
+              "odds": 1.91,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 2.25
+              "odds": 2.25,
+              "actual_btts": false,
+              "result": "miss"
             },
             "ou_goals": {
               "pick": "Under",
               "line": 2.5,
-              "odds": 1.44
+              "odds": 1.44,
+              "actual": 2,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 2.1
+              "odds": 2.1,
+              "actual": 8,
+              "result": "hit"
             }
           },
           "odds": {
@@ -3959,37 +4208,60 @@
             "draw": 3.25,
             "away": 4.5,
             "event_id": 10411542
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 4,
+            "away_corners": 1,
+            "corners_total": 5,
+            "home_fouls": 7,
+            "away_fouls": 22,
+            "fouls_total": 29,
+            "home_sot": 3,
+            "away_sot": 6,
+            "first_to_score": "away",
+            "first_scorer": "Sergio Camello",
+            "ht_home": 0,
+            "ht_away": 1,
+            "ht_winner": "away"
           }
         },
         {
           "id": 14083381,
           "date": "2026-05-04",
-          "time": "02:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Real Betis",
             "short": "Real",
-            "team_id": 2816
+            "team_id": 2816,
+            "goals": 3
           },
           "away": {
             "name": "Real Oviedo",
             "short": "Real",
-            "team_id": 2851
+            "team_id": 2851,
+            "goals": 0
           },
           "predictions": {
             "winner": {
               "pick": "Real Betis",
               "type": "home",
-              "odds": 1.55
+              "odds": 1.55,
+              "result": "hit"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.95
+              "odds": 1.95,
+              "actual_btts": false,
+              "result": "miss"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.91
+              "odds": 1.91,
+              "actual": 3,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
@@ -4033,42 +4305,67 @@
             "draw": 4.0,
             "away": 6.0,
             "event_id": 10411539
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 5,
+            "away_corners": 4,
+            "corners_total": 9,
+            "home_fouls": 9,
+            "away_fouls": 4,
+            "fouls_total": 13,
+            "home_sot": 5,
+            "away_sot": 5,
+            "first_to_score": "home",
+            "first_scorer": "Cucho Hernández",
+            "ht_home": 2,
+            "ht_away": 0,
+            "ht_winner": "home"
           }
         },
         {
           "id": 14083422,
           "date": "2026-05-04",
-          "time": "04:30",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Espanyol",
             "short": "Espanyol",
-            "team_id": 2814
+            "team_id": 2814,
+            "goals": 0
           },
           "away": {
             "name": "Real Madrid",
             "short": "Real",
-            "team_id": 2829
+            "team_id": 2829,
+            "goals": 2
           },
           "predictions": {
             "winner": {
               "pick": "Real Madrid",
               "type": "away",
-              "odds": 1.73
+              "odds": 1.73,
+              "result": "hit"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.53
+              "odds": 1.53,
+              "actual_btts": false,
+              "result": "miss"
             },
             "ou_goals": {
               "pick": "Under",
               "line": 2.5,
-              "odds": 2.38
+              "odds": 2.38,
+              "actual": 2,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.83
+              "odds": 1.83,
+              "actual": 7,
+              "result": "hit"
             }
           },
           "odds": {
@@ -4123,6 +4420,22 @@
             "draw": 3.9,
             "away": 1.73,
             "event_id": 10411538
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 5,
+            "away_corners": 6,
+            "corners_total": 11,
+            "home_fouls": 19,
+            "away_fouls": 16,
+            "fouls_total": 35,
+            "home_sot": 3,
+            "away_sot": 5,
+            "first_to_score": "away",
+            "first_scorer": "Vinicius Júnior",
+            "ht_home": 0,
+            "ht_away": 0,
+            "ht_winner": "draw"
           }
         },
         {
@@ -4157,7 +4470,8 @@
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5
+              "line": 4.5,
+              "odds": 1.91
             }
           },
           "odds": {
@@ -4193,7 +4507,8 @@
             {
               "team": "both",
               "label": "More than 4.5 cards",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 1.91
             },
             {
               "team": "both",
@@ -4211,9 +4526,25 @@
           "sportsbet_odds": {
             "home": 2.4,
             "draw": 3.4,
-            "away": 2.8,
+            "away": 2.88,
             "event_id": 10411540
-          }
+          },
+          "team_streaks": [
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "Without Clean Sheet",
+              "value": "8",
+              "odds": 1.7
+            },
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "Without Clean Sheet",
+              "value": "4",
+              "odds": 1.7
+            }
+          ]
         }
       ]
     },
@@ -5909,17 +6240,19 @@
         {
           "id": 14065236,
           "date": "2026-05-03",
-          "time": "02:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Bayer 04 Leverkusen",
             "short": "Bayer",
-            "team_id": 2681
+            "team_id": 2681,
+            "goals": 4
           },
           "away": {
             "name": "RB Leipzig",
             "short": "RB Leipzig",
-            "team_id": 36360
+            "team_id": 36360,
+            "goals": 1
           },
           "odds": {
             "home": 2.0,
@@ -5968,21 +6301,28 @@
             "winner": {
               "pick": "RB Leipzig",
               "type": "away",
-              "odds": 3.0
+              "odds": 3.0,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.36
+              "odds": 1.36,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.4
+              "odds": 1.4,
+              "actual": 5,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 2.0
+              "odds": 2.0,
+              "actual": 4,
+              "result": "miss"
             }
           },
           "sportsbet_odds": {
@@ -5990,42 +6330,67 @@
             "draw": 5.0,
             "away": 7.5,
             "event_id": 10394139
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 7,
+            "away_corners": 3,
+            "corners_total": 10,
+            "home_fouls": 7,
+            "away_fouls": 12,
+            "fouls_total": 19,
+            "home_sot": 8,
+            "away_sot": 5,
+            "first_to_score": "home",
+            "first_scorer": "Patrik Schick",
+            "ht_home": 2,
+            "ht_away": 0,
+            "ht_winner": "home"
           }
         },
         {
           "id": 14065246,
           "date": "2026-05-03",
-          "time": "23:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "FC St. Pauli",
             "short": "St. Pauli",
-            "team_id": 2526
+            "team_id": 2526,
+            "goals": 1
           },
           "away": {
             "name": "1. FSV Mainz 05",
             "short": "Mainz",
-            "team_id": 2556
+            "team_id": 2556,
+            "goals": 2
           },
           "predictions": {
             "winner": {
               "pick": "1. FSV Mainz 05",
               "type": "away",
-              "odds": 2.5
+              "odds": 2.5,
+              "result": "hit"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.8
+              "odds": 1.8,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 2.1
+              "odds": 2.1,
+              "actual": 3,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.8
+              "odds": 1.8,
+              "actual": 4,
+              "result": "miss"
             }
           },
           "odds": {
@@ -6086,42 +6451,67 @@
             "draw": 3.25,
             "away": 2.5,
             "event_id": 10394138
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 7,
+            "away_corners": 7,
+            "corners_total": 14,
+            "home_fouls": 10,
+            "away_fouls": 8,
+            "fouls_total": 18,
+            "home_sot": 3,
+            "away_sot": 6,
+            "first_to_score": "away",
+            "first_scorer": "Phillip Tietz",
+            "ht_home": 0,
+            "ht_away": 2,
+            "ht_winner": "away"
           }
         },
         {
           "id": 14065243,
           "date": "2026-05-04",
-          "time": "01:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Borussia M'gladbach",
             "short": "M'gladbach",
-            "team_id": 2527
+            "team_id": 2527,
+            "goals": 1
           },
           "away": {
             "name": "Borussia Dortmund",
             "short": "Dortmund",
-            "team_id": 2673
+            "team_id": 2673,
+            "goals": 0
           },
           "predictions": {
             "winner": {
               "pick": "Borussia Dortmund",
               "type": "away",
-              "odds": 1.91
+              "odds": 1.91,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.53
+              "odds": 1.53,
+              "actual_btts": false,
+              "result": "miss"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.57
+              "odds": 1.57,
+              "actual": 1,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.62
+              "odds": 1.62,
+              "actual": 4,
+              "result": "miss"
             }
           },
           "odds": {
@@ -6147,42 +6537,67 @@
             "draw": 3.8,
             "away": 1.91,
             "event_id": 10394156
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 1,
+            "away_corners": 1,
+            "corners_total": 2,
+            "home_fouls": 14,
+            "away_fouls": 17,
+            "fouls_total": 31,
+            "home_sot": 4,
+            "away_sot": 1,
+            "first_to_score": "home",
+            "first_scorer": "Haris Tabaković",
+            "ht_home": 0,
+            "ht_away": 0,
+            "ht_winner": "draw"
           }
         },
         {
           "id": 14065240,
           "date": "2026-05-04",
-          "time": "03:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "SC Freiburg",
             "short": "Freiburg",
-            "team_id": 2538
+            "team_id": 2538,
+            "goals": 1
           },
           "away": {
             "name": "VfL Wolfsburg",
             "short": "Wolfsburg",
-            "team_id": 2524
+            "team_id": 2524,
+            "goals": 1
           },
           "predictions": {
             "winner": {
               "pick": "SC Freiburg",
               "type": "home",
-              "odds": 2.5
+              "odds": 2.5,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.53
+              "odds": 1.53,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.67
+              "odds": 1.67,
+              "actual": 2,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.91
+              "odds": 1.91,
+              "actual": 2,
+              "result": "miss"
             }
           },
           "odds": {
@@ -6243,6 +6658,22 @@
             "draw": 3.5,
             "away": 2.7,
             "event_id": 10394161
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 1,
+            "away_corners": 7,
+            "corners_total": 8,
+            "home_fouls": 5,
+            "away_fouls": 11,
+            "fouls_total": 16,
+            "home_sot": 3,
+            "away_sot": 4,
+            "first_to_score": "away",
+            "first_scorer": "Konstantinos Koulierakis",
+            "ht_home": 0,
+            "ht_away": 0,
+            "ht_winner": "draw"
           }
         }
       ]
@@ -7305,17 +7736,19 @@
         {
           "id": 14167986,
           "date": "2026-05-03",
-          "time": "02:30",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Metz",
             "short": "Metz",
-            "team_id": 1651
+            "team_id": 1651,
+            "goals": 1
           },
           "away": {
             "name": "AS Monaco",
             "short": "AS Monaco",
-            "team_id": 1653
+            "team_id": 1653,
+            "goals": 2
           },
           "odds": {
             "home": 5.75,
@@ -7370,21 +7803,28 @@
             "winner": {
               "pick": "AS Monaco",
               "type": "away",
-              "odds": 1.48
+              "odds": 1.48,
+              "result": "hit"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.57
+              "odds": 1.57,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.44
+              "odds": 1.44,
+              "actual": 3,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 2.2
+              "odds": 2.2,
+              "actual": 2,
+              "result": "miss"
             }
           },
           "sportsbet_odds": {
@@ -7392,22 +7832,40 @@
             "draw": 1.6,
             "away": 2.8,
             "event_id": 10394154
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 5,
+            "away_corners": 9,
+            "corners_total": 14,
+            "home_fouls": 10,
+            "away_fouls": 15,
+            "fouls_total": 25,
+            "home_sot": 1,
+            "away_sot": 3,
+            "first_to_score": "home",
+            "first_scorer": "Jessy Deminguet",
+            "ht_home": 0,
+            "ht_away": 0,
+            "ht_winner": "draw"
           }
         },
         {
           "id": 14167992,
           "date": "2026-05-03",
-          "time": "04:35",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Nice",
             "short": "Nice",
-            "team_id": 1661
+            "team_id": 1661,
+            "goals": 1
           },
           "away": {
             "name": "RC Lens",
             "short": "RC Lens",
-            "team_id": 1648
+            "team_id": 1648,
+            "goals": 1
           },
           "odds": {
             "home": 4.2,
@@ -7455,21 +7913,28 @@
             "winner": {
               "pick": "RC Lens",
               "type": "away",
-              "odds": 1.7
+              "odds": 1.7,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.57
+              "odds": 1.57,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.57
+              "odds": 1.57,
+              "actual": 2,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.73
+              "odds": 1.73,
+              "actual": 6,
+              "result": "hit"
             }
           },
           "sportsbet_odds": {
@@ -7477,42 +7942,67 @@
             "draw": 3.0,
             "away": 1.75,
             "event_id": 10394141
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 7,
+            "away_corners": 8,
+            "corners_total": 15,
+            "home_fouls": 11,
+            "away_fouls": 10,
+            "fouls_total": 21,
+            "home_sot": 2,
+            "away_sot": 4,
+            "first_to_score": "away",
+            "first_scorer": "Allan Saint-Maximin",
+            "ht_home": 0,
+            "ht_away": 0,
+            "ht_winner": "draw"
           }
         },
         {
           "id": 14167987,
           "date": "2026-05-03",
-          "time": "22:30",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Lille",
             "short": "Lille",
-            "team_id": 1643
+            "team_id": 1643,
+            "goals": 1
           },
           "away": {
             "name": "Le Havre",
             "short": "Le Havre",
-            "team_id": 1662
+            "team_id": 1662,
+            "goals": 1
           },
           "predictions": {
             "winner": {
               "pick": "Lille",
               "type": "home",
-              "odds": 1.36
+              "odds": 1.36,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 2.05
+              "odds": 2.05,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Under",
               "line": 2.5,
-              "odds": 1.91
+              "odds": 1.91,
+              "actual": 2,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 2.1
+              "odds": 2.1,
+              "actual": 5,
+              "result": "hit"
             }
           },
           "odds": {
@@ -7590,6 +8080,22 @@
             "draw": 4.6,
             "away": 8.5,
             "event_id": 10394157
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 14,
+            "away_corners": 5,
+            "corners_total": 19,
+            "home_fouls": 9,
+            "away_fouls": 15,
+            "fouls_total": 24,
+            "home_sot": 10,
+            "away_sot": 2,
+            "first_to_score": "home",
+            "first_scorer": "Hakon Arnar Haraldsson",
+            "ht_home": 1,
+            "ht_away": 1,
+            "ht_winner": "draw"
           }
         },
         {
@@ -7706,37 +8212,46 @@
         {
           "id": 14167991,
           "date": "2026-05-04",
-          "time": "00:45",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Auxerre",
             "short": "Auxerre",
-            "team_id": 1646
+            "team_id": 1646,
+            "goals": 3
           },
           "away": {
             "name": "Angers",
             "short": "Angers",
-            "team_id": 1684
+            "team_id": 1684,
+            "goals": 1
           },
           "predictions": {
             "winner": {
               "pick": "Auxerre",
               "type": "home",
-              "odds": 1.67
+              "odds": 1.67,
+              "result": "hit"
             },
             "btts": {
               "pick": "No",
-              "odds": 1.7
+              "odds": 1.7,
+              "actual_btts": true,
+              "result": "miss"
             },
             "ou_goals": {
               "pick": "Under",
               "line": 2.5,
-              "odds": 1.67
+              "odds": 1.67,
+              "actual": 4,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.83
+              "odds": 1.83,
+              "actual": 7,
+              "result": "hit"
             }
           },
           "odds": {
@@ -7784,42 +8299,67 @@
             "draw": 3.7,
             "away": 5.5,
             "event_id": 10394145
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 4,
+            "away_corners": 6,
+            "corners_total": 10,
+            "home_fouls": 12,
+            "away_fouls": 2,
+            "fouls_total": 14,
+            "home_sot": 10,
+            "away_sot": 3,
+            "first_to_score": "home",
+            "first_scorer": "Sékou Mara",
+            "ht_home": 1,
+            "ht_away": 0,
+            "ht_winner": "home"
           }
         },
         {
           "id": 14167990,
           "date": "2026-05-04",
-          "time": "00:45",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Paris FC",
             "short": "Paris",
-            "team_id": 6070
+            "team_id": 6070,
+            "goals": 4
           },
           "away": {
             "name": "Stade Brestois",
             "short": "Brest",
-            "team_id": 1715
+            "team_id": 1715,
+            "goals": 0
           },
           "predictions": {
             "winner": {
               "pick": "Paris FC",
               "type": "home",
-              "odds": 2.05
+              "odds": 2.05,
+              "result": "hit"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.7
+              "odds": 1.7,
+              "actual_btts": false,
+              "result": "miss"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.91
+              "odds": 1.91,
+              "actual": 4,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.57
+              "odds": 1.57,
+              "actual": 3,
+              "result": "miss"
             }
           },
           "odds": {
@@ -7874,42 +8414,67 @@
             "draw": 3.6,
             "away": 3.5,
             "event_id": 10394155
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 7,
+            "away_corners": 3,
+            "corners_total": 10,
+            "home_fouls": 10,
+            "away_fouls": 8,
+            "fouls_total": 18,
+            "home_sot": 8,
+            "away_sot": 1,
+            "first_to_score": "home",
+            "first_scorer": "Rudy Matondo",
+            "ht_home": 2,
+            "ht_away": 0,
+            "ht_winner": "home"
           }
         },
         {
           "id": 14167988,
           "date": "2026-05-04",
-          "time": "00:45",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "RC Strasbourg",
             "short": "Strasbourg",
-            "team_id": 1659
+            "team_id": 1659,
+            "goals": 1
           },
           "away": {
             "name": "Toulouse",
             "short": "Toulouse",
-            "team_id": 1681
+            "team_id": 1681,
+            "goals": 2
           },
           "predictions": {
             "winner": {
               "pick": "RC Strasbourg",
               "type": "home",
-              "odds": 2.88
+              "odds": 2.88,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.62
+              "odds": 1.62,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.8
+              "odds": 1.8,
+              "actual": 3,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.83
+              "odds": 1.83,
+              "actual": 4,
+              "result": "miss"
             }
           },
           "odds": {
@@ -7986,42 +8551,67 @@
             "draw": 3.5,
             "away": 2.38,
             "event_id": 10394143
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 8,
+            "away_corners": 3,
+            "corners_total": 11,
+            "home_fouls": 7,
+            "away_fouls": 15,
+            "fouls_total": 22,
+            "home_sot": 4,
+            "away_sot": 6,
+            "first_to_score": "home",
+            "first_scorer": "Samuel Amo-Ameyaw",
+            "ht_home": 1,
+            "ht_away": 1,
+            "ht_winner": "draw"
           }
         },
         {
           "id": 14167989,
           "date": "2026-05-04",
-          "time": "04:15",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Olympique Lyonnais",
             "short": "Lyon",
-            "team_id": 1649
+            "team_id": 1649,
+            "goals": 4
           },
           "away": {
             "name": "Stade Rennais",
             "short": "Rennes",
-            "team_id": 1658
+            "team_id": 1658,
+            "goals": 2
           },
           "predictions": {
             "winner": {
               "pick": "Stade Rennais",
               "type": "away",
-              "odds": 3.0
+              "odds": 3.0,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.57
+              "odds": 1.57,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.67
+              "odds": 1.67,
+              "actual": 6,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 2.2
+              "odds": 2.2,
+              "actual": 3,
+              "result": "miss"
             }
           },
           "odds": {
@@ -8079,6 +8669,22 @@
             "draw": 3.7,
             "away": 3.25,
             "event_id": 10394148
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 7,
+            "away_corners": 5,
+            "corners_total": 12,
+            "home_fouls": 10,
+            "away_fouls": 14,
+            "fouls_total": 24,
+            "home_sot": 9,
+            "away_sot": 5,
+            "first_to_score": "away",
+            "first_scorer": "Mousa Tamari",
+            "ht_home": 2,
+            "ht_away": 1,
+            "ht_winner": "home"
           }
         }
       ]
@@ -8329,6 +8935,125 @@
             "ht_away": 1,
             "ht_winner": "away"
           }
+        },
+        {
+          "id": 15632635,
+          "date": "2026-05-06",
+          "time": "04:30",
+          "status": "upcoming",
+          "home": {
+            "name": "Arsenal",
+            "short": "Arsenal",
+            "team_id": 42
+          },
+          "away": {
+            "name": "Atlético Madrid",
+            "short": "Atl.",
+            "team_id": 2836
+          },
+          "predictions": {
+            "winner": {
+              "pick": "Arsenal",
+              "type": "home",
+              "odds": 1.62
+            },
+            "btts": {
+              "pick": "Yes",
+              "odds": 1.95
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "odds": 1.91
+            },
+            "ou_cards": {
+              "pick": "Over",
+              "line": 4.5,
+              "odds": 1.8
+            },
+            "factors": {
+              "lambda_home": 2.163,
+              "lambda_away": 0.988,
+              "h2h_n": 1,
+              "h_rank": 1,
+              "a_rank": 14
+            }
+          },
+          "odds": {
+            "home": 1.62,
+            "draw": 4.0,
+            "away": 5.25
+          },
+          "h2h_streaks": [
+            {
+              "team": "both",
+              "label": "No losses",
+              "value": "3"
+            },
+            {
+              "team": "both",
+              "label": "More than 2.5 goals",
+              "value": "5/7",
+              "odds": 1.91
+            },
+            {
+              "team": "both",
+              "label": "Both teams scoring",
+              "value": "6/7",
+              "odds": 1.95
+            },
+            {
+              "team": "both",
+              "label": "First to concede",
+              "value": "5/7"
+            },
+            {
+              "team": "both",
+              "label": "First half loser",
+              "value": "5/7"
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "7/8",
+              "odds": 1.91
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "5/6",
+              "odds": 1.91
+            },
+            {
+              "team": "both",
+              "label": "Less than 10.5 corners",
+              "value": "5/6",
+              "odds": 1.73
+            }
+          ],
+          "team_streaks": [
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "No Losses",
+              "value": "3",
+              "odds": 1.17
+            },
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "No Losses",
+              "value": "3",
+              "odds": 2.25
+            },
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "Both teams scoring",
+              "value": "8/10",
+              "odds": 1.95
+            }
+          ]
         }
       ]
     },
@@ -9316,7 +10041,51 @@
               "pick": "Over",
               "line": 4.5
             }
-          }
+          },
+          "team_streaks": [
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "No Wins",
+              "value": "4"
+            },
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "Without Clean Sheet",
+              "value": "6"
+            },
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "Both teams scoring",
+              "value": "4/5"
+            },
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "No Losses",
+              "value": "3"
+            },
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "Without Clean Sheet",
+              "value": "4"
+            },
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "More than 2.5 goals",
+              "value": "9/10"
+            },
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "Both teams scoring",
+              "value": "9/10"
+            }
+          ]
         },
         {
           "id": 16074271,
@@ -9574,17 +10343,19 @@
         {
           "id": 14028540,
           "date": "2026-05-03",
-          "time": "02:15",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "FC Groningen",
             "short": "Groningen",
-            "team_id": 2951
+            "team_id": 2951,
+            "goals": 2
           },
           "away": {
             "name": "Excelsior",
             "short": "Excelsior",
-            "team_id": 2967
+            "team_id": 2967,
+            "goals": 3
           },
           "h2h_streaks": [
             {
@@ -9638,16 +10409,21 @@
             "winner": {
               "pick": "FC Groningen",
               "type": "home",
-              "odds": 1.67
+              "odds": 1.67,
+              "result": "miss"
             },
             "btts": {
               "pick": "No",
-              "odds": 2.25
+              "odds": 2.25,
+              "actual_btts": true,
+              "result": "miss"
             },
             "ou_goals": {
               "pick": "Under",
               "line": 2.5,
-              "odds": 2.4
+              "odds": 2.4,
+              "actual": 5,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
@@ -9659,22 +10435,45 @@
             "draw": 10.0,
             "away": 1.01,
             "event_id": 10417420
+          },
+          "settled_at": "2026-05-04",
+          "odds": {
+            "home": 1.7,
+            "draw": 4.0,
+            "away": 4.5
+          },
+          "actuals": {
+            "home_corners": 5,
+            "away_corners": 8,
+            "corners_total": 13,
+            "home_fouls": 5,
+            "away_fouls": 10,
+            "fouls_total": 15,
+            "home_sot": 5,
+            "away_sot": 9,
+            "first_to_score": "home",
+            "first_scorer": "Tika de Jonge",
+            "ht_home": 1,
+            "ht_away": 1,
+            "ht_winner": "draw"
           }
         },
         {
           "id": 14028539,
           "date": "2026-05-03",
-          "time": "03:30",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "AFC Ajax",
             "short": "AAjax",
-            "team_id": 2953
+            "team_id": 2953,
+            "goals": 2
           },
           "away": {
             "name": "PSV Eindhoven",
             "short": "PSV Eindhoven",
-            "team_id": 2952
+            "team_id": 2952,
+            "goals": 2
           },
           "h2h_streaks": [
             {
@@ -9718,21 +10517,28 @@
             "winner": {
               "pick": "AFC Ajax",
               "type": "home",
-              "odds": 2.4
+              "odds": 2.4,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.33
+              "odds": 1.33,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.36
+              "odds": 1.36,
+              "actual": 4,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.62
+              "odds": 1.62,
+              "actual": 3,
+              "result": "miss"
             }
           },
           "sportsbet_odds": {
@@ -9740,22 +10546,45 @@
             "draw": 1.04,
             "away": 15.0,
             "event_id": 10415790
+          },
+          "settled_at": "2026-05-04",
+          "odds": {
+            "home": 2.3,
+            "draw": 4.2,
+            "away": 2.63
+          },
+          "actuals": {
+            "home_corners": 6,
+            "away_corners": 4,
+            "corners_total": 10,
+            "home_fouls": 7,
+            "away_fouls": 14,
+            "fouls_total": 21,
+            "home_sot": 4,
+            "away_sot": 2,
+            "first_to_score": "away",
+            "first_scorer": "Ricardo Pepi",
+            "ht_home": 1,
+            "ht_away": 1,
+            "ht_winner": "draw"
           }
         },
         {
           "id": 14028537,
           "date": "2026-05-03",
-          "time": "04:30",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "NEC Nijmegen",
             "short": "NEC Nijmegen",
-            "team_id": 2962
+            "team_id": 2962,
+            "goals": 1
           },
           "away": {
             "name": "SC Telstar",
             "short": "SC Telstar",
-            "team_id": 2972
+            "team_id": 2972,
+            "goals": 1
           },
           "h2h_streaks": [
             {
@@ -9827,20 +10656,27 @@
             "winner": {
               "pick": "NEC Nijmegen",
               "type": "home",
-              "odds": 1.33
+              "odds": 1.33,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.53
+              "odds": 1.53,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.4
+              "odds": 1.4,
+              "actual": 2,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5
+              "line": 4.5,
+              "actual": 5,
+              "result": "hit"
             }
           },
           "sportsbet_odds": {
@@ -9848,22 +10684,45 @@
             "draw": 4.6,
             "away": 5.0,
             "event_id": 10415870
+          },
+          "settled_at": "2026-05-04",
+          "odds": {
+            "home": 1.53,
+            "draw": 4.6,
+            "away": 5.0
+          },
+          "actuals": {
+            "home_corners": 9,
+            "away_corners": 0,
+            "corners_total": 9,
+            "home_fouls": 10,
+            "away_fouls": 11,
+            "fouls_total": 21,
+            "home_sot": 7,
+            "away_sot": 4,
+            "first_to_score": "away",
+            "first_scorer": "Sem van Duijn",
+            "ht_home": 0,
+            "ht_away": 1,
+            "ht_winner": "away"
           }
         },
         {
           "id": 14028552,
           "date": "2026-05-03",
-          "time": "19:45",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "FC Volendam",
             "short": "Volendam",
-            "team_id": 2968
+            "team_id": 2968,
+            "goals": 0
           },
           "away": {
             "name": "SC Heerenveen",
             "short": "SC Heerenveen",
-            "team_id": 2964
+            "team_id": 2964,
+            "goals": 2
           },
           "h2h_streaks": [
             {
@@ -9929,20 +10788,27 @@
             "winner": {
               "pick": "SC Heerenveen",
               "type": "away",
-              "odds": 1.95
+              "odds": 1.95,
+              "result": "hit"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.44
+              "odds": 1.44,
+              "actual_btts": false,
+              "result": "miss"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.48
+              "odds": 1.48,
+              "actual": 2,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5
+              "line": 4.5,
+              "actual": 6,
+              "result": "hit"
             }
           },
           "sportsbet_odds": {
@@ -9950,42 +10816,72 @@
             "draw": 4.0,
             "away": 1.91,
             "event_id": 10417606
+          },
+          "settled_at": "2026-05-04",
+          "odds": {
+            "home": 3.1,
+            "draw": 4.1,
+            "away": 2.05
+          },
+          "actuals": {
+            "home_corners": 7,
+            "away_corners": 5,
+            "corners_total": 12,
+            "home_fouls": 8,
+            "away_fouls": 14,
+            "fouls_total": 22,
+            "home_sot": 5,
+            "away_sot": 4,
+            "first_to_score": "away",
+            "first_scorer": "Luca Oyen",
+            "ht_home": 0,
+            "ht_away": 1,
+            "ht_winner": "away"
           }
         },
         {
           "id": 14028545,
           "date": "2026-05-03",
-          "time": "22:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Fortuna Sittard",
             "short": "Fortuna",
-            "team_id": 2957
+            "team_id": 2957,
+            "goals": 1
           },
           "away": {
             "name": "Feyenoord",
             "short": "Feyenoord",
-            "team_id": 2959
+            "team_id": 2959,
+            "goals": 2
           },
           "predictions": {
             "winner": {
               "pick": "Feyenoord",
               "type": "away",
-              "odds": 1.47
+              "odds": 1.47,
+              "result": "hit"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.67
+              "odds": 1.67,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.5
+              "odds": 1.5,
+              "actual": 3,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 2.0
+              "odds": 2.0,
+              "actual": 6,
+              "result": "hit"
             }
           },
           "odds": {
@@ -10057,41 +10953,66 @@
             "draw": 4.5,
             "away": 1.47,
             "event_id": 10417605
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 1,
+            "away_corners": 8,
+            "corners_total": 9,
+            "home_fouls": 16,
+            "away_fouls": 13,
+            "fouls_total": 29,
+            "home_sot": 3,
+            "away_sot": 7,
+            "first_to_score": "home",
+            "first_scorer": "Kaj Sierhuis",
+            "ht_home": 0,
+            "ht_away": 0,
+            "ht_winner": "draw"
           }
         },
         {
           "id": 14028553,
           "date": "2026-05-03",
-          "time": "22:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "PEC Zwolle",
             "short": "Zwolle",
-            "team_id": 2971
+            "team_id": 2971,
+            "goals": 1
           },
           "away": {
             "name": "Heracles Almelo",
             "short": "Heracles",
-            "team_id": 2977
+            "team_id": 2977,
+            "goals": 0
           },
           "predictions": {
             "winner": {
               "pick": "PEC Zwolle",
               "type": "home",
-              "odds": 1.4
+              "odds": 1.4,
+              "result": "hit"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.62
+              "odds": 1.62,
+              "actual_btts": false,
+              "result": "miss"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.44
+              "odds": 1.44,
+              "actual": 1,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5
+              "line": 4.5,
+              "actual": 7,
+              "result": "hit"
             }
           },
           "odds": {
@@ -10155,6 +11076,22 @@
             "draw": 4.75,
             "away": 6.0,
             "event_id": 10417608
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 3,
+            "away_corners": 3,
+            "corners_total": 6,
+            "home_fouls": 18,
+            "away_fouls": 18,
+            "fouls_total": 36,
+            "home_sot": 5,
+            "away_sot": 3,
+            "first_to_score": "home",
+            "first_scorer": "Anselmo Garcia McNulty",
+            "ht_home": 1,
+            "ht_away": 0,
+            "ht_winner": "home"
           }
         },
         {
@@ -10280,32 +11217,39 @@
         {
           "id": 14028550,
           "date": "2026-05-04",
-          "time": "00:15",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "AZ Alkmaar",
             "short": "AZ",
-            "team_id": 2950
+            "team_id": 2950,
+            "goals": 2
           },
           "away": {
             "name": "FC Twente",
             "short": "Twente",
-            "team_id": 2955
+            "team_id": 2955,
+            "goals": 2
           },
           "predictions": {
             "winner": {
               "pick": "AZ Alkmaar",
               "type": "home",
-              "odds": 2.62
+              "odds": 2.62,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.4
+              "odds": 1.4,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.44
+              "odds": 1.44,
+              "actual": 4,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
@@ -10362,41 +11306,66 @@
             "draw": 3.9,
             "away": 2.3,
             "event_id": 10417910
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 4,
+            "away_corners": 3,
+            "corners_total": 7,
+            "home_fouls": 9,
+            "away_fouls": 14,
+            "fouls_total": 23,
+            "home_sot": 4,
+            "away_sot": 2,
+            "first_to_score": "home",
+            "first_scorer": "Jordy Clasie",
+            "ht_home": 1,
+            "ht_away": 1,
+            "ht_winner": "draw"
           }
         },
         {
           "id": 14028541,
           "date": "2026-05-04",
-          "time": "00:15",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Sparta Rotterdam",
             "short": "Sparta",
-            "team_id": 2960
+            "team_id": 2960,
+            "goals": 2
           },
           "away": {
             "name": "Go Ahead Eagles",
             "short": "GA Eagles",
-            "team_id": 2979
+            "team_id": 2979,
+            "goals": 2
           },
           "predictions": {
             "winner": {
               "pick": "Go Ahead Eagles",
               "type": "away",
-              "odds": 3.1
+              "odds": 3.1,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.5
+              "odds": 1.5,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.53
+              "odds": 1.53,
+              "actual": 4,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5
+              "line": 4.5,
+              "actual": 7,
+              "result": "hit"
             }
           },
           "odds": {
@@ -10443,7 +11412,175 @@
             "draw": 3.9,
             "away": 3.25,
             "event_id": 10417854
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 6,
+            "away_corners": 8,
+            "corners_total": 14,
+            "home_fouls": 11,
+            "away_fouls": 10,
+            "fouls_total": 21,
+            "home_sot": 3,
+            "away_sot": 5,
+            "first_to_score": "home",
+            "first_scorer": "Shunsuke Mito",
+            "ht_home": 1,
+            "ht_away": 0,
+            "ht_winner": "home"
           }
+        },
+        {
+          "id": 16115678,
+          "date": "2026-05-06",
+          "time": "02:15",
+          "status": "upcoming",
+          "home": {
+            "name": "RKC Waalwijk",
+            "short": "Waalwijk",
+            "team_id": 2956
+          },
+          "away": {
+            "name": "Willem II Tilburg",
+            "short": "Willem",
+            "team_id": 2961
+          },
+          "predictions": {
+            "winner": {
+              "pick": "RKC Waalwijk",
+              "type": "home",
+              "odds": 2.45
+            },
+            "btts": {
+              "pick": "Yes",
+              "odds": 1.5
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "odds": 1.57
+            },
+            "ou_cards": {
+              "pick": "Over",
+              "line": 4.5
+            },
+            "factors": {
+              "lambda_home": 1.762,
+              "lambda_away": 1.7,
+              "h2h_n": 1,
+              "h_rank": null,
+              "a_rank": null
+            }
+          },
+          "odds": {
+            "home": 2.45,
+            "draw": 3.7,
+            "away": 2.5
+          },
+          "h2h_streaks": [
+            {
+              "team": "both",
+              "label": "Wins",
+              "value": "5"
+            },
+            {
+              "team": "both",
+              "label": "No losses",
+              "value": "3"
+            },
+            {
+              "team": "both",
+              "label": "Without clean sheet",
+              "value": "4",
+              "odds": 1.5
+            },
+            {
+              "team": "both",
+              "label": "More than 2.5 goals",
+              "value": "8/10",
+              "odds": 1.57
+            },
+            {
+              "team": "both",
+              "label": "Both teams scoring",
+              "value": "9/10",
+              "odds": 1.5
+            },
+            {
+              "team": "both",
+              "label": "First to score",
+              "value": "8/10"
+            },
+            {
+              "team": "both",
+              "label": "First to score",
+              "value": "5/5"
+            },
+            {
+              "team": "both",
+              "label": "First half winner",
+              "value": "5/5"
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "4/5"
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "7/8"
+            },
+            {
+              "team": "both",
+              "label": "More than 10.5 corners",
+              "value": "5/5"
+            }
+          ],
+          "team_streaks": [
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "No Losses",
+              "value": "3",
+              "odds": 1.5
+            },
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "Without Clean Sheet",
+              "value": "4",
+              "odds": 1.5
+            },
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "More than 2.5 goals",
+              "value": "9/10",
+              "odds": 1.57
+            },
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "Both teams scoring",
+              "value": "9/10",
+              "odds": 1.5
+            },
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "Wins",
+              "value": "5",
+              "odds": 2.55
+            },
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "No Losses",
+              "value": "5",
+              "odds": 1.5
+            }
+          ]
         }
       ]
     },
@@ -12257,17 +13394,19 @@
         {
           "id": 15171510,
           "date": "2026-05-03",
-          "time": "02:30",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Toronto FC",
             "short": "Toronto",
-            "team_id": 7080
+            "team_id": 7080,
+            "goals": 1
           },
           "away": {
             "name": "San Jose Earthquakes",
             "short": "San",
-            "team_id": 21825
+            "team_id": 21825,
+            "goals": 1
           },
           "odds": {
             "home": 2.55,
@@ -12334,21 +13473,28 @@
             "winner": {
               "pick": "San Jose Earthquakes",
               "type": "away",
-              "odds": 2.45
+              "odds": 2.45,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.53
+              "odds": 1.53,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.65
+              "odds": 1.65,
+              "actual": 2,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.83
+              "odds": 1.83,
+              "actual": 4,
+              "result": "miss"
             }
           },
           "sportsbet_odds": {
@@ -12356,22 +13502,40 @@
             "draw": 1.8,
             "away": 2.75,
             "event_id": 10394200
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 8,
+            "away_corners": 9,
+            "corners_total": 17,
+            "home_fouls": 17,
+            "away_fouls": 7,
+            "fouls_total": 24,
+            "home_sot": 2,
+            "away_sot": 4,
+            "first_to_score": "home",
+            "first_scorer": "Dániel Sallói",
+            "ht_home": 1,
+            "ht_away": 1,
+            "ht_winner": "draw"
           }
         },
         {
           "id": 15171504,
           "date": "2026-05-03",
-          "time": "04:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Sporting Kansas City",
             "short": "Sporting",
-            "team_id": 2509
+            "team_id": 2509,
+            "goals": 1
           },
           "away": {
             "name": "Seattle Sounders FC",
             "short": "Seattle",
-            "team_id": 22009
+            "team_id": 22009,
+            "goals": 1
           },
           "odds": {
             "home": 5.5,
@@ -12426,21 +13590,28 @@
             "winner": {
               "pick": "Seattle Sounders FC",
               "type": "away",
-              "odds": 1.51
+              "odds": 1.51,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.7
+              "odds": 1.7,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.62
+              "odds": 1.62,
+              "actual": 2,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 2.2
+              "odds": 2.2,
+              "actual": 2,
+              "result": "miss"
             }
           },
           "sportsbet_odds": {
@@ -12448,22 +13619,40 @@
             "draw": 2.5,
             "away": 2.0,
             "event_id": 10394216
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 4,
+            "away_corners": 9,
+            "corners_total": 13,
+            "home_fouls": 10,
+            "away_fouls": 7,
+            "fouls_total": 17,
+            "home_sot": 7,
+            "away_sot": 9,
+            "first_to_score": "away",
+            "first_scorer": "Paul Rothrock",
+            "ht_home": 1,
+            "ht_away": 1,
+            "ht_winner": "draw"
           }
         },
         {
           "id": 15171512,
           "date": "2026-05-03",
-          "time": "06:15",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Real Salt Lake",
             "short": "Real Salt Lake",
-            "team_id": 5133
+            "team_id": 5133,
+            "goals": 2
           },
           "away": {
             "name": "Portland Timbers",
             "short": "Portland",
-            "team_id": 22007
+            "team_id": 22007,
+            "goals": 0
           },
           "odds": {
             "home": 1.46,
@@ -12518,21 +13707,28 @@
             "winner": {
               "pick": "Real Salt Lake",
               "type": "home",
-              "odds": 1.46
+              "odds": 1.46,
+              "result": "hit"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.53
+              "odds": 1.53,
+              "actual_btts": false,
+              "result": "miss"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.44
+              "odds": 1.44,
+              "actual": 2,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 2.1
+              "odds": 2.1,
+              "actual": 3,
+              "result": "miss"
             }
           },
           "sportsbet_odds": {
@@ -12540,22 +13736,40 @@
             "draw": 5.0,
             "away": 6.5,
             "event_id": 10394193
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 6,
+            "away_corners": 2,
+            "corners_total": 8,
+            "home_fouls": 15,
+            "away_fouls": 12,
+            "fouls_total": 27,
+            "home_sot": 15,
+            "away_sot": 2,
+            "first_to_score": "home",
+            "first_scorer": "Zavier Gozo",
+            "ht_home": 2,
+            "ht_away": 0,
+            "ht_winner": "home"
           }
         },
         {
           "id": 15171514,
           "date": "2026-05-03",
-          "time": "08:45",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Inter Miami CF",
             "short": "Inter Miami CF",
-            "team_id": 337602
+            "team_id": 337602,
+            "goals": 3
           },
           "away": {
             "name": "Orlando City SC",
             "short": "Orlando",
-            "team_id": 52237
+            "team_id": 52237,
+            "goals": 4
           },
           "odds": {
             "home": 1.3,
@@ -12592,21 +13806,28 @@
             "winner": {
               "pick": "Inter Miami CF",
               "type": "home",
-              "odds": 1.3
+              "odds": 1.3,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.5
+              "odds": 1.5,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.3
+              "odds": 1.3,
+              "actual": 7,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.91
+              "odds": 1.91,
+              "actual": 7,
+              "result": "hit"
             }
           },
           "sportsbet_odds": {
@@ -12614,22 +13835,40 @@
             "draw": 6.5,
             "away": 8.5,
             "event_id": 10394254
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 10,
+            "away_corners": 2,
+            "corners_total": 12,
+            "home_fouls": 18,
+            "away_fouls": 5,
+            "fouls_total": 23,
+            "home_sot": 10,
+            "away_sot": 9,
+            "first_to_score": "home",
+            "first_scorer": "Ian Fray",
+            "ht_home": 3,
+            "ht_away": 1,
+            "ht_winner": "home"
           }
         },
         {
           "id": 15171509,
           "date": "2026-05-03",
-          "time": "09:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Atlanta United",
             "short": "Atlanta United",
-            "team_id": 243211
+            "team_id": 243211,
+            "goals": 3
           },
           "away": {
             "name": "CF Montréal",
             "short": "CF Montréal",
-            "team_id": 22006
+            "team_id": 22006,
+            "goals": 1
           },
           "odds": {
             "home": 1.86,
@@ -12690,38 +13929,63 @@
             "winner": {
               "pick": "Atlanta United",
               "type": "home",
-              "odds": 1.86
+              "odds": 1.86,
+              "result": "hit"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.67
+              "odds": 1.67,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.75
+              "odds": 1.75,
+              "actual": 4,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 2.1
+              "odds": 2.1,
+              "actual": 8,
+              "result": "hit"
             }
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 3,
+            "away_corners": 2,
+            "corners_total": 5,
+            "home_fouls": 14,
+            "away_fouls": 9,
+            "fouls_total": 23,
+            "home_sot": 5,
+            "away_sot": 5,
+            "first_to_score": "away",
+            "first_scorer": "Matthew Longstaff",
+            "ht_home": 2,
+            "ht_away": 1,
+            "ht_winner": "home"
           }
         },
         {
           "id": 15171519,
           "date": "2026-05-03",
-          "time": "09:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Columbus Crew",
             "short": "Columbus Crew",
-            "team_id": 2504
+            "team_id": 2504,
+            "goals": 2
           },
           "away": {
             "name": "Minnesota United",
             "short": "Minnesota",
-            "team_id": 41618
+            "team_id": 41618,
+            "goals": 3
           },
           "odds": {
             "home": 1.68,
@@ -12764,21 +14028,28 @@
             "winner": {
               "pick": "Columbus Crew",
               "type": "home",
-              "odds": 1.68
+              "odds": 1.68,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.62
+              "odds": 1.62,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.62
+              "odds": 1.62,
+              "actual": 5,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.62
+              "odds": 1.62,
+              "actual": 4,
+              "result": "miss"
             }
           },
           "sportsbet_odds": {
@@ -12786,22 +14057,40 @@
             "draw": 3.9,
             "away": 4.33,
             "event_id": 10394217
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 4,
+            "away_corners": 6,
+            "corners_total": 10,
+            "home_fouls": 10,
+            "away_fouls": 11,
+            "fouls_total": 21,
+            "home_sot": 4,
+            "away_sot": 7,
+            "first_to_score": "home",
+            "first_scorer": "Taha Habroune",
+            "ht_home": 1,
+            "ht_away": 0,
+            "ht_winner": "home"
           }
         },
         {
           "id": 15171516,
           "date": "2026-05-03",
-          "time": "09:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "New England Revolution",
             "short": "New",
-            "team_id": 2511
+            "team_id": 2511,
+            "goals": 1
           },
           "away": {
             "name": "Charlotte FC",
             "short": "Charlotte",
-            "team_id": 404108
+            "team_id": 404108,
+            "goals": 0
           },
           "odds": {
             "home": 2.1,
@@ -12856,21 +14145,28 @@
             "winner": {
               "pick": "New England Revolution",
               "type": "home",
-              "odds": 2.1
+              "odds": 2.1,
+              "result": "hit"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.75
+              "odds": 1.75,
+              "actual_btts": false,
+              "result": "miss"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.95
+              "odds": 1.95,
+              "actual": 1,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.73
+              "odds": 1.73,
+              "actual": 7,
+              "result": "hit"
             }
           },
           "sportsbet_odds": {
@@ -12878,22 +14174,40 @@
             "draw": 3.5,
             "away": 3.1,
             "event_id": 10394247
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 3,
+            "away_corners": 5,
+            "corners_total": 8,
+            "home_fouls": 10,
+            "away_fouls": 16,
+            "fouls_total": 26,
+            "home_sot": 4,
+            "away_sot": 4,
+            "first_to_score": "home",
+            "first_scorer": "Carles Gil",
+            "ht_home": 0,
+            "ht_away": 0,
+            "ht_winner": "draw"
           }
         },
         {
           "id": 15171517,
           "date": "2026-05-03",
-          "time": "09:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "New York Red Bulls",
             "short": "New",
-            "team_id": 2506
+            "team_id": 2506,
+            "goals": 0
           },
           "away": {
             "name": "FC Dallas",
             "short": "Dallas",
-            "team_id": 2512
+            "team_id": 2512,
+            "goals": 2
           },
           "odds": {
             "home": 1.96,
@@ -12953,21 +14267,28 @@
             "winner": {
               "pick": "FC Dallas",
               "type": "away",
-              "odds": 3.4
+              "odds": 3.4,
+              "result": "hit"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.5
+              "odds": 1.5,
+              "actual_btts": false,
+              "result": "miss"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.53
+              "odds": 1.53,
+              "actual": 2,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.8
+              "odds": 1.8,
+              "actual": 2,
+              "result": "miss"
             }
           },
           "sportsbet_odds": {
@@ -12975,22 +14296,40 @@
             "draw": 3.7,
             "away": 2.8,
             "event_id": 10394233
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 8,
+            "away_corners": 4,
+            "corners_total": 12,
+            "home_fouls": 6,
+            "away_fouls": 7,
+            "fouls_total": 13,
+            "home_sot": 0,
+            "away_sot": 6,
+            "first_to_score": "away",
+            "first_scorer": "Petar Musa",
+            "ht_home": 0,
+            "ht_away": 0,
+            "ht_winner": "draw"
           }
         },
         {
           "id": 15171518,
           "date": "2026-05-03",
-          "time": "09:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Philadelphia Union",
             "short": "Philadelphia",
-            "team_id": 39833
+            "team_id": 39833,
+            "goals": 0
           },
           "away": {
             "name": "Nashville SC",
             "short": "Nashville SC",
-            "team_id": 337612
+            "team_id": 337612,
+            "goals": 0
           },
           "odds": {
             "home": 2.4,
@@ -13063,21 +14402,28 @@
             "winner": {
               "pick": "Nashville SC",
               "type": "away",
-              "odds": 2.57
+              "odds": 2.57,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.67
+              "odds": 1.67,
+              "actual_btts": false,
+              "result": "miss"
             },
             "ou_goals": {
               "pick": "Under",
               "line": 2.5,
-              "odds": 2.0
+              "odds": 2.0,
+              "actual": 0,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.83
+              "odds": 1.83,
+              "actual": 2,
+              "result": "miss"
             }
           },
           "sportsbet_odds": {
@@ -13085,22 +14431,38 @@
             "draw": 3.3,
             "away": 3.4,
             "event_id": 10394225
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 5,
+            "away_corners": 2,
+            "corners_total": 7,
+            "home_fouls": 14,
+            "away_fouls": 11,
+            "fouls_total": 25,
+            "home_sot": 4,
+            "away_sot": 1,
+            "ht_home": 0,
+            "ht_away": 0,
+            "ht_winner": "draw"
           }
         },
         {
           "id": 15171520,
           "date": "2026-05-03",
-          "time": "10:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Chicago Fire",
             "short": "Chicago Fire",
-            "team_id": 2505
+            "team_id": 2505,
+            "goals": 2
           },
           "away": {
             "name": "FC Cincinnati",
             "short": "Cincinnati",
-            "team_id": 215167
+            "team_id": 215167,
+            "goals": 3
           },
           "odds": {
             "home": 1.68,
@@ -13197,21 +14559,28 @@
             "winner": {
               "pick": "Chicago Fire",
               "type": "home",
-              "odds": 1.68
+              "odds": 1.68,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.62
+              "odds": 1.62,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.62
+              "odds": 1.62,
+              "actual": 5,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.83
+              "odds": 1.83,
+              "actual": 5,
+              "result": "hit"
             }
           },
           "sportsbet_odds": {
@@ -13219,22 +14588,40 @@
             "draw": 4.4,
             "away": 4.4,
             "event_id": 10394210
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 10,
+            "away_corners": 1,
+            "corners_total": 11,
+            "home_fouls": 12,
+            "away_fouls": 5,
+            "fouls_total": 17,
+            "home_sot": 10,
+            "away_sot": 4,
+            "first_to_score": "home",
+            "first_scorer": "Hugo Cuypers",
+            "ht_home": 2,
+            "ht_away": 2,
+            "ht_winner": "draw"
           }
         },
         {
           "id": 15171523,
           "date": "2026-05-03",
-          "time": "10:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Houston Dynamo",
             "short": "Houston Dynamo",
-            "team_id": 2508
+            "team_id": 2508,
+            "goals": 1
           },
           "away": {
             "name": "Colorado Rapids",
             "short": "Colorado",
-            "team_id": 2510
+            "team_id": 2510,
+            "goals": 0
           },
           "odds": {
             "home": 1.71,
@@ -13289,21 +14676,28 @@
             "winner": {
               "pick": "Colorado Rapids",
               "type": "away",
-              "odds": 4.1
+              "odds": 4.1,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.57
+              "odds": 1.57,
+              "actual_btts": false,
+              "result": "miss"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.57
+              "odds": 1.57,
+              "actual": 1,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.67
+              "odds": 1.67,
+              "actual": 6,
+              "result": "hit"
             }
           },
           "sportsbet_odds": {
@@ -13311,22 +14705,40 @@
             "draw": 3.8,
             "away": 3.7,
             "event_id": 10394253
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 6,
+            "away_corners": 5,
+            "corners_total": 11,
+            "home_fouls": 11,
+            "away_fouls": 8,
+            "fouls_total": 19,
+            "home_sot": 5,
+            "away_sot": 2,
+            "first_to_score": "home",
+            "first_scorer": "Lawrence Ennali",
+            "ht_home": 0,
+            "ht_away": 0,
+            "ht_winner": "draw"
           }
         },
         {
           "id": 15171522,
           "date": "2026-05-03",
-          "time": "11:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "San Diego FC",
             "short": "San Diego",
-            "team_id": 1043961
+            "team_id": 1043961,
+            "goals": 2
           },
           "away": {
             "name": "Los Angeles FC",
             "short": "Los Angeles",
-            "team_id": 274650
+            "team_id": 274650,
+            "goals": 2
           },
           "odds": {
             "home": 2.45,
@@ -13393,21 +14805,28 @@
             "winner": {
               "pick": "Los Angeles FC",
               "type": "away",
-              "odds": 2.45
+              "odds": 2.45,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.53
+              "odds": 1.53,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.62
+              "odds": 1.62,
+              "actual": 4,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.83
+              "odds": 1.83,
+              "actual": 4,
+              "result": "miss"
             }
           },
           "sportsbet_odds": {
@@ -13415,22 +14834,40 @@
             "draw": 4.0,
             "away": 2.55,
             "event_id": 10394252
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 2,
+            "away_corners": 3,
+            "corners_total": 5,
+            "home_fouls": 12,
+            "away_fouls": 17,
+            "fouls_total": 29,
+            "home_sot": 3,
+            "away_sot": 4,
+            "first_to_score": "home",
+            "first_scorer": "Marcus Ingvartsen",
+            "ht_home": 1,
+            "ht_away": 0,
+            "ht_winner": "home"
           }
         },
         {
           "id": 15171521,
           "date": "2026-05-03",
-          "time": "12:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "LA Galaxy",
             "short": "LA Galaxy",
-            "team_id": 2513
+            "team_id": 2513,
+            "goals": 1
           },
           "away": {
             "name": "Vancouver Whitecaps",
             "short": "Vancouver",
-            "team_id": 22010
+            "team_id": 22010,
+            "goals": 1
           },
           "odds": {
             "home": 3.1,
@@ -13509,21 +14946,28 @@
             "winner": {
               "pick": "Vancouver Whitecaps",
               "type": "away",
-              "odds": 2.01
+              "odds": 2.01,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.44
+              "odds": 1.44,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.53
+              "odds": 1.53,
+              "actual": 2,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.91
+              "odds": 1.91,
+              "actual": 10,
+              "result": "hit"
             }
           },
           "sportsbet_odds": {
@@ -13531,42 +14975,219 @@
             "draw": 3.9,
             "away": 1.85,
             "event_id": 10394224
+          },
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 1,
+            "away_corners": 2,
+            "corners_total": 3,
+            "home_fouls": 12,
+            "away_fouls": 18,
+            "fouls_total": 30,
+            "home_sot": 2,
+            "away_sot": 6,
+            "first_to_score": "home",
+            "first_scorer": "Joseph Paintsil",
+            "ht_home": 0,
+            "ht_away": 0,
+            "ht_winner": "draw"
+          }
+        },
+        {
+          "id": 15171525,
+          "date": "2026-05-04",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Austin FC",
+            "short": "Austin",
+            "team_id": 377973,
+            "goals": 2
+          },
+          "away": {
+            "name": "St.Louis City",
+            "short": "St. Louis",
+            "team_id": 407803,
+            "goals": 0
+          },
+          "predictions": {
+            "winner": {
+              "pick": "St.Louis City",
+              "type": "away",
+              "odds": 2.62,
+              "result": "miss"
+            },
+            "btts": {
+              "pick": "Yes",
+              "odds": 1.57,
+              "actual_btts": false,
+              "result": "miss"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "odds": 1.75,
+              "actual": 2,
+              "result": "miss"
+            },
+            "ou_cards": {
+              "pick": "Over",
+              "line": 4.5,
+              "odds": 2.2,
+              "actual": 5,
+              "result": "hit"
+            }
+          },
+          "odds": {
+            "home": 2.57,
+            "draw": 3.4,
+            "away": 2.65
+          },
+          "h2h_streaks": [
+            {
+              "team": "both",
+              "label": "Without clean sheet",
+              "value": "3",
+              "odds": 1.57
+            },
+            {
+              "team": "both",
+              "label": "More than 2.5 goals",
+              "value": "5/6",
+              "odds": 1.75
+            },
+            {
+              "team": "both",
+              "label": "More than 2.5 goals",
+              "value": "4/5",
+              "odds": 1.75
+            },
+            {
+              "team": "both",
+              "label": "Both teams scoring",
+              "value": "5/6",
+              "odds": 1.57
+            },
+            {
+              "team": "both",
+              "label": "Both teams scoring",
+              "value": "6/7",
+              "odds": 1.57
+            },
+            {
+              "team": "both",
+              "label": "First to concede",
+              "value": "9/10"
+            },
+            {
+              "team": "both",
+              "label": "More than 4.5 cards",
+              "value": "5/5",
+              "odds": 2.2
+            },
+            {
+              "team": "both",
+              "label": "More than 10.5 corners",
+              "value": "4/5",
+              "odds": 2.0
+            }
+          ],
+          "sportsbet_odds": {
+            "home": 2.45,
+            "draw": 3.3,
+            "away": 2.8,
+            "event_id": 10394261
+          },
+          "team_streaks": [
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "More than 2.5 goals",
+              "value": "5/6",
+              "odds": 1.65
+            },
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "Both teams scoring",
+              "value": "5/6",
+              "odds": 1.57
+            },
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "Without Clean Sheet",
+              "value": "3",
+              "odds": 1.57
+            },
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "Both teams scoring",
+              "value": "6/7",
+              "odds": 1.57
+            }
+          ],
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 4,
+            "away_corners": 6,
+            "corners_total": 10,
+            "home_fouls": 14,
+            "away_fouls": 20,
+            "fouls_total": 34,
+            "home_sot": 6,
+            "away_sot": 5,
+            "first_to_score": "home",
+            "first_scorer": "Christian Ramirez",
+            "ht_home": 0,
+            "ht_away": 0,
+            "ht_winner": "draw"
           }
         },
         {
           "id": 15171524,
           "date": "2026-05-04",
-          "time": "04:30",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "New York City FC",
             "short": "NY City",
-            "team_id": 187643
+            "team_id": 187643,
+            "goals": 0
           },
           "away": {
             "name": "DC United",
             "short": "DC United",
-            "team_id": 2502
+            "team_id": 2502,
+            "goals": 2
           },
           "predictions": {
             "winner": {
               "pick": "New York City FC",
               "type": "home",
-              "odds": 1.67
+              "odds": 1.67,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.8
+              "odds": 1.8,
+              "actual_btts": false,
+              "result": "miss"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.85
+              "odds": 1.85,
+              "actual": 2,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.73
+              "odds": 1.73,
+              "actual": 5,
+              "result": "hit"
             }
           },
           "odds": {
@@ -13628,103 +15249,22 @@
             "draw": 3.8,
             "away": 5.0,
             "event_id": 10394219
-          }
-        },
-        {
-          "id": 15171525,
-          "date": "2026-05-04",
-          "time": "07:00",
-          "status": "upcoming",
-          "home": {
-            "name": "Austin FC",
-            "short": "Austin",
-            "team_id": 377973
           },
-          "away": {
-            "name": "St.Louis City",
-            "short": "St. Louis",
-            "team_id": 407803
-          },
-          "predictions": {
-            "winner": {
-              "pick": "St.Louis City",
-              "type": "away",
-              "odds": 2.62
-            },
-            "btts": {
-              "pick": "Yes",
-              "odds": 1.57
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5,
-              "odds": 1.75
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5,
-              "odds": 2.2
-            }
-          },
-          "odds": {
-            "home": 2.57,
-            "draw": 3.4,
-            "away": 2.65
-          },
-          "h2h_streaks": [
-            {
-              "team": "both",
-              "label": "Without clean sheet",
-              "value": "3",
-              "odds": 1.57
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "5/6",
-              "odds": 1.75
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "4/5",
-              "odds": 1.75
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "5/6",
-              "odds": 1.57
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "6/7",
-              "odds": 1.57
-            },
-            {
-              "team": "both",
-              "label": "First to concede",
-              "value": "9/10"
-            },
-            {
-              "team": "both",
-              "label": "More than 4.5 cards",
-              "value": "5/5",
-              "odds": 2.2
-            },
-            {
-              "team": "both",
-              "label": "More than 10.5 corners",
-              "value": "4/5",
-              "odds": 2.0
-            }
-          ],
-          "sportsbet_odds": {
-            "home": 2.5,
-            "draw": 3.6,
-            "away": 2.62,
-            "event_id": 10394261
+          "settled_at": "2026-05-04",
+          "actuals": {
+            "home_corners": 6,
+            "away_corners": 3,
+            "corners_total": 9,
+            "home_fouls": 10,
+            "away_fouls": 17,
+            "fouls_total": 27,
+            "home_sot": 4,
+            "away_sot": 7,
+            "first_to_score": "away",
+            "first_scorer": "Louis Munteanu",
+            "ht_home": 0,
+            "ht_away": 1,
+            "ht_winner": "away"
           }
         }
       ]
