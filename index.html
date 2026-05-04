@@ -667,7 +667,17 @@ function renderCard(m){
     const homeWon = homeGoals > awayGoals, awayWon = awayGoals > homeGoals, draw = homeGoals === awayGoals;
     const teamWon = (who === 'home' && homeWon) || (who === 'away' && awayWon);
     const teamLost = (who === 'home' && awayWon) || (who === 'away' && homeWon);
-    const teamConceded = (who === 'home' && awayGoals > 0) || (who === 'away' && homeGoals > 0);
+    // `who === 'both'` means the streak applies to BOTH teams (typically H2H).
+    // For "Without clean sheet" / "No clean sheet" this means BOTH teams concede,
+    // i.e. both score. Mirrors the BTTS-Yes prediction these streaks generate.
+    const teamConceded =
+      (who === 'home' && awayGoals > 0) ||
+      (who === 'away' && homeGoals > 0) ||
+      (who === 'both' && homeGoals > 0 && awayGoals > 0);
+    const teamScored =
+      (who === 'home' && homeGoals > 0) ||
+      (who === 'away' && awayGoals > 0) ||
+      (who === 'both' && homeGoals > 0 && awayGoals > 0);
 
     const overWord = lab.indexOf('over') !== -1 || lab.indexOf('more than') !== -1;
     const underWord = lab.indexOf('under') !== -1 || lab.indexOf('less than') !== -1;
@@ -679,7 +689,6 @@ function renderCard(m){
     if (lab.indexOf('without clean sheet') !== -1) return teamConceded ? 'hit' : 'miss';
     if (lab.indexOf('no goals conceded') !== -1) return !teamConceded ? 'hit' : 'miss';
     if (lab.indexOf('no goals scored') !== -1){
-      const teamScored = (who==='home' && homeGoals>0) || (who==='away' && awayGoals>0);
       return !teamScored ? 'hit' : 'miss';
     }
     if (lab.indexOf('over 2.5 goals') !== -1) return total > 2.5 ? 'hit' : 'miss';
@@ -712,18 +721,24 @@ function renderCard(m){
     }
     if (typeof A.first_to_score !== 'undefined') {
       if (lab.indexOf('first to score') !== -1) {
+        if (who === 'both') return 'na';
         if (A.first_to_score === null) return 'miss';
         return A.first_to_score === who ? 'hit' : 'miss';
       }
       if (lab.indexOf('first to concede') !== -1) {
+        if (who === 'both') return 'na';
         if (A.first_to_score === null) return 'miss';
         const conceder = A.first_to_score === 'home' ? 'away' : 'home';
         return conceder === who ? 'hit' : 'miss';
       }
     }
     if (typeof A.ht_winner !== 'undefined') {
-      if (lab.indexOf('first half winner') !== -1) return A.ht_winner === who ? 'hit' : 'miss';
+      if (lab.indexOf('first half winner') !== -1) {
+        if (who === 'both') return 'na';
+        return A.ht_winner === who ? 'hit' : 'miss';
+      }
       if (lab.indexOf('first half loser') !== -1) {
+        if (who === 'both') return 'na';
         const loser = A.ht_winner === 'home' ? 'away' : (A.ht_winner === 'away' ? 'home' : null);
         return loser === who ? 'hit' : 'miss';
       }
