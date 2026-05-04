@@ -1,0 +1,111 @@
+[Mon 04/05/2026  7:29:45.58] === run_daily start === 
+ 
+[Mon 04/05/2026  7:29:45.70] running soccer_routine.py (live dashboard pipeline) 
+=== soccer_routine.py — 2026-05-04 (Adelaide) ===
+
+[Phase 0] validate + dedupe + re-date
+  dedupe=0  no_id=0  foreign=0  moved=0  re_dated=0
+
+[Phase A] settle pending
+  settled=43  skipped=4
+
+[Phase A.5] backfill finished + enrich
+  added=0  enriched=43
+
+[Phase A.6] retrospective predictions
+  retro=0
+
+[Phase B] forecast new upcoming
+  added=2
+
+[Phase B.4] computed team streaks (PRIMARY) — derived from team match history
+  + Premier League            Chelsea vs Nottingham Forest: 0 home / 2 away
+  + Premier League            Everton vs Manchester City: 3 home / 3 away
+  + LaLiga                    Sevilla vs Real Sociedad: 1 home / 1 away
+  + UEFA Champions League     Arsenal vs Atlético Madrid: 1 home / 2 away
+  + Eredivisie                Roda JC Kerkrade vs RKC Waalwijk: 3 home / 4 away
+  + Eredivisie                RKC Waalwijk vs Willem II Tilburg: 4 home / 2 away
+  + MLS                       Austin FC vs St.Louis City: 2 home / 2 away
+
+DONE. enriched=7
+
+[Phase B.5] sportsbet odds
+Fetching Premier League (united-kingdom/english-premier-league)
+  events with odds: 20
+Fetching LaLiga (spain/spanish-la-liga)
+  events with odds: 31
+Fetching Bundesliga (germany/german-bundesliga)
+  events with odds: 1
+Fetching Ligue 1 (france/french-ligue-1)
+  events with odds: 1
+Fetching UEFA Champions League (uefa-competitions/uefa-champions-league)
+  events with odds: 2
+Fetching Eredivisie (rest-of-europe/dutch-eredivisie)
+  events with odds: 9
+Fetching MLS (north-america/usa-major-league-soccer)
+  events with odds: 269
+Fetching Championship (united-kingdom/english-championship)
+  events with odds: 2
+Fetching League One (united-kingdom/english-league-one)
+  events with odds: 20
+Fetching League Two (united-kingdom/english-league-two)
+  events with odds: 20
+=== matched: 4 | unmatched: 3
+  - ('UEFA Champions League', 'Arsenal', 'Atlético Madrid')
+  - ('Eredivisie', 'Roda JC Kerkrade', 'RKC Waalwijk')
+  - ('Eredivisie', 'RKC Waalwijk', 'Willem II Tilburg')
+
+[Phase B.6] streak odds
+ +2 Chelsea vs Nottingham Forest
+ +6 Everton vs Manchester City
+ +3 Sevilla vs Real Sociedad
+ +8 Arsenal vs Atlético Madrid
+ +9 RKC Waalwijk vs Willem II Tilburg
+BUDGET reached. odds_added=28
+
+[Phase B.7] prediction odds
+ +1 Sevilla vs Real Sociedad
+ +4 Arsenal vs Atlético Madrid
+ +3 RKC Waalwijk vs Willem II Tilburg
+BUDGET reached. added=8
+
+[Phase B.8] TheSportsDB fallback (records score hint when SofaScore was 403)
+  2026-05-03: 3 total events / 3 finished
+  2026-05-04: 3 total events / 0 finished
+
+DONE. matched=0
+
+[Phase B.9] Understat xG enrichment
+  fetching Understat: Premier League (EPL)
+    found 0 events, 0 finished
+  fetching Understat: LaLiga (La_liga)
+    found 0 events, 0 finished
+  fetching Understat: Serie A (Serie_A)
+    found 0 events, 0 finished
+  fetching Understat: Bundesliga (Bundesliga)
+    found 0 events, 0 finished
+  fetching Understat: Ligue 1 (Ligue_1)
+    found 0 events, 0 finished
+
+DONE. enriched=0
+
+[Phase C] update index.html
+index.html updated: 10 leagues, 202 matches.
+
+=== TOTAL: 202  FT: 195  upcoming: 7  | winner hit: 91  miss: 104  pending: 7 ===
+ 
+[Mon 04/05/2026  7:33:44.22] running soccer_phases_routine.py (Phases 1-7) 
+[1 Fixtures] ok  NOTE: Missing API_FOOTBALL_KEY/APISPORTS_KEY; used keyless Flashscore feed.
+[2 Odds] ok  total=4 ready_for_phase_3=3 unmatched=1 blocked=0
+[3 Team Context] ok  total=4 ready_for_phase_4=3 unresolved=0 upstream_blocked=1
+[4 Predictions] ok  total=4 ready_for_phase_5=3 model_only=0 upstream_blocked=1
+[5 Value & Risk] ok  total=4 bets=3 leans=0 no_value=0 upstream_blocked=1 scale=1.0
+[6 Settlement] ok  settled_this_run=0 won=0 lost=0 pending=3 history_hit_rate=0.0 history_roi=0.0
+
+Daily summary: C:\Users\lvora\OneDrive\Betting\Soccer Stats\docs\agent-system\outputs\Phase7_Daily_Summary.md
+Run log: C:\Users\lvora\OneDrive\Betting\Soccer Stats\docs\agent-system\outputs\Phase7_Run_Log.json
+ 
+[Mon 04/05/2026  7:34:28.88] running auto_push.bat 
+'auto_push.bat' is not recognized as an internal or external command,
+operable program or batch file.
+[Mon 04/05/2026  7:34:28.88] === run_daily done === 

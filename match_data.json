@@ -1832,15 +1832,13 @@
               "team": "away",
               "source": "computed",
               "label": "Wins",
-              "value": "4",
-              "odds": 5.0
+              "value": "4"
             },
             {
               "team": "away",
               "source": "computed",
               "label": "No Losses",
-              "value": "9",
-              "odds": 2.1
+              "value": "9"
             }
           ]
         },
@@ -2168,43 +2166,37 @@
               "team": "home",
               "source": "computed",
               "label": "No Wins",
-              "value": "3",
-              "odds": 1.11
+              "value": "3"
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "3",
-              "odds": 1.75
+              "value": "3"
             },
             {
               "team": "home",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "4/5",
-              "odds": 1.62
+              "value": "4/5"
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Wins",
-              "value": "6",
-              "odds": 1.48
+              "value": "6"
             },
             {
               "team": "away",
               "source": "computed",
               "label": "No Losses",
-              "value": "6",
-              "odds": 1.11
+              "value": "6"
             },
             {
               "team": "away",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "4/5",
-              "odds": 1.62
+              "value": "4/5"
             }
           ]
         }
@@ -4534,15 +4526,13 @@
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "8",
-              "odds": 1.7
+              "value": "8"
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "4",
-              "odds": 1.7
+              "value": "4"
             }
           ]
         }
@@ -9036,22 +9026,19 @@
               "team": "home",
               "source": "computed",
               "label": "No Losses",
-              "value": "3",
-              "odds": 1.17
+              "value": "3"
             },
             {
               "team": "away",
               "source": "computed",
               "label": "No Losses",
-              "value": "3",
-              "odds": 2.25
+              "value": "3"
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "8/10",
-              "odds": 1.95
+              "value": "8/10"
             }
           ]
         }
@@ -11542,43 +11529,37 @@
               "team": "home",
               "source": "computed",
               "label": "No Losses",
-              "value": "3",
-              "odds": 1.5
+              "value": "3"
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "4",
-              "odds": 1.5
+              "value": "4"
             },
             {
               "team": "home",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "9/10",
-              "odds": 1.57
+              "value": "9/10"
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "9/10",
-              "odds": 1.5
+              "value": "9/10"
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Wins",
-              "value": "5",
-              "odds": 2.55
+              "value": "5"
             },
             {
               "team": "away",
               "source": "computed",
               "label": "No Losses",
-              "value": "5",
-              "odds": 1.5
+              "value": "5"
             }
           ]
         }

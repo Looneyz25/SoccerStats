@@ -1822,7 +1822,7 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 1.7,
+            "home": 1.67,
             "draw": 3.9,
             "away": 4.75,
             "event_id": 10389887
@@ -2159,7 +2159,7 @@
           ],
           "sportsbet_odds": {
             "home": 6.5,
-            "draw": 4.6,
+            "draw": 4.5,
             "away": 1.44,
             "event_id": 10390285
           },
@@ -2169,21 +2169,21 @@
               "source": "computed",
               "label": "No Wins",
               "value": "3",
-              "odds": 1.12
+              "odds": 1.11
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
               "value": "3",
-              "odds": 1.8
+              "odds": 1.75
             },
             {
               "team": "home",
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "4/5",
-              "odds": 1.67
+              "odds": 1.62
             },
             {
               "team": "away",
@@ -2197,14 +2197,14 @@
               "source": "computed",
               "label": "No Losses",
               "value": "6",
-              "odds": 1.12
+              "odds": 1.11
             },
             {
               "team": "away",
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "4/5",
-              "odds": 1.67
+              "odds": 1.62
             }
           ]
         }
@@ -11571,7 +11571,7 @@
               "source": "computed",
               "label": "Wins",
               "value": "5",
-              "odds": 2.5
+              "odds": 2.55
             },
             {
               "team": "away",
@@ -15103,25 +15103,29 @@
               "team": "home",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "5/6"
+              "value": "5/6",
+              "odds": 1.65
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "5/6"
+              "value": "5/6",
+              "odds": 1.57
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "3"
+              "value": "3",
+              "odds": 1.57
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "6/7"
+              "value": "6/7",
+              "odds": 1.57
             }
           ],
           "settled_at": "2026-05-04",

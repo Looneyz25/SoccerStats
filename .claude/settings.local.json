@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell -NoProfile -Command \"Get-ChildItem logs\\\\run_*.log | Sort-Object LastWriteTime -Descending | Select-Object -First 1 | Get-Content | Select-String -Pattern 'running|DONE|done|exit' | Select-Object -First 20\")",
+      "Bash(cmd /c \"auto_push.bat\")",
+      "Bash(powershell -NoProfile -Command \"& cmd /c 'auto_push.bat' 2>&1\")",
+      "Bash(cmd /c \"auto_push.bat > logs\\\\autopush.log 2>&1\")",
+      "Bash(powershell -NoProfile -Command \"Get-Content logs\\\\autopush.log\")",
+      "Bash(git commit -m ' *)",
+      "Bash(powershell -NoProfile -Command \"Get-ChildItem logs\\\\run_*.log | Sort-Object LastWriteTime -Descending | Select-Object -First 1 | Get-Content | Select-String -Pattern 'running|DONE|done|fatal' | Select-Object -First 30\")",
+      "Read(//c/Users/lvora/OneDrive/Betting/Soccer Stats/logs/**)",
+      "PowerShell(git add run_daily.bat docs/agent-system/outputs/)",
+      "PowerShell(git push origin main 2>&1)",
+      "PowerShell(git fetch origin main 2>&1)",
+      "PowerShell(git add index.html)",
+      "PowerShell(git add .\\\\index.html)",
+      "PowerShell(git commit -m \"Fix streak settlement: BOTH-team clean-sheet and team-specific labels\" -m \"- 'Without clean sheet' with team='both' now settles HIT when both scored \\(each conceded\\). Previously always MISS.\" -m \"- 'No goals scored' extended for 'both' \\(HIT only at 0-0\\).\" -m \"- 'First to score / first to concede / first half winner / loser' return 'na' instead of forced MISS when team='both'.\" -m \"Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>\")"
+    ]
+  }
+}

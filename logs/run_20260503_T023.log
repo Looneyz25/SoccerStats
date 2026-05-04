@@ -1,0 +1,85 @@
+[Sun 03/05/2026  2:31:11.61] === run_daily start === 
+ 
+[Sun 03/05/2026  2:31:11.79] running soccer_routine.py 
+=== soccer_routine.py — 2026-05-03 (Adelaide) ===
+
+[Phase 0] validate + dedupe + re-date
+  dedupe=0  no_id=0  foreign=0  moved=0  re_dated=0
+
+[Phase A] settle pending
+  settled=0  skipped=47
+
+[Phase A.5] backfill finished + enrich
+  added=0  enriched=0
+
+[Phase A.6] retrospective predictions
+  retro=0
+
+[Phase B] forecast new upcoming
+  added=0
+
+[Phase B.5] sportsbet odds
+Fetching Premier League (united-kingdom/english-premier-league)
+  events with odds: 15
+Fetching LaLiga (spain/spanish-la-liga)
+  events with odds: 17
+Fetching Bundesliga (germany/german-bundesliga)
+  events with odds: 4
+Fetching Ligue 1 (france/french-ligue-1)
+  events with odds: 7
+Fetching UEFA Champions League (uefa-competitions/uefa-champions-league)
+  events with odds: 2
+Fetching Eredivisie (rest-of-europe/dutch-eredivisie)
+  events with odds: 8
+Fetching MLS (north-america/usa-major-league-soccer)
+  events with odds: 283
+Fetching Championship (united-kingdom/english-championship)
+  events with odds: 2
+Fetching League One (united-kingdom/english-league-one)
+  events with odds: 15
+Fetching League Two (united-kingdom/english-league-two)
+  events with odds: 15
+=== matched: 44 | unmatched: 4
+  - ('Premier League', 'Arsenal', 'Fulham')
+  - ('LaLiga', 'Deportivo Alavés', 'Athletic Club')
+  - ('Eredivisie', 'Roda JC Kerkrade', 'RKC Waalwijk')
+  - ('MLS', 'Atlanta United', 'CF Montréal')
+
+[Phase B.6] streak odds
+DONE. odds_added=0
+
+[Phase B.7] prediction odds
+DONE. added=0
+
+[Phase B.8] TheSportsDB fallback (records score hint when SofaScore was 403)
+  2026-05-02: 3 total events / 0 finished
+  2026-05-03: 3 total events / 0 finished
+
+DONE. matched=0
+
+[Phase B.9] Understat xG enrichment
+  fetching Understat: Premier League (EPL)
+    found 0 events, 0 finished
+  fetching Understat: LaLiga (La_liga)
+    found 0 events, 0 finished
+  fetching Understat: Serie A (Serie_A)
+    found 0 events, 0 finished
+  fetching Understat: Bundesliga (Bundesliga)
+    found 0 events, 0 finished
+  fetching Understat: Ligue 1 (Ligue_1)
+    found 0 events, 0 finished
+
+DONE. enriched=0
+
+[Phase C] update index.html
+index.html updated: 10 leagues, 200 matches.
+
+=== DONE ===
+Store: 200 matches (152 FT / 48 upcoming)
+Winner accuracy to date: 74 hit / 78 miss  (49%)
+auto_push.bat will commit + push within 15 min.
+ 
+[Sun 03/05/2026  2:32:01.52] running auto_push.bat 
+fatal: Unable to create 'C:/Users/lvora/OneDrive/Betting/Soccer Stats/.git/index.lock': Permission denied
+[Sun 03/05/2026  2:32:01.68] git add failed
+[Sun 03/05/2026  2:32:01.69] === run_daily done === 
