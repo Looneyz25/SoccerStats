@@ -6,17 +6,17 @@ Timezone: Australia/Adelaide
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-04 11:09:27 ACST |
+| run_timestamp | 2026-05-05 01:24:50 ACST |
 | feed_health | healthy |
 | feed_note |  |
-| phase5_input_rows | 4 |
+| phase5_input_rows | 2 |
 | rows_settled_this_run | 0 |
 | won_this_run | 0 |
 | lost_this_run | 0 |
 | pending | 2 |
 | void | 0 |
 | not_found | 0 |
-| skipped | 2 |
+| skipped | 0 |
 
 ## History Summary
 
@@ -35,7 +35,5 @@ Timezone: Australia/Adelaide
 
 | Date | Match | Pick | Odds | Stake | Actual | Outcome | Status | Return |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-04 | Chelsea vs Nottingham |  |  |  |  |  | skipped | 0.0 |
-| 2026-05-04 | Austin FC vs St. Louis City |  |  |  |  |  | skipped | 0.0 |
 | 2026-05-05 | Everton vs Manchester City | home | 6.5 | 16.93 | live |  | pending | 0.0 |
 | 2026-05-05 | Sevilla vs Real Sociedad | away | 2.88 | 20.0 | live |  | pending | 0.0 |

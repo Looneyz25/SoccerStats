@@ -1,28 +1,28 @@
 # Soccer Stats Daily Summary
 
-Generated: 2026-05-04 11:09 ACST
-Date window: 2026-05-04 to 2026-05-05
+Generated: 2026-05-05 01:24 ACST
+Date window: 2026-05-05 to 2026-05-05
 
 ## Phase Run Status
 
 | Phase | Status | Exit | Duration | Last line |
 | --- | --- | --- | --- | --- |
-| 1 Fixtures | ok | 0 | 5.5s | NOTE: Missing API_FOOTBALL_KEY/APISPORTS_KEY; used keyless Flashscore feed. |
-| 2 Odds | ok | 0 | 15.3s | total=4 ready_for_phase_3=2 unmatched=2 blocked=0 |
-| 3 Team Context | ok | 0 | 14.45s | total=4 ready_for_phase_4=2 unresolved=0 upstream_blocked=2 |
-| 4 Predictions | ok | 0 | 0.08s | total=4 ready_for_phase_5=2 model_only=0 upstream_blocked=2 |
-| 5 Value & Risk | ok | 0 | 0.08s | total=4 bets=2 leans=0 no_value=0 upstream_blocked=2 scale=1.0 |
-| 6 Settlement | ok | 0 | 4.73s | settled_this_run=0 won=0 lost=0 pending=2 history_hit_rate=0.0 history_roi=0.0 |
+| 1 Fixtures | ok | 0 | 4.98s | NOTE: Missing API_FOOTBALL_KEY/APISPORTS_KEY; used keyless Flashscore feed. |
+| 2 Odds | ok | 0 | 12.27s | total=2 ready_for_phase_3=2 unmatched=0 blocked=0 |
+| 3 Team Context | ok | 0 | 18.44s | total=2 ready_for_phase_4=2 unresolved=0 upstream_blocked=0 |
+| 4 Predictions | ok | 0 | 0.09s | total=2 ready_for_phase_5=2 model_only=0 upstream_blocked=0 |
+| 5 Value & Risk | ok | 0 | 0.08s | total=2 bets=2 leans=0 no_value=0 upstream_blocked=0 scale=1.0 |
+| 6 Settlement | ok | 0 | 4.55s | settled_this_run=0 won=0 lost=0 pending=2 history_hit_rate=0.0 history_roi=0.0 |
 
 ## Phase Health
 
 | Phase | Ready | Blocked | Source |
 | --- | --- | --- | --- |
-| 1 Fixtures | 4 | 0 | Flashscore |
-| 2 Odds | 2 | 2 | Sportsbet (mimic) |
-| 3 Team Context | 2 | 2 | SofaScore (mimic) |
-| 4 Predictions | 2 | 2 | model |
-| 5 Value & Risk | 2 bets / 0 leans | 2 | model |
+| 1 Fixtures | 2 | 0 | Flashscore |
+| 2 Odds | 2 | 0 | Sportsbet (mimic) |
+| 3 Team Context | 2 | 0 | SofaScore (mimic) |
+| 4 Predictions | 2 | 0 | model |
+| 5 Value & Risk | 2 bets / 0 leans | 0 | model |
 | 6 Settlement | 0 won / 0 lost | 2 | Flashscore |
 
 ## Today's Bets
