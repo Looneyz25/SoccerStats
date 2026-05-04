@@ -6,7 +6,7 @@ Timezone: Australia/Adelaide
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-05 01:24:50 ACST |
+| run_timestamp | 2026-05-05 01:28:49 ACST |
 | bankroll | 1000.0 |
 | kelly_fraction | 0.25 |
 | min_edge | 0.05 |

@@ -7,7 +7,7 @@ Model: capped Poisson grid, last-5 form, +0.20 home advantage
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-05 01:24:50 ACST |
+| run_timestamp | 2026-05-05 01:28:49 ACST |
 | model | capped Poisson 7x7, last-5 form, home advantage +0.20 |
 | phase3_input_rows | 2 |
 | phase4_total_rows | 2 |

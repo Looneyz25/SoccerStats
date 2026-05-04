@@ -7,7 +7,7 @@ Source: SofaScore (smart-mimic session)
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-05 01:24:31 ACST |
+| run_timestamp | 2026-05-05 01:28:37 ACST |
 | timezone | Australia/Adelaide |
 | source | SofaScore (smart-mimic session) |
 | phase2_input_rows | 2 |

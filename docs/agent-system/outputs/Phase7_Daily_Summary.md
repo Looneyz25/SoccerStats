@@ -1,18 +1,18 @@
 # Soccer Stats Daily Summary
 
-Generated: 2026-05-05 01:24 ACST
+Generated: 2026-05-05 01:28 ACST
 Date window: 2026-05-05 to 2026-05-05
 
 ## Phase Run Status
 
 | Phase | Status | Exit | Duration | Last line |
 | --- | --- | --- | --- | --- |
-| 1 Fixtures | ok | 0 | 4.98s | NOTE: Missing API_FOOTBALL_KEY/APISPORTS_KEY; used keyless Flashscore feed. |
-| 2 Odds | ok | 0 | 12.27s | total=2 ready_for_phase_3=2 unmatched=0 blocked=0 |
-| 3 Team Context | ok | 0 | 18.44s | total=2 ready_for_phase_4=2 unresolved=0 upstream_blocked=0 |
+| 1 Fixtures | ok | 0 | 4.76s | NOTE: Missing API_FOOTBALL_KEY/APISPORTS_KEY; used keyless Flashscore feed. |
+| 2 Odds | ok | 0 | 13.0s | total=2 ready_for_phase_3=2 unmatched=0 blocked=0 |
+| 3 Team Context | ok | 0 | 11.27s | total=2 ready_for_phase_4=2 unresolved=0 upstream_blocked=0 |
 | 4 Predictions | ok | 0 | 0.09s | total=2 ready_for_phase_5=2 model_only=0 upstream_blocked=0 |
 | 5 Value & Risk | ok | 0 | 0.08s | total=2 bets=2 leans=0 no_value=0 upstream_blocked=0 scale=1.0 |
-| 6 Settlement | ok | 0 | 4.55s | settled_this_run=0 won=0 lost=0 pending=2 history_hit_rate=0.0 history_roi=0.0 |
+| 6 Settlement | ok | 0 | 4.59s | settled_this_run=0 won=0 lost=0 pending=2 history_hit_rate=0.0 history_roi=0.0 |
 
 ## Phase Health
 
