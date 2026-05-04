@@ -20,7 +20,7 @@ Timezone: Australia/Adelaide
 
 | Source | Endpoint | Date | League | Health | Records | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
-| Flashscore | https://2.flashscore.ninja/2/x/feed/f_1_0_3_en-uk_1 | 2026-05-04 to 2026-05-05 | listed leagues | healthy | 4 | events=308 league_hit=4 skipped_women=0 out_of_window=0 matched=4 by_league={&#x27;Premier League&#x27;: 2, &#x27;LaLiga&#x27;: 1, &#x27;MLS&#x27;: 1} sample_leagues=[&#x27;Albania |
+| Flashscore | https://2.flashscore.ninja/2/x/feed/f_1_0_3_en-uk_1 | 2026-05-04 to 2026-05-05 | listed leagues | healthy | 4 | events=307 league_hit=4 skipped_women=0 out_of_window=0 matched=4 by_league={&#x27;Premier League&#x27;: 2, &#x27;LaLiga&#x27;: 1, &#x27;MLS&#x27;: 1} sample_leagues=[&#x27;Albania |
 
 ## Fixtures
 

@@ -41,7 +41,7 @@ if errorlevel 1 (
 REM Push changes
 echo. >> "%LOG%"
 echo [%date% %time%] running auto_push.bat >> "%LOG%"
-call auto_push.bat >> "%LOG%" 2>&1
+call "%~dp0auto_push.bat" >> "%LOG%" 2>&1
 
 echo [%date% %time%] === run_daily done === >> "%LOG%"
 exit /b 0

@@ -6,7 +6,7 @@ Timezone: Australia/Adelaide
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-04 07:25:09 ACST |
+| run_timestamp | 2026-05-04 07:34:23 ACST |
 | bankroll | 1000.0 |
 | kelly_fraction | 0.25 |
 | min_edge | 0.05 |
@@ -26,7 +26,7 @@ Timezone: Australia/Adelaide
 
 | Date | League | Match | Pick | Side | Market | Model p | Edge | Stake | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-04 | MLS | Austin FC vs St. Louis City | bet | away | 2.75 | 0.4436 | 0.08 | 20.0 | bet |
+| 2026-05-04 | MLS | Austin FC vs St. Louis City | bet | away | 2.8 | 0.4436 | 0.0865 | 20.0 | bet |
 | 2026-05-04 | Premier League | Chelsea vs Nottingham |  |  |  |  |  |  | upstream_blocked |
 | 2026-05-05 | LaLiga | Sevilla vs Real Sociedad | bet | away | 2.88 | 0.4819 | 0.1347 | 20.0 | bet |
 | 2026-05-05 | Premier League | Everton vs Manchester City | bet | home | 6.5 | 0.2111 | 0.0573 | 16.93 | bet |
