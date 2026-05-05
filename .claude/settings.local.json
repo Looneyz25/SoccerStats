@@ -14,7 +14,9 @@
       "PowerShell(git fetch origin main 2>&1)",
       "PowerShell(git add index.html)",
       "PowerShell(git add .\\\\index.html)",
-      "PowerShell(git commit -m \"Fix streak settlement: BOTH-team clean-sheet and team-specific labels\" -m \"- 'Without clean sheet' with team='both' now settles HIT when both scored \\(each conceded\\). Previously always MISS.\" -m \"- 'No goals scored' extended for 'both' \\(HIT only at 0-0\\).\" -m \"- 'First to score / first to concede / first half winner / loser' return 'na' instead of forced MISS when team='both'.\" -m \"Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>\")"
+      "PowerShell(git commit -m \"Fix streak settlement: BOTH-team clean-sheet and team-specific labels\" -m \"- 'Without clean sheet' with team='both' now settles HIT when both scored \\(each conceded\\). Previously always MISS.\" -m \"- 'No goals scored' extended for 'both' \\(HIT only at 0-0\\).\" -m \"- 'First to score / first to concede / first half winner / loser' return 'na' instead of forced MISS when team='both'.\" -m \"Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>\")",
+      "Bash(python -c ' *)",
+      "Bash(call auto_push.bat)"
     ]
   }
 }
