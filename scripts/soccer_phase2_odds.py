@@ -72,6 +72,7 @@ ABBREV = {
     "mancity": "manchestercity",
     "spurs": "tottenham",
     "forest": "nottinghamforest",
+    "nottingham": "nottinghamforest",
     "boro": "middlesbrough",
     "leeds": "leedsunited",
     "newcastle": "newcastleunited",
