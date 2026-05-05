@@ -9119,7 +9119,7 @@
               "source": "computed",
               "label": "No Losses",
               "value": "3",
-              "odds": 2.3
+              "odds": 2.25
             },
             {
               "team": "away",
@@ -9246,7 +9246,7 @@
               "source": "computed",
               "label": "No Losses",
               "value": "4",
-              "odds": 2.3
+              "odds": 2.2
             },
             {
               "team": "away",
@@ -11745,37 +11745,43 @@
               "team": "home",
               "source": "computed",
               "label": "No Losses",
-              "value": "3"
+              "value": "3",
+              "odds": 1.44
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "4"
+              "value": "4",
+              "odds": 1.5
             },
             {
               "team": "home",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "9/10"
+              "value": "9/10",
+              "odds": 1.6
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "9/10"
+              "value": "9/10",
+              "odds": 1.5
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Wins",
-              "value": "5"
+              "value": "5",
+              "odds": 2.57
             },
             {
               "team": "away",
               "source": "computed",
               "label": "No Losses",
-              "value": "5"
+              "value": "5",
+              "odds": 1.53
             }
           ]
         },
@@ -11801,13 +11807,11 @@
               "odds": 2.01
             },
             "btts": {
-              "pick": "Yes",
-              "odds": 1.33
+              "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.36
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",

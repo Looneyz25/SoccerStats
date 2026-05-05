@@ -7,18 +7,21 @@ Model: capped Poisson grid, last-5 form, +0.20 home advantage
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-05 01:28:49 ACST |
+| run_timestamp | 2026-05-06 01:40:49 ACST |
 | model | capped Poisson 7x7, last-5 form, home advantage +0.20 |
-| phase3_input_rows | 2 |
-| phase4_total_rows | 2 |
-| ready_for_phase_5 | 2 |
+| phase3_input_rows | 5 |
+| phase4_total_rows | 5 |
+| ready_for_phase_5 | 0 |
 | model_only | 0 |
-| upstream_blocked | 0 |
-| next_action | Proceed with Phase 5 for ready_for_phase_5 rows. |
+| upstream_blocked | 5 |
+| next_action | No ready predictions; check Phase 2/3 outputs. |
 
 ## Predictions
 
 | Date | League | Match | λH | λA | pH | pD | pA | pick | fH/mH | fD/mD | fA/mA | edgeH | edgeD | edgeA | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-05 | LaLiga | Sevilla vs Real Sociedad | 1.7 | 2.15 | 0.3097 | 0.2084 | 0.4819 | away | 3.229/2.45 | 4.798/3.3 | 2.075/2.88 | -0.0985 | -0.0946 | 0.1347 | ready_for_phase_5 |
-| 2026-05-05 | Premier League | Everton vs Manchester City | 1.1 | 1.95 | 0.2111 | 0.2192 | 0.5697 | away | 4.737/6.5 | 4.562/4.5 | 1.755/1.44 | 0.0573 | -0.003 | -0.1247 | ready_for_phase_5 |
+| 2026-05-02 | Eredivisie | Roda JC Kerkrade vs RKC Waalwijk |  |  |  |  |  |  | / | / | / |  |  |  | upstream_blocked |
+| 2026-05-06 | Eredivisie | RKC Waalwijk vs Willem II Tilburg |  |  |  |  |  |  | / | / | / |  |  |  | upstream_blocked |
+| 2026-05-06 | UEFA Champions League | Arsenal vs Atlético Madrid |  |  |  |  |  |  | / | / | / |  |  |  | upstream_blocked |
+| 2026-05-07 | Eredivisie | Almere City FC vs De Graafschap |  |  |  |  |  |  | / | / | / |  |  |  | upstream_blocked |
+| 2026-05-07 | UEFA Champions League | FC Bayern München vs Paris Saint-Germain |  |  |  |  |  |  | / | / | / |  |  |  | upstream_blocked |

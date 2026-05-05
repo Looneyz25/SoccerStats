@@ -7,31 +7,32 @@ Source: Sportsbet AU (Win-Draw-Win, 90-min regular time)
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-05 01:28:24 ACST |
+| run_timestamp | 2026-05-06 01:40:40 ACST |
 | timezone | Australia/Adelaide |
 | source | Sportsbet AU |
-| phase1_input_rows | 2 |
-| phase1_ready_rows | 2 |
-| phase2_total_rows | 2 |
-| ready_for_phase_3 | 2 |
+| phase1_input_rows | 5 |
+| phase1_ready_rows | 0 |
+| phase2_total_rows | 5 |
+| ready_for_phase_3 | 0 |
 | unmatched_market | 0 |
 | partial_market | 0 |
 | implausible_overround | 0 |
 | low_match_confidence | 0 |
 | source_blocked | 0 |
-| upstream_blocked | 0 |
-| next_action | Proceed with Phase 3 for ready_for_phase_3 rows. |
+| upstream_blocked | 5 |
+| next_action | No ready_for_phase_2 fixtures in Phase 1; rerun Phase 1 first. |
 
 ## Source Health
 
 | League | Endpoint | HTTP | Events | WDW Markets | Health | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
-| LaLiga | /betting/soccer/spain/spanish-la-liga | 200 | 31 | 31 | healthy |  |
-| Premier League | /betting/soccer/united-kingdom/english-premier-league | 200 | 21 | 21 | healthy |  |
 
 ## Odds
 
 | Date | Time | League | Home | Away | H | D | A | Overround | Match | Phase 2 Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-05 | 04:30 | LaLiga | Sevilla | Real Sociedad | 2.45 | 3.3 | 2.88 | 1.0584 | exact:1.0 | ready_for_phase_3 |
-| 2026-05-05 | 04:30 | Premier League | Everton | Manchester City | 6.5 | 4.5 | 1.44 | 1.0704 | alias:0.9 | ready_for_phase_3 |
+| 2026-05-02 | 12:00 | Eredivisie | Roda JC Kerkrade | RKC Waalwijk |  |  |  |  | none:0.0 | upstream_blocked |
+| 2026-05-06 | 02:15 | Eredivisie | RKC Waalwijk | Willem II Tilburg |  |  |  |  | none:0.0 | upstream_blocked |
+| 2026-05-06 | 04:30 | UEFA Champions League | Arsenal | Atlético Madrid |  |  |  |  | none:0.0 | upstream_blocked |
+| 2026-05-07 | 02:15 | Eredivisie | Almere City FC | De Graafschap |  |  |  |  | none:0.0 | upstream_blocked |
+| 2026-05-07 | 04:30 | UEFA Champions League | FC Bayern München | Paris Saint-Germain |  |  |  |  | none:0.0 | upstream_blocked |

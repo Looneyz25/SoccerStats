@@ -3,24 +3,24 @@
     "label": "1 Fixtures",
     "status": "ok",
     "exit": 0,
-    "duration_s": 4.76,
-    "last_line": "NOTE: Missing API_FOOTBALL_KEY/APISPORTS_KEY; used keyless Flashscore feed.",
+    "duration_s": 3.56,
+    "last_line": "NOTE: Missing API_FOOTBALL_KEY/APISPORTS_KEY and Flashscore returned no fixtures; used local match_data.json fallback.",
     "stderr_tail": ""
   },
   {
     "label": "2 Odds",
     "status": "ok",
     "exit": 0,
-    "duration_s": 13.0,
-    "last_line": "total=2 ready_for_phase_3=2 unmatched=0 blocked=0",
+    "duration_s": 6.3,
+    "last_line": "total=5 ready_for_phase_3=0 unmatched=0 blocked=5",
     "stderr_tail": ""
   },
   {
     "label": "3 Team Context",
     "status": "ok",
     "exit": 0,
-    "duration_s": 11.27,
-    "last_line": "total=2 ready_for_phase_4=2 unresolved=0 upstream_blocked=0",
+    "duration_s": 2.48,
+    "last_line": "total=5 ready_for_phase_4=0 unresolved=0 upstream_blocked=5",
     "stderr_tail": ""
   },
   {
@@ -28,7 +28,7 @@
     "status": "ok",
     "exit": 0,
     "duration_s": 0.09,
-    "last_line": "total=2 ready_for_phase_5=2 model_only=0 upstream_blocked=0",
+    "last_line": "total=5 ready_for_phase_5=0 model_only=0 upstream_blocked=5",
     "stderr_tail": ""
   },
   {
@@ -36,15 +36,15 @@
     "status": "ok",
     "exit": 0,
     "duration_s": 0.08,
-    "last_line": "total=2 bets=2 leans=0 no_value=0 upstream_blocked=0 scale=1.0",
+    "last_line": "total=5 bets=0 leans=0 no_value=0 upstream_blocked=5 scale=1.0",
     "stderr_tail": ""
   },
   {
     "label": "6 Settlement",
     "status": "ok",
     "exit": 0,
-    "duration_s": 4.59,
-    "last_line": "settled_this_run=0 won=0 lost=0 pending=2 history_hit_rate=0.0 history_roi=0.0",
+    "duration_s": 4.94,
+    "last_line": "settled_this_run=0 won=0 lost=0 pending=0 history_hit_rate=0.0 history_roi=-1.0",
     "stderr_tail": ""
   }
 ]

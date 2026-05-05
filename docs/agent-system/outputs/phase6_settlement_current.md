@@ -6,18 +6,18 @@ Timezone: Australia/Adelaide
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-05 16:18:29 ACST |
+| run_timestamp | 2026-05-06 01:40:49 ACST |
 | sofa_health | healthy |
 | flashscore_health | healthy |
 | flashscore_note |  |
-| phase5_input_rows | 2 |
-| rows_settled_this_run | 2 |
+| phase5_input_rows | 5 |
+| rows_settled_this_run | 0 |
 | won_this_run | 0 |
-| lost_this_run | 2 |
+| lost_this_run | 0 |
 | pending | 0 |
 | void | 0 |
 | not_found | 0 |
-| skipped | 0 |
+| skipped | 5 |
 
 ## History Summary
 
@@ -36,5 +36,8 @@ Timezone: Australia/Adelaide
 
 | Date | Match | Pick | Odds | Stake | Actual | Outcome | Status | Return |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-05 | Everton vs Manchester City | home | 6.5 | 16.93 | 3-3 | draw | lost | -16.93 |
-| 2026-05-05 | Sevilla vs Real Sociedad | away | 2.88 | 20.0 | 1-0 | home | lost | -20.0 |
+| 2026-05-02 | Roda JC Kerkrade vs RKC Waalwijk |  |  |  |  |  | skipped | 0.0 |
+| 2026-05-06 | RKC Waalwijk vs Willem II Tilburg |  |  |  |  |  | skipped | 0.0 |
+| 2026-05-06 | Arsenal vs Atlético Madrid |  |  |  |  |  | skipped | 0.0 |
+| 2026-05-07 | Almere City FC vs De Graafschap |  |  |  |  |  | skipped | 0.0 |
+| 2026-05-07 | FC Bayern München vs Paris Saint-Germain |  |  |  |  |  | skipped | 0.0 |
