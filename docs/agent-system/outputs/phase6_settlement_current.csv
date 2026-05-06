@@ -1,6 +1,10 @@
 run_timestamp,event_id,league,date,time,home,away,top_side,top_market_odds,top_p,top_edge,top_stake,phase5_status,actual_status,actual_home_score,actual_away_score,actual_outcome,phase6_status,realized_return,phase6_notes
-2026-05-06 01:40:49 ACST,16072838,Eredivisie,2026-05-02,12:00,Roda JC Kerkrade,RKC Waalwijk,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-06 01:40:49 ACST,16115678,Eredivisie,2026-05-06,02:15,RKC Waalwijk,Willem II Tilburg,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-06 01:40:49 ACST,15632635,UEFA Champions League,2026-05-06,04:30,Arsenal,Atlético Madrid,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-06 01:40:49 ACST,16115794,Eredivisie,2026-05-07,02:15,Almere City FC,De Graafschap,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-06 01:40:49 ACST,15632634,UEFA Champions League,2026-05-07,04:30,FC Bayern München,Paris Saint-Germain,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-07 01:36:58 ACST,16072838,Eredivisie,2026-05-02,12:00,Roda JC Kerkrade,RKC Waalwijk,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-07 01:36:58 ACST,16115794,Eredivisie,2026-05-07,02:15,Almere City FC,De Graafschap,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-07 01:36:58 ACST,15632634,UEFA Champions League,2026-05-07,04:30,FC Bayern München,Paris Saint-Germain,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-07 01:36:58 ACST,14065245,Bundesliga,2026-05-09,04:00,Borussia Dortmund,Eintracht Frankfurt,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-07 01:36:58 ACST,14064514,Ligue 1,2026-05-09,04:15,RC Lens,Nantes,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-07 01:36:58 ACST,16116799,Championship,2026-05-09,04:30,Hull City,Millwall,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-07 01:36:58 ACST,14083568,LaLiga,2026-05-09,04:30,Levante UD,Osasuna,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-07 01:36:58 ACST,14024024,Premier League,2026-05-09,21:00,Liverpool FC,Chelsea,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-07 01:36:58 ACST,16116800,Championship,2026-05-09,21:00,Middlesbrough,Southampton,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).

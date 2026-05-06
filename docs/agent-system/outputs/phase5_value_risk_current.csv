@@ -1,6 +1,10 @@
 run_timestamp,league,event_id,date,time,home,away,home_p,home_market,home_edge,home_ev,home_kelly,home_stake,home_decision,draw_p,draw_market,draw_edge,draw_ev,draw_kelly,draw_stake,draw_decision,away_p,away_market,away_edge,away_ev,away_kelly,away_stake,away_decision,top_side,top_decision,top_market_odds,top_p,top_edge,top_stake,risk_scale_factor,phase5_status,phase5_notes
-2026-05-06 01:40:49 ACST,Eredivisie,16072838,2026-05-02,12:00,Roda JC Kerkrade,RKC Waalwijk,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-06 01:40:49 ACST,Eredivisie,16115678,2026-05-06,02:15,RKC Waalwijk,Willem II Tilburg,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-06 01:40:49 ACST,UEFA Champions League,15632635,2026-05-06,04:30,Arsenal,Atlético Madrid,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-06 01:40:49 ACST,Eredivisie,16115794,2026-05-07,02:15,Almere City FC,De Graafschap,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-06 01:40:49 ACST,UEFA Champions League,15632634,2026-05-07,04:30,FC Bayern München,Paris Saint-Germain,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-07 01:36:58 ACST,Eredivisie,16072838,2026-05-02,12:00,Roda JC Kerkrade,RKC Waalwijk,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-07 01:36:58 ACST,Eredivisie,16115794,2026-05-07,02:15,Almere City FC,De Graafschap,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-07 01:36:58 ACST,UEFA Champions League,15632634,2026-05-07,04:30,FC Bayern München,Paris Saint-Germain,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-07 01:36:58 ACST,Bundesliga,14065245,2026-05-09,04:00,Borussia Dortmund,Eintracht Frankfurt,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-07 01:36:58 ACST,Ligue 1,14064514,2026-05-09,04:15,RC Lens,Nantes,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-07 01:36:58 ACST,Championship,16116799,2026-05-09,04:30,Hull City,Millwall,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-07 01:36:58 ACST,LaLiga,14083568,2026-05-09,04:30,Levante UD,Osasuna,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-07 01:36:58 ACST,Championship,16116800,2026-05-09,21:00,Middlesbrough,Southampton,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-07 01:36:58 ACST,Premier League,14024024,2026-05-09,21:00,Liverpool FC,Chelsea,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.

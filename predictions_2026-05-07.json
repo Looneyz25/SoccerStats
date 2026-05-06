@@ -2276,21 +2276,18 @@
           "predictions": {
             "winner": {
               "pick": "Liverpool FC",
-              "type": "home",
-              "odds": 1.83
+              "type": "home"
             },
             "btts": {
               "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.44
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.67
+              "line": 4.5
             },
             "factors": {
               "lambda_home": 1.973,
@@ -2314,8 +2311,7 @@
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "6/8",
-              "odds": 1.44
+              "value": "6/8"
             },
             {
               "team": "both",
@@ -2325,36 +2321,19 @@
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "6/6",
-              "odds": 2.1
+              "value": "6/6"
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "9/10",
-              "odds": 2.1
+              "value": "9/10"
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "5/7",
-              "odds": 1.73
+              "value": "5/7"
             }
-          ],
-          "team_streaks": [
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "Without Clean Sheet",
-              "value": "4"
-            }
-          ],
-          "sportsbet_odds": {
-            "home": 1.83,
-            "draw": 4.0,
-            "away": 3.9,
-            "event_id": 10418551
-          }
+          ]
         }
       ]
     },
@@ -4737,16 +4716,14 @@
           "predictions": {
             "winner": {
               "pick": "Osasuna",
-              "type": "away",
-              "odds": 2.8
+              "type": "away"
             },
             "btts": {
               "pick": "No"
             },
             "ou_goals": {
               "pick": "Under",
-              "line": 2.5,
-              "odds": 1.91
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -4774,8 +4751,7 @@
             {
               "team": "both",
               "label": "Less than 2.5 goals",
-              "value": "4/5",
-              "odds": 1.91
+              "value": "4/5"
             },
             {
               "team": "both",
@@ -4795,43 +4771,14 @@
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "5/6",
-              "odds": 1.8
+              "value": "5/6"
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "10/10",
-              "odds": 1.8
+              "value": "10/10"
             }
-          ],
-          "team_streaks": [
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "Less than 2.5 goals",
-              "value": "4/5",
-              "odds": 1.91
-            },
-            {
-              "team": "away",
-              "source": "computed",
-              "label": "Without Clean Sheet",
-              "value": "5"
-            },
-            {
-              "team": "away",
-              "source": "computed",
-              "label": "Both teams scoring",
-              "value": "4/5"
-            }
-          ],
-          "sportsbet_odds": {
-            "home": 2.5,
-            "draw": 3.3,
-            "away": 2.8,
-            "event_id": 10418639
-          }
+          ]
         }
       ]
     },
@@ -6981,16 +6928,14 @@
           "predictions": {
             "winner": {
               "pick": "Borussia Dortmund",
-              "type": "home",
-              "odds": 1.47
+              "type": "home"
             },
             "btts": {
               "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.36
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
@@ -7023,8 +6968,7 @@
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "5/6",
-              "odds": 1.36
+              "value": "5/6"
             },
             {
               "team": "both",
@@ -7039,36 +6983,9 @@
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "5/5",
-              "odds": 1.83
+              "value": "5/5"
             }
-          ],
-          "team_streaks": [
-            {
-              "team": "away",
-              "source": "computed",
-              "label": "No Wins",
-              "value": "3"
-            },
-            {
-              "team": "away",
-              "source": "computed",
-              "label": "Without Clean Sheet",
-              "value": "6"
-            },
-            {
-              "team": "away",
-              "source": "computed",
-              "label": "Both teams scoring",
-              "value": "6/7"
-            }
-          ],
-          "sportsbet_odds": {
-            "home": 1.47,
-            "draw": 4.75,
-            "away": 5.5,
-            "event_id": 10418670
-          }
+          ]
         }
       ]
     },
@@ -9099,21 +9016,18 @@
           "predictions": {
             "winner": {
               "pick": "RC Lens",
-              "type": "home",
-              "odds": 1.36
+              "type": "home"
             },
             "btts": {
               "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 1.53
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.73
+              "line": 4.5
             },
             "factors": {
               "lambda_home": 2.475,
@@ -9142,8 +9056,7 @@
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "8/9",
-              "odds": 1.53
+              "value": "8/9"
             },
             {
               "team": "both",
@@ -9153,43 +9066,9 @@
             {
               "team": "both",
               "label": "More than 10.5 corners",
-              "value": "4/5",
-              "odds": 1.91
+              "value": "4/5"
             }
-          ],
-          "team_streaks": [
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "No Losses",
-              "value": "4"
-            },
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "Without Clean Sheet",
-              "value": "7"
-            },
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "More than 2.5 goals",
-              "value": "8/10",
-              "odds": 1.53
-            },
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "Both teams scoring",
-              "value": "8/10"
-            }
-          ],
-          "sportsbet_odds": {
-            "home": 1.36,
-            "draw": 5.0,
-            "away": 7.5,
-            "event_id": 10418612
-          }
+          ]
         }
       ]
     },
@@ -9685,27 +9564,29 @@
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "3"
+              "value": "3",
+              "odds": 1.25
             },
             {
               "team": "home",
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "9/10",
-              "odds": 1.22
+              "odds": 1.2
             },
             {
               "team": "away",
               "source": "computed",
               "label": "No Losses",
-              "value": "4"
+              "value": "4",
+              "odds": 2.3
             },
             {
               "team": "away",
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "8/10",
-              "odds": 1.22
+              "odds": 1.2
             }
           ]
         }
@@ -10718,20 +10599,26 @@
             {
               "team": "away",
               "source": "computed",
+              "label": "No Losses",
+              "value": "3"
+            },
+            {
+              "team": "away",
+              "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "5"
+              "value": "4"
             },
             {
               "team": "away",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "8/10"
+              "value": "9/10"
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "8/10"
+              "value": "9/10"
             }
           ]
         },
@@ -18807,21 +18694,18 @@
           "predictions": {
             "winner": {
               "pick": "Millwall",
-              "type": "away",
-              "odds": 2.4
+              "type": "away"
             },
             "btts": {
               "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 2.1
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.62
+              "line": 4.5
             },
             "factors": {
               "lambda_home": 1.257,
@@ -18872,39 +18756,7 @@
               "label": "More than 10.5 corners",
               "value": "5/5"
             }
-          ],
-          "team_streaks": [
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "Without Clean Sheet",
-              "value": "5"
-            },
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "Both teams scoring",
-              "value": "8/10"
-            },
-            {
-              "team": "away",
-              "source": "computed",
-              "label": "No Losses",
-              "value": "5"
-            },
-            {
-              "team": "away",
-              "source": "computed",
-              "label": "Less than 2.5 goals",
-              "value": "4/5"
-            }
-          ],
-          "sportsbet_odds": {
-            "home": 3.0,
-            "draw": 3.2,
-            "away": 2.4,
-            "event_id": 10440817
-          }
+          ]
         },
         {
           "id": 16116800,
@@ -18924,21 +18776,18 @@
           "predictions": {
             "winner": {
               "pick": "Middlesbrough",
-              "type": "home",
-              "odds": 2.25
+              "type": "home"
             },
             "btts": {
               "pick": "Yes"
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5,
-              "odds": 2.1
+              "line": 2.5
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5,
-              "odds": 1.67
+              "line": 4.5
             },
             "factors": {
               "lambda_home": 2.337,
@@ -19004,39 +18853,7 @@
               "label": "Less than 10.5 corners",
               "value": "4/5"
             }
-          ],
-          "team_streaks": [
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "No Losses",
-              "value": "4"
-            },
-            {
-              "team": "away",
-              "source": "computed",
-              "label": "Without Clean Sheet",
-              "value": "5"
-            },
-            {
-              "team": "away",
-              "source": "computed",
-              "label": "More than 2.5 goals",
-              "value": "9/10"
-            },
-            {
-              "team": "away",
-              "source": "computed",
-              "label": "Both teams scoring",
-              "value": "8/10"
-            }
-          ],
-          "sportsbet_odds": {
-            "home": 2.25,
-            "draw": 3.25,
-            "away": 3.3,
-            "event_id": 10440821
-          }
+          ]
         }
       ]
     },
