@@ -16,7 +16,14 @@
       "PowerShell(git add .\\\\index.html)",
       "PowerShell(git commit -m \"Fix streak settlement: BOTH-team clean-sheet and team-specific labels\" -m \"- 'Without clean sheet' with team='both' now settles HIT when both scored \\(each conceded\\). Previously always MISS.\" -m \"- 'No goals scored' extended for 'both' \\(HIT only at 0-0\\).\" -m \"- 'First to score / first to concede / first half winner / loser' return 'na' instead of forced MISS when team='both'.\" -m \"Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>\")",
       "Bash(python -c ' *)",
-      "Bash(call auto_push.bat)"
+      "Bash(call auto_push.bat)",
+      "Bash(cmd /c run_daily.bat)",
+      "Bash(cmd /c \"cd /d \\\\\"C:\\\\Users\\\\lvora\\\\OneDrive\\\\Betting\\\\Soccer Stats\\\\\" && python -c \\\\\"import curl_cffi, tzdata\\\\\" && echo deps ok\")",
+      "PowerShell(Set-Location \"C:\\\\Users\\\\lvora\\\\OneDrive\\\\Betting\\\\Soccer Stats\"; $dt = \\(Get-Date -Format \"yyyyMMddTHHmm\"\\); Write-Output \"DT=$dt\"; $stamp = $dt.Substring\\(0,8\\) + \"_\" + $dt.Substring\\(8,4\\); Write-Output \"STAMP=$stamp\"; $log = \"logs\\\\run_$stamp.log\"; Write-Output \"LOG=$log\")",
+      "PowerShell(Set-Location \"C:\\\\Users\\\\lvora\\\\OneDrive\\\\Betting\\\\Soccer Stats\"; $result = cmd /c \"run_daily.bat\" 2>&1; Write-Output \"Exit code: $LASTEXITCODE\"; $result | ForEach-Object { Write-Output $_ })",
+      "PowerShell($result = cmd /c \"cd /d \"\"C:\\\\Users\\\\lvora\\\\OneDrive\\\\Betting\\\\Soccer Stats\"\" && run_daily.bat\" 2>&1; Write-Output \"Exit: $LASTEXITCODE\"; $result)",
+      "PowerShell($result = cmd /c \"\"\"C:\\\\Users\\\\lvora\\\\OneDrive\\\\Betting\\\\Soccer Stats\\\\run_daily.bat\"\"\" 2>&1; Write-Output \"Exit: $LASTEXITCODE\"; $result)",
+      "Bash(python scripts/soccer_routine.py)"
     ]
   }
 }
