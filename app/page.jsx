@@ -15,7 +15,6 @@ import {
   Filter,
   Goal,
   MapPin,
-  RefreshCcw,
   Shield,
   Trophy,
   UserRound,
@@ -37,9 +36,9 @@ function resultIcon(result) {
 }
 
 function marketPillClass(result) {
-  if (result === 'hit') return 'border-emerald-200 bg-emerald-50';
-  if (result === 'miss') return 'border-red-200 bg-red-50';
-  return 'border-line bg-field';
+  if (result === 'hit') return 'border-emerald-400 bg-emerald-100 shadow-panel';
+  if (result === 'miss') return 'border-red-400 bg-red-100 shadow-panel';
+  return 'border-slate-300 bg-white shadow-panel';
 }
 
 function marketValueClass(result) {
@@ -49,9 +48,9 @@ function marketValueClass(result) {
 }
 
 function streakCardClass(result) {
-  if (result === 'hit') return 'border-emerald-200 bg-emerald-50';
-  if (result === 'miss') return 'border-red-200 bg-red-50';
-  return 'border-line bg-field';
+  if (result === 'hit') return 'border-emerald-400 bg-emerald-100 shadow-panel';
+  if (result === 'miss') return 'border-red-400 bg-red-100 shadow-panel';
+  return 'border-slate-300 bg-white shadow-panel';
 }
 
 function streakTextClass(result) {
@@ -91,12 +90,252 @@ function formatMarketDetail(market) {
   return market.line ? `${market.pick} ${market.line}` : market.pick || '-';
 }
 
+function fmtLambda(value) {
+  if (value === null || value === undefined || Number.isNaN(Number(value))) return null;
+  return Number(value).toFixed(2);
+}
+
+function winnerRationale(match) {
+  const w = match.predictions?.winner;
+  const f = match.predictions?.factors || {};
+  if (!w) return null;
+  const lh = fmtLambda(f.lambda_home);
+  const la = fmtLambda(f.lambda_away);
+  const homeName = match.home?.name || 'Home';
+  const awayName = match.away?.name || 'Away';
+  const parts = [];
+
+  if (lh && la) {
+    if (w.type === 'home') {
+      parts.push(`${homeName} expected to outscore ${awayName} (${lh} to ${la} goals)`);
+    } else if (w.type === 'away') {
+      parts.push(`${awayName} expected to outscore ${homeName} (${la} to ${lh} goals)`);
+    } else {
+      parts.push(`Both teams projected close (${lh} to ${la} goals)`);
+    }
+  }
+
+  const hRank = f.h_rank ?? match.home?.rank;
+  const aRank = f.a_rank ?? match.away?.rank;
+  if (hRank && aRank) {
+    parts.push(`league rank ${hRank} vs ${aRank}`);
+  }
+
+  const odds = match.sportsbet_odds || match.odds || {};
+  if (odds.home && odds.away) {
+    const oh = Number(odds.home);
+    const oa = Number(odds.away);
+    if (Number.isFinite(oh) && Number.isFinite(oa)) {
+      const favSide = oh < oa ? 'home' : 'away';
+      const favName = favSide === 'home' ? homeName : awayName;
+      if (favSide === w.type) {
+        parts.push(`bookmaker agrees, ${favName} favoured (${oh.toFixed(2)} / ${oa.toFixed(2)})`);
+      } else if (w.type === 'draw') {
+        parts.push(`bookmaker favours ${favName} (${oh.toFixed(2)} / ${oa.toFixed(2)})`);
+      } else {
+        parts.push(`going against the bookmaker favourite (${oh.toFixed(2)} / ${oa.toFixed(2)})`);
+      }
+    }
+  }
+
+  if (!parts.length) return null;
+  return parts.join(' · ');
+}
+
+function bttsRationale(match) {
+  const b = match.predictions?.btts;
+  const f = match.predictions?.factors || {};
+  if (!b) return null;
+  const lh = Number(f.lambda_home);
+  const la = Number(f.lambda_away);
+  const parts = [];
+  if (Number.isFinite(lh) && Number.isFinite(la)) {
+    const pBoth = (1 - Math.exp(-lh)) * (1 - Math.exp(-la));
+    parts.push(`${(pBoth * 100).toFixed(0)}% chance both teams score`);
+  }
+  const streakHints = (match.team_streaks || []).filter((s) => {
+    const l = (s.label || '').toLowerCase();
+    return l.includes('without clean sheet') || l.includes('no clean sheet') || l.includes('no goals') || l.includes('clean sheet');
+  });
+  if (streakHints.length) {
+    const first = streakHints[0];
+    const teamName = teamNameForSide(first.team, match);
+    parts.push(`${teamName} recent form: ${first.label}${first.value ? ` (${first.value})` : ''}`);
+  }
+  if (!parts.length) return null;
+  return parts.join(' · ');
+}
+
+// Predictor (soccer_routine.py) uses a 7x7 Poisson grid and picks Over only when
+// P(total >= 3) >= 0.55. Mirror that math here so the rationale matches the pick.
+function poissonGoalsOverProb(lh, la, line = 2.5) {
+  const pmf = (k, l) => Math.exp(-l) * Math.pow(l, k) / [1, 1, 2, 6, 24, 120, 720][k];
+  let pUnder = 0;
+  for (let i = 0; i < 7; i++) {
+    for (let j = 0; j < 7; j++) {
+      if (i + j < Math.ceil(line)) pUnder += pmf(i, lh) * pmf(j, la);
+    }
+  }
+  return 1 - pUnder;
+}
+
+function recentTeamForm(allMatches, teamId, currentMatchId, n = 5) {
+  if (!teamId || !Array.isArray(allMatches)) return null;
+  const played = allMatches
+    .filter((m) => {
+      if (m.status !== 'FT') return false;
+      if (m.id === currentMatchId) return false;
+      const hid = m.home?.team_id;
+      const aid = m.away?.team_id;
+      if (hid !== teamId && aid !== teamId) return false;
+      const hg = m.home?.goals;
+      const ag = m.away?.goals;
+      return typeof hg === 'number' && typeof ag === 'number';
+    })
+    .sort((a, b) => `${b.date} ${b.time}`.localeCompare(`${a.date} ${a.time}`))
+    .slice(0, n);
+  if (!played.length) return null;
+  let scored = 0;
+  let conceded = 0;
+  for (const m of played) {
+    if (m.home?.team_id === teamId) {
+      scored += m.home.goals;
+      conceded += m.away.goals;
+    } else {
+      scored += m.away.goals;
+      conceded += m.home.goals;
+    }
+  }
+  return {
+    count: played.length,
+    avgScored: scored / played.length,
+    avgConceded: conceded / played.length,
+  };
+}
+
+function goalsRationale(match, allMatches) {
+  const g = match.predictions?.ou_goals;
+  const f = match.predictions?.factors || {};
+  if (!g) return null;
+  const lh = Number(f.lambda_home);
+  const la = Number(f.lambda_away);
+  if (!Number.isFinite(lh) || !Number.isFinite(la)) return null;
+  const line = g.line ?? 2.5;
+  const pOver = poissonGoalsOverProb(lh, la, line);
+  const pct = (pOver * 100).toFixed(0);
+  const total = (lh + la).toFixed(2);
+
+  const homeForm = recentTeamForm(allMatches, match.home?.team_id, match.id);
+  const awayForm = recentTeamForm(allMatches, match.away?.team_id, match.id);
+  const formParts = [];
+  if (homeForm) {
+    formParts.push(
+      `${match.home?.name || 'Home'} scoring ${homeForm.avgScored.toFixed(1)}/conceding ${homeForm.avgConceded.toFixed(1)} per match over last ${homeForm.count}`,
+    );
+  }
+  if (awayForm) {
+    formParts.push(
+      `${match.away?.name || 'Away'} scoring ${awayForm.avgScored.toFixed(1)}/conceding ${awayForm.avgConceded.toFixed(1)} per match over last ${awayForm.count}`,
+    );
+  }
+
+  const lead = g.pick === 'Over'
+    ? `${pct}% chance of 3 or more goals — model picks Over (expected total ${total})`
+    : `${pct}% chance of 3 or more goals — not high enough for Over, so Under (expected total ${total})`;
+  return formParts.length ? `${lead} · ${formParts.join(' · ')}` : lead;
+}
+
+function recentTeamCards(allMatches, teamId, currentMatchId, n = 5) {
+  if (!teamId || !Array.isArray(allMatches)) return null;
+  const played = allMatches
+    .filter((m) => {
+      if (m.status !== 'FT' || m.id === currentMatchId) return false;
+      if (m.home?.team_id !== teamId && m.away?.team_id !== teamId) return false;
+      return typeof m.predictions?.ou_cards?.actual === 'number';
+    })
+    .sort((a, b) => `${b.date} ${b.time}`.localeCompare(`${a.date} ${a.time}`))
+    .slice(0, n);
+  if (!played.length) return null;
+  const total = played.reduce((sum, m) => sum + m.predictions.ou_cards.actual, 0);
+  return { count: played.length, avg: total / played.length };
+}
+
+function cardsRationale(match, allMatches) {
+  const c = match.predictions?.ou_cards;
+  if (!c) return null;
+  const homeCards = recentTeamCards(allMatches, match.home?.team_id, match.id);
+  const awayCards = recentTeamCards(allMatches, match.away?.team_id, match.id);
+  if (!homeCards && !awayCards) return null;
+  const parts = [];
+  if (homeCards) {
+    parts.push(`${match.home?.name || 'Home'} averaging ${homeCards.avg.toFixed(1)} cards per match over last ${homeCards.count}`);
+  }
+  if (awayCards) {
+    parts.push(`${match.away?.name || 'Away'} averaging ${awayCards.avg.toFixed(1)} cards per match over last ${awayCards.count}`);
+  }
+  return parts.join(' · ');
+}
+
 function localTodayDate() {
   const date = new Date();
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
+}
+
+function formatDateDMY(iso) {
+  if (!iso) return iso;
+  const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
+  if (!match) return iso;
+  const [, y, m, d] = match;
+  return `${d}/${m}/${y}`;
+}
+
+// Pipeline writes `date` + `time` (HH:MM) as Adelaide-local. Convert back to a
+// real UTC instant so we can display in the viewer's browser timezone.
+function adelaideToLocal(dateStr, timeStr) {
+  if (!dateStr || !timeStr || !/^\d{2}:\d{2}$/.test(timeStr)) return null;
+  const naive = new Date(`${dateStr}T${timeStr}:00Z`);
+  if (Number.isNaN(naive.getTime())) return null;
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Australia/Adelaide',
+    hourCycle: 'h23',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  }).formatToParts(naive);
+  const m = Object.fromEntries(parts.filter((p) => p.type !== 'literal').map((p) => [p.type, p.value]));
+  const adlAsIfUtc = new Date(`${m.year}-${m.month}-${m.day}T${m.hour}:${m.minute}:${m.second}Z`);
+  const offsetMs = adlAsIfUtc.getTime() - naive.getTime();
+  return new Date(naive.getTime() - offsetMs);
+}
+
+function matchDisplayDate(match) {
+  if (!match?.date) return '-';
+  if (match.time && /^\d{2}:\d{2}$/.test(match.time)) {
+    const d = adelaideToLocal(match.date, match.time);
+    if (d) {
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const year = d.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
+  }
+  return formatDateDMY(match.date);
+}
+
+function matchDisplayTime(match) {
+  if (!match?.time) return '-';
+  if (!/^\d{2}:\d{2}$/.test(match.time)) return match.time;
+  const d = adelaideToLocal(match.date, match.time);
+  if (!d) return match.time;
+  const hh = String(d.getHours()).padStart(2, '0');
+  const mm = String(d.getMinutes()).padStart(2, '0');
+  return `${hh}:${mm}`;
 }
 
 function defaultMatchDate(dates, capturedAt) {
@@ -259,7 +498,7 @@ function MarketPill({ label, market }) {
 
 function DetailStat({ label, value }) {
   return (
-    <div className="rounded-md border border-line bg-white px-3 py-2">
+    <div className="rounded-md border border-slate-300 bg-white px-3 py-2 shadow-panel">
       <div className="text-xs font-medium text-slate-500">{label}</div>
       <div className="mt-1 text-sm font-semibold text-ink">{value ?? '-'}</div>
     </div>
@@ -315,7 +554,54 @@ function StreakList({ title, streaks, match }) {
   );
 }
 
-function MatchDetailView({ match, onBack }) {
+function PredictionSummaryCard({ match, allMatches }) {
+  const predictions = match.predictions || {};
+  const winner = predictions.winner;
+
+  // Headline = one-line summary of every pick, so it doesn't duplicate the per-market bullets below.
+  const headlineParts = [];
+  if (winner?.pick) headlineParts.push(`${winner.pick} to win`);
+  if (predictions.ou_goals?.pick) {
+    const line = predictions.ou_goals.line ?? 2.5;
+    headlineParts.push(`${predictions.ou_goals.pick} ${line} goals`);
+  }
+  if (predictions.btts?.pick) {
+    headlineParts.push(predictions.btts.pick === 'Yes' ? 'both teams to score' : 'one team blanks');
+  }
+  if (predictions.ou_cards?.pick) {
+    const line = predictions.ou_cards.line ?? 4.5;
+    headlineParts.push(`${predictions.ou_cards.pick} ${line} cards`);
+  }
+  const headline = headlineParts.length ? `Picks: ${headlineParts.join(' · ')}.` : null;
+
+  const lines = [
+    { label: 'Winner', pick: winner ? formatMarketDetail(winner) : null, text: winnerRationale(match) },
+    { label: 'BTTS', pick: predictions.btts ? formatMarketDetail(predictions.btts) : null, text: bttsRationale(match) },
+    { label: 'Goals', pick: predictions.ou_goals ? formatMarketDetail(predictions.ou_goals) : null, text: goalsRationale(match, allMatches) },
+    { label: 'Cards', pick: predictions.ou_cards ? formatMarketDetail(predictions.ou_cards) : null, text: cardsRationale(match, allMatches) },
+  ].filter((row) => row.pick && row.text);
+
+  if (!headline && !lines.length) return null;
+
+  return (
+    <div className="rounded-lg border border-slate-300 bg-white p-3 shadow-panel ring-1 ring-signal/20 sm:p-4">
+      <h3 className="text-base font-semibold text-ink">Prediction summary</h3>
+      {headline && <p className="mt-1 text-sm text-slate-700">{headline}</p>}
+      {lines.length > 0 && (
+        <ul className="mt-3 space-y-1.5 text-xs text-slate-600">
+          {lines.map((row) => (
+            <li key={row.label} className="flex gap-2">
+              <span className="shrink-0 font-semibold text-ink">{row.label} {row.pick}:</span>
+              <span className="min-w-0">{row.text}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+function MatchDetailView({ match, onBack, allMatches }) {
   const predictions = match.predictions || {};
   const odds = match.sportsbet_odds || match.odds || {};
   const actuals = match.actuals || {};
@@ -344,8 +630,8 @@ function MatchDetailView({ match, onBack }) {
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-semibold text-slate-500">
               <span className="truncate">{match.league}</span>
-              <span>{match.date}</span>
-              <span>{match.time}</span>
+              <span>{matchDisplayDate(match)}</span>
+              <span>{matchDisplayTime(match)}</span>
               <span className={`rounded-full px-2 py-1 ring-1 ${statusClass(match.status)}`}>{match.status}</span>
             </div>
             <h2 className="mt-1.5 truncate text-base font-semibold text-ink sm:text-xl">
@@ -357,14 +643,14 @@ function MatchDetailView({ match, onBack }) {
 
       <div className="mx-auto max-w-3xl space-y-5 px-3 py-4 sm:px-5 sm:py-5">
         <div className="grid grid-cols-[minmax(0,1fr)_4rem_minmax(0,1fr)] items-center gap-2 sm:grid-cols-[1fr_auto_1fr]">
-          <div className="min-w-0 rounded-md bg-white px-3 py-3 text-left">
+          <div className="min-w-0 rounded-md border border-slate-300 bg-white px-3 py-3 text-left shadow-panel">
             <div className="truncate text-base font-semibold text-ink">{match.home?.name}</div>
             <div className="mt-1 text-xs text-slate-500">Rank {match.home?.rank ?? '-'} · {match.home?.pts ?? '-'} pts</div>
           </div>
-          <div className="rounded-md bg-ink px-3 py-3 text-center text-base font-semibold text-white">
+          <div className="rounded-md bg-ink px-3 py-3 text-center text-base font-semibold text-white shadow-panel">
             {match.status === 'FT' ? `${match.home?.goals ?? '-'}-${match.away?.goals ?? '-'}` : 'vs'}
           </div>
-          <div className="min-w-0 rounded-md bg-white px-3 py-3 text-right">
+          <div className="min-w-0 rounded-md border border-slate-300 bg-white px-3 py-3 text-right shadow-panel">
             <div className="truncate text-base font-semibold text-ink">{match.away?.name}</div>
             <div className="mt-1 text-xs text-slate-500">Rank {match.away?.rank ?? '-'} · {match.away?.pts ?? '-'} pts</div>
           </div>
@@ -379,13 +665,13 @@ function MatchDetailView({ match, onBack }) {
         {(match.venue || match.referee) && (
           <div className="grid gap-2 sm:grid-cols-2">
             {match.venue && (
-              <div className="flex items-center gap-2 rounded-md border border-line bg-white px-3 py-2 text-sm text-slate-700">
+              <div className="flex items-center gap-2 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 shadow-panel">
                 <MapPin className="h-4 w-4 text-slate-500" aria-hidden="true" />
                 <span className="min-w-0 truncate">{match.venue}</span>
               </div>
             )}
             {match.referee && (
-              <div className="flex items-center gap-2 rounded-md border border-line bg-white px-3 py-2 text-sm text-slate-700">
+              <div className="flex items-center gap-2 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 shadow-panel">
                 <UserRound className="h-4 w-4 text-slate-500" aria-hidden="true" />
                 <span className="min-w-0 truncate">
                   {match.referee.name} · YC {match.referee.avg_yellow ?? '-'} · RC {match.referee.avg_red ?? '-'}
@@ -394,6 +680,8 @@ function MatchDetailView({ match, onBack }) {
             )}
           </div>
         )}
+
+        <PredictionSummaryCard match={match} allMatches={allMatches} />
 
         <div>
           <h3 className="text-sm font-semibold text-ink">Predictions</h3>
@@ -444,11 +732,11 @@ function MatchCard({ match, onSelect }) {
         <div className="grid grid-cols-[1fr_1fr_auto] items-center gap-2 text-sm text-slate-600">
           <span className="flex min-w-0 items-center gap-1">
             <CalendarDays className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-            <span className="truncate">{match.date}</span>
+            <span className="truncate">{matchDisplayDate(match)}</span>
           </span>
           <span className="flex min-w-0 items-center justify-center gap-1">
             <Clock3 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-            <span className="truncate">{match.time}</span>
+            <span className="truncate">{matchDisplayTime(match)}</span>
           </span>
           <span className={`shrink-0 rounded-full px-2 py-1 text-xs font-semibold ring-1 ${statusClass(match.status)}`}>
             {match.status}
@@ -677,27 +965,23 @@ function HomeInner() {
   );
 
   if (selectedMatch) {
-    return <MatchDetailView match={selectedMatch} onBack={handleBack} />;
+    return <MatchDetailView match={selectedMatch} onBack={handleBack} allMatches={matches} />;
   }
 
   return (
     <main className="min-h-screen bg-field">
       <header className="border-b border-line bg-white">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-3 py-4 sm:px-6 sm:py-5 lg:px-8">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="min-w-0">
-              <h1 className="text-xl font-semibold text-ink sm:text-2xl">Soccer Stats</h1>
-              <p className="mt-1 text-sm text-slate-500">
-                Captured {data?.captured_at || '-'} | Source {data?.source || 'static data'}
+          <div className="min-w-0">
+            <h1 className="text-xl font-semibold text-ink sm:text-2xl">Lonny&apos;s Predictions</h1>
+            <p className="mt-1 text-sm text-slate-500">
+              Stats-led football picks across Europe&apos;s top leagues — refreshed every few hours.
+            </p>
+            {data?.captured_at && (
+              <p className="mt-0.5 text-xs text-slate-400">
+                Last updated {formatDateDMY(data.captured_at)}
               </p>
-            </div>
-            <a
-              href={DATA_URL}
-              className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-md border border-line bg-white px-3 py-2 text-sm font-semibold text-ink hover:bg-field sm:h-10 sm:w-auto"
-            >
-              <RefreshCcw className="h-4 w-4" aria-hidden="true" />
-              Data JSON
-            </a>
+            )}
           </div>
         </div>
       </header>
@@ -760,7 +1044,7 @@ function HomeInner() {
               <option value="all">All dates</option>
               {dates.map((date) => (
                 <option key={date} value={date}>
-                  {date}
+                  {formatDateDMY(date)}
                 </option>
               ))}
             </select>
