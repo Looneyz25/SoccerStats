@@ -25,7 +25,13 @@
       "PowerShell($result = cmd /c \"\"\"C:\\\\Users\\\\lvora\\\\OneDrive\\\\Betting\\\\Soccer Stats\\\\run_daily.bat\"\"\" 2>&1; Write-Output \"Exit: $LASTEXITCODE\"; $result)",
       "Bash(python scripts/soccer_routine.py)",
       "Bash(powershell -NoProfile -Command \"Get-Date -Format HH:mm\")",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(python3 -c \"import json; d=json.load\\(open\\(r'C:/Users/lvora/OneDrive/Betting/Soccer Stats/match_data.json',encoding='utf-8'\\)\\); m=d['leagues'][0]['matches'][0]; print\\(list\\(m.keys\\(\\)\\)[:20]\\)\")",
+      "PowerShell($d = Get-Content \"C:\\\\Users\\\\lvora\\\\OneDrive\\\\Betting\\\\Soccer Stats\\\\match_data.json\" -Raw | ConvertFrom-Json; $m = $d.leagues[0].matches[0]; $m.PSObject.Properties.Name -join \",\")",
+      "Bash(git checkout *)",
+      "Bash(python scripts/soccer_update_index.py)",
+      "Bash(git rm *)",
+      "Bash(git restore *)"
     ]
   }
 }
