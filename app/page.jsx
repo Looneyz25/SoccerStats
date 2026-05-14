@@ -1,9 +1,11 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Activity,
   AlertTriangle,
+  ArrowLeft,
   BarChart3,
   CalendarDays,
   CheckCircle2,
@@ -17,7 +19,6 @@ import {
   Shield,
   Trophy,
   UserRound,
-  X,
   XCircle,
 } from 'lucide-react';
 
@@ -65,6 +66,22 @@ function streakMetaClass(result) {
   return 'text-slate-600';
 }
 
+function teamNameForSide(side, match) {
+  if (side === 'home') return match.home?.name || 'Home';
+  if (side === 'away') return match.away?.name || 'Away';
+  return 'both';
+}
+
+function displayTeamForStreak(streak, match) {
+  const label = (streak.label || '').toLowerCase();
+  const side =
+    label.includes('first to score') && streak.team === 'both' && match.actuals?.first_to_score
+      ? match.actuals.first_to_score
+      : streak.team;
+
+  return teamNameForSide(side, match);
+}
+
 function formatOdds(value) {
   return value ? Number(value).toFixed(2) : '-';
 }
@@ -72,6 +89,20 @@ function formatOdds(value) {
 function formatMarketDetail(market) {
   if (!market) return '-';
   return market.line ? `${market.pick} ${market.line}` : market.pick || '-';
+}
+
+function localTodayDate() {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function defaultMatchDate(dates, capturedAt) {
+  if (!dates.length) return 'all';
+  const today = capturedAt || localTodayDate();
+  return dates.includes(today) ? today : dates.find((date) => date >= today) || dates[dates.length - 1];
 }
 
 function flattenMatches(data) {
@@ -216,7 +247,7 @@ function MarketPill({ label, market }) {
   if (!market) return null;
   const detail = formatMarketDetail(market);
   return (
-    <div className={`flex min-h-10 items-center justify-between gap-2 rounded-md border px-2.5 py-2 sm:px-3 ${marketPillClass(market.result)}`}>
+    <div className={`flex min-h-11 items-center justify-between gap-2 rounded-md border px-2.5 py-2 sm:px-3 ${marketPillClass(market.result)}`}>
       <span className="shrink-0 text-xs font-medium text-slate-500">{label}</span>
       <span className={`flex min-w-0 items-center gap-1 text-right text-sm font-semibold ${marketValueClass(market.result)}`}>
         {resultIcon(market.result)}
@@ -255,147 +286,142 @@ function PredictionDetail({ label, market }) {
   );
 }
 
-function StreakList({ title, streaks }) {
+function StreakList({ title, streaks, match }) {
   if (!streaks?.length) return null;
   return (
     <div>
       <h3 className="text-sm font-semibold text-ink">{title}</h3>
       <div className="mt-2 grid gap-2 sm:grid-cols-2">
-        {streaks.map((streak, index) => (
-          <div key={`${title}-${streak.team}-${streak.label}-${index}`} className="rounded-md border border-line bg-field px-3 py-2">
-            <div className="flex items-center justify-between gap-2">
-              <span className="truncate text-sm font-semibold text-ink">{streak.label}</span>
-              <span className="rounded bg-white px-2 py-0.5 text-xs font-semibold text-slate-600">{streak.team}</span>
+        {streaks.map((streak, index) => {
+          const result = streakResultFor(streak, match);
+          const displayTeam = displayTeamForStreak(streak, match);
+          return (
+            <div key={`${title}-${streak.team}-${streak.label}-${index}`} className={`rounded-md border px-3 py-2 ${streakCardClass(result)}`}>
+              <div className="flex items-center justify-between gap-2">
+                <span className={`truncate text-sm font-semibold ${streakTextClass(result)}`}>{streak.label}</span>
+                <span className={`max-w-[45%] truncate rounded bg-white px-2 py-0.5 text-xs font-semibold ${streakMetaClass(result)}`}>
+                  {displayTeam}
+                </span>
+              </div>
+              <div className={`mt-1 flex items-center justify-between gap-2 text-xs ${streakMetaClass(result)}`}>
+                <span>{streak.value}</span>
+                <span>Odds {formatOdds(streak.odds)}</span>
+              </div>
             </div>
-            <div className="mt-1 flex items-center justify-between gap-2 text-xs text-slate-600">
-              <span>{streak.value}</span>
-              <span>Odds {formatOdds(streak.odds)}</span>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
 }
 
-function MatchDetails({ match, onClose }) {
+function MatchDetailView({ match, onBack }) {
   const predictions = match.predictions || {};
   const odds = match.sportsbet_odds || match.odds || {};
   const actuals = match.actuals || {};
 
   useEffect(() => {
     function handleKeyDown(event) {
-      if (event.key === 'Escape') onClose();
+      if (event.key === 'Escape') onBack();
     }
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [onClose]);
+  }, [onBack]);
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-end bg-ink/55 p-0 sm:items-center sm:p-6"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="match-details-title"
-      onClick={onClose}
-    >
-      <div
-        className="max-h-[92vh] w-full overflow-y-auto rounded-t-lg bg-white shadow-2xl sm:mx-auto sm:max-w-3xl sm:rounded-lg"
-        onClick={(event) => event.stopPropagation()}
-      >
-        <div className="sticky top-0 z-10 border-b border-line bg-white px-4 py-3 sm:px-5">
-          <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-500">
-                <span>{match.league}</span>
-                <span>{match.date}</span>
-                <span>{match.time}</span>
-                <span className={`rounded-full px-2 py-1 ring-1 ${statusClass(match.status)}`}>{match.status}</span>
-              </div>
-              <h2 id="match-details-title" className="mt-2 text-lg font-semibold text-ink sm:text-xl">
-                {match.home?.name} vs {match.away?.name}
-              </h2>
+    <div className="min-h-screen bg-field">
+      <div className="sticky top-0 z-20 border-b border-line bg-white">
+        <div className="mx-auto flex max-w-3xl items-start gap-3 px-3 py-3 sm:px-5 sm:py-4">
+          <button
+            type="button"
+            onClick={onBack}
+            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-line text-slate-600 hover:bg-field"
+            aria-label="Back to matches"
+          >
+            <ArrowLeft className="h-5 w-5" aria-hidden="true" />
+          </button>
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-semibold text-slate-500">
+              <span className="truncate">{match.league}</span>
+              <span>{match.date}</span>
+              <span>{match.time}</span>
+              <span className={`rounded-full px-2 py-1 ring-1 ${statusClass(match.status)}`}>{match.status}</span>
             </div>
-            <button
-              type="button"
-              onClick={onClose}
-              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-line text-slate-600 hover:bg-field"
-              aria-label="Close match details"
-            >
-              <X className="h-4 w-4" aria-hidden="true" />
-            </button>
+            <h2 className="mt-1.5 truncate text-base font-semibold text-ink sm:text-xl">
+              {match.home?.name} vs {match.away?.name}
+            </h2>
+          </div>
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-3xl space-y-5 px-3 py-4 sm:px-5 sm:py-5">
+        <div className="grid grid-cols-[minmax(0,1fr)_4rem_minmax(0,1fr)] items-center gap-2 sm:grid-cols-[1fr_auto_1fr]">
+          <div className="min-w-0 rounded-md bg-white px-3 py-3 text-left">
+            <div className="truncate text-base font-semibold text-ink">{match.home?.name}</div>
+            <div className="mt-1 text-xs text-slate-500">Rank {match.home?.rank ?? '-'} · {match.home?.pts ?? '-'} pts</div>
+          </div>
+          <div className="rounded-md bg-ink px-3 py-3 text-center text-base font-semibold text-white">
+            {match.status === 'FT' ? `${match.home?.goals ?? '-'}-${match.away?.goals ?? '-'}` : 'vs'}
+          </div>
+          <div className="min-w-0 rounded-md bg-white px-3 py-3 text-right">
+            <div className="truncate text-base font-semibold text-ink">{match.away?.name}</div>
+            <div className="mt-1 text-xs text-slate-500">Rank {match.away?.rank ?? '-'} · {match.away?.pts ?? '-'} pts</div>
           </div>
         </div>
 
-        <div className="space-y-5 px-4 py-4 sm:px-5 sm:py-5">
-          <div className="grid grid-cols-[minmax(0,1fr)_4rem_minmax(0,1fr)] items-center gap-2 sm:grid-cols-[1fr_auto_1fr]">
-            <div className="min-w-0 rounded-md bg-field px-3 py-3 text-left">
-              <div className="truncate text-base font-semibold text-ink">{match.home?.name}</div>
-              <div className="mt-1 text-xs text-slate-500">Rank {match.home?.rank ?? '-'} · {match.home?.pts ?? '-'} pts</div>
-            </div>
-            <div className="rounded-md bg-ink px-3 py-3 text-center text-base font-semibold text-white">
-              {match.status === 'FT' ? `${match.home?.goals ?? '-'}-${match.away?.goals ?? '-'}` : 'vs'}
-            </div>
-            <div className="min-w-0 rounded-md bg-field px-3 py-3 text-right">
-              <div className="truncate text-base font-semibold text-ink">{match.away?.name}</div>
-              <div className="mt-1 text-xs text-slate-500">Rank {match.away?.rank ?? '-'} · {match.away?.pts ?? '-'} pts</div>
-            </div>
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-3">
+          <DetailStat label="Home odds" value={formatOdds(odds.home)} />
+          <DetailStat label="Draw odds" value={formatOdds(odds.draw)} />
+          <DetailStat label="Away odds" value={formatOdds(odds.away)} />
+        </div>
+
+        {(match.venue || match.referee) && (
+          <div className="grid gap-2 sm:grid-cols-2">
+            {match.venue && (
+              <div className="flex items-center gap-2 rounded-md border border-line bg-white px-3 py-2 text-sm text-slate-700">
+                <MapPin className="h-4 w-4 text-slate-500" aria-hidden="true" />
+                <span className="min-w-0 truncate">{match.venue}</span>
+              </div>
+            )}
+            {match.referee && (
+              <div className="flex items-center gap-2 rounded-md border border-line bg-white px-3 py-2 text-sm text-slate-700">
+                <UserRound className="h-4 w-4 text-slate-500" aria-hidden="true" />
+                <span className="min-w-0 truncate">
+                  {match.referee.name} · YC {match.referee.avg_yellow ?? '-'} · RC {match.referee.avg_red ?? '-'}
+                </span>
+              </div>
+            )}
           </div>
+        )}
 
-          <div className="grid gap-2 sm:grid-cols-3">
-            <DetailStat label="Home odds" value={formatOdds(odds.home)} />
-            <DetailStat label="Draw odds" value={formatOdds(odds.draw)} />
-            <DetailStat label="Away odds" value={formatOdds(odds.away)} />
+        <div>
+          <h3 className="text-sm font-semibold text-ink">Predictions</h3>
+          <div className="mt-2 grid gap-2 sm:grid-cols-2">
+            <PredictionDetail label="Winner" market={predictions.winner} />
+            <PredictionDetail label="BTTS" market={predictions.btts} />
+            <PredictionDetail label="Goals" market={predictions.ou_goals} />
+            <PredictionDetail label="Cards" market={predictions.ou_cards} />
           </div>
+        </div>
 
-          {(match.venue || match.referee) && (
-            <div className="grid gap-2 sm:grid-cols-2">
-              {match.venue && (
-                <div className="flex items-center gap-2 rounded-md border border-line bg-white px-3 py-2 text-sm text-slate-700">
-                  <MapPin className="h-4 w-4 text-slate-500" aria-hidden="true" />
-                  <span className="min-w-0 truncate">{match.venue}</span>
-                </div>
-              )}
-              {match.referee && (
-                <div className="flex items-center gap-2 rounded-md border border-line bg-white px-3 py-2 text-sm text-slate-700">
-                  <UserRound className="h-4 w-4 text-slate-500" aria-hidden="true" />
-                  <span className="min-w-0 truncate">
-                    {match.referee.name} · YC {match.referee.avg_yellow ?? '-'} · RC {match.referee.avg_red ?? '-'}
-                  </span>
-                </div>
-              )}
-            </div>
-          )}
-
+        {Object.keys(actuals).length > 0 && (
           <div>
-            <h3 className="text-sm font-semibold text-ink">Predictions</h3>
-            <div className="mt-2 grid gap-2 sm:grid-cols-2">
-              <PredictionDetail label="Winner" market={predictions.winner} />
-              <PredictionDetail label="BTTS" market={predictions.btts} />
-              <PredictionDetail label="Goals" market={predictions.ou_goals} />
-              <PredictionDetail label="Cards" market={predictions.ou_cards} />
+            <h3 className="flex items-center gap-2 text-sm font-semibold text-ink">
+              <BarChart3 className="h-4 w-4" aria-hidden="true" />
+              Actuals
+            </h3>
+            <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+              <DetailStat label="Corners" value={actuals.corners_total} />
+              <DetailStat label="Fouls" value={actuals.fouls_total} />
+              <DetailStat label="Shots on target" value={`${actuals.home_sot ?? '-'}-${actuals.away_sot ?? '-'}`} />
+              <DetailStat label="Half time" value={`${actuals.ht_home ?? '-'}-${actuals.ht_away ?? '-'}`} />
             </div>
           </div>
+        )}
 
-          {Object.keys(actuals).length > 0 && (
-            <div>
-              <h3 className="flex items-center gap-2 text-sm font-semibold text-ink">
-                <BarChart3 className="h-4 w-4" aria-hidden="true" />
-                Actuals
-              </h3>
-              <div className="mt-2 grid gap-2 sm:grid-cols-4">
-                <DetailStat label="Corners" value={actuals.corners_total} />
-                <DetailStat label="Fouls" value={actuals.fouls_total} />
-                <DetailStat label="Shots on target" value={`${actuals.home_sot ?? '-'}-${actuals.away_sot ?? '-'}`} />
-                <DetailStat label="Half time" value={`${actuals.ht_home ?? '-'}-${actuals.ht_away ?? '-'}`} />
-              </div>
-            </div>
-          )}
-
-          <StreakList title="Team streaks" streaks={match.team_streaks} />
-          <StreakList title="Head to head streaks" streaks={match.h2h_streaks} />
-        </div>
+        <StreakList title="Team streaks" streaks={match.team_streaks} match={match} />
+        <StreakList title="Head to head streaks" streaks={match.h2h_streaks} match={match} />
       </div>
     </div>
   );
@@ -407,7 +433,7 @@ function MatchCard({ match, onSelect }) {
   const actuals = match.actuals || {};
 
   return (
-    <article className="rounded-lg border border-line bg-white shadow-panel transition hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-lg">
+    <article className="rounded-lg border border-line bg-white shadow-panel transition active:scale-[0.99] sm:hover:-translate-y-0.5 sm:hover:border-slate-300 sm:hover:shadow-lg">
       <button
         type="button"
         onClick={() => onSelect(match)}
@@ -417,14 +443,14 @@ function MatchCard({ match, onSelect }) {
       <div className="border-b border-line px-3 py-3 sm:px-4">
         <div className="grid grid-cols-[1fr_1fr_auto] items-center gap-2 text-sm text-slate-600">
           <span className="flex min-w-0 items-center gap-1">
-            <CalendarDays className="h-3.5 w-3.5" aria-hidden="true" />
+            <CalendarDays className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
             <span className="truncate">{match.date}</span>
           </span>
           <span className="flex min-w-0 items-center justify-center gap-1">
-            <Clock3 className="h-3.5 w-3.5" aria-hidden="true" />
+            <Clock3 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
             <span className="truncate">{match.time}</span>
           </span>
-          <span className={`rounded-full px-2 py-1 text-xs font-semibold ring-1 ${statusClass(match.status)}`}>
+          <span className={`shrink-0 rounded-full px-2 py-1 text-xs font-semibold ring-1 ${statusClass(match.status)}`}>
             {match.status}
           </span>
         </div>
@@ -445,7 +471,7 @@ function MatchCard({ match, onSelect }) {
           </div>
         </div>
 
-        <div className="mt-4 grid gap-2 sm:grid-cols-2">
+        <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
           <MarketPill label="Winner" market={predictions.winner} />
           <MarketPill label="BTTS" market={predictions.btts} />
           <MarketPill label="Goals" market={predictions.ou_goals} />
@@ -486,18 +512,18 @@ function LeagueSection({ group, onSelectMatch }) {
 
   return (
     <section className="overflow-hidden rounded-lg border border-line bg-white">
-      <div className="flex flex-col gap-3 border-b border-line bg-ink px-3 py-3 text-white sm:flex-row sm:items-center sm:justify-between sm:px-4">
+      <div className="flex flex-col gap-2 border-b border-line bg-ink px-3 py-3 text-white sm:flex-row sm:items-center sm:justify-between sm:px-4">
         <div className="flex min-w-0 items-center gap-2">
           <Trophy className="h-5 w-5 shrink-0" aria-hidden="true" />
           <h2 className="truncate text-base font-semibold sm:text-lg">{group.league}</h2>
         </div>
-        <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
+        <div className="flex flex-wrap items-center gap-1.5 text-xs font-semibold">
           <span className="rounded-full bg-white/12 px-2.5 py-1">{group.matches.length} matches</span>
           <span className="rounded-full bg-white/12 px-2.5 py-1">{upcoming} upcoming</span>
           <span className="rounded-full bg-white/12 px-2.5 py-1">{finished} finished</span>
         </div>
       </div>
-      <div className="grid gap-3 bg-field p-2 sm:gap-4 sm:p-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3 bg-field p-2 sm:gap-4 sm:p-4 lg:grid-cols-2">
         {group.matches.map((match) => (
           <MatchCard key={`${match.league}-${match.id}`} match={match} onSelect={onSelectMatch} />
         ))}
@@ -506,14 +532,20 @@ function LeagueSection({ group, onSelectMatch }) {
   );
 }
 
-export default function Home() {
+function HomeInner() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const matchParam = searchParams.get('match');
+
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
   const [league, setLeague] = useState('all');
-  const [status, setStatus] = useState('upcoming');
-  const [selectedDate, setSelectedDate] = useState('all');
+  const [status, setStatus] = useState('all');
+  const [selectedDate, setSelectedDate] = useState('');
   const [query, setQuery] = useState('');
-  const [selectedMatch, setSelectedMatch] = useState(null);
+
+  const scrollPositionRef = useRef(0);
+  const swipeStartRef = useRef(null);
 
   useEffect(() => {
     fetch(DATA_URL)
@@ -534,23 +566,31 @@ export default function Home() {
   const stats = useMemo(() => summarize(matches), [matches]);
   const selectedDateIndex = dates.indexOf(selectedDate);
 
-  function moveDate(direction) {
-    if (!dates.length) return;
+  useEffect(() => {
+    if (selectedDate || !dates.length) return;
+    setSelectedDate(defaultMatchDate(dates, data?.captured_at));
+  }, [data?.captured_at, dates, selectedDate]);
 
-    if (selectedDateIndex === -1) {
-      setSelectedDate(direction > 0 ? dates[0] : dates[dates.length - 1]);
-      return;
-    }
+  const moveDate = useCallback(
+    (direction) => {
+      if (!dates.length) return;
 
-    const nextIndex = Math.min(Math.max(selectedDateIndex + direction, 0), dates.length - 1);
-    setSelectedDate(dates[nextIndex]);
-  }
+      if (selectedDateIndex === -1) {
+        setSelectedDate(direction > 0 ? dates[0] : dates[dates.length - 1]);
+        return;
+      }
+
+      const nextIndex = Math.min(Math.max(selectedDateIndex + direction, 0), dates.length - 1);
+      setSelectedDate(dates[nextIndex]);
+    },
+    [dates, selectedDateIndex],
+  );
 
   const filtered = useMemo(() => {
     const normalized = query.trim().toLowerCase();
     return matches
       .filter((match) => (league === 'all' ? true : match.league === league))
-      .filter((match) => (selectedDate === 'all' ? true : match.date === selectedDate))
+      .filter((match) => (!selectedDate || selectedDate === 'all' ? true : match.date === selectedDate))
       .filter((match) => {
         if (status === 'all') return true;
         if (status === 'FT') return match.status === 'FT';
@@ -563,6 +603,82 @@ export default function Home() {
       .sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`));
   }, [league, matches, query, selectedDate, status]);
   const groupedMatches = useMemo(() => groupMatchesByLeague(filtered), [filtered]);
+
+  // Look up the selected match across the entire dataset so detail view works
+  // even when the current filters would exclude it.
+  const selectedMatch = useMemo(() => {
+    if (!matchParam) return null;
+    return matches.find((m) => String(m.id) === String(matchParam)) || null;
+  }, [matchParam, matches]);
+
+  const handleSelectMatch = useCallback(
+    (match) => {
+      scrollPositionRef.current = typeof window !== 'undefined' ? window.scrollY : 0;
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('match', String(match.id));
+      router.push(`?${params.toString()}`, { scroll: false });
+    },
+    [router, searchParams],
+  );
+
+  const handleBack = useCallback(() => {
+    router.back();
+  }, [router]);
+
+  // Restore scroll position when returning to the list view.
+  useEffect(() => {
+    if (matchParam) {
+      // Detail view: scroll to top so user starts at the header.
+      if (typeof window !== 'undefined') window.scrollTo(0, 0);
+      return;
+    }
+    if (scrollPositionRef.current > 0 && typeof window !== 'undefined') {
+      const y = scrollPositionRef.current;
+      // Defer so the DOM is laid out before scroll restore.
+      requestAnimationFrame(() => window.scrollTo(0, y));
+    }
+  }, [matchParam]);
+
+  // Swipe handlers — bound to the list wrapper only.
+  const onTouchStart = useCallback((event) => {
+    if (event.touches.length !== 1) {
+      swipeStartRef.current = null;
+      return;
+    }
+    const touch = event.touches[0];
+    swipeStartRef.current = {
+      x: touch.clientX,
+      y: touch.clientY,
+      time: Date.now(),
+    };
+  }, []);
+
+  const onTouchMove = useCallback(() => {
+    // Intentionally empty — never preventDefault, so vertical scrolling stays smooth.
+  }, []);
+
+  const onTouchEnd = useCallback(
+    (event) => {
+      const start = swipeStartRef.current;
+      swipeStartRef.current = null;
+      if (!start) return;
+      const touch = event.changedTouches[0];
+      if (!touch) return;
+      const dx = touch.clientX - start.x;
+      const dy = touch.clientY - start.y;
+      const dt = Date.now() - start.time;
+      if (dt > 600) return;
+      if (Math.abs(dy) > 30) return;
+      if (Math.abs(dx) < 50) return;
+      // Swipe left (dx < 0) → next date; swipe right (dx > 0) → previous date.
+      moveDate(dx < 0 ? 1 : -1);
+    },
+    [moveDate],
+  );
+
+  if (selectedMatch) {
+    return <MatchDetailView match={selectedMatch} onBack={handleBack} />;
+  }
 
   return (
     <main className="min-h-screen bg-field">
@@ -577,7 +693,7 @@ export default function Home() {
             </div>
             <a
               href={DATA_URL}
-              className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-md border border-line bg-white px-3 py-2 text-sm font-semibold text-ink hover:bg-field sm:w-auto"
+              className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-md border border-line bg-white px-3 py-2 text-sm font-semibold text-ink hover:bg-field sm:h-10 sm:w-auto"
             >
               <RefreshCcw className="h-4 w-4" aria-hidden="true" />
               Data JSON
@@ -597,7 +713,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="mt-3 grid gap-3 rounded-lg border border-line bg-white p-3 sm:mt-5 sm:grid-cols-[auto_12rem_10rem_16rem_minmax(0,1fr)] sm:items-center">
+        <div className="mt-3 grid gap-2 rounded-lg border border-line bg-white p-3 sm:mt-5 sm:grid-cols-[auto_12rem_10rem_16rem_minmax(0,1fr)] sm:items-center sm:gap-3">
           <div className="flex items-center gap-2 text-sm font-semibold text-slate-600">
             <Filter className="h-4 w-4" aria-hidden="true" />
             Filters
@@ -605,7 +721,7 @@ export default function Home() {
           <select
             value={league}
             onChange={(event) => setLeague(event.target.value)}
-            className="h-10 w-full min-w-0 rounded-md border border-line bg-white px-3 text-sm"
+            className="h-11 w-full min-w-0 rounded-md border border-line bg-white px-3 text-sm sm:h-10"
             aria-label="League"
           >
             <option value="all">All leagues</option>
@@ -618,7 +734,7 @@ export default function Home() {
           <select
             value={status}
             onChange={(event) => setStatus(event.target.value)}
-            className="h-10 w-full min-w-0 rounded-md border border-line bg-white px-3 text-sm"
+            className="h-11 w-full min-w-0 rounded-md border border-line bg-white px-3 text-sm sm:h-10"
             aria-label="Status"
           >
             <option value="upcoming">Upcoming</option>
@@ -630,15 +746,15 @@ export default function Home() {
               type="button"
               onClick={() => moveDate(-1)}
               disabled={!dates.length || selectedDateIndex === 0}
-              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-line bg-white text-slate-600 hover:bg-field disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-line bg-white text-slate-600 hover:bg-field disabled:cursor-not-allowed disabled:opacity-40 sm:h-10 sm:w-10"
               aria-label="Previous match date"
             >
               <ChevronLeft className="h-4 w-4" aria-hidden="true" />
             </button>
             <select
-              value={selectedDate}
+              value={selectedDate || 'all'}
               onChange={(event) => setSelectedDate(event.target.value)}
-              className="h-10 min-w-0 flex-1 rounded-md border border-line bg-white px-3 text-sm"
+              className="h-11 min-w-0 flex-1 rounded-md border border-line bg-white px-3 text-sm sm:h-10"
               aria-label="Match date"
             >
               <option value="all">All dates</option>
@@ -652,7 +768,7 @@ export default function Home() {
               type="button"
               onClick={() => moveDate(1)}
               disabled={!dates.length || selectedDateIndex === dates.length - 1}
-              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-line bg-white text-slate-600 hover:bg-field disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-line bg-white text-slate-600 hover:bg-field disabled:cursor-not-allowed disabled:opacity-40 sm:h-10 sm:w-10"
               aria-label="Next match date"
             >
               <ChevronRight className="h-4 w-4" aria-hidden="true" />
@@ -662,7 +778,7 @@ export default function Home() {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search teams or league"
-            className="h-10 min-w-0 rounded-md border border-line bg-white px-3 text-sm"
+            className="h-11 min-w-0 rounded-md border border-line bg-white px-3 text-sm sm:h-10"
           />
         </div>
 
@@ -673,20 +789,31 @@ export default function Home() {
           </div>
         )}
 
-        <div className="mt-3 space-y-4 sm:mt-5 sm:space-y-5">
+        <div
+          className="mt-3 space-y-4 sm:mt-5 sm:space-y-5"
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+        >
           {groupedMatches.map((group) => (
-            <LeagueSection key={group.leagueId || group.league} group={group} onSelectMatch={setSelectedMatch} />
+            <LeagueSection key={group.leagueId || group.league} group={group} onSelectMatch={handleSelectMatch} />
           ))}
+
+          {!error && filtered.length === 0 && (
+            <div className="rounded-lg border border-line bg-white p-8 text-center text-sm text-slate-500">
+              No matches found for the selected filters.
+            </div>
+          )}
         </div>
-
-        {!error && filtered.length === 0 && (
-          <div className="mt-5 rounded-lg border border-line bg-white p-8 text-center text-sm text-slate-500">
-            No matches found for the selected filters.
-          </div>
-        )}
       </section>
-
-      {selectedMatch && <MatchDetails match={selectedMatch} onClose={() => setSelectedMatch(null)} />}
     </main>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<main className="min-h-screen bg-field" />}>
+      <HomeInner />
+    </Suspense>
   );
 }

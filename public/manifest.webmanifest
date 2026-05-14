@@ -1,0 +1,14 @@
+{
+  "name": "Looneyz Predictions",
+  "short_name": "Looneyz",
+  "description": "Fixture, odds, and prediction dashboard for selected football leagues.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#111827",
+  "background_color": "#f7f9fb",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

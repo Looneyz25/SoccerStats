@@ -1,0 +1,12 @@
+{
+  "name": "Looneyz Predictions",
+  "short_name": "Looneyz",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#14181f",
+  "theme_color": "#14181f",
+  "description": "Soccer match predictions and stats dashboard.",
+  "icons": []
+}
