@@ -51,7 +51,30 @@ def _profile(): return random.choice(_PROFILES)
 # ----------------------------------------------------------------------------
 ROOT  = Path(__file__).resolve().parent.parent
 STORE = ROOT / "match_data.json"
+ELO_STORE = ROOT / "team_elo.json"
 SCRIPTS = ROOT / "scripts"
+
+# --- Model tuning constants ---------------------------------------------------
+# Dixon-Coles (1997) low-score correction. Negative rho lifts 0-0 and 1-1
+# probabilities while reducing 1-0 / 0-1, matching the empirical excess of
+# draws in low-scoring fixtures. Published fits on European football typically
+# land between -0.18 and -0.05; -0.10 is the canonical default used in most
+# tutorials (Dashee, Opisthokonta, penaltyblog) and falls in the middle of
+# the empirical range.
+DIXON_COLES_RHO = -0.10
+
+# Football Elo. K=20 matches the eloratings.net "ordinary match" weight and
+# the Opisthokonta tuning study (best K ~= 19.5). HOME_ADV=50 is at the
+# conservative end of the 50-100 range published for club football and lines
+# up with the +0.20 home lambda boost already in the predictor (we don't want
+# to double-count home advantage by piling a 100-point Elo gap on top of it).
+ELO_INIT = 1500.0
+ELO_K = 20.0
+ELO_HOME_ADV = 50.0
+# 400 Elo points ~= 1 goal of lambda swing. Capped at +/-0.4 to match the
+# previous rank/pts table_adj magnitude so behaviour stays in the same range.
+ELO_LAMBDA_SCALE = 400.0
+ELO_LAMBDA_CAP = 0.4
 TODAY     = datetime.now(ADL).date()
 YESTERDAY = TODAY - timedelta(days=1)
 TOMORROW  = TODAY + timedelta(days=1)
@@ -382,7 +405,62 @@ def phase_a5_backfill_enrich(store, seen_ids):
 
 
 # ----------------------------------------------------------------------------
-def fetch_form(team_id, exclude_event_id=None):
+def build_xg_index(store):
+    """Walk the local store once and build a per-team list of recent xG samples.
+
+    Returns: {team_id: [{"date": "YYYY-MM-DD", "time": "HH:MM",
+                         "for": float, "against": float,
+                         "event_id": int}, ...]} sorted oldest -> newest.
+
+    Only FT matches that carry an `xg` block (attached by
+    soccer_fetch_understat.py — PL, LaLiga, Bundesliga, Ligue 1 are covered;
+    Serie A isn't in TOURNAMENTS; Eredivisie/MLS/Championship/League One/
+    League Two are NOT covered by Understat) are included. Teams that play
+    in non-Understat leagues will simply have no entries here, and the
+    fetch_form() call will fall back to raw SofaScore goals.
+    """
+    idx = {}
+    for L in store.get("leagues", []):
+        for m in L.get("matches", []):
+            if m.get("status") != "FT": continue
+            xg = m.get("xg")
+            if not xg: continue
+            xh = xg.get("home"); xa = xg.get("away")
+            if xh is None or xa is None: continue
+            h_id = (m.get("home") or {}).get("team_id")
+            a_id = (m.get("away") or {}).get("team_id")
+            key = (m.get("date") or "", m.get("time") or "", m.get("id"))
+            if h_id:
+                idx.setdefault(h_id, []).append({"date": m.get("date"), "time": m.get("time"),
+                                                  "for": float(xh), "against": float(xa),
+                                                  "event_id": m.get("id")})
+            if a_id:
+                idx.setdefault(a_id, []).append({"date": m.get("date"), "time": m.get("time"),
+                                                  "for": float(xa), "against": float(xh),
+                                                  "event_id": m.get("id")})
+    for tid in idx:
+        idx[tid].sort(key=lambda r: ((r.get("date") or ""), (r.get("time") or "")))
+    return idx
+
+
+# Module-level cache so phase_b_forecast / phase_a6_retro can share one index.
+_XG_INDEX = {}
+
+
+def fetch_form(team_id, exclude_event_id=None, xg_index=None):
+    """Return (attack, defence) form for a team over its last ~6 matches.
+
+    Prefers xG over raw goals on a per-match basis: for each of the team's
+    recent matches we use xG-for/xG-against if the local store has Understat
+    xG attached to that match (PL / LaLiga / Bundesliga / Ligue 1). For any
+    match without xG (any Eredivisie / MLS / Championship / League One /
+    League Two fixture, or any FT match where Understat enrichment hadn't run
+    yet) we fall back to the SofaScore raw goal scored / conceded for that
+    same match. Final attack/defence is the mean across all 6 samples,
+    regardless of which source each sample came from.
+    """
+    if xg_index is None:
+        xg_index = _XG_INDEX
     if not team_id: return 1.40, 1.40
     d = fetch(f"/api/v1/team/{team_id}/events/last/0"); time.sleep(0.6)
     if not d: return 1.40, 1.40
@@ -390,8 +468,17 @@ def fetch_form(team_id, exclude_event_id=None):
            if (e.get("status") or {}).get("type") == "finished"
            and e.get("id") != exclude_event_id][-6:]
     if len(fin) < 3: return 1.40, 1.40
+    # Per-event xG lookup (by event id) for fast match
+    xg_by_event = {row.get("event_id"): row for row in (xg_index.get(team_id) or [])}
     att = []; df = []
     for e in fin:
+        eid = e.get("id")
+        row = xg_by_event.get(eid)
+        if row is not None:
+            # Use xG numbers from the local store (already from team's POV)
+            att.append(float(row["for"])); df.append(float(row["against"]))
+            continue
+        # Fallback: raw goals from the SofaScore event payload
         is_home = (e.get("homeTeam") or {}).get("id") == team_id
         hs = (e.get("homeScore") or {}).get("current", 0); as_ = (e.get("awayScore") or {}).get("current", 0)
         if is_home: att.append(hs); df.append(as_)
@@ -447,23 +534,89 @@ def fetch_standings(unique_tournament_id, season_id):
     return out
 
 
+# ----------------------------------------------------------------------------
+# Team Elo --------------------------------------------------------------------
+# Module-level cache populated by compute_team_elo() and consumed by the
+# predictor. Maps SofaScore team_id -> Elo rating (float).
+_TEAM_ELO = {}
+
+
+def compute_team_elo(store):
+    """Rebuild every team's Elo from scratch by walking all FT matches in
+    chronological order. Deterministic, idempotent, and survives manual
+    edits to match_data.json. Persists to team_elo.json and also updates
+    the module-level _TEAM_ELO cache.
+
+    Returns: {team_id: rating}.
+    """
+    finished = []
+    for L in store.get("leagues", []):
+        for m in L.get("matches", []):
+            if m.get("status") != "FT": continue
+            h = m.get("home") or {}; a = m.get("away") or {}
+            h_id = h.get("team_id"); a_id = a.get("team_id")
+            hg = h.get("goals"); ag = a.get("goals")
+            if not h_id or not a_id or hg is None or ag is None: continue
+            finished.append({
+                "date": m.get("date") or "",
+                "time": m.get("time") or "",
+                "h_id": h_id, "a_id": a_id, "hg": int(hg), "ag": int(ag),
+            })
+    finished.sort(key=lambda x: (x["date"], x["time"]))
+
+    elo = {}
+    for fx in finished:
+        rh = elo.get(fx["h_id"], ELO_INIT)
+        ra = elo.get(fx["a_id"], ELO_INIT)
+        # Expected score for home, including home-field advantage
+        e_h = 1.0 / (1.0 + 10 ** ((ra - rh - ELO_HOME_ADV) / 400.0))
+        e_a = 1.0 - e_h
+        if fx["hg"] > fx["ag"]:
+            s_h, s_a = 1.0, 0.0
+        elif fx["hg"] < fx["ag"]:
+            s_h, s_a = 0.0, 1.0
+        else:
+            s_h, s_a = 0.5, 0.5
+        elo[fx["h_id"]] = rh + ELO_K * (s_h - e_h)
+        elo[fx["a_id"]] = ra + ELO_K * (s_a - e_a)
+
+    # Persist a sorted, human-readable snapshot. Keys are team_ids (str in JSON).
+    snapshot = {
+        "computed_at": TODAY.isoformat(),
+        "n_matches": len(finished),
+        "params": {"init": ELO_INIT, "K": ELO_K, "home_adv": ELO_HOME_ADV},
+        "ratings": {str(tid): round(r, 2) for tid, r in sorted(elo.items(), key=lambda kv: -kv[1])},
+    }
+    ELO_STORE.write_text(json.dumps(snapshot, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    _TEAM_ELO.clear(); _TEAM_ELO.update(elo)
+    return elo
+
+
 def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
-                    h2h=None, h_rank=None, h_pts=None, a_rank=None, a_pts=None):
-    """Poisson prediction enhanced with H2H trend and standings differential.
+                    h2h=None, h_rank=None, h_pts=None, a_rank=None, a_pts=None,
+                    h_team_id=None, a_team_id=None):
+    """Poisson prediction enhanced with H2H, Elo, and Dixon-Coles correction.
 
     Lambda construction:
       base_h = (h_attack + a_defence) / 2
       base_a = (a_attack + h_defence) / 2
 
       H2H adjustment (weight 0.25): bias toward team that has historically scored
-      more in this matchup, capped at ±0.5 goals.
+      more in this matchup, capped at +/-0.5 goals.
 
-      Standings adjustment (weight 0.20): teams with better league position
-      (lower rank, higher pts) get a small lambda bump. ±0.4 cap.
+      Elo adjustment (replaces the rank/pts nudge): elo_diff = R_home - R_away,
+      lambda_bump = clip(elo_diff / 400, +/-0.4). Applied symmetrically.
 
       Home advantage: +0.20 to home, -0.05 to away.
 
     All adjustments clipped, then floor at 0.20.
+
+    Joint distribution: independent Poisson grid * Dixon-Coles tau on the
+    four low-score cells, then renormalised to sum to 1.
+
+    `h_rank` / `a_rank` are still threaded through to factors for the UI
+    rationale ("league rank X vs Y") but no longer drive the lambdas.
     """
     base_h = (h_att + a_def) / 2
     base_a = (a_att + h_def) / 2
@@ -479,20 +632,34 @@ def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
     else:
         h2h_delta_h = h2h_delta_a = 0.0
 
-    # Standings: rank/pts differential. Lower rank = stronger.
-    rank_h = h_rank or 10; rank_a = a_rank or 10
-    pts_h = h_pts or 0; pts_a = a_pts or 0
-    rank_diff = rank_a - rank_h  # positive = home better
-    pts_diff = (pts_h - pts_a) / 50.0  # ~50 pts table gap = 1 lambda goal
-    table_adj_h = max(-0.4, min(0.4, rank_diff * 0.03 + pts_diff * 0.20))
-    table_adj_a = -table_adj_h
+    # Elo differential. Missing teams (never appeared FT) default to ELO_INIT
+    # so the bump cleanly collapses to zero.
+    home_elo = _TEAM_ELO.get(h_team_id, ELO_INIT) if h_team_id else ELO_INIT
+    away_elo = _TEAM_ELO.get(a_team_id, ELO_INIT) if a_team_id else ELO_INIT
+    elo_diff = home_elo - away_elo
+    elo_bump = max(-ELO_LAMBDA_CAP, min(ELO_LAMBDA_CAP, elo_diff / ELO_LAMBDA_SCALE))
+    elo_adj_h = elo_bump
+    elo_adj_a = -elo_bump
 
     # Final lambdas
-    lh = max(0.20, base_h + 0.20 + h2h_delta_h + table_adj_h)
-    la = max(0.20, base_a - 0.05 + h2h_delta_a + table_adj_a)
+    lh = max(0.20, base_h + 0.20 + h2h_delta_h + elo_adj_h)
+    la = max(0.20, base_a - 0.05 + h2h_delta_a + elo_adj_a)
 
     pmf = lambda k, l: math.exp(-l) * (l ** k) / math.factorial(k)
     grid = [[pmf(i, lh) * pmf(j, la) for j in range(7)] for i in range(7)]
+
+    # Dixon-Coles low-score correction. tau adjusts only (0,0), (1,0), (0,1),
+    # (1,1); everything else has tau=1. Renormalise the 7x7 grid so the
+    # truncated joint pmf still sums to 1.
+    rho = DIXON_COLES_RHO
+    grid[0][0] *= (1.0 - lh * la * rho)
+    grid[1][0] *= (1.0 + la * rho)
+    grid[0][1] *= (1.0 + lh * rho)
+    grid[1][1] *= (1.0 - rho)
+    total = sum(grid[i][j] for i in range(7) for j in range(7))
+    if total > 0:
+        grid = [[grid[i][j] / total for j in range(7)] for i in range(7)]
+
     p_h = sum(grid[i][j] for i in range(7) for j in range(7) if i > j)
     p_d = sum(grid[i][i] for i in range(7))
     p_a = sum(grid[i][j] for i in range(7) for j in range(7) if j > i)
@@ -502,7 +669,10 @@ def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
         w = {"pick": a_name, "type": "away"}
     else:
         w = {"pick": "Draw", "type": "draw"}
-    btts = {"pick": "Yes" if (1 - math.exp(-lh)) * (1 - math.exp(-la)) >= 0.50 else "No"}
+    # BTTS / OU goals are now derived from the Dixon-Coles-corrected grid so
+    # the low-score adjustment flows through to all markets, not just 1X2.
+    p_btts_yes = sum(grid[i][j] for i in range(7) for j in range(7) if i > 0 and j > 0)
+    btts = {"pick": "Yes" if p_btts_yes >= 0.50 else "No"}
     p_under_25 = sum(grid[i][j] for i in range(7) for j in range(7) if i + j < 3)
     ou_goals = {"pick": "Over" if (1 - p_under_25) >= 0.55 else "Under", "line": 2.5}
     over = sum(1 for s in (streaks or []) if "more than 4.5 cards" in (s.get("label") or "").lower())
@@ -513,14 +683,20 @@ def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
         "lambda_away": round(la, 3),
         "h2h_n": len(h2h or []),
         "h_rank": h_rank, "a_rank": a_rank,
+        "home_elo": round(home_elo, 1),
+        "away_elo": round(away_elo, 1),
+        "dixon_coles_rho": DIXON_COLES_RHO,
     }
     return {"winner": w, "btts": btts, "ou_goals": ou_goals, "ou_cards": cards,
             "factors": factors}
 
 
-# Backwards-compat shim — soccer_routine still calls predict_poisson() inside Phase B
-def predict_poisson(h_att, h_def, a_att, a_def, h_name, a_name, streaks):
-    return predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks)
+# Backwards-compat shim — keeps phase_a6_retro working without an explicit
+# context payload. Accepts optional team ids so Elo still applies in retro mode.
+def predict_poisson(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
+                    h_team_id=None, a_team_id=None):
+    return predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
+                            h_team_id=h_team_id, a_team_id=a_team_id)
 
 
 def phase_a6_retro(store):
@@ -536,7 +712,8 @@ def phase_a6_retro(store):
             h_att, h_def = fetch_form(h_id, ev_id)
             a_att, a_def = fetch_form(a_id, ev_id)
             pred = predict_poisson(h_att, h_def, a_att, a_def,
-                                   m["home"]["name"], m["away"]["name"], m.get("team_streaks") or [])
+                                   m["home"]["name"], m["away"]["name"], m.get("team_streaks") or [],
+                                   h_team_id=h_id, a_team_id=a_id)
             actual = "home" if hg > ag else ("away" if ag > hg else "draw")
             pred["winner"]["result"] = "hit" if pred["winner"]["type"] == actual else "miss"
             abtts = (hg > 0 and ag > 0)
@@ -588,7 +765,8 @@ def phase_b_forecast(store, seen_ids):
                                         h.get("name",""), a.get("name",""), tstr,
                                         h2h=h2h_history,
                                         h_rank=hr.get("rank"), h_pts=hr.get("pts"),
-                                        a_rank=ar.get("rank"), a_pts=ar.get("pts"))
+                                        a_rank=ar.get("rank"), a_pts=ar.get("pts"),
+                                        h_team_id=h.get("id"), a_team_id=a.get("id"))
                 ts = ev.get("startTimestamp")
                 rec = {
                     "id": eid, "date": adl_date(ts) if ts else d, "time": adl_time(ts) if ts else "00:00",
@@ -606,6 +784,52 @@ def phase_b_forecast(store, seen_ids):
             except Exception:
                 pass
     return {"added": added, "add_brk": add_brk}
+
+
+# ----------------------------------------------------------------------------
+_SEASON_CACHE = {}
+def fetch_current_season(unique_tournament_id):
+    """Return the current season id for a tournament. Cached per process."""
+    if not unique_tournament_id:
+        return None
+    if unique_tournament_id in _SEASON_CACHE:
+        return _SEASON_CACHE[unique_tournament_id]
+    d = fetch(f"/api/v1/unique-tournament/{unique_tournament_id}/seasons")
+    time.sleep(0.6)
+    season_id = None
+    if d:
+        seasons = d.get("seasons") or []
+        if seasons:
+            season_id = seasons[0].get("id")
+    _SEASON_CACHE[unique_tournament_id] = season_id
+    return season_id
+
+
+def phase_b3_attach_standings(store):
+    """Attach rank/pts to every match's home/away from the current league table.
+    One standings fetch per league per run (cached). Safe to call repeatedly.
+    """
+    name_to_ut = {v: k for k, v in TOURNAMENTS.items()}
+    attached = 0
+    for L in store["leagues"]:
+        ut_id = name_to_ut.get(L["name"])
+        if not ut_id:
+            continue
+        season_id = fetch_current_season(ut_id)
+        if not season_id:
+            continue
+        stand = fetch_standings(ut_id, season_id)
+        if not stand:
+            continue
+        for m in L["matches"]:
+            for side in ("home", "away"):
+                tid = (m.get(side) or {}).get("team_id")
+                row = stand.get(tid)
+                if row and row.get("rank") is not None:
+                    m[side]["rank"] = row.get("rank")
+                    m[side]["pts"] = row.get("pts")
+                    attached += 1
+    return {"attached": attached}
 
 
 # ----------------------------------------------------------------------------
@@ -637,6 +861,16 @@ def main():
     pa5 = phase_a5_backfill_enrich(store, seen_ids)
     print(f"  added={pa5['added']}  enriched={pa5['enriched']}")
 
+    # Phase A.7 — rebuild team Elo from full FT history (deterministic).
+    # Runs before retro + forecast so both phases consume up-to-date ratings.
+    # Also rebuilds the xG-by-team index so fetch_form() can prefer xG over
+    # raw goals where Understat data has been attached.
+    print("\n[Phase A.7] compute team Elo + build xG index")
+    elo = compute_team_elo(store)
+    _XG_INDEX.clear(); _XG_INDEX.update(build_xg_index(store))
+    n_teams_xg = sum(1 for tid, rows in _XG_INDEX.items() if rows)
+    print(f"  teams_rated={len(elo)}  teams_with_xg={n_teams_xg}  elo_file={ELO_STORE.name}")
+
     # Phase A.6
     print("\n[Phase A.6] retrospective predictions")
     pa6 = phase_a6_retro(store)
@@ -646,6 +880,11 @@ def main():
     print("\n[Phase B] forecast new upcoming")
     pb = phase_b_forecast(store, seen_ids)
     print(f"  added={pb['added']}")
+
+    # Phase B.3 — attach league-table rank/pts to every match's home/away
+    print("\n[Phase B.3] attach standings to home/away")
+    pb3 = phase_b3_attach_standings(store)
+    print(f"  attached={pb3['attached']}")
 
     # Sort matches inside each league
     for L in store["leagues"]:
