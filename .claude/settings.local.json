@@ -31,7 +31,16 @@
       "Bash(git checkout *)",
       "Bash(python scripts/soccer_update_index.py)",
       "Bash(git rm *)",
-      "Bash(git restore *)"
+      "Bash(git restore *)",
+      "Bash(gh run *)",
+      "Bash(awk 'NR>=8240 && NR<=8290' match_data.json)",
+      "WebSearch",
+      "PowerShell(python -c \"import ast; ast.parse\\(open\\(r'c:\\\\Users\\\\lvora\\\\OneDrive\\\\Betting\\\\Soccer Stats\\\\scripts\\\\soccer_routine.py', encoding='utf-8'\\).read\\(\\)\\); print\\('OK'\\)\")",
+      "Bash(python -c \"import curl_cffi; print\\('curl_cffi OK'\\)\")",
+      "Bash(tee logs/manual_run_2026-05-15.log)",
+      "Bash(curl -s -o /tmp/live_match_data.json -w \"%{http_code} bytes:%{size_download}\\\\n\" \"https://looneyz25.github.io/SoccerStats/data/match_data.json?cb=$\\(date +%s\\)\")",
+      "Bash(curl -s 'https://looneyz25.github.io/SoccerStats/data/match_data.json?cb=__CMDSUB_OUTPUT__' -o __TRACKED_VAR__/live_match_data.json)",
+      "Bash(python scripts/soccer_fetch_sportsbet.py)"
     ]
   }
 }

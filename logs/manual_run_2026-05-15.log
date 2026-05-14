@@ -1,0 +1,140 @@
+=== soccer_routine.py — 2026-05-15 (Adelaide) ===
+
+[Phase 0] validate + dedupe + re-date
+  dedupe=0  no_id=0  foreign=0  moved=0  re_dated=0
+
+[Phase A] settle pending
+  settled=0  skipped=8
+
+[Phase A.5] backfill finished + enrich
+  added=0  enriched=0
+
+[Phase A.7] compute team Elo + build xG index
+  teams_rated=212  teams_with_xg=0  elo_file=team_elo.json
+
+[Phase A.6] retrospective predictions
+  retro=0
+
+[Phase B] forecast new upcoming
+  added=24
+
+[Phase B.3] attach standings to home/away
+  attached=629
+
+[Phase B.4] computed team streaks (PRIMARY) — derived from team match history
+  + Premier League            Aston Villa vs Liverpool FC: 0 home / 2 away
+  + Premier League            Manchester United vs Nottingham Forest: 1 home / 1 away
+  + LaLiga                    Valencia vs Rayo Vallecano: 1 home / 2 away
+  + LaLiga                    Girona FC vs Real Sociedad: 3 home / 2 away
+  + LaLiga                    Real Madrid vs Real Oviedo: 1 home / 1 away
+  + Bundesliga                1. FC Heidenheim vs 1. FSV Mainz 05: 3 home / 3 away
+  + Bundesliga                1. FC Union Berlin vs FC Augsburg: 3 home / 3 away
+  + Bundesliga                Bayer 04 Leverkusen vs Hamburger SV: 3 home / 2 away
+  + Bundesliga                Borussia M'gladbach vs TSG Hoffenheim: 1 home / 3 away
+  + Bundesliga                Eintracht Frankfurt vs VfB Stuttgart: 3 home / 4 away
+  + Bundesliga                FC Bayern München vs 1. FC Köln: 2 home / 3 away
+  + Bundesliga                FC St. Pauli vs VfL Wolfsburg: 3 home / 1 away
+  + Bundesliga                SC Freiburg vs RB Leipzig: 2 home / 2 away
+  + Bundesliga                SV Werder Bremen vs Borussia Dortmund: 3 home / 0 away
+  + Ligue 1                   Saint-Étienne vs Rodez AF: 1 home / 4 away
+  + Eredivisie                Roda JC Kerkrade vs RKC Waalwijk: 3 home / 2 away
+  + Eredivisie                Willem II Tilburg vs Almere City FC: 1 home / 3 away
+  + MLS                       CF Montréal vs Chicago Fire: 2 home / 2 away
+  + MLS                       Charlotte FC vs Toronto FC: 2 home / 3 away
+  + MLS                       DC United vs St.Louis City: 2 home / 0 away
+  + MLS                       New England Revolution vs Minnesota United: 0 home / 1 away
+  + MLS                       New York Red Bulls vs New York City FC: 3 home / 0 away
+  + MLS                       Orlando City SC vs Atlanta United: 3 home / 2 away
+  + MLS                       Philadelphia Union vs Columbus Crew: 1 home / 4 away
+  + MLS                       Austin FC vs Sporting Kansas City: 0 home / 2 away
+  + MLS                       Houston Dynamo vs Vancouver Whitecaps: 0 home / 3 away
+  + MLS                       Seattle Sounders FC vs LA Galaxy: 3 home / 3 away
+  + MLS                       Real Salt Lake vs Colorado Rapids: 1 home / 0 away
+  + MLS                       San Diego FC vs FC Cincinnati: 2 home / 3 away
+  + MLS                       San Jose Earthquakes vs FC Dallas: 3 home / 0 away
+  + League One                Bradford City vs Bolton Wanderers: 2 home / 1 away
+  + League Two                Salford City vs Grimsby Town: 1 home / 1 away
+  + League Two                Notts County vs Chesterfield: 1 home / 0 away
+
+DONE. enriched=33
+
+[Phase B.5] sportsbet odds
+Fetching Premier League (united-kingdom/english-premier-league)
+  events with odds: 10
+Fetching LaLiga (spain/spanish-la-liga)
+  events with odds: 13
+Fetching Bundesliga (germany/german-bundesliga)
+  events with odds: 9
+Fetching Ligue 1 (france/french-ligue-1)
+  events with odds: 9
+Fetching UEFA Champions League (uefa-competitions/uefa-champions-league)
+  events with odds: 1
+Fetching Eredivisie (rest-of-europe/dutch-eredivisie)
+  events with odds: 9
+Fetching MLS (north-america/usa-major-league-soccer)
+  events with odds: 239
+Fetching Championship (united-kingdom/english-championship)
+  events with odds: 1
+Fetching League One (united-kingdom/english-league-one)
+  events with odds: 10
+Fetching League Two (united-kingdom/english-league-two)
+  events with odds: 10
+=== matched: 25 | unmatched: 8
+  - ('Bundesliga', 'FC Bayern München', '1. FC Köln')
+  - ('Ligue 1', 'Saint-Étienne', 'Rodez AF')
+  - ('Eredivisie', 'Roda JC Kerkrade', 'RKC Waalwijk')
+  - ('Eredivisie', 'Willem II Tilburg', 'Almere City FC')
+  - ('MLS', 'CF Montréal', 'Chicago Fire')
+  - ('League One', 'Bradford City', 'Bolton Wanderers')
+  - ('League Two', 'Salford City', 'Grimsby Town')
+  - ('League Two', 'Notts County', 'Chesterfield')
+
+[Phase B.6] streak odds
+ +2 Aston Villa vs Liverpool FC
+ +8 Manchester United vs Nottingham Forest
+ +3 Valencia vs Rayo Vallecano
+ +5 Girona FC vs Real Sociedad
+ +2 Real Madrid vs Real Oviedo
+BUDGET reached. odds_added=20
+
+[Phase B.7] prediction odds
+ +4 Manchester United vs Nottingham Forest
+ +4 1. FC Heidenheim vs 1. FSV Mainz 05
+ +4 1. FC Union Berlin vs FC Augsburg
+ +4 Bayer 04 Leverkusen vs Hamburger SV
+ +4 Borussia M'gladbach vs TSG Hoffenheim
+ +4 Eintracht Frankfurt vs VfB Stuttgart
+ +4 FC Bayern München vs 1. FC Köln
+ +4 FC St. Pauli vs VfL Wolfsburg
+ +4 SC Freiburg vs RB Leipzig
+ +4 SV Werder Bremen vs Borussia Dortmund
+ +3 Willem II Tilburg vs Almere City FC
+ +4 FC Cincinnati vs Inter Miami CF
+ +4 New England Revolution vs Nashville SC
+ +4 New York Red Bulls vs Columbus Crew
+ +4 Orlando City SC vs Philadelphia Union
+ +4 FC Dallas vs Vancouver Whitecaps
+ +4 Minnesota United vs Colorado Rapids
+BUDGET reached. added=67
+
+[Phase B.8] TheSportsDB fallback (records score hint when SofaScore was 403)
+  2026-05-14: 3 total events / 0 finished
+  2026-05-15: 3 total events / 0 finished
+
+DONE. matched=0
+
+[Phase B.9] Understat xG enrichment
+  fetching Understat: Premier League (EPL)
+    found 0 events, 0 finished
+  fetching Understat: LaLiga (La_liga)
+    found 0 events, 0 finished
+  fetching Understat: Serie A (Serie_A)
+    found 0 events, 0 finished
+  fetching Understat: Bundesliga (Bundesliga)
+    found 0 events, 0 finished
+  fetching Understat: Ligue 1 (Ligue_1)
+    found 0 events, 0 finished
+
+DONE. enriched=0
+
+=== TOTAL: 335  FT: 302  upcoming: 33  | winner hit: 137  miss: 165  pending: 33 ===
