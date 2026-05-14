@@ -7,7 +7,7 @@ NOTE: Markets matched are "Win-Draw-Win" / "Match Result" / "1X2" — these are 
 regular time only. Extra-time markets ("Match Result Including Overtime", etc.) are
 explicitly excluded.
 """
-import json, re, time, pathlib
+import json, re, time, pathlib, unicodedata
 import random
 from curl_cffi import requests
 
@@ -62,7 +62,9 @@ ABBREV = {
 }
 
 def norm(s):
-    s = re.sub(r'[^a-z0-9]', '', (s or '').lower())
+    # Fold accented characters to ASCII so München -> munchen, Étienne -> etienne, etc.
+    folded = unicodedata.normalize('NFKD', s or '').encode('ascii', 'ignore').decode('ascii')
+    s = re.sub(r'[^a-z0-9]', '', folded.lower())
     return s.replace("utd", "united").replace("fc", "")
 
 def names_match(a, b):

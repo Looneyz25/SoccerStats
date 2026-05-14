@@ -9269,9 +9269,9 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 5.0,
-            "draw": 3.3,
-            "away": 1.7,
+            "home": 2.7,
+            "draw": 2.3,
+            "away": 3.75,
             "event_id": 10445148
           }
         },
@@ -14171,7 +14171,13 @@
               "label": "Both teams scoring",
               "value": "9/10"
             }
-          ]
+          ],
+          "sportsbet_odds": {
+            "home": 1.13,
+            "draw": 9.5,
+            "away": 15.0,
+            "event_id": 10470436
+          }
         },
         {
           "id": 14065563,
@@ -31987,7 +31993,13 @@
               "label": "More than 2.5 goals",
               "value": "8/10"
             }
-          ]
+          ],
+          "sportsbet_odds": {
+            "home": 2.75,
+            "draw": 3.75,
+            "away": 2.3,
+            "event_id": 10472086
+          }
         },
         {
           "id": 15171553,
