@@ -23,7 +23,9 @@
       "PowerShell(Set-Location \"C:\\\\Users\\\\lvora\\\\OneDrive\\\\Betting\\\\Soccer Stats\"; $result = cmd /c \"run_daily.bat\" 2>&1; Write-Output \"Exit code: $LASTEXITCODE\"; $result | ForEach-Object { Write-Output $_ })",
       "PowerShell($result = cmd /c \"cd /d \"\"C:\\\\Users\\\\lvora\\\\OneDrive\\\\Betting\\\\Soccer Stats\"\" && run_daily.bat\" 2>&1; Write-Output \"Exit: $LASTEXITCODE\"; $result)",
       "PowerShell($result = cmd /c \"\"\"C:\\\\Users\\\\lvora\\\\OneDrive\\\\Betting\\\\Soccer Stats\\\\run_daily.bat\"\"\" 2>&1; Write-Output \"Exit: $LASTEXITCODE\"; $result)",
-      "Bash(python scripts/soccer_routine.py)"
+      "Bash(python scripts/soccer_routine.py)",
+      "Bash(powershell -NoProfile -Command \"Get-Date -Format HH:mm\")",
+      "Bash(git commit *)"
     ]
   }
 }

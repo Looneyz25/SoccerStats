@@ -55,7 +55,9 @@ jobs:
           }
 
       - name: Run the master soccer routine
-        run: python scripts/soccer_routine.py
+        run: |
+          python scripts/soccer_phase1_fixtures.py
+          python scripts/soccer_routine.py
 
       - name: Verify routine actually changed data
         run: |
@@ -89,7 +91,7 @@ jobs:
         run: |
           git config user.name  "soccer-stats-bot"
           git config user.email "actions@github.com"
-          git add index.html match_data.json "predictions_*.json" "predictions_*.md" scripts/ 2>$null
+          git add index.html match_data.json "predictions_*.json" "predictions_*.md" scripts/ docs/ 2>$null
           git diff --cached --quiet
           if ($LASTEXITCODE -eq 0) {
             Write-Host "No changes to commit"

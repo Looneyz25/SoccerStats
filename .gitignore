@@ -13,6 +13,16 @@ __pycache__/
 venv/
 .env
 
+# Node / Next.js
+node_modules/
+.npm-cache/
+.next/
+out/
+public/data/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
 # Editor
 .vscode/
 .idea/
