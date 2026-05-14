@@ -76,22 +76,11 @@ jobs:
             }
           }
 
-      - name: Verify index.html integrity
-        run: |
-          $html = Get-Content -Raw -Path index.html
-          foreach ($tag in '</script>', '</body>', '</html>') {
-            if (-not $html.Contains($tag)) {
-              Write-Host "::error::index.html missing $tag — refusing to commit"
-              exit 1
-            }
-          }
-          Write-Host "index.html closing tags intact"
-
       - name: Commit and push changes
         run: |
           git config user.name  "soccer-stats-bot"
           git config user.email "actions@github.com"
-          git add index.html match_data.json "predictions_*.json" "predictions_*.md" scripts/ docs/ 2>$null
+          git add match_data.json "predictions_*.json" "predictions_*.md" scripts/ docs/ 2>$null
           git diff --cached --quiet
           if ($LASTEXITCODE -eq 0) {
             Write-Host "No changes to commit"

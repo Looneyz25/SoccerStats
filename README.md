@@ -34,7 +34,6 @@ npm.cmd run build --cache .\.npm-cache
 
 ## Legacy Files
 
-- `index.html` - previous static dashboard, kept while the Next.js Pages workflow is adopted
 - `Soccer_Stats_Dashboard.xlsx` - source workbook
 - `PL_Matchday_*.xlsx` - matchday fixtures
 - `PL_Round*_Preview_*.xlsx` - matchday previews

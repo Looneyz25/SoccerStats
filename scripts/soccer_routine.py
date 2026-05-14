@@ -11,8 +11,7 @@ Runs the full pipeline against a fixed 10-tournament whitelist:
 - Phase B.5: attach sportsbet.com.au Win-Draw-Win odds (90-min regular)
 - Phase B.6: attach SofaScore market odds to each streak entry
 - Phase B.7: attach odds to each prediction (sportsbet first, SofaScore fallback)
-- Phase C:   write match_data.json, dated predictions snapshot + markdown report,
-             splice DATA_SOCCER into index.html via the brace-aware safe splicer
+- Phase C:   write match_data.json, dated predictions snapshot + markdown report
 
 DOES NOT touch git. `auto_push.bat` (Windows Task Scheduler) handles commits + push.
 
@@ -52,7 +51,6 @@ def _profile(): return random.choice(_PROFILES)
 # ----------------------------------------------------------------------------
 ROOT  = Path(__file__).resolve().parent.parent
 STORE = ROOT / "match_data.json"
-INDEX = ROOT / "index.html"
 SCRIPTS = ROOT / "scripts"
 TODAY     = datetime.now(ADL).date()
 YESTERDAY = TODAY - timedelta(days=1)
@@ -674,10 +672,6 @@ def main():
 
     print("\n[Phase B.9] Understat xG enrichment")
     run_helper("soccer_fetch_understat.py")
-
-    print("\n[Phase C] update index.html")
-    run_helper("soccer_update_index.py")
-
 
     # Final tally — reload store after helpers (they mutate match_data.json)
     store = load_store()
