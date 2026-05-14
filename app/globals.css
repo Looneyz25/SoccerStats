@@ -32,3 +32,18 @@ select,
 textarea {
   font-size: 16px;
 }
+
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(6%); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slide-in-left {
+  from { opacity: 0; transform: translateX(-6%); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.date-slide-next { animation: slide-in-right 220ms ease-out; }
+.date-slide-prev { animation: slide-in-left 220ms ease-out; }
+@media (prefers-reduced-motion: reduce) {
+  .date-slide-next,
+  .date-slide-prev { animation: none; }
+}

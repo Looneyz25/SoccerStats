@@ -859,9 +859,11 @@ function HomeInner() {
     setSelectedDate(defaultMatchDate(dates, data?.captured_at));
   }, [data?.captured_at, dates, selectedDate]);
 
+  const [slideDir, setSlideDir] = useState(0);
   const moveDate = useCallback(
     (direction) => {
       if (!dates.length) return;
+      setSlideDir(direction > 0 ? 1 : -1);
 
       if (selectedDateIndex === -1) {
         setSelectedDate(direction > 0 ? dates[0] : dates[dates.length - 1]);
@@ -1037,7 +1039,7 @@ function HomeInner() {
             </button>
             <select
               value={selectedDate || 'all'}
-              onChange={(event) => setSelectedDate(event.target.value)}
+              onChange={(event) => { setSlideDir(0); setSelectedDate(event.target.value); }}
               className="h-11 min-w-0 flex-1 rounded-md border border-line bg-white px-3 text-sm sm:h-10"
               aria-label="Match date"
             >
@@ -1074,11 +1076,15 @@ function HomeInner() {
         )}
 
         <div
-          className="mt-3 space-y-4 sm:mt-5 sm:space-y-5"
+          className="mt-3 sm:mt-5"
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
         >
+          <div
+            key={`${selectedDate || 'all'}-${slideDir}`}
+            className={`space-y-4 sm:space-y-5 ${slideDir > 0 ? 'date-slide-next' : slideDir < 0 ? 'date-slide-prev' : ''}`}
+          >
           {groupedMatches.map((group) => (
             <LeagueSection key={group.leagueId || group.league} group={group} onSelectMatch={handleSelectMatch} />
           ))}
@@ -1088,6 +1094,7 @@ function HomeInner() {
               No matches found for the selected filters.
             </div>
           )}
+          </div>
         </div>
       </section>
     </main>
