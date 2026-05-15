@@ -7,7 +7,7 @@ NOTE: Uses /api/v1/event/{id}/odds/1/all which returns 90-minute regular time ma
 ("Full time", "Match goals X.5", "Both teams to score", "Cards in match X.5",
 "Corners 2-Way X.5", "1st half", "Double chance"). Extra-time markets are NOT used.
 """
-import json, time, pathlib
+import json, os, time, pathlib
 import random
 from curl_cffi import requests
 
@@ -16,7 +16,7 @@ def _profile(): return random.choice(_PROFILES)
 
 FOLDER = pathlib.Path(__file__).resolve().parent.parent
 STORE_PATH = FOLDER / "match_data.json"
-BUDGET = 38
+BUDGET = int(os.environ.get("SOCCER_ODDS_BUDGET", "180"))
 START = time.time()
 
 def fetch(path):
@@ -54,6 +54,13 @@ def fetch_all_odds(eid):
         if choices: out[key] = choices
     return out
 
+def seed_match_odds(m):
+    odds = m.get("sportsbet_odds") or m.get("odds") or {}
+    out = {}
+    if all(odds.get(k) is not None for k in ("home", "draw", "away")):
+        out["Full time"] = {"1": odds["home"], "X": odds["draw"], "2": odds["away"]}
+    return out
+
 def any_line(market_odds, prefix, choice):
     for k, choices in market_odds.items():
         if k.startswith(prefix + " ") and choice in choices:
@@ -72,6 +79,16 @@ def derive_third(market_odds, market_key, present_a, present_b, target):
         if p > 0.01:
             return round(1.0 / p, 2)
     return None
+
+def combine_double_chance(market_odds, first, second):
+    full = market_odds.get('Full time') or {}
+    if first not in full or second not in full:
+        return None
+    p = implied_prob(full[first]) + implied_prob(full[second])
+    if p <= 0:
+        return None
+    # Keep a conservative bookmaker margin so derived prices don't look too generous.
+    return round(1.0 / min(p * 1.06, 0.99), 2)
 
 def get_streak_odds(label, who, market_odds, home_name, away_name):
     """Map a SofaScore streak (label + which team) to the matching 90-minute market price."""
@@ -106,13 +123,13 @@ def get_streak_odds(label, who, market_odds, home_name, away_name):
         if who == 'home': return g('Full time', '2')
         if who == 'away': return g('Full time', '1')
     if lab == 'no losses':
-        if who == 'home': return g('Double chance', '1X')
-        if who == 'away': return g('Double chance', 'X2')
+        if who == 'home': return g('Double chance', '1X') or combine_double_chance(o, '1', 'X')
+        if who == 'away': return g('Double chance', 'X2') or combine_double_chance(o, 'X', '2')
     if lab == 'no wins':
-        if who == 'home': return g('Double chance', 'X2')
-        if who == 'away': return g('Double chance', '1X')
+        if who == 'home': return g('Double chance', 'X2') or combine_double_chance(o, 'X', '2')
+        if who == 'away': return g('Double chance', '1X') or combine_double_chance(o, '1', 'X')
     if lab == 'draws':    return g('Full time', 'X')
-    if lab == 'no draws': return g('Double chance', '12')
+    if lab == 'no draws': return g('Double chance', '12') or combine_double_chance(o, '1', '2')
 
     # CARDS
     is_card_more = 'cards' in lab and ('over' in lab or 'more than' in lab)
@@ -152,31 +169,46 @@ def main():
     store = json.loads(STORE_PATH.read_text(encoding="utf-8"))
     odds_added = 0
     cache = {}
-    for L in store["leagues"]:
-        for m in L["matches"]:
-            if time.time() - START > BUDGET:
-                STORE_PATH.write_text(json.dumps(store, indent=2, ensure_ascii=False), encoding="utf-8")
-                print("BUDGET reached. odds_added=" + str(odds_added))
-                return
-            eid = m.get("id")
-            if not eid: continue
-            home_name, away_name = m["home"]["name"], m["away"]["name"]
-            all_streaks = (m.get("h2h_streaks") or []) + (m.get("team_streaks") or [])
-            need = [s for s in all_streaks if s.get("odds") is None]
-            if not need: continue
-            if eid not in cache:
-                cache[eid] = fetch_all_odds(eid)
-            market = cache[eid]
-            if not market: continue
-            count = 0
-            for s in need:
-                o = get_streak_odds(s.get("label"), s.get("team", "both"), market, home_name, away_name)
-                if o is not None:
-                    s["odds"] = o
-                    count += 1
-            odds_added += count
-            if count:
-                print(" +" + str(count) + " " + home_name + " vs " + away_name)
+    matches = [
+        (L, m)
+        for L in store["leagues"]
+        for m in L["matches"]
+        if m.get("status") != "FT"
+    ]
+    matches.sort(key=lambda item: (
+        item[1].get("date", ""),
+        item[1].get("time", ""),
+        item[0].get("name", ""),
+        item[1].get("home", {}).get("name", ""),
+    ))
+    for L, m in matches:
+        if time.time() - START > BUDGET:
+            STORE_PATH.write_text(json.dumps(store, indent=2, ensure_ascii=False), encoding="utf-8")
+            print("BUDGET reached. odds_added=" + str(odds_added))
+            return
+        eid = m.get("id")
+        if not eid: continue
+        home_name, away_name = m["home"]["name"], m["away"]["name"]
+        all_streaks = (m.get("h2h_streaks") or []) + (m.get("team_streaks") or [])
+        need = [s for s in all_streaks if s.get("odds") is None]
+        if not need: continue
+        if eid not in cache:
+            seeded = seed_match_odds(m)
+            fetched = fetch_all_odds(eid)
+            if fetched:
+                seeded.update(fetched)
+            cache[eid] = seeded
+        market = cache[eid]
+        if not market: continue
+        count = 0
+        for s in need:
+            o = get_streak_odds(s.get("label"), s.get("team", "both"), market, home_name, away_name)
+            if o is not None:
+                s["odds"] = o
+                count += 1
+        odds_added += count
+        if count:
+            print(" +" + str(count) + " " + home_name + " vs " + away_name)
     STORE_PATH.write_text(json.dumps(store, indent=2, ensure_ascii=False), encoding="utf-8")
     print("DONE. odds_added=" + str(odds_added))
 

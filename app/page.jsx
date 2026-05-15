@@ -14,14 +14,50 @@ import {
   Clock3,
   Filter,
   Goal,
+  ExternalLink,
   MapPin,
   Shield,
+  ShoppingCart,
   Trophy,
   UserRound,
   XCircle,
 } from 'lucide-react';
 
 const DATA_URL = 'data/match_data.json';
+
+const SPORTSBET_LEAGUE_SLUGS = {
+  'Premier League': 'united-kingdom/english-premier-league',
+  Championship: 'united-kingdom/english-championship',
+  'League One': 'united-kingdom/english-league-one',
+  'League Two': 'united-kingdom/english-league-two',
+  LaLiga: 'spain/spanish-la-liga',
+  Bundesliga: 'germany/german-bundesliga',
+  'Ligue 1': 'france/french-ligue-1',
+  Eredivisie: 'rest-of-europe/dutch-eredivisie',
+  'UEFA Champions League': 'uefa-competitions/uefa-champions-league',
+  MLS: 'north-america/usa-major-league-soccer',
+};
+
+function sportsbetSlug(value) {
+  return String(value || '')
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/&/g, 'and')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function sportsbetEventUrl(match) {
+  if (match.sportsbet_odds?.event_url) return match.sportsbet_odds.event_url;
+  const eventId = match.sportsbet_odds?.event_id;
+  const leagueSlug = SPORTSBET_LEAGUE_SLUGS[match.league];
+  if (!eventId || !leagueSlug) return null;
+  const home = sportsbetSlug(match.home?.name);
+  const away = sportsbetSlug((match.away?.name || '').replace(/\s+FC$/i, ''));
+  if (!home || !away) return null;
+  return `https://www.sportsbet.com.au/betting/soccer/${leagueSlug}/${home}-v-${away}-${eventId}`;
+}
 
 function statusClass(status) {
   if (status === 'FT') return 'bg-signal/10 text-signal ring-signal/20';
@@ -505,7 +541,24 @@ function DetailStat({ label, value }) {
   );
 }
 
-function PredictionDetail({ label, market }) {
+function SportsbetLink({ href, label = 'Sportsbet' }) {
+  if (!href) return null;
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noreferrer"
+      className="inline-flex items-center gap-1.5 rounded-md border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-xs font-semibold text-emerald-700 hover:bg-emerald-100"
+      aria-label="Open this market on Sportsbet"
+    >
+      <ShoppingCart className="h-3.5 w-3.5" aria-hidden="true" />
+      <span>{label}</span>
+      <ExternalLink className="h-3 w-3" aria-hidden="true" />
+    </a>
+  );
+}
+
+function PredictionDetail({ label, market, sportsbetHref }) {
   if (!market) return null;
   return (
     <div className={`rounded-md border px-3 py-2 ${marketPillClass(market.result)}`}>
@@ -520,6 +573,7 @@ function PredictionDetail({ label, market }) {
         <span className="font-semibold text-ink">{formatMarketDetail(market)}</span>
         <span className="text-slate-600">Odds {formatOdds(market.odds)}</span>
         {'actual' in market && <span className="text-slate-600">Actual {market.actual}</span>}
+        <SportsbetLink href={sportsbetHref} label="Add on Sportsbet" />
       </div>
     </div>
   );
@@ -581,18 +635,32 @@ function PredictionSummaryCard({ match, allMatches }) {
     { label: 'Cards', pick: predictions.ou_cards ? formatMarketDetail(predictions.ou_cards) : null, text: cardsRationale(match, allMatches) },
   ].filter((row) => row.pick && row.text);
 
-  if (!headline && !lines.length) return null;
+  if (!headlineParts.length && !lines.length) return null;
 
   return (
-    <div className="rounded-lg border border-slate-300 bg-white p-3 shadow-panel ring-1 ring-signal/20 sm:p-4">
-      <h3 className="text-base font-semibold text-ink">Prediction summary</h3>
-      {headline && <p className="mt-1 text-sm text-slate-700">{headline}</p>}
+    <div className="rounded-lg border border-slate-300 bg-white p-4 shadow-panel ring-1 ring-signal/20 sm:p-5">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <h3 className="text-base font-semibold leading-6 text-ink">Prediction summary</h3>
+        {headlineParts.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 sm:justify-end">
+            {headlineParts.map((part) => (
+              <span
+                key={part}
+                className="rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-medium leading-none text-slate-700"
+              >
+                {part}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
       {lines.length > 0 && (
-        <ul className="mt-3 space-y-1.5 text-xs text-slate-600">
+        <ul className="mt-4 divide-y divide-slate-100 text-sm">
           {lines.map((row) => (
-            <li key={row.label} className="flex gap-2">
-              <span className="shrink-0 font-semibold text-ink">{row.label} {row.pick}:</span>
-              <span className="min-w-0">{row.text}</span>
+            <li key={row.label} className="grid gap-2 py-2 first:pt-0 last:pb-0 sm:grid-cols-[7rem_8.5rem_minmax(0,1fr)] sm:items-start">
+              <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">{row.label}</span>
+              <span className="font-semibold leading-5 text-ink">{row.pick}</span>
+              <span className="min-w-0 leading-5 text-slate-600">{row.text}</span>
             </li>
           ))}
         </ul>
@@ -605,6 +673,7 @@ function MatchDetailView({ match, onBack, allMatches }) {
   const predictions = match.predictions || {};
   const odds = match.sportsbet_odds || match.odds || {};
   const actuals = match.actuals || {};
+  const sportsbetHref = sportsbetEventUrl(match);
 
   useEffect(() => {
     function handleKeyDown(event) {
@@ -661,6 +730,11 @@ function MatchDetailView({ match, onBack, allMatches }) {
           <DetailStat label="Draw odds" value={formatOdds(odds.draw)} />
           <DetailStat label="Away odds" value={formatOdds(odds.away)} />
         </div>
+        {sportsbetHref && (
+          <div className="flex justify-end">
+            <SportsbetLink href={sportsbetHref} label="Open Sportsbet event" />
+          </div>
+        )}
 
         {(match.venue || match.referee) && (
           <div className="grid gap-2 sm:grid-cols-2">
@@ -686,10 +760,10 @@ function MatchDetailView({ match, onBack, allMatches }) {
         <div>
           <h3 className="text-sm font-semibold text-ink">Predictions</h3>
           <div className="mt-2 grid gap-2 sm:grid-cols-2">
-            <PredictionDetail label="Winner" market={predictions.winner} />
-            <PredictionDetail label="BTTS" market={predictions.btts} />
-            <PredictionDetail label="Goals" market={predictions.ou_goals} />
-            <PredictionDetail label="Cards" market={predictions.ou_cards} />
+            <PredictionDetail label="Winner" market={predictions.winner} sportsbetHref={sportsbetHref} />
+            <PredictionDetail label="BTTS" market={predictions.btts} sportsbetHref={sportsbetHref} />
+            <PredictionDetail label="Goals" market={predictions.ou_goals} sportsbetHref={sportsbetHref} />
+            <PredictionDetail label="Cards" market={predictions.ou_cards} sportsbetHref={sportsbetHref} />
           </div>
         </div>
 

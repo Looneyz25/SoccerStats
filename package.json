@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3001",
     "prebuild": "python scripts/soccer_prepare_next_data.py",
     "build": "next build",
     "start": "next start"

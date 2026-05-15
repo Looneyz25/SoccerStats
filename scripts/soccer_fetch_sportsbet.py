@@ -67,6 +67,11 @@ def norm(s):
     s = re.sub(r'[^a-z0-9]', '', folded.lower())
     return s.replace("utd", "united").replace("fc", "")
 
+def url_slug(s):
+    folded = unicodedata.normalize('NFKD', s or '').encode('ascii', 'ignore').decode('ascii')
+    slug = re.sub(r'[^a-z0-9]+', '-', folded.lower()).strip('-')
+    return slug
+
 def names_match(a, b):
     a, b = norm(a), norm(b)
     if not a or not b: return False
@@ -95,7 +100,7 @@ def to_decimal(num, den):
     """Sportsbet AU price = profit/stake. Decimal odds = profit + 1."""
     return round(num / den + 1.0, 2)
 
-def extract_odds(data):
+def extract_odds(data, league_slug=None):
     """Extract Win-Draw-Win (90-min regular time) prices for every event on the league page."""
     out = {}
     sb = (data.get("entities") or {}).get("sportsbook") or {}
@@ -129,10 +134,15 @@ def extract_odds(data):
             elif rt == "D": odds["draw"] = price
             elif rt == "A": odds["away"] = price
         if "home" in odds and "draw" in odds and "away" in odds:
+            event_url = None
+            if league_slug and ev.get("id"):
+                event_url = "https://www.sportsbet.com.au/betting/soccer/{}/{}-{}".format(
+                    league_slug, url_slug(ev.get("name") or f"{h} v {a}"), ev.get("id")
+                )
             out[(norm(h), norm(a))] = {
                 "home": odds["home"], "draw": odds["draw"], "away": odds["away"],
                 "event_id": ev.get("id"), "start_ts": ts // 1000,
-                "home_name": h, "away_name": a,
+                "home_name": h, "away_name": a, "event_url": event_url,
             }
     return out
 
@@ -156,7 +166,7 @@ def main():
         if slug not in cache:
             print("Fetching " + L["name"] + " (" + slug + ")")
             data = fetch_page_data(slug)
-            cache[slug] = extract_odds(data) if data else None
+            cache[slug] = extract_odds(data, slug) if data else None
             print("  events with odds: " + str(len(cache[slug] or {})))
             time.sleep(1.0)
         idx = cache[slug]
@@ -166,7 +176,8 @@ def main():
             hit = find_match(idx, m["home"]["name"], m["away"]["name"])
             if hit:
                 m["sportsbet_odds"] = {"home": hit["home"], "draw": hit["draw"],
-                                       "away": hit["away"], "event_id": hit["event_id"]}
+                                       "away": hit["away"], "event_id": hit["event_id"],
+                                       "event_url": hit.get("event_url")}
                 matched += 1
             else:
                 no_match.append((L["name"], m["home"]["name"], m["away"]["name"]))

@@ -285,10 +285,14 @@ def phase_a_settle(store, cache):
 # ----------------------------------------------------------------------------
 def parse_streaks_payload(sp):
     h2h = []; tstr = []
-    for s in (sp.get("general") or []):
-        h2h.append({"team": s.get("teamSide", "both"),
+    for s in (sp.get("head2head") or []):
+        h2h.append({"team": s.get("team") or s.get("teamSide", "both"),
                     "label": s.get("name") or s.get("label", ""),
                     "value": str(s.get("count") or s.get("value", ""))})
+    for s in (sp.get("general") or []):
+        tstr.append({"team": s.get("team") or s.get("teamSide", "both"),
+                     "label": s.get("name") or s.get("label", ""),
+                     "value": str(s.get("count") or s.get("value", ""))})
     for side in ("home", "away"):
         for s in (sp.get(side) or []):
             tstr.append({"team": side,
@@ -914,6 +918,7 @@ def main():
 
     # Final tally — reload store after helpers (they mutate match_data.json)
     store = load_store()
+    save_store(store)
     total = 0; ft = 0; up = 0
     hit = miss = pending = 0
     for L in store["leagues"]:

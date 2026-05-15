@@ -4011,51 +4011,34 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
+              "team": "away",
+              "label": "No losses",
+              "value": "11",
+              "odds": 1.4
+            },
+            {
+              "team": "home",
               "label": "Without clean sheet",
-              "value": "5",
-              "odds": 1.44
+              "value": "13",
+              "odds": 1.62
             },
             {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "5/7",
-              "odds": 1.53
+              "team": "away",
+              "label": "First to score",
+              "value": "5/5",
+              "odds": 1.91
             },
             {
-              "team": "both",
-              "label": "Both teams scoring",
+              "team": "away",
+              "label": "First half winner",
               "value": "4/5",
-              "odds": 1.44
-            },
-            {
-              "team": "both",
-              "label": "First to concede",
-              "value": "4/5"
+              "odds": 3.0
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "9/10",
-              "odds": 1.62
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "6/7",
-              "odds": 1.62
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "8/9",
-              "odds": 2.0
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
               "value": "4/5",
-              "odds": 2.0
+              "odds": 2.1
             }
           ],
           "team_streaks": [
@@ -4138,50 +4121,22 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
+              "team": "away",
               "label": "No losses",
-              "value": "4"
+              "value": "3",
+              "odds": 2.25
             },
             {
-              "team": "both",
+              "team": "home",
               "label": "Without clean sheet",
               "value": "3",
-              "odds": 1.67
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "7/9",
               "odds": 1.62
             },
             {
               "team": "both",
-              "label": "Both teams scoring",
-              "value": "7/9",
-              "odds": 1.67
-            },
-            {
-              "team": "both",
-              "label": "First to score",
-              "value": "5/7"
-            },
-            {
-              "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "9/10",
+              "value": "8/10",
               "odds": 1.83
-            },
-            {
-              "team": "both",
-              "label": "More than 10.5 corners",
-              "value": "5/7",
-              "odds": 2.0
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "7/9",
-              "odds": 1.73
             }
           ],
           "team_streaks": [
@@ -4264,28 +4219,34 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
+              "team": "home",
               "label": "Without clean sheet",
-              "value": "6",
+              "value": "7",
               "odds": 1.7
             },
             {
               "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "4/5",
-              "odds": 1.67
+              "label": "Both teams scoring",
+              "value": "6/7",
+              "odds": 1.7
             },
             {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "6/6",
-              "odds": 1.67
+              "team": "home",
+              "label": "First to score",
+              "value": "4/5",
+              "odds": 1.53
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "6/7",
+              "value": "9/10",
               "odds": 2.0
+            },
+            {
+              "team": "both",
+              "label": "More than 10.5 corners",
+              "value": "5/5",
+              "odds": 1.83
             }
           ],
           "team_streaks": [
@@ -4375,48 +4336,27 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
-              "label": "No wins",
-              "value": "5"
-            },
-            {
-              "team": "both",
-              "label": "No wins",
-              "value": "4"
-            },
-            {
-              "team": "both",
+              "team": "away",
               "label": "Without clean sheet",
               "value": "5",
               "odds": 1.75
             },
             {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "6/6",
-              "odds": 1.8
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "5/5",
-              "odds": 1.75
-            },
-            {
-              "team": "both",
-              "label": "First to concede",
-              "value": "4/5"
+              "team": "home",
+              "label": "First to score",
+              "value": "4/5",
+              "odds": 1.62
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "6/8",
-              "odds": 1.67
+              "value": "5/6",
+              "odds": 2.2
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "4/5",
+              "value": "6/7",
               "odds": 1.83
             }
           ],
@@ -4514,33 +4454,34 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
+              "team": "away",
+              "label": "No losses",
+              "value": "7",
+              "odds": 1.36
+            },
+            {
+              "team": "home",
               "label": "Without clean sheet",
               "value": "4",
               "odds": 1.53
             },
             {
               "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "5/7",
-              "odds": 1.67
+              "label": "Less than 2.5 goals",
+              "value": "7/9",
+              "odds": 2.2
             },
             {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "5/6",
-              "odds": 1.67
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "5/7",
-              "odds": 1.53
-            },
-            {
-              "team": "both",
+              "team": "away",
               "label": "First to score",
-              "value": "5/7"
+              "value": "6/7",
+              "odds": 1.73
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "6/8",
+              "odds": 2.0
             }
           ],
           "team_streaks": [
@@ -4623,48 +4564,39 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
-              "label": "No wins",
-              "value": "7"
-            },
-            {
-              "team": "both",
+              "team": "home",
               "label": "Without clean sheet",
-              "value": "8",
+              "value": "6",
               "odds": 1.67
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "6/8",
+              "value": "5/5",
               "odds": 1.73
             },
             {
               "team": "both",
-              "label": "Less than 2.5 goals",
+              "label": "Both teams scoring",
+              "value": "5/6",
+              "odds": 1.67
+            },
+            {
+              "team": "away",
+              "label": "First to score",
               "value": "4/5",
-              "odds": 2.1
-            },
-            {
-              "team": "both",
-              "label": "First to concede",
-              "value": "7/7"
-            },
-            {
-              "team": "both",
-              "label": "First half loser",
-              "value": "5/6"
+              "odds": 1.67
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "4/5",
+              "value": "5/6",
               "odds": 2.1
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "5/6",
+              "value": "8/10",
               "odds": 1.83
             }
           ],
@@ -4756,45 +4688,27 @@
           "h2h_streaks": [
             {
               "team": "both",
-              "label": "Without clean sheet",
-              "value": "7",
-              "odds": 1.44
-            },
-            {
-              "team": "both",
-              "label": "Without clean sheet",
-              "value": "3",
-              "odds": 1.44
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "5/7",
-              "odds": 1.53
-            },
-            {
-              "team": "both",
               "label": "Both teams scoring",
-              "value": "6/7",
+              "value": "8/10",
               "odds": 1.44
+            },
+            {
+              "team": "home",
+              "label": "First to score",
+              "value": "5/7",
+              "odds": 1.73
+            },
+            {
+              "team": "away",
+              "label": "First half winner",
+              "value": "4/5",
+              "odds": 3.4
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "7/9",
+              "value": "5/7",
               "odds": 2.0
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "4/5",
-              "odds": 1.83
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "6/6",
-              "odds": 1.83
             }
           ],
           "team_streaks": [
@@ -10284,31 +10198,32 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
+              "team": "home",
               "label": "Without clean sheet",
-              "value": "4",
+              "value": "8",
               "odds": 1.91
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "8/10",
+              "value": "5/6",
               "odds": 2.1
             },
             {
               "team": "both",
-              "label": "First to concede",
-              "value": "5/7"
+              "label": "Both teams scoring",
+              "value": "5/6",
+              "odds": 1.91
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "8/10"
+              "value": "7/9"
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "9/10",
+              "value": "5/5",
               "odds": 2.1
             }
           ],
@@ -10391,60 +10306,44 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
-              "label": "No wins",
-              "value": "6"
+              "team": "home",
+              "label": "Wins",
+              "value": "4",
+              "odds": 1.8
             },
             {
-              "team": "both",
-              "label": "Without clean sheet",
+              "team": "home",
+              "label": "No goals conceded",
               "value": "3",
-              "odds": 1.67
+              "odds": 2.1
             },
             {
-              "team": "both",
+              "team": "away",
               "label": "Without clean sheet",
-              "value": "6",
+              "value": "13",
               "odds": 1.67
             },
             {
               "team": "both",
-              "label": "Less than 2.5 goals",
-              "value": "4/5",
-              "odds": 2.1
+              "label": "More than 2.5 goals",
+              "value": "5/5",
+              "odds": 1.73
             },
             {
-              "team": "both",
-              "label": "Less than 2.5 goals",
-              "value": "6/8",
-              "odds": 2.1
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "5/6",
-              "odds": 1.67
-            },
-            {
-              "team": "both",
-              "label": "First to concede",
-              "value": "5/6"
+              "team": "home",
+              "label": "First to score",
+              "value": "8/10",
+              "odds": 1.62
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "7/9"
+              "value": "8/10"
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
               "value": "5/6",
-              "odds": 1.83
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "4/5",
               "odds": 1.83
             }
           ],
@@ -10548,49 +10447,21 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
-              "label": "No wins",
-              "value": "3"
-            },
-            {
-              "team": "both",
+              "team": "home",
               "label": "Without clean sheet",
-              "value": "5"
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "4/5"
+              "value": "4",
+              "odds": 2.2
             },
             {
               "team": "both",
               "label": "Less than 2.5 goals",
-              "value": "6/7"
+              "value": "4/5",
+              "odds": 1.44
             },
             {
               "team": "both",
-              "label": "Both teams scoring",
-              "value": "5/5"
-            },
-            {
-              "team": "both",
-              "label": "First to concede",
-              "value": "8/10"
-            },
-            {
-              "team": "both",
-              "label": "More than 4.5 cards",
+              "label": "Less than 4.5 cards",
               "value": "5/6"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "7/7"
             }
           ],
           "team_streaks": [
@@ -10598,25 +10469,29 @@
               "team": "home",
               "source": "computed",
               "label": "No Wins",
-              "value": "3"
+              "value": "3",
+              "odds": 1.67
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "5"
+              "value": "5",
+              "odds": 2.2
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 2.2
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Less than 2.5 goals",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 1.44
             }
           ],
           "sportsbet_odds": {
@@ -10683,23 +10558,15 @@
           "h2h_streaks": [
             {
               "team": "both",
-              "label": "Without clean sheet",
-              "value": "3"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "8/10"
-            },
-            {
-              "team": "both",
-              "label": "First to score",
-              "value": "6/8"
+              "label": "Less than 2.5 goals",
+              "value": "4/5",
+              "odds": 2.0
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "5/6"
+              "value": "6/7",
+              "odds": 1.83
             }
           ],
           "team_streaks": [
@@ -10707,13 +10574,15 @@
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "3"
+              "value": "3",
+              "odds": 1.67
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 1.67
             }
           ],
           "sportsbet_odds": {
@@ -10780,43 +10649,9 @@
           "h2h_streaks": [
             {
               "team": "both",
-              "label": "Losses",
-              "value": "3"
-            },
-            {
-              "team": "both",
-              "label": "Without clean sheet",
-              "value": "7"
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
               "label": "Less than 2.5 goals",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "6/7"
-            },
-            {
-              "team": "both",
-              "label": "First to concede",
-              "value": "5/6"
-            },
-            {
-              "team": "both",
-              "label": "More than 4.5 cards",
-              "value": "5/6"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "8/10"
+              "value": "9/9",
+              "odds": 1.67
             }
           ],
           "team_streaks": [
@@ -10824,31 +10659,36 @@
               "team": "home",
               "source": "computed",
               "label": "Losses",
-              "value": "3"
+              "value": "3",
+              "odds": 3.8
             },
             {
               "team": "home",
               "source": "computed",
               "label": "No Wins",
-              "value": "3"
+              "value": "3",
+              "odds": 1.7
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "7"
+              "value": "7",
+              "odds": 1.91
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 1.91
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Less than 2.5 goals",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 1.67
             }
           ],
           "sportsbet_odds": {
@@ -10914,49 +10754,33 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
+              "team": "away",
               "label": "No losses",
-              "value": "7"
+              "value": "5",
+              "odds": 1.53
             },
             {
-              "team": "both",
+              "team": "home",
               "label": "Without clean sheet",
-              "value": "12"
+              "value": "6",
+              "odds": 1.62
             },
             {
-              "team": "both",
-              "label": "Less than 2.5 goals",
-              "value": "5/5"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "6/6"
-            },
-            {
-              "team": "both",
+              "team": "away",
               "label": "First to score",
-              "value": "5/5"
-            },
-            {
-              "team": "both",
-              "label": "First to score",
-              "value": "6/6"
+              "value": "4/5",
+              "odds": 2.0
             },
             {
               "team": "both",
               "label": "More than 4.5 cards",
-              "value": "8/10"
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "4/5"
+              "value": "6/8"
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "4/5"
+              "value": "6/7",
+              "odds": 1.83
             }
           ],
           "team_streaks": [
@@ -10964,25 +10788,29 @@
               "team": "home",
               "source": "computed",
               "label": "No Losses",
-              "value": "7"
+              "value": "7",
+              "odds": 1.4
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Less than 2.5 goals",
-              "value": "6/7"
+              "value": "6/7",
+              "odds": 2.1
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "10"
+              "value": "10",
+              "odds": 1.62
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "9/10"
+              "value": "9/10",
+              "odds": 1.62
             }
           ],
           "sportsbet_odds": {
@@ -11048,44 +10876,16 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
-              "label": "No wins",
-              "value": "5"
+              "team": "away",
+              "label": "Without clean sheet",
+              "value": "3",
+              "odds": 1.75
             },
             {
               "team": "both",
-              "label": "No goals scored",
-              "value": "3"
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "6/8"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "9/10"
-            },
-            {
-              "team": "both",
-              "label": "First to concede",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "First half loser",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "5/6"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "6/6"
+              "label": "Less than 2.5 goals",
+              "value": "7/9",
+              "odds": 1.91
             }
           ],
           "team_streaks": [
@@ -11093,7 +10893,8 @@
               "team": "home",
               "source": "computed",
               "label": "No Wins",
-              "value": "5"
+              "value": "5",
+              "odds": 1.29
             },
             {
               "team": "home",
@@ -11105,7 +10906,8 @@
               "team": "away",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "9/10"
+              "value": "9/10",
+              "odds": 1.75
             }
           ],
           "sportsbet_odds": {
@@ -11172,33 +10974,9 @@
           "h2h_streaks": [
             {
               "team": "both",
-              "label": "No wins",
-              "value": "5"
-            },
-            {
-              "team": "both",
-              "label": "Without clean sheet",
-              "value": "7"
-            },
-            {
-              "team": "both",
               "label": "Less than 2.5 goals",
-              "value": "5/6"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "5/7"
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "7/8"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "6/6"
+              "value": "8/9",
+              "odds": 1.91
             }
           ],
           "team_streaks": [
@@ -11206,19 +10984,22 @@
               "team": "home",
               "source": "computed",
               "label": "No Wins",
-              "value": "5"
+              "value": "5",
+              "odds": 1.67
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "7"
+              "value": "7",
+              "odds": 1.7
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Less than 2.5 goals",
-              "value": "5/6"
+              "value": "5/6",
+              "odds": 1.91
             }
           ],
           "sportsbet_odds": {
@@ -11284,29 +11065,45 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
+              "team": "away",
               "label": "Wins",
-              "value": "3"
+              "value": "4",
+              "odds": 2.15
+            },
+            {
+              "team": "away",
+              "label": "No losses",
+              "value": "14",
+              "odds": 1.36
+            },
+            {
+              "team": "home",
+              "label": "Without clean sheet",
+              "value": "14",
+              "odds": 1.62
             },
             {
               "team": "both",
               "label": "Less than 2.5 goals",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 2.1
             },
             {
-              "team": "both",
+              "team": "away",
               "label": "First to score",
-              "value": "6/7"
+              "value": "4/5",
+              "odds": 1.8
             },
             {
               "team": "both",
-              "label": "More than 10.5 corners",
-              "value": "7/8"
+              "label": "More than 4.5 cards",
+              "value": "7/9"
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "5/5"
+              "value": "8/10",
+              "odds": 1.83
             }
           ],
           "team_streaks": [
@@ -11314,19 +11111,22 @@
               "team": "home",
               "source": "computed",
               "label": "Wins",
-              "value": "3"
+              "value": "3",
+              "odds": 3.0
             },
             {
               "team": "home",
               "source": "computed",
               "label": "No Losses",
-              "value": "3"
+              "value": "3",
+              "odds": 1.67
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Less than 2.5 goals",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 2.1
             }
           ],
           "sportsbet_odds": {
@@ -11392,59 +11192,51 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
+              "team": "home",
               "label": "No losses",
-              "value": "5"
+              "value": "10",
+              "odds": 1.1
+            },
+            {
+              "team": "home",
+              "label": "Without clean sheet",
+              "value": "5",
+              "odds": 1.53
+            },
+            {
+              "team": "away",
+              "label": "Without clean sheet",
+              "value": "10",
+              "odds": 1.53
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "5/6"
-            },
-            {
-              "team": "both",
-              "label": "Less than 2.5 goals",
-              "value": "4/5"
+              "value": "7/8",
+              "odds": 1.33
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "7/8"
+              "value": "5/5",
+              "odds": 1.53
             },
             {
-              "team": "both",
+              "team": "home",
               "label": "First to score",
-              "value": "6/7"
+              "value": "9/10",
+              "odds": 1.36
             },
             {
-              "team": "both",
-              "label": "First to score",
-              "value": "5/7"
-            },
-            {
-              "team": "both",
+              "team": "home",
               "label": "First half winner",
-              "value": "5/7"
+              "value": "6/7",
+              "odds": 1.73
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "5/6"
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "5/6"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "8/9"
+              "value": "7/8"
             }
           ],
           "team_streaks": [
@@ -11452,19 +11244,22 @@
               "team": "home",
               "source": "computed",
               "label": "Less than 2.5 goals",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 3.4
             },
             {
               "team": "away",
               "source": "computed",
               "label": "No Losses",
-              "value": "5"
+              "value": "5",
+              "odds": 3.25
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 1.53
             }
           ],
           "sportsbet_odds": {
@@ -15277,53 +15072,9 @@
           "h2h_streaks": [
             {
               "team": "both",
-              "label": "No losses",
-              "value": "3"
-            },
-            {
-              "team": "both",
-              "label": "Without clean sheet",
-              "value": "6"
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "6/7"
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "6/7"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "First to score",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "First half winner",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "6/6"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "8/10"
+              "label": "Less than 2.5 goals",
+              "value": "4/5",
+              "odds": 2.75
             }
           ],
           "team_streaks": [
@@ -15331,37 +15082,43 @@
               "team": "home",
               "source": "computed",
               "label": "No Losses",
-              "value": "3"
+              "value": "3",
+              "odds": 1.3
             },
             {
               "team": "home",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "6/7"
+              "value": "6/7",
+              "odds": 1.44
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "6/7"
+              "value": "6/7",
+              "odds": 1.44
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "6"
+              "value": "6",
+              "odds": 1.44
             },
             {
               "team": "away",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 1.44
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 1.44
             }
           ],
           "sportsbet_odds": {
@@ -15428,64 +15185,40 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
-              "label": "No losses",
-              "value": "6"
-            },
-            {
-              "team": "both",
+              "team": "home",
               "label": "Without clean sheet",
-              "value": "7"
+              "value": "9",
+              "odds": 1.4
             },
             {
               "team": "both",
-              "label": "Without clean sheet",
-              "value": "9"
+              "label": "Less than 2.5 goals",
+              "value": "5/6",
+              "odds": 2.62
             },
             {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "5/5"
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "6/6"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "7/7"
-            },
-            {
-              "team": "both",
+              "team": "away",
               "label": "First to score",
-              "value": "5/6"
+              "value": "6/6",
+              "odds": 1.83
             },
             {
-              "team": "both",
-              "label": "First to concede",
-              "value": "6/7"
-            },
-            {
-              "team": "both",
-              "label": "First half loser",
-              "value": "6/7"
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "7/8"
+              "team": "away",
+              "label": "First half winner",
+              "value": "4/5",
+              "odds": 2.88
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "4/5"
+              "value": "7/7",
+              "odds": 1.62
+            },
+            {
+              "team": "both",
+              "label": "Less than 10.5 corners",
+              "value": "8/9",
+              "odds": 2.0
             }
           ],
           "team_streaks": [
@@ -15493,37 +15226,43 @@
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "7"
+              "value": "7",
+              "odds": 1.4
             },
             {
               "team": "home",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "6/7"
+              "value": "6/7",
+              "odds": 1.5
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "6/7"
+              "value": "6/7",
+              "odds": 1.4
             },
             {
               "team": "away",
               "source": "computed",
               "label": "No Losses",
-              "value": "6"
+              "value": "6",
+              "odds": 1.5
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "9"
+              "value": "9",
+              "odds": 1.4
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 1.4
             }
           ],
           "sportsbet_odds": {
@@ -15590,54 +15329,28 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
+              "team": "home",
+              "label": "Wins",
+              "value": "3",
+              "odds": 1.27
+            },
+            {
+              "team": "away",
               "label": "Without clean sheet",
-              "value": "5"
-            },
-            {
-              "team": "both",
-              "label": "Without clean sheet",
-              "value": "13"
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "5/5"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "8/9"
-            },
-            {
-              "team": "both",
-              "label": "First to score",
-              "value": "5/6"
-            },
-            {
-              "team": "both",
-              "label": "First to concede",
-              "value": "5/6"
-            },
-            {
-              "team": "both",
-              "label": "More than 4.5 cards",
-              "value": "7/9"
+              "value": "3",
+              "odds": 1.57
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "6/6"
+              "value": "5/5",
+              "odds": 1.91
+            },
+            {
+              "team": "both",
+              "label": "Less than 10.5 corners",
+              "value": "5/5",
+              "odds": 2.0
             }
           ],
           "team_streaks": [
@@ -15645,31 +15358,36 @@
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "5"
+              "value": "5",
+              "odds": 1.57
             },
             {
               "team": "home",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 1.29
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 1.57
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "10"
+              "value": "10",
+              "odds": 1.57
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 1.57
             }
           ],
           "sportsbet_odds": {
@@ -15736,44 +15454,34 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
-              "label": "No losses",
-              "value": "5"
+              "team": "home",
+              "label": "Without clean sheet",
+              "value": "12",
+              "odds": 1.4
+            },
+            {
+              "team": "away",
+              "label": "Without clean sheet",
+              "value": "14",
+              "odds": 1.4
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "7/8"
-            },
-            {
-              "team": "both",
-              "label": "Less than 2.5 goals",
-              "value": "4/5"
+              "value": "8/8",
+              "odds": 1.36
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "6/7"
+              "value": "10/10",
+              "odds": 1.4
             },
             {
               "team": "both",
-              "label": "First to score",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "First half winner",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "More than 4.5 cards",
-              "value": "6/6"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "5/7"
+              "label": "Less than 4.5 cards",
+              "value": "5/6",
+              "odds": 1.91
             }
           ],
           "team_streaks": [
@@ -15781,25 +15489,29 @@
               "team": "home",
               "source": "computed",
               "label": "Less than 2.5 goals",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 3.2
             },
             {
               "team": "away",
               "source": "computed",
               "label": "No Losses",
-              "value": "5"
+              "value": "5",
+              "odds": 1.18
             },
             {
               "team": "away",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 1.36
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 1.4
             }
           ],
           "sportsbet_odds": {
@@ -15866,54 +15578,28 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
-              "label": "No losses",
-              "value": "4"
-            },
-            {
-              "team": "both",
-              "label": "No wins",
-              "value": "4"
-            },
-            {
-              "team": "both",
+              "team": "away",
               "label": "Without clean sheet",
-              "value": "7"
-            },
-            {
-              "team": "both",
-              "label": "Without clean sheet",
-              "value": "5"
+              "value": "3",
+              "odds": 1.33
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "6/7"
+              "value": "5/6",
+              "odds": 1.3
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "7/7"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "5/5"
-            },
-            {
-              "team": "both",
-              "label": "First to concede",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "First half loser",
-              "value": "4/5"
+              "value": "8/10",
+              "odds": 1.33
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "6/7"
+              "value": "5/5",
+              "odds": 1.8
             }
           ],
           "team_streaks": [
@@ -15921,43 +15607,50 @@
               "team": "home",
               "source": "computed",
               "label": "No Wins",
-              "value": "4"
+              "value": "4",
+              "odds": 1.3
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "7"
+              "value": "7",
+              "odds": 1.33
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "7/8"
+              "value": "7/8",
+              "odds": 1.33
             },
             {
               "team": "away",
               "source": "computed",
               "label": "No Losses",
-              "value": "4"
+              "value": "4",
+              "odds": 1.3
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "5"
+              "value": "5",
+              "odds": 1.33
             },
             {
               "team": "away",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "5/6"
+              "value": "5/6",
+              "odds": 1.3
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "5/6"
+              "value": "5/6",
+              "odds": 1.33
             }
           ],
           "sportsbet_odds": {
@@ -16024,59 +15717,28 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
+              "team": "home",
+              "label": "Wins",
+              "value": "5",
+              "odds": 1.14
+            },
+            {
+              "team": "home",
               "label": "No losses",
-              "value": "3"
+              "value": "8",
+              "odds": 1.04
             },
             {
-              "team": "both",
-              "label": "No wins",
-              "value": "4"
-            },
-            {
-              "team": "both",
+              "team": "away",
               "label": "Without clean sheet",
-              "value": "13"
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "6/7"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "9/9"
-            },
-            {
-              "team": "both",
-              "label": "First to concede",
-              "value": "8/10"
-            },
-            {
-              "team": "both",
-              "label": "First half loser",
-              "value": "4/5"
+              "value": "20",
+              "odds": 1.44
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "6/7"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "5/6"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "6/8"
+              "value": "10/10",
+              "odds": 1.83
             }
           ],
           "team_streaks": [
@@ -16084,31 +15746,36 @@
               "team": "home",
               "source": "computed",
               "label": "No Losses",
-              "value": "3"
+              "value": "3",
+              "odds": 1.04
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 1.44
             },
             {
               "team": "away",
               "source": "computed",
               "label": "No Wins",
-              "value": "4"
+              "value": "4",
+              "odds": 1.04
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "10"
+              "value": "10",
+              "odds": 1.44
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "9/10"
+              "value": "9/10",
+              "odds": 1.44
             }
           ],
           "sportsbet_odds": {
@@ -16175,54 +15842,22 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
-              "label": "Losses",
-              "value": "3"
-            },
-            {
-              "team": "both",
-              "label": "No wins",
-              "value": "9"
-            },
-            {
-              "team": "both",
-              "label": "No wins",
-              "value": "3"
-            },
-            {
-              "team": "both",
-              "label": "Without clean sheet",
-              "value": "8"
+              "team": "away",
+              "label": "No losses",
+              "value": "6",
+              "odds": 1.4
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "5/7"
-            },
-            {
-              "team": "both",
-              "label": "First to concede",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "First half loser",
-              "value": "4/5"
+              "value": "7/8",
+              "odds": 1.57
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "9/10"
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "More than 10.5 corners",
-              "value": "6/8"
+              "value": "6/6",
+              "odds": 2.1
             }
           ],
           "team_streaks": [
@@ -16230,25 +15865,29 @@
               "team": "home",
               "source": "computed",
               "label": "Losses",
-              "value": "3"
+              "value": "3",
+              "odds": 2.35
             },
             {
               "team": "home",
               "source": "computed",
               "label": "No Wins",
-              "value": "9"
+              "value": "9",
+              "odds": 1.4
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "8"
+              "value": "8",
+              "odds": 1.57
             },
             {
               "team": "away",
               "source": "computed",
               "label": "No Wins",
-              "value": "3"
+              "value": "3",
+              "odds": 1.57
             }
           ],
           "sportsbet_odds": {
@@ -16315,59 +15954,22 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
-              "label": "Without clean sheet",
-              "value": "8"
+              "team": "away",
+              "label": "No losses",
+              "value": "14",
+              "odds": 1.5
             },
             {
-              "team": "both",
-              "label": "Without clean sheet",
-              "value": "4"
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "6/7"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "7/8"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "5/6"
-            },
-            {
-              "team": "both",
+              "team": "away",
               "label": "First to score",
-              "value": "6/7"
-            },
-            {
-              "team": "both",
-              "label": "First to concede",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "8/9"
+              "value": "6/8",
+              "odds": 1.83
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "9/10"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "5/7"
+              "value": "9/10",
+              "odds": 1.8
             }
           ],
           "team_streaks": [
@@ -16375,25 +15977,29 @@
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "8"
+              "value": "8",
+              "odds": 1.4
             },
             {
               "team": "home",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 1.44
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "4"
+              "value": "4",
+              "odds": 1.4
             },
             {
               "team": "away",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 1.44
             }
           ],
           "sportsbet_odds": {
@@ -16460,34 +16066,16 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
-              "label": "No wins",
-              "value": "3"
+              "team": "away",
+              "label": "No losses",
+              "value": "6",
+              "odds": 1.33
             },
             {
-              "team": "both",
-              "label": "Without clean sheet",
-              "value": "6"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "5/6"
-            },
-            {
-              "team": "both",
-              "label": "First to concede",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "6/6"
+              "team": "away",
+              "label": "First to score",
+              "value": "6/7",
+              "odds": 1.67
             }
           ],
           "team_streaks": [
@@ -16495,19 +16083,22 @@
               "team": "home",
               "source": "computed",
               "label": "No Wins",
-              "value": "3"
+              "value": "3",
+              "odds": 1.33
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "6"
+              "value": "6",
+              "odds": 1.36
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "5/6"
+              "value": "5/6",
+              "odds": 1.36
             }
           ],
           "sportsbet_odds": {
@@ -20414,54 +20005,15 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
-              "label": "Wins",
-              "value": "3"
-            },
-            {
-              "team": "both",
-              "label": "No losses",
-              "value": "20"
-            },
-            {
-              "team": "both",
+              "team": "away",
               "label": "Without clean sheet",
-              "value": "3"
+              "value": "6",
+              "odds": 1.73
             },
             {
               "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
+              "label": "Less than 4.5 cards",
               "value": "5/6"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "8/9"
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "8/10"
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "7/8"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "5/7"
             }
           ],
           "team_streaks": [
@@ -20469,31 +20021,36 @@
               "team": "home",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 1.67
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Wins",
-              "value": "3"
+              "value": "3",
+              "odds": 4.2
             },
             {
               "team": "away",
               "source": "computed",
               "label": "No Losses",
-              "value": "10"
+              "value": "10",
+              "odds": 2.0
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "3"
+              "value": "3",
+              "odds": 1.62
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 1.62
             }
           ]
         },
@@ -20554,49 +20111,34 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
+              "team": "home",
               "label": "No losses",
-              "value": "7"
-            },
-            {
-              "team": "both",
-              "label": "Without clean sheet",
-              "value": "4"
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "Less than 2.5 goals",
-              "value": "4/5"
+              "value": "6",
+              "odds": 1.1
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "5/6"
+              "value": "5/6",
+              "odds": 2.0
             },
             {
-              "team": "both",
+              "team": "home",
               "label": "First to score",
-              "value": "5/6"
+              "value": "5/6",
+              "odds": 1.36
+            },
+            {
+              "team": "home",
+              "label": "First half winner",
+              "value": "5/6",
+              "odds": 1.83
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "6/8"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "9/10"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "5/7"
+              "value": "5/7",
+              "odds": 1.8
             }
           ],
           "team_streaks": [
@@ -20604,25 +20146,29 @@
               "team": "home",
               "source": "computed",
               "label": "No Losses",
-              "value": "7"
+              "value": "7",
+              "odds": 1.1
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Less than 2.5 goals",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 2.1
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "4"
+              "value": "4",
+              "odds": 2.0
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "5/6"
+              "value": "5/6",
+              "odds": 2.0
             }
           ],
           "sportsbet_odds": {
@@ -20689,34 +20235,22 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
-              "label": "No wins",
-              "value": "11"
+              "team": "away",
+              "label": "No losses",
+              "value": "3",
+              "odds": 1.44
             },
             {
-              "team": "both",
+              "team": "home",
               "label": "Without clean sheet",
-              "value": "7"
-            },
-            {
-              "team": "both",
-              "label": "Less than 2.5 goals",
-              "value": "5/6"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "6/7"
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "5/6"
+              "value": "3",
+              "odds": 1.7
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "5/6"
+              "value": "4/5",
+              "odds": 1.91
             }
           ],
           "team_streaks": [
@@ -20724,19 +20258,22 @@
               "team": "away",
               "source": "computed",
               "label": "No Wins",
-              "value": "10"
+              "value": "10",
+              "odds": 1.44
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "7"
+              "value": "7",
+              "odds": 1.7
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Less than 2.5 goals",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 1.91
             }
           ],
           "sportsbet_odds": {
@@ -20803,39 +20340,16 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
+              "team": "home",
               "label": "No losses",
-              "value": "3"
+              "value": "4",
+              "odds": 1.5
             },
             {
-              "team": "both",
-              "label": "Without clean sheet",
-              "value": "7"
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "7/7"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "5/5"
-            },
-            {
-              "team": "both",
-              "label": "First to concede",
-              "value": "5/7"
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "5/7"
-            },
-            {
-              "team": "both",
-              "label": "More than 10.5 corners",
-              "value": "5/5"
+              "team": "away",
+              "label": "No losses",
+              "value": "3",
+              "odds": 1.5
             }
           ],
           "team_streaks": [
@@ -20843,19 +20357,22 @@
               "team": "away",
               "source": "computed",
               "label": "No Losses",
-              "value": "3"
+              "value": "3",
+              "odds": 1.5
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "7"
+              "value": "7",
+              "odds": 1.62
             },
             {
               "team": "away",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 1.73
             }
           ],
           "sportsbet_odds": {
@@ -20922,59 +20439,34 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
-              "label": "No wins",
-              "value": "3"
-            },
-            {
-              "team": "both",
-              "label": "No wins",
-              "value": "18"
-            },
-            {
-              "team": "both",
+              "team": "away",
               "label": "Without clean sheet",
-              "value": "3"
-            },
-            {
-              "team": "both",
-              "label": "Without clean sheet",
-              "value": "5"
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "5/5"
+              "value": "4",
+              "odds": 1.91
             },
             {
               "team": "both",
               "label": "Less than 2.5 goals",
-              "value": "5/6"
+              "value": "4/5",
+              "odds": 2.38
             },
             {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "5/7"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "First to concede",
-              "value": "4/5"
+              "team": "home",
+              "label": "First to score",
+              "value": "4/5",
+              "odds": 1.33
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "10/10"
+              "value": "7/8",
+              "odds": 1.91
             },
             {
               "team": "both",
-              "label": "More than 10.5 corners",
-              "value": "4/5"
+              "label": "Less than 10.5 corners",
+              "value": "10/10",
+              "odds": 1.91
             }
           ],
           "team_streaks": [
@@ -20982,37 +20474,43 @@
               "team": "home",
               "source": "computed",
               "label": "No Wins",
-              "value": "3"
+              "value": "3",
+              "odds": 3.25
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "3"
+              "value": "3",
+              "odds": 1.91
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Less than 2.5 goals",
-              "value": "5/6"
+              "value": "5/6",
+              "odds": 2.38
             },
             {
               "team": "away",
               "source": "computed",
               "label": "No Wins",
-              "value": "10"
+              "value": "10",
+              "odds": 1.1
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "5"
+              "value": "5",
+              "odds": 1.91
             },
             {
               "team": "away",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "5/6"
+              "value": "5/6",
+              "odds": 1.57
             }
           ],
           "sportsbet_odds": {
@@ -21079,24 +20577,16 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
+              "team": "away",
               "label": "Without clean sheet",
-              "value": "4"
+              "value": "3",
+              "odds": 1.57
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "6/8"
+              "value": "5/7",
+              "odds": 1.53
             }
           ],
           "team_streaks": [
@@ -21104,19 +20594,22 @@
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "4"
+              "value": "4",
+              "odds": 1.57
             },
             {
               "team": "home",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 1.53
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 1.57
             }
           ],
           "sportsbet_odds": {
@@ -21183,44 +20676,22 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
-              "label": "Without clean sheet",
-              "value": "3"
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "6/6"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "5/6"
-            },
-            {
-              "team": "both",
+              "team": "away",
               "label": "First to score",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 2.1
             },
             {
               "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "5/7"
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "More than 10.5 corners",
-              "value": "4/5"
+              "label": "More than 4.5 cards",
+              "value": "5/7",
+              "odds": 1.83
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "5/7"
+              "value": "8/9",
+              "odds": 1.91
             }
           ],
           "team_streaks": [
@@ -21228,13 +20699,15 @@
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "3"
+              "value": "3",
+              "odds": 1.5
             },
             {
               "team": "away",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 1.57
             }
           ],
           "sportsbet_odds": {
@@ -21301,44 +20774,28 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
-              "label": "No losses",
-              "value": "7"
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "4/5"
+              "team": "away",
+              "label": "Without clean sheet",
+              "value": "5",
+              "odds": 1.5
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "5/7"
+              "value": "4/5",
+              "odds": 1.5
             },
             {
-              "team": "both",
+              "team": "away",
               "label": "First to score",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "First to score",
-              "value": "6/7"
-            },
-            {
-              "team": "both",
-              "label": "First half winner",
-              "value": "5/7"
+              "value": "4/5",
+              "odds": 3.15
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "8/9"
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "6/7"
+              "value": "5/5",
+              "odds": 1.62
             }
           ],
           "team_streaks": [
@@ -21346,13 +20803,15 @@
               "team": "home",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 1.4
             },
             {
               "team": "away",
               "source": "computed",
               "label": "No Losses",
-              "value": "7"
+              "value": "7",
+              "odds": 1.14
             }
           ]
         },
@@ -21414,28 +20873,15 @@
           "h2h_streaks": [
             {
               "team": "both",
-              "label": "Without clean sheet",
-              "value": "8"
-            },
-            {
-              "team": "both",
-              "label": "Without clean sheet",
-              "value": "7"
-            },
-            {
-              "team": "both",
               "label": "More than 2.5 goals",
-              "value": "6/7"
+              "value": "6/8",
+              "odds": 1.44
             },
             {
               "team": "both",
-              "label": "Both teams scoring",
-              "value": "6/7"
-            },
-            {
-              "team": "both",
-              "label": "First to concede",
-              "value": "4/5"
+              "label": "Less than 10.5 corners",
+              "value": "6/8",
+              "odds": 1.83
             }
           ],
           "team_streaks": [
@@ -21443,25 +20889,29 @@
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "8"
+              "value": "8",
+              "odds": 1.4
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "7"
+              "value": "7",
+              "odds": 1.4
             },
             {
               "team": "away",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "6/7"
+              "value": "6/7",
+              "odds": 1.44
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "6/7"
+              "value": "6/7",
+              "odds": 1.4
             }
           ],
           "sportsbet_odds": {
@@ -21529,63 +20979,27 @@
           "h2h_streaks": [
             {
               "team": "both",
-              "label": "Losses",
-              "value": "3"
+              "label": "Less than 2.5 goals",
+              "value": "8/10",
+              "odds": 2.0
+            },
+            {
+              "team": "home",
+              "label": "First to score",
+              "value": "6/7",
+              "odds": 1.62
+            },
+            {
+              "team": "home",
+              "label": "First half winner",
+              "value": "5/7",
+              "odds": 2.38
             },
             {
               "team": "both",
-              "label": "No wins",
-              "value": "8"
-            },
-            {
-              "team": "both",
-              "label": "Without clean sheet",
-              "value": "8"
-            },
-            {
-              "team": "both",
-              "label": "Without clean sheet",
-              "value": "5"
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "5/7"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "First to concede",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "First to concede",
-              "value": "5/5"
-            },
-            {
-              "team": "both",
-              "label": "First half loser",
-              "value": "6/8"
-            },
-            {
-              "team": "both",
-              "label": "First half loser",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "5/7"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "6/7"
+              "label": "Less than 4.5 cards",
+              "value": "8/8",
+              "odds": 1.73
             }
           ],
           "team_streaks": [
@@ -21593,37 +21007,43 @@
               "team": "home",
               "source": "computed",
               "label": "Losses",
-              "value": "3"
+              "value": "3",
+              "odds": 4.0
             },
             {
               "team": "home",
               "source": "computed",
               "label": "No Wins",
-              "value": "8"
+              "value": "8",
+              "odds": 1.95
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "8"
+              "value": "8",
+              "odds": 1.75
             },
             {
               "team": "away",
               "source": "computed",
               "label": "No Wins",
-              "value": "8"
+              "value": "8",
+              "odds": 1.22
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "5"
+              "value": "5",
+              "odds": 1.75
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 1.75
             }
           ],
           "sportsbet_odds": {
@@ -26785,39 +26205,33 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
-              "label": "No losses",
-              "value": "8"
+              "team": "home",
+              "label": "Wins",
+              "value": "3",
+              "odds": 2.1
             },
             {
-              "team": "both",
+              "team": "away",
               "label": "Without clean sheet",
-              "value": "3"
+              "value": "3",
+              "odds": 1.44
             },
             {
               "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "9/10"
+              "label": "Less than 2.5 goals",
+              "value": "6/7",
+              "odds": 2.5
             },
             {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "8/10"
-            },
-            {
-              "team": "both",
+              "team": "home",
               "label": "First to score",
-              "value": "8/8"
-            },
-            {
-              "team": "both",
-              "label": "First half winner",
-              "value": "6/8"
+              "value": "4/5",
+              "odds": 1.73
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "9/10"
+              "value": "5/6"
             }
           ],
           "team_streaks": [
@@ -26825,25 +26239,29 @@
               "team": "home",
               "source": "computed",
               "label": "No Losses",
-              "value": "8"
+              "value": "8",
+              "odds": 1.36
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "3"
+              "value": "3",
+              "odds": 1.44
             },
             {
               "team": "away",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "9/10"
+              "value": "9/10",
+              "odds": 1.5
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 1.44
             }
           ]
         },
@@ -26869,14 +26287,17 @@
           "predictions": {
             "winner": {
               "pick": "AZ Alkmaar",
-              "type": "home"
+              "type": "home",
+              "odds": 1.3
             },
             "btts": {
-              "pick": "No"
+              "pick": "No",
+              "odds": 2.25
             },
             "ou_goals": {
               "pick": "Under",
-              "line": 2.5
+              "line": 2.5,
+              "odds": 3.1
             },
             "ou_cards": {
               "pick": "Over",
@@ -26900,54 +26321,27 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
+              "team": "home",
               "label": "No losses",
-              "value": "6"
+              "value": "3",
+              "odds": 1.1
             },
             {
-              "team": "both",
-              "label": "No wins",
-              "value": "3"
+              "team": "away",
+              "label": "Without clean sheet",
+              "value": "11",
+              "odds": 1.57
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "5/7"
-            },
-            {
-              "team": "both",
-              "label": "Less than 2.5 goals",
-              "value": "5/5"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "First to concede",
-              "value": "7/9"
+              "value": "7/9",
+              "odds": 1.36
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
               "value": "8/10"
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "7/7"
-            },
-            {
-              "team": "both",
-              "label": "More than 10.5 corners",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "4/5"
             }
           ],
           "team_streaks": [
@@ -26955,31 +26349,36 @@
               "team": "home",
               "source": "computed",
               "label": "Draws",
-              "value": "3"
+              "value": "3",
+              "odds": 4.75
             },
             {
               "team": "home",
               "source": "computed",
               "label": "No Wins",
-              "value": "3"
+              "value": "3",
+              "odds": 3.0
             },
             {
               "team": "home",
               "source": "computed",
               "label": "No Losses",
-              "value": "6"
+              "value": "6",
+              "odds": 1.1
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 1.57
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Less than 2.5 goals",
-              "value": "5/6"
+              "value": "5/6",
+              "odds": 3.1
             }
           ],
           "sportsbet_odds": {
@@ -27011,14 +26410,17 @@
           "predictions": {
             "winner": {
               "pick": "FC Utrecht",
-              "type": "home"
+              "type": "home",
+              "odds": 1.44
             },
             "btts": {
-              "pick": "Yes"
+              "pick": "Yes",
+              "odds": 1.53
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5
+              "line": 2.5,
+              "odds": 1.4
             },
             "ou_cards": {
               "pick": "Over",
@@ -27042,44 +26444,15 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
-              "label": "Without clean sheet",
-              "value": "22"
+              "team": "away",
+              "label": "No losses",
+              "value": "3",
+              "odds": 2.62
             },
             {
               "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
+              "label": "Less than 4.5 cards",
               "value": "8/10"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "9/10"
-            },
-            {
-              "team": "both",
-              "label": "First to score",
-              "value": "6/7"
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "10/10"
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "9/10"
-            },
-            {
-              "team": "both",
-              "label": "More than 10.5 corners",
-              "value": "4/5"
             }
           ],
           "team_streaks": [
@@ -27087,25 +26460,29 @@
               "team": "home",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 1.4
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "10"
+              "value": "10",
+              "odds": 1.53
             },
             {
               "team": "away",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 1.4
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "9/10"
+              "value": "9/10",
+              "odds": 1.53
             }
           ],
           "sportsbet_odds": {
@@ -27137,14 +26514,17 @@
           "predictions": {
             "winner": {
               "pick": "SC Telstar",
-              "type": "away"
+              "type": "away",
+              "odds": 2.3
             },
             "btts": {
-              "pick": "Yes"
+              "pick": "Yes",
+              "odds": 1.44
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5
+              "line": 2.5,
+              "odds": 1.53
             },
             "ou_cards": {
               "pick": "Over",
@@ -27168,29 +26548,33 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
+              "team": "home",
               "label": "No losses",
-              "value": "3"
+              "value": "11",
+              "odds": 1.57
+            },
+            {
+              "team": "away",
+              "label": "Without clean sheet",
+              "value": "20",
+              "odds": 1.44
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "8/10"
+              "value": "5/5",
+              "odds": 1.53
             },
             {
               "team": "both",
-              "label": "Less than 2.5 goals",
-              "value": "6/7"
+              "label": "Both teams scoring",
+              "value": "8/10",
+              "odds": 1.44
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "9/10"
-            },
-            {
-              "team": "both",
-              "label": "More than 10.5 corners",
-              "value": "5/6"
+              "value": "8/10"
             }
           ],
           "team_streaks": [
@@ -27198,19 +26582,22 @@
               "team": "home",
               "source": "computed",
               "label": "Less than 2.5 goals",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 2.4
             },
             {
               "team": "away",
               "source": "computed",
               "label": "No Losses",
-              "value": "3"
+              "value": "3",
+              "odds": 1.4
             },
             {
               "team": "away",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 1.53
             }
           ],
           "sportsbet_odds": {
@@ -27242,14 +26629,17 @@
           "predictions": {
             "winner": {
               "pick": "FC Groningen",
-              "type": "away"
+              "type": "away",
+              "odds": 1.57
             },
             "btts": {
-              "pick": "Yes"
+              "pick": "Yes",
+              "odds": 1.44
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5
+              "line": 2.5,
+              "odds": 1.4
             },
             "ou_cards": {
               "pick": "Over",
@@ -27273,34 +26663,16 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
-              "label": "Losses",
-              "value": "5"
+              "team": "away",
+              "label": "No losses",
+              "value": "3",
+              "odds": 1.18
             },
             {
-              "team": "both",
-              "label": "No wins",
-              "value": "12"
-            },
-            {
-              "team": "both",
-              "label": "No goals scored",
-              "value": "4"
-            },
-            {
-              "team": "both",
+              "team": "home",
               "label": "Without clean sheet",
-              "value": "7"
-            },
-            {
-              "team": "both",
-              "label": "Without clean sheet",
-              "value": "3"
-            },
-            {
-              "team": "both",
-              "label": "First to concede",
-              "value": "4/5"
+              "value": "3",
+              "odds": 1.44
             },
             {
               "team": "both",
@@ -27309,13 +26681,9 @@
             },
             {
               "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "10/10"
-            },
-            {
-              "team": "both",
-              "label": "More than 10.5 corners",
-              "value": "4/5"
+              "label": "Less than 10.5 corners",
+              "value": "9/9",
+              "odds": 2.1
             }
           ],
           "team_streaks": [
@@ -27323,19 +26691,22 @@
               "team": "home",
               "source": "computed",
               "label": "Losses",
-              "value": "5"
+              "value": "5",
+              "odds": 1.6
             },
             {
               "team": "home",
               "source": "computed",
               "label": "No Wins",
-              "value": "10"
+              "value": "10",
+              "odds": 1.18
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "7"
+              "value": "7",
+              "odds": 1.44
             },
             {
               "team": "home",
@@ -27347,7 +26718,8 @@
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "3"
+              "value": "3",
+              "odds": 1.44
             }
           ],
           "sportsbet_odds": {
@@ -27379,14 +26751,17 @@
           "predictions": {
             "winner": {
               "pick": "NEC Nijmegen",
-              "type": "home"
+              "type": "home",
+              "odds": 1.33
             },
             "btts": {
-              "pick": "Yes"
+              "pick": "Yes",
+              "odds": 1.5
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5
+              "line": 2.5,
+              "odds": 1.33
             },
             "ou_cards": {
               "pick": "Over",
@@ -27410,49 +26785,39 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
-              "label": "No wins",
-              "value": "5"
+              "team": "away",
+              "label": "No losses",
+              "value": "5",
+              "odds": 3.0
             },
             {
-              "team": "both",
-              "label": "No wins",
-              "value": "4"
-            },
-            {
-              "team": "both",
+              "team": "home",
               "label": "Without clean sheet",
-              "value": "5"
+              "value": "9",
+              "odds": 1.5
+            },
+            {
+              "team": "both",
+              "label": "More than 2.5 goals",
+              "value": "5/6",
+              "odds": 1.33
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "5/5"
-            },
-            {
-              "team": "both",
-              "label": "First to concede",
-              "value": "5/5"
-            },
-            {
-              "team": "both",
-              "label": "First half loser",
-              "value": "4/5"
+              "value": "6/7",
+              "odds": 1.5
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "9/10"
+              "value": "8/10"
             },
             {
               "team": "both",
               "label": "More than 10.5 corners",
-              "value": "5/5"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "5/7"
+              "value": "7/7",
+              "odds": 1.91
             }
           ],
           "team_streaks": [
@@ -27460,25 +26825,29 @@
               "team": "home",
               "source": "computed",
               "label": "No Wins",
-              "value": "5"
+              "value": "5",
+              "odds": 3.0
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "5"
+              "value": "5",
+              "odds": 1.5
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 1.5
             },
             {
               "team": "away",
               "source": "computed",
               "label": "No Wins",
-              "value": "4"
+              "value": "4",
+              "odds": 1.1
             }
           ],
           "sportsbet_odds": {
@@ -27510,14 +26879,17 @@
           "predictions": {
             "winner": {
               "pick": "Feyenoord",
-              "type": "away"
+              "type": "away",
+              "odds": 1.61
             },
             "btts": {
-              "pick": "Yes"
+              "pick": "Yes",
+              "odds": 1.44
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5
+              "line": 2.5,
+              "odds": 1.4
             },
             "ou_cards": {
               "pick": "Over",
@@ -27541,44 +26913,39 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
-              "label": "No losses",
-              "value": "8"
+              "team": "away",
+              "label": "Wins",
+              "value": "13",
+              "odds": 1.67
             },
             {
-              "team": "both",
+              "team": "home",
               "label": "Without clean sheet",
-              "value": "4"
+              "value": "16",
+              "odds": 1.44
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "5/6"
+              "value": "8/9",
+              "odds": 1.4
             },
             {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "6/8"
+              "team": "away",
+              "label": "First to score",
+              "value": "6/6",
+              "odds": 1.57
             },
             {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "7/8"
+              "team": "away",
+              "label": "First half winner",
+              "value": "7/7",
+              "odds": 2.2
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "7/8"
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "5/7"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "6/6"
+              "value": "10/10"
             }
           ],
           "team_streaks": [
@@ -27586,25 +26953,29 @@
               "team": "home",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "5/6"
+              "value": "5/6",
+              "odds": 1.4
             },
             {
               "team": "away",
               "source": "computed",
               "label": "No Losses",
-              "value": "8"
+              "value": "8",
+              "odds": 1.22
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "4"
+              "value": "4",
+              "odds": 1.44
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 1.44
             }
           ],
           "sportsbet_odds": {
@@ -27636,14 +27007,17 @@
           "predictions": {
             "winner": {
               "pick": "PSV Eindhoven",
-              "type": "home"
+              "type": "home",
+              "odds": 2.0
             },
             "btts": {
-              "pick": "Yes"
+              "pick": "Yes",
+              "odds": 1.33
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5
+              "line": 2.5,
+              "odds": 1.33
             },
             "ou_cards": {
               "pick": "Over",
@@ -27667,49 +27041,45 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
-              "label": "No losses",
-              "value": "5"
+              "team": "home",
+              "label": "Wins",
+              "value": "7",
+              "odds": 2.05
             },
             {
-              "team": "both",
-              "label": "No losses",
-              "value": "6"
-            },
-            {
-              "team": "both",
+              "team": "away",
               "label": "Without clean sheet",
-              "value": "3"
+              "value": "20",
+              "odds": 1.33
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "9/10"
+              "value": "8/10",
+              "odds": 1.33
             },
             {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "5/6"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "9/10"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "5/6"
-            },
-            {
-              "team": "both",
+              "team": "home",
               "label": "First to score",
-              "value": "4/5"
+              "value": "5/7",
+              "odds": 1.73
+            },
+            {
+              "team": "home",
+              "label": "First half winner",
+              "value": "5/7",
+              "odds": 2.5
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "9/10"
+              "value": "6/8"
+            },
+            {
+              "team": "both",
+              "label": "More than 10.5 corners",
+              "value": "4/5",
+              "odds": 2.0
             }
           ],
           "team_streaks": [
@@ -27717,43 +27087,50 @@
               "team": "home",
               "source": "computed",
               "label": "No Losses",
-              "value": "5"
+              "value": "5",
+              "odds": 1.4
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "3"
+              "value": "3",
+              "odds": 1.33
             },
             {
               "team": "home",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "9/10"
+              "value": "9/10",
+              "odds": 1.33
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "9/10"
+              "value": "9/10",
+              "odds": 1.33
             },
             {
               "team": "away",
               "source": "computed",
               "label": "No Losses",
-              "value": "6"
+              "value": "6",
+              "odds": 1.73
             },
             {
               "team": "away",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "5/6"
+              "value": "5/6",
+              "odds": 1.33
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "5/6"
+              "value": "5/6",
+              "odds": 1.33
             }
           ],
           "sportsbet_odds": {
@@ -27785,14 +27162,17 @@
           "predictions": {
             "winner": {
               "pick": "SC Heerenveen",
-              "type": "home"
+              "type": "home",
+              "odds": 3.0
             },
             "btts": {
-              "pick": "Yes"
+              "pick": "Yes",
+              "odds": 1.33
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5
+              "line": 2.5,
+              "odds": 1.33
             },
             "ou_cards": {
               "pick": "Over",
@@ -27816,34 +27196,33 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "8/10"
+              "team": "away",
+              "label": "No losses",
+              "value": "3",
+              "odds": 1.4
             },
             {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "4/5"
+              "team": "home",
+              "label": "Without clean sheet",
+              "value": "13",
+              "odds": 1.33
             },
             {
-              "team": "both",
-              "label": "First to concede",
-              "value": "5/6"
+              "team": "away",
+              "label": "First to score",
+              "value": "8/9",
+              "odds": 1.73
+            },
+            {
+              "team": "away",
+              "label": "First half winner",
+              "value": "8/9",
+              "odds": 2.5
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "5/6"
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "8/9"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "5/7"
+              "value": "10/10"
             }
           ],
           "team_streaks": [
@@ -27851,13 +27230,15 @@
               "team": "home",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 1.33
             },
             {
               "team": "away",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "5/6"
+              "value": "5/6",
+              "odds": 1.33
             }
           ],
           "sportsbet_odds": {
@@ -27889,14 +27270,17 @@
           "predictions": {
             "winner": {
               "pick": "Excelsior",
-              "type": "away"
+              "type": "away",
+              "odds": 3.0
             },
             "btts": {
-              "pick": "Yes"
+              "pick": "Yes",
+              "odds": 1.44
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5
+              "line": 2.5,
+              "odds": 1.48
             },
             "ou_cards": {
               "pick": "Over",
@@ -27920,49 +27304,28 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
-              "label": "No losses",
-              "value": "4"
-            },
-            {
-              "team": "both",
-              "label": "No wins",
-              "value": "5"
-            },
-            {
-              "team": "both",
+              "team": "away",
               "label": "Without clean sheet",
-              "value": "4"
+              "value": "10",
+              "odds": 1.44
             },
             {
               "team": "both",
-              "label": "Both teams scoring",
-              "value": "6/8"
+              "label": "More than 2.5 goals",
+              "value": "5/7",
+              "odds": 1.48
             },
             {
-              "team": "both",
-              "label": "First to concede",
-              "value": "5/6"
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "7/9"
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "10/10"
-            },
-            {
-              "team": "both",
-              "label": "More than 10.5 corners",
-              "value": "4/5"
+              "team": "home",
+              "label": "First to score",
+              "value": "6/7",
+              "odds": 1.73
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "5/6"
+              "value": "5/5",
+              "odds": 1.8
             }
           ],
           "team_streaks": [
@@ -27970,19 +27333,22 @@
               "team": "home",
               "source": "computed",
               "label": "No Wins",
-              "value": "5"
+              "value": "5",
+              "odds": 1.7
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "4"
+              "value": "4",
+              "odds": 1.44
             },
             {
               "team": "away",
               "source": "computed",
               "label": "No Losses",
-              "value": "4"
+              "value": "4",
+              "odds": 1.7
             }
           ],
           "sportsbet_odds": {
@@ -36107,18 +35473,22 @@
           "predictions": {
             "winner": {
               "pick": "Chicago Fire",
-              "type": "away"
+              "type": "away",
+              "odds": 2.3
             },
             "btts": {
-              "pick": "Yes"
+              "pick": "Yes",
+              "odds": 1.5
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5
+              "line": 2.5,
+              "odds": 1.6
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5
+              "line": 4.5,
+              "odds": 2.2
             },
             "factors": {
               "lambda_home": 1.974,
@@ -36138,54 +35508,22 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
+              "team": "away",
               "label": "No losses",
-              "value": "3"
+              "value": "3",
+              "odds": 1.4
             },
             {
-              "team": "both",
+              "team": "home",
               "label": "Without clean sheet",
-              "value": "4"
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "8/10"
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "7/7"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "6/7"
-            },
-            {
-              "team": "both",
-              "label": "First to score",
-              "value": "7/7"
-            },
-            {
-              "team": "both",
-              "label": "First to score",
-              "value": "8/10"
-            },
-            {
-              "team": "both",
-              "label": "First half winner",
-              "value": "5/7"
-            },
-            {
-              "team": "both",
-              "label": "More than 4.5 cards",
-              "value": "7/9"
+              "value": "3",
+              "odds": 1.5
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "5/7"
+              "value": "7/8",
+              "odds": 1.91
             }
           ],
           "team_streaks": [
@@ -36193,25 +35531,29 @@
               "team": "home",
               "source": "computed",
               "label": "No Losses",
-              "value": "3"
+              "value": "3",
+              "odds": 1.57
             },
             {
               "team": "home",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 1.6
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "4"
+              "value": "4",
+              "odds": 1.5
             },
             {
               "team": "away",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 1.6
             }
           ],
           "sportsbet_odds": {
@@ -36243,18 +35585,22 @@
           "predictions": {
             "winner": {
               "pick": "Toronto FC",
-              "type": "away"
+              "type": "away",
+              "odds": 4.1
             },
             "btts": {
-              "pick": "Yes"
+              "pick": "Yes",
+              "odds": 1.67
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5
+              "line": 2.5,
+              "odds": 1.7
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5
+              "line": 4.5,
+              "odds": 1.8
             },
             "factors": {
               "lambda_home": 1.938,
@@ -36274,49 +35620,22 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
-              "label": "No wins",
-              "value": "6"
+              "team": "home",
+              "label": "Wins",
+              "value": "3",
+              "odds": 1.76
             },
             {
-              "team": "both",
-              "label": "No wins",
-              "value": "7"
-            },
-            {
-              "team": "both",
+              "team": "away",
               "label": "Without clean sheet",
-              "value": "7"
+              "value": "3",
+              "odds": 1.67
             },
             {
-              "team": "both",
-              "label": "Without clean sheet",
-              "value": "10"
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "5/6"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "10/10"
-            },
-            {
-              "team": "both",
-              "label": "First to concede",
-              "value": "6/6"
-            },
-            {
-              "team": "both",
-              "label": "First half loser",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "8/9"
+              "team": "home",
+              "label": "First to score",
+              "value": "4/5",
+              "odds": 1.62
             }
           ],
           "team_streaks": [
@@ -36324,31 +35643,36 @@
               "team": "home",
               "source": "computed",
               "label": "No Wins",
-              "value": "6"
+              "value": "6",
+              "odds": 1.95
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "7"
+              "value": "7",
+              "odds": 1.67
             },
             {
               "team": "away",
               "source": "computed",
               "label": "No Wins",
-              "value": "7"
+              "value": "7",
+              "odds": 1.22
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "10"
+              "value": "10",
+              "odds": 1.67
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "10/10"
+              "value": "10/10",
+              "odds": 1.67
             }
           ],
           "sportsbet_odds": {
@@ -36380,18 +35704,22 @@
           "predictions": {
             "winner": {
               "pick": "DC United",
-              "type": "home"
+              "type": "home",
+              "odds": 2.38
             },
             "btts": {
-              "pick": "Yes"
+              "pick": "Yes",
+              "odds": 1.62
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5
+              "line": 2.5,
+              "odds": 1.8
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5
+              "line": 4.5,
+              "odds": 1.91
             },
             "factors": {
               "lambda_home": 2.135,
@@ -36413,17 +35741,20 @@
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 1.8
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "5/7"
+              "value": "5/7",
+              "odds": 1.8
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 1.62
             },
             {
               "team": "both",
@@ -36438,12 +35769,14 @@
             {
               "team": "both",
               "label": "More than 4.5 cards",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 1.91
             },
             {
               "team": "both",
               "label": "More than 4.5 cards",
-              "value": "5/5"
+              "value": "5/5",
+              "odds": 1.91
             }
           ],
           "team_streaks": [
@@ -36451,13 +35784,15 @@
               "team": "home",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 1.8
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 1.62
             }
           ],
           "sportsbet_odds": {
@@ -36489,18 +35824,22 @@
           "predictions": {
             "winner": {
               "pick": "New England Revolution",
-              "type": "home"
+              "type": "home",
+              "odds": 2.15
             },
             "btts": {
-              "pick": "Yes"
+              "pick": "Yes",
+              "odds": 1.62
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5
+              "line": 2.5,
+              "odds": 1.73
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5
+              "line": 4.5,
+              "odds": 1.62
             },
             "factors": {
               "lambda_home": 1.831,
@@ -36520,39 +35859,34 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
+              "team": "home",
+              "label": "No losses",
+              "value": "4",
+              "odds": 1.36
+            },
+            {
+              "team": "home",
               "label": "Without clean sheet",
-              "value": "5"
+              "value": "8",
+              "odds": 1.62
+            },
+            {
+              "team": "away",
+              "label": "Without clean sheet",
+              "value": "4",
+              "odds": 1.62
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "5/7"
+              "value": "5/7",
+              "odds": 1.73
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "6/8"
-            },
-            {
-              "team": "both",
-              "label": "First to concede",
-              "value": "5/5"
-            },
-            {
-              "team": "both",
-              "label": "First half loser",
-              "value": "5/5"
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "6/7"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "8/10"
+              "value": "7/8",
+              "odds": 1.62
             }
           ],
           "team_streaks": [
@@ -36560,7 +35894,8 @@
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "5"
+              "value": "5",
+              "odds": 1.62
             }
           ],
           "sportsbet_odds": {
@@ -36592,18 +35927,22 @@
           "predictions": {
             "winner": {
               "pick": "New York City FC",
-              "type": "away"
+              "type": "away",
+              "odds": 2.4
             },
             "btts": {
-              "pick": "Yes"
+              "pick": "Yes",
+              "odds": 1.5
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5
+              "line": 2.5,
+              "odds": 1.57
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5
+              "line": 4.5,
+              "odds": 1.73
             },
             "factors": {
               "lambda_home": 1.762,
@@ -36623,29 +35962,34 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
+              "team": "away",
+              "label": "Wins",
+              "value": "3",
+              "odds": 2.4
+            },
+            {
+              "team": "home",
               "label": "Without clean sheet",
-              "value": "13"
+              "value": "3",
+              "odds": 1.5
             },
             {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "8/10"
+              "team": "away",
+              "label": "First to score",
+              "value": "5/6",
+              "odds": 1.91
             },
             {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "8/10"
+              "team": "away",
+              "label": "First half winner",
+              "value": "4/5",
+              "odds": 3.0
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "5/6"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "6/8"
+              "value": "4/5",
+              "odds": 2.0
             }
           ],
           "team_streaks": [
@@ -36653,19 +35997,22 @@
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "10"
+              "value": "10",
+              "odds": 1.5
             },
             {
               "team": "home",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 1.57
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 1.5
             }
           ],
           "sportsbet_odds": {
@@ -36697,18 +36044,22 @@
           "predictions": {
             "winner": {
               "pick": "Orlando City SC",
-              "type": "home"
+              "type": "home",
+              "odds": 2.0
             },
             "btts": {
-              "pick": "Yes"
+              "pick": "Yes",
+              "odds": 1.44
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5
+              "line": 2.5,
+              "odds": 1.5
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5
+              "line": 4.5,
+              "odds": 2.2
             },
             "factors": {
               "lambda_home": 2.353,
@@ -36728,49 +36079,10 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
+              "team": "away",
               "label": "Without clean sheet",
-              "value": "7"
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "5/6"
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "5/6"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "First to score",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "First to concede",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "6/8"
-            },
-            {
-              "team": "both",
-              "label": "More than 10.5 corners",
-              "value": "4/5"
+              "value": "4",
+              "odds": 1.44
             }
           ],
           "team_streaks": [
@@ -36778,31 +36090,36 @@
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "7"
+              "value": "7",
+              "odds": 1.44
             },
             {
               "team": "home",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "5/6"
+              "value": "5/6",
+              "odds": 1.5
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "5/6"
+              "value": "5/6",
+              "odds": 1.44
             },
             {
               "team": "away",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 1.5
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 1.44
             }
           ],
           "sportsbet_odds": {
@@ -36834,18 +36151,22 @@
           "predictions": {
             "winner": {
               "pick": "Columbus Crew",
-              "type": "away"
+              "type": "away",
+              "odds": 2.88
             },
             "btts": {
-              "pick": "Yes"
+              "pick": "Yes",
+              "odds": 1.62
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5
+              "line": 2.5,
+              "odds": 1.73
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5
+              "line": 4.5,
+              "odds": 2.1
             },
             "factors": {
               "lambda_home": 1.338,
@@ -36865,54 +36186,28 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
-              "label": "Losses",
-              "value": "3"
+              "team": "away",
+              "label": "No losses",
+              "value": "7",
+              "odds": 1.57
             },
             {
-              "team": "both",
-              "label": "No wins",
-              "value": "6"
-            },
-            {
-              "team": "both",
+              "team": "home",
               "label": "Without clean sheet",
-              "value": "4"
+              "value": "8",
+              "odds": 1.62
             },
             {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "7/8"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "5/7"
-            },
-            {
-              "team": "both",
+              "team": "away",
               "label": "First to score",
-              "value": "6/8"
-            },
-            {
-              "team": "both",
-              "label": "First half winner",
-              "value": "6/8"
+              "value": "5/6",
+              "odds": 2.05
             },
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "5/6"
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "7/8"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "5/7"
+              "value": "5/6",
+              "odds": 1.67
             }
           ],
           "team_streaks": [
@@ -36920,31 +36215,36 @@
               "team": "home",
               "source": "computed",
               "label": "No Wins",
-              "value": "6"
+              "value": "6",
+              "odds": 1.57
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Losses",
-              "value": "3"
+              "value": "3",
+              "odds": 2.25
             },
             {
               "team": "away",
               "source": "computed",
               "label": "No Wins",
-              "value": "3"
+              "value": "3",
+              "odds": 1.4
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "4"
+              "value": "4",
+              "odds": 1.62
             },
             {
               "team": "away",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 1.73
             }
           ],
           "sportsbet_odds": {
@@ -36976,18 +36276,22 @@
           "predictions": {
             "winner": {
               "pick": "Austin FC",
-              "type": "home"
+              "type": "home",
+              "odds": 1.44
             },
             "btts": {
-              "pick": "Yes"
+              "pick": "Yes",
+              "odds": 1.57
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5
+              "line": 2.5,
+              "odds": 1.48
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5
+              "line": 4.5,
+              "odds": 1.83
             },
             "factors": {
               "lambda_home": 2.157,
@@ -37007,49 +36311,16 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
-              "label": "Without clean sheet",
-              "value": "13"
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "7/9"
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "9/10"
-            },
-            {
-              "team": "both",
+              "team": "away",
               "label": "First to score",
-              "value": "5/6"
-            },
-            {
-              "team": "both",
-              "label": "First to concede",
-              "value": "5/6"
-            },
-            {
-              "team": "both",
-              "label": "More than 4.5 cards",
-              "value": "7/8"
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 2.62
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "7/9"
+              "value": "8/9",
+              "odds": 2.0
             }
           ],
           "team_streaks": [
@@ -37057,13 +36328,15 @@
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "10"
+              "value": "10",
+              "odds": 1.57
             },
             {
               "team": "away",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "9/10"
+              "value": "9/10",
+              "odds": 1.48
             }
           ],
           "sportsbet_odds": {
@@ -37095,18 +36368,22 @@
           "predictions": {
             "winner": {
               "pick": "Vancouver Whitecaps",
-              "type": "away"
+              "type": "away",
+              "odds": 1.91
             },
             "btts": {
-              "pick": "Yes"
+              "pick": "Yes",
+              "odds": 1.57
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5
+              "line": 2.5,
+              "odds": 1.62
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5
+              "line": 4.5,
+              "odds": 1.67
             },
             "factors": {
               "lambda_home": 1.233,
@@ -37126,29 +36403,40 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
+              "team": "away",
               "label": "No losses",
-              "value": "7"
+              "value": "3",
+              "odds": 1.29
             },
             {
-              "team": "both",
+              "team": "home",
               "label": "Without clean sheet",
-              "value": "4"
+              "value": "8",
+              "odds": 1.57
             },
             {
               "team": "both",
-              "label": "Less than 2.5 goals",
-              "value": "5/7"
+              "label": "More than 2.5 goals",
+              "value": "6/8",
+              "odds": 1.62
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "4/5"
+              "value": "7/8",
+              "odds": 1.57
+            },
+            {
+              "team": "both",
+              "label": "More than 4.5 cards",
+              "value": "6/6",
+              "odds": 1.67
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "7/9"
+              "value": "6/7",
+              "odds": 2.0
             }
           ],
           "team_streaks": [
@@ -37156,19 +36444,22 @@
               "team": "away",
               "source": "computed",
               "label": "No Losses",
-              "value": "7"
+              "value": "7",
+              "odds": 1.29
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "4"
+              "value": "4",
+              "odds": 1.57
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 1.57
             }
           ],
           "sportsbet_odds": {
@@ -37200,18 +36491,22 @@
           "predictions": {
             "winner": {
               "pick": "Seattle Sounders FC",
-              "type": "home"
+              "type": "home",
+              "odds": 1.65
             },
             "btts": {
-              "pick": "Yes"
+              "pick": "Yes",
+              "odds": 1.57
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5
+              "line": 2.5,
+              "odds": 1.53
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5
+              "line": 4.5,
+              "odds": 2.1
             },
             "factors": {
               "lambda_home": 2.217,
@@ -37231,44 +36526,34 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
+              "team": "home",
               "label": "No losses",
-              "value": "6"
+              "value": "3",
+              "odds": 1.17
             },
             {
-              "team": "both",
+              "team": "away",
               "label": "Without clean sheet",
-              "value": "7"
+              "value": "3",
+              "odds": 1.57
+            },
+            {
+              "team": "home",
+              "label": "First to score",
+              "value": "4/5",
+              "odds": 1.53
+            },
+            {
+              "team": "home",
+              "label": "First half winner",
+              "value": "4/5",
+              "odds": 2.1
             },
             {
               "team": "both",
-              "label": "Without clean sheet",
-              "value": "11"
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "9/10"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "6/6"
-            },
-            {
-              "team": "both",
-              "label": "First to concede",
-              "value": "5/7"
-            },
-            {
-              "team": "both",
-              "label": "More than 10.5 corners",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "5/7"
+              "label": "Less than 4.5 cards",
+              "value": "6/8",
+              "odds": 1.67
             }
           ],
           "team_streaks": [
@@ -37276,37 +36561,43 @@
               "team": "home",
               "source": "computed",
               "label": "No Losses",
-              "value": "6"
+              "value": "6",
+              "odds": 1.17
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "7"
+              "value": "7",
+              "odds": 1.57
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "6/7"
+              "value": "6/7",
+              "odds": 1.57
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "10"
+              "value": "10",
+              "odds": 1.57
             },
             {
               "team": "away",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "9/10"
+              "value": "9/10",
+              "odds": 1.53
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "9/10"
+              "value": "9/10",
+              "odds": 1.57
             }
           ],
           "sportsbet_odds": {
@@ -37338,18 +36629,22 @@
           "predictions": {
             "winner": {
               "pick": "Real Salt Lake",
-              "type": "home"
+              "type": "home",
+              "odds": 1.65
             },
             "btts": {
-              "pick": "Yes"
+              "pick": "Yes",
+              "odds": 1.5
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5
+              "line": 2.5,
+              "odds": 1.48
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5
+              "line": 4.5,
+              "odds": 1.91
             },
             "factors": {
               "lambda_home": 1.869,
@@ -37369,24 +36664,22 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "7/9"
+              "team": "home",
+              "label": "First to score",
+              "value": "8/10",
+              "odds": 1.53
             },
             {
               "team": "both",
-              "label": "Less than 2.5 goals",
-              "value": "5/6"
-            },
-            {
-              "team": "both",
-              "label": "More than 4.5 cards",
-              "value": "7/8"
+              "label": "Less than 4.5 cards",
+              "value": "5/6",
+              "odds": 1.8
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "6/7"
+              "value": "4/5",
+              "odds": 1.67
             }
           ],
           "team_streaks": [
@@ -37394,7 +36687,8 @@
               "team": "home",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 1.48
             }
           ],
           "sportsbet_odds": {
@@ -37426,18 +36720,22 @@
           "predictions": {
             "winner": {
               "pick": "San Diego FC",
-              "type": "home"
+              "type": "home",
+              "odds": 1.95
             },
             "btts": {
-              "pick": "Yes"
+              "pick": "Yes",
+              "odds": 1.33
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5
+              "line": 2.5,
+              "odds": 1.33
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5
+              "line": 4.5,
+              "odds": 2.2
             },
             "factors": {
               "lambda_home": 2.427,
@@ -37464,27 +36762,32 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "3"
+              "value": "3",
+              "odds": 1.33
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 1.33
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "5/6"
+              "value": "5/6",
+              "odds": 1.33
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "5/7"
+              "value": "5/7",
+              "odds": 1.33
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "9/10"
+              "value": "9/10",
+              "odds": 1.33
             },
             {
               "team": "both",
@@ -37494,12 +36797,14 @@
             {
               "team": "both",
               "label": "Less than 4.5 cards",
-              "value": "5/6"
+              "value": "5/6",
+              "odds": 1.62
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "6/7"
+              "value": "6/7",
+              "odds": 1.83
             }
           ],
           "team_streaks": [
@@ -37507,31 +36812,36 @@
               "team": "home",
               "source": "computed",
               "label": "No Losses",
-              "value": "3"
+              "value": "3",
+              "odds": 1.29
             },
             {
               "team": "home",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 1.33
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "3"
+              "value": "3",
+              "odds": 1.33
             },
             {
               "team": "away",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 1.33
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "9/10"
+              "value": "9/10",
+              "odds": 1.33
             }
           ],
           "sportsbet_odds": {
@@ -37563,18 +36873,22 @@
           "predictions": {
             "winner": {
               "pick": "San Jose Earthquakes",
-              "type": "home"
+              "type": "home",
+              "odds": 1.8
             },
             "btts": {
-              "pick": "Yes"
+              "pick": "Yes",
+              "odds": 1.44
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5
+              "line": 2.5,
+              "odds": 1.44
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5
+              "line": 4.5,
+              "odds": 1.83
             },
             "factors": {
               "lambda_home": 2.289,
@@ -37594,54 +36908,46 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
-              "label": "No wins",
-              "value": "3"
+              "team": "home",
+              "label": "No losses",
+              "value": "3",
+              "odds": 1.25
             },
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "7"
+              "value": "12",
+              "odds": 1.44
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "5/7"
+              "value": "4/5",
+              "odds": 1.44
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "7/7"
+              "value": "10/10",
+              "odds": 1.44
             },
             {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "5/7"
-            },
-            {
-              "team": "both",
+              "team": "home",
               "label": "First to score",
-              "value": "4/5"
-            },
-            {
-              "team": "both",
-              "label": "First to score",
-              "value": "7/9"
+              "value": "5/6",
+              "odds": 1.62
             },
             {
               "team": "both",
               "label": "More than 4.5 cards",
-              "value": "4/5"
+              "value": "5/7",
+              "odds": 1.83
             },
             {
               "team": "both",
-              "label": "More than 10.5 corners",
-              "value": "5/6"
-            },
-            {
-              "team": "both",
-              "label": "More than 10.5 corners",
-              "value": "4/5"
+              "label": "Less than 10.5 corners",
+              "value": "8/9",
+              "odds": 1.83
             }
           ],
           "team_streaks": [
@@ -37649,19 +36955,22 @@
               "team": "home",
               "source": "computed",
               "label": "No Wins",
-              "value": "3"
+              "value": "3",
+              "odds": 1.91
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "7"
+              "value": "7",
+              "odds": 1.44
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 1.44
             }
           ],
           "sportsbet_odds": {
@@ -37693,14 +37002,17 @@
           "predictions": {
             "winner": {
               "pick": "Inter Miami CF",
-              "type": "home"
+              "type": "home",
+              "odds": 1.3
             },
             "btts": {
-              "pick": "Yes"
+              "pick": "Yes",
+              "odds": 1.44
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5
+              "line": 2.5,
+              "odds": 1.25
             },
             "ou_cards": {
               "pick": "Over",
@@ -37726,22 +37038,26 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "4"
+              "value": "4",
+              "odds": 1.44
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "7/9"
+              "value": "7/9",
+              "odds": 1.25
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "5/7"
+              "value": "5/7",
+              "odds": 1.25
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "9/10"
+              "value": "9/10",
+              "odds": 1.44
             },
             {
               "team": "both",
@@ -37751,12 +37067,14 @@
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "5/6"
+              "value": "5/6",
+              "odds": 1.67
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "5/7"
+              "value": "5/7",
+              "odds": 1.67
             }
           ],
           "team_streaks": [
@@ -37764,13 +37082,15 @@
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "4"
+              "value": "4",
+              "odds": 1.44
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "9/10"
+              "value": "9/10",
+              "odds": 1.44
             }
           ],
           "sportsbet_odds": {
@@ -37802,14 +37122,17 @@
           "predictions": {
             "winner": {
               "pick": "Nashville SC",
-              "type": "home"
+              "type": "home",
+              "odds": 2.05
             },
             "btts": {
-              "pick": "Yes"
+              "pick": "Yes",
+              "odds": 1.7
             },
             "ou_goals": {
               "pick": "Over",
-              "line": 2.5
+              "line": 2.5,
+              "odds": 1.8
             },
             "ou_cards": {
               "pick": "Over",
@@ -37845,17 +37168,20 @@
             {
               "team": "both",
               "label": "Without clean sheet",
-              "value": "5"
+              "value": "5",
+              "odds": 1.7
             },
             {
               "team": "both",
               "label": "More than 2.5 goals",
-              "value": "5/5"
+              "value": "5/5",
+              "odds": 1.8
             },
             {
               "team": "both",
               "label": "Both teams scoring",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 1.7
             },
             {
               "team": "both",
@@ -37870,12 +37196,14 @@
             {
               "team": "both",
               "label": "More than 10.5 corners",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 1.83
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 1.83
             }
           ],
           "team_streaks": [
@@ -37883,25 +37211,29 @@
               "team": "away",
               "source": "computed",
               "label": "Losses",
-              "value": "3"
+              "value": "3",
+              "odds": 1.96
             },
             {
               "team": "away",
               "source": "computed",
               "label": "No Wins",
-              "value": "4"
+              "value": "4",
+              "odds": 1.33
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "5"
+              "value": "5",
+              "odds": 1.7
             },
             {
               "team": "away",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "5/6"
+              "value": "5/6",
+              "odds": 1.8
             }
           ],
           "sportsbet_odds": {
@@ -47913,18 +47245,22 @@
           "predictions": {
             "winner": {
               "pick": "Salford City",
-              "type": "home"
+              "type": "home",
+              "odds": 2.15
             },
             "btts": {
-              "pick": "Yes"
+              "pick": "Yes",
+              "odds": 2.1
             },
             "ou_goals": {
               "pick": "Under",
-              "line": 2.5
+              "line": 2.5,
+              "odds": 1.5
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5
+              "line": 4.5,
+              "odds": 2.2
             },
             "factors": {
               "lambda_home": 1.49,
@@ -47941,39 +47277,27 @@
           },
           "h2h_streaks": [
             {
-              "team": "both",
-              "label": "No losses",
-              "value": "5"
+              "team": "home",
+              "label": "Without clean sheet",
+              "value": "3",
+              "odds": 2.2
             },
             {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "6/7"
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "6/7"
-            },
-            {
-              "team": "both",
+              "team": "away",
               "label": "First to score",
-              "value": "5/5"
+              "value": "6/7"
             },
             {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "8/8"
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "5/5"
+              "team": "away",
+              "label": "First half winner",
+              "value": "5/7",
+              "odds": 4.33
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "8/10"
+              "value": "4/5",
+              "odds": 1.83
             }
           ],
           "team_streaks": [
@@ -47981,13 +47305,15 @@
               "team": "home",
               "source": "computed",
               "label": "No Losses",
-              "value": "5"
+              "value": "5",
+              "odds": 1.36
             },
             {
               "team": "away",
               "source": "computed",
               "label": "More than 2.5 goals",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 2.5
             }
           ]
         },
@@ -48013,18 +47339,22 @@
           "predictions": {
             "winner": {
               "pick": "Chesterfield",
-              "type": "away"
+              "type": "away",
+              "odds": 3.2
             },
             "btts": {
-              "pick": "Yes"
+              "pick": "Yes",
+              "odds": 1.83
             },
             "ou_goals": {
               "pick": "Under",
-              "line": 2.5
+              "line": 2.5,
+              "odds": 1.67
             },
             "ou_cards": {
               "pick": "Over",
-              "line": 4.5
+              "line": 4.5,
+              "odds": 2.0
             },
             "factors": {
               "lambda_home": 1.234,
@@ -48042,28 +47372,27 @@
           "h2h_streaks": [
             {
               "team": "both",
-              "label": "No losses",
-              "value": "3"
+              "label": "Both teams scoring",
+              "value": "8/10",
+              "odds": 1.83
             },
             {
-              "team": "both",
-              "label": "Less than 2.5 goals",
-              "value": "7/9"
-            },
-            {
-              "team": "both",
+              "team": "away",
               "label": "First to score",
-              "value": "6/8"
+              "value": "5/6",
+              "odds": 2.2
             },
             {
               "team": "both",
-              "label": "First to score",
-              "value": "7/9"
+              "label": "More than 4.5 cards",
+              "value": "4/5",
+              "odds": 2.0
             },
             {
               "team": "both",
               "label": "Less than 10.5 corners",
-              "value": "5/5"
+              "value": "6/7",
+              "odds": 1.83
             }
           ],
           "team_streaks": [
@@ -48071,7 +47400,8 @@
               "team": "home",
               "source": "computed",
               "label": "No Losses",
-              "value": "3"
+              "value": "3",
+              "odds": 1.36
             }
           ]
         }

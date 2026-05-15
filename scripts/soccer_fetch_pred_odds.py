@@ -5,7 +5,7 @@ Sportsbet.com.au odds (from `sportsbet_odds`) take priority for the winner pick.
 SofaScore "Full time" 1X2. Other prediction types (BTTS / O-U goals / O-U cards) use SofaScore
 90-minute regular-time markets only.
 """
-import json, time, pathlib
+import json, os, time, pathlib
 import random
 from curl_cffi import requests
 
@@ -14,7 +14,7 @@ def _profile(): return random.choice(_PROFILES)
 
 FOLDER = pathlib.Path(__file__).resolve().parent.parent
 STORE_PATH = FOLDER / "match_data.json"
-BUDGET = 38
+BUDGET = int(os.environ.get("SOCCER_ODDS_BUDGET", "180"))
 START = time.time()
 
 def fetch(path):
@@ -50,6 +50,19 @@ def fetch_all_odds(eid):
         if choices: out[key] = choices
     return out
 
+def seed_match_odds(m):
+    """Use already-attached 1X2 odds as a no-network fallback.
+
+    The main routine often has `odds` from SofaScore before this helper runs.
+    Reusing it prevents visible Winner cards from showing "Odds -" when a
+    later market fetch is slow or blocked.
+    """
+    odds = m.get("sportsbet_odds") or m.get("odds") or {}
+    out = {}
+    if all(odds.get(k) is not None for k in ("home", "draw", "away")):
+        out["Full time"] = {"1": odds["home"], "X": odds["draw"], "2": odds["away"]}
+    return out
+
 def any_line(market_odds, prefix, choice):
     for k, choices in market_odds.items():
         if k.startswith(prefix + " ") and choice in choices:
@@ -63,7 +76,7 @@ def attach_pred_odds(m, market):
     w = p.get("winner") or {}
     if w.get("type") and w.get("odds") is None:
         wt = w["type"]
-        sb = m.get("sportsbet_odds") or {}
+        sb = m.get("sportsbet_odds") or m.get("odds") or {}
         if sb.get(wt) is not None:
             w["odds"] = sb[wt]
         else:
@@ -95,27 +108,41 @@ def attach_pred_odds(m, market):
 def main():
     store = json.loads(STORE_PATH.read_text(encoding="utf-8"))
     added = 0
-    for L in store["leagues"]:
-        for m in L["matches"]:
-            if time.time() - START > BUDGET:
-                STORE_PATH.write_text(json.dumps(store, indent=2, ensure_ascii=False), encoding="utf-8")
-                print("BUDGET reached. added=" + str(added))
-                return
-            eid = m.get("id")
-            if not eid: continue
-            p = m.get("predictions") or {}
-            need = any(p.get(k) and p[k].get("pick") and p[k].get("odds") is None
-                       for k in ("winner", "ou_goals", "btts", "ou_cards"))
-            if not need: continue
-            market = fetch_all_odds(eid)
-            if not market: continue
-            before = sum(1 for k in ("winner","ou_goals","btts","ou_cards") if (p.get(k) or {}).get("odds") is not None)
-            attach_pred_odds(m, market)
-            after = sum(1 for k in ("winner","ou_goals","btts","ou_cards") if (p.get(k) or {}).get("odds") is not None)
-            delta = after - before
-            if delta:
-                added += delta
-                print(f" +{delta} {m['home']['name']} vs {m['away']['name']}")
+    matches = [
+        (L, m)
+        for L in store["leagues"]
+        for m in L["matches"]
+        if m.get("status") != "FT"
+    ]
+    matches.sort(key=lambda item: (
+        item[1].get("date", ""),
+        item[1].get("time", ""),
+        item[0].get("name", ""),
+        item[1].get("home", {}).get("name", ""),
+    ))
+    for L, m in matches:
+        if time.time() - START > BUDGET:
+            STORE_PATH.write_text(json.dumps(store, indent=2, ensure_ascii=False), encoding="utf-8")
+            print("BUDGET reached. added=" + str(added))
+            return
+        eid = m.get("id")
+        if not eid: continue
+        p = m.get("predictions") or {}
+        need = any(p.get(k) and p[k].get("pick") and p[k].get("odds") is None
+                   for k in ("winner", "ou_goals", "btts", "ou_cards"))
+        if not need: continue
+        market = seed_match_odds(m)
+        fetched = fetch_all_odds(eid)
+        if fetched:
+            market.update(fetched)
+        if not market: continue
+        before = sum(1 for k in ("winner","ou_goals","btts","ou_cards") if (p.get(k) or {}).get("odds") is not None)
+        attach_pred_odds(m, market)
+        after = sum(1 for k in ("winner","ou_goals","btts","ou_cards") if (p.get(k) or {}).get("odds") is not None)
+        delta = after - before
+        if delta:
+            added += delta
+            print(f" +{delta} {m['home']['name']} vs {m['away']['name']}")
     STORE_PATH.write_text(json.dumps(store, indent=2, ensure_ascii=False), encoding="utf-8")
     print(f"DONE. added={added}")
 
