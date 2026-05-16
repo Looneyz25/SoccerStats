@@ -33,7 +33,7 @@ jobs:
 
       - name: Set up Python environment
         run: |
-          uv venv --python 3.11 .venv-gh
+          uv venv --python 3.11 --seed .venv-gh
           .\.venv-gh\Scripts\python.exe --version
 
       - name: Verify Python
