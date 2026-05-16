@@ -3,10 +3,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
   createUserWithEmailAndPassword,
+  getRedirectResult,
   onAuthStateChanged,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
+  signInWithRedirect,
   signOut,
 } from 'firebase/auth';
 import { Loader2, LockKeyhole, LogIn, Mail, ShieldCheck } from 'lucide-react';
@@ -21,6 +23,8 @@ function authErrorMessage(error) {
   if (code.includes('auth/email-already-in-use')) return 'That email already has an account.';
   if (code.includes('auth/weak-password')) return 'Use at least 6 characters for the password.';
   if (code.includes('auth/popup-closed-by-user')) return 'Google sign-in was closed before it finished.';
+  if (code.includes('auth/popup-blocked')) return 'Popup was blocked. Redirecting to Google sign-in instead.';
+  if (code.includes('auth/popup-redirect-cancelled')) return 'Google sign-in was interrupted. Try again.';
   if (code.includes('auth/operation-not-allowed')) {
     return 'This sign-in method is not enabled in Firebase Authentication yet.';
   }
@@ -42,6 +46,12 @@ export default function AuthGate({ children }) {
     return onAuthStateChanged(auth, (nextUser) => {
       setUser(nextUser);
       setReady(true);
+    });
+  }, [auth]);
+
+  useEffect(() => {
+    getRedirectResult(auth).catch((redirectError) => {
+      setError(authErrorMessage(redirectError));
     });
   }, [auth]);
 
@@ -70,6 +80,17 @@ export default function AuthGate({ children }) {
     try {
       await signInWithPopup(auth, googleProvider);
     } catch (googleError) {
+      const code = googleError?.code || '';
+      if (
+        code.includes('auth/popup-blocked') ||
+        code.includes('auth/popup-closed-by-user') ||
+        code.includes('auth/cancelled-popup-request') ||
+        code.includes('auth/web-storage-unsupported')
+      ) {
+        setMessage('Opening Google sign-in...');
+        await signInWithRedirect(auth, googleProvider);
+        return;
+      }
       setError(authErrorMessage(googleError));
     } finally {
       setBusy(false);
