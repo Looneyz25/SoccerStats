@@ -16,7 +16,6 @@ import {
   Goal,
   MapPin,
   Settings,
-  Shield,
   Trophy,
   UserRound,
   XCircle,
@@ -98,6 +97,21 @@ function sportsbetEventUrl(match) {
   return `https://www.sportsbet.com.au/betting/soccer/${leagueSlug}/${home}-v-${away}-${eventId}`;
 }
 
+function bookmakerMatchQuery(match) {
+  return [match.home?.name, match.away?.name].filter(Boolean).join(' v ');
+}
+
+function bookmakerMatchSearchUrl(match, bookmakerId) {
+  const query = encodeURIComponent(bookmakerMatchQuery(match));
+  if (!query) return null;
+
+  if (bookmakerId === 'tab') return `https://www.tab.com.au/sports/betting/Soccer?search=${query}`;
+  if (bookmakerId === 'ladbrokes') return `https://www.ladbrokes.com.au/sports/soccer?search=${query}`;
+  if (bookmakerId === 'neds') return `https://www.neds.com.au/sports/soccer?search=${query}`;
+  if (bookmakerId === 'bet365') return `https://www.bet365.com.au/hub/en-au/sports-betting?search=${query}`;
+  return null;
+}
+
 function bookmakerUrl(match, bookmakerId) {
   const bookmaker = BOOKMAKERS[bookmakerId] || BOOKMAKERS.sportsbet;
   const eventUrl =
@@ -106,7 +120,7 @@ function bookmakerUrl(match, bookmakerId) {
     match[`${bookmaker.id}_odds`]?.event_url;
   if (eventUrl) return eventUrl;
   if (bookmaker.id === 'sportsbet') return sportsbetEventUrl(match) || bookmaker.entryUrl;
-  return bookmaker.entryUrl;
+  return bookmakerMatchSearchUrl(match, bookmaker.id) || bookmaker.entryUrl;
 }
 
 function hasDirectBookmakerMatchLink(match, bookmakerId) {
@@ -179,6 +193,10 @@ function displayTeamForStreak(streak, match) {
 
 function formatOdds(value) {
   return value ? Number(value).toFixed(2) : '-';
+}
+
+function formatOddsTotal(value) {
+  return Number(value || 0).toFixed(2);
 }
 
 function formatMarketDetail(market) {
@@ -489,8 +507,20 @@ function summarize(matches) {
     .filter((value) => value === 'hit' || value === 'miss');
   const hits = winnerResults.filter((value) => value === 'hit').length;
   const accuracy = winnerResults.length ? Math.round((hits / winnerResults.length) * 100) : 0;
-  const sportsbet = matches.filter((m) => m.sportsbet_odds).length;
-  return { total, finished, upcoming, accuracy, sportsbet };
+  const oddsTotals = matches.reduce(
+    (totals, match) => {
+      Object.values(match.predictions || {}).forEach((market) => {
+        const odds = Number(market?.odds);
+        if (!Number.isFinite(odds)) return;
+        if (market.result === 'hit') totals.hit += odds;
+        if (market.result === 'miss') totals.loss += odds;
+      });
+      return totals;
+    },
+    { hit: 0, loss: 0 },
+  );
+
+  return { total, finished, upcoming, accuracy, oddsTotals };
 }
 
 function getNumericLine(label) {
@@ -800,10 +830,11 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
   const actuals = match.actuals || {};
   const selectedBookmaker = BOOKMAKERS[bookmakerId] || BOOKMAKERS.sportsbet;
   const selectedBookmakerHref = bookmakerUrl(match, selectedBookmaker.id);
+  const hasDirectBookmakerLink = hasDirectBookmakerMatchLink(match, selectedBookmaker.id);
   const bookmakerButtonLabel =
     selectedBookmaker.id === 'sportsbet'
       ? `${selectedBookmaker.name} odds ${formatOdds(odds.home)} / ${formatOdds(odds.draw)} / ${formatOdds(odds.away)}`
-      : `Open ${selectedBookmaker.name} soccer`;
+      : `${hasDirectBookmakerLink ? 'Open' : 'Find'} ${selectedBookmaker.name} match`;
 
   useEffect(() => {
     function handleKeyDown(event) {
@@ -1253,7 +1284,17 @@ function HomeInner() {
             <Stat icon={CheckCircle2} label="Finished" value={stats.finished} tone="text-signal" />
             <Stat icon={Clock3} label="Upcoming" value={stats.upcoming} tone="text-blue-700" />
             <Stat icon={Goal} label="Winner Hit Rate" value={`${stats.accuracy}%`} />
-            <Stat icon={Shield} label="Sportsbet Odds" value={stats.sportsbet} />
+            <Stat
+              icon={BarChart3}
+              label="Odds Hit / Loss"
+              value={
+                <span className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                  <span className="text-signal">{formatOddsTotal(stats.oddsTotals?.hit)}</span>
+                  <span className="text-sm font-semibold text-slate-400">v</span>
+                  <span className="text-miss">{formatOddsTotal(stats.oddsTotals?.loss)}</span>
+                </span>
+              }
+            />
           </div>
         </div>
 
