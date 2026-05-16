@@ -62,6 +62,8 @@ Stripe objects created for this app:
 - Product: `prod_UWtFiyWb2LoEy0`
 - Price: `price_1TXpTJBbsFy1wAkF64nFdG26`
 
+Subscription signup uses Stripe Checkout with the hardcoded price in `functions/index.js`. Existing customers can manage billing through Stripe Customer Portal.
+
 Create a Stripe webhook endpoint pointing to:
 
 `https://lvrstats.com/api/stripe/webhook`

@@ -2,6 +2,8 @@ const admin = require('firebase-admin');
 const { onRequest } = require('firebase-functions/v2/https');
 const Stripe = require('stripe');
 
+const PRO_PRICE_ID = 'price_1TXpTJBbsFy1wAkF64nFdG26';
+const PRO_PLAN_NAME = 'Soccer Stats Pro';
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || 'https://lvrstats.com';
 
 admin.initializeApp();
@@ -71,7 +73,7 @@ async function syncSubscription(subscription) {
   }
 
   const priceId = subscriptionPriceId(subscription);
-  const hasSubscriptionAccess = subscriptionHasAccess(subscription.status);
+  const hasSubscriptionAccess = priceId === PRO_PRICE_ID && subscriptionHasAccess(subscription.status);
   const userSnap = await userRef.get();
   const profile = userSnap.exists ? userSnap.data() : {};
   const hasLegacyManualAccess = profile.hasAccess === true && !String(profile.accessSource || '').startsWith('stripe');
@@ -137,7 +139,31 @@ async function getOrCreateCustomer(decoded) {
 }
 
 async function createCheckout(req, res) {
-  return createPortal(req, res);
+  const decoded = await verifyUser(req);
+  const customerId = await getOrCreateCustomer(decoded);
+
+  const session = await stripe().checkout.sessions.create({
+    mode: 'subscription',
+    customer: customerId,
+    line_items: [{ price: PRO_PRICE_ID, quantity: 1 }],
+    allow_promotion_codes: true,
+    client_reference_id: decoded.uid,
+    customer_update: { name: 'auto' },
+    metadata: {
+      firebaseUid: decoded.uid,
+      plan: PRO_PLAN_NAME,
+    },
+    subscription_data: {
+      metadata: {
+        firebaseUid: decoded.uid,
+        plan: PRO_PLAN_NAME,
+      },
+    },
+    success_url: `${APP_URL}/dashboard?checkout=success`,
+    cancel_url: `${APP_URL}/dashboard?checkout=cancelled`,
+  });
+
+  return sendJson(res, 200, { url: session.url });
 }
 
 async function createPortal(req, res) {

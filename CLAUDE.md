@@ -40,11 +40,10 @@ npm run build && npx firebase-tools deploy --only hosting --project sports-predi
 |---|---|---|
 | `STRIPE_SECRET_KEY` | Firebase Secret Manager | `secrets[]` in `onRequest` config |
 | `STRIPE_WEBHOOK_SECRET` | Firebase Secret Manager | `secrets[]` in `onRequest` config |
-| `STRIPE_PRO_PRICE_ID` | Firebase Secret Manager | `secrets[]` in `onRequest` config |
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | `apphosting.yaml` | Build/runtime env var |
 | `NEXT_PUBLIC_APP_URL` | `apphosting.yaml` | Build/runtime env var |
 
 - Cloud Function URL: `https://australia-southeast1-sports-predictions-f91fd.cloudfunctions.net/stripeApi`
 - Stripe Product ID: `prod_UWtFiyWb2LoEy0` (Soccer Stats Pro, A$19.99/month)
-- Stripe Price ID: `price_1TXpTJBbsFy1wAkF64nFdG26`
+- Stripe Price ID is hardcoded in `functions/index.js` for Checkout: `price_1TXpTJBbsFy1wAkF64nFdG26`.
 - Never hardcode Stripe keys in source. Add new public vars to `apphosting.yaml`, sensitive vars to Secret Manager.
