@@ -36,6 +36,19 @@ const SPORTSBET_LEAGUE_SLUGS = {
   MLS: 'north-america/usa-major-league-soccer',
 };
 
+const TAB_LEAGUE_NAMES = {
+  'Premier League': 'English Premier League',
+  Championship: 'English Championship',
+  'League One': 'English League One',
+  'League Two': 'English League Two',
+  LaLiga: 'Spanish La Liga',
+  Bundesliga: 'German Bundesliga',
+  'Ligue 1': 'French Ligue 1',
+  Eredivisie: 'Dutch Eredivisie',
+  'UEFA Champions League': 'UEFA Champions League',
+  MLS: 'US Major League Soccer',
+};
+
 const BOOKMAKERS = {
   sportsbet: {
     id: 'sportsbet',
@@ -97,8 +110,24 @@ function sportsbetEventUrl(match) {
   return `https://www.sportsbet.com.au/betting/soccer/${leagueSlug}/${home}-v-${away}-${eventId}`;
 }
 
+function bookmakerTeamName(value) {
+  return String(value || '')
+    .replace(/\s+FC$/i, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function bookmakerMatchQuery(match) {
-  return [match.home?.name, match.away?.name].filter(Boolean).join(' v ');
+  return [bookmakerTeamName(match.home?.name), bookmakerTeamName(match.away?.name)].filter(Boolean).join(' v ');
+}
+
+function tabMatchUrl(match) {
+  const competition = TAB_LEAGUE_NAMES[match.league] || match.league;
+  const query = bookmakerMatchQuery(match);
+  if (!competition || !query) return null;
+  return `https://www.tab.com.au/sports/betting/Soccer/competitions/${encodeURIComponent(
+    competition,
+  )}/matches/${encodeURIComponent(query)}`;
 }
 
 function bookmakerMatchSearchUrl(match, bookmakerId) {
@@ -120,16 +149,18 @@ function bookmakerUrl(match, bookmakerId) {
     match[`${bookmaker.id}_odds`]?.event_url;
   if (eventUrl) return eventUrl;
   if (bookmaker.id === 'sportsbet') return sportsbetEventUrl(match) || bookmaker.entryUrl;
+  if (bookmaker.id === 'tab') return tabMatchUrl(match) || bookmaker.entryUrl;
   return bookmakerMatchSearchUrl(match, bookmaker.id) || bookmaker.entryUrl;
 }
 
 function hasDirectBookmakerMatchLink(match, bookmakerId) {
   const bookmaker = BOOKMAKERS[bookmakerId] || BOOKMAKERS.sportsbet;
   return Boolean(
-    match.bookmaker_links?.[bookmaker.id] ||
+      match.bookmaker_links?.[bookmaker.id] ||
       match.bookmaker_urls?.[bookmaker.id] ||
       match[`${bookmaker.id}_odds`]?.event_url ||
-      (bookmaker.id === 'sportsbet' && sportsbetEventUrl(match)),
+      (bookmaker.id === 'sportsbet' && sportsbetEventUrl(match)) ||
+      (bookmaker.id === 'tab' && tabMatchUrl(match)),
   );
 }
 
