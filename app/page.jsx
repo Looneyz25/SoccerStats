@@ -22,7 +22,7 @@ import {
   XCircle,
 } from 'lucide-react';
 
-const DATA_URL = '/data/match_data.json';
+const DATA_URL = 'data/match_data.json';
 
 const SPORTSBET_LEAGUE_SLUGS = {
   'Premier League': 'united-kingdom/english-premier-league',
