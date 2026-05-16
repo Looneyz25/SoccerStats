@@ -199,7 +199,7 @@ export default function AuthGate({ children }) {
   async function openStripeSession(endpoint, busyKey) {
     setBusy(busyKey);
     setError('');
-    setMessage(busyKey === 'checkout' ? 'Opening secure checkout...' : 'Opening billing portal...');
+    setMessage('Opening Stripe portal...');
     try {
       const token = await user.getIdToken();
       const response = await fetch(endpoint, {
@@ -397,24 +397,13 @@ export default function AuthGate({ children }) {
             )}
             <button
               type="button"
-              onClick={() => openStripeSession('/api/stripe/create-checkout', 'checkout')}
+              onClick={() => openStripeSession('/api/stripe/create-portal', 'portal')}
               disabled={!!busy}
               className="mb-3 inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-ink px-4 text-sm font-semibold text-white shadow-panel transition hover:bg-slate-800 disabled:cursor-wait disabled:opacity-70"
             >
-              {busy === 'checkout' ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
+              {busy === 'portal' ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
               Subscribe to Pro
             </button>
-            {profile?.stripeCustomerId && (
-              <button
-                type="button"
-                onClick={() => openStripeSession('/api/stripe/create-portal', 'portal')}
-                disabled={!!busy}
-                className="mb-3 inline-flex h-10 w-full items-center justify-center gap-2 rounded-md border border-line bg-white px-4 text-sm font-semibold text-ink transition hover:bg-field disabled:cursor-wait disabled:opacity-70"
-              >
-                {busy === 'portal' ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
-                Manage billing
-              </button>
-            )}
             <button
               type="button"
               onClick={() => signOut(auth)}

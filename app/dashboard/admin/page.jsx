@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import AuthGate from '../../auth-gate';
-import { getAllUsers, getUserProfile, updateUserManualAccess } from '../../firestore-data';
+import { getAllUsers, getUserProfile, updateUserManualAccess, updateUserStripeInheritance } from '../../firestore-data';
 import { getFirebaseAuth } from '../../firebase';
 import {
   ArrowLeft,
@@ -49,9 +49,10 @@ function stripeStatusClass(status) {
 }
 
 function accessState(user) {
+  const inheritsStripe = user.inheritStripeStatus !== false;
   if (user.isPlatformOwner) return { label: 'Owner', tone: 'bg-signal/10 text-signal ring-signal/20' };
   if (user.manualAccess) return { label: 'Manual', tone: 'bg-blue-50 text-blue-700 ring-blue-200' };
-  if (user.subscriptionHasAccess || user.subscriptionStatus === 'active' || user.subscriptionStatus === 'trialing') {
+  if (inheritsStripe && (user.subscriptionHasAccess || user.subscriptionStatus === 'active' || user.subscriptionStatus === 'trialing')) {
     return { label: 'Stripe', tone: 'bg-emerald-50 text-emerald-700 ring-emerald-200' };
   }
   if (user.hasAccess) return { label: 'Granted', tone: 'bg-emerald-50 text-emerald-700 ring-emerald-200' };
@@ -130,18 +131,44 @@ function AdminDashboard() {
       await updateUserManualAccess(user.uid, manualAccess);
       setUsers((current) => current.map((item) => {
         if (item.uid !== user.uid) return item;
-        const nextHasAccess = Boolean(manualAccess || item.subscriptionHasAccess || item.isPlatformOwner);
+        const inheritsActiveStripe = item.inheritStripeStatus !== false && item.subscriptionHasAccess;
+        const nextHasAccess = Boolean(manualAccess || inheritsActiveStripe || item.isPlatformOwner);
         return {
           ...item,
           manualAccess,
           hasAccess: nextHasAccess,
-          accessSource: manualAccess ? 'manual' : item.subscriptionHasAccess ? 'stripe' : 'none',
+          accessSource: manualAccess ? 'manual' : inheritsActiveStripe ? 'stripe' : 'none',
           manualAccessUpdatedAt: new Date().toISOString(),
         };
       }));
     } catch (err) {
       console.error(err);
       setError(err?.message || 'Failed to update manual access.');
+    } finally {
+      setBusyUid('');
+    }
+  }
+
+  async function handleStripeInheritance(user, inheritStripeStatus) {
+    setBusyUid(user.uid);
+    setError('');
+    try {
+      await updateUserStripeInheritance(user.uid, inheritStripeStatus);
+      setUsers((current) => current.map((item) => {
+        if (item.uid !== user.uid) return item;
+        const inheritsActiveStripe = inheritStripeStatus && item.subscriptionHasAccess;
+        const nextHasAccess = Boolean(item.manualAccess || inheritsActiveStripe || item.isPlatformOwner);
+        return {
+          ...item,
+          inheritStripeStatus,
+          hasAccess: nextHasAccess,
+          accessSource: item.manualAccess ? 'manual' : inheritsActiveStripe ? 'stripe' : 'none',
+          stripeInheritanceUpdatedAt: new Date().toISOString(),
+        };
+      }));
+    } catch (err) {
+      console.error(err);
+      setError(err?.message || 'Failed to update Stripe inheritance.');
     } finally {
       setBusyUid('');
     }
@@ -230,7 +257,7 @@ function AdminDashboard() {
 
         <div className="overflow-hidden rounded-lg border border-line bg-white shadow-panel">
           <div className="overflow-x-auto">
-            <table className="min-w-[1180px] divide-y divide-line">
+            <table className="min-w-[1280px] divide-y divide-line">
               <thead className="bg-field">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-500">Member</th>
@@ -238,7 +265,7 @@ function AdminDashboard() {
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-500">Stripe</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-500">Subscription</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase text-slate-500">Dates</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase text-slate-500">Manual Override</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase text-slate-500">Access Controls</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-line bg-white">
@@ -246,6 +273,7 @@ function AdminDashboard() {
                   const access = accessState(user);
                   const hasEffectiveAccess = Boolean(user.hasAccess || user.isPlatformOwner);
                   const isBusy = busyUid === user.uid;
+                  const inheritsStripe = user.inheritStripeStatus !== false;
 
                   return (
                     <tr key={user.uid} className="align-top">
@@ -294,6 +322,9 @@ function AdminDashboard() {
                           <div className="text-xs text-slate-500">
                             Stripe access: <span className="font-semibold text-slate-700">{user.subscriptionHasAccess ? 'yes' : 'no'}</span>
                           </div>
+                          <div className="text-xs text-slate-500">
+                            Inherits Stripe: <span className="font-semibold text-slate-700">{inheritsStripe ? 'yes' : 'no'}</span>
+                          </div>
                           {user.subscriptionCancelAtPeriodEnd && (
                             <div className="text-xs font-semibold text-orange-700">Cancels at period end</div>
                           )}
@@ -309,24 +340,41 @@ function AdminDashboard() {
                         {user.isPlatformOwner ? (
                           <span className="text-sm font-semibold text-slate-400">Protected</span>
                         ) : (
-                          <div className="inline-flex rounded-md border border-line bg-white p-1">
+                          <div className="flex flex-col items-end gap-2">
                             <button
                               type="button"
-                              disabled={isBusy || user.manualAccess}
-                              onClick={() => handleManualOverride(user, true)}
-                              className="inline-flex h-9 items-center gap-2 rounded px-3 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-50 disabled:cursor-not-allowed disabled:bg-emerald-50 disabled:opacity-60"
+                              disabled={isBusy}
+                              onClick={() => handleStripeInheritance(user, !inheritsStripe)}
+                              className={`inline-flex h-9 min-w-[150px] items-center justify-between gap-3 rounded-md border px-3 text-xs font-semibold transition disabled:cursor-wait disabled:opacity-70 ${
+                                inheritsStripe
+                                  ? 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                                  : 'border-slate-200 bg-white text-slate-600 hover:bg-field'
+                              }`}
                             >
-                              {isBusy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <SlidersHorizontal className="h-3.5 w-3.5" />}
-                              Allow
+                              <span>{isBusy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : 'Inherit Stripe'}</span>
+                              <span className={`h-5 w-9 rounded-full p-0.5 transition ${inheritsStripe ? 'bg-emerald-600' : 'bg-slate-300'}`}>
+                                <span className={`block h-4 w-4 rounded-full bg-white transition ${inheritsStripe ? 'translate-x-4' : 'translate-x-0'}`} />
+                              </span>
                             </button>
-                            <button
-                              type="button"
-                              disabled={isBusy || !user.manualAccess}
-                              onClick={() => handleManualOverride(user, false)}
-                              className="inline-flex h-9 items-center gap-2 rounded px-3 text-xs font-semibold text-red-700 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
-                            >
-                              Remove
-                            </button>
+                            <div className="inline-flex rounded-md border border-line bg-white p-1">
+                              <button
+                                type="button"
+                                disabled={isBusy || user.manualAccess}
+                                onClick={() => handleManualOverride(user, true)}
+                                className="inline-flex h-9 items-center gap-2 rounded px-3 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-50 disabled:cursor-not-allowed disabled:bg-emerald-50 disabled:opacity-60"
+                              >
+                                {isBusy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <SlidersHorizontal className="h-3.5 w-3.5" />}
+                                Allow
+                              </button>
+                              <button
+                                type="button"
+                                disabled={isBusy || !user.manualAccess}
+                                onClick={() => handleManualOverride(user, false)}
+                                className="inline-flex h-9 items-center gap-2 rounded px-3 text-xs font-semibold text-red-700 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
+                              >
+                                Remove
+                              </button>
+                            </div>
                           </div>
                         )}
                       </td>

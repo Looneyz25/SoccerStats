@@ -2,8 +2,6 @@ const admin = require('firebase-admin');
 const { onRequest } = require('firebase-functions/v2/https');
 const Stripe = require('stripe');
 
-const PRO_PRICE_ID = process.env.STRIPE_PRO_PRICE_ID || 'price_1TXpTJBbsFy1wAkF64nFdG26';
-const PRO_PLAN_NAME = 'Soccer Stats Pro';
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || 'https://lvrstats.com';
 
 admin.initializeApp();
@@ -73,19 +71,22 @@ async function syncSubscription(subscription) {
   }
 
   const priceId = subscriptionPriceId(subscription);
-  const hasSubscriptionAccess = priceId === PRO_PRICE_ID && subscriptionHasAccess(subscription.status);
+  const hasSubscriptionAccess = subscriptionHasAccess(subscription.status);
   const userSnap = await userRef.get();
   const profile = userSnap.exists ? userSnap.data() : {};
   const hasLegacyManualAccess = profile.hasAccess === true && !String(profile.accessSource || '').startsWith('stripe');
   const hasManualAccess = Boolean(profile.manualAccess || profile.isPlatformOwner || hasLegacyManualAccess);
+  const inheritStripeStatus = profile.inheritStripeStatus !== false;
+  const inheritsActiveStripe = inheritStripeStatus && hasSubscriptionAccess;
   const periodEnd = subscription.current_period_end
     ? new Date(subscription.current_period_end * 1000).toISOString()
     : null;
 
   await userRef.set({
-    hasAccess: hasManualAccess || hasSubscriptionAccess,
+    hasAccess: hasManualAccess || inheritsActiveStripe,
+    inheritStripeStatus,
     subscriptionHasAccess: hasSubscriptionAccess,
-    accessSource: hasManualAccess ? 'manual' : hasSubscriptionAccess ? 'stripe' : 'stripe_inactive',
+    accessSource: hasManualAccess ? 'manual' : inheritsActiveStripe ? 'stripe' : hasSubscriptionAccess ? 'stripe_not_inherited' : 'stripe_inactive',
     stripeCustomerId: typeof subscription.customer === 'string' ? subscription.customer : subscription.customer?.id || null,
     stripeSubscriptionId: subscription.id,
     stripePriceId: priceId,
@@ -109,8 +110,7 @@ async function syncCheckoutSession(session) {
   }, { merge: true });
 }
 
-async function createCheckout(req, res) {
-  const decoded = await verifyUser(req);
+async function getOrCreateCustomer(decoded) {
   const db = admin.firestore();
   const userRef = db.collection('users').doc(decoded.uid);
   const userSnap = await userRef.get();
@@ -133,41 +133,19 @@ async function createCheckout(req, res) {
     }, { merge: true });
   }
 
-  const session = await stripe().checkout.sessions.create({
-    mode: 'subscription',
-    customer: customerId,
-    line_items: [{ price: PRO_PRICE_ID, quantity: 1 }],
-    allow_promotion_codes: true,
-    client_reference_id: decoded.uid,
-    customer_update: { name: 'auto' },
-    metadata: {
-      firebaseUid: decoded.uid,
-      plan: PRO_PLAN_NAME,
-    },
-    subscription_data: {
-      metadata: {
-        firebaseUid: decoded.uid,
-        plan: PRO_PLAN_NAME,
-      },
-    },
-    success_url: `${APP_URL}/dashboard?checkout=success`,
-    cancel_url: `${APP_URL}/dashboard?checkout=cancelled`,
-  });
+  return customerId;
+}
 
-  sendJson(res, 200, { url: session.url });
+async function createCheckout(req, res) {
+  return createPortal(req, res);
 }
 
 async function createPortal(req, res) {
   const decoded = await verifyUser(req);
-  const userSnap = await admin.firestore().collection('users').doc(decoded.uid).get();
-  const profile = userSnap.exists ? userSnap.data() : {};
-
-  if (!profile.stripeCustomerId) {
-    return sendJson(res, 404, { error: 'No Stripe customer is linked to this account yet.' });
-  }
+  const customerId = await getOrCreateCustomer(decoded);
 
   const session = await stripe().billingPortal.sessions.create({
-    customer: profile.stripeCustomerId,
+    customer: customerId,
     return_url: `${APP_URL}/dashboard`,
   });
 
@@ -212,7 +190,7 @@ async function webhook(req, res) {
 
 exports.stripeApi = onRequest({
   region: 'australia-southeast1',
-  secrets: ['STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET', 'STRIPE_PRO_PRICE_ID'],
+  secrets: ['STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET'],
 }, async (req, res) => {
   try {
     const routePath = req.path || req.url || '';

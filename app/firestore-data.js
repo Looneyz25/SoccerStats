@@ -48,6 +48,7 @@ export async function createUserProfile(user) {
     displayName: user.displayName || '',
     isPlatformOwner: isPlatformOwner,
     manualAccess: false,
+    inheritStripeStatus: true,
     subscriptionHasAccess: false,
     hasAccess: isPlatformOwner,
     accessSource: isPlatformOwner ? 'owner' : 'none',
@@ -80,10 +81,28 @@ export async function updateUserManualAccess(uid, manualAccess) {
   const userRef = doc(db, 'users', uid);
   const current = await getDoc(userRef);
   const data = current.exists() ? current.data() : {};
+  const inheritStripeStatus = data.inheritStripeStatus !== false;
+  const inheritsActiveStripe = inheritStripeStatus && data.subscriptionHasAccess;
   await updateDoc(userRef, {
     manualAccess,
-    hasAccess: Boolean(manualAccess || data.subscriptionHasAccess || data.isPlatformOwner),
-    accessSource: manualAccess ? 'manual' : data.subscriptionHasAccess ? 'stripe' : 'none',
+    hasAccess: Boolean(manualAccess || inheritsActiveStripe || data.isPlatformOwner),
+    accessSource: manualAccess ? 'manual' : inheritsActiveStripe ? 'stripe' : 'none',
     manualAccessUpdatedAt: new Date().toISOString()
+  });
+}
+
+export async function updateUserStripeInheritance(uid, inheritStripeStatus) {
+  const db = getFirebaseDb();
+  const userRef = doc(db, 'users', uid);
+  const current = await getDoc(userRef);
+  const data = current.exists() ? current.data() : {};
+  const inheritsActiveStripe = inheritStripeStatus && data.subscriptionHasAccess;
+  const hasAccess = Boolean(data.manualAccess || inheritsActiveStripe || data.isPlatformOwner);
+
+  await updateDoc(userRef, {
+    inheritStripeStatus,
+    hasAccess,
+    accessSource: data.manualAccess ? 'manual' : inheritsActiveStripe ? 'stripe' : 'none',
+    stripeInheritanceUpdatedAt: new Date().toISOString()
   });
 }
