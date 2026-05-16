@@ -14,13 +14,13 @@ Timezone: Australia/Adelaide
 | needs_settlement | 0 |
 | blocked_or_invalid | 0 |
 | source_issues | 0 |
-| next_action | Set API_FOOTBALL_KEY or APISPORTS_KEY before run_daily for live Phase 1 collection. |
+| next_action | Set API_FOOTBALL_KEY/APISPORTS_KEY for richer Phase 1 collection; TheSportsDB free API is available as fallback. |
 
 ## Source Health
 
 | Source | Endpoint | Date | League | Health | Records | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
-| Flashscore | https://2.flashscore.ninja/2/x/feed/f_1_0_3_en-uk_1 | 2026-05-16 to 2026-05-17 | listed leagues | healthy | 8 | events=1428 league_hit=10 skipped_women=2 out_of_window=0 matched=8 by_league={&#x27;Bundesliga&#x27;: 7, &#x27;MLS&#x27;: 1} sample_leagues=[&#x27;Africa|AFRICA: CAF Confederation |
+| Flashscore | https://2.flashscore.ninja/2/x/feed/f_1_0_3_en-uk_1 | 2026-05-16 to 2026-05-17 | listed leagues | healthy | 8 | events=1431 league_hit=10 skipped_women=2 out_of_window=0 matched=8 by_league={&#x27;Bundesliga&#x27;: 7, &#x27;MLS&#x27;: 1} sample_leagues=[&#x27;Africa|AFRICA: CAF Confederation |
 
 ## Fixtures
 
