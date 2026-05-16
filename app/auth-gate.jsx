@@ -14,6 +14,7 @@ import { Loader2, LockKeyhole, LogIn, Mail, ShieldCheck } from 'lucide-react';
 import { getFirebaseAuth, googleProvider } from './firebase';
 
 const AUTH_RETURN_PATH_KEY = 'looneyz-auth-return-path';
+const AUTH_GOOGLE_PENDING_KEY = 'looneyz-google-sign-in-pending';
 
 function currentReturnPath() {
   if (typeof window === 'undefined') return '/dashboard/';
@@ -49,6 +50,15 @@ function authErrorMessage(error) {
   if (code.includes('auth/popup-redirect-cancelled')) return 'Google sign-in was interrupted. Try again.';
   if (code.includes('auth/operation-not-allowed')) {
     return 'This sign-in method is not enabled in Firebase Authentication yet.';
+  }
+  if (code.includes('auth/unauthorized-domain')) {
+    return 'This domain is not authorized in Firebase Authentication.';
+  }
+  if (code.includes('auth/web-storage-unsupported')) {
+    return 'This browser is blocking the storage Firebase needs for Google sign-in.';
+  }
+  if (code.includes('auth/network-request-failed')) {
+    return 'Firebase Auth could not be reached from this browser.';
   }
   return error?.message || 'Sign-in failed. Try again.';
 }
@@ -91,15 +101,27 @@ export default function AuthGate({ children }) {
   }, [auth]);
 
   useEffect(() => {
+    setMessage('Finishing Google sign-in...');
     getRedirectResult(auth)
       .then((result) => {
-        if (!result?.user) return;
+        const hadPendingGoogle = window.sessionStorage.getItem(AUTH_GOOGLE_PENDING_KEY) === '1';
+        window.sessionStorage.removeItem(AUTH_GOOGLE_PENDING_KEY);
+        if (!result?.user) {
+          if (hadPendingGoogle) {
+            setReady(true);
+            setError('Google sign-in returned without creating a Firebase user. Try the live Firebase URL or a normal browser window.');
+          }
+          setMessage('');
+          return;
+        }
         setUser(result.user);
         setReady(true);
         restoreReturnPath();
       })
       .catch((redirectError) => {
+        setReady(true);
         setError(authErrorMessage(redirectError));
+        setMessage('');
       });
   }, [auth]);
 
@@ -131,9 +153,11 @@ export default function AuthGate({ children }) {
     setError('');
     setMessage('Opening Google sign-in...');
     rememberReturnPath();
+    window.sessionStorage.setItem(AUTH_GOOGLE_PENDING_KEY, '1');
     try {
       await signInWithRedirect(auth, googleProvider);
     } catch (googleError) {
+      window.sessionStorage.removeItem(AUTH_GOOGLE_PENDING_KEY);
       setError(authErrorMessage(googleError));
       setMessage('');
       setBusy(false);
