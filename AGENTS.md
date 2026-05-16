@@ -47,4 +47,5 @@ npm run build && npx firebase-tools deploy --only hosting --project sports-predi
 - Stripe Product ID: `prod_UWtFiyWb2LoEy0` (Soccer Stats Pro, A$19.99/month)
 - Stripe Price ID is hardcoded in `functions/index.js` for Checkout: `price_1TXpTJBbsFy1wAkF64nFdG26`.
 - Checkout starts new subscriptions with a 7-day free trial and no upfront payment requirement.
+- Stripe webhooks and `/api/stripe/sync-subscription` both sync trialing/active/cancelled subscription status into Firestore.
 - Never hardcode Stripe keys in source. Add new public vars to `apphosting.yaml`, sensitive vars to Secret Manager.

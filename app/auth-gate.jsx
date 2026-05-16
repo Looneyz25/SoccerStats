@@ -116,9 +116,26 @@ export default function AuthGate({ children }) {
   useEffect(() => {
     if (!user) return;
     let active = true;
+    async function syncStripeAfterCheckout() {
+      if (typeof window === 'undefined') return;
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('checkout') !== 'success') return;
+
+      const token = await user.getIdToken(true);
+      const response = await fetch('/api/stripe/sync-subscription', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(payload.error || 'Stripe subscription could not be synced.');
+      }
+    }
+
     async function loadProfile() {
       setCheckingAccess(true);
       try {
+        await syncStripeAfterCheckout();
         let p = await getUserProfile(user.uid);
         if (!p) p = await createUserProfile(user);
         if (active) setProfile(p);

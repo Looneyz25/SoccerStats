@@ -77,6 +77,8 @@ Listen for:
 - `invoice.payment_succeeded`
 - `invoice.payment_failed`
 
+The app also calls `/api/stripe/sync-subscription` after Checkout returns with `?checkout=success`, so trial access updates immediately even if the webhook is still processing.
+
 Then add both Stripe secrets to Firebase and deploy:
 
 ```powershell

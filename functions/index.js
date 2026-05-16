@@ -111,6 +111,12 @@ async function syncCheckoutSession(session) {
     stripeSubscriptionId: typeof session.subscription === 'string' ? session.subscription : session.subscription?.id || null,
     checkoutCompletedAt: admin.firestore.FieldValue.serverTimestamp(),
   }, { merge: true });
+
+  if (session.subscription) {
+    const subscriptionId = typeof session.subscription === 'string' ? session.subscription : session.subscription.id;
+    const subscription = await stripe().subscriptions.retrieve(subscriptionId);
+    await syncSubscription(subscription);
+  }
 }
 
 async function getOrCreateCustomer(decoded) {
@@ -186,6 +192,45 @@ async function createPortal(req, res) {
   return sendJson(res, 200, { url: session.url });
 }
 
+async function syncCurrentSubscription(req, res) {
+  const decoded = await verifyUser(req);
+  const userRef = admin.firestore().collection('users').doc(decoded.uid);
+  const userSnap = await userRef.get();
+  const profile = userSnap.exists ? userSnap.data() : {};
+
+  if (!profile.stripeCustomerId) {
+    return sendJson(res, 200, { synced: false, reason: 'No Stripe customer linked.' });
+  }
+
+  const subscriptions = await stripe().subscriptions.list({
+    customer: profile.stripeCustomerId,
+    status: 'all',
+    limit: 10,
+  });
+
+  const relevant = subscriptions.data
+    .filter((subscription) => subscriptionPriceId(subscription) === PRO_PRICE_ID)
+    .sort((a, b) => (b.created || 0) - (a.created || 0))[0];
+
+  if (!relevant) {
+    await userRef.set({
+      subscriptionHasAccess: false,
+      hasAccess: Boolean(profile.manualAccess || profile.isPlatformOwner),
+      accessSource: profile.manualAccess ? 'manual' : profile.isPlatformOwner ? 'owner' : 'stripe_inactive',
+      subscriptionStatus: 'none',
+      subscriptionUpdatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true });
+    return sendJson(res, 200, { synced: false, reason: 'No Soccer Stats Pro subscription found.' });
+  }
+
+  await syncSubscription(relevant);
+  return sendJson(res, 200, {
+    synced: true,
+    subscriptionStatus: relevant.status,
+    subscriptionId: relevant.id,
+  });
+}
+
 async function webhook(req, res) {
   if (!process.env.STRIPE_WEBHOOK_SECRET) {
     return sendJson(res, 500, { error: 'STRIPE_WEBHOOK_SECRET is not configured.' });
@@ -233,6 +278,9 @@ exports.stripeApi = onRequest({
     }
     if (req.method === 'POST' && routePath.endsWith('/create-portal')) {
       return await createPortal(req, res);
+    }
+    if (req.method === 'POST' && routePath.endsWith('/sync-subscription')) {
+      return await syncCurrentSubscription(req, res);
     }
     if (req.method === 'POST' && routePath.endsWith('/webhook')) {
       return await webhook(req, res);
