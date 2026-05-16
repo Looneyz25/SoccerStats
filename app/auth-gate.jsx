@@ -14,6 +14,29 @@ import {
 import { Loader2, LockKeyhole, LogIn, Mail, ShieldCheck } from 'lucide-react';
 import { getFirebaseAuth, googleProvider } from './firebase';
 
+const AUTH_RETURN_PATH_KEY = 'looneyz-auth-return-path';
+
+function currentReturnPath() {
+  if (typeof window === 'undefined') return '/dashboard/';
+  return `${window.location.pathname}${window.location.search}${window.location.hash}` || '/dashboard/';
+}
+
+function rememberReturnPath() {
+  if (typeof window === 'undefined') return;
+  window.sessionStorage.setItem(AUTH_RETURN_PATH_KEY, currentReturnPath());
+}
+
+function restoreReturnPath() {
+  if (typeof window === 'undefined') return;
+  const fallbackPath = '/dashboard/';
+  const savedPath = window.sessionStorage.getItem(AUTH_RETURN_PATH_KEY) || fallbackPath;
+  window.sessionStorage.removeItem(AUTH_RETURN_PATH_KEY);
+  const safePath = savedPath.startsWith('/') ? savedPath : fallbackPath;
+  if (safePath !== currentReturnPath()) {
+    window.location.replace(safePath);
+  }
+}
+
 function authErrorMessage(error) {
   const code = error?.code || '';
   if (code.includes('auth/invalid-credential') || code.includes('auth/wrong-password')) {
@@ -55,6 +78,7 @@ export default function AuthGate({ children }) {
       window.clearTimeout(fallback);
       setUser(nextUser);
       setReady(true);
+      if (nextUser) restoreReturnPath();
     });
 
     return () => {
@@ -75,6 +99,7 @@ export default function AuthGate({ children }) {
     setBusy(true);
     setError('');
     setMessage('');
+    rememberReturnPath();
     try {
       if (mode === 'create') {
         await createUserWithEmailAndPassword(auth, email.trim(), password);
@@ -92,6 +117,7 @@ export default function AuthGate({ children }) {
     setBusy(true);
     setError('');
     setMessage('');
+    rememberReturnPath();
     try {
       await signInWithPopup(auth, googleProvider);
     } catch (googleError) {
