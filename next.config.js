@@ -6,8 +6,8 @@ const isStaticExport = process.env.NEXT_BUILD === 'prod' && !isFirebaseAppHostin
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  distDir: isStaticExport ? '.next-build' : '.next',
-  output: isStaticExport ? 'export' : undefined,
+  distDir: '.next',
+  output: isStaticExport ? 'export' : isFirebaseAppHosting ? 'standalone' : undefined,
   trailingSlash: isStaticExport,
   devIndicators: false,
   experimental: {
