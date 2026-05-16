@@ -92,9 +92,16 @@ export default function AuthGate({ children }) {
   }, [auth]);
 
   useEffect(() => {
-    getRedirectResult(auth).catch((redirectError) => {
-      setError(authErrorMessage(redirectError));
-    });
+    getRedirectResult(auth)
+      .then((result) => {
+        if (!result?.user) return;
+        setUser(result.user);
+        setReady(true);
+        restoreReturnPath();
+      })
+      .catch((redirectError) => {
+        setError(authErrorMessage(redirectError));
+      });
   }, [auth]);
 
   async function handleSubmit(event) {
@@ -104,11 +111,15 @@ export default function AuthGate({ children }) {
     setMessage('');
     rememberReturnPath();
     try {
+      let credential;
       if (mode === 'create') {
-        await createUserWithEmailAndPassword(auth, email.trim(), password);
+        credential = await createUserWithEmailAndPassword(auth, email.trim(), password);
       } else {
-        await signInWithEmailAndPassword(auth, email.trim(), password);
+        credential = await signInWithEmailAndPassword(auth, email.trim(), password);
       }
+      setUser(credential.user);
+      setReady(true);
+      restoreReturnPath();
     } catch (submitError) {
       setError(authErrorMessage(submitError));
     } finally {
@@ -122,7 +133,10 @@ export default function AuthGate({ children }) {
     setMessage('');
     rememberReturnPath();
     try {
-      await signInWithPopup(auth, googleProvider);
+      const credential = await signInWithPopup(auth, googleProvider);
+      setUser(credential.user);
+      setReady(true);
+      restoreReturnPath();
     } catch (googleError) {
       const code = googleError?.code || '';
       if (
