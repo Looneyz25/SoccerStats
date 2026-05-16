@@ -1,9 +1,9 @@
-name: Soccer Stats Routine
+name: Soccer Stats Fixtures and Results
 
 on:
   schedule:
-    # Every 3 hours, on the hour UTC: 00, 03, 06, 09, 12, 15, 18, 21
-    # In Adelaide (ACST UTC+9:30): 09:30, 12:30, 15:30, 18:30, 21:30, 00:30, 03:30, 06:30
+    # Every 3 hours. In Adelaide this gives regular fixture refreshes and
+    # result settlement across the day without hammering the upstream APIs.
     - cron: '0 */3 * * *'
   workflow_dispatch: {}
 
@@ -19,7 +19,7 @@ jobs:
     # Self-hosted runner on the user's PC. SofaScore blocks GitHub-hosted (Azure
     # datacenter) IPs at the Cloudflare layer, so we use the home IP instead.
     runs-on: [self-hosted, Windows]
-    timeout-minutes: 15
+    timeout-minutes: 60
     defaults:
       run:
         # PowerShell 5.1 with execution policy bypass so the runner's temp .ps1 files run.
@@ -42,7 +42,7 @@ jobs:
           python -c "import sys; assert sys.version_info >= (3, 9), 'need Python 3.9+'"
 
       - name: Install dependencies
-        run: python -m pip install --quiet --upgrade pip curl_cffi
+        run: python -m pip install --quiet --upgrade pip curl_cffi tzdata
 
       - name: Snapshot match_data.json before run
         id: pre
@@ -56,7 +56,9 @@ jobs:
 
       - name: Run the master soccer routine
         run: |
+          Write-Host "Collecting fixture slate"
           python scripts/soccer_phase1_fixtures.py
+          Write-Host "Settling results and refreshing forecasts"
           python scripts/soccer_routine.py
 
       - name: Verify routine actually changed data
@@ -80,7 +82,9 @@ jobs:
         run: |
           git config user.name  "soccer-stats-bot"
           git config user.email "actions@github.com"
-          git add match_data.json "predictions_*.json" "predictions_*.md" scripts/ docs/ 2>$null
+          git add match_data.json team_elo.json scripts/ docs/
+          Get-ChildItem -Path . -Filter "predictions_*.json" | ForEach-Object { git add $_.FullName }
+          Get-ChildItem -Path . -Filter "predictions_*.md" | ForEach-Object { git add $_.FullName }
           git diff --cached --quiet
           if ($LASTEXITCODE -eq 0) {
             Write-Host "No changes to commit"
