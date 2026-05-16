@@ -14,8 +14,8 @@ import {
   Clock3,
   Filter,
   Goal,
-  ExternalLink,
   MapPin,
+  Settings,
   Shield,
   Trophy,
   UserRound,
@@ -42,31 +42,36 @@ const BOOKMAKERS = {
     id: 'sportsbet',
     name: 'Sportsbet',
     entryUrl: 'https://www.sportsbet.com.au/betting/soccer',
-    buttonClass: 'border-[#008542] bg-[#008542] text-white hover:border-[#006f36] hover:bg-[#006f36]',
+    logoSrc: '/bookmakers/sportsbet.svg',
+    buttonClass: 'border-[#0078be] bg-[#0078be] hover:border-[#0066a3] hover:bg-[#0066a3]',
   },
   bet365: {
     id: 'bet365',
     name: 'bet365',
     entryUrl: 'https://www.bet365.com.au/hub/en-au/sports-betting',
-    buttonClass: 'border-[#126e51] bg-[#126e51] text-white hover:border-[#0f5a43] hover:bg-[#0f5a43]',
+    logoSrc: '/bookmakers/bet365.svg',
+    buttonClass: 'border-[#027b5b] bg-[#027b5b] hover:border-[#02694d] hover:bg-[#02694d]',
   },
   tab: {
     id: 'tab',
     name: 'TAB',
     entryUrl: 'https://www.tab.com.au/sports/betting/Soccer',
-    buttonClass: 'border-[#005eb8] bg-[#005eb8] text-white hover:border-[#004b93] hover:bg-[#004b93]',
+    logoSrc: '/bookmakers/tab.svg',
+    buttonClass: 'border-[#004c4f] bg-[#004c4f] hover:border-[#003f42] hover:bg-[#003f42]',
   },
   ladbrokes: {
     id: 'ladbrokes',
     name: 'Ladbrokes',
     entryUrl: 'https://www.ladbrokes.com.au/sports/soccer',
-    buttonClass: 'border-[#e30613] bg-[#e30613] text-white hover:border-[#bd0510] hover:bg-[#bd0510]',
+    logoSrc: '/bookmakers/ladbrokes.svg',
+    buttonClass: 'border-[#d71920] bg-[#d71920] hover:border-[#b9151b] hover:bg-[#b9151b]',
   },
   neds: {
     id: 'neds',
     name: 'Neds',
     entryUrl: 'https://www.neds.com.au/sports/soccer',
-    buttonClass: 'border-[#ff6900] bg-[#ff6900] text-white hover:border-[#d95a00] hover:bg-[#d95a00]',
+    logoSrc: '/bookmakers/neds.svg',
+    buttonClass: 'border-[#ff5a00] bg-[#ff5a00] hover:border-[#d95a00] hover:bg-[#d95a00]',
   },
 };
 
@@ -95,8 +100,23 @@ function sportsbetEventUrl(match) {
 
 function bookmakerUrl(match, bookmakerId) {
   const bookmaker = BOOKMAKERS[bookmakerId] || BOOKMAKERS.sportsbet;
+  const eventUrl =
+    match.bookmaker_links?.[bookmaker.id] ||
+    match.bookmaker_urls?.[bookmaker.id] ||
+    match[`${bookmaker.id}_odds`]?.event_url;
+  if (eventUrl) return eventUrl;
   if (bookmaker.id === 'sportsbet') return sportsbetEventUrl(match) || bookmaker.entryUrl;
   return bookmaker.entryUrl;
+}
+
+function hasDirectBookmakerMatchLink(match, bookmakerId) {
+  const bookmaker = BOOKMAKERS[bookmakerId] || BOOKMAKERS.sportsbet;
+  return Boolean(
+    match.bookmaker_links?.[bookmaker.id] ||
+      match.bookmaker_urls?.[bookmaker.id] ||
+      match[`${bookmaker.id}_odds`]?.event_url ||
+      (bookmaker.id === 'sportsbet' && sportsbetEventUrl(match)),
+  );
 }
 
 function statusClass(status) {
@@ -589,12 +609,78 @@ function BookmakerLink({ bookmakerId, href, label }) {
       href={href}
       target="_blank"
       rel="noreferrer"
-      className={`inline-flex h-11 w-full items-center justify-center gap-2 rounded-md border px-5 text-sm font-semibold shadow-panel transition sm:w-auto ${bookmaker.buttonClass}`}
+      className={`inline-flex h-11 w-full items-center justify-center gap-2 rounded-md border px-5 text-sm font-semibold shadow-panel transition sm:w-52 ${bookmaker.buttonClass}`}
       aria-label={`Open this market on ${bookmaker.name}`}
     >
-      <span>{label}</span>
-      <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+      {bookmaker.logoSrc ? (
+        <>
+          <img src={bookmaker.logoSrc} alt="" className="h-8 w-auto max-w-36" aria-hidden="true" />
+          <span className="sr-only">{label}</span>
+        </>
+      ) : (
+        <span>{label}</span>
+      )}
     </a>
+  );
+}
+
+function BookmakerSelect({ value, onChange, compact = false }) {
+  return (
+    <select
+      value={value}
+      onChange={(event) => onChange(event.target.value)}
+      className={`rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink shadow-panel ${
+        compact ? 'h-10' : 'h-11'
+      }`}
+      aria-label="Bookmaker"
+    >
+      {BOOKMAKER_OPTIONS.map((bookmaker) => (
+        <option key={bookmaker.id} value={bookmaker.id}>
+          {bookmaker.name}
+        </option>
+      ))}
+    </select>
+  );
+}
+
+function SettingsView({ bookmakerId, onBookmakerChange, onBack }) {
+  const selectedBookmaker = BOOKMAKERS[bookmakerId] || BOOKMAKERS.sportsbet;
+
+  return (
+    <main className="min-h-screen bg-field">
+      <header className="border-b border-line bg-white">
+        <div className="mx-auto flex max-w-3xl items-start gap-3 px-3 py-3 sm:px-5 sm:py-4">
+          <button
+            type="button"
+            onClick={onBack}
+            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-line text-slate-600 hover:bg-field"
+            aria-label="Back to matches"
+          >
+            <ArrowLeft className="h-5 w-5" aria-hidden="true" />
+          </button>
+          <div className="min-w-0">
+            <h1 className="text-xl font-semibold text-ink">Settings</h1>
+            <p className="mt-1 text-sm text-slate-500">Choose the default bookmaker used across match cards.</p>
+          </div>
+        </div>
+      </header>
+
+      <section className="mx-auto max-w-3xl px-3 py-4 sm:px-5 sm:py-5">
+        <div className="rounded-lg border border-slate-300 bg-white p-4 shadow-panel">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-base font-semibold text-ink">Default bookmaker</h2>
+              <p className="mt-1 text-sm text-slate-500">Current choice: {selectedBookmaker.name}</p>
+            </div>
+            <BookmakerSelect value={selectedBookmaker.id} onChange={onBookmakerChange} />
+          </div>
+
+          <div className="mt-4 rounded-md border border-line bg-field p-3 text-sm text-slate-600">
+            Sportsbet opens direct match pages when the Sportsbet event ID is available. Other bookmakers will open their soccer page unless their direct event URL is added to the match data.
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }
 
@@ -771,18 +857,7 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
 
         {selectedBookmakerHref && (
           <div className="flex flex-col items-stretch justify-center gap-2 sm:flex-row sm:items-center">
-            <select
-              value={selectedBookmaker.id}
-              onChange={(event) => onBookmakerChange(event.target.value)}
-              className="h-11 rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink shadow-panel"
-              aria-label="Bookmaker"
-            >
-              {BOOKMAKER_OPTIONS.map((bookmaker) => (
-                <option key={bookmaker.id} value={bookmaker.id}>
-                  {bookmaker.name}
-                </option>
-              ))}
-            </select>
+            <BookmakerSelect value={selectedBookmaker.id} onChange={onBookmakerChange} />
             <BookmakerLink bookmakerId={selectedBookmaker.id} href={selectedBookmakerHref} label={bookmakerButtonLabel} />
           </div>
         )}
@@ -840,10 +915,12 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
   );
 }
 
-function MatchCard({ match, onSelect }) {
+function MatchCard({ match, onSelect, bookmakerId }) {
   const predictions = match.predictions || {};
   const odds = match.sportsbet_odds || match.odds || {};
   const actuals = match.actuals || {};
+  const selectedBookmaker = BOOKMAKERS[bookmakerId] || BOOKMAKERS.sportsbet;
+  const hasDirectBookmakerLink = hasDirectBookmakerMatchLink(match, selectedBookmaker.id);
 
   return (
     <article className="rounded-lg border border-line bg-white shadow-panel transition active:scale-[0.99] sm:hover:-translate-y-0.5 sm:hover:border-slate-300 sm:hover:shadow-lg">
@@ -906,6 +983,12 @@ function MatchCard({ match, onSelect }) {
           </div>
         </div>
 
+        <div className="mt-3 flex justify-center">
+          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${hasDirectBookmakerLink ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600'}`}>
+            {selectedBookmaker.name}
+          </span>
+        </div>
+
         {match.status === 'FT' && (
           <div className="mt-4 flex flex-wrap gap-2 text-xs text-slate-600">
             {'corners_total' in actuals && <span className="rounded bg-field px-2 py-1">Corners {actuals.corners_total}</span>}
@@ -919,7 +1002,7 @@ function MatchCard({ match, onSelect }) {
   );
 }
 
-function LeagueSection({ group, onSelectMatch }) {
+function LeagueSection({ group, onSelectMatch, bookmakerId }) {
   const finished = group.matches.filter((match) => match.status === 'FT').length;
   const upcoming = group.matches.length - finished;
 
@@ -938,7 +1021,7 @@ function LeagueSection({ group, onSelectMatch }) {
       </div>
       <div className="grid grid-cols-1 gap-3 bg-field p-2 sm:gap-4 sm:p-4 lg:grid-cols-2">
         {group.matches.map((match) => (
-          <MatchCard key={`${match.league}-${match.id}`} match={match} onSelect={onSelectMatch} />
+          <MatchCard key={`${match.league}-${match.id}`} match={match} onSelect={onSelectMatch} bookmakerId={bookmakerId} />
         ))}
       </div>
     </section>
@@ -949,6 +1032,7 @@ function HomeInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const matchParam = searchParams.get('match');
+  const isSettingsView = searchParams.get('view') === 'settings';
 
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
@@ -1042,11 +1126,26 @@ function HomeInner() {
     (match) => {
       scrollPositionRef.current = typeof window !== 'undefined' ? window.scrollY : 0;
       const params = new URLSearchParams(searchParams.toString());
+      params.delete('view');
       params.set('match', String(match.id));
       router.push(`?${params.toString()}`, { scroll: false });
     },
     [router, searchParams],
   );
+
+  const openSettings = useCallback(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('match');
+    params.set('view', 'settings');
+    router.push(`?${params.toString()}`, { scroll: false });
+  }, [router, searchParams]);
+
+  const closeSettings = useCallback(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('view');
+    const next = params.toString();
+    router.push(next ? `?${next}` : '/', { scroll: false });
+  }, [router, searchParams]);
 
   const handleBack = useCallback(() => {
     router.back();
@@ -1115,10 +1214,15 @@ function HomeInner() {
     );
   }
 
+  if (isSettingsView) {
+    return <SettingsView bookmakerId={bookmakerId} onBookmakerChange={handleBookmakerChange} onBack={closeSettings} />;
+  }
+
   return (
     <main className="min-h-screen bg-field">
       <header className="border-b border-line bg-white">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-3 py-4 sm:px-6 sm:py-5 lg:px-8">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
             <h1 className="text-xl font-semibold text-ink sm:text-2xl">Lonny&apos;s Predictions</h1>
             <p className="mt-1 text-sm text-slate-500">
@@ -1129,6 +1233,15 @@ function HomeInner() {
                 Last updated {formatDateDMY(data.captured_at)}
               </p>
             )}
+          </div>
+          <button
+            type="button"
+            onClick={openSettings}
+            className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink shadow-panel hover:bg-field sm:w-auto"
+          >
+            <Settings className="h-4 w-4" aria-hidden="true" />
+            Settings
+          </button>
           </div>
         </div>
       </header>
@@ -1231,7 +1344,12 @@ function HomeInner() {
             className={`space-y-4 sm:space-y-5 ${slideDir > 0 ? 'date-slide-next' : slideDir < 0 ? 'date-slide-prev' : ''}`}
           >
           {groupedMatches.map((group) => (
-            <LeagueSection key={group.leagueId || group.league} group={group} onSelectMatch={handleSelectMatch} />
+            <LeagueSection
+              key={group.leagueId || group.league}
+              group={group}
+              onSelectMatch={handleSelectMatch}
+              bookmakerId={bookmakerId}
+            />
           ))}
 
           {!error && filtered.length === 0 && (

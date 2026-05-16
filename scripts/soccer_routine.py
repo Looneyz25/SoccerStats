@@ -904,6 +904,9 @@ def main():
     print("\n[Phase B.5] sportsbet odds")
     run_helper("soccer_fetch_sportsbet.py")
 
+    print("\n[Phase B.5a] bookmaker direct links")
+    run_helper("soccer_fetch_bookmaker_links.py")
+
     print("\n[Phase B.6] streak odds")
     run_helper("soccer_enrich_streak_odds.py")
 

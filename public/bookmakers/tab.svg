@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 76" role="img" aria-label="TAB">
+  <rect width="96" height="76" fill="#004c4f"/>
+  <path d="M18 24 78 12v44L18 64V24Z" fill="#2ee66b"/>
+  <text
+    x="47"
+    y="49"
+    text-anchor="middle"
+    font-family="Arial Black, Arial, Helvetica, sans-serif"
+    font-size="28"
+    font-weight="900"
+    fill="#004c4f"
+  >TAB</text>
+</svg>
