@@ -9,10 +9,42 @@ The frontend lives in [app/page.jsx](app/page.jsx) (App Router) with Tailwind st
 | Task | File / area |
 |---|---|
 | UI / layout / styles | [app/page.jsx](app/page.jsx), [app/globals.css](app/globals.css), [app/layout.jsx](app/layout.jsx) |
+| Auth / subscription gate | [app/auth-gate.jsx](app/auth-gate.jsx) |
+| Stripe backend logic | [functions/index.js](functions/index.js) |
+| Stripe API proxy routes | [app/api/stripe/](app/api/stripe/) |
 | Data pipeline / settlement / forecasts | [scripts/soccer_routine.py](scripts/soccer_routine.py) |
 | Match data source of truth | [match_data.json](match_data.json) (auto-generated) |
 | PWA assets | [public/](public/) (manifest, icons) |
+| App Hosting env vars (public) | [apphosting.yaml](apphosting.yaml) |
 
 ## Deploy
 
-Next.js app — confirm the deploy target before adding routes (static export vs server). Hash routes are safer for static export.
+**Live site uses Firebase App Hosting** — deploys automatically on `git push origin main`.
+- `apphosting.yaml` injects `NEXT_PUBLIC_APP_URL` and `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` at build/runtime.
+- The Next.js API routes under `app/api/stripe/` proxy to the Cloud Function.
+- Do NOT use `firebase deploy --only hosting` for the primary site (that targets static Hosting, not App Hosting).
+
+**Cloud Functions** — deploy manually when `functions/index.js` changes:
+```
+npx firebase-tools deploy --only functions --project sports-predictions-f91fd
+```
+
+**Static Hosting fallback** (secondary, `out/` dir):
+```
+npm run build && npx firebase-tools deploy --only hosting --project sports-predictions-f91fd
+```
+
+## Stripe Architecture
+
+| Secret | Stored in | How injected |
+|---|---|---|
+| `STRIPE_SECRET_KEY` | Firebase Secret Manager | `secrets[]` in `onRequest` config |
+| `STRIPE_WEBHOOK_SECRET` | Firebase Secret Manager | `secrets[]` in `onRequest` config |
+| `STRIPE_PRO_PRICE_ID` | Firebase Secret Manager | `secrets[]` in `onRequest` config |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | `apphosting.yaml` | Build/runtime env var |
+| `NEXT_PUBLIC_APP_URL` | `apphosting.yaml` | Build/runtime env var |
+
+- Cloud Function URL: `https://australia-southeast1-sports-predictions-f91fd.cloudfunctions.net/stripeApi`
+- Stripe Product ID: `prod_UWtFiyWb2LoEy0` (Soccer Stats Pro, A$19.99/month)
+- Stripe Price ID: `price_1TXpTJBbsFy1wAkF64nFdG26`
+- Never hardcode Stripe keys in source. Add new public vars to `apphosting.yaml`, sensitive vars to Secret Manager.
