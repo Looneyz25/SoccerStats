@@ -4186,6 +4186,25 @@
             "away": 5.0,
             "event_id": 10445154,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/man-utd-v-nottm-forest-10445154"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/man-utd-v-nottm-forest-10445154",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/uk-and-ireland/premier-league/manchester-united-vs-nottingham-forest/fd47ff5d-21e8-4ad8-ba48-0401e6bd3c97",
+            "neds": "https://www.neds.com.au/sports/soccer/uk-and-ireland/premier-league/manchester-united-vs-nottingham-forest/fd47ff5d-21e8-4ad8-ba48-0401e6bd3c97"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "fd47ff5d-21e8-4ad8-ba48-0401e6bd3c97",
+              "event_name": "Manchester United vs Nottingham Forest"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "fd47ff5d-21e8-4ad8-ba48-0401e6bd3c97",
+              "event_name": "Manchester United vs Nottingham Forest"
+            }
           }
         },
         {
@@ -4304,6 +4323,25 @@
             "away": 4.6,
             "event_id": 10445163,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/brentford-v-crystal-palace-10445163"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/brentford-v-crystal-palace-10445163",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/uk-and-ireland/premier-league/brentford-vs-crystal-palace/8dbdf1ae-61dc-4df0-b05d-9b3ccfcd13e7",
+            "neds": "https://www.neds.com.au/sports/soccer/uk-and-ireland/premier-league/brentford-vs-crystal-palace/8dbdf1ae-61dc-4df0-b05d-9b3ccfcd13e7"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "8dbdf1ae-61dc-4df0-b05d-9b3ccfcd13e7",
+              "event_name": "Brentford vs Crystal Palace"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "8dbdf1ae-61dc-4df0-b05d-9b3ccfcd13e7",
+              "event_name": "Brentford vs Crystal Palace"
+            }
           }
         },
         {
@@ -4423,6 +4461,25 @@
             "away": 4.33,
             "event_id": 10445164,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/everton-v-sunderland-10445164"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/everton-v-sunderland-10445164",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/uk-and-ireland/premier-league/everton-fc-vs-sunderland-afc/0b1e3bd1-d796-4c09-a724-757e6ee457d4",
+            "neds": "https://www.neds.com.au/sports/soccer/uk-and-ireland/premier-league/everton-fc-vs-sunderland-afc/0b1e3bd1-d796-4c09-a724-757e6ee457d4"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "0b1e3bd1-d796-4c09-a724-757e6ee457d4",
+              "event_name": "Everton FC vs Sunderland AFC"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "0b1e3bd1-d796-4c09-a724-757e6ee457d4",
+              "event_name": "Everton FC vs Sunderland AFC"
+            }
           }
         },
         {
@@ -4534,6 +4591,25 @@
             "away": 2.1,
             "event_id": 10445165,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/leeds-v-brighton-10445165"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/leeds-v-brighton-10445165",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/uk-and-ireland/premier-league/leeds-united-vs-brighton-and-hove-albion/5d957147-c91b-4729-a669-5c4f74899371",
+            "neds": "https://www.neds.com.au/sports/soccer/uk-and-ireland/premier-league/leeds-united-vs-brighton-and-hove-albion/5d957147-c91b-4729-a669-5c4f74899371"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "5d957147-c91b-4729-a669-5c4f74899371",
+              "event_name": "Leeds United vs Brighton & Hove Albion"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "5d957147-c91b-4729-a669-5c4f74899371",
+              "event_name": "Leeds United vs Brighton & Hove Albion"
+            }
           }
         },
         {
@@ -4658,6 +4734,25 @@
             "away": 1.91,
             "event_id": 10445159,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/wolves-v-fulham-10445159"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/wolves-v-fulham-10445159",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/uk-and-ireland/premier-league/wolverhampton-wanderers-vs-fulham-fc/eba7bb3c-5577-4b54-8f20-26fc4642bc5c",
+            "neds": "https://www.neds.com.au/sports/soccer/uk-and-ireland/premier-league/wolverhampton-wanderers-vs-fulham-fc/eba7bb3c-5577-4b54-8f20-26fc4642bc5c"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "eba7bb3c-5577-4b54-8f20-26fc4642bc5c",
+              "event_name": "Wolverhampton Wanderers vs Fulham FC"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "eba7bb3c-5577-4b54-8f20-26fc4642bc5c",
+              "event_name": "Wolverhampton Wanderers vs Fulham FC"
+            }
           }
         },
         {
@@ -4765,11 +4860,30 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 2.15,
-            "draw": 3.8,
+            "home": 2.2,
+            "draw": 3.75,
             "away": 3.0,
             "event_id": 10445161,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/newcastle-v-west-ham-10445161"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/newcastle-v-west-ham-10445161",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/uk-and-ireland/premier-league/newcastle-united-vs-west-ham-united/c31b2ab6-b296-4c30-9f9b-60192926cee4",
+            "neds": "https://www.neds.com.au/sports/soccer/uk-and-ireland/premier-league/newcastle-united-vs-west-ham-united/c31b2ab6-b296-4c30-9f9b-60192926cee4"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "c31b2ab6-b296-4c30-9f9b-60192926cee4",
+              "event_name": "Newcastle United vs West Ham United"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "c31b2ab6-b296-4c30-9f9b-60192926cee4",
+              "event_name": "Newcastle United vs West Ham United"
+            }
           }
         }
       ]
@@ -10276,10 +10390,13 @@
           ],
           "sportsbet_odds": {
             "home": 2.15,
-            "draw": 2.9,
+            "draw": 3.0,
             "away": 3.6,
             "event_id": 10445186,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/athletic-bilbao-v-celta-vigo-10445186"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/athletic-bilbao-v-celta-vigo-10445186"
           }
         },
         {
@@ -10422,6 +10539,25 @@
             "away": 4.2,
             "event_id": 10445218,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/atletico-madrid-v-girona-10445218"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/atletico-madrid-v-girona-10445218",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/spain/spanish-la-liga/atletico-madrid-vs-girona-fc/2e10c7a2-2c27-4261-a89e-157fcdc16b7f",
+            "neds": "https://www.neds.com.au/sports/soccer/spain/spanish-la-liga/atletico-madrid-vs-girona-fc/2e10c7a2-2c27-4261-a89e-157fcdc16b7f"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "2e10c7a2-2c27-4261-a89e-157fcdc16b7f",
+              "event_name": "Atletico Madrid vs Girona FC"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "2e10c7a2-2c27-4261-a89e-157fcdc16b7f",
+              "event_name": "Atletico Madrid vs Girona FC"
+            }
           }
         },
         {
@@ -10503,7 +10639,7 @@
               "source": "computed",
               "label": "No Wins",
               "value": "3",
-              "odds": 1.67
+              "odds": 1.62
             },
             {
               "team": "home",
@@ -10533,6 +10669,25 @@
             "away": 3.7,
             "event_id": 10445210,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/elche-v-getafe-10445210"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/elche-v-getafe-10445210",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/spain/spanish-la-liga/elche-cf-vs-getafe-cf/bc6965c2-790a-4859-9526-fde525e730bf",
+            "neds": "https://www.neds.com.au/sports/soccer/spain/spanish-la-liga/elche-cf-vs-getafe-cf/bc6965c2-790a-4859-9526-fde525e730bf"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "bc6965c2-790a-4859-9526-fde525e730bf",
+              "event_name": "Elche CF vs Getafe CF"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "bc6965c2-790a-4859-9526-fde525e730bf",
+              "event_name": "Elche CF vs Getafe CF"
+            }
           }
         },
         {
@@ -10625,6 +10780,25 @@
             "away": 3.5,
             "event_id": 10445204,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/levante-v-mallorca-10445204"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/levante-v-mallorca-10445204",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/spain/spanish-la-liga/levante-ud-vs-rcd-mallorca/fe6585cf-455a-4983-84c2-ca427a8fd973",
+            "neds": "https://www.neds.com.au/sports/soccer/spain/spanish-la-liga/levante-ud-vs-rcd-mallorca/fe6585cf-455a-4983-84c2-ca427a8fd973"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "fe6585cf-455a-4983-84c2-ca427a8fd973",
+              "event_name": "Levante UD vs RCD Mallorca"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "fe6585cf-455a-4983-84c2-ca427a8fd973",
+              "event_name": "Levante UD vs RCD Mallorca"
+            }
           }
         },
         {
@@ -10695,7 +10869,7 @@
               "source": "computed",
               "label": "Losses",
               "value": "3",
-              "odds": 3.8
+              "odds": 4.0
             },
             {
               "team": "home",
@@ -10709,14 +10883,14 @@
               "source": "computed",
               "label": "Without Clean Sheet",
               "value": "7",
-              "odds": 1.91
+              "odds": 1.95
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Both teams scoring",
               "value": "8/10",
-              "odds": 1.91
+              "odds": 1.95
             },
             {
               "team": "away",
@@ -10729,9 +10903,28 @@
           "sportsbet_odds": {
             "home": 2.1,
             "draw": 2.75,
-            "away": 4.33,
+            "away": 4.2,
             "event_id": 10445212,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/osasuna-v-espanyol-10445212"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/osasuna-v-espanyol-10445212",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/spain/spanish-la-liga/ca-osasuna-vs-espanyol-barcelona/bb4760a5-1e67-4550-a09b-927e011a22c9",
+            "neds": "https://www.neds.com.au/sports/soccer/spain/spanish-la-liga/ca-osasuna-vs-espanyol-barcelona/bb4760a5-1e67-4550-a09b-927e011a22c9"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "bb4760a5-1e67-4550-a09b-927e011a22c9",
+              "event_name": "CA Osasuna vs Espanyol Barcelona"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "bb4760a5-1e67-4550-a09b-927e011a22c9",
+              "event_name": "CA Osasuna vs Espanyol Barcelona"
+            }
           }
         },
         {
@@ -10855,6 +11048,25 @@
             "away": 2.88,
             "event_id": 10445209,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/rayo-vallecano-v-villarreal-10445209"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/rayo-vallecano-v-villarreal-10445209",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/spain/spanish-la-liga/rayo-vallecano-vs-villarreal-cf/bedbaa74-b146-444e-a5cc-95f6cd139db9",
+            "neds": "https://www.neds.com.au/sports/soccer/spain/spanish-la-liga/rayo-vallecano-vs-villarreal-cf/bedbaa74-b146-444e-a5cc-95f6cd139db9"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "bedbaa74-b146-444e-a5cc-95f6cd139db9",
+              "event_name": "Rayo Vallecano vs Villarreal CF"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "bedbaa74-b146-444e-a5cc-95f6cd139db9",
+              "event_name": "Rayo Vallecano vs Villarreal CF"
+            }
           }
         },
         {
@@ -10931,7 +11143,7 @@
               "source": "computed",
               "label": "No Wins",
               "value": "5",
-              "odds": 1.29
+              "odds": 1.22
             },
             {
               "team": "home",
@@ -10953,6 +11165,25 @@
             "away": 1.95,
             "event_id": 10445211,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/oviedo-v-alaves-10445211"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/oviedo-v-alaves-10445211",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/spain/spanish-la-liga/real-oviedo-vs-deportivo-alaves/8437a1b0-614b-4f58-8ccb-4e46ebe2e34d",
+            "neds": "https://www.neds.com.au/sports/soccer/spain/spanish-la-liga/real-oviedo-vs-deportivo-alaves/8437a1b0-614b-4f58-8ccb-4e46ebe2e34d"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "8437a1b0-614b-4f58-8ccb-4e46ebe2e34d",
+              "event_name": "Real Oviedo vs Deportivo Alaves"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "8437a1b0-614b-4f58-8ccb-4e46ebe2e34d",
+              "event_name": "Real Oviedo vs Deportivo Alaves"
+            }
           }
         },
         {
@@ -11030,7 +11261,7 @@
               "source": "computed",
               "label": "Without Clean Sheet",
               "value": "7",
-              "odds": 1.7
+              "odds": 1.67
             },
             {
               "team": "away",
@@ -11042,10 +11273,29 @@
           ],
           "sportsbet_odds": {
             "home": 2.15,
-            "draw": 3.4,
-            "away": 3.4,
+            "draw": 3.5,
+            "away": 3.3,
             "event_id": 10445208,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/real-sociedad-v-valencia-10445208"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/real-sociedad-v-valencia-10445208",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/spain/spanish-la-liga/real-sociedad-vs-valencia-cf/6aabe008-7d71-431b-b5b0-337fb432b23d",
+            "neds": "https://www.neds.com.au/sports/soccer/spain/spanish-la-liga/real-sociedad-vs-valencia-cf/6aabe008-7d71-431b-b5b0-337fb432b23d"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "6aabe008-7d71-431b-b5b0-337fb432b23d",
+              "event_name": "Real Sociedad vs Valencia CF"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "6aabe008-7d71-431b-b5b0-337fb432b23d",
+              "event_name": "Real Sociedad vs Valencia CF"
+            }
           }
         },
         {
@@ -11151,7 +11401,7 @@
               "source": "computed",
               "label": "Wins",
               "value": "3",
-              "odds": 3.0
+              "odds": 3.2
             },
             {
               "team": "home",
@@ -11174,6 +11424,25 @@
             "away": 2.2,
             "event_id": 10445202,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/sevilla-v-real-madrid-10445202"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/sevilla-v-real-madrid-10445202",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/spain/spanish-la-liga/sevilla-fc-vs-real-madrid/db5bcd03-0f71-4f46-b5b2-b1b6a0c147ca",
+            "neds": "https://www.neds.com.au/sports/soccer/spain/spanish-la-liga/sevilla-fc-vs-real-madrid/db5bcd03-0f71-4f46-b5b2-b1b6a0c147ca"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "db5bcd03-0f71-4f46-b5b2-b1b6a0c147ca",
+              "event_name": "Sevilla FC vs Real Madrid"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "db5bcd03-0f71-4f46-b5b2-b1b6a0c147ca",
+              "event_name": "Sevilla FC vs Real Madrid"
+            }
           }
         },
         {
@@ -11292,7 +11561,7 @@
               "source": "computed",
               "label": "No Losses",
               "value": "5",
-              "odds": 3.25
+              "odds": 3.0
             },
             {
               "team": "away",
@@ -11308,6 +11577,25 @@
             "away": 8.0,
             "event_id": 10445213,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/barcelona-v-betis-10445213"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/barcelona-v-betis-10445213",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/spain/spanish-la-liga/fc-barcelona-vs-real-betis/02bd6e42-6a1a-41a0-9091-cbbd78599d84",
+            "neds": "https://www.neds.com.au/sports/soccer/spain/spanish-la-liga/fc-barcelona-vs-real-betis/02bd6e42-6a1a-41a0-9091-cbbd78599d84"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "02bd6e42-6a1a-41a0-9091-cbbd78599d84",
+              "event_name": "FC Barcelona vs Real Betis"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "02bd6e42-6a1a-41a0-9091-cbbd78599d84",
+              "event_name": "FC Barcelona vs Real Betis"
+            }
           }
         }
       ]
@@ -15124,7 +15412,7 @@
               "source": "computed",
               "label": "No Losses",
               "value": "3",
-              "odds": 1.3
+              "odds": 1.33
             },
             {
               "team": "home",
@@ -15138,14 +15426,14 @@
               "source": "computed",
               "label": "Both teams scoring",
               "value": "6/7",
-              "odds": 1.44
+              "odds": 1.4
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
               "value": "6",
-              "odds": 1.44
+              "odds": 1.4
             },
             {
               "team": "away",
@@ -15159,7 +15447,7 @@
               "source": "computed",
               "label": "Both teams scoring",
               "value": "4/5",
-              "odds": 1.44
+              "odds": 1.4
             }
           ],
           "sportsbet_odds": {
@@ -15168,6 +15456,25 @@
             "away": 3.4,
             "event_id": 10469347,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/germany/german-bundesliga/fc-heidenheim-v-mainz-10469347"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/germany/german-bundesliga/fc-heidenheim-v-mainz-10469347",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/germany/german-bundesliga/1-fc-heidenheim-vs-1-fsv-mainz-05/53fbd684-7d67-43a3-a775-32337f732cf4",
+            "neds": "https://www.neds.com.au/sports/soccer/germany/german-bundesliga/1-fc-heidenheim-vs-1-fsv-mainz-05/53fbd684-7d67-43a3-a775-32337f732cf4"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "53fbd684-7d67-43a3-a775-32337f732cf4",
+              "event_name": "1. FC Heidenheim vs 1. FSV Mainz 05"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "53fbd684-7d67-43a3-a775-32337f732cf4",
+              "event_name": "1. FC Heidenheim vs 1. FSV Mainz 05"
+            }
           }
         },
         {
@@ -15269,42 +15576,42 @@
               "source": "computed",
               "label": "Without Clean Sheet",
               "value": "7",
-              "odds": 1.44
+              "odds": 1.4
             },
             {
               "team": "home",
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "6/7",
-              "odds": 1.44
+              "odds": 1.4
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Both teams scoring",
               "value": "6/7",
-              "odds": 1.44
+              "odds": 1.4
             },
             {
               "team": "away",
               "source": "computed",
               "label": "No Losses",
               "value": "6",
-              "odds": 1.44
+              "odds": 1.5
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
               "value": "9",
-              "odds": 1.44
+              "odds": 1.4
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Both teams scoring",
               "value": "8/10",
-              "odds": 1.44
+              "odds": 1.4
             }
           ],
           "sportsbet_odds": {
@@ -15313,6 +15620,9 @@
             "away": 2.4,
             "event_id": 10469358,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/germany/german-bundesliga/union-berlin-v-augsburg-10469358"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/germany/german-bundesliga/union-berlin-v-augsburg-10469358"
           }
         },
         {
@@ -15436,9 +15746,28 @@
           "sportsbet_odds": {
             "home": 1.25,
             "draw": 6.5,
-            "away": 10.0,
+            "away": 9.5,
             "event_id": 10469353,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/germany/german-bundesliga/leverkusen-v-hamburger-sv-10469353"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/germany/german-bundesliga/leverkusen-v-hamburger-sv-10469353",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/germany/german-bundesliga/bayer-leverkusen-vs-hamburger-sv/e3c59a58-ab27-4103-b3a7-034680d8dba4",
+            "neds": "https://www.neds.com.au/sports/soccer/germany/german-bundesliga/bayer-leverkusen-vs-hamburger-sv/e3c59a58-ab27-4103-b3a7-034680d8dba4"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "e3c59a58-ab27-4103-b3a7-034680d8dba4",
+              "event_name": "Bayer Leverkusen vs Hamburger SV"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "e3c59a58-ab27-4103-b3a7-034680d8dba4",
+              "event_name": "Bayer Leverkusen vs Hamburger SV"
+            }
           }
         },
         {
@@ -15534,7 +15863,7 @@
               "source": "computed",
               "label": "Less than 2.5 goals",
               "value": "4/5",
-              "odds": 3.2
+              "odds": 3.4
             },
             {
               "team": "away",
@@ -15548,7 +15877,7 @@
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "8/10",
-              "odds": 1.36
+              "odds": 1.33
             },
             {
               "team": "away",
@@ -15564,6 +15893,25 @@
             "away": 1.61,
             "event_id": 10469400,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/germany/german-bundesliga/mgladbach-v-hoffenheim-10469400"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/germany/german-bundesliga/mgladbach-v-hoffenheim-10469400",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/germany/german-bundesliga/borussia-monchengladbach-vs-tsg-hoffenheim/c4aaa10e-aa3f-4ab5-acb4-da173fa23767",
+            "neds": "https://www.neds.com.au/sports/soccer/germany/german-bundesliga/borussia-monchengladbach-vs-tsg-hoffenheim/c4aaa10e-aa3f-4ab5-acb4-da173fa23767"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "c4aaa10e-aa3f-4ab5-acb4-da173fa23767",
+              "event_name": "Borussia Monchengladbach vs TSG Hoffenheim"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "c4aaa10e-aa3f-4ab5-acb4-da173fa23767",
+              "event_name": "Borussia Monchengladbach vs TSG Hoffenheim"
+            }
           }
         },
         {
@@ -15704,6 +16052,25 @@
             "away": 1.9,
             "event_id": 10469352,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/germany/german-bundesliga/eintracht-frankfurt-v-stuttgart-10469352"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/germany/german-bundesliga/eintracht-frankfurt-v-stuttgart-10469352",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/germany/german-bundesliga/eintracht-frankfurt-vs-vfb-stuttgart/77730496-cf5e-4a2a-9158-37bfa559c6e3",
+            "neds": "https://www.neds.com.au/sports/soccer/germany/german-bundesliga/eintracht-frankfurt-vs-vfb-stuttgart/77730496-cf5e-4a2a-9158-37bfa559c6e3"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "77730496-cf5e-4a2a-9158-37bfa559c6e3",
+              "event_name": "Eintracht Frankfurt vs VfB Stuttgart"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "77730496-cf5e-4a2a-9158-37bfa559c6e3",
+              "event_name": "Eintracht Frankfurt vs VfB Stuttgart"
+            }
           }
         },
         {
@@ -15825,11 +16192,14 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 1.14,
-            "draw": 9.0,
-            "away": 15.0,
+            "home": 1.12,
+            "draw": 9.5,
+            "away": 16.0,
             "event_id": 10470436,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/germany/german-bundesliga/bayern-munich-v-fc-koln-10470436"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/germany/german-bundesliga/bayern-munich-v-fc-koln-10470436"
           }
         },
         {
@@ -15913,7 +16283,7 @@
               "source": "computed",
               "label": "Losses",
               "value": "3",
-              "odds": 2.35
+              "odds": 2.4
             },
             {
               "team": "home",
@@ -15934,15 +16304,34 @@
               "source": "computed",
               "label": "No Wins",
               "value": "3",
-              "odds": 1.57
+              "odds": 1.53
             }
           ],
           "sportsbet_odds": {
             "home": 2.8,
-            "draw": 3.6,
-            "away": 2.3,
+            "draw": 3.5,
+            "away": 2.4,
             "event_id": 10469346,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/germany/german-bundesliga/st-pauli-v-wolfsburg-10469346"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/germany/german-bundesliga/st-pauli-v-wolfsburg-10469346",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/germany/german-bundesliga/fc-st-pauli-vs-vfl-wolfsburg/cf4c1aba-61d3-40c9-ac14-282eef229fcb",
+            "neds": "https://www.neds.com.au/sports/soccer/germany/german-bundesliga/fc-st-pauli-vs-vfl-wolfsburg/cf4c1aba-61d3-40c9-ac14-282eef229fcb"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "cf4c1aba-61d3-40c9-ac14-282eef229fcb",
+              "event_name": "FC St. Pauli vs VfL Wolfsburg"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "cf4c1aba-61d3-40c9-ac14-282eef229fcb",
+              "event_name": "FC St. Pauli vs VfL Wolfsburg"
+            }
           }
         },
         {
@@ -16026,36 +16415,55 @@
               "source": "computed",
               "label": "Without Clean Sheet",
               "value": "8",
-              "odds": 1.4
+              "odds": 1.44
             },
             {
               "team": "home",
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "8/10",
-              "odds": 1.44
+              "odds": 1.53
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
               "value": "4",
-              "odds": 1.4
+              "odds": 1.44
             },
             {
               "team": "away",
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "8/10",
-              "odds": 1.44
+              "odds": 1.53
             }
           ],
           "sportsbet_odds": {
-            "home": 2.55,
+            "home": 2.62,
             "draw": 3.9,
-            "away": 2.45,
+            "away": 2.4,
             "event_id": 10469355,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/germany/german-bundesliga/freiburg-v-rb-leipzig-10469355"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/germany/german-bundesliga/freiburg-v-rb-leipzig-10469355",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/germany/german-bundesliga/sc-freiburg-vs-rb-leipzig/1bdf994e-41d4-40c0-9580-610dde50e030",
+            "neds": "https://www.neds.com.au/sports/soccer/germany/german-bundesliga/sc-freiburg-vs-rb-leipzig/1bdf994e-41d4-40c0-9580-610dde50e030"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "1bdf994e-41d4-40c0-9580-610dde50e030",
+              "event_name": "SC Freiburg vs RB Leipzig"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "1bdf994e-41d4-40c0-9580-610dde50e030",
+              "event_name": "SC Freiburg vs RB Leipzig"
+            }
           }
         },
         {
@@ -16133,7 +16541,7 @@
               "source": "computed",
               "label": "No Wins",
               "value": "3",
-              "odds": 1.33
+              "odds": 1.3
             },
             {
               "team": "home",
@@ -16156,6 +16564,25 @@
             "away": 1.95,
             "event_id": 10469356,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/germany/german-bundesliga/werder-bremen-v-dortmund-10469356"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/germany/german-bundesliga/werder-bremen-v-dortmund-10469356",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/germany/german-bundesliga/werder-bremen-vs-borussia-dortmund/fd50636c-24c3-4292-add0-49a174065614",
+            "neds": "https://www.neds.com.au/sports/soccer/germany/german-bundesliga/werder-bremen-vs-borussia-dortmund/fd50636c-24c3-4292-add0-49a174065614"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "fd50636c-24c3-4292-add0-49a174065614",
+              "event_name": "Werder Bremen vs Borussia Dortmund"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "fd50636c-24c3-4292-add0-49a174065614",
+              "event_name": "Werder Bremen vs Borussia Dortmund"
+            }
           }
         }
       ]
@@ -20255,6 +20682,25 @@
             "away": 8.5,
             "event_id": 10469368,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/lille-v-auxerre-10469368"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/lille-v-auxerre-10469368",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/france/french-ligue-1/lille-osc-vs-aj-auxerre/3d89e8fd-2815-48dc-bc7f-868c00bf2980",
+            "neds": "https://www.neds.com.au/sports/soccer/france/french-ligue-1/lille-osc-vs-aj-auxerre/3d89e8fd-2815-48dc-bc7f-868c00bf2980"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "3d89e8fd-2815-48dc-bc7f-868c00bf2980",
+              "event_name": "Lille OSC vs AJ Auxerre"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "3d89e8fd-2815-48dc-bc7f-868c00bf2980",
+              "event_name": "Lille OSC vs AJ Auxerre"
+            }
           }
         },
         {
@@ -20361,6 +20807,25 @@
             "away": 2.62,
             "event_id": 10469363,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/lorient-v-le-havre-10469363"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/lorient-v-le-havre-10469363",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/france/french-ligue-1/fc-lorient-vs-le-havre-ac/e1f15895-f387-4c35-b908-006e37205c54",
+            "neds": "https://www.neds.com.au/sports/soccer/france/french-ligue-1/fc-lorient-vs-le-havre-ac/e1f15895-f387-4c35-b908-006e37205c54"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "e1f15895-f387-4c35-b908-006e37205c54",
+              "event_name": "FC Lorient vs Le Havre AC"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "e1f15895-f387-4c35-b908-006e37205c54",
+              "event_name": "FC Lorient vs Le Havre AC"
+            }
           }
         },
         {
@@ -20461,6 +20926,25 @@
             "away": 2.55,
             "event_id": 10469369,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/nantes-v-toulouse-10469369"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/nantes-v-toulouse-10469369",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/france/french-ligue-1/fc-nantes-vs-toulouse-fc/977af469-a339-4c2c-876f-6f32fa00f48e",
+            "neds": "https://www.neds.com.au/sports/soccer/france/french-ligue-1/fc-nantes-vs-toulouse-fc/977af469-a339-4c2c-876f-6f32fa00f48e"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "977af469-a339-4c2c-876f-6f32fa00f48e",
+              "event_name": "FC Nantes vs Toulouse FC"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "977af469-a339-4c2c-876f-6f32fa00f48e",
+              "event_name": "FC Nantes vs Toulouse FC"
+            }
           }
         },
         {
@@ -20600,6 +21084,25 @@
             "away": 9.0,
             "event_id": 10469361,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/nice-v-metz-10469361"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/nice-v-metz-10469361",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/france/french-ligue-1/ogc-nice-vs-fc-metz/69c7039f-a84d-4bb7-8db3-088126377bff",
+            "neds": "https://www.neds.com.au/sports/soccer/france/french-ligue-1/ogc-nice-vs-fc-metz/69c7039f-a84d-4bb7-8db3-088126377bff"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "69c7039f-a84d-4bb7-8db3-088126377bff",
+              "event_name": "OGC Nice vs FC Metz"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "69c7039f-a84d-4bb7-8db3-088126377bff",
+              "event_name": "OGC Nice vs FC Metz"
+            }
           }
         },
         {
@@ -20700,6 +21203,9 @@
             "away": 4.5,
             "event_id": 10469365,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/lyon-v-lens-10469365"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/lyon-v-lens-10469365"
           }
         },
         {
@@ -20799,6 +21305,25 @@
             "away": 3.4,
             "event_id": 10469357,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/marseille-v-rennes-10469357"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/marseille-v-rennes-10469357",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/france/french-ligue-1/olympique-marseille-vs-stade-rennais/0fd4a3a1-3e05-4774-9e80-ac40f14828dc",
+            "neds": "https://www.neds.com.au/sports/soccer/france/french-ligue-1/olympique-marseille-vs-stade-rennais/0fd4a3a1-3e05-4774-9e80-ac40f14828dc"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "0fd4a3a1-3e05-4774-9e80-ac40f14828dc",
+              "event_name": "Olympique Marseille vs Stade Rennais"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "0fd4a3a1-3e05-4774-9e80-ac40f14828dc",
+              "event_name": "Olympique Marseille vs Stade Rennais"
+            }
           }
         },
         {
@@ -20897,7 +21422,25 @@
               "value": "7",
               "odds": 1.14
             }
-          ]
+          ],
+          "bookmaker_links": {
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/france/french-ligue-1/paris-fc-vs-paris-saint-germain/789ae7bc-be8b-485b-9285-a16022cafe63",
+            "neds": "https://www.neds.com.au/sports/soccer/france/french-ligue-1/paris-fc-vs-paris-saint-germain/789ae7bc-be8b-485b-9285-a16022cafe63"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "789ae7bc-be8b-485b-9285-a16022cafe63",
+              "event_name": "Paris FC vs Paris Saint-Germain"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "789ae7bc-be8b-485b-9285-a16022cafe63",
+              "event_name": "Paris FC vs Paris Saint-Germain"
+            }
+          }
         },
         {
           "id": 14061905,
@@ -21004,6 +21547,25 @@
             "away": 2.05,
             "event_id": 10469366,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/strasbourg-v-monaco-10469366"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/strasbourg-v-monaco-10469366",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/france/french-ligue-1/rc-strasbourg-alsace-vs-as-monaco/037453bf-eea3-45c3-9f01-178a5ac6635e",
+            "neds": "https://www.neds.com.au/sports/soccer/france/french-ligue-1/rc-strasbourg-alsace-vs-as-monaco/037453bf-eea3-45c3-9f01-178a5ac6635e"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "037453bf-eea3-45c3-9f01-178a5ac6635e",
+              "event_name": "RC Strasbourg Alsace vs AS Monaco"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "037453bf-eea3-45c3-9f01-178a5ac6635e",
+              "event_name": "RC Strasbourg Alsace vs AS Monaco"
+            }
           }
         },
         {
@@ -21137,6 +21699,9 @@
             "away": 4.33,
             "event_id": 10469364,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/brest-v-angers-10469364"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/brest-v-angers-10469364"
           }
         }
       ]
@@ -26340,7 +26905,7 @@
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "9/10",
-              "odds": 1.5
+              "odds": 1.57
             },
             {
               "team": "away",
@@ -26349,7 +26914,25 @@
               "value": "8/10",
               "odds": 1.44
             }
-          ]
+          ],
+          "bookmaker_links": {
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/netherlands/dutch-eredivisie/willem-ii-tilburg-vs-almere-city-fc/b5386d78-3f9c-498f-acf3-aea6f293db36",
+            "neds": "https://www.neds.com.au/sports/soccer/netherlands/dutch-eredivisie/willem-ii-tilburg-vs-almere-city-fc/b5386d78-3f9c-498f-acf3-aea6f293db36"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "b5386d78-3f9c-498f-acf3-aea6f293db36",
+              "event_name": "Willem II Tilburg vs Almere City FC"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "b5386d78-3f9c-498f-acf3-aea6f293db36",
+              "event_name": "Willem II Tilburg vs Almere City FC"
+            }
+          }
         },
         {
           "id": 14028526,
@@ -26464,7 +27047,7 @@
               "source": "computed",
               "label": "Less than 2.5 goals",
               "value": "5/6",
-              "odds": 3.1
+              "odds": 2.88
             }
           ],
           "sportsbet_odds": {
@@ -26473,6 +27056,25 @@
             "away": 7.5,
             "event_id": 10471793,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/dutch-eredivisie/az-alkmaar-v-nac-breda-10471793"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/dutch-eredivisie/az-alkmaar-v-nac-breda-10471793",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/netherlands/dutch-eredivisie/az-alkmaar-vs-nac-breda/2e4b7928-1a56-4305-9634-5b10f37d42c4",
+            "neds": "https://www.neds.com.au/sports/soccer/netherlands/dutch-eredivisie/az-alkmaar-vs-nac-breda/2e4b7928-1a56-4305-9634-5b10f37d42c4"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "2e4b7928-1a56-4305-9634-5b10f37d42c4",
+              "event_name": "AZ Alkmaar vs NAC Breda"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "2e4b7928-1a56-4305-9634-5b10f37d42c4",
+              "event_name": "AZ Alkmaar vs NAC Breda"
+            }
           }
         },
         {
@@ -26578,6 +27180,25 @@
             "away": 6.0,
             "event_id": 10471658,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/dutch-eredivisie/fc-utrecht-v-fortuna-sittard-10471658"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/dutch-eredivisie/fc-utrecht-v-fortuna-sittard-10471658",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/netherlands/dutch-eredivisie/fc-utrecht-vs-fortuna-sittard/f2f07008-d655-4140-a3ca-bd73fc4d1dc7",
+            "neds": "https://www.neds.com.au/sports/soccer/netherlands/dutch-eredivisie/fc-utrecht-vs-fortuna-sittard/f2f07008-d655-4140-a3ca-bd73fc4d1dc7"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "f2f07008-d655-4140-a3ca-bd73fc4d1dc7",
+              "event_name": "FC Utrecht vs Fortuna Sittard"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "f2f07008-d655-4140-a3ca-bd73fc4d1dc7",
+              "event_name": "FC Utrecht vs Fortuna Sittard"
+            }
           }
         },
         {
@@ -26694,6 +27315,25 @@
             "away": 2.3,
             "event_id": 10471807,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/dutch-eredivisie/fc-volendam-v-sc-telstar-10471807"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/dutch-eredivisie/fc-volendam-v-sc-telstar-10471807",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/netherlands/dutch-eredivisie/fc-volendam-vs-sc-telstar/6cd13d1f-ed83-4371-becf-758519e4b342",
+            "neds": "https://www.neds.com.au/sports/soccer/netherlands/dutch-eredivisie/fc-volendam-vs-sc-telstar/6cd13d1f-ed83-4371-becf-758519e4b342"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "6cd13d1f-ed83-4371-becf-758519e4b342",
+              "event_name": "FC Volendam vs SC Telstar"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "6cd13d1f-ed83-4371-becf-758519e4b342",
+              "event_name": "FC Volendam vs SC Telstar"
+            }
           }
         },
         {
@@ -26817,6 +27457,25 @@
             "away": 1.57,
             "event_id": 10471804,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/dutch-eredivisie/heracles-v-fc-groningen-10471804"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/dutch-eredivisie/heracles-v-fc-groningen-10471804",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/netherlands/dutch-eredivisie/heracles-almelo-vs-fc-groningen/7a844cbe-0ee7-4b58-a8a2-3b5dfdfc45f2",
+            "neds": "https://www.neds.com.au/sports/soccer/netherlands/dutch-eredivisie/heracles-almelo-vs-fc-groningen/7a844cbe-0ee7-4b58-a8a2-3b5dfdfc45f2"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "7a844cbe-0ee7-4b58-a8a2-3b5dfdfc45f2",
+              "event_name": "Heracles Almelo vs FC Groningen"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "7a844cbe-0ee7-4b58-a8a2-3b5dfdfc45f2",
+              "event_name": "Heracles Almelo vs FC Groningen"
+            }
           }
         },
         {
@@ -26946,6 +27605,25 @@
             "away": 7.0,
             "event_id": 10471754,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/dutch-eredivisie/nec-nijmegen-v-go-ahead-eagles-10471754"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/dutch-eredivisie/nec-nijmegen-v-go-ahead-eagles-10471754",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/netherlands/dutch-eredivisie/nec-nijmegen-vs-go-ahead-eagles/d9213fab-a6dd-407c-b452-33603669a4dd",
+            "neds": "https://www.neds.com.au/sports/soccer/netherlands/dutch-eredivisie/nec-nijmegen-vs-go-ahead-eagles/d9213fab-a6dd-407c-b452-33603669a4dd"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "d9213fab-a6dd-407c-b452-33603669a4dd",
+              "event_name": "NEC Nijmegen vs Go Ahead Eagles"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "d9213fab-a6dd-407c-b452-33603669a4dd",
+              "event_name": "NEC Nijmegen vs Go Ahead Eagles"
+            }
           }
         },
         {
@@ -27075,6 +27753,25 @@
             "away": 1.67,
             "event_id": 10471766,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/dutch-eredivisie/pec-zwolle-v-feyenoord-10471766"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/dutch-eredivisie/pec-zwolle-v-feyenoord-10471766",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/netherlands/dutch-eredivisie/pec-zwolle-vs-feyenoord-rotterdam/f66594ff-b5eb-41c6-a072-b65119f523e5",
+            "neds": "https://www.neds.com.au/sports/soccer/netherlands/dutch-eredivisie/pec-zwolle-vs-feyenoord-rotterdam/f66594ff-b5eb-41c6-a072-b65119f523e5"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "f66594ff-b5eb-41c6-a072-b65119f523e5",
+              "event_name": "PEC Zwolle vs Feyenoord Rotterdam"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "f66594ff-b5eb-41c6-a072-b65119f523e5",
+              "event_name": "PEC Zwolle vs Feyenoord Rotterdam"
+            }
           }
         },
         {
@@ -27231,6 +27928,25 @@
             "away": 3.0,
             "event_id": 10471814,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/dutch-eredivisie/psv-v-fc-twente-10471814"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/dutch-eredivisie/psv-v-fc-twente-10471814",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/netherlands/knvb-beker-womens/fc-twente-women-vs-psv-eindhoven-women/52b6f49e-250c-40f3-ac25-9cce025b8149",
+            "neds": "https://www.neds.com.au/sports/soccer/netherlands/knvb-beker-womens/fc-twente-women-vs-psv-eindhoven-women/52b6f49e-250c-40f3-ac25-9cce025b8149"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "52b6f49e-250c-40f3-ac25-9cce025b8149",
+              "event_name": "FC Twente (Women) vs PSV Eindhoven (Women)"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "52b6f49e-250c-40f3-ac25-9cce025b8149",
+              "event_name": "FC Twente (Women) vs PSV Eindhoven (Women)"
+            }
           }
         },
         {
@@ -27340,6 +28056,9 @@
             "away": 2.0,
             "event_id": 10471788,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/dutch-eredivisie/heerenveen-v-ajax-10471788"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/dutch-eredivisie/heerenveen-v-ajax-10471788"
           }
         },
         {
@@ -27451,6 +28170,25 @@
             "away": 3.0,
             "event_id": 10471727,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/dutch-eredivisie/sparta-rotterdam-v-excelsior-10471727"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/dutch-eredivisie/sparta-rotterdam-v-excelsior-10471727",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/netherlands/dutch-eredivisie/sparta-rotterdam-vs-excelsior-rotterdam/5ff95e68-5c10-4678-8dea-c54d704b750c",
+            "neds": "https://www.neds.com.au/sports/soccer/netherlands/dutch-eredivisie/sparta-rotterdam-vs-excelsior-rotterdam/5ff95e68-5c10-4678-8dea-c54d704b750c"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "5ff95e68-5c10-4678-8dea-c54d704b750c",
+              "event_name": "Sparta Rotterdam vs Excelsior Rotterdam"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "5ff95e68-5c10-4678-8dea-c54d704b750c",
+              "event_name": "Sparta Rotterdam vs Excelsior Rotterdam"
+            }
           }
         }
       ]
@@ -35657,6 +36395,25 @@
             "away": 2.3,
             "event_id": 10472086,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/cf-montreal-v-chicago-fire-10472086"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/cf-montreal-v-chicago-fire-10472086",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/americas/us-major-league-soccer/cf-montreal-vs-chicago-fire/fe158ea7-338e-4b02-a642-4532ca96e275",
+            "neds": "https://www.neds.com.au/sports/soccer/americas/us-major-league-soccer/cf-montreal-vs-chicago-fire/fe158ea7-338e-4b02-a642-4532ca96e275"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "fe158ea7-338e-4b02-a642-4532ca96e275",
+              "event_name": "CF Montreal vs Chicago Fire"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "fe158ea7-338e-4b02-a642-4532ca96e275",
+              "event_name": "CF Montreal vs Chicago Fire"
+            }
           }
         },
         {
@@ -35772,11 +36529,30 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 1.7,
-            "draw": 4.1,
-            "away": 4.5,
+            "home": 1.67,
+            "draw": 4.0,
+            "away": 4.75,
             "event_id": 10472096,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/charlotte-fc-v-toronto-fc-10472096"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/charlotte-fc-v-toronto-fc-10472096",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/americas/us-major-league-soccer/charlotte-fc-vs-toronto-fc/7b84731e-bdd3-435a-bc57-04c6ef3fdd54",
+            "neds": "https://www.neds.com.au/sports/soccer/americas/us-major-league-soccer/charlotte-fc-vs-toronto-fc/7b84731e-bdd3-435a-bc57-04c6ef3fdd54"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "7b84731e-bdd3-435a-bc57-04c6ef3fdd54",
+              "event_name": "Charlotte FC vs Toronto FC"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "7b84731e-bdd3-435a-bc57-04c6ef3fdd54",
+              "event_name": "Charlotte FC vs Toronto FC"
+            }
           }
         },
         {
@@ -35882,7 +36658,7 @@
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "4/5",
-              "odds": 1.8
+              "odds": 1.75
             },
             {
               "team": "home",
@@ -35898,6 +36674,25 @@
             "away": 2.8,
             "event_id": 10472091,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/dc-utd-v-st-louis-city-sc-10472091"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/dc-utd-v-st-louis-city-sc-10472091",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/americas/us-major-league-soccer/dc-united-vs-st-louis-city-sc/7305a100-0481-4e5a-a8f1-0290d0127986",
+            "neds": "https://www.neds.com.au/sports/soccer/americas/us-major-league-soccer/dc-united-vs-st-louis-city-sc/7305a100-0481-4e5a-a8f1-0290d0127986"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "7305a100-0481-4e5a-a8f1-0290d0127986",
+              "event_name": "DC United vs St. Louis City SC"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "7305a100-0481-4e5a-a8f1-0290d0127986",
+              "event_name": "DC United vs St. Louis City SC"
+            }
           }
         },
         {
@@ -36002,6 +36797,25 @@
             "away": 3.1,
             "event_id": 10472097,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/new-england-v-minnesota-utd-10472097"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/new-england-v-minnesota-utd-10472097",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/americas/us-major-league-soccer/new-england-revolution-vs-minnesota-united/1006c10c-da09-4704-9f9b-51182bbb2255",
+            "neds": "https://www.neds.com.au/sports/soccer/americas/us-major-league-soccer/new-england-revolution-vs-minnesota-united/1006c10c-da09-4704-9f9b-51182bbb2255"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "1006c10c-da09-4704-9f9b-51182bbb2255",
+              "event_name": "New England Revolution vs Minnesota United"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "1006c10c-da09-4704-9f9b-51182bbb2255",
+              "event_name": "New England Revolution vs Minnesota United"
+            }
           }
         },
         {
@@ -36120,6 +36934,25 @@
             "away": 2.4,
             "event_id": 10472106,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/new-york-red-bulls-v-new-york-city-10472106"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/new-york-red-bulls-v-new-york-city-10472106",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/americas/us-major-league-soccer/new-york-red-bulls-vs-new-york-city-fc/b8197220-4be8-4c3a-b8dd-401917c59a54",
+            "neds": "https://www.neds.com.au/sports/soccer/americas/us-major-league-soccer/new-york-red-bulls-vs-new-york-city-fc/b8197220-4be8-4c3a-b8dd-401917c59a54"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "b8197220-4be8-4c3a-b8dd-401917c59a54",
+              "event_name": "New York Red Bulls vs New York City FC"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "b8197220-4be8-4c3a-b8dd-401917c59a54",
+              "event_name": "New York Red Bulls vs New York City FC"
+            }
           }
         },
         {
@@ -36198,7 +37031,7 @@
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "5/6",
-              "odds": 1.53
+              "odds": 1.5
             },
             {
               "team": "home",
@@ -36212,7 +37045,7 @@
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "4/5",
-              "odds": 1.53
+              "odds": 1.5
             },
             {
               "team": "away",
@@ -36228,6 +37061,9 @@
             "away": 3.25,
             "event_id": 10472095,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/orlando-city-v-atlanta-utd-10472095"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/orlando-city-v-atlanta-utd-10472095"
           }
         },
         {
@@ -36345,7 +37181,7 @@
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "8/10",
-              "odds": 1.73
+              "odds": 1.7
             }
           ],
           "sportsbet_odds": {
@@ -36354,6 +37190,25 @@
             "away": 2.88,
             "event_id": 10472099,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/philadelphia-v-columbus-10472099"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/philadelphia-v-columbus-10472099",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/americas/us-major-league-soccer/philadelphia-union-vs-columbus-crew/c1e28a6a-9609-4c03-84d6-8116c1a964e5",
+            "neds": "https://www.neds.com.au/sports/soccer/americas/us-major-league-soccer/philadelphia-union-vs-columbus-crew/c1e28a6a-9609-4c03-84d6-8116c1a964e5"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "c1e28a6a-9609-4c03-84d6-8116c1a964e5",
+              "event_name": "Philadelphia Union vs Columbus Crew"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "c1e28a6a-9609-4c03-84d6-8116c1a964e5",
+              "event_name": "Philadelphia Union vs Columbus Crew"
+            }
           }
         },
         {
@@ -36438,15 +37293,34 @@
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "9/10",
-              "odds": 1.48
+              "odds": 1.5
             }
           ],
           "sportsbet_odds": {
-            "home": 1.44,
-            "draw": 4.75,
-            "away": 6.0,
+            "home": 1.5,
+            "draw": 4.6,
+            "away": 5.5,
             "event_id": 10472105,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/austin-fc-v-kansas-city-10472105"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/austin-fc-v-kansas-city-10472105",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/americas/us-major-league-soccer/austin-fc-vs-sporting-kansas-city/38b1c642-e536-4388-80e7-b80c5f2b1bd0",
+            "neds": "https://www.neds.com.au/sports/soccer/americas/us-major-league-soccer/austin-fc-vs-sporting-kansas-city/38b1c642-e536-4388-80e7-b80c5f2b1bd0"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "38b1c642-e536-4388-80e7-b80c5f2b1bd0",
+              "event_name": "Austin FC vs Sporting Kansas City"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "38b1c642-e536-4388-80e7-b80c5f2b1bd0",
+              "event_name": "Austin FC vs Sporting Kansas City"
+            }
           }
         },
         {
@@ -36571,6 +37445,25 @@
             "away": 1.91,
             "event_id": 10472116,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/houston-dynamo-v-vancouver-whitecaps-10472116"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/houston-dynamo-v-vancouver-whitecaps-10472116",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/americas/us-major-league-soccer/houston-dynamo-vs-vancouver-whitecaps/43fb614b-52af-47fc-bdab-f6bc167f2573",
+            "neds": "https://www.neds.com.au/sports/soccer/americas/us-major-league-soccer/houston-dynamo-vs-vancouver-whitecaps/43fb614b-52af-47fc-bdab-f6bc167f2573"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "43fb614b-52af-47fc-bdab-f6bc167f2573",
+              "event_name": "Houston Dynamo vs Vancouver Whitecaps"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "43fb614b-52af-47fc-bdab-f6bc167f2573",
+              "event_name": "Houston Dynamo vs Vancouver Whitecaps"
+            }
           }
         },
         {
@@ -36710,6 +37603,9 @@
             "away": 4.75,
             "event_id": 10472118,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/seattle-sounders-v-la-galaxy-10472118"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/seattle-sounders-v-la-galaxy-10472118"
           }
         },
         {
@@ -36802,6 +37698,25 @@
             "away": 4.5,
             "event_id": 10472110,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/real-salt-lake-v-colorado-10472110"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/real-salt-lake-v-colorado-10472110",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/americas/us-major-league-soccer/real-salt-lake-vs-colorado-rapids/266d7397-c595-4fdc-bbac-4676bde38d3f",
+            "neds": "https://www.neds.com.au/sports/soccer/americas/us-major-league-soccer/real-salt-lake-vs-colorado-rapids/266d7397-c595-4fdc-bbac-4676bde38d3f"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "266d7397-c595-4fdc-bbac-4676bde38d3f",
+              "event_name": "Real Salt Lake vs Colorado Rapids"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "266d7397-c595-4fdc-bbac-4676bde38d3f",
+              "event_name": "Real Salt Lake vs Colorado Rapids"
+            }
           }
         },
         {
@@ -36926,7 +37841,7 @@
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "8/10",
-              "odds": 1.36
+              "odds": 1.33
             },
             {
               "team": "away",
@@ -36940,7 +37855,7 @@
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "8/10",
-              "odds": 1.36
+              "odds": 1.33
             },
             {
               "team": "away",
@@ -36956,6 +37871,25 @@
             "away": 3.3,
             "event_id": 10472117,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/san-diego-fc-v-fc-cincinnati-10472117"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/san-diego-fc-v-fc-cincinnati-10472117",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/americas/us-major-league-soccer/san-diego-fc-vs-fc-cincinnati/43ae69be-f794-4ade-8774-240775a91eaf",
+            "neds": "https://www.neds.com.au/sports/soccer/americas/us-major-league-soccer/san-diego-fc-vs-fc-cincinnati/43ae69be-f794-4ade-8774-240775a91eaf"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "43ae69be-f794-4ade-8774-240775a91eaf",
+              "event_name": "San Diego FC vs FC Cincinnati"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "43ae69be-f794-4ade-8774-240775a91eaf",
+              "event_name": "San Diego FC vs FC Cincinnati"
+            }
           }
         },
         {
@@ -37081,11 +38015,30 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 1.8,
+            "home": 1.87,
             "draw": 4.1,
-            "away": 3.8,
+            "away": 3.7,
             "event_id": 10472112,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/san-jose-earthquakes-v-fc-dallas-10472112"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/san-jose-earthquakes-v-fc-dallas-10472112",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/americas/us-major-league-soccer/san-jose-earthquakes-vs-fc-dallas/00395cc0-3efe-4ee7-bd06-55d29ac507de",
+            "neds": "https://www.neds.com.au/sports/soccer/americas/us-major-league-soccer/san-jose-earthquakes-vs-fc-dallas/00395cc0-3efe-4ee7-bd06-55d29ac507de"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "00395cc0-3efe-4ee7-bd06-55d29ac507de",
+              "event_name": "San Jose Earthquakes vs FC Dallas"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "00395cc0-3efe-4ee7-bd06-55d29ac507de",
+              "event_name": "San Jose Earthquakes vs FC Dallas"
+            }
           }
         },
         {
@@ -37207,6 +38160,9 @@
             "away": 8.0,
             "event_id": 10472111,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/inter-miami-cf-v-portland-timbers-10472111"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/inter-miami-cf-v-portland-timbers-10472111"
           }
         },
         {
@@ -37342,15 +38298,34 @@
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "5/6",
-              "odds": 1.8
+              "odds": 1.85
             }
           ],
           "sportsbet_odds": {
-            "home": 2.05,
+            "home": 2.1,
             "draw": 3.7,
-            "away": 3.4,
+            "away": 3.3,
             "event_id": 10472119,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/nashville-sc-v-los-angeles-fc-10472119"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/nashville-sc-v-los-angeles-fc-10472119",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/americas/us-major-league-soccer/nashville-sc-vs-los-angeles-fc/5eb5fb37-a187-4384-a5c4-a3b817f28dac",
+            "neds": "https://www.neds.com.au/sports/soccer/americas/us-major-league-soccer/nashville-sc-vs-los-angeles-fc/5eb5fb37-a187-4384-a5c4-a3b817f28dac"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "5eb5fb37-a187-4384-a5c4-a3b817f28dac",
+              "event_name": "Nashville SC vs Los Angeles FC"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "5eb5fb37-a187-4384-a5c4-a3b817f28dac",
+              "event_name": "Nashville SC vs Los Angeles FC"
+            }
           }
         }
       ]

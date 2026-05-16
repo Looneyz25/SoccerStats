@@ -4860,8 +4860,8 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 2.15,
-            "draw": 3.8,
+            "home": 2.2,
+            "draw": 3.75,
             "away": 3.0,
             "event_id": 10445161,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/newcastle-v-west-ham-10445161"
@@ -10390,7 +10390,7 @@
           ],
           "sportsbet_odds": {
             "home": 2.15,
-            "draw": 2.9,
+            "draw": 3.0,
             "away": 3.6,
             "event_id": 10445186,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/athletic-bilbao-v-celta-vigo-10445186"
@@ -10639,7 +10639,7 @@
               "source": "computed",
               "label": "No Wins",
               "value": "3",
-              "odds": 1.67
+              "odds": 1.62
             },
             {
               "team": "home",
@@ -10869,7 +10869,7 @@
               "source": "computed",
               "label": "Losses",
               "value": "3",
-              "odds": 3.8
+              "odds": 4.0
             },
             {
               "team": "home",
@@ -10883,14 +10883,14 @@
               "source": "computed",
               "label": "Without Clean Sheet",
               "value": "7",
-              "odds": 1.91
+              "odds": 1.95
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Both teams scoring",
               "value": "8/10",
-              "odds": 1.91
+              "odds": 1.95
             },
             {
               "team": "away",
@@ -10903,7 +10903,7 @@
           "sportsbet_odds": {
             "home": 2.1,
             "draw": 2.75,
-            "away": 4.33,
+            "away": 4.2,
             "event_id": 10445212,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/osasuna-v-espanyol-10445212"
           },
@@ -11143,7 +11143,7 @@
               "source": "computed",
               "label": "No Wins",
               "value": "5",
-              "odds": 1.29
+              "odds": 1.22
             },
             {
               "team": "home",
@@ -11261,7 +11261,7 @@
               "source": "computed",
               "label": "Without Clean Sheet",
               "value": "7",
-              "odds": 1.7
+              "odds": 1.67
             },
             {
               "team": "away",
@@ -11273,8 +11273,8 @@
           ],
           "sportsbet_odds": {
             "home": 2.15,
-            "draw": 3.4,
-            "away": 3.4,
+            "draw": 3.5,
+            "away": 3.3,
             "event_id": 10445208,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/real-sociedad-v-valencia-10445208"
           },
@@ -11401,7 +11401,7 @@
               "source": "computed",
               "label": "Wins",
               "value": "3",
-              "odds": 3.0
+              "odds": 3.2
             },
             {
               "team": "home",
@@ -11561,7 +11561,7 @@
               "source": "computed",
               "label": "No Losses",
               "value": "5",
-              "odds": 3.25
+              "odds": 3.0
             },
             {
               "team": "away",
@@ -15412,7 +15412,7 @@
               "source": "computed",
               "label": "No Losses",
               "value": "3",
-              "odds": 1.3
+              "odds": 1.33
             },
             {
               "team": "home",
@@ -15426,14 +15426,14 @@
               "source": "computed",
               "label": "Both teams scoring",
               "value": "6/7",
-              "odds": 1.44
+              "odds": 1.4
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
               "value": "6",
-              "odds": 1.44
+              "odds": 1.4
             },
             {
               "team": "away",
@@ -15447,7 +15447,7 @@
               "source": "computed",
               "label": "Both teams scoring",
               "value": "4/5",
-              "odds": 1.44
+              "odds": 1.4
             }
           ],
           "sportsbet_odds": {
@@ -15576,42 +15576,42 @@
               "source": "computed",
               "label": "Without Clean Sheet",
               "value": "7",
-              "odds": 1.44
+              "odds": 1.4
             },
             {
               "team": "home",
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "6/7",
-              "odds": 1.44
+              "odds": 1.4
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Both teams scoring",
               "value": "6/7",
-              "odds": 1.44
+              "odds": 1.4
             },
             {
               "team": "away",
               "source": "computed",
               "label": "No Losses",
               "value": "6",
-              "odds": 1.44
+              "odds": 1.5
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
               "value": "9",
-              "odds": 1.44
+              "odds": 1.4
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Both teams scoring",
               "value": "8/10",
-              "odds": 1.44
+              "odds": 1.4
             }
           ],
           "sportsbet_odds": {
@@ -15746,7 +15746,7 @@
           "sportsbet_odds": {
             "home": 1.25,
             "draw": 6.5,
-            "away": 10.0,
+            "away": 9.5,
             "event_id": 10469353,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/germany/german-bundesliga/leverkusen-v-hamburger-sv-10469353"
           },
@@ -15863,7 +15863,7 @@
               "source": "computed",
               "label": "Less than 2.5 goals",
               "value": "4/5",
-              "odds": 3.2
+              "odds": 3.4
             },
             {
               "team": "away",
@@ -15877,7 +15877,7 @@
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "8/10",
-              "odds": 1.36
+              "odds": 1.33
             },
             {
               "team": "away",
@@ -16192,9 +16192,9 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 1.14,
-            "draw": 9.0,
-            "away": 15.0,
+            "home": 1.12,
+            "draw": 9.5,
+            "away": 16.0,
             "event_id": 10470436,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/germany/german-bundesliga/bayern-munich-v-fc-koln-10470436"
           },
@@ -16283,7 +16283,7 @@
               "source": "computed",
               "label": "Losses",
               "value": "3",
-              "odds": 2.35
+              "odds": 2.4
             },
             {
               "team": "home",
@@ -16304,13 +16304,13 @@
               "source": "computed",
               "label": "No Wins",
               "value": "3",
-              "odds": 1.57
+              "odds": 1.53
             }
           ],
           "sportsbet_odds": {
             "home": 2.8,
-            "draw": 3.6,
-            "away": 2.3,
+            "draw": 3.5,
+            "away": 2.4,
             "event_id": 10469346,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/germany/german-bundesliga/st-pauli-v-wolfsburg-10469346"
           },
@@ -16415,34 +16415,34 @@
               "source": "computed",
               "label": "Without Clean Sheet",
               "value": "8",
-              "odds": 1.4
+              "odds": 1.44
             },
             {
               "team": "home",
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "8/10",
-              "odds": 1.44
+              "odds": 1.53
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
               "value": "4",
-              "odds": 1.4
+              "odds": 1.44
             },
             {
               "team": "away",
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "8/10",
-              "odds": 1.44
+              "odds": 1.53
             }
           ],
           "sportsbet_odds": {
-            "home": 2.55,
+            "home": 2.62,
             "draw": 3.9,
-            "away": 2.45,
+            "away": 2.4,
             "event_id": 10469355,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/germany/german-bundesliga/freiburg-v-rb-leipzig-10469355"
           },
@@ -16541,7 +16541,7 @@
               "source": "computed",
               "label": "No Wins",
               "value": "3",
-              "odds": 1.33
+              "odds": 1.3
             },
             {
               "team": "home",
@@ -26905,7 +26905,7 @@
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "9/10",
-              "odds": 1.5
+              "odds": 1.57
             },
             {
               "team": "away",
@@ -27047,7 +27047,7 @@
               "source": "computed",
               "label": "Less than 2.5 goals",
               "value": "5/6",
-              "odds": 3.1
+              "odds": 2.88
             }
           ],
           "sportsbet_odds": {
@@ -36529,9 +36529,9 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 1.7,
-            "draw": 4.1,
-            "away": 4.5,
+            "home": 1.67,
+            "draw": 4.0,
+            "away": 4.75,
             "event_id": 10472096,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/charlotte-fc-v-toronto-fc-10472096"
           },
@@ -36658,7 +36658,7 @@
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "4/5",
-              "odds": 1.8
+              "odds": 1.75
             },
             {
               "team": "home",
@@ -37031,7 +37031,7 @@
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "5/6",
-              "odds": 1.53
+              "odds": 1.5
             },
             {
               "team": "home",
@@ -37045,7 +37045,7 @@
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "4/5",
-              "odds": 1.53
+              "odds": 1.5
             },
             {
               "team": "away",
@@ -37181,7 +37181,7 @@
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "8/10",
-              "odds": 1.73
+              "odds": 1.7
             }
           ],
           "sportsbet_odds": {
@@ -37293,13 +37293,13 @@
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "9/10",
-              "odds": 1.48
+              "odds": 1.5
             }
           ],
           "sportsbet_odds": {
-            "home": 1.44,
-            "draw": 4.75,
-            "away": 6.0,
+            "home": 1.5,
+            "draw": 4.6,
+            "away": 5.5,
             "event_id": 10472105,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/austin-fc-v-kansas-city-10472105"
           },
@@ -37841,7 +37841,7 @@
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "8/10",
-              "odds": 1.36
+              "odds": 1.33
             },
             {
               "team": "away",
@@ -37855,7 +37855,7 @@
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "8/10",
-              "odds": 1.36
+              "odds": 1.33
             },
             {
               "team": "away",
@@ -38015,9 +38015,9 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 1.8,
+            "home": 1.87,
             "draw": 4.1,
-            "away": 3.8,
+            "away": 3.7,
             "event_id": 10472112,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/san-jose-earthquakes-v-fc-dallas-10472112"
           },
@@ -38298,13 +38298,13 @@
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "5/6",
-              "odds": 1.8
+              "odds": 1.85
             }
           ],
           "sportsbet_odds": {
-            "home": 2.05,
+            "home": 2.1,
             "draw": 3.7,
-            "away": 3.4,
+            "away": 3.3,
             "event_id": 10472119,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/nashville-sc-v-los-angeles-fc-10472119"
           },
