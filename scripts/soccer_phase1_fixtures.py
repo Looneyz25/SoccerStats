@@ -7,12 +7,14 @@ fixture dates/times are stored in Australia/Adelaide local time.
 
 Environment:
     API_FOOTBALL_KEY or APISPORTS_KEY
+    THESPORTSDB_KEY or THESPORTSDB_API_KEY (optional; defaults to free v1 key 123)
 """
 import argparse
 import csv
 import html
 import json
 import os
+import time
 import urllib.parse
 import urllib.request
 import zipfile
@@ -39,6 +41,9 @@ MD_PATH = OUT_DIR / "phase1_fixture_slate_current.md"
 
 API_BASE = "https://v3.football.api-sports.io"
 API_KEY_ENV = ("API_FOOTBALL_KEY", "APISPORTS_KEY")
+THESPORTSDB_KEY_ENV = ("THESPORTSDB_KEY", "THESPORTSDB_API_KEY")
+THESPORTSDB_DEFAULT_KEY = "123"
+THESPORTSDB_BASE = "https://www.thesportsdb.com/api/v1/json"
 LOCAL_TZ = "Australia/Adelaide"
 FLASHSCORE_FEED_URL = "https://2.flashscore.ninja/2/x/feed/f_1_0_3_en-uk_1"
 
@@ -59,6 +64,33 @@ LEAGUES = [
 LEAGUE_BY_API = {x["api_id"]: x for x in LEAGUES}
 LEAGUE_BY_NAME = {x["name"]: x for x in LEAGUES}
 READY = "ready_for_phase_2"
+
+# TheSportsDB v1 league IDs for the same league set where available. These
+# let us ask for a day within one competition instead of taking the tiny global
+# free sample returned by eventsday.php?s=Soccer.
+THESPORTSDB_LEAGUES = {
+    "Premier League": "4328",
+    "Championship": "4329",
+    "Bundesliga": "4331",
+    "Ligue 1": "4334",
+    "LaLiga": "4335",
+    "Eredivisie": "4337",
+    "MLS": "4346",
+    "UEFA Champions League": "4480",
+}
+
+THESPORTSDB_LEAGUE_HINTS = {
+    "Premier League": ("english premier league", "premier league"),
+    "Championship": ("english league championship", "championship"),
+    "League One": ("english league one", "league one"),
+    "League Two": ("english league two", "league two"),
+    "LaLiga": ("spanish la liga", "la liga"),
+    "Bundesliga": ("german bundesliga", "bundesliga"),
+    "Ligue 1": ("french ligue 1", "ligue 1"),
+    "Eredivisie": ("dutch eredivisie", "eredivisie"),
+    "UEFA Champions League": ("uefa champions league", "champions league"),
+    "MLS": ("american major league soccer", "major league soccer", "mls"),
+}
 
 # Exact Flashscore league names (after stripping the country prefix). Some
 # Flashscore feeds prepend "COUNTRY: " (e.g. "ENGLAND: Premier League"); we
@@ -129,6 +161,14 @@ def api_key():
         if val:
             return val
     return ""
+
+
+def thesportsdb_key():
+    for name in THESPORTSDB_KEY_ENV:
+        val = os.environ.get(name)
+        if val:
+            return val
+    return THESPORTSDB_DEFAULT_KEY
 
 
 def parse_source_datetime(value, timestamp=None):
@@ -493,6 +533,197 @@ def rows_from_api(start_date, days, run_ts, key):
     return rows, health_rows
 
 
+def thesportsdb_league_matches(canonical_name, provider_league):
+    league = (provider_league or "").lower()
+    return any(hint in league for hint in THESPORTSDB_LEAGUE_HINTS.get(canonical_name, ()))
+
+
+def thesportsdb_status(event):
+    if str(event.get("strPostponed") or "").lower() == "yes":
+        return "postponed_or_cancelled"
+    status = (event.get("strStatus") or "").lower()
+    if "finished" in status:
+        return "FT"
+    if any(token in status for token in ("live", "half", "extra", "penalty", "progress")):
+        return "live"
+    if any(token in status for token in ("postponed", "cancelled", "abandoned", "suspended")):
+        return "postponed_or_cancelled"
+    return "upcoming"
+
+
+def thesportsdb_event_datetime(event):
+    local_date = event.get("dateEventLocal") or event.get("dateEvent") or ""
+    local_time = (event.get("strTimeLocal") or event.get("strTime") or "").strip()
+    if local_time:
+        local_time = local_time[:5]
+
+    utc_ts = ""
+    timestamp = event.get("strTimestamp")
+    if timestamp:
+        text = str(timestamp).replace("Z", "+00:00")
+        try:
+            dt = datetime.fromisoformat(text)
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
+            local = dt.astimezone(ADL)
+            local_date = local.strftime("%Y-%m-%d")
+            local_time = local.strftime("%H:%M")
+            utc_ts = int(dt.astimezone(timezone.utc).timestamp())
+        except Exception:
+            pass
+
+    return local_date, local_time, utc_ts
+
+
+def fetch_thesportsdb_events(day, key, league_id=None):
+    params = {"d": day}
+    if league_id:
+        params["l"] = league_id
+    else:
+        params["s"] = "Soccer"
+    url = f"{THESPORTSDB_BASE}/{key}/eventsday.php?" + urllib.parse.urlencode(params)
+    with urllib.request.urlopen(url, timeout=25) as resp:
+        payload = json.loads(resp.read().decode("utf-8"))
+    return payload.get("events") or [], url
+
+
+def rows_from_thesportsdb(start_date, days, run_ts):
+    rows = []
+    health_rows = []
+    key = thesportsdb_key()
+    allowed_dates = iso_date_range(start_date, days)
+
+    for day in allowed_dates:
+        for league in LEAGUES:
+            provider_league_id = THESPORTSDB_LEAGUES.get(league["name"])
+            if not provider_league_id:
+                continue
+
+            status = "healthy"
+            notes = ""
+            try:
+                events, url = fetch_thesportsdb_events(day, key, provider_league_id)
+            except Exception as exc:
+                events = []
+                url = f"{THESPORTSDB_BASE}/{key}/eventsday.php?d={day}&l={provider_league_id}"
+                status = "blocked"
+                notes = str(exc)
+
+            matched = 0
+            for event in events:
+                if not thesportsdb_league_matches(league["name"], event.get("strLeague", "")):
+                    continue
+                if is_women_team(event.get("strHomeTeam")) or is_women_team(event.get("strAwayTeam")):
+                    continue
+                local_date, local_time, utc_ts = thesportsdb_event_datetime(event)
+                if local_date not in allowed_dates:
+                    continue
+                status_text = thesportsdb_status(event)
+                row = {
+                    "run_timestamp": run_ts,
+                    "source": "TheSportsDB",
+                    "source_health": status,
+                    "league_id": league["legacy_id"],
+                    "api_league_id": provider_league_id,
+                    "league": league["name"],
+                    "event_id": "thesportsdb:" + str(event.get("idEvent", "")),
+                    "date": local_date,
+                    "time": "FT" if status_text == "FT" else local_time,
+                    "timezone": LOCAL_TZ,
+                    "utc_timestamp": utc_ts,
+                    "status": status_text,
+                    "home": event.get("strHomeTeam", ""),
+                    "home_team_id": event.get("idHomeTeam", ""),
+                    "away": event.get("strAwayTeam", ""),
+                    "away_team_id": event.get("idAwayTeam", ""),
+                    "is_duplicate": "no",
+                    "is_stale": "no",
+                    "missing_fields": "",
+                    "phase1_status": "",
+                    "phase1_notes": "TheSportsDB v1 free API fallback.",
+                }
+                if status_text == "FT":
+                    row["phase1_notes"] = f"FT score {event.get('intHomeScore')}-{event.get('intAwayScore')}. TheSportsDB v1 free API fallback."
+                rows.append(row)
+                matched += 1
+
+            health_rows.append({
+                "run_timestamp": run_ts,
+                "source": "TheSportsDB",
+                "endpoint": url.replace(f"/{key}/", "/<key>/"),
+                "date": day,
+                "league": league["name"],
+                "source_health": status,
+                "records": matched,
+                "notes": notes,
+            })
+            time.sleep(0.2)
+
+    if not rows:
+        # Last attempt: use the global soccer day feed. The free key only
+        # returns a very small sample, but it is still better than dropping
+        # straight to local stale data when a listed league is present.
+        for day in allowed_dates:
+            status = "healthy"
+            notes = ""
+            try:
+                events, url = fetch_thesportsdb_events(day, key)
+            except Exception as exc:
+                events = []
+                url = f"{THESPORTSDB_BASE}/{key}/eventsday.php?d={day}&s=Soccer"
+                status = "blocked"
+                notes = str(exc)
+
+            matched = 0
+            for event in events:
+                league = next(
+                    (item for item in LEAGUES if thesportsdb_league_matches(item["name"], event.get("strLeague", ""))),
+                    None,
+                )
+                if not league:
+                    continue
+                local_date, local_time, utc_ts = thesportsdb_event_datetime(event)
+                status_text = thesportsdb_status(event)
+                rows.append({
+                    "run_timestamp": run_ts,
+                    "source": "TheSportsDB",
+                    "source_health": status,
+                    "league_id": league["legacy_id"],
+                    "api_league_id": event.get("idLeague", ""),
+                    "league": league["name"],
+                    "event_id": "thesportsdb:" + str(event.get("idEvent", "")),
+                    "date": local_date,
+                    "time": "FT" if status_text == "FT" else local_time,
+                    "timezone": LOCAL_TZ,
+                    "utc_timestamp": utc_ts,
+                    "status": status_text,
+                    "home": event.get("strHomeTeam", ""),
+                    "home_team_id": event.get("idHomeTeam", ""),
+                    "away": event.get("strAwayTeam", ""),
+                    "away_team_id": event.get("idAwayTeam", ""),
+                    "is_duplicate": "no",
+                    "is_stale": "no",
+                    "missing_fields": "",
+                    "phase1_status": "",
+                    "phase1_notes": "TheSportsDB global soccer day fallback.",
+                })
+                matched += 1
+
+            health_rows.append({
+                "run_timestamp": run_ts,
+                "source": "TheSportsDB",
+                "endpoint": url.replace(f"/{key}/", "/<key>/"),
+                "date": day,
+                "league": "Soccer",
+                "source_health": status,
+                "records": matched,
+                "notes": notes or "Global free feed returns a small sample.",
+            })
+            time.sleep(0.2)
+
+    return rows, health_rows
+
+
 def rows_from_store(run_ts):
     if not STORE.exists():
         return [], [{
@@ -595,7 +826,7 @@ def run_notes(rows, health_rows, start_date, days, used_api):
     bad_sources = [h for h in health_rows if h.get("source_health") != "healthy"]
     notes.append({"item": "source_issues", "value": len(bad_sources)})
     if not used_api:
-        notes.append({"item": "next_action", "value": "Set API_FOOTBALL_KEY or APISPORTS_KEY before run_daily for live Phase 1 collection."})
+        notes.append({"item": "next_action", "value": "Set API_FOOTBALL_KEY/APISPORTS_KEY for richer Phase 1 collection; TheSportsDB free API is available as fallback."})
     elif bad_sources:
         notes.append({"item": "next_action", "value": "Review Source Health sheet before Phase 2."})
     else:
@@ -714,6 +945,11 @@ def main():
         used_api = False
         source_mode = "Flashscore"
         if not rows:
+            tsdb_rows, tsdb_health = rows_from_thesportsdb(start_date, args.days, run_ts)
+            rows = tsdb_rows
+            health_rows.extend(tsdb_health)
+            source_mode = "TheSportsDB"
+        if not rows:
             fallback_rows, fallback_health = rows_from_store(run_ts)
             rows = fallback_rows
             health_rows.extend(fallback_health)
@@ -747,8 +983,10 @@ def main():
     print(f"total={len(rows)} ready_for_phase_2={len(ready)} needs_settlement={len(needs_settlement)} blocked_or_invalid={len(blocked)} source={source_mode}")
     if not key and source_mode == "Flashscore":
         print("NOTE: Missing API_FOOTBALL_KEY/APISPORTS_KEY; used keyless Flashscore feed.")
+    elif source_mode == "TheSportsDB":
+        print("NOTE: Missing API_FOOTBALL_KEY/APISPORTS_KEY and Flashscore returned no fixtures; used TheSportsDB v1 fallback.")
     elif source_mode == "local fallback":
-        print("NOTE: Missing API_FOOTBALL_KEY/APISPORTS_KEY and Flashscore returned no fixtures; used local match_data.json fallback.")
+        print("NOTE: Missing API_FOOTBALL_KEY/APISPORTS_KEY and live fallbacks returned no fixtures; used local match_data.json fallback.")
 
 
 if __name__ == "__main__":

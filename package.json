@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3001",
+    "dev:fresh": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/restart-next-dev.ps1",
+    "dev:clean": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/restart-next-dev.ps1 -NoStart",
     "prebuild": "python scripts/soccer_prepare_next_data.py",
     "build": "next build",
     "start": "next start"

@@ -29,8 +29,9 @@ Phase 1 is a `run_daily` foundation phase. It does not form streaks, predictions
 | --- | --- | --- | --- |
 | 1 | API-Football | `/fixtures?date={YYYY-MM-DD}&timezone=Australia/Adelaide` or date-range equivalent | Primary daily fixture discovery, status, teams, league, score |
 | 2 | API-Football | `/fixtures?id={fixture_id}&timezone=Australia/Adelaide` | Validate fixture status, teams, league, timestamp, score |
-| 3 | Flashscore | `https://2.flashscore.ninja/2/x/feed/f_1_0_3_en-uk_1` | Fallback score/status hint only |
-| 4 | TheSportsDB | `/eventsday.php?d={YYYY-MM-DD}&s=Soccer` | Fallback score/status hint only |
+| 3 | Flashscore | `https://2.flashscore.ninja/2/x/feed/f_1_0_3_en-uk_1` | Keyless fallback fixture/status source |
+| 4 | TheSportsDB | `/api/v1/json/{key}/eventsday.php?d={YYYY-MM-DD}&l={league_id}` | Free v1 API fallback fixture/status source |
+| 5 | TheSportsDB | `/api/v1/json/{key}/eventsday.php?d={YYYY-MM-DD}&s=Soccer` | Last-resort global soccer sample |
 
 Do not use Sportsbet or Understat to discover fixtures. They are later-phase sources. SofaScore is no longer a required Phase 1 source because it is blocked.
 
@@ -41,7 +42,16 @@ Phase 1 expects one of these environment variables:
 - `API_FOOTBALL_KEY`
 - `APISPORTS_KEY`
 
-If neither variable is set, the Phase 1 script still writes the Excel workbook from current `match_data.json`, but rows are marked as local fallback data. Past fallback rows become `needs_settlement`; future fallback rows become `source_unverified` until API-Football is configured.
+If neither variable is set, the Phase 1 script tries the keyless Flashscore feed, then TheSportsDB, then current `match_data.json`. Local fallback rows are marked as fallback data. Past fallback rows become `needs_settlement`; future fallback rows become `source_unverified` until a live source validates them.
+
+## TheSportsDB Configuration
+
+TheSportsDB v1 is available as a free fallback source. The script uses the documented free v1 key `123` by default, or one of these environment variables if set:
+
+- `THESPORTSDB_KEY`
+- `THESPORTSDB_API_KEY`
+
+TheSportsDB is used only when API-Football is not configured and Flashscore returns no usable rows. It is not an odds source.
 
 ## Required Agents
 

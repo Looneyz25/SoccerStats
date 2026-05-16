@@ -32,6 +32,13 @@ npm.cmd run build --cache .\.npm-cache
 - `match_data.json` - current app data
 - `predictions_*.json` - dated snapshots
 
+Fixture source order:
+
+1. API-Football when `API_FOOTBALL_KEY` or `APISPORTS_KEY` is set
+2. Flashscore keyless feed
+3. TheSportsDB v1 free API using `THESPORTSDB_KEY`, `THESPORTSDB_API_KEY`, or the documented free key `123`
+4. Local `match_data.json` fallback
+
 ## Legacy Files
 
 - `Soccer_Stats_Dashboard.xlsx` - source workbook

@@ -490,7 +490,7 @@ def fetch_form(team_id, exclude_event_id=None, xg_index=None):
     return sum(att)/len(att), sum(df)/len(df)
 
 
-def fetch_h2h(home_id, away_id, exclude_event_id=None, max_n=6):
+def fetch_h2h(home_id, away_id, exclude_event_id=None, max_n=10):
     """Past meetings between two specific teams. Returns list of {h_scored, a_scored}
     from the home-team's perspective. Empty if data unavailable.
     """
@@ -627,9 +627,16 @@ def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
 
     # H2H: average goals each side scored when these two played
     h2h_h = h2h_a = 0.0
+    h2h_home_wins = h2h_away_wins = h2h_draws = 0
+    h2h_home_goals = h2h_away_goals = 0
     if h2h:
-        h2h_h = sum(m["h_scored"] for m in h2h) / len(h2h)
-        h2h_a = sum(m["a_scored"] for m in h2h) / len(h2h)
+        h2h_home_goals = sum(m["h_scored"] for m in h2h)
+        h2h_away_goals = sum(m["a_scored"] for m in h2h)
+        h2h_home_wins = sum(1 for m in h2h if m["h_scored"] > m["a_scored"])
+        h2h_away_wins = sum(1 for m in h2h if m["a_scored"] > m["h_scored"])
+        h2h_draws = len(h2h) - h2h_home_wins - h2h_away_wins
+        h2h_h = h2h_home_goals / len(h2h)
+        h2h_a = h2h_away_goals / len(h2h)
         # Delta from current base — capped weighting
         h2h_delta_h = max(-0.5, min(0.5, (h2h_h - base_h) * 0.25))
         h2h_delta_a = max(-0.5, min(0.5, (h2h_a - base_a) * 0.25))
@@ -686,6 +693,11 @@ def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
         "lambda_home": round(lh, 3),
         "lambda_away": round(la, 3),
         "h2h_n": len(h2h or []),
+        "h2h_home_wins": h2h_home_wins,
+        "h2h_away_wins": h2h_away_wins,
+        "h2h_draws": h2h_draws,
+        "h2h_home_goals": h2h_home_goals,
+        "h2h_away_goals": h2h_away_goals,
         "h_rank": h_rank, "a_rank": a_rank,
         "home_elo": round(home_elo, 1),
         "away_elo": round(away_elo, 1),

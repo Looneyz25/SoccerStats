@@ -16,6 +16,7 @@ import {
   Goal,
   MapPin,
   Settings,
+  Star,
   Trophy,
   UserRound,
   XCircle,
@@ -212,6 +213,27 @@ function teamNameForSide(side, match) {
   return 'both';
 }
 
+function teamNameForCopy(name) {
+  return (name || '').replace(/^\d+\.\s+/, '');
+}
+
+function formatPlainNumber(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return value;
+  return Number.isInteger(number) ? String(number) : number.toFixed(1);
+}
+
+function formatCopyNumber(value) {
+  const number = Number(value);
+  const words = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+  if (Number.isInteger(number) && number >= 0 && number <= 10) return words[number];
+  return formatPlainNumber(value);
+}
+
+function pointText(value) {
+  return `${formatCopyNumber(value)} ${Number(value) === 1 ? 'point' : 'points'}`;
+}
+
 function displayTeamForStreak(streak, match) {
   const label = (streak.label || '').toLowerCase();
   const side =
@@ -240,51 +262,374 @@ function fmtLambda(value) {
   return Number(value).toFixed(2);
 }
 
-function winnerRationale(match) {
+function fmtPct(value) {
+  if (!Number.isFinite(value)) return null;
+  return `${(value * 100).toFixed(0)}%`;
+}
+
+function fmtPrice(value) {
+  if (!Number.isFinite(value) || value <= 0) return null;
+  return value.toFixed(2);
+}
+
+function impliedProbability(odds) {
+  const value = Number(odds);
+  return Number.isFinite(value) && value > 0 ? 1 / value : null;
+}
+
+function poissonMarketProbabilities(lh, la, rho = 0, line = 2.5) {
+  if (!Number.isFinite(lh) || !Number.isFinite(la)) return null;
+  const pmf = (k, l) => Math.exp(-l) * Math.pow(l, k) / [1, 1, 2, 6, 24, 120, 720][k];
+  const grid = Array.from({ length: 7 }, (_, i) => Array.from({ length: 7 }, (_, j) => pmf(i, lh) * pmf(j, la)));
+  grid[0][0] *= 1 - lh * la * rho;
+  grid[1][0] *= 1 + la * rho;
+  grid[0][1] *= 1 + lh * rho;
+  grid[1][1] *= 1 - rho;
+  const total = grid.reduce((sum, row) => sum + row.reduce((rowSum, value) => rowSum + value, 0), 0);
+  if (total <= 0) return null;
+
+  let home = 0;
+  let draw = 0;
+  let away = 0;
+  let bttsYes = 0;
+  let overGoals = 0;
+  for (let i = 0; i < 7; i++) {
+    for (let j = 0; j < 7; j++) {
+      const p = grid[i][j] / total;
+      if (i > j) home += p;
+      else if (j > i) away += p;
+      else draw += p;
+      if (i > 0 && j > 0) bttsYes += p;
+      if (i + j > line) overGoals += p;
+    }
+  }
+  return { home, draw, away, bttsYes, overGoals };
+}
+
+function comparisonFromPrices({ title, modelProb, marketOdds, fallbackLabel = null }) {
+  if (!Number.isFinite(modelProb)) {
+    const marketPrice = fmtPrice(marketOdds);
+    if (!marketPrice) return null;
+    return {
+      title,
+      badge: { label: fallbackLabel || 'Trend pick', tone: 'neutral' },
+      bookmaker: { odds: marketPrice, probability: impliedProbability(marketOdds) ? fmtPct(impliedProbability(marketOdds)) : '-' },
+      model: { odds: fallbackLabel || 'Trend pick', probability: '-' },
+      edgePoints: 0,
+      modelEdge: 0,
+      note: 'Streak-led pick; use the bookmaker price as context, not a fair-odds edge.',
+    };
+  }
+
+  const modelPrice = fmtPrice(1 / modelProb);
+  const marketPrice = fmtPrice(marketOdds);
+  const marketProb = impliedProbability(marketOdds);
+  if (!modelPrice || !marketPrice || !Number.isFinite(marketProb)) return null;
+
+  const diff = modelProb - marketProb;
+  const points = Math.abs(diff * 100).toFixed(0);
+  const isClose = Math.abs(diff) < 0.02;
+  const label = isClose ? 'Close to market' : diff > 0 ? `Model +${points}%` : `Bookmaker +${points}%`;
+  const tone = isClose ? 'neutral' : diff > 0 ? 'positive' : 'warning';
+  const note = isClose
+    ? 'No clear edge; only bet if other markets agree.'
+    : diff > 0
+      ? 'Model sees value; price is better than our fair odds.'
+      : 'No model edge; bookmaker price looks short.';
+  return {
+    title,
+    badge: { label, tone },
+    bookmaker: { odds: marketPrice, probability: fmtPct(marketProb) },
+    model: { odds: modelPrice, probability: fmtPct(modelProb) },
+    edgePoints: Math.abs(diff * 100),
+    modelEdge: diff,
+    note,
+  };
+}
+
+function modelVsBookmakerComparison(match, marketKey, market) {
+  if (!market) return null;
+  const f = match.predictions?.factors || {};
+  const lh = Number(f.lambda_home);
+  const la = Number(f.lambda_away);
+  const probs = poissonMarketProbabilities(lh, la, Number(f.dixon_coles_rho) || 0, Number(market.line ?? 2.5));
+
+  if (marketKey === 'winner') {
+    if (!market.type || market.type === 'draw' || !probs) return null;
+    const odds = match.sportsbet_odds || match.odds || {};
+    return comparisonFromPrices({
+      title: 'Winner',
+      modelProb: probs[market.type],
+      marketOdds: Number(odds[market.type]),
+    });
+  }
+
+  if (marketKey === 'btts' && probs) {
+    const modelProb = market.pick === 'No' ? 1 - probs.bttsYes : probs.bttsYes;
+    return comparisonFromPrices({ title: 'BTTS', modelProb, marketOdds: Number(market.odds) });
+  }
+
+  if (marketKey === 'ou_goals' && probs) {
+    const modelProb = market.pick === 'Under' ? 1 - probs.overGoals : probs.overGoals;
+    const line = market.line ?? 2.5;
+    return comparisonFromPrices({ title: `${market.pick || 'Goals'} ${line} Goals`, modelProb, marketOdds: Number(market.odds) });
+  }
+
+  if (marketKey === 'ou_cards') {
+    const line = market.line ?? 4.5;
+    return comparisonFromPrices({
+      title: `${market.pick || 'Cards'} ${line} Cards`,
+      modelProb: NaN,
+      marketOdds: Number(market.odds),
+      fallbackLabel: 'Trend pick',
+    });
+  }
+
+  return null;
+}
+
+function sameTeamId(left, right) {
+  return left !== null && left !== undefined && right !== null && right !== undefined && String(left) === String(right);
+}
+
+function matchSortKey(match) {
+  return `${match?.date || ''} ${match?.time || ''}`;
+}
+
+function teamGoalsInMatch(match, teamId) {
+  if (sameTeamId(match.home?.team_id, teamId)) {
+    return { scored: match.home?.goals, conceded: match.away?.goals, side: 'home' };
+  }
+  if (sameTeamId(match.away?.team_id, teamId)) {
+    return { scored: match.away?.goals, conceded: match.home?.goals, side: 'away' };
+  }
+  return null;
+}
+
+function resultForTeam(scored, conceded) {
+  if (scored > conceded) return 'W';
+  if (scored < conceded) return 'L';
+  return 'D';
+}
+
+function recentTeamForm(allMatches, teamId, currentMatchId, n = 5, options = {}) {
+  if (!teamId || !Array.isArray(allMatches)) return null;
+  const played = allMatches
+    .filter((m) => {
+      if (m.status !== 'FT' || m.id === currentMatchId) return false;
+      const goals = teamGoalsInMatch(m, teamId);
+      if (!goals || typeof goals.scored !== 'number' || typeof goals.conceded !== 'number') return false;
+      if (options.side && goals.side !== options.side) return false;
+      if (options.venue && m.venue !== options.venue) return false;
+      return true;
+    })
+    .sort((a, b) => matchSortKey(b).localeCompare(matchSortKey(a)))
+    .slice(0, n);
+  if (!played.length) return null;
+
+  const summary = { count: played.length, wins: 0, draws: 0, losses: 0, scored: 0, conceded: 0 };
+  for (const m of played) {
+    const goals = teamGoalsInMatch(m, teamId);
+    summary.scored += goals.scored;
+    summary.conceded += goals.conceded;
+    const result = resultForTeam(goals.scored, goals.conceded);
+    if (result === 'W') summary.wins += 1;
+    else if (result === 'D') summary.draws += 1;
+    else summary.losses += 1;
+  }
+  return {
+    ...summary,
+    avgScored: summary.scored / summary.count,
+    avgConceded: summary.conceded / summary.count,
+    goalDiff: summary.scored - summary.conceded,
+    pointsPerMatch: (summary.wins * 3 + summary.draws) / summary.count,
+  };
+}
+
+function formatFormRecord(form) {
+  if (!form) return null;
+  const gd = form.goalDiff > 0 ? `+${form.goalDiff}` : `${form.goalDiff}`;
+  const winWord = form.wins === 1 ? 'win' : 'wins';
+  const drawWord = form.draws === 1 ? 'draw' : 'draws';
+  const lossWord = form.losses === 1 ? 'loss' : 'losses';
+  return `${formatCopyNumber(form.wins)} ${winWord}, ${formatCopyNumber(form.draws)} ${drawWord}, ${formatCopyNumber(form.losses)} ${lossWord} with a ${gd} goal difference`;
+}
+
+function recentH2hSummary(allMatches, match, maxN = 10) {
+  const homeId = match.home?.team_id;
+  const awayId = match.away?.team_id;
+  if (!homeId || !awayId || !Array.isArray(allMatches)) return null;
+  const meetings = allMatches
+    .filter((m) => {
+      if (m.status !== 'FT' || m.id === match.id) return false;
+      const mh = m.home?.team_id;
+      const ma = m.away?.team_id;
+      const samePair =
+        (sameTeamId(mh, homeId) && sameTeamId(ma, awayId)) ||
+        (sameTeamId(mh, awayId) && sameTeamId(ma, homeId));
+      return samePair && typeof m.home?.goals === 'number' && typeof m.away?.goals === 'number';
+    })
+    .sort((a, b) => matchSortKey(b).localeCompare(matchSortKey(a)))
+    .slice(0, maxN);
+  if (!meetings.length) return null;
+
+  const summary = {
+    count: meetings.length,
+    homeWins: 0,
+    awayWins: 0,
+    draws: 0,
+    homeGoals: 0,
+    awayGoals: 0,
+    atVenueCount: 0,
+    atVenueHomeWins: 0,
+    atVenueAwayWins: 0,
+    atVenueDraws: 0,
+    lastWinner: null,
+  };
+
+  for (const m of meetings) {
+    const currentHomeWasHome = sameTeamId(m.home?.team_id, homeId);
+    const currentHomeGoals = currentHomeWasHome ? m.home.goals : m.away.goals;
+    const currentAwayGoals = currentHomeWasHome ? m.away.goals : m.home.goals;
+    summary.homeGoals += currentHomeGoals;
+    summary.awayGoals += currentAwayGoals;
+
+    let winner = 'draw';
+    if (currentHomeGoals > currentAwayGoals) {
+      summary.homeWins += 1;
+      winner = 'home';
+    } else if (currentAwayGoals > currentHomeGoals) {
+      summary.awayWins += 1;
+      winner = 'away';
+    } else {
+      summary.draws += 1;
+    }
+    if (!summary.lastWinner) summary.lastWinner = winner;
+
+    if (match.venue && m.venue === match.venue) {
+      summary.atVenueCount += 1;
+      if (winner === 'home') summary.atVenueHomeWins += 1;
+      else if (winner === 'away') summary.atVenueAwayWins += 1;
+      else summary.atVenueDraws += 1;
+    }
+  }
+
+  return summary;
+}
+
+function h2hFactorSummary(match) {
+  const f = match.predictions?.factors || {};
+  const count = Number(f.h2h_n);
+  if (!Number.isFinite(count) || count <= 0) return null;
+  const homeWins = Number(f.h2h_home_wins);
+  const awayWins = Number(f.h2h_away_wins);
+  const draws = Number(f.h2h_draws);
+  if (!Number.isFinite(homeWins) || !Number.isFinite(awayWins) || !Number.isFinite(draws)) return null;
+  return {
+    count,
+    homeWins,
+    awayWins,
+    draws,
+    homeGoals: Number(f.h2h_home_goals),
+    awayGoals: Number(f.h2h_away_goals),
+  };
+}
+
+function winnerRationale(match, allMatches) {
   const w = match.predictions?.winner;
   const f = match.predictions?.factors || {};
   if (!w) return null;
-  const lh = fmtLambda(f.lambda_home);
-  const la = fmtLambda(f.lambda_away);
-  const homeName = match.home?.name || 'Home';
-  const awayName = match.away?.name || 'Away';
+  const homeName = teamNameForCopy(match.home?.name || 'Home');
+  const awayName = teamNameForCopy(match.away?.name || 'Away');
+  const pickedName = w.type === 'away' ? awayName : w.type === 'draw' ? 'Draw' : homeName;
+  const pickedTeamId = w.type === 'away' ? match.away?.team_id : w.type === 'home' ? match.home?.team_id : null;
+  const otherTeamId = w.type === 'away' ? match.home?.team_id : w.type === 'home' ? match.away?.team_id : null;
+  const priceComparison = modelVsBookmakerComparison(match, 'winner', w);
   const parts = [];
 
-  if (lh && la) {
-    if (w.type === 'home') {
-      parts.push(`${homeName} expected to outscore ${awayName} (${lh} to ${la} goals)`);
-    } else if (w.type === 'away') {
-      parts.push(`${awayName} expected to outscore ${homeName} (${la} to ${lh} goals)`);
-    } else {
-      parts.push(`Both teams projected close (${lh} to ${la} goals)`);
+  if (w.type === 'home') {
+    parts.push(`The model leans ${homeName} because it expects them to create more good chances than ${awayName}.`);
+  } else if (w.type === 'away') {
+    parts.push(`The model leans ${awayName} because it expects them to create more good chances than ${homeName}.`);
+  } else {
+    parts.push('The model sees this as tight, with both teams projected close on chances.');
+  }
+  const pickedOverall = recentTeamForm(allMatches, pickedTeamId, match.id, 10);
+  const otherOverall = recentTeamForm(allMatches, otherTeamId, match.id, 10);
+  if (pickedOverall && w.type !== 'draw') {
+    const formLead = pickedOverall.pointsPerMatch >= (otherOverall?.pointsPerMatch ?? 0)
+      ? 'Recent form is stronger'
+      : 'Recent form is not the main edge';
+    const otherPpm = otherOverall ? `; the opponent is at ${pointText(otherOverall.pointsPerMatch)} per game` : '';
+    parts.push(`${formLead}: ${pointText(pickedOverall.pointsPerMatch)} per game over the last ${formatCopyNumber(pickedOverall.count)} matches${otherPpm}.`);
+  }
+
+  if (w.type === 'home') {
+    const venueForm = recentTeamForm(allMatches, pickedTeamId, match.id, 10, { venue: match.venue });
+    const homeForm = venueForm?.count >= 2 ? venueForm : recentTeamForm(allMatches, pickedTeamId, match.id, 10, { side: 'home' });
+    if (homeForm) {
+      const label = venueForm?.count >= 2 && match.venue ? 'at this ground' : 'at home';
+      parts.push(`They have been solid ${label}: ${formatFormRecord(homeForm)} in the last ${formatCopyNumber(homeForm.count)} matches.`);
+    }
+  } else if (w.type === 'away') {
+    const awayForm = recentTeamForm(allMatches, pickedTeamId, match.id, 10, { side: 'away' });
+    if (awayForm) {
+      parts.push(`Their away record backs the pick: ${formatFormRecord(awayForm)} in the last ${formatCopyNumber(awayForm.count)} matches.`);
+    }
+  }
+
+  const h2h = recentH2hSummary(allMatches, match, 10) || h2hFactorSummary(match);
+  if (h2h?.count) {
+    const h2hWinner =
+      h2h.homeWins > h2h.awayWins ? homeName :
+      h2h.awayWins > h2h.homeWins ? awayName :
+      'neither side';
+    const h2hGoalText = Number.isFinite(h2h.homeGoals) && Number.isFinite(h2h.awayGoals)
+      ? `, with goals ${h2h.homeGoals}-${h2h.awayGoals}`
+      : '';
+    const lastWinText = h2h.lastWinner && h2h.lastWinner !== 'draw'
+      ? ` The most recent win went to ${h2h.lastWinner === 'home' ? homeName : awayName}.`
+      : '';
+    parts.push(`Head to head, ${h2hWinner} has had the better of the last ${h2h.count}: ${homeName} ${h2h.homeWins}, ${awayName} ${h2h.awayWins}, draws ${h2h.draws}${h2hGoalText}.${lastWinText}`);
+    if (h2h.atVenueCount >= 2 && match.venue) {
+      parts.push(`At this ground, the last ${h2h.atVenueCount} meetings are ${homeName} ${h2h.atVenueHomeWins}, ${awayName} ${h2h.atVenueAwayWins}, draws ${h2h.atVenueDraws}.`);
+    }
+  } else if (match.h2h_streaks?.length) {
+    const trend = match.h2h_streaks.find((s) => ['wins', 'no losses', 'over 2.5 goals', 'both teams to score'].includes((s.label || '').toLowerCase()));
+    if (trend) {
+      const teamName = teamNameForSide(trend.team, match);
+      parts.push(`The useful H2H clue is ${teamName} ${trend.label.toLowerCase()}${trend.value ? ` in ${trend.value}` : ''}.`);
     }
   }
 
   const hRank = f.h_rank ?? match.home?.rank;
   const aRank = f.a_rank ?? match.away?.rank;
   if (hRank && aRank) {
-    parts.push(`league rank ${hRank} vs ${aRank}`);
+    const rankLeader = Number(hRank) < Number(aRank) ? homeName : Number(aRank) < Number(hRank) ? awayName : null;
+    if (rankLeader) parts.push(`League position also points to ${rankLeader}: ${hRank} vs ${aRank}.`);
   }
 
-  const odds = match.sportsbet_odds || match.odds || {};
-  if (odds.home && odds.away) {
-    const oh = Number(odds.home);
-    const oa = Number(odds.away);
-    if (Number.isFinite(oh) && Number.isFinite(oa)) {
-      const favSide = oh < oa ? 'home' : 'away';
-      const favName = favSide === 'home' ? homeName : awayName;
-      if (favSide === w.type) {
-        parts.push(`bookmaker agrees, ${favName} favoured (${oh.toFixed(2)} / ${oa.toFixed(2)})`);
-      } else if (w.type === 'draw') {
-        parts.push(`bookmaker favours ${favName} (${oh.toFixed(2)} / ${oa.toFixed(2)})`);
-      } else {
-        parts.push(`going against the bookmaker favourite (${oh.toFixed(2)} / ${oa.toFixed(2)})`);
+  if (!priceComparison) {
+    const odds = match.sportsbet_odds || match.odds || {};
+    if (odds.home && odds.away) {
+      const oh = Number(odds.home);
+      const oa = Number(odds.away);
+      if (Number.isFinite(oh) && Number.isFinite(oa)) {
+        const favSide = oh < oa ? 'home' : 'away';
+        const favName = favSide === 'home' ? homeName : awayName;
+        if (favSide === w.type) {
+          parts.push(`The bookmaker agrees, with ${favName} favoured at ${oh.toFixed(2)} vs ${oa.toFixed(2)}.`);
+        } else if (w.type === 'draw') {
+          parts.push(`The bookmaker leans ${favName}, so the draw pick is going against the market.`);
+        } else {
+          parts.push(`This goes against the bookmaker favourite, priced ${oh.toFixed(2)} vs ${oa.toFixed(2)}.`);
+        }
       }
     }
   }
 
   if (!parts.length) return null;
-  return parts.join(' · ');
+  return parts.slice(0, 5).join(' ');
 }
 
 function bttsRationale(match) {
@@ -304,7 +649,7 @@ function bttsRationale(match) {
   });
   if (streakHints.length) {
     const first = streakHints[0];
-    const teamName = teamNameForSide(first.team, match);
+    const teamName = teamNameForCopy(teamNameForSide(first.team, match));
     parts.push(`${teamName} recent form: ${first.label}${first.value ? ` (${first.value})` : ''}`);
   }
   if (!parts.length) return null;
@@ -324,40 +669,6 @@ function poissonGoalsOverProb(lh, la, line = 2.5) {
   return 1 - pUnder;
 }
 
-function recentTeamForm(allMatches, teamId, currentMatchId, n = 5) {
-  if (!teamId || !Array.isArray(allMatches)) return null;
-  const played = allMatches
-    .filter((m) => {
-      if (m.status !== 'FT') return false;
-      if (m.id === currentMatchId) return false;
-      const hid = m.home?.team_id;
-      const aid = m.away?.team_id;
-      if (hid !== teamId && aid !== teamId) return false;
-      const hg = m.home?.goals;
-      const ag = m.away?.goals;
-      return typeof hg === 'number' && typeof ag === 'number';
-    })
-    .sort((a, b) => `${b.date} ${b.time}`.localeCompare(`${a.date} ${a.time}`))
-    .slice(0, n);
-  if (!played.length) return null;
-  let scored = 0;
-  let conceded = 0;
-  for (const m of played) {
-    if (m.home?.team_id === teamId) {
-      scored += m.home.goals;
-      conceded += m.away.goals;
-    } else {
-      scored += m.away.goals;
-      conceded += m.home.goals;
-    }
-  }
-  return {
-    count: played.length,
-    avgScored: scored / played.length,
-    avgConceded: conceded / played.length,
-  };
-}
-
 function goalsRationale(match, allMatches) {
   const g = match.predictions?.ou_goals;
   const f = match.predictions?.factors || {};
@@ -367,7 +678,9 @@ function goalsRationale(match, allMatches) {
   if (!Number.isFinite(lh) || !Number.isFinite(la)) return null;
   const line = g.line ?? 2.5;
   const pOver = poissonGoalsOverProb(lh, la, line);
+  const pUnder = 1 - pOver;
   const pct = (pOver * 100).toFixed(0);
+  const underPct = (pUnder * 100).toFixed(0);
   const total = (lh + la).toFixed(2);
 
   const homeForm = recentTeamForm(allMatches, match.home?.team_id, match.id);
@@ -375,18 +688,18 @@ function goalsRationale(match, allMatches) {
   const formParts = [];
   if (homeForm) {
     formParts.push(
-      `${match.home?.name || 'Home'} scoring ${homeForm.avgScored.toFixed(1)}/conceding ${homeForm.avgConceded.toFixed(1)} per match over last ${homeForm.count}`,
+      `${teamNameForCopy(match.home?.name || 'Home')} scoring ${homeForm.avgScored.toFixed(1)}/conceding ${homeForm.avgConceded.toFixed(1)} per match over last ${homeForm.count}`,
     );
   }
   if (awayForm) {
     formParts.push(
-      `${match.away?.name || 'Away'} scoring ${awayForm.avgScored.toFixed(1)}/conceding ${awayForm.avgConceded.toFixed(1)} per match over last ${awayForm.count}`,
+      `${teamNameForCopy(match.away?.name || 'Away')} scoring ${awayForm.avgScored.toFixed(1)}/conceding ${awayForm.avgConceded.toFixed(1)} per match over last ${awayForm.count}`,
     );
   }
 
   const lead = g.pick === 'Over'
-    ? `${pct}% chance of 3 or more goals — model picks Over (expected total ${total})`
-    : `${pct}% chance of 3 or more goals — not high enough for Over, so Under (expected total ${total})`;
+    ? `The model leans Over ${line}: ${pct}% chance of 3 or more goals, with ${total} expected goals.`
+    : `The model leans Under ${line}: ${underPct}% chance the match stays below 3 goals, even though there is still a ${pct}% goal-risk. Expected total is ${total}.`;
   return formParts.length ? `${lead} · ${formParts.join(' · ')}` : lead;
 }
 
@@ -413,10 +726,10 @@ function cardsRationale(match, allMatches) {
   if (!homeCards && !awayCards) return null;
   const parts = [];
   if (homeCards) {
-    parts.push(`${match.home?.name || 'Home'} averaging ${homeCards.avg.toFixed(1)} cards per match over last ${homeCards.count}`);
+    parts.push(`${teamNameForCopy(match.home?.name || 'Home')} averaging ${homeCards.avg.toFixed(1)} cards per match over last ${homeCards.count}`);
   }
   if (awayCards) {
-    parts.push(`${match.away?.name || 'Away'} averaging ${awayCards.avg.toFixed(1)} cards per match over last ${awayCards.count}`);
+    parts.push(`${teamNameForCopy(match.away?.name || 'Away')} averaging ${awayCards.avg.toFixed(1)} cards per match over last ${awayCards.count}`);
   }
   return parts.join(' · ');
 }
@@ -639,13 +952,19 @@ function Stat({ icon: Icon, label, value, tone = 'text-ink' }) {
   );
 }
 
-function MarketPill({ label, market }) {
+function MarketPill({ label, market, edgeBadge }) {
   if (!market) return null;
   const detail = formatMarketDetail(market);
   return (
     <div className={`flex min-h-11 items-center justify-between gap-2 rounded-md border px-2.5 py-2 sm:px-3 ${marketPillClass(market.result)}`}>
       <span className="shrink-0 text-xs font-medium text-slate-500">{label}</span>
       <span className={`flex min-w-0 items-center gap-1 text-right text-sm font-semibold ${marketValueClass(market.result)}`}>
+        {edgeBadge && (
+          <span className="inline-flex shrink-0 items-center gap-1 rounded-md border border-amber-300 bg-amber-50 px-1.5 py-0.5 text-[11px] font-semibold leading-none text-amber-700">
+            <Star className="h-3 w-3 fill-amber-400 text-amber-500" aria-hidden="true" />
+            <span>{edgeBadge}</span>
+          </span>
+        )}
         {resultIcon(market.result)}
         <span className="truncate">{detail || '-'}</span>
       </span>
@@ -765,6 +1084,53 @@ function PredictionDetail({ label, market }) {
   );
 }
 
+function comparisonBadgeClass(tone) {
+  if (tone === 'positive') return 'border-emerald-600 bg-emerald-100 text-emerald-800';
+  if (tone === 'warning') return 'border-amber-200 bg-amber-50 text-amber-700';
+  return 'border-slate-200 bg-slate-50 text-slate-600';
+}
+
+function comparisonOddsText(value) {
+  return /^\d/.test(String(value)) ? `${value} odds` : value;
+}
+
+function summaryRowClass(result) {
+  if (result === 'hit') return 'border-l-4 border-l-emerald-500 bg-emerald-50/40';
+  if (result === 'miss') return 'border-l-4 border-l-red-500 bg-red-50/40';
+  return 'border-l-4 border-l-slate-400 bg-slate-100/70';
+}
+
+function ModelVsBookmakerComparison({ comparison }) {
+  if (!comparison?.badge?.label) return null;
+  const modelFavoured = comparison.badge.tone === 'positive';
+  return (
+    <div className="w-full rounded-md border border-slate-500 bg-white p-2 text-xs shadow-panel">
+      <div className="mb-1.5 flex items-center justify-between gap-2">
+        <span className="font-semibold text-slate-500">{comparison.title}</span>
+        <span className={`inline-flex min-w-24 shrink-0 items-center justify-center rounded-md border px-2 py-1 font-semibold leading-none ${comparisonBadgeClass(comparison.badge.tone)}`}>
+          {comparison.badge.label}
+        </span>
+      </div>
+      <div className="grid gap-1">
+        <div className="grid grid-cols-[5.5rem_5.25rem_3.5rem] items-center gap-2 rounded px-1.5 py-1">
+          <span className="text-slate-500">Bookmaker</span>
+          <span className="text-right font-semibold text-ink">{comparisonOddsText(comparison.bookmaker.odds)}</span>
+          <span className="text-right text-slate-500">{comparison.bookmaker.probability}</span>
+        </div>
+        <div className={`grid grid-cols-[5.5rem_5.25rem_3.5rem] items-center gap-2 rounded px-1.5 py-1 ${modelFavoured ? 'bg-emerald-100 text-emerald-900 ring-1 ring-emerald-500' : ''}`}>
+          <span className={modelFavoured ? 'font-semibold text-emerald-800' : 'text-slate-500'}>Model</span>
+          <span className="text-right font-semibold text-ink">{comparisonOddsText(comparison.model.odds)}</span>
+          <span className={modelFavoured ? 'text-right font-semibold text-emerald-800' : 'text-right text-slate-500'}>{comparison.model.probability}</span>
+        </div>
+        <div className={`rounded px-1.5 py-1 leading-5 ${modelFavoured ? 'bg-emerald-50 text-slate-800 ring-1 ring-emerald-400' : 'bg-white text-slate-600 ring-1 ring-slate-300'}`}>
+          <span className="font-semibold text-slate-500">Bet note: </span>
+          {comparison.note}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function StreakList({ title, streaks, match }) {
   if (!streaks?.length) return null;
   return (
@@ -797,6 +1163,10 @@ function StreakList({ title, streaks, match }) {
 function PredictionSummaryCard({ match, allMatches }) {
   const predictions = match.predictions || {};
   const winner = predictions.winner;
+  const winnerComparison = modelVsBookmakerComparison(match, 'winner', winner);
+  const bttsComparison = modelVsBookmakerComparison(match, 'btts', predictions.btts);
+  const goalsComparison = modelVsBookmakerComparison(match, 'ou_goals', predictions.ou_goals);
+  const cardsComparison = modelVsBookmakerComparison(match, 'ou_cards', predictions.ou_cards);
 
   // Headline = one-line summary of every pick, so it doesn't duplicate the per-market bullets below.
   const headlineParts = [];
@@ -812,14 +1182,14 @@ function PredictionSummaryCard({ match, allMatches }) {
     const line = predictions.ou_cards.line ?? 4.5;
     headlineParts.push(`${predictions.ou_cards.pick} ${line} cards`);
   }
-  const headline = headlineParts.length ? `Picks: ${headlineParts.join(' · ')}.` : null;
+  const headline = headlineParts.length ? `Picks: ${headlineParts.join(' / ')}.` : null;
 
   const lines = [
-    { label: 'Winner', pick: winner ? formatMarketDetail(winner) : null, text: winnerRationale(match) },
-    { label: 'BTTS', pick: predictions.btts ? formatMarketDetail(predictions.btts) : null, text: bttsRationale(match) },
-    { label: 'Goals', pick: predictions.ou_goals ? formatMarketDetail(predictions.ou_goals) : null, text: goalsRationale(match, allMatches) },
-    { label: 'Cards', pick: predictions.ou_cards ? formatMarketDetail(predictions.ou_cards) : null, text: cardsRationale(match, allMatches) },
-  ].filter((row) => row.pick && row.text);
+    { label: 'Winner', pick: winner ? formatMarketDetail(winner) : null, text: winnerRationale(match, allMatches), comparison: winnerComparison, result: winner?.result },
+    { label: 'BTTS', pick: predictions.btts ? formatMarketDetail(predictions.btts) : null, text: bttsRationale(match), comparison: bttsComparison, result: predictions.btts?.result },
+    { label: 'Goals', pick: predictions.ou_goals ? formatMarketDetail(predictions.ou_goals) : null, text: goalsRationale(match, allMatches), comparison: goalsComparison, result: predictions.ou_goals?.result },
+    { label: 'Cards', pick: predictions.ou_cards ? formatMarketDetail(predictions.ou_cards) : null, text: cardsRationale(match, allMatches), comparison: cardsComparison, result: predictions.ou_cards?.result },
+  ].filter((row) => row.pick && (row.text || row.comparison));
 
   if (!headlineParts.length && !lines.length) return null;
 
@@ -843,10 +1213,27 @@ function PredictionSummaryCard({ match, allMatches }) {
       {lines.length > 0 && (
         <ul className="mt-4 divide-y divide-slate-100 text-sm">
           {lines.map((row) => (
-            <li key={row.label} className="grid gap-2 py-2 first:pt-0 last:pb-0 sm:grid-cols-[7rem_8.5rem_minmax(0,1fr)] sm:items-start">
-              <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">{row.label}</span>
-              <span className="font-semibold leading-5 text-ink">{row.pick}</span>
-              <span className="min-w-0 leading-5 text-slate-600">{row.text}</span>
+            <li key={row.label} className={`grid gap-3 rounded-md px-2 py-3 first:pt-3 last:pb-3 sm:grid-cols-[24rem_minmax(0,1fr)] sm:items-start ${summaryRowClass(row.result)}`}>
+              <span className="min-w-0">
+                <span className="grid min-h-6 grid-cols-[7rem_minmax(0,1fr)] items-center gap-2">
+                  <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    {row.result && resultIcon(row.result)}
+                    <span>{row.label}</span>
+                  </span>
+                  <span className="min-w-0 truncate font-semibold leading-5 text-ink">{row.pick}</span>
+                </span>
+                <span className="mt-2 block">
+                  <ModelVsBookmakerComparison comparison={row.comparison} />
+                </span>
+              </span>
+              <span className="min-w-0 leading-5 text-slate-600">
+                {row.text}
+                {row.result && (
+                  <span className={`ml-2 inline-flex rounded-md px-2 py-0.5 text-xs font-semibold ${row.result === 'hit' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>
+                    {row.result}
+                  </span>
+                )}
+              </span>
             </li>
           ))}
         </ul>
@@ -945,16 +1332,6 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
 
         <PredictionSummaryCard match={match} allMatches={allMatches} />
 
-        <div>
-          <h3 className="text-sm font-semibold text-ink">Predictions</h3>
-          <div className="mt-2 grid gap-2 sm:grid-cols-2">
-            <PredictionDetail label="Winner" market={predictions.winner} />
-            <PredictionDetail label="BTTS" market={predictions.btts} />
-            <PredictionDetail label="Goals" market={predictions.ou_goals} />
-            <PredictionDetail label="Cards" market={predictions.ou_cards} />
-          </div>
-        </div>
-
         {Object.keys(actuals).length > 0 && (
           <div>
             <h3 className="flex items-center gap-2 text-sm font-semibold text-ink">
@@ -983,6 +1360,12 @@ function MatchCard({ match, onSelect, bookmakerId }) {
   const actuals = match.actuals || {};
   const selectedBookmaker = BOOKMAKERS[bookmakerId] || BOOKMAKERS.sportsbet;
   const hasDirectBookmakerLink = hasDirectBookmakerMatchLink(match, selectedBookmaker.id);
+  const winnerComparison = modelVsBookmakerComparison(match, 'winner', predictions.winner);
+  const bttsComparison = modelVsBookmakerComparison(match, 'btts', predictions.btts);
+  const goalsComparison = modelVsBookmakerComparison(match, 'ou_goals', predictions.ou_goals);
+  const cardsComparison = modelVsBookmakerComparison(match, 'ou_cards', predictions.ou_cards);
+  const edgeBadgeFor = (comparison) =>
+    comparison?.badge?.tone === 'positive' && comparison.edgePoints > 0 ? comparison.badge.label : null;
 
   return (
     <article className="rounded-lg border border-line bg-white shadow-panel transition active:scale-[0.99] sm:hover:-translate-y-0.5 sm:hover:border-slate-300 sm:hover:shadow-lg">
@@ -1024,10 +1407,10 @@ function MatchCard({ match, onSelect, bookmakerId }) {
         </div>
 
         <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
-          <MarketPill label="Winner" market={predictions.winner} />
-          <MarketPill label="BTTS" market={predictions.btts} />
-          <MarketPill label="Goals" market={predictions.ou_goals} />
-          <MarketPill label="Cards" market={predictions.ou_cards} />
+          <MarketPill label="Winner" market={predictions.winner} edgeBadge={edgeBadgeFor(winnerComparison)} />
+          <MarketPill label="BTTS" market={predictions.btts} edgeBadge={edgeBadgeFor(bttsComparison)} />
+          <MarketPill label="Goals" market={predictions.ou_goals} edgeBadge={edgeBadgeFor(goalsComparison)} />
+          <MarketPill label="Cards" market={predictions.ou_cards} edgeBadge={edgeBadgeFor(cardsComparison)} />
         </div>
 
         <div className="mt-4 grid grid-cols-3 gap-1 rounded-md bg-field p-2 text-center sm:gap-2">

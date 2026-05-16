@@ -17,6 +17,7 @@ follow-up run of soccer_routine.py's Phase A can use it as a hint when
 SofaScore is unavailable.
 """
 import json
+import os
 import re
 import time
 import pathlib
@@ -34,7 +35,8 @@ except ImportError:
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 STORE = ROOT / "match_data.json"
 
-API_BASE = "https://www.thesportsdb.com/api/v1/json/3"
+THESPORTSDB_KEY = os.environ.get("THESPORTSDB_KEY") or os.environ.get("THESPORTSDB_API_KEY") or "123"
+API_BASE = f"https://www.thesportsdb.com/api/v1/json/{THESPORTSDB_KEY}"
 
 # Map our canonical league names to TheSportsDB's strLeague filter values.
 # (We accept anything that contains these substrings — TheSportsDB uses
