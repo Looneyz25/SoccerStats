@@ -22,7 +22,6 @@ import {
   Settings,
   ShieldCheck,
   Star,
-  Trophy,
   UserRound,
   XCircle,
 } from 'lucide-react';
@@ -52,11 +51,16 @@ const SPORTSBET_LEAGUE_SLUGS = {
   'League One': 'united-kingdom/english-league-one',
   'League Two': 'united-kingdom/english-league-two',
   LaLiga: 'spain/spanish-la-liga',
+  'Serie A': 'italy/italian-serie-a',
   Bundesliga: 'germany/german-bundesliga',
   'Ligue 1': 'france/french-ligue-1',
   Eredivisie: 'rest-of-europe/dutch-eredivisie',
+  'Primeira Liga': 'rest-of-europe/portuguese-primeira-liga',
   'UEFA Champions League': 'uefa-competitions/uefa-champions-league',
   MLS: 'north-america/usa-major-league-soccer',
+  'A-League Men': 'australia/a-league-men',
+  'Scottish Premiership': 'united-kingdom/scottish-premiership',
+  'J1 League': 'asia/japanese-j1-league',
 };
 
 const TAB_LEAGUE_NAMES = {
@@ -65,11 +69,16 @@ const TAB_LEAGUE_NAMES = {
   'League One': 'English League One',
   'League Two': 'English League Two',
   LaLiga: 'Spanish La Liga',
+  'Serie A': 'Italian Serie A',
   Bundesliga: 'German Bundesliga',
   'Ligue 1': 'French Ligue 1',
   Eredivisie: 'Dutch Eredivisie',
+  'Primeira Liga': 'Portuguese Primeira Liga',
   'UEFA Champions League': 'UEFA Champions League',
   MLS: 'US Major League Soccer',
+  'A-League Men': 'A-League Men',
+  'Scottish Premiership': 'Scottish Premiership',
+  'J1 League': 'Japanese J1 League',
 };
 
 const BOOKMAKERS = {
@@ -184,6 +193,59 @@ function hasDirectBookmakerMatchLink(match, bookmakerId) {
       match[`${bookmaker.id}_odds`]?.event_url ||
       (bookmaker.id === 'sportsbet' && sportsbetEventUrl(match)) ||
       (bookmaker.id === 'tab' && tabMatchUrl(match)),
+  );
+}
+
+function imageValue(...values) {
+  return values.find((value) => typeof value === 'string' && value.trim()) || '';
+}
+
+function teamLogo(match, side) {
+  const team = match?.[side] || {};
+  return imageValue(team.logo, team.logo_url, team.crest, team.badge);
+}
+
+function leagueLogo(value) {
+  return imageValue(value?.leagueLogo, value?.league_logo, value?.logo, value?.logo_url);
+}
+
+function TeamBadge({ src, name, align = 'left' }) {
+  const [failed, setFailed] = useState(false);
+  const initials = String(name || '?')
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0])
+    .join('')
+    .toUpperCase();
+  const justify = align === 'right' ? 'ml-auto' : '';
+
+  return (
+    <span className={`inline-flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-line bg-white text-xs font-bold text-slate-500 ${justify}`}>
+      {src && !failed ? (
+        <img src={src} alt="" className="h-full w-full object-contain p-1" aria-hidden="true" onError={() => setFailed(true)} />
+      ) : (
+        initials
+      )}
+    </span>
+  );
+}
+
+function LeagueBadge({ src, name }) {
+  const [failed, setFailed] = useState(false);
+
+  if (src && !failed) {
+    return (
+      <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-md border border-white/20 bg-white">
+        <img src={src} alt="" className="h-full w-full object-contain p-1" aria-hidden="true" onError={() => setFailed(true)} />
+      </span>
+    );
+  }
+
+  return (
+    <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-white/20 bg-white/12 text-xs font-bold text-white">
+      {String(name || '?').slice(0, 2).toUpperCase()}
+    </span>
   );
 }
 
@@ -1158,6 +1220,7 @@ function flattenMatches(data) {
       ...match,
       league: league.name,
       leagueId: league.id,
+      leagueLogo: leagueLogo(league),
     })),
   );
 }
@@ -1177,6 +1240,14 @@ const LEAGUE_PRIORITY = [
   'Ligue 1',
   'Eredivisie',
   'Primeira Liga',
+  'MLS',
+  'A-League Men',
+  'Scottish Premiership',
+  'J1 League',
+  'UEFA Champions League',
+  'Championship',
+  'League One',
+  'League Two',
 ];
 
 function leagueSortRank(league) {
@@ -1197,6 +1268,7 @@ function groupMatchesByLeague(matches) {
       grouped.set(match.league, {
         league: match.league,
         leagueId: match.leagueId,
+        logo: match.leagueLogo,
         matches: [],
       });
     }
@@ -2034,14 +2106,20 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
       <div className="mx-auto max-w-3xl space-y-5 px-3 py-4 sm:px-5 sm:py-5">
         <div className="grid grid-cols-[minmax(0,1fr)_4rem_minmax(0,1fr)] items-center gap-2 sm:grid-cols-[1fr_auto_1fr]">
           <div className="min-w-0 rounded-md border border-slate-300 bg-white px-3 py-3 text-left shadow-panel">
-            <div className="truncate text-base font-semibold text-ink">{match.home?.name}</div>
+            <div className="flex min-w-0 items-center gap-2">
+              <TeamBadge src={teamLogo(match, 'home')} name={match.home?.name} />
+              <div className="truncate text-base font-semibold text-ink">{match.home?.name}</div>
+            </div>
             <div className="mt-1 text-xs text-slate-500">Rank {match.home?.rank ?? '-'} · {match.home?.pts ?? '-'} pts</div>
           </div>
           <div className="rounded-md bg-ink px-3 py-3 text-center text-base font-semibold text-white shadow-panel">
             {match.status === 'FT' ? `${match.home?.goals ?? '-'}-${match.away?.goals ?? '-'}` : 'vs'}
           </div>
           <div className="min-w-0 rounded-md border border-slate-300 bg-white px-3 py-3 text-right shadow-panel">
-            <div className="truncate text-base font-semibold text-ink">{match.away?.name}</div>
+            <div className="flex min-w-0 items-center justify-end gap-2">
+              <div className="truncate text-base font-semibold text-ink">{match.away?.name}</div>
+              <TeamBadge src={teamLogo(match, 'away')} name={match.away?.name} align="right" />
+            </div>
             <div className="mt-1 text-xs text-slate-500">Rank {match.away?.rank ?? '-'} · {match.away?.pts ?? '-'} pts</div>
           </div>
         </div>
@@ -2141,14 +2219,20 @@ function MatchCard({ match, onSelect, bookmakerId }) {
       <div className="px-3 py-3 sm:px-4 sm:py-4">
         <div className="grid grid-cols-[minmax(0,1fr)_3.25rem_minmax(0,1fr)] items-center gap-2 sm:grid-cols-[1fr_auto_1fr] sm:gap-3">
           <div className="min-w-0 text-left">
-            <div className="truncate text-sm font-semibold text-ink sm:text-base">{match.home?.name}</div>
+            <div className="flex min-w-0 items-center gap-2">
+              <TeamBadge src={teamLogo(match, 'home')} name={match.home?.name} />
+              <div className="truncate text-sm font-semibold text-ink sm:text-base">{match.home?.name}</div>
+            </div>
             <div className="mt-1 text-xs text-slate-500">Home</div>
           </div>
           <div className="rounded-md bg-ink px-2 py-2 text-center text-sm font-semibold text-white">
             {match.status === 'FT' ? `${match.home?.goals ?? '-'}-${match.away?.goals ?? '-'}` : 'vs'}
           </div>
           <div className="min-w-0 text-right">
-            <div className="truncate text-sm font-semibold text-ink sm:text-base">{match.away?.name}</div>
+            <div className="flex min-w-0 items-center justify-end gap-2">
+              <div className="truncate text-sm font-semibold text-ink sm:text-base">{match.away?.name}</div>
+              <TeamBadge src={teamLogo(match, 'away')} name={match.away?.name} align="right" />
+            </div>
             <div className="mt-1 text-xs text-slate-500">Away</div>
           </div>
         </div>
@@ -2204,7 +2288,7 @@ function LeagueSection({ group, onSelectMatch, bookmakerId }) {
     <section className="overflow-hidden rounded-lg border border-line bg-white">
       <div className="flex flex-col gap-2 border-b border-line bg-ink px-3 py-3 text-white sm:flex-row sm:items-center sm:justify-between sm:px-4">
         <div className="flex min-w-0 items-center gap-2">
-          <Trophy className="h-5 w-5 shrink-0" aria-hidden="true" />
+          <LeagueBadge src={group.logo} name={group.league} />
           <h2 className="truncate text-base font-semibold sm:text-lg">{group.league}</h2>
         </div>
         <div className="flex flex-wrap items-center gap-1.5 text-xs font-semibold">
@@ -2435,7 +2519,7 @@ function HomeInner() {
               />
               <div className="min-w-0">
                 <p className="text-sm text-slate-500">
-                  Stats-led football picks across Europe&apos;s top leagues — refreshed every few hours.
+                  Stats-led football picks across top leagues worldwide — refreshed every few hours.
                 </p>
                 {data?.captured_at && (
                   <p className="mt-0.5 text-xs text-slate-400">

@@ -70,6 +70,21 @@ async function findLatestProSubscription(customerId) {
     .sort((a, b) => (b.created || 0) - (a.created || 0))[0] || null;
 }
 
+async function hasUsedProTrial(customerId, profile = {}) {
+  if (profile.stripeTrialUsed || profile.subscriptionTrialStart) return true;
+  if (!customerId) return false;
+
+  const subscriptions = await stripe().subscriptions.list({
+    customer: customerId,
+    status: 'all',
+    limit: 20,
+  });
+
+  return subscriptions.data.some((subscription) =>
+    subscriptionPriceId(subscription) === PRO_PRICE_ID && Boolean(subscription.trial_start)
+  );
+}
+
 async function verifyUser(req) {
   const token = bearerToken(req);
   if (!token) {
@@ -131,6 +146,7 @@ async function syncSubscription(subscription) {
   const trialEnd = subscription.trial_end
     ? new Date(subscription.trial_end * 1000).toISOString()
     : null;
+  const trialUsed = Boolean(profile.stripeTrialUsed || trialStart);
 
   await userRef.set({
     hasAccess: hasManualAccess || inheritsActiveStripe,
@@ -144,6 +160,8 @@ async function syncSubscription(subscription) {
     subscriptionCurrentPeriodEnd: periodEnd,
     subscriptionTrialStart: trialStart,
     subscriptionTrialEnd: trialEnd,
+    stripeTrialUsed: trialUsed,
+    stripeTrialUsedAt: trialUsed ? (profile.stripeTrialUsedAt || trialStart || admin.firestore.FieldValue.serverTimestamp()) : null,
     subscriptionCancelAtPeriodEnd: Boolean(subscription.cancel_at_period_end),
     subscriptionUpdatedAt: admin.firestore.FieldValue.serverTimestamp(),
   }, { merge: true });
@@ -198,6 +216,9 @@ async function createCheckout(req, res) {
   const decoded = await verifyUser(req);
   const customerId = await getOrCreateCustomer(decoded);
   const currentSubscription = await findCurrentProSubscription(customerId);
+  const userSnap = await admin.firestore().collection('users').doc(decoded.uid).get();
+  const profile = userSnap.exists ? userSnap.data() : {};
+  const trialAlreadyUsed = await hasUsedProTrial(customerId, profile);
 
   if (currentSubscription) {
     await syncSubscription(currentSubscription);
@@ -213,35 +234,42 @@ async function createCheckout(req, res) {
     });
   }
 
-  const session = await stripe().checkout.sessions.create({
+  const sessionOptions = {
     mode: 'subscription',
     customer: customerId,
     line_items: [{ price: PRO_PRICE_ID, quantity: 1 }],
     allow_promotion_codes: true,
-    payment_method_collection: 'if_required',
     client_reference_id: decoded.uid,
     customer_update: { name: 'auto' },
     metadata: {
       firebaseUid: decoded.uid,
       plan: PRO_PLAN_NAME,
+      trialAlreadyUsed: String(trialAlreadyUsed),
     },
     subscription_data: {
-      trial_period_days: PRO_TRIAL_DAYS,
-      trial_settings: {
-        end_behavior: {
-          missing_payment_method: 'cancel',
-        },
-      },
       metadata: {
         firebaseUid: decoded.uid,
         plan: PRO_PLAN_NAME,
+        trialAlreadyUsed: String(trialAlreadyUsed),
       },
     },
     success_url: `${APP_URL}/dashboard?checkout=success`,
     cancel_url: `${APP_URL}/dashboard?checkout=cancelled`,
-  });
+  };
 
-  return sendJson(res, 200, { url: session.url });
+  if (!trialAlreadyUsed) {
+    sessionOptions.payment_method_collection = 'if_required';
+    sessionOptions.subscription_data.trial_period_days = PRO_TRIAL_DAYS;
+    sessionOptions.subscription_data.trial_settings = {
+      end_behavior: {
+        missing_payment_method: 'cancel',
+      },
+    };
+  }
+
+  const session = await stripe().checkout.sessions.create(sessionOptions);
+
+  return sendJson(res, 200, { url: session.url, trialApplied: !trialAlreadyUsed });
 }
 
 async function createPortal(req, res) {
@@ -316,6 +344,7 @@ async function syncUserSubscription(req, res) {
       subscriptionCurrentPeriodEnd: null,
       subscriptionTrialStart: null,
       subscriptionTrialEnd: null,
+      stripeTrialUsed: Boolean(profile.stripeTrialUsed),
       subscriptionCancelAtPeriodEnd: false,
       subscriptionUpdatedAt: admin.firestore.FieldValue.serverTimestamp(),
     }, { merge: true });
@@ -337,6 +366,7 @@ async function syncUserSubscription(req, res) {
       subscriptionCurrentPeriodEnd: null,
       subscriptionTrialStart: null,
       subscriptionTrialEnd: null,
+      stripeTrialUsed: Boolean(profile.stripeTrialUsed),
       subscriptionCancelAtPeriodEnd: false,
       subscriptionUpdatedAt: admin.firestore.FieldValue.serverTimestamp(),
     }, { merge: true });

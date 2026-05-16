@@ -62,7 +62,7 @@ Stripe objects created for this app:
 - Product: `prod_UWtFiyWb2LoEy0`
 - Price: `price_1TXpTJBbsFy1wAkF64nFdG26`
 
-Subscription signup uses Stripe Checkout with the hardcoded price in `functions/index.js`. New subscriptions start with a 7-day free trial and no upfront payment required. Existing customers can manage billing through Stripe Customer Portal. When the trial ends, Stripe charges the saved payment method; if no payment method is attached, the subscription is cancelled and webhook sync removes dashboard access.
+Subscription signup uses Stripe Checkout with the hardcoded price in `functions/index.js`. Each Stripe customer/Firebase user gets only one 7-day free trial with no upfront payment required. If a user cancels and subscribes again after using a trial, Checkout starts a normal paid subscription without another trial. Existing customers can manage billing through Stripe Customer Portal. When the trial ends, Stripe charges the saved payment method; if no payment method is attached, the subscription is cancelled and webhook sync removes dashboard access.
 
 Create a Stripe webhook endpoint pointing to:
 

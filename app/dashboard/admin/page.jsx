@@ -382,6 +382,9 @@ function AdminDashboard() {
                           <div className="text-xs text-slate-500">
                             Inherits Stripe: <span className="font-semibold text-slate-700">{inheritsStripe ? 'yes' : 'no'}</span>
                           </div>
+                          <div className="text-xs text-slate-500">
+                            Trial used: <span className="font-semibold text-slate-700">{user.stripeTrialUsed || user.subscriptionTrialStart ? 'yes' : 'no'}</span>
+                          </div>
                           {user.subscriptionCancelAtPeriodEnd && (
                             <div className="text-xs font-semibold text-orange-700">Cancels at period end</div>
                           )}
