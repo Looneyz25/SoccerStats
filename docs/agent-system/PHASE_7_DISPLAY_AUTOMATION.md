@@ -1,16 +1,16 @@
-# Phase 7: Display & Automation
+# Phase 9: Display & Automation
 
 Use this phase when the prompt asks to run all phases, refresh the daily slate, generate a human-readable summary, schedule the pipeline, or wire the agent system into a daily batch.
 
 ## Objective
 
-Run Phases 1-6 in order, capture each phase's exit status and headline counts, produce a single human-readable daily summary, and (optionally) update the dashboard data block.
+Run Phases 1-8 in order, capture each phase's exit status and headline counts, produce a single human-readable daily summary, and prepare the generated JSON consumed by the Next.js dashboard.
 
-Phase 7 owns orchestration and presentation. It does not collect data, score, value, or settle on its own.
+Phase 9 owns orchestration and presentation. It does not collect data, score, value, settle, or recalibrate on its own.
 
 ## Inputs
 
-All Phase 1-6 outputs in `docs/agent-system/outputs/`.
+All Phase 1-8 outputs in `docs/agent-system/outputs/`.
 
 ## Workflow
 
@@ -21,14 +21,16 @@ All Phase 1-6 outputs in `docs/agent-system/outputs/`.
    - Per-phase health table (rows ready, blocked, source health)
    - Today's recommended bets (Phase 5 `bet` rows) with model vs market
    - Cumulative history accuracy + ROI
-4. Optionally update a data block in `index.html` — only if the user opts in via `--update-html`. Default is no.
+   - Result Review Agent top model-feedback action
+   - Model Calibration Agent adjustment counts
+4. Prepare Next.js dashboard data with `scripts/soccer_prepare_next_data.py` when the dashboard needs refreshed static data under `public/data/`.
 
 ## Required Agents
 
 | Agent | Role In Phase 7 |
 | --- | --- |
 | Automation Operator | Run the routine, capture exit codes, surface failures |
-| Dashboard Product Agent | Compose the daily summary; opt-in update of `index.html` |
+| Dashboard Product Agent | Compose the daily summary and verify the Next.js dashboard data handoff |
 | Compliance and Responsible Betting Reviewer | Verify summary uses probability/edge/uncertainty language and includes a responsible-betting note |
 
 ## Outputs
@@ -37,7 +39,9 @@ All Phase 1-6 outputs in `docs/agent-system/outputs/`.
 | --- | --- |
 | `docs/agent-system/outputs/Phase7_Daily_Summary.md` | One-page human-readable slate |
 | `docs/agent-system/outputs/Phase7_Run_Log.json` | Per-phase exit code, last stdout line, duration |
-| `index.html` | Updated data block, only with `--update-html` |
+| `docs/agent-system/outputs/model_result_review_current.md` | Daily model-feedback review from resulted matches |
+| `docs/agent-system/outputs/model_calibration.md` | Conservative automatic-learning controls |
+| `public/data/*.json` | Static dashboard data prepared from generated JSON |
 
 ## Acceptance Criteria
 
@@ -45,8 +49,9 @@ All Phase 1-6 outputs in `docs/agent-system/outputs/`.
 - The daily summary lists every Phase 5 `bet` row with: match, model probability, model fair odds, market price, edge, recommended stake.
 - The daily summary names the source for each odds price.
 - The daily summary includes a responsible-betting note ("Estimates only. No guarantees. Stake within limits.").
+- The daily summary includes the Result Review Agent's top model-feedback action.
 - The run log records exit codes and timing for each phase.
-- `--update-html` is opt-in; default behavior never modifies `index.html`.
+- The workflow does not modify `index.html`; the legacy static dashboard has been removed.
 
 ## Daily Summary Template
 
@@ -65,6 +70,8 @@ Date window: YYYY-MM-DD to YYYY-MM-DD
 | 4 Predictions | N | N | n/a |
 | 5 Value & Risk | N bets / N leans | N | n/a |
 | 6 Settlement | N pending | N not_found | Flashscore healthy/blocked |
+| Result Review | N settled markets | N weak spots | match_data.json |
+| Model Calibration | N markets | N league/markets | model_calibration.json |
 
 ## Today's Bets
 | Match | Pick | Model p | Fair | Market | Edge | Stake |
@@ -73,6 +80,16 @@ Date window: YYYY-MM-DD to YYYY-MM-DD
 - Total settled bets: N
 - Hit rate: X.X%
 - ROI: X.X%
+
+## Model Result Review
+- Settled market rows reviewed: N
+- Weak spots flagged: N
+- Top action: ...
+
+## Model Calibration
+- Market adjustments: N
+- League/market adjustments: N
+- Full calibration: `docs/agent-system/outputs/model_calibration.md`
 
 Responsible betting: Estimates only. No guarantees. Stake within limits.
 ```

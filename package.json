@@ -10,10 +10,14 @@
     "dev:health": "node scripts/dev-health.js",
     "prebuild": "node scripts/run-python.js scripts/soccer_prepare_next_data.py",
     "build": "node scripts/next-build-prod.js",
+    "data:firebase": "node scripts/upload_match_data_to_firestore.mjs",
+    "deploy:firebase": "npm.cmd run build && npx firebase-tools deploy --only hosting,firestore:rules --project sports-predictions-f91fd",
+    "firebase:serve": "npm.cmd run build && npx firebase-tools emulators:start --only hosting --project sports-predictions-f91fd",
     "audit:summary": "node scripts/audit_prediction_summary.js",
     "start": "next start"
   },
   "dependencies": {
+    "firebase": "^12.13.0",
     "lucide-react": "^0.468.0",
     "next": "^15.0.0",
     "react": "^19.0.0",
@@ -21,6 +25,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.20",
+    "firebase-admin": "^13.10.0",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17"
   }

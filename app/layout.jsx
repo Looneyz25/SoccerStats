@@ -1,5 +1,7 @@
 import './globals.css';
 import { IBM_Plex_Sans } from 'next/font/google';
+import AuthGate from './auth-gate';
+import FirebaseAnalytics from './firebase-analytics';
 
 const plexSans = IBM_Plex_Sans({
   subsets: ['latin'],
@@ -31,7 +33,10 @@ export const viewport = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={plexSans.className}>
-      <body>{children}</body>
+      <body>
+        <FirebaseAnalytics />
+        <AuthGate>{children}</AuthGate>
+      </body>
     </html>
   );
 }

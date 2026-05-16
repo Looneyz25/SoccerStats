@@ -23,6 +23,8 @@ Read this file first when a user asks for betting analysis, data collection, mod
 | Value Betting Analyst | Compare model probability to bookmaker odds | Value picks and edge estimate |
 | Risk Manager | Bankroll, staking, correlation, exposure | Stake plan and risk flags |
 | Results Settler | Final scores, actuals, hit/miss tracking | Settled results and accuracy update |
+| Result Review Agent | Resulted matches, model learning, calibration review | Market/league feedback and model-review action |
+| Model Calibration Agent | Automatic learning controls from result review | `model_calibration.json` trust and edge adjustments |
 | Dashboard Product Agent | HTML/dashboard UX and data presentation | UI changes and display rules |
 | Automation Operator | Daily batch, Git push, scheduled jobs, logs | Run status and failure handling |
 | Compliance and Responsible Betting Reviewer | User-facing betting language and safety | Responsible betting review |
@@ -35,7 +37,8 @@ Read this file first when a user asks for betting analysis, data collection, mod
 | "find endpoints", "why missing data", "API" | Data Source Analyst | Fixture Collector, Odds Collector |
 | "today's picks", "best bets", "value" | Fixture Collector, Odds Collector, Team Form Analyst, Prediction Modeler, Value Betting Analyst, Risk Manager, Compliance Reviewer | Streak and Trends Analyst |
 | "settle results", "accuracy", "what hit" | Results Settler, Data Source Analyst | Dashboard Product Agent |
-| "improve model", "better predictions" | Prediction Modeler, Team Form Analyst, Streak and Trends Analyst, Results Settler | Value Betting Analyst |
+| "improve model", "better predictions" | Prediction Modeler, Result Review Agent, Model Calibration Agent, Team Form Analyst, Streak and Trends Analyst, Results Settler | Value Betting Analyst |
+| "review results", "resulted matches", "model feedback" | Result Review Agent, Model Calibration Agent, Results Settler, Prediction Modeler | Value Betting Analyst |
 | "odds not matching", "Sportsbet", "markets" | Odds Collector, Data Source Analyst | Value Betting Analyst |
 | "dashboard", "UI", "cards", "filters" | Dashboard Product Agent | Data Source Analyst |
 | "schedule automation", "push to git" | Automation Operator | Data Source Analyst |
@@ -63,7 +66,9 @@ For betting picks, use this sequence:
 | 4 | Prediction | Prediction Modeler | Probabilities and fair odds |
 | 5 | Value and Risk | Value Betting Analyst, Risk Manager | Bet/lean/pass decisions and staking |
 | 6 | Settlement | Results Settler, Data Source Analyst | Scores, actuals, hit/miss tracking |
-| 7 | Display and Automation | Dashboard Product Agent, Automation Operator | Published dashboard and run logs |
+| 7 | Result Review | Result Review Agent, Prediction Modeler | Model-feedback summary from settled matches |
+| 8 | Model Calibration | Model Calibration Agent, Prediction Modeler | Conservative automatic-learning controls |
+| 9 | Display and Automation | Dashboard Product Agent, Automation Operator | Published dashboard and run logs |
 
 Phase specs:
 
@@ -73,9 +78,11 @@ Phase specs:
 - [Phase 4 Prediction](PHASE_4_PREDICTION.md) — Poisson grid + fair odds + edge vs market
 - [Phase 5 Value & Risk](PHASE_5_VALUE_RISK.md) — fractional Kelly, per-bet + portfolio caps
 - [Phase 6 Settlement](PHASE_6_SETTLEMENT.md) — Flashscore-driven settlement + persistent history
-- [Phase 7 Display & Automation](PHASE_7_DISPLAY_AUTOMATION.md) — orchestrator + daily summary
+- Phase 7 Result Review — `scripts/soccer_result_review_agent.py` writes market/league model-feedback outputs
+- Phase 8 Model Calibration — `scripts/soccer_model_calibration_agent.py` writes `model_calibration.json`
+- [Phase 9 Display & Automation](PHASE_7_DISPLAY_AUTOMATION.md) — orchestrator + daily summary
 
-Run the full pipeline with `python scripts/soccer_phases_routine.py`. Each phase writes its own Excel workbook + CSV + Markdown to `docs/agent-system/outputs/`.
+Run the full pipeline with `python scripts/soccer_phases_routine.py`. Each phase writes its review outputs to `docs/agent-system/outputs/`; the result review agent writes CSV, Markdown, and summary JSON for the daily report.
 
 Phase 1 must produce `docs/agent-system/outputs/Phase1_Fixture_Slate.xlsx` with these sheets: `Fixtures`, `Ready For Phase 2`, `Needs Settlement`, `Blocked Or Invalid`, `League Summary`, `Source Health`, and `Run Notes`.
 
@@ -100,6 +107,8 @@ Phase 1 must produce `docs/agent-system/outputs/Phase1_Fixture_Slate.xlsx` with 
 - [Value Betting Analyst](agents/value-betting-analyst.md)
 - [Risk Manager](agents/risk-manager.md)
 - [Results Settler](agents/results-settler.md)
+- [Result Review Agent](agents/result-review-agent.md)
+- [Model Calibration Agent](agents/model-calibration-agent.md)
 - [Dashboard Product Agent](agents/dashboard-product-agent.md)
 - [Automation Operator](agents/automation-operator.md)
 - [Compliance Reviewer](agents/compliance-reviewer.md)
@@ -111,6 +120,8 @@ Phase 1 must produce `docs/agent-system/outputs/Phase1_Fixture_Slate.xlsx` with 
 - [Fixture Normalization Skill](skills/fixture-normalization.md)
 - [Odds Matching Skill](skills/odds-matching.md)
 - [Prediction Calibration Skill](skills/prediction-calibration.md)
+- [Result Review Calibration Skill](skills/result-review-calibration.md)
+- [Model Auto Learning Skill](skills/model-auto-learning.md)
 - [Value Detection Skill](skills/value-detection.md)
 - [Bankroll Risk Skill](skills/bankroll-risk.md)
 - [Settlement Audit Skill](skills/settlement-audit.md)

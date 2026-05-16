@@ -6,6 +6,7 @@ model, and writes 1X2 / BTTS / O-U probabilities, fair odds, and edge.
 """
 import argparse
 import csv
+import json
 import html
 import math
 import zipfile
@@ -30,12 +31,25 @@ PHASE3_CSV = OUT_DIR / "phase3_team_context_current.csv"
 XLSX_PATH = OUT_DIR / "Phase4_Predictions.xlsx"
 CSV_PATH = OUT_DIR / "phase4_predictions_current.csv"
 MD_PATH = OUT_DIR / "phase4_predictions_current.md"
+MODEL_CALIBRATION = OUT_DIR / "model_calibration.json"
 
 LOCAL_TZ = "Australia/Adelaide"
 READY = "ready_for_phase_5"
 HOME_ADV = 0.20
 GRID = 7
 LAMBDA_FLOOR = 0.20
+
+
+def load_model_calibration():
+    if not MODEL_CALIBRATION.exists():
+        return {}
+    try:
+        return json.loads(MODEL_CALIBRATION.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
+MODEL_CAL = load_model_calibration()
 
 HEADERS = [
     "run_timestamp", "league", "event_id", "date", "time", "home", "away",
@@ -90,6 +104,41 @@ def aggregate(grid):
         "p_btts": round(p_btts, 4),
         "p_over25": round(p_over25, 4),
     }
+
+
+def calibration_adjustment(league, market_key):
+    if not MODEL_CAL:
+        return {"trust_factor": 1.0, "min_edge_delta": 0.0, "sources": []}
+    sources = []
+    trust = 1.0
+    edge_delta = 0.0
+    market = (MODEL_CAL.get("market_adjustments") or {}).get(market_key)
+    if market:
+        trust *= float(market.get("trust_factor") or 1.0)
+        edge_delta = max(edge_delta, float(market.get("min_edge_delta") or 0.0))
+        sources.append(market.get("reason") or f"{market_key} market adjustment")
+    league_market = (MODEL_CAL.get("league_market_adjustments") or {}).get(f"{league}|{market_key}")
+    if league_market:
+        trust *= float(league_market.get("trust_factor") or 1.0)
+        edge_delta = max(edge_delta, float(league_market.get("min_edge_delta") or 0.0))
+        sources.append(league_market.get("reason") or f"{league} {market_key} adjustment")
+    return {
+        "trust_factor": round(max(0.65, min(1.0, trust)), 4),
+        "min_edge_delta": round(edge_delta, 4),
+        "sources": sources,
+    }
+
+
+def apply_three_way_calibration(probs, league):
+    cal = calibration_adjustment(league, "winner")
+    trust = cal["trust_factor"]
+    adjusted = {}
+    for key in ("p_home", "p_draw", "p_away"):
+        adjusted[key] = (1 / 3) + ((probs[key] - (1 / 3)) * trust)
+    total = sum(adjusted.values())
+    if total > 0:
+        adjusted = {key: round(value / total, 4) for key, value in adjusted.items()}
+    return adjusted, cal
 
 
 def fair_odds(probs):
@@ -236,7 +285,8 @@ def main():
         out["lambda_home"] = round(lh, 3)
         out["lambda_away"] = round(la, 3)
 
-        probs = aggregate(score_grid(lh, la))
+        raw_probs = aggregate(score_grid(lh, la))
+        probs, winner_cal = apply_three_way_calibration(raw_probs, out["league"])
         out.update(probs)
         out.update(fair_odds(probs))
         out["model_pick"] = max(("home", "draw", "away"), key=lambda k: probs[f"p_{k}"])
@@ -253,10 +303,13 @@ def main():
 
         if all(side in market for side in ("home", "draw", "away")):
             out["phase4_status"] = READY
-            out["phase4_notes"] = "Probabilities + fair odds attached; market joined."
+            note = "Probabilities + fair odds attached; market joined."
         else:
             out["phase4_status"] = "model_only"
-            out["phase4_notes"] = "Probabilities computed but Phase 2 odds incomplete; no edge."
+            note = "Probabilities computed but Phase 2 odds incomplete; no edge."
+        if winner_cal["sources"]:
+            note += f" Calibration trust={winner_cal['trust_factor']} edge_delta={winner_cal['min_edge_delta']}."
+        out["phase4_notes"] = note
         rows.append(out)
 
     rows.sort(key=lambda r: (r.get("date", ""), r.get("time", ""), r.get("league", ""), r.get("home", "")))
@@ -264,6 +317,7 @@ def main():
     notes = [
         {"item": "run_timestamp", "value": run_ts},
         {"item": "model", "value": "capped Poisson 7x7, last-5 form, home advantage +0.20"},
+        {"item": "model_calibration", "value": MODEL_CAL.get("generated_at", "none") if MODEL_CAL else "none"},
         {"item": "phase3_input_rows", "value": len(p3_rows)},
         {"item": "phase4_total_rows", "value": len(rows)},
         {"item": "ready_for_phase_5", "value": counts.get(READY, 0)},

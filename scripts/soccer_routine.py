@@ -53,6 +53,7 @@ ROOT  = Path(__file__).resolve().parent.parent
 STORE = ROOT / "match_data.json"
 ELO_STORE = ROOT / "team_elo.json"
 SCRIPTS = ROOT / "scripts"
+MODEL_CALIBRATION = ROOT / "docs" / "agent-system" / "outputs" / "model_calibration.json"
 
 # --- Model tuning constants ---------------------------------------------------
 # Dixon-Coles (1997) low-score correction. Negative rho lifts 0-0 and 1-1
@@ -93,6 +94,52 @@ TOURNAMENTS = {
 }
 ORDER = ["Premier League","LaLiga","Bundesliga","Ligue 1","UEFA Champions League",
          "Eredivisie","MLS","Championship","League One","League Two"]
+
+
+def load_model_calibration():
+    if not MODEL_CALIBRATION.exists():
+        return {}
+    try:
+        return json.loads(MODEL_CALIBRATION.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
+_MODEL_CALIBRATION = load_model_calibration()
+
+
+def calibration_adjustment(league, market_key):
+    if not _MODEL_CALIBRATION:
+        return {"trust_factor": 1.0, "min_edge_delta": 0.0, "sources": []}
+    sources = []
+    trust = 1.0
+    edge_delta = 0.0
+    market = (_MODEL_CALIBRATION.get("market_adjustments") or {}).get(market_key)
+    if market:
+        trust *= float(market.get("trust_factor") or 1.0)
+        edge_delta = max(edge_delta, float(market.get("min_edge_delta") or 0.0))
+        sources.append(market.get("reason") or f"{market_key} market adjustment")
+    league_market = (_MODEL_CALIBRATION.get("league_market_adjustments") or {}).get(f"{league}|{market_key}")
+    if league_market:
+        trust *= float(league_market.get("trust_factor") or 1.0)
+        edge_delta = max(edge_delta, float(league_market.get("min_edge_delta") or 0.0))
+        sources.append(league_market.get("reason") or f"{league} {market_key} adjustment")
+    return {
+        "trust_factor": round(max(0.65, min(1.0, trust)), 4),
+        "min_edge_delta": round(edge_delta, 4),
+        "sources": sources,
+    }
+
+
+def shrink_probability(probability, trust_factor, neutral):
+    return neutral + ((probability - neutral) * trust_factor)
+
+
+def normalize_three_way(home, draw, away):
+    total = home + draw + away
+    if total <= 0:
+        return 1 / 3, 1 / 3, 1 / 3
+    return home / total, draw / total, away / total
 
 
 # ----------------------------------------------------------------------------
@@ -632,8 +679,8 @@ def compute_team_elo(store):
 
 
 def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
-                    h2h=None, h_rank=None, h_pts=None, a_rank=None, a_pts=None,
-                    h_team_id=None, a_team_id=None):
+                     h2h=None, h_rank=None, h_pts=None, a_rank=None, a_pts=None,
+                     h_team_id=None, a_team_id=None, league=None):
     """Poisson prediction enhanced with H2H, Elo, and Dixon-Coles correction.
 
     Lambda construction:
@@ -708,21 +755,71 @@ def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
     p_h = sum(grid[i][j] for i in range(7) for j in range(7) if i > j)
     p_d = sum(grid[i][i] for i in range(7))
     p_a = sum(grid[i][j] for i in range(7) for j in range(7) if j > i)
+    raw_p_h, raw_p_d, raw_p_a = normalize_three_way(p_h, p_d, p_a)
+    winner_cal = calibration_adjustment(league, "winner")
+    p_h = shrink_probability(raw_p_h, winner_cal["trust_factor"], 1 / 3)
+    p_d = shrink_probability(raw_p_d, winner_cal["trust_factor"], 1 / 3)
+    p_a = shrink_probability(raw_p_a, winner_cal["trust_factor"], 1 / 3)
+    p_h, p_d, p_a = normalize_three_way(p_h, p_d, p_a)
     if p_h >= max(p_d, p_a):
-        w = {"pick": h_name, "type": "home"}
+        w = {"pick": h_name, "type": "home", "probability": round(p_h, 4), "raw_probability": round(raw_p_h, 4)}
     elif p_a >= p_d:
-        w = {"pick": a_name, "type": "away"}
+        w = {"pick": a_name, "type": "away", "probability": round(p_a, 4), "raw_probability": round(raw_p_a, 4)}
     else:
-        w = {"pick": "Draw", "type": "draw"}
+        w = {"pick": "Draw", "type": "draw", "probability": round(p_d, 4), "raw_probability": round(raw_p_d, 4)}
+    w["probabilities"] = {"home": round(p_h, 4), "draw": round(p_d, 4), "away": round(p_a, 4)}
+    w["raw_probabilities"] = {"home": round(raw_p_h, 4), "draw": round(raw_p_d, 4), "away": round(raw_p_a, 4)}
+    if winner_cal["sources"]:
+        w["calibration"] = winner_cal
+
     # BTTS / OU goals are now derived from the Dixon-Coles-corrected grid so
     # the low-score adjustment flows through to all markets, not just 1X2.
     p_btts_yes = sum(grid[i][j] for i in range(7) for j in range(7) if i > 0 and j > 0)
-    btts = {"pick": "Yes" if p_btts_yes >= 0.50 else "No"}
+    btts_cal = calibration_adjustment(league, "btts")
+    p_btts_yes_cal = shrink_probability(p_btts_yes, btts_cal["trust_factor"], 0.5)
+    btts_pick = "Yes" if p_btts_yes_cal >= 0.50 else "No"
+    btts_probability = p_btts_yes_cal if btts_pick == "Yes" else 1 - p_btts_yes_cal
+    btts_raw_probability = p_btts_yes if btts_pick == "Yes" else 1 - p_btts_yes
+    btts = {
+        "pick": btts_pick,
+        "probability": round(btts_probability, 4),
+        "raw_probability": round(btts_raw_probability, 4),
+    }
+    if btts_cal["sources"]:
+        btts["calibration"] = btts_cal
+
     p_under_25 = sum(grid[i][j] for i in range(7) for j in range(7) if i + j < 3)
-    ou_goals = {"pick": "Over" if (1 - p_under_25) >= 0.55 else "Under", "line": 2.5}
+    p_over_25 = 1 - p_under_25
+    goals_cal = calibration_adjustment(league, "ou_goals")
+    p_over_25_cal = shrink_probability(p_over_25, goals_cal["trust_factor"], 0.5)
+    goals_pick = "Over" if p_over_25_cal >= 0.55 else "Under"
+    goals_probability = p_over_25_cal if goals_pick == "Over" else 1 - p_over_25_cal
+    goals_raw_probability = p_over_25 if goals_pick == "Over" else 1 - p_over_25
+    ou_goals = {
+        "pick": goals_pick,
+        "line": 2.5,
+        "probability": round(goals_probability, 4),
+        "raw_probability": round(goals_raw_probability, 4),
+    }
+    if goals_cal["sources"]:
+        ou_goals["calibration"] = goals_cal
+
     over = sum(1 for s in (streaks or []) if "more than 4.5 cards" in (s.get("label") or "").lower())
     under = sum(1 for s in (streaks or []) if "less than 4.5 cards" in (s.get("label") or "").lower())
-    cards = {"pick": "Over" if over >= under else "Under", "line": 4.5}
+    card_raw_over_probability = (over + 1) / (over + under + 2)
+    cards_cal = calibration_adjustment(league, "ou_cards")
+    card_over_probability = shrink_probability(card_raw_over_probability, cards_cal["trust_factor"], 0.5)
+    cards_pick = "Over" if card_over_probability >= 0.50 else "Under"
+    cards_probability = card_over_probability if cards_pick == "Over" else 1 - card_over_probability
+    cards_raw_probability = card_raw_over_probability if cards_pick == "Over" else 1 - card_raw_over_probability
+    cards = {
+        "pick": cards_pick,
+        "line": 4.5,
+        "probability": round(cards_probability, 4),
+        "raw_probability": round(cards_raw_probability, 4),
+    }
+    if cards_cal["sources"]:
+        cards["calibration"] = cards_cal
     factors = {
         "lambda_home": round(lh, 3),
         "lambda_away": round(la, 3),
@@ -736,6 +833,7 @@ def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
         "home_elo": round(home_elo, 1),
         "away_elo": round(away_elo, 1),
         "dixon_coles_rho": DIXON_COLES_RHO,
+        "model_calibration": _MODEL_CALIBRATION.get("generated_at", "") if _MODEL_CALIBRATION else "",
     }
     return {"winner": w, "btts": btts, "ou_goals": ou_goals, "ou_cards": cards,
             "factors": factors}
@@ -744,9 +842,9 @@ def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
 # Backwards-compat shim — keeps phase_a6_retro working without an explicit
 # context payload. Accepts optional team ids so Elo still applies in retro mode.
 def predict_poisson(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
-                    h_team_id=None, a_team_id=None):
+                    h_team_id=None, a_team_id=None, league=None):
     return predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
-                            h_team_id=h_team_id, a_team_id=a_team_id)
+                            h_team_id=h_team_id, a_team_id=a_team_id, league=league)
 
 
 def phase_a6_retro(store):
@@ -779,7 +877,7 @@ def phase_a6_retro(store):
             a_att, a_def = fetch_form(a_id, ev_id)
             pred = predict_poisson(h_att, h_def, a_att, a_def,
                                    m["home"]["name"], m["away"]["name"], m.get("team_streaks") or [],
-                                   h_team_id=h_id, a_team_id=a_id)
+                                   h_team_id=h_id, a_team_id=a_id, league=L.get("name"))
             actual = "home" if hg > ag else ("away" if ag > hg else "draw")
             pred["winner"]["result"] = "hit" if pred["winner"]["type"] == actual else "miss"
             abtts = (hg > 0 and ag > 0)
@@ -833,7 +931,8 @@ def phase_b_forecast(store, seen_ids):
                                         h2h=h2h_history,
                                         h_rank=hr.get("rank"), h_pts=hr.get("pts"),
                                         a_rank=ar.get("rank"), a_pts=ar.get("pts"),
-                                        h_team_id=h.get("id"), a_team_id=a.get("id"))
+                                        h_team_id=h.get("id"), a_team_id=a.get("id"),
+                                        league=TOURNAMENTS[utid])
                 ts = ev.get("startTimestamp")
                 rec = {
                     "id": eid, "date": adl_date(ts) if ts else d, "time": adl_time(ts) if ts else "00:00",

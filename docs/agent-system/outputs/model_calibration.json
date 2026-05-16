@@ -1,0 +1,170 @@
+{
+  "generated_at": "2026-05-17 03:56:03 ACST",
+  "source": "docs\\agent-system\\outputs\\model_result_review_summary.json",
+  "mode": "conservative_auto_learning",
+  "rules": {
+    "target_hit_rate": 0.5,
+    "min_market_sample": 50,
+    "min_league_market_sample": 20,
+    "min_trust_factor": 0.85,
+    "max_market_edge_delta": 0.04,
+    "max_league_edge_delta": 0.06
+  },
+  "market_adjustments": {
+    "ou_cards": {
+      "market": "Cards",
+      "settled": 298,
+      "hit_rate": 0.3826,
+      "trust_factor": 0.8943,
+      "min_edge_delta": 0.04,
+      "reason": "Cards below 50% target over 298 settled markets."
+    },
+    "winner": {
+      "market": "Winner",
+      "settled": 319,
+      "hit_rate": 0.4451,
+      "trust_factor": 0.9506,
+      "min_edge_delta": 0.0192,
+      "reason": "Winner below 50% target over 319 settled markets."
+    }
+  },
+  "league_market_adjustments": {
+    "Championship|ou_cards": {
+      "league": "Championship",
+      "market": "Cards",
+      "market_key": "ou_cards",
+      "settled": 25,
+      "hit_rate": 0.2,
+      "odds_net": -32.94,
+      "trust_factor": 0.9325,
+      "min_edge_delta": 0.0262,
+      "reason": "Championship Cards weak spot from result review."
+    },
+    "League One|ou_cards": {
+      "league": "League One",
+      "market": "Cards",
+      "market_key": "ou_cards",
+      "settled": 28,
+      "hit_rate": 0.2143,
+      "odds_net": -2.1,
+      "trust_factor": 0.928,
+      "min_edge_delta": 0.028,
+      "reason": "League One Cards weak spot from result review."
+    },
+    "League Two|ou_cards": {
+      "league": "League Two",
+      "market": "Cards",
+      "market_key": "ou_cards",
+      "settled": 26,
+      "hit_rate": 0.2692,
+      "odds_net": -4.2,
+      "trust_factor": 0.946,
+      "min_edge_delta": 0.021,
+      "reason": "League Two Cards weak spot from result review."
+    },
+    "Bundesliga|ou_cards": {
+      "league": "Bundesliga",
+      "market": "Cards",
+      "market_key": "ou_cards",
+      "settled": 35,
+      "hit_rate": 0.3143,
+      "odds_net": -23.9,
+      "trust_factor": 0.9415,
+      "min_edge_delta": 0.0227,
+      "reason": "Bundesliga Cards weak spot from result review."
+    },
+    "LaLiga|winner": {
+      "league": "LaLiga",
+      "market": "Winner",
+      "market_key": "winner",
+      "settled": 40,
+      "hit_rate": 0.325,
+      "odds_net": -47.94,
+      "trust_factor": 0.937,
+      "min_edge_delta": 0.0245,
+      "reason": "LaLiga Winner weak spot from result review."
+    },
+    "Eredivisie|ou_cards": {
+      "league": "Eredivisie",
+      "market": "Cards",
+      "market_key": "ou_cards",
+      "settled": 27,
+      "hit_rate": 0.3333,
+      "odds_net": -3.45,
+      "trust_factor": 0.9595,
+      "min_edge_delta": 0.0158,
+      "reason": "Eredivisie Cards weak spot from result review."
+    },
+    "Ligue 1|ou_cards": {
+      "league": "Ligue 1",
+      "market": "Cards",
+      "market_key": "ou_cards",
+      "settled": 29,
+      "hit_rate": 0.3793,
+      "odds_net": -13.24,
+      "trust_factor": 0.9685,
+      "min_edge_delta": 0.0123,
+      "reason": "Ligue 1 Cards weak spot from result review."
+    },
+    "Bundesliga|winner": {
+      "league": "Bundesliga",
+      "market": "Winner",
+      "market_key": "winner",
+      "settled": 36,
+      "hit_rate": 0.3889,
+      "odds_net": -23.89,
+      "trust_factor": 0.964,
+      "min_edge_delta": 0.014,
+      "reason": "Bundesliga Winner weak spot from result review."
+    },
+    "Ligue 1|ou_goals": {
+      "league": "Ligue 1",
+      "market": "Goals",
+      "market_key": "ou_goals",
+      "settled": 30,
+      "hit_rate": 0.4,
+      "odds_net": -13.84,
+      "trust_factor": 0.973,
+      "min_edge_delta": 0.0105,
+      "reason": "Ligue 1 Goals weak spot from result review."
+    },
+    "Championship|winner": {
+      "league": "Championship",
+      "market": "Winner",
+      "market_key": "winner",
+      "settled": 28,
+      "hit_rate": 0.4286,
+      "odds_net": -13.61,
+      "trust_factor": 0.982,
+      "min_edge_delta": 0.007,
+      "reason": "Championship Winner weak spot from result review."
+    },
+    "MLS|winner": {
+      "league": "MLS",
+      "market": "Winner",
+      "market_key": "winner",
+      "settled": 59,
+      "hit_rate": 0.4407,
+      "odds_net": -6.71,
+      "trust_factor": 0.9685,
+      "min_edge_delta": 0.0122,
+      "reason": "MLS Winner weak spot from result review."
+    },
+    "League Two|winner": {
+      "league": "League Two",
+      "market": "Winner",
+      "market_key": "winner",
+      "settled": 27,
+      "hit_rate": 0.4444,
+      "odds_net": -13.3,
+      "trust_factor": 0.9865,
+      "min_edge_delta": 0.0053,
+      "reason": "League Two Winner weak spot from result review."
+    }
+  },
+  "notes": [
+    "Trust factors shrink model probabilities toward neutral, not toward the opposite pick.",
+    "Edge deltas raise the threshold before a value pick becomes a bet.",
+    "Adjustments are regenerated from settled results during the daily routine."
+  ]
+}

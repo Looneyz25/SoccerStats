@@ -6,8 +6,11 @@ Make the betting dashboard clear, useful, and safe to scan.
 
 ## Reads
 
-- `index.html`
+- `app/page.jsx`
+- `app/globals.css`
+- `app/layout.jsx`
 - `match_data.json`
+- `public/data/match_data.json`
 - dashboard user goals
 
 ## Responsibilities

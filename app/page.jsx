@@ -2,6 +2,7 @@
 
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { loadMatchDataFromFirestore } from './firestore-data';
 import {
   Activity,
   AlertTriangle,
@@ -22,7 +23,22 @@ import {
   XCircle,
 } from 'lucide-react';
 
-const DATA_URL = 'data/match_data.json';
+const DATA_URLS = ['data/match_data.json', 'match_data.json'];
+
+async function loadMatchData() {
+  try {
+    return await loadMatchDataFromFirestore();
+  } catch (firestoreError) {
+    return Promise.any(
+      DATA_URLS.map((url) =>
+        fetch(url, { cache: 'no-store' }).then((response) => {
+          if (!response.ok) throw new Error(`Could not load ${url}`);
+          return response.json();
+        }),
+      ),
+    );
+  }
+}
 
 const SPORTSBET_LEAGUE_SLUGS = {
   'Premier League': 'united-kingdom/english-premier-league',
@@ -2045,18 +2061,14 @@ function HomeInner() {
   useEffect(() => {
     let cancelled = false;
 
-    fetch(DATA_URL, { cache: 'no-store' })
-      .then((response) => {
-        if (!response.ok) throw new Error(`Could not load ${DATA_URL}`);
-        return response.json();
-      })
+    loadMatchData()
       .then((nextData) => {
         if (cancelled) return;
         setData(nextData);
         setError('');
       })
       .catch((err) => {
-        if (!cancelled) setError(describeLoadError(err));
+        if (!cancelled) setError(`Could not load ${DATA_URLS.join(' or ')}`);
       });
 
     return () => {

@@ -35,6 +35,8 @@ PHASES = [
     ("4 Predictions",    "soccer_phase4_predictions.py",   OUT_DIR / "phase3_team_context_current.csv"),
     ("5 Value & Risk",   "soccer_phase5_value_risk.py",    OUT_DIR / "phase4_predictions_current.csv"),
     ("6 Settlement",     "soccer_phase6_settlement.py",    OUT_DIR / "phase5_value_risk_current.csv"),
+    ("Result Review",    "soccer_result_review_agent.py",  ROOT / "match_data.json"),
+    ("Model Calibration", "soccer_model_calibration_agent.py", OUT_DIR / "model_result_review_summary.json"),
 ]
 
 
@@ -70,6 +72,15 @@ def read_csv_safe(path):
         return list(csv.DictReader(h))
 
 
+def read_json_safe(path):
+    if not path.exists():
+        return None
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+
+
 def health_table():
     p1 = read_csv_safe(OUT_DIR / "phase1_fixture_slate_current.csv")
     p2 = read_csv_safe(OUT_DIR / "phase2_odds_slate_current.csv")
@@ -77,6 +88,8 @@ def health_table():
     p4 = read_csv_safe(OUT_DIR / "phase4_predictions_current.csv")
     p5 = read_csv_safe(OUT_DIR / "phase5_value_risk_current.csv")
     p6 = read_csv_safe(OUT_DIR / "phase6_settlement_current.csv")
+    review = read_json_safe(OUT_DIR / "model_result_review_summary.json") or {}
+    calibration = read_json_safe(OUT_DIR / "model_calibration.json") or {}
     def count(rows, key, val):
         return sum(1 for r in rows if r.get(key) == val)
     rows = [
@@ -100,6 +113,14 @@ def health_table():
          f"{count(p6, 'phase6_status', 'won')} won / {count(p6, 'phase6_status', 'lost')} lost",
          count(p6, "phase6_status", "pending") + count(p6, "phase6_status", "not_found"),
          "Flashscore"),
+        ("Result Review",
+         review.get("settled_market_rows", 0),
+         len(review.get("weak_spots", [])),
+         "match_data.json"),
+        ("Model Calibration",
+         len(calibration.get("market_adjustments", {})),
+         len(calibration.get("league_market_adjustments", {})),
+         "model_calibration.json"),
     ]
     return rows
 
@@ -218,6 +239,27 @@ def write_summary(run_results):
     else:
         lines.append("No settled bets in history yet.")
 
+    review = read_json_safe(OUT_DIR / "model_result_review_summary.json") or {}
+    lines.extend(["", "## Model Result Review", ""])
+    if review:
+        lines.append(f"- Settled market rows reviewed: {review.get('settled_market_rows', 0)}")
+        lines.append(f"- Weak spots flagged: {len(review.get('weak_spots', []))}")
+        recommendations = review.get("recommendations") or []
+        if recommendations:
+            lines.append(f"- Top action: {recommendations[0]}")
+        lines.append("- Full review: `docs/agent-system/outputs/model_result_review_current.md`")
+    else:
+        lines.append("No model result review output yet.")
+
+    calibration = read_json_safe(OUT_DIR / "model_calibration.json") or {}
+    lines.extend(["", "## Model Calibration", ""])
+    if calibration:
+        lines.append(f"- Market adjustments: {len(calibration.get('market_adjustments', {}))}")
+        lines.append(f"- League/market adjustments: {len(calibration.get('league_market_adjustments', {}))}")
+        lines.append("- Full calibration: `docs/agent-system/outputs/model_calibration.md`")
+    else:
+        lines.append("No model calibration output yet.")
+
     lines.extend([
         "",
         "## Responsible Betting",
@@ -231,7 +273,7 @@ def write_summary(run_results):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--update-html", action="store_true",
-                        help="(reserved) Update the dashboard data block in index.html. Default: off.")
+                        help="(legacy no-op) The dashboard now reads generated JSON via the Next.js app.")
     args = parser.parse_args()
 
     run_results = []
@@ -247,7 +289,7 @@ def main():
     print(f"Run log: {RUN_LOG_PATH}")
 
     if args.update_html:
-        print("--update-html is reserved. No HTML changes performed in this build.")
+        print("--update-html is a legacy no-op. The Next.js dashboard reads generated JSON from public/data/.")
 
 
 if __name__ == "__main__":

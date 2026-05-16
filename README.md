@@ -4,18 +4,21 @@ Soccer stats, fixture, odds, and prediction dashboard.
 
 ## Live Site
 
-The dashboard is designed to stay on the same GitHub Pages URL:
+The dashboard is configured for Firebase Hosting under project:
 
-https://looneyz25.github.io/SoccerStats/
+`sports-predictions-f91fd`
 
-GitHub Pages should use the `Deploy Next.js Dashboard` workflow. That workflow builds the static Next.js export and publishes the `out/` folder.
+Firebase Hosting serves the static Next.js export from `out/`.
 
 ## Frontend
 
 - `app/` - Next.js dashboard
 - `public/data/` - generated static JSON data, created during build
-- `next.config.js` - static export config for GitHub Pages
-- `.github/workflows/deploy-pages.yml` - builds and deploys the static site
+- `next.config.js` - static export config
+- `firebase.json` - Firebase Hosting config
+- `firestore.rules` - public read rules for dashboard data
+- `.firebaserc` - Firebase project mapping
+- `app/firebase.js` / `app/firebase-analytics.jsx` / `app/auth-gate.jsx` - Firebase app, Analytics, and Auth gate
 
 Build locally:
 
@@ -24,13 +27,41 @@ npm.cmd install --cache .\.npm-cache
 npm.cmd run build --cache .\.npm-cache
 ```
 
+Deploy to Firebase Hosting:
+
+```powershell
+npm.cmd run deploy:firebase
+```
+
+Preview locally with Firebase Hosting emulator:
+
+```powershell
+npm.cmd run firebase:serve
+```
+
+## Authentication
+
+The dashboard is protected by Firebase Authentication. The login page supports email/password accounts, password reset, and Google sign-in.
+
+Enable providers in Firebase Console before testing sign-in:
+
+1. Open Authentication > Sign-in method.
+2. Enable Email/Password.
+3. Enable Google if you want the Google button active.
+4. Confirm authorized domains include `localhost` and `sports-predictions-f91fd.web.app`.
+
 ## Data Pipeline
 
 - `scripts/soccer_phase1_fixtures.py` - Phase 1 fixture slate and Excel handoff
 - `scripts/soccer_routine.py` - daily data routine
+- `scripts/soccer_result_review_agent.py` - daily resulted-match review for model feedback
+- `scripts/soccer_model_calibration_agent.py` - turns review feedback into conservative automatic-learning controls
+- `scripts/upload_match_data_to_firestore.mjs` - uploads dashboard data into Firestore chunks
 - `scripts/soccer_prepare_next_data.py` - copies JSON into `public/data/` for the static frontend
-- `match_data.json` - current app data
+- `match_data.json` - local generated fallback data
 - `predictions_*.json` - dated snapshots
+
+The live app reads Firestore first from `dashboardData/match_data`, then falls back to generated JSON files when Firestore is unavailable.
 
 Fixture source order:
 

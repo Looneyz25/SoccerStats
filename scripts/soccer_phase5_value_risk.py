@@ -7,6 +7,7 @@ Phase 5 review workbook.
 """
 import argparse
 import csv
+import json
 import zipfile
 from collections import Counter
 from datetime import datetime, timedelta, timezone
@@ -28,9 +29,35 @@ PHASE4_CSV = OUT_DIR / "phase4_predictions_current.csv"
 XLSX_PATH = OUT_DIR / "Phase5_Value_Risk.xlsx"
 CSV_PATH = OUT_DIR / "phase5_value_risk_current.csv"
 MD_PATH = OUT_DIR / "phase5_value_risk_current.md"
+MODEL_CALIBRATION = OUT_DIR / "model_calibration.json"
 
 LOCAL_TZ = "Australia/Adelaide"
 SIDES = ("home", "draw", "away")
+
+
+def load_model_calibration():
+    if not MODEL_CALIBRATION.exists():
+        return {}
+    try:
+        return json.loads(MODEL_CALIBRATION.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
+MODEL_CAL = load_model_calibration()
+
+
+def calibration_edge_delta(league, market_key):
+    if not MODEL_CAL:
+        return 0.0
+    delta = 0.0
+    market = (MODEL_CAL.get("market_adjustments") or {}).get(market_key)
+    if market:
+        delta = max(delta, float(market.get("min_edge_delta") or 0.0))
+    league_market = (MODEL_CAL.get("league_market_adjustments") or {}).get(f"{league}|{market_key}")
+    if league_market:
+        delta = max(delta, float(league_market.get("min_edge_delta") or 0.0))
+    return round(delta, 4)
 
 DEFAULTS = dict(
     bankroll=1000.0,
@@ -59,7 +86,7 @@ def to_float(value):
         return None
 
 
-def evaluate_side(p, market, cfg):
+def evaluate_side(p, market, cfg, min_edge_delta=0.0):
     if p is None or market is None or market <= 1.0:
         return {"edge": "", "ev": "", "kelly": 0.0, "decision": "pass"}
     implied = 1.0 / market
@@ -67,9 +94,10 @@ def evaluate_side(p, market, cfg):
     ev = p * (market - 1) - (1 - p)
     kelly_raw = (p * market - 1) / (market - 1)
     kelly = max(0.0, kelly_raw)
-    if edge >= cfg["min_edge"] and ev > 0 and market >= cfg["min_price"]:
+    min_edge = cfg["min_edge"] + min_edge_delta
+    if edge >= min_edge and ev > 0 and market >= cfg["min_price"]:
         decision = "bet"
-    elif edge >= 0.5 * cfg["min_edge"] and ev > 0:
+    elif edge >= 0.5 * min_edge and ev > 0:
         decision = "lean"
     else:
         decision = "pass"
@@ -197,10 +225,11 @@ def main():
             continue
 
         side_eval = {}
+        winner_edge_delta = calibration_edge_delta(out["league"], "winner")
         for side in SIDES:
             p = to_float(r.get(f"p_{side}"))
             market = to_float(r.get(f"market_{side}"))
-            ev = evaluate_side(p, market, cfg)
+            ev = evaluate_side(p, market, cfg, winner_edge_delta)
             out[f"{side}_p"] = p if p is not None else ""
             out[f"{side}_market"] = market if market is not None else ""
             out[f"{side}_edge"] = ev["edge"]
@@ -230,6 +259,8 @@ def main():
             out["top_stake"] = round(min(top_stake, cfg["max_stake_pct"] * cfg["bankroll"]), 2)
             out["phase5_status"] = "bet"
             out["phase5_notes"] = "Bet recommended; subject to portfolio cap."
+            if winner_edge_delta:
+                out["phase5_notes"] += f" Learned edge threshold +{winner_edge_delta}."
             raw_stakes[out["event_id"]] = out["top_stake"]
         elif leans:
             top = max(leans, key=lambda x: x[1]["edge"])
@@ -242,11 +273,15 @@ def main():
             out["top_stake"] = 0.0
             out["phase5_status"] = "lean"
             out["phase5_notes"] = "Edge above lean threshold but below bet threshold."
+            if winner_edge_delta:
+                out["phase5_notes"] += f" Learned edge threshold +{winner_edge_delta}."
         else:
             out["top_decision"] = "pass"
             out["top_stake"] = 0.0
             out["phase5_status"] = "no_value"
             out["phase5_notes"] = "No side meets edge / EV / price thresholds."
+            if winner_edge_delta:
+                out["phase5_notes"] += f" Learned edge threshold +{winner_edge_delta}."
 
         rows.append(out)
 
@@ -271,6 +306,7 @@ def main():
         {"item": "bankroll", "value": cfg["bankroll"]},
         {"item": "kelly_fraction", "value": cfg["kelly_fraction"]},
         {"item": "min_edge", "value": cfg["min_edge"]},
+        {"item": "model_calibration", "value": MODEL_CAL.get("generated_at", "none") if MODEL_CAL else "none"},
         {"item": "min_price", "value": cfg["min_price"]},
         {"item": "max_stake_pct", "value": cfg["max_stake_pct"]},
         {"item": "max_exposure_pct", "value": cfg["max_exposure_pct"]},

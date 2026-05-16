@@ -1,5 +1,3 @@
-const repoName = 'SoccerStats';
-const isGithubPages = process.env.GITHUB_ACTIONS === 'true';
 const isProdBuild = process.env.NEXT_BUILD === 'prod';
 
 /** @type {import('next').NextConfig} */
@@ -14,8 +12,8 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  basePath: isGithubPages ? `/${repoName}` : '',
-  assetPrefix: isGithubPages ? `/${repoName}/` : '',
+  basePath: '',
+  assetPrefix: '',
 };
 
 module.exports = nextConfig;
