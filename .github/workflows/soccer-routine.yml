@@ -31,13 +31,17 @@ jobs:
         with:
           fetch-depth: 1
 
+      - name: Set up Python environment
+        run: |
+          uv venv --python 3.11 .venv-gh
+          .\.venv-gh\Scripts\python.exe --version
+
       - name: Verify Python
         run: |
-          py -3.11 --version
-          py -3.11 -c "import sys; assert sys.version_info >= (3, 9), 'need Python 3.9+'"
+          .\.venv-gh\Scripts\python.exe -c "import sys; assert sys.version_info >= (3, 9), 'need Python 3.9+'"
 
       - name: Install dependencies
-        run: py -3.11 -m pip install --quiet --upgrade pip curl_cffi tzdata
+        run: .\.venv-gh\Scripts\python.exe -m pip install --quiet --upgrade pip curl_cffi tzdata
 
       - name: Snapshot match_data.json before run
         id: pre
@@ -52,9 +56,9 @@ jobs:
       - name: Run the master soccer routine
         run: |
           Write-Host "Collecting fixture slate"
-          py -3.11 scripts/soccer_phase1_fixtures.py
+          .\.venv-gh\Scripts\python.exe scripts/soccer_phase1_fixtures.py
           Write-Host "Settling results and refreshing forecasts"
-          py -3.11 scripts/soccer_routine.py
+          .\.venv-gh\Scripts\python.exe scripts/soccer_routine.py
 
       - name: Verify routine actually changed data
         run: |
@@ -65,7 +69,7 @@ jobs:
           Write-Host "pre  size=$preSize  hash=$preHash"
           Write-Host "post size=$postSize hash=$postHash"
           if ($preHash -and ($preHash -eq $postHash)) {
-            $finishedToday = py -3.11 -c "import json,datetime; d=json.load(open('match_data.json')); t=datetime.date.today().isoformat(); print(sum(1 for lg in d['leagues'] for m in lg['matches'] if m.get('settled_at')==t))"
+            $finishedToday = .\.venv-gh\Scripts\python.exe -c "import json,datetime; d=json.load(open('match_data.json')); t=datetime.date.today().isoformat(); print(sum(1 for lg in d['leagues'] for m in lg['matches'] if m.get('settled_at')==t))"
             if ($finishedToday.Trim() -eq "0") {
               Write-Host "::warning::match_data.json unchanged AND zero settlements today — possible silent fetch failure"
             } else {
