@@ -1,0 +1,12 @@
+# Settings for App Hosting
+env:
+  - variable: NEXT_PUBLIC_APP_URL
+    value: https://lvrstats.com
+    availability:
+      - BUILD
+      - RUNTIME
+  - variable: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+    value: pk_live_51T5Gp3BbsFy1wAkFrjHMLzmsKALny5BdbQhYyckcJrgdndr3TPZR5smBxWZGHkCCa3h7aFr6cnMq07z0awzuip5u00FedXgOt3
+    availability:
+      - BUILD
+      - RUNTIME
