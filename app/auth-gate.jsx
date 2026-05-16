@@ -42,6 +42,18 @@ function restoreReturnPath() {
   }
 }
 
+function checkoutSucceeded() {
+  if (typeof window === 'undefined') return false;
+  return new URLSearchParams(window.location.search).get('checkout') === 'success';
+}
+
+function clearCheckoutStatus() {
+  if (typeof window === 'undefined' || !checkoutSucceeded()) return;
+  const url = new URL(window.location.href);
+  url.searchParams.delete('checkout');
+  window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
+}
+
 function authErrorMessage(error) {
   const code = error?.code || '';
   if (code.includes('auth/invalid-credential') || code.includes('auth/wrong-password')) {
@@ -91,7 +103,7 @@ export default function AuthGate({ children }) {
         setReady(true);
         setMessage('Sign in to continue.');
       }
-    }, 3500);
+    }, checkoutSucceeded() ? 10000 : 3500);
 
     const unsubscribe = onAuthStateChanged(auth, (nextUser) => {
       resolved = true;
@@ -117,9 +129,7 @@ export default function AuthGate({ children }) {
     if (!user) return;
     let active = true;
     async function syncStripeAfterCheckout() {
-      if (typeof window === 'undefined') return;
-      const params = new URLSearchParams(window.location.search);
-      if (params.get('checkout') !== 'success') return;
+      if (!checkoutSucceeded()) return;
 
       const token = await user.getIdToken(true);
       const response = await fetch('/api/stripe/sync-subscription', {
@@ -130,14 +140,30 @@ export default function AuthGate({ children }) {
       if (!response.ok) {
         throw new Error(payload.error || 'Stripe subscription could not be synced.');
       }
+      return payload;
+    }
+
+    async function loadProfileWithRetry() {
+      const attempts = checkoutSucceeded() ? 4 : 1;
+      for (let attempt = 0; attempt < attempts; attempt += 1) {
+        let nextProfile = await getUserProfile(user.uid);
+        if (!nextProfile) nextProfile = await createUserProfile(user);
+        const hasStripeAccess = nextProfile?.subscriptionHasAccess || nextProfile?.subscriptionStatus === 'trialing' || nextProfile?.subscriptionStatus === 'active';
+        if (!checkoutSucceeded() || nextProfile?.hasAccess || nextProfile?.manualAccess || nextProfile?.isPlatformOwner || hasStripeAccess) {
+          return nextProfile;
+        }
+        await new Promise((resolve) => setTimeout(resolve, 900));
+      }
+      let nextProfile = await getUserProfile(user.uid);
+      if (!nextProfile) nextProfile = await createUserProfile(user);
+      return nextProfile;
     }
 
     async function loadProfile() {
       setCheckingAccess(true);
       try {
         await syncStripeAfterCheckout();
-        let p = await getUserProfile(user.uid);
-        if (!p) p = await createUserProfile(user);
+        const p = await loadProfileWithRetry();
         if (active) setProfile(p);
       } catch (e) {
         console.error('Profile load error:', e);
@@ -146,6 +172,7 @@ export default function AuthGate({ children }) {
         if (active) {
           setCheckingAccess(false);
           setReady(true);
+          clearCheckoutStatus();
           restoreReturnPath();
         }
       }

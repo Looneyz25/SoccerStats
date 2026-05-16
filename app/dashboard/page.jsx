@@ -28,6 +28,8 @@ import {
 } from 'lucide-react';
 
 const DATA_URLS = ['/data/match_data.json', '/match_data.json'];
+const GAMBLING_HELP_URL = 'https://www.gamblinghelponline.org.au/';
+const BETSTOP_URL = 'https://www.betstop.gov.au/';
 
 async function loadMatchData() {
   try {
@@ -1449,6 +1451,26 @@ function BookmakerSelect({ value, onChange, compact = false }) {
   );
 }
 
+function ResponsibleGamblingNotice({ compact = false }) {
+  return (
+    <div className={`rounded-lg border border-amber-200 bg-amber-50 text-amber-950 shadow-panel ${compact ? 'px-3 py-2 text-xs leading-5' : 'p-4 text-sm leading-6'}`}>
+      <div className="font-semibold">Prediction information only. 18+</div>
+      <p className={compact ? 'mt-1' : 'mt-2'}>
+        This dashboard does not take bets, process payments for wagering, or have bookmaker affiliation. Bookmaker links are external handoffs only. Gamble responsibly.
+      </p>
+      <div className={`flex flex-wrap gap-x-3 gap-y-1 ${compact ? 'mt-1' : 'mt-2'}`}>
+        <a href={GAMBLING_HELP_URL} target="_blank" rel="noreferrer" className="font-semibold underline underline-offset-2">
+          Gambling Help Online
+        </a>
+        <span>1800 858 858</span>
+        <a href={BETSTOP_URL} target="_blank" rel="noreferrer" className="font-semibold underline underline-offset-2">
+          BetStop
+        </a>
+      </div>
+    </div>
+  );
+}
+
 function SettingsView({ bookmakerId, onBookmakerChange, onBack }) {
   const selectedBookmaker = BOOKMAKERS[bookmakerId] || BOOKMAKERS.sportsbet;
   const [isPlatformOwner, setIsPlatformOwner] = useState(false);
@@ -1546,6 +1568,10 @@ function SettingsView({ bookmakerId, onBookmakerChange, onBack }) {
           <div className="mt-4 rounded-md border border-line bg-field p-3 text-sm text-slate-600">
             Sportsbet opens direct match pages when the Sportsbet event ID is available. Other bookmakers will open their soccer page unless their direct event URL is added to the match data.
           </div>
+        </div>
+
+        <div className="mt-4">
+          <ResponsibleGamblingNotice />
         </div>
 
         <div className="mt-4 rounded-lg border border-slate-300 bg-white p-4 shadow-panel">
@@ -2012,9 +2038,12 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
         </div>
 
         {selectedBookmakerHref && (
-          <div className="flex flex-col items-stretch justify-center gap-2 sm:flex-row sm:items-center">
-            <BookmakerSelect value={selectedBookmaker.id} onChange={onBookmakerChange} />
-            <BookmakerLink bookmakerId={selectedBookmaker.id} href={selectedBookmakerHref} label={bookmakerButtonLabel} />
+          <div className="space-y-2">
+            <div className="flex flex-col items-stretch justify-center gap-2 sm:flex-row sm:items-center">
+              <BookmakerSelect value={selectedBookmaker.id} onChange={onBookmakerChange} />
+              <BookmakerLink bookmakerId={selectedBookmaker.id} href={selectedBookmakerHref} label={bookmakerButtonLabel} />
+            </div>
+            <ResponsibleGamblingNotice compact />
           </div>
         )}
 
@@ -2434,6 +2463,10 @@ function HomeInner() {
         </div>
 
         <ResultsReview matches={matches} />
+
+        <div className="mt-3 sm:mt-5">
+          <ResponsibleGamblingNotice />
+        </div>
 
         <div className="mt-3 grid gap-2 rounded-lg border border-line bg-white p-3 sm:mt-5 sm:grid-cols-[auto_12rem_10rem_12rem_16rem_minmax(0,1fr)] sm:items-center sm:gap-3">
           <div className="flex items-center gap-2 text-sm font-semibold text-slate-600">

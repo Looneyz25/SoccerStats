@@ -41,6 +41,35 @@ function subscriptionPriceId(subscription) {
   return subscription?.items?.data?.[0]?.price?.id || '';
 }
 
+async function findCurrentProSubscription(customerId) {
+  if (!customerId) return null;
+
+  const subscriptions = await stripe().subscriptions.list({
+    customer: customerId,
+    status: 'all',
+    limit: 20,
+  });
+
+  return subscriptions.data
+    .filter((subscription) => subscriptionPriceId(subscription) === PRO_PRICE_ID)
+    .filter((subscription) => subscriptionHasAccess(subscription.status))
+    .sort((a, b) => (b.created || 0) - (a.created || 0))[0] || null;
+}
+
+async function findLatestProSubscription(customerId) {
+  if (!customerId) return null;
+
+  const subscriptions = await stripe().subscriptions.list({
+    customer: customerId,
+    status: 'all',
+    limit: 20,
+  });
+
+  return subscriptions.data
+    .filter((subscription) => subscriptionPriceId(subscription) === PRO_PRICE_ID)
+    .sort((a, b) => (b.created || 0) - (a.created || 0))[0] || null;
+}
+
 async function verifyUser(req) {
   const token = bearerToken(req);
   if (!token) {
@@ -148,6 +177,21 @@ async function getOrCreateCustomer(decoded) {
 async function createCheckout(req, res) {
   const decoded = await verifyUser(req);
   const customerId = await getOrCreateCustomer(decoded);
+  const currentSubscription = await findCurrentProSubscription(customerId);
+
+  if (currentSubscription) {
+    await syncSubscription(currentSubscription);
+    const portalSession = await stripe().billingPortal.sessions.create({
+      customer: customerId,
+      return_url: `${APP_URL}/dashboard`,
+    });
+    return sendJson(res, 200, {
+      url: portalSession.url,
+      existingSubscription: true,
+      subscriptionStatus: currentSubscription.status,
+      subscriptionId: currentSubscription.id,
+    });
+  }
 
   const session = await stripe().checkout.sessions.create({
     mode: 'subscription',
@@ -202,15 +246,9 @@ async function syncCurrentSubscription(req, res) {
     return sendJson(res, 200, { synced: false, reason: 'No Stripe customer linked.' });
   }
 
-  const subscriptions = await stripe().subscriptions.list({
-    customer: profile.stripeCustomerId,
-    status: 'all',
-    limit: 10,
-  });
-
-  const relevant = subscriptions.data
-    .filter((subscription) => subscriptionPriceId(subscription) === PRO_PRICE_ID)
-    .sort((a, b) => (b.created || 0) - (a.created || 0))[0];
+  const relevant =
+    await findCurrentProSubscription(profile.stripeCustomerId) ||
+    await findLatestProSubscription(profile.stripeCustomerId);
 
   if (!relevant) {
     await userRef.set({
@@ -228,6 +266,7 @@ async function syncCurrentSubscription(req, res) {
     synced: true,
     subscriptionStatus: relevant.status,
     subscriptionId: relevant.id,
+    subscriptionHasAccess: subscriptionHasAccess(relevant.status),
   });
 }
 

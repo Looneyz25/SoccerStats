@@ -18,6 +18,9 @@ const metrics = [
   { label: 'Learning checks', value: 'Daily' },
 ];
 
+const GAMBLING_HELP_URL = 'https://www.gamblinghelponline.org.au/';
+const BETSTOP_URL = 'https://www.betstop.gov.au/';
+
 const features = [
   {
     icon: RefreshCw,
@@ -161,6 +164,23 @@ export default function LandingPage() {
             Continue
             <CheckCircle2 className="h-4 w-4" />
           </Link>
+        </div>
+        <div className="mx-auto max-w-7xl px-4 pb-8 lg:px-8">
+          <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950">
+            <div className="font-semibold">Prediction information only. 18+</div>
+            <p className="mt-1">
+              Lonny&apos;s Predictions does not take bets, process wagering payments, or have bookmaker affiliation. External bookmaker links are handoffs only. Gamble responsibly.
+            </p>
+            <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1">
+              <a href={GAMBLING_HELP_URL} target="_blank" rel="noreferrer" className="font-semibold underline underline-offset-2">
+                Gambling Help Online
+              </a>
+              <span>1800 858 858</span>
+              <a href={BETSTOP_URL} target="_blank" rel="noreferrer" className="font-semibold underline underline-offset-2">
+                BetStop
+              </a>
+            </div>
+          </div>
         </div>
       </section>
     </main>
