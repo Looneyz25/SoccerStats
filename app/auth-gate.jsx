@@ -43,10 +43,25 @@ export default function AuthGate({ children }) {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    return onAuthStateChanged(auth, (nextUser) => {
+    let resolved = false;
+    const fallback = window.setTimeout(() => {
+      if (resolved) return;
+      setReady(true);
+      setMessage('Session check was slow. Sign in to continue.');
+    }, 3500);
+
+    const unsubscribe = onAuthStateChanged(auth, (nextUser) => {
+      resolved = true;
+      window.clearTimeout(fallback);
       setUser(nextUser);
       setReady(true);
     });
+
+    return () => {
+      resolved = true;
+      window.clearTimeout(fallback);
+      unsubscribe();
+    };
   }, [auth]);
 
   useEffect(() => {
