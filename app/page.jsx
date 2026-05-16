@@ -17,7 +17,6 @@ import {
   ExternalLink,
   MapPin,
   Shield,
-  ShoppingCart,
   Trophy,
   UserRound,
   XCircle,
@@ -38,6 +37,41 @@ const SPORTSBET_LEAGUE_SLUGS = {
   MLS: 'north-america/usa-major-league-soccer',
 };
 
+const BOOKMAKERS = {
+  sportsbet: {
+    id: 'sportsbet',
+    name: 'Sportsbet',
+    entryUrl: 'https://www.sportsbet.com.au/betting/soccer',
+    buttonClass: 'border-[#008542] bg-[#008542] text-white hover:border-[#006f36] hover:bg-[#006f36]',
+  },
+  bet365: {
+    id: 'bet365',
+    name: 'bet365',
+    entryUrl: 'https://www.bet365.com.au/hub/en-au/sports-betting',
+    buttonClass: 'border-[#126e51] bg-[#126e51] text-white hover:border-[#0f5a43] hover:bg-[#0f5a43]',
+  },
+  tab: {
+    id: 'tab',
+    name: 'TAB',
+    entryUrl: 'https://www.tab.com.au/sports/betting/Soccer',
+    buttonClass: 'border-[#005eb8] bg-[#005eb8] text-white hover:border-[#004b93] hover:bg-[#004b93]',
+  },
+  ladbrokes: {
+    id: 'ladbrokes',
+    name: 'Ladbrokes',
+    entryUrl: 'https://www.ladbrokes.com.au/sports/soccer',
+    buttonClass: 'border-[#e30613] bg-[#e30613] text-white hover:border-[#bd0510] hover:bg-[#bd0510]',
+  },
+  neds: {
+    id: 'neds',
+    name: 'Neds',
+    entryUrl: 'https://www.neds.com.au/sports/soccer',
+    buttonClass: 'border-[#ff6900] bg-[#ff6900] text-white hover:border-[#d95a00] hover:bg-[#d95a00]',
+  },
+};
+
+const BOOKMAKER_OPTIONS = Object.values(BOOKMAKERS);
+
 function sportsbetSlug(value) {
   return String(value || '')
     .normalize('NFKD')
@@ -57,6 +91,12 @@ function sportsbetEventUrl(match) {
   const away = sportsbetSlug((match.away?.name || '').replace(/\s+FC$/i, ''));
   if (!home || !away) return null;
   return `https://www.sportsbet.com.au/betting/soccer/${leagueSlug}/${home}-v-${away}-${eventId}`;
+}
+
+function bookmakerUrl(match, bookmakerId) {
+  const bookmaker = BOOKMAKERS[bookmakerId] || BOOKMAKERS.sportsbet;
+  if (bookmaker.id === 'sportsbet') return sportsbetEventUrl(match) || bookmaker.entryUrl;
+  return bookmaker.entryUrl;
 }
 
 function statusClass(status) {
@@ -541,24 +581,24 @@ function DetailStat({ label, value }) {
   );
 }
 
-function SportsbetLink({ href, label = 'Sportsbet' }) {
+function BookmakerLink({ bookmakerId, href, label }) {
   if (!href) return null;
+  const bookmaker = BOOKMAKERS[bookmakerId] || BOOKMAKERS.sportsbet;
   return (
     <a
       href={href}
       target="_blank"
       rel="noreferrer"
-      className="inline-flex items-center gap-1.5 rounded-md border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-xs font-semibold text-emerald-700 hover:bg-emerald-100"
-      aria-label="Open this market on Sportsbet"
+      className={`inline-flex h-11 w-full items-center justify-center gap-2 rounded-md border px-5 text-sm font-semibold shadow-panel transition sm:w-auto ${bookmaker.buttonClass}`}
+      aria-label={`Open this market on ${bookmaker.name}`}
     >
-      <ShoppingCart className="h-3.5 w-3.5" aria-hidden="true" />
       <span>{label}</span>
-      <ExternalLink className="h-3 w-3" aria-hidden="true" />
+      <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
     </a>
   );
 }
 
-function PredictionDetail({ label, market, sportsbetHref }) {
+function PredictionDetail({ label, market }) {
   if (!market) return null;
   return (
     <div className={`rounded-md border px-3 py-2 ${marketPillClass(market.result)}`}>
@@ -573,7 +613,6 @@ function PredictionDetail({ label, market, sportsbetHref }) {
         <span className="font-semibold text-ink">{formatMarketDetail(market)}</span>
         <span className="text-slate-600">Odds {formatOdds(market.odds)}</span>
         {'actual' in market && <span className="text-slate-600">Actual {market.actual}</span>}
-        <SportsbetLink href={sportsbetHref} label="Add on Sportsbet" />
       </div>
     </div>
   );
@@ -669,11 +708,16 @@ function PredictionSummaryCard({ match, allMatches }) {
   );
 }
 
-function MatchDetailView({ match, onBack, allMatches }) {
+function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerChange }) {
   const predictions = match.predictions || {};
   const odds = match.sportsbet_odds || match.odds || {};
   const actuals = match.actuals || {};
-  const sportsbetHref = sportsbetEventUrl(match);
+  const selectedBookmaker = BOOKMAKERS[bookmakerId] || BOOKMAKERS.sportsbet;
+  const selectedBookmakerHref = bookmakerUrl(match, selectedBookmaker.id);
+  const bookmakerButtonLabel =
+    selectedBookmaker.id === 'sportsbet'
+      ? `${selectedBookmaker.name} odds ${formatOdds(odds.home)} / ${formatOdds(odds.draw)} / ${formatOdds(odds.away)}`
+      : `Open ${selectedBookmaker.name} soccer`;
 
   useEffect(() => {
     function handleKeyDown(event) {
@@ -725,14 +769,21 @@ function MatchDetailView({ match, onBack, allMatches }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-2 sm:grid-cols-3">
-          <DetailStat label="Home odds" value={formatOdds(odds.home)} />
-          <DetailStat label="Draw odds" value={formatOdds(odds.draw)} />
-          <DetailStat label="Away odds" value={formatOdds(odds.away)} />
-        </div>
-        {sportsbetHref && (
-          <div className="flex justify-end">
-            <SportsbetLink href={sportsbetHref} label="Open Sportsbet event" />
+        {selectedBookmakerHref && (
+          <div className="flex flex-col items-stretch justify-center gap-2 sm:flex-row sm:items-center">
+            <select
+              value={selectedBookmaker.id}
+              onChange={(event) => onBookmakerChange(event.target.value)}
+              className="h-11 rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink shadow-panel"
+              aria-label="Bookmaker"
+            >
+              {BOOKMAKER_OPTIONS.map((bookmaker) => (
+                <option key={bookmaker.id} value={bookmaker.id}>
+                  {bookmaker.name}
+                </option>
+              ))}
+            </select>
+            <BookmakerLink bookmakerId={selectedBookmaker.id} href={selectedBookmakerHref} label={bookmakerButtonLabel} />
           </div>
         )}
 
@@ -760,10 +811,10 @@ function MatchDetailView({ match, onBack, allMatches }) {
         <div>
           <h3 className="text-sm font-semibold text-ink">Predictions</h3>
           <div className="mt-2 grid gap-2 sm:grid-cols-2">
-            <PredictionDetail label="Winner" market={predictions.winner} sportsbetHref={sportsbetHref} />
-            <PredictionDetail label="BTTS" market={predictions.btts} sportsbetHref={sportsbetHref} />
-            <PredictionDetail label="Goals" market={predictions.ou_goals} sportsbetHref={sportsbetHref} />
-            <PredictionDetail label="Cards" market={predictions.ou_cards} sportsbetHref={sportsbetHref} />
+            <PredictionDetail label="Winner" market={predictions.winner} />
+            <PredictionDetail label="BTTS" market={predictions.btts} />
+            <PredictionDetail label="Goals" market={predictions.ou_goals} />
+            <PredictionDetail label="Cards" market={predictions.ou_cards} />
           </div>
         </div>
 
@@ -905,6 +956,7 @@ function HomeInner() {
   const [status, setStatus] = useState('all');
   const [selectedDate, setSelectedDate] = useState('');
   const [query, setQuery] = useState('');
+  const [bookmakerId, setBookmakerId] = useState('sportsbet');
 
   const scrollPositionRef = useRef(0);
   const swipeStartRef = useRef(null);
@@ -917,6 +969,17 @@ function HomeInner() {
       })
       .then(setData)
       .catch((err) => setError(err.message));
+  }, []);
+
+  useEffect(() => {
+    const saved = window.localStorage.getItem('preferredBookmaker');
+    if (saved && BOOKMAKERS[saved]) setBookmakerId(saved);
+  }, []);
+
+  const handleBookmakerChange = useCallback((nextBookmakerId) => {
+    const safeBookmakerId = BOOKMAKERS[nextBookmakerId] ? nextBookmakerId : 'sportsbet';
+    setBookmakerId(safeBookmakerId);
+    window.localStorage.setItem('preferredBookmaker', safeBookmakerId);
   }, []);
 
   const matches = useMemo(() => flattenMatches(data), [data]);
@@ -1041,7 +1104,15 @@ function HomeInner() {
   );
 
   if (selectedMatch) {
-    return <MatchDetailView match={selectedMatch} onBack={handleBack} allMatches={matches} />;
+    return (
+      <MatchDetailView
+        match={selectedMatch}
+        onBack={handleBack}
+        allMatches={matches}
+        bookmakerId={bookmakerId}
+        onBookmakerChange={handleBookmakerChange}
+      />
+    );
   }
 
   return (
