@@ -55,7 +55,7 @@ const BOOKMAKERS = {
     id: 'sportsbet',
     name: 'Sportsbet',
     entryUrl: 'https://www.sportsbet.com.au/betting/soccer',
-    logoSrc: 'bookmakers/sportsbet.svg',
+    logoSrc: 'bookmakers/sportsbet-logo.svg',
     buttonClass: 'border-[#0078be] bg-[#0078be] hover:border-[#0066a3] hover:bg-[#0066a3]',
   },
   bet365: {
@@ -1400,7 +1400,7 @@ function BookmakerLink({ bookmakerId, href, label }) {
     >
       {bookmaker.logoSrc ? (
         <>
-          <img src={bookmaker.logoSrc} alt="" className="h-8 w-auto max-w-36" aria-hidden="true" />
+          <img src={bookmaker.logoSrc} alt="" className="h-9 w-auto max-w-44" aria-hidden="true" />
           <span className="sr-only">{label}</span>
         </>
       ) : (
@@ -1647,18 +1647,21 @@ function H2HContextPanel({ match, allMatches }) {
 
       {h2hStreaks.length > 0 && (
         <div className="mt-3 grid gap-2 sm:grid-cols-2">
-          {h2hStreaks.slice(0, 4).map((streak, index) => (
-            <div key={`${streak.label}-${index}`} className="rounded-md border border-slate-300 bg-field px-3 py-2">
-              <div className="flex items-center justify-between gap-2">
-                <span className="truncate text-sm font-semibold text-ink">{streak.label}</span>
-                <span className="rounded bg-white px-2 py-0.5 text-xs font-semibold text-slate-600">{streak.value || '-'}</span>
+          {h2hStreaks.slice(0, 4).map((streak, index) => {
+            const result = streakResultFor(streak, match);
+            return (
+              <div key={`${streak.label}-${index}`} className={`rounded-md border px-3 py-2 ${streakCardClass(result)}`}>
+                <div className="flex items-center justify-between gap-2">
+                  <span className={`truncate text-sm font-semibold ${streakTextClass(result)}`}>{streak.label}</span>
+                  <span className={`rounded bg-white px-2 py-0.5 text-xs font-semibold ${streakMetaClass(result)}`}>{streak.value || '-'}</span>
+                </div>
+                <div className={`mt-1 flex items-center justify-between gap-2 text-xs ${streakMetaClass(result)}`}>
+                  <span>{displayTeamForStreak(streak, match)}</span>
+                  <span>Odds {formatOdds(streak.odds)}</span>
+                </div>
               </div>
-              <div className="mt-1 flex items-center justify-between gap-2 text-xs text-slate-500">
-                <span>{displayTeamForStreak(streak, match)}</span>
-                <span>Odds {formatOdds(streak.odds)}</span>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 

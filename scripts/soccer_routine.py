@@ -388,7 +388,9 @@ def phase_a5_backfill_enrich(store, seen_ids):
             eid = m.get("id")
             if not eid: continue
             need_odds = not m.get("odds")
-            need_streaks = not (m.get("h2h_streaks") or m.get("team_streaks"))
+            need_h2h = not m.get("h2h_streaks")
+            need_team = not m.get("team_streaks")
+            need_streaks = need_h2h or need_team
             need_actuals = not m.get("actuals")
             if not (need_odds or need_streaks or need_actuals): continue
             if need_odds:
@@ -399,8 +401,8 @@ def phase_a5_backfill_enrich(store, seen_ids):
                 sp = fetch(f"/api/v1/event/{eid}/team-streaks"); time.sleep(0.6)
                 if sp:
                     h2h, tstr = parse_streaks_payload(sp)
-                    if h2h: m["h2h_streaks"] = h2h
-                    if tstr: m["team_streaks"] = tstr
+                    if h2h and need_h2h: m["h2h_streaks"] = h2h
+                    if tstr and need_team: m["team_streaks"] = tstr
             if need_actuals:
                 act = actuals_for(eid)
                 if act: m["actuals"] = act
@@ -749,10 +751,26 @@ def predict_poisson(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
 
 def phase_a6_retro(store):
     done = 0
+    factors_backfilled = 0
     for L in store["leagues"]:
         for m in L["matches"]:
             if m.get("status") != "FT": continue
-            if m.get("predictions"): continue
+            if m.get("predictions"):
+                preds = m["predictions"]
+                if not preds.get("factors"):
+                    h_id = m.get("home", {}).get("team_id"); a_id = m.get("away", {}).get("team_id")
+                    h_rank = (m.get("home") or {}).get("rank")
+                    a_rank = (m.get("away") or {}).get("rank")
+                    home_elo = _TEAM_ELO.get(h_id, ELO_INIT) if h_id else ELO_INIT
+                    away_elo = _TEAM_ELO.get(a_id, ELO_INIT) if a_id else ELO_INIT
+                    preds["factors"] = {
+                        "h_rank": h_rank, "a_rank": a_rank,
+                        "home_elo": round(home_elo, 1),
+                        "away_elo": round(away_elo, 1),
+                        "source": "retro_snapshot",
+                    }
+                    factors_backfilled += 1
+                continue
             h_id = m.get("home", {}).get("team_id"); a_id = m.get("away", {}).get("team_id")
             hg = m["home"].get("goals"); ag = m["away"].get("goals")
             if hg is None or ag is None: continue
@@ -778,7 +796,7 @@ def phase_a6_retro(store):
                                               (pred["ou_cards"]["pick"] == "Under" and cards < 4.5) else "miss")
             m["predictions"] = pred
             done += 1
-    return {"retro": done}
+    return {"retro": done, "factors_backfilled": factors_backfilled}
 
 
 # ----------------------------------------------------------------------------
