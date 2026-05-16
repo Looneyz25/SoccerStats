@@ -62,22 +62,23 @@ export default function AuthGate({ children }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
-  const [sessionSlow, setSessionSlow] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
   useEffect(() => {
     let resolved = false;
-    setSessionSlow(false);
     const fallback = window.setTimeout(() => {
       if (resolved) return;
-      setSessionSlow(true);
+      const currentUser = auth.currentUser;
+      setUser(currentUser);
+      setReady(true);
+      if (currentUser) restoreReturnPath();
+      else setMessage('Sign in to continue.');
     }, 3500);
 
     const unsubscribe = onAuthStateChanged(auth, (nextUser) => {
       resolved = true;
       window.clearTimeout(fallback);
-      setSessionSlow(false);
       setUser(nextUser);
       setReady(true);
       if (nextUser) restoreReturnPath();
@@ -161,37 +162,9 @@ export default function AuthGate({ children }) {
   if (!ready) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-field px-4">
-        <div className="w-full max-w-sm rounded-lg border border-line bg-white p-4 text-center shadow-panel">
-          <div className="flex items-center justify-center gap-3 text-sm font-semibold text-ink">
-            <Loader2 className="h-5 w-5 animate-spin text-signal" />
-            Checking session
-          </div>
-          {sessionSlow && (
-            <>
-              <p className="mt-3 text-sm leading-6 text-slate-600">
-                Firebase is taking longer than expected. I&apos;ll keep checking, or you can open sign in now.
-              </p>
-              <div className="mt-4 grid gap-2 sm:grid-cols-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setReady(true);
-                    setMessage('Sign in to continue.');
-                  }}
-                  className="inline-flex h-10 items-center justify-center rounded-md bg-ink px-3 text-sm font-semibold text-white hover:bg-slate-800"
-                >
-                  Sign in
-                </button>
-                <button
-                  type="button"
-                  onClick={() => window.location.reload()}
-                  className="inline-flex h-10 items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink hover:bg-field"
-                >
-                  Retry
-                </button>
-              </div>
-            </>
-          )}
+        <div className="flex items-center gap-3 rounded-lg border border-line bg-white px-4 py-3 text-sm font-semibold text-ink shadow-panel">
+          <Loader2 className="h-5 w-5 animate-spin text-signal" />
+          Checking session
         </div>
       </main>
     );
