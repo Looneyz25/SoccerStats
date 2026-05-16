@@ -8,7 +8,7 @@
     "dev:fresh": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/restart-next-dev.ps1",
     "dev:clean": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/restart-next-dev.ps1 -NoStart",
     "dev:health": "node scripts/dev-health.js",
-    "prebuild": "py -3 scripts/soccer_prepare_next_data.py",
+    "prebuild": "node scripts/run-python.js scripts/soccer_prepare_next_data.py",
     "build": "node scripts/next-build-prod.js",
     "audit:summary": "node scripts/audit_prediction_summary.js",
     "start": "next start"
