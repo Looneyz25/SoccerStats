@@ -1,10 +1,14 @@
-const isProdBuild = process.env.NEXT_BUILD === 'prod';
+const isFirebaseAppHosting =
+  process.env.FIREBASE_APP_HOSTING === 'true' ||
+  process.env.FIREBASE_APP_HOSTING === '1' ||
+  Boolean(process.env.FIREBASE_OUTPUT_BUNDLE_DIR || process.env.NEXTJS_ADAPTER_VERSION);
+const isStaticExport = process.env.NEXT_BUILD === 'prod' && !isFirebaseAppHosting;
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  distDir: isProdBuild ? '.next-build' : '.next',
-  output: process.env.NODE_ENV === 'production' ? 'export' : undefined,
-  trailingSlash: true,
+  distDir: isStaticExport ? '.next-build' : '.next',
+  output: isStaticExport ? 'export' : undefined,
+  trailingSlash: isStaticExport,
   devIndicators: false,
   experimental: {
     devtoolSegmentExplorer: false,

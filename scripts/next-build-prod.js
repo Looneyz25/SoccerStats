@@ -4,6 +4,10 @@ const path = require('node:path');
 
 const nextBin = path.join(__dirname, '..', 'node_modules', 'next', 'dist', 'bin', 'next');
 const devUrl = process.env.SOCCER_STATS_DEV_URL || 'http://localhost:3001';
+const isFirebaseAppHosting =
+  process.env.FIREBASE_APP_HOSTING === 'true' ||
+  process.env.FIREBASE_APP_HOSTING === '1' ||
+  Boolean(process.env.FIREBASE_OUTPUT_BUNDLE_DIR || process.env.NEXTJS_ADAPTER_VERSION);
 
 function canReachDevServer() {
   return new Promise((resolve) => {
@@ -31,7 +35,7 @@ async function main() {
     cwd: path.join(__dirname, '..'),
     env: {
       ...process.env,
-      NEXT_BUILD: 'prod',
+      NEXT_BUILD: isFirebaseAppHosting ? 'firebase' : 'prod',
     },
     stdio: 'inherit',
   });
