@@ -6,6 +6,7 @@ import {
   getRedirectResult,
   onAuthStateChanged,
   sendPasswordResetEmail,
+  signInWithCredential,
   signInWithEmailAndPassword,
   signInWithRedirect,
   signOut,
@@ -35,6 +36,17 @@ function restoreReturnPath() {
   if (safePath !== currentReturnPath()) {
     window.location.replace(safePath);
   }
+}
+
+function googleIdTokenFromUrl() {
+  if (typeof window === 'undefined' || !window.location.hash) return null;
+  const params = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+  return params.get('id_token');
+}
+
+function clearUrlHash() {
+  if (typeof window === 'undefined' || !window.location.hash) return;
+  window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
 }
 
 function authErrorMessage(error) {
@@ -101,28 +113,52 @@ export default function AuthGate({ children }) {
   }, [auth]);
 
   useEffect(() => {
-    setMessage('Finishing Google sign-in...');
-    getRedirectResult(auth)
-      .then((result) => {
-        const hadPendingGoogle = window.sessionStorage.getItem(AUTH_GOOGLE_PENDING_KEY) === '1';
-        window.sessionStorage.removeItem(AUTH_GOOGLE_PENDING_KEY);
-        if (!result?.user) {
-          if (hadPendingGoogle) {
-            setReady(true);
-            setError('Google sign-in returned without creating a Firebase user. Try the live Firebase URL or a normal browser window.');
-          }
+    const finishGoogleSignIn = async () => {
+      setMessage('Finishing Google sign-in...');
+      const idToken = googleIdTokenFromUrl();
+      if (idToken) {
+        try {
+          const credential = await signInWithCredential(auth, GoogleAuthProvider.credential(idToken));
+          window.sessionStorage.removeItem(AUTH_GOOGLE_PENDING_KEY);
+          clearUrlHash();
+          setUser(credential.user);
+          setReady(true);
+          restoreReturnPath();
+          return;
+        } catch (manualError) {
+          window.sessionStorage.removeItem(AUTH_GOOGLE_PENDING_KEY);
+          clearUrlHash();
+          setReady(true);
+          setError(authErrorMessage(manualError));
           setMessage('');
           return;
         }
-        setUser(result.user);
-        setReady(true);
-        restoreReturnPath();
-      })
-      .catch((redirectError) => {
-        setReady(true);
-        setError(authErrorMessage(redirectError));
-        setMessage('');
-      });
+      }
+
+      getRedirectResult(auth)
+        .then((result) => {
+          const hadPendingGoogle = window.sessionStorage.getItem(AUTH_GOOGLE_PENDING_KEY) === '1';
+          window.sessionStorage.removeItem(AUTH_GOOGLE_PENDING_KEY);
+          if (!result?.user) {
+            if (hadPendingGoogle) {
+              setReady(true);
+              setError('Google sign-in returned without creating a Firebase user. Try the live Firebase URL or a normal browser window.');
+            }
+            setMessage('');
+            return;
+          }
+          setUser(result.user);
+          setReady(true);
+          restoreReturnPath();
+        })
+        .catch((redirectError) => {
+          setReady(true);
+          setError(authErrorMessage(redirectError));
+          setMessage('');
+        });
+    };
+
+    finishGoogleSignIn();
   }, [auth]);
 
   async function handleSubmit(event) {
