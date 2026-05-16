@@ -18,11 +18,14 @@ venv/
 node_modules/
 .npm-cache/
 .next/
+.next-build/
 out/
 public/data/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+logs/
+.codex-logs/
 
 # Editor
 .vscode/

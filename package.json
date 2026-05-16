@@ -4,10 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3001",
+    "dev:next": "next dev -p 3001",
     "dev:fresh": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/restart-next-dev.ps1",
     "dev:clean": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/restart-next-dev.ps1 -NoStart",
-    "prebuild": "python scripts/soccer_prepare_next_data.py",
-    "build": "next build",
+    "dev:health": "node scripts/dev-health.js",
+    "prebuild": "py -3 scripts/soccer_prepare_next_data.py",
+    "build": "node scripts/next-build-prod.js",
+    "audit:summary": "node scripts/audit_prediction_summary.js",
     "start": "next start"
   },
   "dependencies": {

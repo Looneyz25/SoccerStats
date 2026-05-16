@@ -66,7 +66,7 @@ $matchingProcesses = Get-CommandLineProcess | Where-Object {
     ($commandLine -match "(-p|--port)\s+$Port\b" -or $commandLine -match "\b$Port\b")
   $isRepoNpmDev = $fromRepo -and $commandLine -match "\bnpm(\.cmd)?\b" -and $commandLine -match "\brun\s+dev\b"
 
-  $fromRepo -or $isNextDevOnPort -or $isRepoNpmDev
+  $isNextDevOnPort -or $isRepoNpmDev
 }
 
 $portProcessIds = @()
@@ -97,4 +97,4 @@ if ($NoStart) {
 
 Write-Host "Starting Soccer Stats dev server on http://localhost:$Port"
 Set-Location $repoRoot
-& npm.cmd run dev
+& npm.cmd run dev:next

@@ -491,8 +491,8 @@ def fetch_form(team_id, exclude_event_id=None, xg_index=None):
 
 
 def fetch_h2h(home_id, away_id, exclude_event_id=None, max_n=10):
-    """Past meetings between two specific teams. Returns list of {h_scored, a_scored}
-    from the home-team's perspective. Empty if data unavailable.
+    """Past meetings between two specific teams. Returns rows from the current
+    home-team's perspective. Empty if data unavailable.
     """
     if not home_id or not away_id:
         return []
@@ -507,12 +507,44 @@ def fetch_h2h(home_id, away_id, exclude_event_id=None, max_n=10):
         h_team = (e.get("homeTeam") or {}).get("id")
         a_team = (e.get("awayTeam") or {}).get("id")
         if h_team == home_id and a_team == away_id:
-            out.append({"h_scored": (e.get("homeScore") or {}).get("current", 0),
+            out.append({"event_id": e.get("id"),
+                        "date": adl_date(e.get("startTimestamp")) if e.get("startTimestamp") else None,
+                        "home_name": (e.get("homeTeam") or {}).get("name"),
+                        "away_name": (e.get("awayTeam") or {}).get("name"),
+                        "home_score": (e.get("homeScore") or {}).get("current", 0),
+                        "away_score": (e.get("awayScore") or {}).get("current", 0),
+                        "current_home_scored": (e.get("homeScore") or {}).get("current", 0),
+                        "current_away_scored": (e.get("awayScore") or {}).get("current", 0),
+                        "h_scored": (e.get("homeScore") or {}).get("current", 0),
                         "a_scored": (e.get("awayScore") or {}).get("current", 0)})
         elif a_team == home_id and h_team == away_id:
-            out.append({"h_scored": (e.get("awayScore") or {}).get("current", 0),
+            out.append({"event_id": e.get("id"),
+                        "date": adl_date(e.get("startTimestamp")) if e.get("startTimestamp") else None,
+                        "home_name": (e.get("homeTeam") or {}).get("name"),
+                        "away_name": (e.get("awayTeam") or {}).get("name"),
+                        "home_score": (e.get("homeScore") or {}).get("current", 0),
+                        "away_score": (e.get("awayScore") or {}).get("current", 0),
+                        "current_home_scored": (e.get("awayScore") or {}).get("current", 0),
+                        "current_away_scored": (e.get("homeScore") or {}).get("current", 0),
+                        "h_scored": (e.get("awayScore") or {}).get("current", 0),
                         "a_scored": (e.get("homeScore") or {}).get("current", 0)})
     return out[:max_n]
+
+
+def fetch_event_h2h_duel(event_id):
+    """Return SofaScore's team duel summary for the event, if available."""
+    if not event_id:
+        return None
+    d = fetch(f"/api/v1/event/{event_id}/h2h")
+    time.sleep(0.6)
+    duel = (d or {}).get("teamDuel")
+    if not duel:
+        return None
+    return {
+        "home_wins": duel.get("homeWins", 0),
+        "away_wins": duel.get("awayWins", 0),
+        "draws": duel.get("draws", 0),
+    }
 
 
 _STANDINGS_CACHE = {}
@@ -772,6 +804,7 @@ def phase_b_forecast(store, seen_ids):
                 a_att, a_def = fetch_form(a.get("id"))
                 # NEW: H2H + standings inputs for the enhanced predictor
                 h2h_history = fetch_h2h(h.get("id"), a.get("id"), exclude_event_id=eid)
+                h2h_duel = fetch_event_h2h_duel(eid)
                 ut = (ev.get("tournament") or {}).get("uniqueTournament") or {}
                 season = ev.get("season") or {}
                 stand = fetch_standings(ut.get("id"), season.get("id"))
@@ -793,6 +826,8 @@ def phase_b_forecast(store, seen_ids):
                 }
                 if odds: rec["odds"] = odds
                 if h2h: rec["h2h_streaks"] = h2h
+                if h2h_history: rec["h2h_history"] = h2h_history
+                if h2h_duel: rec["h2h_duel"] = h2h_duel
                 if tstr: rec["team_streaks"] = tstr
                 by_name[TOURNAMENTS[utid]]["matches"].append(rec)
                 seen_ids.add(eid); added += 1

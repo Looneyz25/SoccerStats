@@ -15475,6 +15475,25 @@
               "event_id": "53fbd684-7d67-43a3-a775-32337f732cf4",
               "event_name": "1. FC Heidenheim vs 1. FSV Mainz 05"
             }
+          },
+          "h2h_history": [
+            {
+              "event_id": 14062156,
+              "date": "2026-01-14",
+              "home_name": "1. FSV Mainz 05",
+              "away_name": "1. FC Heidenheim",
+              "home_score": 2,
+              "away_score": 1,
+              "current_home_scored": 1,
+              "current_away_scored": 2,
+              "h_scored": 1,
+              "a_scored": 2
+            }
+          ],
+          "h2h_duel": {
+            "home_wins": 2,
+            "away_wins": 2,
+            "draws": 1
           }
         },
         {
