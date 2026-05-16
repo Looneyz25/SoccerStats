@@ -46,4 +46,5 @@ npm run build && npx firebase-tools deploy --only hosting --project sports-predi
 - Cloud Function URL: `https://australia-southeast1-sports-predictions-f91fd.cloudfunctions.net/stripeApi`
 - Stripe Product ID: `prod_UWtFiyWb2LoEy0` (Soccer Stats Pro, A$19.99/month)
 - Stripe Price ID is hardcoded in `functions/index.js` for Checkout: `price_1TXpTJBbsFy1wAkF64nFdG26`.
+- Checkout starts new subscriptions with a 7-day free trial and no upfront payment requirement.
 - Never hardcode Stripe keys in source. Add new public vars to `apphosting.yaml`, sensitive vars to Secret Manager.

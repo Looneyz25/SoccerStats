@@ -62,7 +62,7 @@ Stripe objects created for this app:
 - Product: `prod_UWtFiyWb2LoEy0`
 - Price: `price_1TXpTJBbsFy1wAkF64nFdG26`
 
-Subscription signup uses Stripe Checkout with the hardcoded price in `functions/index.js`. Existing customers can manage billing through Stripe Customer Portal.
+Subscription signup uses Stripe Checkout with the hardcoded price in `functions/index.js`. New subscriptions start with a 7-day free trial and no upfront payment required. Existing customers can manage billing through Stripe Customer Portal.
 
 Create a Stripe webhook endpoint pointing to:
 

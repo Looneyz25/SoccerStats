@@ -4,6 +4,7 @@ const Stripe = require('stripe');
 
 const PRO_PRICE_ID = 'price_1TXpTJBbsFy1wAkF64nFdG26';
 const PRO_PLAN_NAME = 'Soccer Stats Pro';
+const PRO_TRIAL_DAYS = 7;
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || 'https://lvrstats.com';
 
 admin.initializeApp();
@@ -147,6 +148,7 @@ async function createCheckout(req, res) {
     customer: customerId,
     line_items: [{ price: PRO_PRICE_ID, quantity: 1 }],
     allow_promotion_codes: true,
+    payment_method_collection: 'if_required',
     client_reference_id: decoded.uid,
     customer_update: { name: 'auto' },
     metadata: {
@@ -154,6 +156,12 @@ async function createCheckout(req, res) {
       plan: PRO_PLAN_NAME,
     },
     subscription_data: {
+      trial_period_days: PRO_TRIAL_DAYS,
+      trial_settings: {
+        end_behavior: {
+          missing_payment_method: 'cancel',
+        },
+      },
       metadata: {
         firebaseUid: decoded.uid,
         plan: PRO_PLAN_NAME,
