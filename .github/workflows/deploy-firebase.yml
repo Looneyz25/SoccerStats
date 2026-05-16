@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - 'app/**'
+      - 'functions/**'
       - 'public/**'
       - 'scripts/**'
       - 'match_data.json'
@@ -14,6 +15,8 @@ on:
       - '.firebaserc'
       - 'package.json'
       - 'package-lock.json'
+      - 'functions/package.json'
+      - 'functions/package-lock.json'
       - 'next.config.js'
       - 'tailwind.config.js'
       - 'postcss.config.js'
@@ -46,6 +49,10 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Install function dependencies
+        run: npm install
+        working-directory: functions
+
       - name: Build static site
         run: npm run build
 
@@ -65,6 +72,11 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_SPORTS_PREDICTIONS_F91FD }}'
           projectId: sports-predictions-f91fd
           channelId: live
+
+      - name: Deploy Firebase Functions
+        run: npx firebase-tools deploy --only functions --project sports-predictions-f91fd
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.firebase-auth.outputs.credentials_file_path }}
 
       - name: Deploy Firestore rules
         run: npx firebase-tools deploy --only firestore:rules --project sports-predictions-f91fd

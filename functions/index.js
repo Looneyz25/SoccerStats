@@ -80,6 +80,18 @@ async function verifyUser(req) {
   return admin.auth().verifyIdToken(token);
 }
 
+async function verifyPlatformOwner(req) {
+  const decoded = await verifyUser(req);
+  const snap = await admin.firestore().collection('users').doc(decoded.uid).get();
+  const profile = snap.exists ? snap.data() : {};
+  if (!profile.isPlatformOwner && decoded.email !== 'l.vorabouth@gmail.com') {
+    const error = new Error('Platform owner access required.');
+    error.status = 403;
+    throw error;
+  }
+  return decoded;
+}
+
 async function findUserRefBySubscription(subscription) {
   const uid = subscription.metadata?.firebaseUid;
   if (uid) return admin.firestore().collection('users').doc(uid);
@@ -270,6 +282,64 @@ async function syncCurrentSubscription(req, res) {
   });
 }
 
+async function syncUserSubscription(req, res) {
+  await verifyPlatformOwner(req);
+
+  const uid = req.body?.uid;
+  if (!uid) {
+    return sendJson(res, 400, { error: 'uid is required.' });
+  }
+
+  const userRef = admin.firestore().collection('users').doc(uid);
+  const userSnap = await userRef.get();
+  if (!userSnap.exists) {
+    return sendJson(res, 404, { error: 'User profile not found.' });
+  }
+
+  const profile = userSnap.data() || {};
+  if (!profile.stripeCustomerId) {
+    await userRef.set({
+      subscriptionHasAccess: false,
+      hasAccess: Boolean(profile.manualAccess || profile.isPlatformOwner),
+      accessSource: profile.manualAccess ? 'manual' : profile.isPlatformOwner ? 'owner' : 'stripe_inactive',
+      stripeSubscriptionId: null,
+      stripePriceId: null,
+      subscriptionStatus: 'none',
+      subscriptionCurrentPeriodEnd: null,
+      subscriptionCancelAtPeriodEnd: false,
+      subscriptionUpdatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true });
+    return sendJson(res, 200, { synced: false, subscriptionStatus: 'none', reason: 'No Stripe customer linked.' });
+  }
+
+  const relevant =
+    await findCurrentProSubscription(profile.stripeCustomerId) ||
+    await findLatestProSubscription(profile.stripeCustomerId);
+
+  if (!relevant) {
+    await userRef.set({
+      subscriptionHasAccess: false,
+      hasAccess: Boolean(profile.manualAccess || profile.isPlatformOwner),
+      accessSource: profile.manualAccess ? 'manual' : profile.isPlatformOwner ? 'owner' : 'stripe_inactive',
+      stripeSubscriptionId: null,
+      stripePriceId: null,
+      subscriptionStatus: 'none',
+      subscriptionCurrentPeriodEnd: null,
+      subscriptionCancelAtPeriodEnd: false,
+      subscriptionUpdatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true });
+    return sendJson(res, 200, { synced: true, subscriptionStatus: 'none', subscriptionHasAccess: false });
+  }
+
+  await syncSubscription(relevant);
+  return sendJson(res, 200, {
+    synced: true,
+    subscriptionStatus: relevant.status,
+    subscriptionId: relevant.id,
+    subscriptionHasAccess: subscriptionHasAccess(relevant.status),
+  });
+}
+
 async function webhook(req, res) {
   if (!process.env.STRIPE_WEBHOOK_SECRET) {
     return sendJson(res, 500, { error: 'STRIPE_WEBHOOK_SECRET is not configured.' });
@@ -320,6 +390,9 @@ exports.stripeApi = onRequest({
     }
     if (req.method === 'POST' && routePath.endsWith('/sync-subscription')) {
       return await syncCurrentSubscription(req, res);
+    }
+    if (req.method === 'POST' && routePath.endsWith('/sync-user')) {
+      return await syncUserSubscription(req, res);
     }
     if (req.method === 'POST' && routePath.endsWith('/webhook')) {
       return await webhook(req, res);

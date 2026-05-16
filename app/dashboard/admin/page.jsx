@@ -64,8 +64,29 @@ function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [busyUid, setBusyUid] = useState('');
+  const [syncingStripe, setSyncingStripe] = useState(false);
   const [query, setQuery] = useState('');
   const router = useRouter();
+
+  async function syncStripeUser(uid) {
+    const auth = getFirebaseAuth();
+    const token = await auth.currentUser?.getIdToken();
+    if (!token) throw new Error('Sign in again before syncing Stripe.');
+
+    const response = await fetch('/api/stripe/sync-user', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ uid }),
+    });
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(payload.error || 'Stripe sync failed.');
+    }
+    return payload;
+  }
 
   async function loadUsers() {
     setLoading(true);
@@ -84,12 +105,19 @@ function AdminDashboard() {
         return;
       }
 
-      const usersList = await getAllUsers();
+      let usersList = await getAllUsers();
+      const stripeUsers = usersList.filter((user) => user.stripeCustomerId);
+      if (stripeUsers.length) {
+        setSyncingStripe(true);
+        await Promise.all(stripeUsers.map((user) => syncStripeUser(user.uid)));
+        usersList = await getAllUsers();
+      }
       setUsers(usersList);
     } catch (err) {
       console.error(err);
       setError(err?.message || 'Failed to load users.');
     } finally {
+      setSyncingStripe(false);
       setLoading(false);
     }
   }
@@ -174,6 +202,21 @@ function AdminDashboard() {
     }
   }
 
+  async function handleSyncStripeUser(user) {
+    setBusyUid(user.uid);
+    setError('');
+    try {
+      await syncStripeUser(user.uid);
+      const usersList = await getAllUsers();
+      setUsers(usersList);
+    } catch (err) {
+      console.error(err);
+      setError(err?.message || 'Failed to sync Stripe subscription.');
+    } finally {
+      setBusyUid('');
+    }
+  }
+
   if (loading) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-field px-4">
@@ -208,7 +251,7 @@ function AdminDashboard() {
             className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink shadow-sm transition hover:bg-field"
           >
             <RefreshCw className="h-4 w-4" />
-            Refresh
+            {syncingStripe ? 'Syncing Stripe...' : 'Refresh'}
           </button>
         </div>
 
@@ -357,6 +400,15 @@ function AdminDashboard() {
                               </span>
                             </button>
                             <div className="inline-flex rounded-md border border-line bg-white p-1">
+                              <button
+                                type="button"
+                                disabled={isBusy || !user.stripeCustomerId}
+                                onClick={() => handleSyncStripeUser(user)}
+                                className="inline-flex h-9 items-center gap-2 rounded px-3 text-xs font-semibold text-slate-700 transition hover:bg-field disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400"
+                              >
+                                {isBusy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
+                                Sync
+                              </button>
                               <button
                                 type="button"
                                 disabled={isBusy || user.manualAccess}
