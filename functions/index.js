@@ -125,6 +125,12 @@ async function syncSubscription(subscription) {
   const periodEnd = subscription.current_period_end
     ? new Date(subscription.current_period_end * 1000).toISOString()
     : null;
+  const trialStart = subscription.trial_start
+    ? new Date(subscription.trial_start * 1000).toISOString()
+    : null;
+  const trialEnd = subscription.trial_end
+    ? new Date(subscription.trial_end * 1000).toISOString()
+    : null;
 
   await userRef.set({
     hasAccess: hasManualAccess || inheritsActiveStripe,
@@ -136,6 +142,8 @@ async function syncSubscription(subscription) {
     stripePriceId: priceId,
     subscriptionStatus: subscription.status,
     subscriptionCurrentPeriodEnd: periodEnd,
+    subscriptionTrialStart: trialStart,
+    subscriptionTrialEnd: trialEnd,
     subscriptionCancelAtPeriodEnd: Boolean(subscription.cancel_at_period_end),
     subscriptionUpdatedAt: admin.firestore.FieldValue.serverTimestamp(),
   }, { merge: true });
@@ -306,6 +314,8 @@ async function syncUserSubscription(req, res) {
       stripePriceId: null,
       subscriptionStatus: 'none',
       subscriptionCurrentPeriodEnd: null,
+      subscriptionTrialStart: null,
+      subscriptionTrialEnd: null,
       subscriptionCancelAtPeriodEnd: false,
       subscriptionUpdatedAt: admin.firestore.FieldValue.serverTimestamp(),
     }, { merge: true });
@@ -325,6 +335,8 @@ async function syncUserSubscription(req, res) {
       stripePriceId: null,
       subscriptionStatus: 'none',
       subscriptionCurrentPeriodEnd: null,
+      subscriptionTrialStart: null,
+      subscriptionTrialEnd: null,
       subscriptionCancelAtPeriodEnd: false,
       subscriptionUpdatedAt: admin.firestore.FieldValue.serverTimestamp(),
     }, { merge: true });

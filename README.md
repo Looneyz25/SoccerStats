@@ -62,7 +62,7 @@ Stripe objects created for this app:
 - Product: `prod_UWtFiyWb2LoEy0`
 - Price: `price_1TXpTJBbsFy1wAkF64nFdG26`
 
-Subscription signup uses Stripe Checkout with the hardcoded price in `functions/index.js`. New subscriptions start with a 7-day free trial and no upfront payment required. Existing customers can manage billing through Stripe Customer Portal.
+Subscription signup uses Stripe Checkout with the hardcoded price in `functions/index.js`. New subscriptions start with a 7-day free trial and no upfront payment required. Existing customers can manage billing through Stripe Customer Portal. When the trial ends, Stripe charges the saved payment method; if no payment method is attached, the subscription is cancelled and webhook sync removes dashboard access.
 
 Create a Stripe webhook endpoint pointing to:
 
@@ -87,7 +87,7 @@ npx firebase-tools functions:secrets:set STRIPE_WEBHOOK_SECRET --project sports-
 npm.cmd run deploy:firebase
 ```
 
-The webhook updates `users/{uid}` with `hasAccess`, `accessSource`, `stripeCustomerId`, `stripeSubscriptionId`, `subscriptionStatus`, and renewal metadata. Active or trialing subscriptions unlock the dashboard automatically.
+The webhook updates `users/{uid}` with `hasAccess`, `accessSource`, `stripeCustomerId`, `stripeSubscriptionId`, `subscriptionStatus`, trial dates, and renewal metadata. Active or trialing subscriptions unlock the dashboard automatically.
 
 ## Data Pipeline
 

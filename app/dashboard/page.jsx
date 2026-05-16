@@ -1534,6 +1534,10 @@ function SettingsView({ bookmakerId, onBookmakerChange, onBack }) {
   const subscriptionRenewal = profile?.subscriptionCurrentPeriodEnd
     ? new Date(profile.subscriptionCurrentPeriodEnd).toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })
     : null;
+  const subscriptionTrialEnd = profile?.subscriptionTrialEnd
+    ? new Date(profile.subscriptionTrialEnd).toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })
+    : null;
+  const isTrialing = profile?.subscriptionStatus === 'trialing';
   const canManageBilling = Boolean(profile?.stripeCustomerId);
 
   return (
@@ -1590,10 +1594,15 @@ function SettingsView({ bookmakerId, onBookmakerChange, onBack }) {
                   <div className="mt-0.5 font-semibold capitalize text-ink">{String(subscriptionStatus).replaceAll('_', ' ')}</div>
                 </div>
                 <div className="rounded-md border border-line bg-field px-3 py-2">
-                  <div className="text-xs font-semibold uppercase text-slate-500">Next renewal</div>
-                  <div className="mt-0.5 font-semibold text-ink">{subscriptionRenewal || '-'}</div>
+                  <div className="text-xs font-semibold uppercase text-slate-500">{isTrialing ? 'Trial ends' : 'Next renewal'}</div>
+                  <div className="mt-0.5 font-semibold text-ink">{(isTrialing ? subscriptionTrialEnd || subscriptionRenewal : subscriptionRenewal) || '-'}</div>
                 </div>
               </div>
+              {isTrialing && (
+                <p className="mt-2 text-xs font-medium text-slate-500">
+                  Trial access stays active until the trial ends. Stripe will charge the saved payment method after the trial; without a payment method, the subscription cancels and dashboard access is removed.
+                </p>
+              )}
               {profile?.manualAccess && !profile?.stripeCustomerId && (
                 <p className="mt-2 text-xs font-medium text-slate-500">
                   Your access is currently managed by an administrator.
@@ -2418,25 +2427,31 @@ function HomeInner() {
       <header className="border-b border-line bg-white">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-3 py-4 sm:px-6 sm:py-5 lg:px-8">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div className="min-w-0">
-            <h1 className="text-xl font-semibold text-ink sm:text-2xl">Lonny&apos;s Predictions</h1>
-            <p className="mt-1 text-sm text-slate-500">
-              Stats-led football picks across Europe&apos;s top leagues — refreshed every few hours.
-            </p>
-            {data?.captured_at && (
-              <p className="mt-0.5 text-xs text-slate-400">
-                Last updated {formatDateDMY(data.captured_at)}
-              </p>
-            )}
-          </div>
-          <button
-            type="button"
-            onClick={openSettings}
-            className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink shadow-panel hover:bg-field sm:w-auto"
-          >
-            <Settings className="h-4 w-4" aria-hidden="true" />
-            Settings
-          </button>
+            <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center">
+              <img
+                src="/LVR-LOGO.png"
+                alt="LVRstats.com"
+                className="h-12 w-auto max-w-[17rem] object-contain sm:h-14 sm:max-w-xs"
+              />
+              <div className="min-w-0">
+                <p className="text-sm text-slate-500">
+                  Stats-led football picks across Europe&apos;s top leagues — refreshed every few hours.
+                </p>
+                {data?.captured_at && (
+                  <p className="mt-0.5 text-xs text-slate-400">
+                    Last updated {formatDateDMY(data.captured_at)}
+                  </p>
+                )}
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={openSettings}
+              className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink shadow-panel hover:bg-field sm:w-auto"
+            >
+              <Settings className="h-4 w-4" aria-hidden="true" />
+              Settings
+            </button>
           </div>
         </div>
       </header>
@@ -2463,10 +2478,6 @@ function HomeInner() {
         </div>
 
         <ResultsReview matches={matches} />
-
-        <div className="mt-3 sm:mt-5">
-          <ResponsibleGamblingNotice />
-        </div>
 
         <div className="mt-3 grid gap-2 rounded-lg border border-line bg-white p-3 sm:mt-5 sm:grid-cols-[auto_12rem_10rem_12rem_16rem_minmax(0,1fr)] sm:items-center sm:gap-3">
           <div className="flex items-center gap-2 text-sm font-semibold text-slate-600">
@@ -2583,6 +2594,10 @@ function HomeInner() {
             </div>
           )}
           </div>
+        </div>
+
+        <div className="mt-3 sm:mt-5">
+          <ResponsibleGamblingNotice />
         </div>
       </section>
     </main>

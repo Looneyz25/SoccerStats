@@ -41,6 +41,14 @@ function normalizeStatus(status) {
   return (status || 'none').replaceAll('_', ' ');
 }
 
+function daysUntil(value) {
+  if (!value) return null;
+  const date = typeof value?.toDate === 'function' ? value.toDate() : new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  const diff = date.getTime() - Date.now();
+  return Math.max(0, Math.ceil(diff / 86400000));
+}
+
 function stripeStatusClass(status) {
   if (status === 'active' || status === 'trialing') return 'bg-emerald-50 text-emerald-700 ring-emerald-200';
   if (status === 'past_due' || status === 'unpaid' || status === 'incomplete') return 'bg-orange-50 text-orange-700 ring-orange-200';
@@ -317,6 +325,7 @@ function AdminDashboard() {
                   const hasEffectiveAccess = Boolean(user.hasAccess || user.isPlatformOwner);
                   const isBusy = busyUid === user.uid;
                   const inheritsStripe = user.inheritStripeStatus !== false;
+                  const trialDaysLeft = daysUntil(user.subscriptionTrialEnd);
 
                   return (
                     <tr key={user.uid} className="align-top">
@@ -362,6 +371,11 @@ function AdminDashboard() {
                           <span className={`inline-flex w-fit rounded-full px-2.5 py-1 text-xs font-semibold capitalize ring-1 ${stripeStatusClass(user.subscriptionStatus)}`}>
                             {normalizeStatus(user.subscriptionStatus)}
                           </span>
+                          {user.subscriptionStatus === 'trialing' && (
+                            <div className="rounded-md border border-emerald-200 bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-700">
+                              On trial{trialDaysLeft != null ? ` - ${trialDaysLeft} day${trialDaysLeft === 1 ? '' : 's'} left` : ''}
+                            </div>
+                          )}
                           <div className="text-xs text-slate-500">
                             Stripe access: <span className="font-semibold text-slate-700">{user.subscriptionHasAccess ? 'yes' : 'no'}</span>
                           </div>
@@ -375,7 +389,14 @@ function AdminDashboard() {
                       </td>
                       <td className="px-4 py-4 text-sm text-slate-600">
                         <div>Joined: <span className="font-medium text-ink">{formatDate(user.createdAt)}</span></div>
-                        <div className="mt-1">Renews: <span className="font-medium text-ink">{formatDate(user.subscriptionCurrentPeriodEnd)}</span></div>
+                        {user.subscriptionStatus === 'trialing' ? (
+                          <>
+                            <div className="mt-1">Trial ends: <span className="font-medium text-ink">{formatDate(user.subscriptionTrialEnd || user.subscriptionCurrentPeriodEnd)}</span></div>
+                            <div className="mt-1 text-xs text-slate-500">Then charges monthly if payment exists; otherwise Stripe cancels access.</div>
+                          </>
+                        ) : (
+                          <div className="mt-1">Renews: <span className="font-medium text-ink">{formatDate(user.subscriptionCurrentPeriodEnd)}</span></div>
+                        )}
                         <div className="mt-1">Sub update: <span className="font-medium text-ink">{formatDateTime(user.subscriptionUpdatedAt)}</span></div>
                         <div className="mt-1">Manual update: <span className="font-medium text-ink">{formatDateTime(user.manualAccessUpdatedAt)}</span></div>
                       </td>
