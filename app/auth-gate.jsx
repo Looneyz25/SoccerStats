@@ -7,7 +7,6 @@ import {
   onAuthStateChanged,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
-  signInWithPopup,
   signInWithRedirect,
   signOut,
 } from 'firebase/auth';
@@ -130,28 +129,17 @@ export default function AuthGate({ children }) {
   async function handleGoogleSignIn() {
     setBusy(true);
     setError('');
-    setMessage('');
+    setMessage('Opening Google sign-in...');
     rememberReturnPath();
     try {
-      const credential = await signInWithPopup(auth, googleProvider);
-      setUser(credential.user);
-      setReady(true);
-      restoreReturnPath();
+      await signInWithRedirect(auth, googleProvider);
     } catch (googleError) {
-      const code = googleError?.code || '';
-      if (
-        code.includes('auth/popup-blocked') ||
-        code.includes('auth/popup-closed-by-user') ||
-        code.includes('auth/cancelled-popup-request') ||
-        code.includes('auth/web-storage-unsupported')
-      ) {
-        setMessage('Opening Google sign-in...');
-        await signInWithRedirect(auth, googleProvider);
-        return;
-      }
       setError(authErrorMessage(googleError));
-    } finally {
+      setMessage('');
       setBusy(false);
+    } finally {
+      // Redirect navigation normally leaves this page. If it does not, the
+      // catch block above restores the button state and shows the Firebase error.
     }
   }
 
