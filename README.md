@@ -33,6 +33,8 @@ Deploy to Firebase Hosting:
 npm.cmd run deploy:firebase
 ```
 
+This app is a static Next.js export served by classic Firebase Hosting from `out/`. Do not connect it to Firebase App Hosting; App Hosting expects a server/standalone Next.js bundle and will fail on this static export.
+
 Preview locally with Firebase Hosting emulator:
 
 ```powershell
