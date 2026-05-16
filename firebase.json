@@ -2,6 +2,10 @@
   "firestore": {
     "rules": "firestore.rules"
   },
+  "functions": {
+    "source": "functions",
+    "runtime": "nodejs22"
+  },
   "hosting": {
     "public": "out",
     "ignore": [
@@ -32,6 +36,13 @@
       }
     ],
     "rewrites": [
+      {
+        "source": "/api/stripe/**",
+        "function": {
+          "functionId": "stripeApi",
+          "region": "australia-southeast1"
+        }
+      },
       {
         "source": "**",
         "destination": "/index.html"

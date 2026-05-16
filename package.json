@@ -11,7 +11,7 @@
     "prebuild": "node scripts/run-python.js scripts/soccer_prepare_next_data.py",
     "build": "node scripts/next-build-prod.js",
     "data:firebase": "node scripts/upload_match_data_to_firestore.mjs",
-    "deploy:firebase": "npm.cmd run build && npx firebase-tools deploy --only hosting,firestore:rules --project sports-predictions-f91fd",
+    "deploy:firebase": "npm.cmd run build && npx firebase-tools deploy --only hosting,firestore:rules,functions --project sports-predictions-f91fd",
     "firebase:serve": "npm.cmd run build && npx firebase-tools emulators:start --only hosting --project sports-predictions-f91fd",
     "audit:summary": "node scripts/audit_prediction_summary.js",
     "start": "next start"

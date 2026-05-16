@@ -3,23 +3,22 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
   createUserWithEmailAndPassword,
-  getRedirectResult,
   onAuthStateChanged,
   sendPasswordResetEmail,
-  signInWithCredential,
   signInWithEmailAndPassword,
-  signInWithRedirect,
+  signInWithPopup,
   signOut,
 } from 'firebase/auth';
-import { Loader2, LockKeyhole, LogIn, Mail, ShieldCheck } from 'lucide-react';
+import { CreditCard, Loader2, LockKeyhole, LogIn, Mail, ShieldCheck, Clock } from 'lucide-react';
 import { getFirebaseAuth, googleProvider } from './firebase';
+import { getUserProfile, createUserProfile } from './firestore-data';
 
 const AUTH_RETURN_PATH_KEY = 'looneyz-auth-return-path';
 const AUTH_GOOGLE_PENDING_KEY = 'looneyz-google-sign-in-pending';
 
 function currentReturnPath() {
-  if (typeof window === 'undefined') return '/dashboard/';
-  return `${window.location.pathname}${window.location.search}${window.location.hash}` || '/dashboard/';
+  if (typeof window === 'undefined') return '/dashboard';
+  return `${window.location.pathname}${window.location.search}${window.location.hash}` || '/dashboard';
 }
 
 function rememberReturnPath() {
@@ -29,24 +28,18 @@ function rememberReturnPath() {
 
 function restoreReturnPath() {
   if (typeof window === 'undefined') return;
-  const fallbackPath = '/dashboard/';
-  const savedPath = window.sessionStorage.getItem(AUTH_RETURN_PATH_KEY) || fallbackPath;
+  const fallbackPath = '/dashboard';
+  const savedPath = window.sessionStorage.getItem(AUTH_RETURN_PATH_KEY);
   window.sessionStorage.removeItem(AUTH_RETURN_PATH_KEY);
+  if (!savedPath) return;
   const safePath = savedPath.startsWith('/') ? savedPath : fallbackPath;
-  if (safePath !== currentReturnPath()) {
+  const current = currentReturnPath();
+
+  const normalize = (p) => p.replace(/\/(\?|#|$)/, '$1');
+  if (normalize(current).startsWith('/dashboard/') && normalize(safePath) === fallbackPath) return;
+  if (normalize(safePath) !== normalize(current)) {
     window.location.replace(safePath);
   }
-}
-
-function googleIdTokenFromUrl() {
-  if (typeof window === 'undefined' || !window.location.hash) return null;
-  const params = new URLSearchParams(window.location.hash.replace(/^#/, ''));
-  return params.get('id_token');
-}
-
-function clearUrlHash() {
-  if (typeof window === 'undefined' || !window.location.hash) return;
-  window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
 }
 
 function authErrorMessage(error) {
@@ -79,10 +72,12 @@ export default function AuthGate({ children }) {
   const auth = useMemo(() => getFirebaseAuth(), []);
   const [ready, setReady] = useState(false);
   const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [checkingAccess, setCheckingAccess] = useState(false);
   const [mode, setMode] = useState('sign-in');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [busy, setBusy] = useState(false);
+  const [busy, setBusy] = useState(null);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
@@ -92,17 +87,23 @@ export default function AuthGate({ children }) {
       if (resolved) return;
       const currentUser = auth.currentUser;
       setUser(currentUser);
-      setReady(true);
-      if (currentUser) restoreReturnPath();
-      else setMessage('Sign in to continue.');
+      if (!currentUser) {
+        setReady(true);
+        setMessage('Sign in to continue.');
+      }
     }, 3500);
 
     const unsubscribe = onAuthStateChanged(auth, (nextUser) => {
       resolved = true;
       window.clearTimeout(fallback);
       setUser(nextUser);
-      setReady(true);
-      if (nextUser) restoreReturnPath();
+      if (!nextUser) {
+        setProfile(null);
+        setReady(true);
+        setMessage('');
+        setError('');
+        setBusy(null);
+      }
     });
 
     return () => {
@@ -113,57 +114,34 @@ export default function AuthGate({ children }) {
   }, [auth]);
 
   useEffect(() => {
-    const finishGoogleSignIn = async () => {
-      setMessage('Finishing Google sign-in...');
-      const idToken = googleIdTokenFromUrl();
-      if (idToken) {
-        try {
-          const credential = await signInWithCredential(auth, GoogleAuthProvider.credential(idToken));
-          window.sessionStorage.removeItem(AUTH_GOOGLE_PENDING_KEY);
-          clearUrlHash();
-          setUser(credential.user);
+    if (!user) return;
+    let active = true;
+    async function loadProfile() {
+      setCheckingAccess(true);
+      try {
+        let p = await getUserProfile(user.uid);
+        if (!p) p = await createUserProfile(user);
+        if (active) setProfile(p);
+      } catch (e) {
+        console.error('Profile load error:', e);
+        if (active) setError(e.message || 'Failed to load profile.');
+      } finally {
+        if (active) {
+          setCheckingAccess(false);
           setReady(true);
           restoreReturnPath();
-          return;
-        } catch (manualError) {
-          window.sessionStorage.removeItem(AUTH_GOOGLE_PENDING_KEY);
-          clearUrlHash();
-          setReady(true);
-          setError(authErrorMessage(manualError));
-          setMessage('');
-          return;
         }
       }
+    }
+    loadProfile();
+    return () => { active = false; };
+  }, [user]);
 
-      getRedirectResult(auth)
-        .then((result) => {
-          const hadPendingGoogle = window.sessionStorage.getItem(AUTH_GOOGLE_PENDING_KEY) === '1';
-          window.sessionStorage.removeItem(AUTH_GOOGLE_PENDING_KEY);
-          if (!result?.user) {
-            if (hadPendingGoogle) {
-              setReady(true);
-              setError('Google sign-in returned without creating a Firebase user. Try the live Firebase URL or a normal browser window.');
-            }
-            setMessage('');
-            return;
-          }
-          setUser(result.user);
-          setReady(true);
-          restoreReturnPath();
-        })
-        .catch((redirectError) => {
-          setReady(true);
-          setError(authErrorMessage(redirectError));
-          setMessage('');
-        });
-    };
 
-    finishGoogleSignIn();
-  }, [auth]);
 
   async function handleSubmit(event) {
     event.preventDefault();
-    setBusy(true);
+    setBusy('email');
     setError('');
     setMessage('');
     rememberReturnPath();
@@ -175,31 +153,28 @@ export default function AuthGate({ children }) {
         credential = await signInWithEmailAndPassword(auth, email.trim(), password);
       }
       setUser(credential.user);
-      setReady(true);
-      restoreReturnPath();
     } catch (submitError) {
       setError(authErrorMessage(submitError));
     } finally {
-      setBusy(false);
+      setBusy(null);
     }
   }
 
   async function handleGoogleSignIn() {
-    setBusy(true);
+    setBusy('google');
     setError('');
     setMessage('Opening Google sign-in...');
     rememberReturnPath();
     window.sessionStorage.setItem(AUTH_GOOGLE_PENDING_KEY, '1');
     try {
-      await signInWithRedirect(auth, googleProvider);
+      const result = await signInWithPopup(auth, googleProvider);
+      window.sessionStorage.removeItem(AUTH_GOOGLE_PENDING_KEY);
+      setUser(result.user);
     } catch (googleError) {
       window.sessionStorage.removeItem(AUTH_GOOGLE_PENDING_KEY);
       setError(authErrorMessage(googleError));
       setMessage('');
-      setBusy(false);
-    } finally {
-      // Redirect navigation normally leaves this page. If it does not, the
-      // catch block above restores the button state and shows the Firebase error.
+      setBusy(null);
     }
   }
 
@@ -208,7 +183,7 @@ export default function AuthGate({ children }) {
       setError('Enter your email first, then reset the password.');
       return;
     }
-    setBusy(true);
+    setBusy('reset');
     setError('');
     setMessage('');
     try {
@@ -217,16 +192,38 @@ export default function AuthGate({ children }) {
     } catch (resetError) {
       setError(authErrorMessage(resetError));
     } finally {
-      setBusy(false);
+      setBusy(null);
     }
   }
 
-  if (!ready) {
+  async function openStripeSession(endpoint, busyKey) {
+    setBusy(busyKey);
+    setError('');
+    setMessage(busyKey === 'checkout' ? 'Opening secure checkout...' : 'Opening billing portal...');
+    try {
+      const token = await user.getIdToken();
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const payload = await response.json();
+      if (!response.ok || !payload.url) {
+        throw new Error(payload.error || 'Stripe session could not be created.');
+      }
+      window.location.assign(payload.url);
+    } catch (stripeError) {
+      setError(stripeError.message || 'Stripe could not be reached.');
+      setMessage('');
+      setBusy(null);
+    }
+  }
+
+  if (!ready || checkingAccess) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-field px-4">
         <div className="flex items-center gap-3 rounded-lg border border-line bg-white px-4 py-3 text-sm font-semibold text-ink shadow-panel">
           <Loader2 className="h-5 w-5 animate-spin text-signal" />
-          Checking session
+          {checkingAccess ? 'Verifying access...' : 'Checking session...'}
         </div>
       </main>
     );
@@ -324,10 +321,10 @@ export default function AuthGate({ children }) {
 
               <button
                 type="submit"
-                disabled={busy}
+                disabled={!!busy}
                 className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-ink px-4 text-sm font-semibold text-white shadow-panel transition hover:bg-slate-800 disabled:cursor-wait disabled:opacity-70"
               >
-                {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogIn className="h-4 w-4" />}
+                {busy === 'email' ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogIn className="h-4 w-4" />}
                 {isCreateMode ? 'Create account' : 'Sign in'}
               </button>
             </form>
@@ -336,21 +333,96 @@ export default function AuthGate({ children }) {
               <button
                 type="button"
                 onClick={handleGoogleSignIn}
-                disabled={busy}
-                className="inline-flex h-10 items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink hover:bg-field disabled:cursor-wait disabled:opacity-70"
+                disabled={!!busy}
+                className="inline-flex h-10 gap-2 items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink hover:bg-field disabled:cursor-wait disabled:opacity-70"
               >
+                {busy === 'google' && <Loader2 className="h-4 w-4 animate-spin" />}
                 Continue with Google
               </button>
               <button
                 type="button"
                 onClick={handlePasswordReset}
-                disabled={busy}
-                className="inline-flex h-10 items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink hover:bg-field disabled:cursor-wait disabled:opacity-70"
+                disabled={!!busy}
+                className="inline-flex h-10 gap-2 items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink hover:bg-field disabled:cursor-wait disabled:opacity-70"
               >
+                {busy === 'reset' && <Loader2 className="h-4 w-4 animate-spin" />}
                 Reset password
               </button>
             </div>
           </section>
+        </div>
+      </main>
+    );
+  }
+
+  const hasAccess = profile?.hasAccess || profile?.manualAccess || profile?.subscriptionHasAccess || profile?.isPlatformOwner;
+
+  if (user && !hasAccess) {
+    const subscriptionStatus = profile?.subscriptionStatus;
+    const subscriptionNotice = subscriptionStatus && subscriptionStatus !== 'active'
+      ? `Subscription status: ${subscriptionStatus}. Update payment to unlock the dashboard.`
+      : 'Subscribe to Soccer Stats Pro to unlock the dashboard.';
+
+    return (
+      <main className="min-h-screen bg-field px-4 py-8">
+        <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-md flex-col justify-center">
+          <div className="mb-5 text-center">
+            <div className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-full bg-orange-100 text-orange-600">
+              <Clock className="h-6 w-6" />
+            </div>
+            <h1 className="mt-4 text-2xl font-semibold text-ink">Unlock Soccer Stats Pro</h1>
+            <p className="mt-2 text-sm text-slate-600">
+              {subscriptionNotice}
+            </p>
+          </div>
+          <div className="rounded-lg border border-line bg-white p-6 shadow-panel text-center">
+            <p className="text-sm font-medium text-ink mb-4">
+              Signed in as <span className="font-semibold text-signal">{user.email}</span>
+            </p>
+            <div className="mb-4 rounded-md border border-line bg-field px-3 py-3 text-left">
+              <div className="text-sm font-semibold text-ink">A$19.99 / month</div>
+              <div className="mt-1 text-xs text-slate-600">
+                Full predictions, odds, H2H trends, saved access, and member-only dashboard data.
+              </div>
+            </div>
+            {error && (
+              <div className="mb-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-miss">
+                {error}
+              </div>
+            )}
+            {message && (
+              <div className="mb-3 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-medium text-signal">
+                {message}
+              </div>
+            )}
+            <button
+              type="button"
+              onClick={() => openStripeSession('/api/stripe/create-checkout', 'checkout')}
+              disabled={!!busy}
+              className="mb-3 inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-ink px-4 text-sm font-semibold text-white shadow-panel transition hover:bg-slate-800 disabled:cursor-wait disabled:opacity-70"
+            >
+              {busy === 'checkout' ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
+              Subscribe to Pro
+            </button>
+            {profile?.stripeCustomerId && (
+              <button
+                type="button"
+                onClick={() => openStripeSession('/api/stripe/create-portal', 'portal')}
+                disabled={!!busy}
+                className="mb-3 inline-flex h-10 w-full items-center justify-center gap-2 rounded-md border border-line bg-white px-4 text-sm font-semibold text-ink transition hover:bg-field disabled:cursor-wait disabled:opacity-70"
+              >
+                {busy === 'portal' ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
+                Manage billing
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => signOut(auth)}
+              className="inline-flex h-10 w-full items-center justify-center rounded-md border border-line bg-white px-4 text-sm font-semibold text-ink hover:bg-field transition"
+            >
+              Sign out
+            </button>
+          </div>
         </div>
       </main>
     );
@@ -362,14 +434,21 @@ export default function AuthGate({ children }) {
         <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-2 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between lg:px-8">
           <div className="min-w-0 truncate">
             Signed in as <span className="font-semibold text-ink">{user.email || user.displayName || 'user'}</span>
+            {profile?.isPlatformOwner && (
+              <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-signal/10 px-2 py-0.5 text-xs font-semibold text-signal">
+                <ShieldCheck className="h-3 w-3" /> Admin
+              </span>
+            )}
           </div>
-          <button
-            type="button"
-            onClick={() => signOut(auth)}
-            className="inline-flex h-9 items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink hover:bg-field"
-          >
-            Sign out
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => signOut(auth)}
+              className="inline-flex h-9 items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink hover:bg-field"
+            >
+              Sign out
+            </button>
+          </div>
         </div>
       </div>
       {children}

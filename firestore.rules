@@ -2,12 +2,29 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    function isPlatformOwner() {
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isPlatformOwner == true;
+    }
+
+    function hasAccess() {
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.hasAccess == true;
+    }
+
+    match /users/{userId} {
+      allow read: if request.auth != null && (request.auth.uid == userId || isPlatformOwner());
+      allow create: if request.auth != null && request.auth.uid == userId
+                    && (request.auth.token.email == 'l.vorabouth@gmail.com' || (request.resource.data.isPlatformOwner == false && request.resource.data.hasAccess == false));
+      allow update, delete: if request.auth != null && isPlatformOwner();
+    }
+
     match /dashboardData/{docId} {
-      allow read: if true;
+      allow read: if request.auth != null && (hasAccess() || isPlatformOwner() || request.auth.token.email == 'l.vorabouth@gmail.com');
       allow write: if false;
 
       match /chunks/{chunkId} {
-        allow read: if true;
+        allow read: if request.auth != null && (hasAccess() || isPlatformOwner() || request.auth.token.email == 'l.vorabouth@gmail.com');
         allow write: if false;
       }
     }

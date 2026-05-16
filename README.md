@@ -8,17 +8,18 @@ The dashboard is configured for Firebase Hosting under project:
 
 `sports-predictions-f91fd`
 
-Firebase Hosting serves the static Next.js export from `out/`.
+Firebase Hosting serves the static Next.js export from `out/`. Stripe subscription endpoints run through Firebase Functions and are exposed behind `/api/stripe/*` by the Hosting rewrites.
 
 ## Frontend
 
 - `app/` - Next.js dashboard
 - `public/data/` - generated static JSON data, created during build
 - `next.config.js` - static export config
-- `firebase.json` - Firebase Hosting config
+- `firebase.json` - Firebase Hosting, Firestore rules, and Functions rewrite config
 - `firestore.rules` - public read rules for dashboard data
 - `.firebaserc` - Firebase project mapping
 - `app/firebase.js` / `app/firebase-analytics.jsx` / `app/auth-gate.jsx` - Firebase app, Analytics, and Auth gate
+- `functions/index.js` - Stripe Checkout, billing portal, and webhook listener
 
 Build locally:
 
@@ -27,13 +28,13 @@ npm.cmd install --cache .\.npm-cache
 npm.cmd run build --cache .\.npm-cache
 ```
 
-Deploy to Firebase Hosting:
+Deploy to Firebase Hosting, Firestore rules, and Functions:
 
 ```powershell
 npm.cmd run deploy:firebase
 ```
 
-This app is a static Next.js export served by classic Firebase Hosting from `out/`. Do not connect it to Firebase App Hosting; App Hosting expects a server/standalone Next.js bundle and will fail on this static export.
+This app is a static Next.js export served by classic Firebase Hosting from `out/`. Stripe uses Firebase Functions rather than Next.js API routes so the static export remains deployable.
 
 Preview locally with Firebase Hosting emulator:
 
@@ -51,6 +52,38 @@ Enable providers in Firebase Console before testing sign-in:
 2. Enable Email/Password.
 3. Enable Google if you want the Google button active.
 4. Confirm authorized domains include `localhost` and `sports-predictions-f91fd.web.app`.
+
+## Stripe Subscription
+
+The single paid tier is `Soccer Stats Pro` at `A$19.99/month`.
+
+Stripe objects created for this app:
+
+- Product: `prod_UWtFiyWb2LoEy0`
+- Price: `price_1TXpTJBbsFy1wAkF64nFdG26`
+
+Create a Stripe webhook endpoint pointing to:
+
+`https://lvrstats.com/api/stripe/webhook`
+
+Listen for:
+
+- `checkout.session.completed`
+- `customer.subscription.created`
+- `customer.subscription.updated`
+- `customer.subscription.deleted`
+- `invoice.payment_succeeded`
+- `invoice.payment_failed`
+
+Then add both Stripe secrets to Firebase and deploy:
+
+```powershell
+npx firebase-tools functions:secrets:set STRIPE_SECRET_KEY --project sports-predictions-f91fd
+npx firebase-tools functions:secrets:set STRIPE_WEBHOOK_SECRET --project sports-predictions-f91fd
+npm.cmd run deploy:firebase
+```
+
+The webhook updates `users/{uid}` with `hasAccess`, `accessSource`, `stripeCustomerId`, `stripeSubscriptionId`, `subscriptionStatus`, and renewal metadata. Active or trialing subscriptions unlock the dashboard automatically.
 
 ## Data Pipeline
 

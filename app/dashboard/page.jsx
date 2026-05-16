@@ -14,10 +14,13 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock3,
+  CreditCard,
   Filter,
   Goal,
+  Loader2,
   MapPin,
   Settings,
+  ShieldCheck,
   Star,
   Trophy,
   UserRound,
@@ -1448,6 +1451,68 @@ function BookmakerSelect({ value, onChange, compact = false }) {
 
 function SettingsView({ bookmakerId, onBookmakerChange, onBack }) {
   const selectedBookmaker = BOOKMAKERS[bookmakerId] || BOOKMAKERS.sportsbet;
+  const [isPlatformOwner, setIsPlatformOwner] = useState(false);
+  const [profile, setProfile] = useState(null);
+  const [billingBusy, setBillingBusy] = useState(false);
+  const [billingMessage, setBillingMessage] = useState('');
+  const [billingError, setBillingError] = useState('');
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadProfile() {
+      try {
+        const { getFirebaseAuth } = await import('../firebase');
+        const { getUserProfile } = await import('../firestore-data');
+        const user = getFirebaseAuth().currentUser;
+        if (!user) return;
+        const nextProfile = await getUserProfile(user.uid);
+        if (active) {
+          setProfile(nextProfile);
+          setIsPlatformOwner(Boolean(nextProfile?.isPlatformOwner));
+        }
+      } catch (error) {
+        if (active) {
+          setProfile(null);
+          setIsPlatformOwner(false);
+        }
+      }
+    }
+
+    loadProfile();
+    return () => { active = false; };
+  }, []);
+
+  async function openBillingPortal() {
+    setBillingBusy(true);
+    setBillingError('');
+    setBillingMessage('Opening billing portal...');
+    try {
+      const { getFirebaseAuth } = await import('../firebase');
+      const user = getFirebaseAuth().currentUser;
+      if (!user) throw new Error('Sign in again before managing billing.');
+      const token = await user.getIdToken();
+      const response = await fetch('/api/stripe/create-portal', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const payload = await response.json();
+      if (!response.ok || !payload.url) {
+        throw new Error(payload.error || 'Billing portal could not be opened.');
+      }
+      window.location.assign(payload.url);
+    } catch (error) {
+      setBillingError(error.message || 'Billing portal could not be opened.');
+      setBillingMessage('');
+      setBillingBusy(false);
+    }
+  }
+
+  const subscriptionStatus = profile?.subscriptionStatus || 'No Stripe subscription';
+  const subscriptionRenewal = profile?.subscriptionCurrentPeriodEnd
+    ? new Date(profile.subscriptionCurrentPeriodEnd).toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })
+    : null;
+  const canManageBilling = Boolean(profile?.stripeCustomerId);
 
   return (
     <main className="min-h-screen bg-field">
@@ -1482,6 +1547,84 @@ function SettingsView({ bookmakerId, onBookmakerChange, onBack }) {
             Sportsbet opens direct match pages when the Sportsbet event ID is available. Other bookmakers will open their soccer page unless their direct event URL is added to the match data.
           </div>
         </div>
+
+        <div className="mt-4 rounded-lg border border-slate-300 bg-white p-4 shadow-panel">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="flex items-center gap-2 text-base font-semibold text-ink">
+                <CreditCard className="h-4 w-4 text-signal" aria-hidden="true" />
+                Subscription
+              </h2>
+              <p className="mt-1 text-sm text-slate-500">
+                Manage your Soccer Stats Pro billing and payment method.
+              </p>
+              <div className="mt-3 grid gap-2 text-sm text-slate-600 sm:grid-cols-2">
+                <div className="rounded-md border border-line bg-field px-3 py-2">
+                  <div className="text-xs font-semibold uppercase text-slate-500">Status</div>
+                  <div className="mt-0.5 font-semibold capitalize text-ink">{String(subscriptionStatus).replaceAll('_', ' ')}</div>
+                </div>
+                <div className="rounded-md border border-line bg-field px-3 py-2">
+                  <div className="text-xs font-semibold uppercase text-slate-500">Next renewal</div>
+                  <div className="mt-0.5 font-semibold text-ink">{subscriptionRenewal || '-'}</div>
+                </div>
+              </div>
+              {profile?.manualAccess && !profile?.stripeCustomerId && (
+                <p className="mt-2 text-xs font-medium text-slate-500">
+                  Your access is currently managed by an administrator.
+                </p>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={openBillingPortal}
+              disabled={billingBusy || !canManageBilling}
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink shadow-panel hover:bg-field disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {billingBusy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <CreditCard className="h-4 w-4" aria-hidden="true" />}
+              Manage subscription
+            </button>
+          </div>
+          {billingMessage && (
+            <div className="mt-3 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-medium text-signal">
+              {billingMessage}
+            </div>
+          )}
+          {billingError && (
+            <div className="mt-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-miss">
+              {billingError}
+            </div>
+          )}
+          {!canManageBilling && (
+            <div className="mt-3 rounded-md border border-line bg-field px-3 py-2 text-sm text-slate-600">
+              Billing portal appears after the first Stripe checkout is created for this account.
+            </div>
+          )}
+        </div>
+
+        {isPlatformOwner && (
+          <div className="mt-4 rounded-lg border border-slate-300 bg-white p-4 shadow-panel">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 className="flex items-center gap-2 text-base font-semibold text-ink">
+                  <ShieldCheck className="h-4 w-4 text-signal" aria-hidden="true" />
+                  Admin access
+                </h2>
+                <p className="mt-1 text-sm text-slate-500">View users, Stripe status, and manual access overrides.</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  window.sessionStorage.setItem('looneyz-auth-return-path', '/dashboard/admin');
+                  window.location.assign('/dashboard/admin');
+                }}
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink shadow-panel hover:bg-field"
+              >
+                <ShieldCheck className="h-4 w-4" aria-hidden="true" />
+                Manage users
+              </button>
+            </div>
+          </div>
+        )}
       </section>
     </main>
   );

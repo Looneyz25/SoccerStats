@@ -1,4 +1,4 @@
-import { collection, doc, getDoc, getDocs, orderBy, query } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, orderBy, query, setDoc, updateDoc } from 'firebase/firestore';
 import { getFirebaseDb } from './firebase';
 
 const DASHBOARD_DOC = 'match_data';
@@ -22,4 +22,68 @@ export async function loadMatchDataFromFirestore() {
   }
 
   return JSON.parse(chunks.join(''));
+}
+
+export async function getUserProfile(uid) {
+  const db = getFirebaseDb();
+  const userRef = doc(db, 'users', uid);
+  const snap = await getDoc(userRef);
+  if (!snap.exists()) return null;
+
+  const data = snap.data();
+  if (data.email === 'l.vorabouth@gmail.com') {
+    data.isPlatformOwner = true;
+    data.hasAccess = true;
+    data.accessSource = 'owner';
+  }
+  return data;
+}
+
+export async function createUserProfile(user) {
+  const db = getFirebaseDb();
+  const userRef = doc(db, 'users', user.uid);
+  const isPlatformOwner = user.email === 'l.vorabouth@gmail.com';
+  const newProfile = {
+    email: user.email,
+    displayName: user.displayName || '',
+    isPlatformOwner: isPlatformOwner,
+    manualAccess: false,
+    subscriptionHasAccess: false,
+    hasAccess: isPlatformOwner,
+    accessSource: isPlatformOwner ? 'owner' : 'none',
+    createdAt: new Date().toISOString()
+  };
+  await setDoc(userRef, newProfile);
+  return newProfile;
+}
+
+export async function getAllUsers() {
+  const db = getFirebaseDb();
+  const usersRef = collection(db, 'users');
+  const snap = await getDocs(query(usersRef, orderBy('createdAt', 'desc')));
+  return snap.docs.map(doc => {
+    const data = doc.data();
+    if (data.email === 'l.vorabouth@gmail.com') {
+      data.isPlatformOwner = true;
+      data.hasAccess = true;
+      data.accessSource = 'owner';
+    } else if (data.hasAccess && data.manualAccess == null && data.subscriptionHasAccess == null) {
+      data.manualAccess = true;
+      data.accessSource = data.accessSource || 'legacy_manual';
+    }
+    return { uid: doc.id, ...data };
+  });
+}
+
+export async function updateUserManualAccess(uid, manualAccess) {
+  const db = getFirebaseDb();
+  const userRef = doc(db, 'users', uid);
+  const current = await getDoc(userRef);
+  const data = current.exists() ? current.data() : {};
+  await updateDoc(userRef, {
+    manualAccess,
+    hasAccess: Boolean(manualAccess || data.subscriptionHasAccess || data.isPlatformOwner),
+    accessSource: manualAccess ? 'manual' : data.subscriptionHasAccess ? 'stripe' : 'none',
+    manualAccessUpdatedAt: new Date().toISOString()
+  });
 }
