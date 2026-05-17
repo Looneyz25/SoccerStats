@@ -2281,7 +2281,7 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
               <span>{matchDisplayTime(match)}</span>
               <span className={`rounded-full px-2 py-1 ring-1 ${statusClass(match.status)}`}>{match.status}</span>
             </div>
-            <h2 className="mt-1.5 truncate text-base font-semibold text-ink sm:text-xl">
+            <h2 className="mt-1.5 text-base font-semibold leading-snug text-ink sm:text-xl">
               {match.home?.name} vs {match.away?.name}
             </h2>
           </div>
@@ -2289,21 +2289,24 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
       </div>
 
       <div className="mx-auto max-w-3xl space-y-5 px-3 py-4 sm:px-5 sm:py-5">
-        <div className="grid grid-cols-[minmax(0,1fr)_4rem_minmax(0,1fr)] items-center gap-2 sm:grid-cols-[1fr_auto_1fr]">
-          <div className="min-w-0 rounded-md border border-slate-300 bg-white px-3 py-3 text-left shadow-panel">
-            <div className="flex min-w-0 items-center gap-2">
+        <div className="grid grid-cols-1 items-center gap-1.5 sm:grid-cols-[1fr_auto_1fr] sm:gap-2">
+          <div className="min-w-0 rounded-md border border-slate-300 bg-white px-3 py-2.5 text-center shadow-panel sm:py-3 sm:text-left">
+            <div className="flex min-w-0 items-center justify-center gap-2 sm:justify-start">
               <TeamBadge src={teamLogo(match, 'home')} name={match.home?.name} />
-              <div className="truncate text-base font-semibold text-ink">{match.home?.name}</div>
+              <div className="min-w-0 whitespace-normal break-words text-base font-semibold leading-snug text-ink">{match.home?.name}</div>
             </div>
             <div className="mt-1 text-xs text-slate-500">Rank {match.home?.rank ?? '-'} · {match.home?.pts ?? '-'} pts</div>
           </div>
-          <div className="rounded-md bg-ink px-3 py-3 text-center text-base font-semibold text-white shadow-panel">
-            {match.status === 'FT' ? `${match.home?.goals ?? '-'}-${match.away?.goals ?? '-'}` : 'vs'}
-          </div>
-          <div className="min-w-0 rounded-md border border-slate-300 bg-white px-3 py-3 text-left shadow-panel">
-            <div className="flex min-w-0 items-center gap-2">
+          {match.status === 'FT' && (
+            <div className="justify-self-center rounded-md bg-ink px-3 py-1.5 text-center text-sm font-semibold text-white shadow-panel sm:px-3 sm:py-3 sm:text-base">
+              {match.home?.goals ?? '-'}-{match.away?.goals ?? '-'}
+            </div>
+          )}
+          {match.status !== 'FT' && <div className="hidden sm:block" />}
+          <div className="min-w-0 rounded-md border border-slate-300 bg-white px-3 py-2.5 text-center shadow-panel sm:py-3 sm:text-left">
+            <div className="flex min-w-0 items-center justify-center gap-2 sm:justify-start">
               <TeamBadge src={teamLogo(match, 'away')} name={match.away?.name} />
-              <div className="truncate text-base font-semibold text-ink">{match.away?.name}</div>
+              <div className="min-w-0 whitespace-normal break-words text-base font-semibold leading-snug text-ink">{match.away?.name}</div>
             </div>
             <div className="mt-1 text-xs text-slate-500">Rank {match.away?.rank ?? '-'} · {match.away?.pts ?? '-'} pts</div>
           </div>
