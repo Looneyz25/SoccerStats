@@ -46,6 +46,9 @@ Firestore upload requires one credential source in the shell:
 
 - `FIREBASE_SERVICE_ACCOUNT_JSON` containing the service account JSON string
 - `GOOGLE_APPLICATION_CREDENTIALS` pointing to a service account JSON file
+- or a local service-account file at `.secrets/firebase-service-account.json`
+
+Firestore writes are admin-only. Browser users can read subscribed dashboard data, but Firestore rules keep `dashboardData` writes disabled for all client users.
 
 Do not use proxy/IP rotation to bypass provider controls. The local routines prefer API/fallback sources, cache existing data, and use gentle sleeps/backoff. You can slow Sportsbet collection further with `SOCCER_PHASE2_SLEEP` and cap odds enrichment with `SOCCER_ODDS_BUDGET`.
 

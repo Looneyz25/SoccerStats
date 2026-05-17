@@ -13,6 +13,10 @@ __pycache__/
 venv/
 .venv*/
 .env
+.env.local
+.secrets/
+*service-account*.json
+*firebase-adminsdk*.json
 
 # Node / Next.js
 node_modules/
