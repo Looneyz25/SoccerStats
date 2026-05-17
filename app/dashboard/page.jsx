@@ -31,7 +31,7 @@ import {
 const DATA_URLS = ['/data/match_data.json', '/match_data.json'];
 const GAMBLING_HELP_URL = 'https://www.gamblinghelponline.org.au/';
 const BETSTOP_URL = 'https://www.betstop.gov.au/';
-const SUPPORT_EMAIL = 'lvrstats.com@gmail.com';
+const SUPPORT_EMAIL = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'lvrstats.com@gmail.com';
 const FAVORITE_LEAGUES_STORAGE_KEY = 'favoriteLeagues';
 
 async function loadMatchData() {

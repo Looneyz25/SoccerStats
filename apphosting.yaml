@@ -10,3 +10,8 @@ env:
     availability:
       - BUILD
       - RUNTIME
+  - variable: NEXT_PUBLIC_SUPPORT_EMAIL
+    value: lvrstats.com@gmail.com
+    availability:
+      - BUILD
+      - RUNTIME
