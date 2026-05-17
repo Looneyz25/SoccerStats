@@ -522,7 +522,6 @@ function cornerMarketFromStreaks(match, allMatches = []) {
       result: prediction.result || marketResultFromActual(prediction, match.actuals?.corners_total),
     };
   }
-  if (match.status === 'FT') return null;
   const streaks = [...(match.h2h_streaks || []), ...(match.team_streaks || [])];
   const seen = new Set();
   const candidates = streaks
@@ -2076,10 +2075,10 @@ function summarize(matches) {
   return { total, finished, upcoming, accuracy, oddsTotals };
 }
 
-function summarizeResultsByMarket(matches) {
+function summarizeResultsByMarket(matches, allMatches = matches) {
   return MARKET_CONFIG.map((config) => {
     const settled = matches
-      .map((match) => marketForConfig(config, match, matches))
+      .map((match) => marketForConfig(config, match, allMatches))
       .filter((market) => market?.result === 'hit' || market?.result === 'miss');
     const hits = settled.filter((market) => market.result === 'hit');
     const misses = settled.filter((market) => market.result === 'miss');
@@ -2951,7 +2950,7 @@ function ResultsReview({ matches }) {
     if (reviewScope === 'week') return matchDate >= today && matchDate <= weekEnd;
     return true;
   });
-  const rows = summarizeResultsByMarket(resulted).filter((row) => row.total > 0);
+  const rows = summarizeResultsByMarket(resulted, matches).filter((row) => row.total > 0);
   if (!allResulted.length) return null;
   const best = [...rows].sort((a, b) => b.hitRate - a.hitRate)[0];
   const worst = [...rows].sort((a, b) => a.hitRate - b.hitRate)[0];
