@@ -1,0 +1,107 @@
+# get:data transcript 20260517T173556Z
+root=C:\Betting\Soccer Stats
+mode=results-only
+started_at=2026-05-17T17:35:56.559Z
+npm_command=npm.cmd
+
+## Settle due results
+$ node scripts/run-python.js scripts/soccer_routine.py --results-only
+started_at=2026-05-17T17:35:56.560Z
+=== soccer_routine.py results-only � 2026-05-18 (Adelaide) ===
+  result_check_buffer_minutes=130
+  result_backfill_dates=2026-05-15, 2026-05-16, 2026-05-17, 2026-05-18
+  due_for_result_check=1
+
+[Results A] settle due pending matches
+  settled=0  skipped=0  not_due=91
+
+[Results B] backfill finished + enrich recent FT
+  added=0  enriched=1
+
+[Results C] protect resulted predictions
+  protected=379
+  result_schedule=docs\agent-system\outputs\result_check_schedule_20260518T030600+0930.md
+
+=== TOTAL: 471  FT: 379  upcoming: 92  | winner hit: 188  miss: 191  pending: 92 ===
+
+completed_at=2026-05-17T17:36:00.123Z
+exit_code=0
+
+## Run result review
+$ node scripts/run-python.js scripts/soccer_result_review_agent.py
+started_at=2026-05-17T17:36:00.123Z
+Result review written: C:\Betting\Soccer Stats\docs\agent-system\outputs\model_result_review_current.md
+CSV: C:\Betting\Soccer Stats\docs\agent-system\outputs\model_result_review_current.csv
+settled_market_rows=1490 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the review agent can compare confidence bands to actual hit rate.
+
+completed_at=2026-05-17T17:36:00.297Z
+exit_code=0
+
+## Run model calibration
+$ node scripts/run-python.js scripts/soccer_model_calibration_agent.py
+started_at=2026-05-17T17:36:00.297Z
+Model calibration written: C:\Betting\Soccer Stats\docs\agent-system\outputs\model_calibration.json
+Markdown: C:\Betting\Soccer Stats\docs\agent-system\outputs\model_calibration.md
+market_adjustments=4 league_market_adjustments=8
+
+completed_at=2026-05-17T17:36:00.425Z
+exit_code=0
+
+seed_next_day_decision=result schedule still has active matches
+
+## Upload league docs to Firestore
+$ node scripts/upload_match_data_to_firestore.mjs
+started_at=2026-05-17T17:36:00.427Z
+Retrying Firestore set dashboardData/match_data/dates/2026-05-11 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443
+
+Retrying Firestore set dashboardData/match_data/dates/2026-05-12 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443
+
+Retrying Firestore set dashboardData/match_data/dates/2026-05-14 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443
+
+Retrying Firestore set dashboardData/match_data/dates/2026-05-16 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443
+
+Retrying Firestore set dashboardData/match_data/dates/2026-05-17 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443
+
+Retrying Firestore set dashboardData/match_data/dates/2026-05-18 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443
+
+Retrying Firestore set dashboardData/match_data/dates/2026-05-19 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443
+
+Retrying Firestore set dashboardData/match_data/dates/2026-05-20 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443
+
+Retrying Firestore set dashboardData/match_data/dates/2026-05-25 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443
+
+Retrying Firestore set dashboardData/match_data/dates/2026-04-27 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443
+
+Retrying Firestore set dashboardData/match_data/dates/2026-05-13 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443
+
+Retrying Firestore set dashboardData/match_data/dates/2026-05-15 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443
+
+Retrying Firestore set dashboardData/match_data/dates/2026-05-24 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443
+
+Retrying Firestore set dashboardData/match_data/dates/2026-05-22 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443
+
+Retrying Firestore set dashboardData/match_data/dates/2026-04-29 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443
+
+Retrying Firestore set dashboardData/match_data/dates/2026-04-30 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443
+
+Retrying Firestore set dashboardData/match_data/dates/2026-05-06 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443
+
+Retrying Firestore set dashboardData/match_data/dates/2026-05-07 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443
+
+Retrying Firestore set dashboardData/match_data/dates/2026-05-21 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443
+
+Retrying Firestore set dashboardData/match_data/dates/2026-05-23 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443
+
+Retrying Firestore set dashboardData/match_data after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.010s,metadata filters: 0.030s,LB pick: 0.004s,remote_addr=142.250.195.170:443
+
+Retrying Firestore set dashboardData/match_data_fast after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.010s,metadata filters: 0.030s,LB pick: 0.004s,remote_addr=142.250.195.170:443
+
+Uploaded C:\Betting\Soccer Stats\match_data.json to Firestore dashboardData/match_data as 15 league docs and 31 date docs.
+
+Uploaded fast dashboard doc dashboardData/match_data_fast.
+
+completed_at=2026-05-17T17:37:20.123Z
+exit_code=0
+
+completed_at=2026-05-17T17:37:20.123Z
+status=ok

@@ -140,7 +140,21 @@ async function main() {
   const existingChunks = await chunksRef.listDocuments();
   const existingLeagues = await leaguesRef.listDocuments();
   const existingDates = await datesRef.listDocuments();
-  const writer = db.bulkWriter();
+  const writer = db.bulkWriter({
+    throttling: {
+      initialOpsPerSecond: 10,
+      maxOpsPerSecond: 25,
+    },
+  });
+  writer.onWriteError((error) => {
+    const retryableCodes = new Set([4, 10, 13, 14]);
+    if (retryableCodes.has(error.code) && error.failedAttempts < 5) {
+      console.warn(`Retrying Firestore ${error.operationType} ${error.documentRef.path} after ${error.message}`);
+      return true;
+    }
+    console.error(`Firestore ${error.operationType} failed for ${error.documentRef.path}: ${error.message}`);
+    return false;
+  });
 
   for (const ref of existingChunks) {
     writer.delete(ref);

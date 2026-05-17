@@ -17,7 +17,9 @@ DOES NOT touch git. `auto_push.bat` (Windows Task Scheduler) handles commits + p
 
 Usage:
     python3 scripts/soccer_routine.py
+    python3 scripts/soccer_routine.py --results-only
 """
+import argparse
 import json, math, random, re, subprocess, sys, time
 import os
 from datetime import date, datetime, timedelta, timezone
@@ -54,6 +56,7 @@ ROOT  = Path(__file__).resolve().parent.parent
 STORE = ROOT / "match_data.json"
 ELO_STORE = ROOT / "team_elo.json"
 SCRIPTS = ROOT / "scripts"
+OUT_DIR = ROOT / "docs" / "agent-system" / "outputs"
 MODEL_CALIBRATION = ROOT / "docs" / "agent-system" / "outputs" / "model_calibration.json"
 
 # --- Model tuning constants ---------------------------------------------------
@@ -87,6 +90,8 @@ TODAY     = datetime.now(ADL).date()
 YESTERDAY = TODAY - timedelta(days=1)
 TOMORROW  = TODAY + timedelta(days=1)
 FIXTURE_LOOKAHEAD_DAYS = max(1, int(os.environ.get("SOCCER_FIXTURE_DAYS", "7")))
+RESULT_CHECK_BUFFER_MINUTES = max(90, int(os.environ.get("SOCCER_RESULT_BUFFER_MINUTES", "130")))
+RESULT_LOOKBACK_DAYS = max(1, int(os.environ.get("SOCCER_RESULT_LOOKBACK_DAYS", "3")))
 
 TOURNAMENTS = {
     7:   "UEFA Champions League",
@@ -223,6 +228,141 @@ def fetch(path, retries=2):
 
 def adl_date(ts): return datetime.fromtimestamp(ts, tz=timezone.utc).astimezone(ADL).strftime("%Y-%m-%d")
 def adl_time(ts): return datetime.fromtimestamp(ts, tz=timezone.utc).astimezone(ADL).strftime("%H:%M")
+
+
+def parse_match_date(value):
+    try:
+        return datetime.strptime(str(value), "%Y-%m-%d").date()
+    except Exception:
+        return None
+
+
+def match_kickoff_datetime(match):
+    d = parse_match_date(match.get("date"))
+    t = str(match.get("time") or "")
+    if not d or not re.match(r"^\d{2}:\d{2}$", t):
+        return None
+    hour, minute = [int(part) for part in t.split(":")]
+    return datetime(d.year, d.month, d.day, hour, minute, tzinfo=ADL)
+
+
+def match_due_for_result_check(match, now=None):
+    if match.get("status") == "FT":
+        return False
+    kickoff = match_kickoff_datetime(match)
+    if not kickoff:
+        return False
+    now = now or datetime.now(ADL)
+    return now >= kickoff + timedelta(minutes=RESULT_CHECK_BUFFER_MINUTES)
+
+
+def result_backfill_dates():
+    start = TODAY - timedelta(days=RESULT_LOOKBACK_DAYS)
+    return [(start + timedelta(days=i)).isoformat() for i in range(RESULT_LOOKBACK_DAYS + 1)]
+
+
+def ft_recent_enough_for_results_mode(match):
+    if match.get("settled_at") == TODAY.isoformat():
+        return True
+    d = parse_match_date(match.get("date"))
+    return bool(d and d >= TODAY - timedelta(days=RESULT_LOOKBACK_DAYS))
+
+
+def result_schedule_rows(store):
+    now = datetime.now(ADL)
+    rows = []
+    for league in store.get("leagues", []):
+        for match in league.get("matches", []):
+            if match.get("status") == "FT":
+                continue
+            kickoff = match_kickoff_datetime(match)
+            check_after = kickoff + timedelta(minutes=RESULT_CHECK_BUFFER_MINUTES) if kickoff else None
+            match_date = parse_match_date(match.get("date"))
+            due = match_due_for_result_check(match, now)
+            if match_date and match_date < TODAY:
+                scope = "overdue"
+            elif match_date == TODAY:
+                scope = "today"
+            elif match_date == TOMORROW:
+                scope = "tomorrow"
+            else:
+                scope = "future"
+            include = due or scope in {"overdue", "today", "tomorrow"}
+            if not include:
+                continue
+            rows.append({
+                "scope": scope,
+                "league": league.get("name"),
+                "date": match.get("date"),
+                "time": match.get("time"),
+                "home": (match.get("home") or {}).get("name"),
+                "away": (match.get("away") or {}).get("name"),
+                "status": match.get("status"),
+                "kickoff_at": kickoff.isoformat() if kickoff else None,
+                "check_after": check_after.isoformat() if check_after else None,
+                "due_for_check": due,
+                "event_id": match.get("id"),
+            })
+    rows.sort(key=lambda row: (row.get("date") or "", row.get("time") or "", row.get("league") or ""))
+    return rows
+
+
+def write_result_schedule_log(store, phase_summary):
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    run_id = datetime.now(ADL).strftime("%Y%m%dT%H%M%S%z")
+    rows = result_schedule_rows(store)
+    payload = {
+        "generated_at": datetime.now(ADL).isoformat(),
+        "result_check_buffer_minutes": RESULT_CHECK_BUFFER_MINUTES,
+        "result_lookback_days": RESULT_LOOKBACK_DAYS,
+        "due_count": sum(1 for row in rows if row["due_for_check"]),
+        "remaining_count": sum(1 for row in rows if row["scope"] in {"overdue", "today"}),
+        "tomorrow_count": sum(1 for row in rows if row["scope"] == "tomorrow"),
+        "phase_summary": phase_summary,
+        "matches": rows,
+    }
+    json_path = OUT_DIR / f"result_check_schedule_{run_id}.json"
+    latest_json_path = OUT_DIR / "result_check_schedule_latest.json"
+    md_path = OUT_DIR / f"result_check_schedule_{run_id}.md"
+    latest_md_path = OUT_DIR / "result_check_schedule_latest.md"
+    text = json.dumps(payload, ensure_ascii=False, indent=2)
+    json_path.write_text(text + "\n", encoding="utf-8")
+    latest_json_path.write_text(text + "\n", encoding="utf-8")
+
+    lines = [
+        "# Result Check Schedule",
+        "",
+        f"Generated: {payload['generated_at']}",
+        f"Completion buffer: {RESULT_CHECK_BUFFER_MINUTES} minutes after kickoff",
+        f"Due now: {payload['due_count']}",
+        f"Remaining today/overdue: {payload['remaining_count']}",
+        f"Tomorrow visible: {payload['tomorrow_count']}",
+        "",
+        "## This Run",
+        "",
+        f"- Settled: {len(phase_summary.get('settled', []))}",
+        f"- Backfilled finished: {phase_summary.get('backfilled', 0)}",
+        f"- Enriched FT: {phase_summary.get('enriched', 0)}",
+        f"- Pruned stale unresolved: {len(phase_summary.get('pruned', []))}",
+        "",
+        "## Match Checks",
+        "",
+        "| Scope | Due | Date | Time | Check after | League | Match | Status |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- |",
+    ]
+    for row in rows:
+        due = "yes" if row["due_for_check"] else "no"
+        check_after = row.get("check_after") or "-"
+        if check_after != "-":
+            check_after = check_after[11:16]
+        lines.append(
+            f"| {row.get('scope') or ''} | {due} | {row.get('date') or ''} | {row.get('time') or ''} | {check_after} | "
+            f"{row.get('league') or ''} | {row.get('home') or ''} vs {row.get('away') or ''} | {row.get('status') or ''} |"
+        )
+    md = "\n".join(lines) + "\n"
+    md_path.write_text(md, encoding="utf-8")
+    latest_md_path.write_text(md, encoding="utf-8")
+    return {"json": str(json_path.relative_to(ROOT)), "markdown": str(md_path.relative_to(ROOT))}
 
 
 def short(name):
@@ -402,13 +542,17 @@ def cards_count(eid):
     return (yc + rc) if found else None
 
 
-def phase_a_settle(store, cache):
-    settled = []; skipped = 0
+def phase_a_settle(store, cache, due_only=False):
+    settled = []; skipped = 0; not_due = 0
+    now = datetime.now(ADL)
     for L in store["leagues"]:
         for m in L["matches"]:
             if m.get("status") == "FT": continue
             eid = m.get("id")
             if not eid: continue
+            if due_only and not match_due_for_result_check(m, now):
+                not_due += 1
+                continue
             ev = cache.get(eid) or fetch(f"/api/v1/event/{eid}")
             if not ev: continue
             e = ev.get("event") or ev
@@ -425,7 +569,7 @@ def phase_a_settle(store, cache):
                         c["result"] = ("hit" if (c["pick"] == "Over" and cards > line) or
                                        (c["pick"] == "Under" and cards < line) else "miss")
                 settled.append(f"{L['name']}: {m['home']['name']} {m['home']['goals']}-{m['away']['goals']} {m['away']['name']}")
-    return {"settled": settled, "skipped": skipped}
+    return {"settled": settled, "skipped": skipped, "not_due": not_due}
 
 
 # ----------------------------------------------------------------------------
@@ -499,11 +643,11 @@ def actuals_for(eid):
     return out
 
 
-def phase_a5_backfill_enrich(store, seen_ids):
+def phase_a5_backfill_enrich(store, seen_ids, backfill_dates=None, recent_only=False):
     """Add finished-but-untracked + enrich every FT record."""
     by_name = {L["name"]: L for L in store["leagues"]}
     added = 0; add_brk = {}
-    for d in (YESTERDAY.isoformat(), TODAY.isoformat()):
+    for d in (backfill_dates or (YESTERDAY.isoformat(), TODAY.isoformat())):
         data = fetch(f"/api/v1/sport/football/scheduled-events/{d}"); time.sleep(0.6)
         if not data: continue
         for ev in data.get("events", []):
@@ -529,6 +673,7 @@ def phase_a5_backfill_enrich(store, seen_ids):
     for L in store["leagues"]:
         for m in L["matches"]:
             if m.get("status") != "FT": continue
+            if recent_only and not ft_recent_enough_for_results_mode(m): continue
             eid = m.get("id")
             if not eid: continue
             need_odds = not m.get("odds")
@@ -1015,6 +1160,28 @@ def phase_a6_retro(store):
     return {"retro": done, "factors_backfilled": factors_backfilled, "protected": protected}
 
 
+def prune_stale_pending_matches(store):
+    cutoff = TODAY - timedelta(days=RESULT_LOOKBACK_DAYS)
+    pruned = []
+    for league in store.get("leagues", []):
+        keep = []
+        for match in league.get("matches", []):
+            match_date = parse_match_date(match.get("date"))
+            if match.get("status") != "FT" and match_date and match_date < cutoff:
+                pruned.append({
+                    "league": league.get("name"),
+                    "date": match.get("date"),
+                    "time": match.get("time"),
+                    "home": (match.get("home") or {}).get("name"),
+                    "away": (match.get("away") or {}).get("name"),
+                    "event_id": match.get("id"),
+                })
+                continue
+            keep.append(match)
+        league["matches"] = keep
+    return pruned
+
+
 # ----------------------------------------------------------------------------
 def phase_b_forecast(store, seen_ids):
     by_name = {L["name"]: L for L in store["leagues"]}
@@ -1129,7 +1296,56 @@ def run_helper(name):
         print(f"  [{name}] stderr: {p.stderr.rstrip()}")
 
 
-def main():
+def run_dashboard_enrichment_helpers():
+    print("\n[Phase B.4] computed team streaks (PRIMARY) — derived from team match history")
+    run_helper("soccer_compute_streaks.py")
+
+    print("\n[Phase B.5] sportsbet odds")
+    run_helper("soccer_fetch_sportsbet.py")
+
+    print("\n[Phase B.5a] bookmaker direct links")
+    run_helper("soccer_fetch_bookmaker_links.py")
+
+    print("\n[Phase B.6] streak odds")
+    run_helper("soccer_enrich_streak_odds.py")
+
+    print("\n[Phase B.7] prediction odds")
+    run_helper("soccer_fetch_pred_odds.py")
+
+    print("\n[Phase B.8] TheSportsDB fallback (records score hint when SofaScore was 403)")
+    run_helper("soccer_fetch_thesportsdb.py")
+
+    print("\n[Phase B.9] Understat xG enrichment")
+    run_helper("soccer_fetch_understat.py")
+
+
+def sort_store(store):
+    for L in store["leagues"]:
+        L["matches"].sort(key=lambda m: (m.get("date", ""), m.get("time", "")))
+    store["leagues"].sort(key=lambda L: ORDER.index(L["name"]) if L["name"] in ORDER else 99)
+
+
+def print_final_tally(store):
+    total = 0; ft = 0; up = 0
+    hit = miss = pending = 0
+    for L in store["leagues"]:
+        total += len(L["matches"])
+        for m in L["matches"]:
+            if m.get("status") == "FT":
+                ft += 1
+            else:
+                up += 1
+            r = ((m.get("predictions", {}) or {}).get("winner", {}) or {}).get("result")
+            if r == "hit":
+                hit += 1
+            elif r == "miss":
+                miss += 1
+            else:
+                pending += 1
+    print(f"\n=== TOTAL: {total}  FT: {ft}  upcoming: {up}  | winner hit: {hit}  miss: {miss}  pending: {pending} ===")
+
+
+def run_full_refresh():
     print(f"=== soccer_routine.py — {TODAY.isoformat()} (Adelaide) ===")
     store = load_store()
 
@@ -1175,54 +1391,106 @@ def main():
     print(f"  attached={pb3['attached']}")
 
     # Sort matches inside each league
-    for L in store["leagues"]:
-        L["matches"].sort(key=lambda m: (m.get("date", ""), m.get("time", "")))
-    store["leagues"].sort(key=lambda L: ORDER.index(L["name"]) if L["name"] in ORDER else 99)
+    sort_store(store)
 
     # Persist before invoking helpers (they read match_data.json)
     save_store(store)
 
-    print("\n[Phase B.4] computed team streaks (PRIMARY) — derived from team match history")
-    run_helper("soccer_compute_streaks.py")
-
-    print("\n[Phase B.5] sportsbet odds")
-    run_helper("soccer_fetch_sportsbet.py")
-
-    print("\n[Phase B.5a] bookmaker direct links")
-    run_helper("soccer_fetch_bookmaker_links.py")
-
-    print("\n[Phase B.6] streak odds")
-    run_helper("soccer_enrich_streak_odds.py")
-
-    print("\n[Phase B.7] prediction odds")
-    run_helper("soccer_fetch_pred_odds.py")
-
-    print("\n[Phase B.8] TheSportsDB fallback (records score hint when SofaScore was 403)")
-    run_helper("soccer_fetch_thesportsdb.py")
-
-    print("\n[Phase B.9] Understat xG enrichment")
-    run_helper("soccer_fetch_understat.py")
+    run_dashboard_enrichment_helpers()
 
     # Final tally — reload store after helpers (they mutate match_data.json)
     store = load_store()
     save_store(store)
-    total = 0; ft = 0; up = 0
-    hit = miss = pending = 0
-    for L in store["leagues"]:
-        total += len(L["matches"])
-        for m in L["matches"]:
-            if m.get("status") == "FT":
-                ft += 1
-            else:
-                up += 1
-            r = ((m.get("predictions", {}) or {}).get("winner", {}) or {}).get("result")
-            if r == "hit":
-                hit += 1
-            elif r == "miss":
-                miss += 1
-            else:
-                pending += 1
-    print(f"\n=== TOTAL: {total}  FT: {ft}  upcoming: {up}  | winner hit: {hit}  miss: {miss}  pending: {pending} ===")
+    print_final_tally(store)
+
+
+def run_results_only():
+    print(f"=== soccer_routine.py results-only — {TODAY.isoformat()} (Adelaide) ===")
+    print(f"  result_check_buffer_minutes={RESULT_CHECK_BUFFER_MINUTES}")
+    print(f"  result_backfill_dates={', '.join(result_backfill_dates())}")
+    store = load_store()
+    seen_ids = {m["id"] for L in store["leagues"] for m in L["matches"] if m.get("id")}
+    due_count = sum(
+        1
+        for L in store["leagues"]
+        for m in L["matches"]
+        if m.get("id") and match_due_for_result_check(m)
+    )
+    print(f"  due_for_result_check={due_count}")
+
+    print("\n[Results A] settle due pending matches")
+    pa = phase_a_settle(store, {}, due_only=True)
+    print(f"  settled={len(pa['settled'])}  skipped={pa['skipped']}  not_due={pa['not_due']}")
+
+    print("\n[Results B] backfill finished + enrich recent FT")
+    pa5 = phase_a5_backfill_enrich(
+        store,
+        seen_ids,
+        backfill_dates=result_backfill_dates(),
+        recent_only=True,
+    )
+    print(f"  added={pa5['added']}  enriched={pa5['enriched']}")
+
+    print("\n[Results C] protect resulted predictions")
+    pa6 = phase_a6_retro(store)
+    print(f"  protected={pa6.get('protected', 0)}")
+
+    print("\n[Results D] prune stale unresolved matches")
+    pruned = prune_stale_pending_matches(store)
+    print(f"  pruned={len(pruned)}")
+
+    sort_store(store)
+    save_store(store)
+    schedule_paths = write_result_schedule_log(store, {
+        "settled": pa["settled"],
+        "backfilled": pa5["added"],
+        "enriched": pa5["enriched"],
+        "protected": pa6.get("protected", 0),
+        "pruned": pruned,
+    })
+    print(f"  result_schedule={schedule_paths['markdown']}")
+    print_final_tally(store)
+
+
+def run_seed_next_day():
+    print(f"=== soccer_routine.py seed-next-day — {TODAY.isoformat()} (Adelaide) ===")
+    print(f"  fixture_lookahead_days={FIXTURE_LOOKAHEAD_DAYS}")
+    store = load_store()
+    seen_ids = {m["id"] for L in store["leagues"] for m in L["matches"] if m.get("id")}
+
+    print("\n[Seed A] compute team Elo + build xG index")
+    elo = compute_team_elo(store)
+    _XG_INDEX.clear(); _XG_INDEX.update(build_xg_index(store))
+    n_teams_xg = sum(1 for tid, rows in _XG_INDEX.items() if rows)
+    print(f"  teams_rated={len(elo)}  teams_with_xg={n_teams_xg}  elo_file={ELO_STORE.name}")
+
+    print(f"\n[Seed B] forecast current/tomorrow (+{FIXTURE_LOOKAHEAD_DAYS} days)")
+    pb = phase_b_forecast(store, seen_ids)
+    print(f"  added={pb['added']}")
+
+    print("\n[Seed C] attach standings to home/away")
+    pb3 = phase_b3_attach_standings(store)
+    print(f"  attached={pb3['attached']}")
+
+    sort_store(store)
+    save_store(store)
+    run_dashboard_enrichment_helpers()
+    store = load_store()
+    save_store(store)
+    print_final_tally(store)
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Run Soccer Stats data routine.")
+    parser.add_argument("--results-only", action="store_true", help="Only check due matches for results, enrich recent FT records, and save match_data.json.")
+    parser.add_argument("--seed-next-day", action="store_true", help="Lightly seed the current/tomorrow fixture window after a slate has finished.")
+    args = parser.parse_args()
+    if args.seed_next_day:
+        run_seed_next_day()
+    elif args.results_only:
+        run_results_only()
+    else:
+        run_full_refresh()
 
 
 if __name__ == "__main__":

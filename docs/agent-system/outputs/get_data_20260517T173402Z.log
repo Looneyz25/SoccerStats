@@ -1,0 +1,875 @@
+# get:data transcript 20260517T173402Z
+root=C:\Betting\Soccer Stats
+mode=results-only
+started_at=2026-05-17T17:34:02.617Z
+npm_command=npm.cmd
+
+## Settle due results
+$ node scripts/run-python.js scripts/soccer_routine.py --results-only
+started_at=2026-05-17T17:34:02.617Z
+=== soccer_routine.py results-only � 2026-05-18 (Adelaide) ===
+  result_check_buffer_minutes=130
+  result_backfill_dates=2026-05-15, 2026-05-16, 2026-05-17, 2026-05-18
+  due_for_result_check=1
+
+[Results A] settle due pending matches
+  settled=0  skipped=0  not_due=91
+
+[Results B] backfill finished + enrich recent FT
+  added=0  enriched=1
+
+[Results C] protect resulted predictions
+  protected=379
+
+=== TOTAL: 471  FT: 379  upcoming: 92  | winner hit: 188  miss: 191  pending: 92 ===
+
+completed_at=2026-05-17T17:34:06.090Z
+exit_code=0
+
+## Run result review
+$ node scripts/run-python.js scripts/soccer_result_review_agent.py
+started_at=2026-05-17T17:34:06.090Z
+Result review written: C:\Betting\Soccer Stats\docs\agent-system\outputs\model_result_review_current.md
+CSV: C:\Betting\Soccer Stats\docs\agent-system\outputs\model_result_review_current.csv
+settled_market_rows=1490 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the review agent can compare confidence bands to actual hit rate.
+
+completed_at=2026-05-17T17:34:06.253Z
+exit_code=0
+
+## Run model calibration
+$ node scripts/run-python.js scripts/soccer_model_calibration_agent.py
+started_at=2026-05-17T17:34:06.253Z
+Model calibration written: C:\Betting\Soccer Stats\docs\agent-system\outputs\model_calibration.json
+Markdown: C:\Betting\Soccer Stats\docs\agent-system\outputs\model_calibration.md
+market_adjustments=4 league_market_adjustments=8
+
+completed_at=2026-05-17T17:34:06.383Z
+exit_code=0
+
+seed_next_day_decision=result schedule still has active matches
+
+## Upload league docs to Firestore
+$ node scripts/upload_match_data_to_firestore.mjs
+started_at=2026-05-17T17:34:06.383Z
+C:\Betting\Soccer Stats\node_modules\@google-cloud\firestore\build\src\bulk-writer.js:97
+            const bulkWriterError = new BulkWriterError(error.code, error.message, this.ref, this.type, this.failedAttempts);
+                                    ^
+
+BulkWriterError: 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.009s,metadata filters: 0.323s,LB pick: 0.003s,remote_addr=142.250.195.170:443
+    at BulkWriterOperation.onError (C:\Betting\Soccer Stats\node_modules\@google-cloud\firestore\build\src\bulk-writer.js:97:37)
+    at _firestore._traceUtil.startActiveSpan (C:\Betting\Soccer Stats\node_modules\@google-cloud\firestore\build\src\bulk-writer.js:195:40)
+    at runNextTicks (node:internal/process/task_queues:65:5)
+    at process.processImmediate (node:internal/timers:472:9)
+    at async BulkWriter._sendBatch (C:\Betting\Soccer Stats\node_modules\@google-cloud\firestore\build\src\bulk-writer.js:755:13) {
+  code: 4,
+  documentRef: DocumentReference {
+    _firestore: Firestore {
+      _settings: {
+        projectId: 'sports-predictions-f91fd',
+        firebaseVersion: '13.10.0',
+        firebaseAdminVersion: '13.10.0',
+        preferRest: undefined,
+        databaseId: '(default)',
+        libName: 'gccl',
+        libVersion: '7.11.6 fire/13.10.0 fire-admin/13.10.0',
+        toJSON: [Function (anonymous)]
+      },
+      _settingsFrozen: true,
+      _serializer: Serializer {
+        createReference: [Function (anonymous)],
+        createInteger: [Function (anonymous)],
+        allowUndefined: false
+      },
+      _projectId: 'sports-predictions-f91fd',
+      _databaseId: '(default)',
+      registeredListenersCount: 0,
+      bulkWritersCount: 0,
+      _traceUtil: EnabledTraceUtil {
+        tracerProvider: ProxyTracerProvider {},
+        tracer: ProxyTracer {
+          _provider: ProxyTracerProvider {},
+          name: '@google-cloud/firestore',
+          version: '7.11.6',
+          options: undefined
+        },
+        settingsAttributes: {
+          'otel.scope.name': '@google-cloud/firestore',
+          'otel.scope.version': '7.11.6',
+          'gcp.firestore.settings.project_id': 'sports-predictions-f91fd',
+          'gcp.firestore.settings.database_id': '(default)',
+          'gcp.firestore.settings.host': 'firestore.googleapis.com:443',
+          'gcp.firestore.settings.max_idle_channels': 1,
+          'gcp.firestore.settings.initial_retry_delay': '0.1s',
+          'gcp.firestore.settings.initial_rpc_timeout': '60s',
+          'gcp.firestore.settings.total_timeout': '600s',
+          'gcp.firestore.settings.max_retry_delay': '60s',
+          'gcp.firestore.settings.max_rpc_timeout': '60s',
+          'gcp.firestore.settings.retry_delay_multiplier': '1.3',
+          'gcp.firestore.settings.rpc_timeout_multiplier': '1'
+        }
+      },
+      _backoffSettings: { initialDelayMs: 100, maxDelayMs: 60000, backoffFactor: 1.3 },
+      _clientPool: ClientPool {
+        concurrentOperationLimit: 100,
+        maxIdleClients: 1,
+        clientFactory: [Function (anonymous)],
+        clientDestructor: [Function (anonymous)],
+        grpcEnabled: false,
+        activeClients: Map(1) {
+          FirestoreClient {
+            _terminated: false,
+            _stubFailed: false,
+            descriptors: [Object],
+            _universeDomain: 'googleapis.com',
+            _servicePath: 'firestore.googleapis.com',
+            _providedCustomServicePath: false,
+            _gaxModule: [Object],
+            _gaxGrpc: [GrpcClient],
+            _opts: [Object],
+            auth: [GoogleAuth],
+            locationsClient: [LocationsClient],
+            _protos: [Object],
+            _defaults: [Object],
+            innerApiCalls: [Object],
+            warn: [Function: warn],
+            firestoreStub: [Promise]
+          } => { grpcEnabled: false, activeRequestCount: 1 }
+        },
+        failedClients: Set(0) {},
+        clientIdByClient: WeakMap { <items unknown> },
+        terminated: false,
+        terminateDeferred: Deferred {
+          resolve: [Function (anonymous)],
+          reject: [Function (anonymous)],
+          promise: Promise { <pending> }
+        },
+        instanceId: 'cplYPsAC',
+        lazyLogStringForAllClientIds: LazyLogStringForAllClientIds {
+          activeClients: Map(1) { [FirestoreClient] => [Object] },
+          failedClients: Set(0) {},
+          clientIdByClient: WeakMap { <items unknown> }
+        }
+      },
+      _gax: {
+        GoogleAuth: [Getter],
+        grpc: {
+          credentials: {
+            combineChannelCredentials: [Function: combineChannelCredentials],
+            combineCallCredentials: [Function: combineCallCredentials],
+            createInsecure: [Function: createInsecure],
+            createSsl: [Function: createSsl],
+            createFromSecureContext: [Function: createFromSecureContext],
+            createFromMetadataGenerator: [Function: createFromMetadataGenerator],
+            createFromGoogleCredential: [Function: createFromGoogleCredential],
+            createEmpty: [Function: createEmpty]
+          },
+          Metadata: [Getter],
+          logVerbosity: [Getter],
+          status: [Getter],
+          connectivityState: [Getter],
+          propagate: [Getter],
+          compressionAlgorithms: [Getter],
+          Client: [Getter],
+          loadPackageDefinition: [Getter],
+          makeClientConstructor: [Getter],
+          makeGenericClientConstructor: [Getter],
+          Channel: [Getter],
+          closeClient: [Function: closeClient],
+          waitForClientReady: [Function: waitForClientReady],
+          ChannelCredentials: [Getter],
+          CallCredentials: [Getter],
+          loadObject: [Function: loadObject],
+          load: [Function: load],
+          setLogger: [Function: setLogger],
+          setLogVerbosity: [Function: setLogVerbosity],
+          Server: [Getter],
+          ServerCredentials: [Getter],
+          getClientChannel: [Function: getClientChannel],
+          StatusBuilder: [Getter],
+          ListenerBuilder: [Getter],
+          RequesterBuilder: [Getter],
+          InterceptingCall: [Getter],
+          InterceptorConfigurationError: [Getter],
+          getChannelzServiceDefinition: [Getter],
+          getChannelzHandlers: [Getter],
+          addAdminServicesToServer: [Getter],
+          ServerListenerBuilder: [Getter],
+          ResponderBuilder: [Getter],
+          ServerInterceptingCall: [Getter],
+          ServerMetricRecorder: [Getter],
+          experimental: {
+            trace: [Getter],
+            log: [Getter],
+            registerResolver: [Getter],
+            createResolver: [Getter],
+            CHANNEL_ARGS_CONFIG_SELECTOR_KEY: [Getter],
+            uriToString: [Getter],
+            splitHostPort: [Getter],
+            durationToMs: [Getter],
+            parseDuration: [Getter],
+            BackoffTimeout: [Getter],
+            createChildChannelControlHelper: [Getter],
+            registerLoadBalancerType: [Getter],
+            selectLbConfigFromList: [Getter],
+            parseLoadBalancingConfig: [Getter],
+            isLoadBalancerNameRegistered: [Getter],
+            LeafLoadBalancer: [Getter],
+            subchannelAddressToString: [Getter],
+            endpointToString: [Getter],
+            endpointHasAddress: [Getter],
+            EndpointMap: [Getter],
+            ChildLoadBalancerHandler: [Getter],
+            UnavailablePicker: [Getter],
+            QueuePicker: [Getter],
+            PickResultType: [Getter],
+            statusOrFromValue: [Getter],
+            statusOrFromError: [Getter],
+            BaseFilter: [Getter],
+            FilterStackFactory: [Getter],
+            registerAdminService: [Getter],
+            BaseSubchannelWrapper: [Getter],
+            createServerCredentialsWithInterceptors: [Getter],
+            createCertificateProviderServerCredentials: [Getter],
+            FileWatcherCertificateProvider: [Getter],
+            createCertificateProviderChannelCredentials: [Getter],
+            SUBCHANNEL_ARGS_EXCLUDE_KEY_PREFIX: [Getter]
+          }
+        },
+        OngoingCall: [Getter],
+        createApiCall: [Getter],
+        BundleDescriptor: [Getter],
+        LongrunningDescriptor: [Getter],
+        PageDescriptor: [Getter],
+        StreamDescriptor: [Getter],
+        CallSettings: [Getter],
+        constructSettings: [Getter],
+        RetryOptions: [Getter],
+        createRetryOptions: [Getter],
+        createBundleOptions: [Getter],
+        createBackoffSettings: [Getter],
+        createDefaultBackoffSettings: [Getter],
+        createMaxRetriesBackoffSettings: [Getter],
+        GoogleError: [Getter],
+        ClientStub: [Getter],
+        GoogleProtoFilesRoot: [Getter],
+        GrpcClient: [Getter],
+        Operation: [Getter],
+        operation: [Getter],
+        PathTemplate: [Getter],
+        Status: [Getter],
+        StreamType: [Getter],
+        routingHeader: { fromParams: [Function: fromParams] },
+        operationsProtos: {
+          google: {
+            longrunning: [Object],
+            api: [Object],
+            protobuf: [Object],
+            rpc: [Object]
+          }
+        },
+        IamProtos: {
+          google: {
+            iam: [Object],
+            api: [Object],
+            protobuf: [Object],
+            type: [Object]
+          }
+        },
+        LocationProtos: {
+          google: { cloud: [Object], api: [Object], protobuf: [Object] }
+        },
+        OperationsClient: [Getter],
+        IamClient: [Getter],
+        LocationsClient: [Getter],
+        createByteLengthFunction: [Function: createByteLengthFunction],
+        version: '4.6.1',
+        protobuf: {
+          build: 'full',
+          Writer: [Function: Writer] {
+            create: [Function: create_buffer],
+            alloc: [Function: pool_alloc],
+            _configure: [Function (anonymous)]
+          },
+          BufferWriter: [Function: BufferWriter] {
+            _configure: [Function (anonymous)],
+            alloc: [Function: allocUnsafe],
+            writeBytesBuffer: [Function: writeBytesBuffer_set]
+          },
+          Reader: [Function: Reader] {
+            create: [Function: create_buffer],
+            recursionLimit: 100,
+            _configure: [Function (anonymous)]
+          },
+          BufferReader: [Function: BufferReader] {
+            _configure: [Function (anonymous)]
+          },
+          util: {
+            asPromise: [Function: asPromise],
+            base64: [Object],
+            EventEmitter: [Function: EventEmitter],
+            float: [Function],
+            inquire: [Function: inquire],
+            utf8: [Object],
+            pool: [Function: pool],
+            LongBits: [Function],
+            isNode: true,
+            global: [Object [global]],
+            emptyArray: [],
+            emptyObject: {},
+            isInteger: [Function: isInteger],
+            isString: [Function: isString],
+            isObject: [Function: isObject],
+            isSet: [Function: isSet],
+            isset: [Function: isSet],
+            Buffer: [Function],
+            _Buffer_from: [Function: from],
+            _Buffer_allocUnsafe: [Function: allocUnsafe],
+            newBuffer: [Function: newBuffer],
+            Array: [Function: Uint8Array],
+            Long: [Function],
+            key2Re: /^true|false|0|1$/,
+            key32Re: /^-?(?:0|[1-9][0-9]*)$/,
+            key64Re: /^(?:[\\x00-\\xff]{8}|-?(?:0|[1-9][0-9]*))$/,
+            longToHash: [Function: longToHash],
+            longFromHash: [Function: longFromHash],
+            merge: [Function: merge],
+            recursionLimit: 100,
+            makeProp: [Function: makeProp],
+            lcFirst: [Function: lcFirst],
+            newError: [Function: newError],
+            ProtocolError: [Function: CustomError],
+            oneOfGetter: [Function: getOneOf],
+            oneOfSetter: [Function: setOneOf],
+            toJSONOptions: [Object],
+            _configure: [Function (anonymous)],
+            codegen: [Function],
+            fetch: [Function],
+            path: [Object],
+            patterns: [Object],
+            fs: [Object],
+            checkDepth: [Function: checkDepth],
+            toArray: [Function: toArray],
+            toObject: [Function: toObject],
+            isReserved: [Function: isReserved],
+            safeProp: [Function: safeProp],
+            ucFirst: [Function: ucFirst],
+            camelCase: [Function: camelCase],
+            compareFieldsById: [Function: compareFieldsById],
+            decorateType: [Function: decorateType],
+            decorateEnum: [Function: decorateEnum],
+            setProperty: [Function: setProperty]
+          },
+          rpc: { Service: [Function: Service] },
+          roots: {
+            iam_protos: [Object],
+            locations_protos: [Object],
+            operations_protos: [Object]
+          },
+          configure: [Function: configure],
+          load: [Function: load],
+          loadSync: [Function: loadSync],
+          encoder: [Function: encoder],
+          decoder: [Function: decoder],
+          verifier: [Function: verifier],
+          converter: {
+            fromObject: [Function: fromObject],
+            toObject: [Function: toObject]
+          },
+          ReflectionObject: [Function: ReflectionObject] {
+            className: 'ReflectionObject',
+            _configure: [Function (anonymous)]
+          },
+          Namespace: [Function: Namespace] {
+            className: 'Namespace',
+            fromJSON: [Function: fromJSON],
+            arrayToJSON: [Function: arrayToJSON],
+            isReservedId: [Function: isReservedId],
+            isReservedName: [Function: isReservedName],
+            _configure: [Function (anonymous)]
+          },
+          Root: [Function: Root] {
+            className: 'Root',
+            fromJSON: [Function: fromJSON],
+            _configure: [Function (anonymous)],
+            fromDescriptor: [Function: fromDescriptor]
+          },
+          Enum: [Function: Enum] {
+            className: 'Enum',
+            fromJSON: [Function: fromJSON],
+            fromDescriptor: [Function: fromDescriptor]
+          },
+          Type: [Function: Type] {
+            className: 'Type',
+            generateConstructor: [Function: generateConstructor],
+            fromJSON: [Function: fromJSON],
+            d: [Function: decorateType],
+            fromDescriptor: [Function: fromDescriptor]
+          },
+          Field: [Function: Field] {
+            className: 'Field',
+            fromJSON: [Function: fromJSON],
+            d: [Function: decorateField],
+            _configure: [Function: configure],
+            fromDescriptor: [Function: fromDescriptor]
+          },
+          OneOf: [Function: OneOf] {
+            className: 'OneOf',
+            fromJSON: [Function: fromJSON],
+            d: [Function: decorateOneOf],
+            fromDescriptor: [Function: fromDescriptor]
+          },
+          MapField: [Function: MapField] {
+            className: 'MapField',
+            fromJSON: [Function: fromJSON],
+            d: [Function: decorateMapField]
+          },
+          Service: [Function: Service] {
+            className: 'Service',
+            fromJSON: [Function: fromJSON],
+            fromDescriptor: [Function: fromDescriptor]
+          },
+          Method: [Function: Method] {
+            className: 'Method',
+            fromJSON: [Function: fromJSON],
+            fromDescriptor: [Function: fromDescriptor]
+          },
+          Message: [Function: Message] {
+            create: [Function: create],
+            encode: [Function: encode],
+            encodeDelimited: [Function: encodeDelimited],
+            decode: [Function: decode],
+            decodeDelimited: [Function: decodeDelimited],
+            verify: [Function: verify],
+            fromObject: [Function: fromObject],
+            toObject: [Function: toObject]
+          },
+          wrappers: { '.google.protobuf.Any': [Object] },
+          types: {
+            basic: [Object: null prototype],
+            defaults: [Object: null prototype],
+            long: [Object: null prototype],
+            mapKey: [Object: null prototype],
+            packed: [Object: null prototype]
+          },
+          tokenize: [Function: tokenize] { unescape: [Function: unescape] },
+          parse: [Function: parse] { filename: null, defaults: [Object] },
+          common: [Function: common] {
+            'google/protobuf/any.proto': [Object],
+            'google/protobuf/duration.proto': [Object],
+            'google/protobuf/timestamp.proto': [Object],
+            'google/protobuf/empty.proto': [Object],
+            'google/protobuf/struct.proto': [Object],
+            'google/protobuf/wrappers.proto': [Object],
+            'google/protobuf/field_mask.proto': [Object],
+            get: [Function: get],
+            'google/protobuf/api.proto': [Object],
+            'google/protobuf/descriptor.proto': [Object],
+            'google/protobuf/source_context.proto': [Object],
+            'google/protobuf/type.proto': [Object]
+          },
+          descriptor: Namespace {
+            options: [Object],
+            parsedOptions: null,
+            name: 'protobuf',
+            _edition: 'proto2',
+            _defaultEdition: 'proto2',
+            _features: [Object],
+            _featuresResolved: true,
+            parent: [Namespace],
+            resolved: true,
+            comment: null,
+            filename: null,
+            nested: [Object],
+            _nestedArray: [Array],
+            _lookupCache: [Object: null prototype],
+            _needsRecursiveFeatureResolution: false,
+            _needsRecursiveResolve: false,
+            FileDescriptorSet: [Type],
+            Edition: [Object],
+            FileDescriptorProto: [Type],
+            DescriptorProto: [Type],
+            ExtensionRangeOptions: [Type],
+            FieldDescriptorProto: [Type],
+            OneofDescriptorProto: [Type],
+            EnumDescriptorProto: [Type],
+            EnumValueDescriptorProto: [Type],
+            ServiceDescriptorProto: [Type],
+            MethodDescriptorProto: [Type],
+            FileOptions: [Type],
+            MessageOptions: [Type],
+            FieldOptions: [Type],
+            OneofOptions: [Type],
+            EnumOptions: [Type],
+            EnumValueOptions: [Type],
+            ServiceOptions: [Type],
+            MethodOptions: [Type],
+            UninterpretedOption: [Type],
+            FeatureSet: [Type],
+            FeatureSetDefaults: [Type],
+            SourceCodeInfo: [Type],
+            GeneratedCodeInfo: [Type],
+            SymbolVisibility: [Object]
+          }
+        },
+        protobufMinimal: {
+          build: 'full',
+          Writer: [Function: Writer] {
+            create: [Function: create_buffer],
+            alloc: [Function: pool_alloc],
+            _configure: [Function (anonymous)]
+          },
+          BufferWriter: [Function: BufferWriter] {
+            _configure: [Function (anonymous)],
+            alloc: [Function: allocUnsafe],
+            writeBytesBuffer: [Function: writeBytesBuffer_set]
+          },
+          Reader: [Function: Reader] {
+            create: [Function: create_buffer],
+            recursionLimit: 100,
+            _configure: [Function (anonymous)]
+          },
+          BufferReader: [Function: BufferReader] {
+            _configure: [Function (anonymous)]
+          },
+          util: {
+            asPromise: [Function: asPromise],
+            base64: [Object],
+            EventEmitter: [Function: EventEmitter],
+            float: [Function],
+            inquire: [Function: inquire],
+            utf8: [Object],
+            pool: [Function: pool],
+            LongBits: [Function],
+            isNode: true,
+            global: [Object [global]],
+            emptyArray: [],
+            emptyObject: {},
+            isInteger: [Function: isInteger],
+            isString: [Function: isString],
+            isObject: [Function: isObject],
+            isSet: [Function: isSet],
+            isset: [Function: isSet],
+            Buffer: [Function],
+            _Buffer_from: [Function: from],
+            _Buffer_allocUnsafe: [Function: allocUnsafe],
+            newBuffer: [Function: newBuffer],
+            Array: [Function: Uint8Array],
+            Long: [Function],
+            key2Re: /^true|false|0|1$/,
+            key32Re: /^-?(?:0|[1-9][0-9]*)$/,
+            key64Re: /^(?:[\\x00-\\xff]{8}|-?(?:0|[1-9][0-9]*))$/,
+            longToHash: [Function: longToHash],
+            longFromHash: [Function: longFromHash],
+            merge: [Function: merge],
+            recursionLimit: 100,
+            makeProp: [Function: makeProp],
+            lcFirst: [Function: lcFirst],
+            newError: [Function: newError],
+            ProtocolError: [Function: CustomError],
+            oneOfGetter: [Function: getOneOf],
+            oneOfSetter: [Function: setOneOf],
+            toJSONOptions: [Object],
+            _configure: [Function (anonymous)],
+            codegen: [Function],
+            fetch: [Function],
+            path: [Object],
+            patterns: [Object],
+            fs: [Object],
+            checkDepth: [Function: checkDepth],
+            toArray: [Function: toArray],
+            toObject: [Function: toObject],
+            isReserved: [Function: isReserved],
+            safeProp: [Function: safeProp],
+            ucFirst: [Function: ucFirst],
+            camelCase: [Function: camelCase],
+            compareFieldsById: [Function: compareFieldsById],
+            decorateType: [Function: decorateType],
+            decorateEnum: [Function: decorateEnum],
+            setProperty: [Function: setProperty]
+          },
+          rpc: { Service: [Function: Service] },
+          roots: {
+            iam_protos: [Object],
+            locations_protos: [Object],
+            operations_protos: [Object]
+          },
+          configure: [Function: configure],
+          load: [Function: load],
+          loadSync: [Function: loadSync],
+          encoder: [Function: encoder],
+          decoder: [Function: decoder],
+          verifier: [Function: verifier],
+          converter: {
+            fromObject: [Function: fromObject],
+            toObject: [Function: toObject]
+          },
+          ReflectionObject: [Function: ReflectionObject] {
+            className: 'ReflectionObject',
+            _configure: [Function (anonymous)]
+          },
+          Namespace: [Function: Namespace] {
+            className: 'Namespace',
+            fromJSON: [Function: fromJSON],
+            arrayToJSON: [Function: arrayToJSON],
+            isReservedId: [Function: isReservedId],
+            isReservedName: [Function: isReservedName],
+            _configure: [Function (anonymous)]
+          },
+          Root: [Function: Root] {
+            className: 'Root',
+            fromJSON: [Function: fromJSON],
+            _configure: [Function (anonymous)],
+            fromDescriptor: [Function: fromDescriptor]
+          },
+          Enum: [Function: Enum] {
+            className: 'Enum',
+            fromJSON: [Function: fromJSON],
+            fromDescriptor: [Function: fromDescriptor]
+          },
+          Type: [Function: Type] {
+            className: 'Type',
+            generateConstructor: [Function: generateConstructor],
+            fromJSON: [Function: fromJSON],
+            d: [Function: decorateType],
+            fromDescriptor: [Function: fromDescriptor]
+          },
+          Field: [Function: Field] {
+            className: 'Field',
+            fromJSON: [Function: fromJSON],
+            d: [Function: decorateField],
+            _configure: [Function: configure],
+            fromDescriptor: [Function: fromDescriptor]
+          },
+          OneOf: [Function: OneOf] {
+            className: 'OneOf',
+            fromJSON: [Function: fromJSON],
+            d: [Function: decorateOneOf],
+            fromDescriptor: [Function: fromDescriptor]
+          },
+          MapField: [Function: MapField] {
+            className: 'MapField',
+            fromJSON: [Function: fromJSON],
+            d: [Function: decorateMapField]
+          },
+          Service: [Function: Service] {
+            className: 'Service',
+            fromJSON: [Function: fromJSON],
+            fromDescriptor: [Function: fromDescriptor]
+          },
+          Method: [Function: Method] {
+            className: 'Method',
+            fromJSON: [Function: fromJSON],
+            fromDescriptor: [Function: fromDescriptor]
+          },
+          Message: [Function: Message] {
+            create: [Function: create],
+            encode: [Function: encode],
+            encodeDelimited: [Function: encodeDelimited],
+            decode: [Function: decode],
+            decodeDelimited: [Function: decodeDelimited],
+            verify: [Function: verify],
+            fromObject: [Function: fromObject],
+            toObject: [Function: toObject]
+          },
+          wrappers: { '.google.protobuf.Any': [Object] },
+          types: {
+            basic: [Object: null prototype],
+            defaults: [Object: null prototype],
+            long: [Object: null prototype],
+            mapKey: [Object: null prototype],
+            packed: [Object: null prototype]
+          },
+          tokenize: [Function: tokenize] { unescape: [Function: unescape] },
+          parse: [Function: parse] { filename: null, defaults: [Object] },
+          common: [Function: common] {
+            'google/protobuf/any.proto': [Object],
+            'google/protobuf/duration.proto': [Object],
+            'google/protobuf/timestamp.proto': [Object],
+            'google/protobuf/empty.proto': [Object],
+            'google/protobuf/struct.proto': [Object],
+            'google/protobuf/wrappers.proto': [Object],
+            'google/protobuf/field_mask.proto': [Object],
+            get: [Function: get],
+            'google/protobuf/api.proto': [Object],
+            'google/protobuf/descriptor.proto': [Object],
+            'google/protobuf/source_context.proto': [Object],
+            'google/protobuf/type.proto': [Object]
+          },
+          descriptor: Namespace {
+            options: [Object],
+            parsedOptions: null,
+            name: 'protobuf',
+            _edition: 'proto2',
+            _defaultEdition: 'proto2',
+            _features: [Object],
+            _featuresResolved: true,
+            parent: [Namespace],
+            resolved: true,
+            comment: null,
+            filename: null,
+            nested: [Object],
+            _nestedArray: [Array],
+            _lookupCache: [Object: null prototype],
+            _needsRecursiveFeatureResolution: false,
+            _needsRecursiveResolve: false,
+            FileDescriptorSet: [Type],
+            Edition: [Object],
+            FileDescriptorProto: [Type],
+            DescriptorProto: [Type],
+            ExtensionRangeOptions: [Type],
+            FieldDescriptorProto: [Type],
+            OneofDescriptorProto: [Type],
+            EnumDescriptorProto: [Type],
+            EnumValueDescriptorProto: [Type],
+            ServiceDescriptorProto: [Type],
+            MethodDescriptorProto: [Type],
+            FileOptions: [Type],
+            MessageOptions: [Type],
+            FieldOptions: [Type],
+            OneofOptions: [Type],
+            EnumOptions: [Type],
+            EnumValueOptions: [Type],
+            ServiceOptions: [Type],
+            MethodOptions: [Type],
+            UninterpretedOption: [Type],
+            FeatureSet: [Type],
+            FeatureSetDefaults: [Type],
+            SourceCodeInfo: [Type],
+            GeneratedCodeInfo: [Type],
+            SymbolVisibility: [Object]
+          }
+        },
+        fallback: <ref *1> {
+          PathTemplate: [Getter],
+          routingHeader: { fromParams: [Function: fromParams] },
+          CallSettings: [Getter],
+          constructSettings: [Getter],
+          RetryOptions: [Getter],
+          createDefaultBackoffSettings: [Getter],
+          version: '4.6.1-fallback',
+          BundleDescriptor: [Getter],
+          LongrunningDescriptor: [Getter],
+          PageDescriptor: [Getter],
+          StreamDescriptor: [Getter],
+          StreamType: [Getter],
+          OperationsClient: [Getter],
+          IamClient: [Getter],
+          LocationsClient: [Getter],
+          makeUUID: [Getter],
+          defaultToObjectOptions: {
+            keepCase: false,
+            longs: [Function: String],
+            enums: [Function: String],
+            defaults: true,
+            oneofs: true
+          },
+          GrpcClient: [class GrpcClient] { protoCache: Map(0) {} },
+          operationsProtos: { google: [Object] },
+          IamProtos: { google: [Object] },
+          LocationProtos: { google: [Object] },
+          protobuf: {
+            build: 'full',
+            Writer: [Function],
+            BufferWriter: [Function],
+            Reader: [Function],
+            BufferReader: [Function],
+            util: [Object],
+            rpc: [Object],
+            roots: [Object],
+            configure: [Function: configure],
+            load: [Function: load],
+            loadSync: [Function: loadSync],
+            encoder: [Function: encoder],
+            decoder: [Function: decoder],
+            verifier: [Function: verifier],
+            converter: [Object],
+            ReflectionObject: [Function],
+            Namespace: [Function],
+            Root: [Function],
+            Enum: [Function],
+            Type: [Function],
+            Field: [Function],
+            OneOf: [Function],
+            MapField: [Function],
+            Service: [Function],
+            Method: [Function],
+            Message: [Function],
+            wrappers: [Object],
+            types: [Object],
+            tokenize: [Function],
+            parse: [Function],
+            common: [Function],
+            descriptor: [Namespace]
+          },
+          protobufMinimal: {
+            build: 'full',
+            Writer: [Function],
+            BufferWriter: [Function],
+            Reader: [Function],
+            BufferReader: [Function],
+            util: [Object],
+            rpc: [Object],
+            roots: [Object],
+            configure: [Function: configure],
+            load: [Function: load],
+            loadSync: [Function: loadSync],
+            encoder: [Function: encoder],
+            decoder: [Function: decoder],
+            verifier: [Function: verifier],
+            converter: [Object],
+            ReflectionObject: [Function],
+            Namespace: [Function],
+            Root: [Function],
+            Enum: [Function],
+            Type: [Function],
+            Field: [Function],
+            OneOf: [Function],
+            MapField: [Function],
+            Service: [Function],
+            Method: [Function],
+            Message: [Function],
+            wrappers: [Object],
+            types: [Object],
+            tokenize: [Function],
+            parse: [Function],
+            common: [Function],
+            descriptor: [Namespace]
+          },
+          warn: [Getter],
+          Operation: [Getter],
+          operation: [Getter],
+          GoogleError: [Getter],
+          fallback: [Circular *1],
+          lro: [Function: lro],
+          createApiCall: [Function: createApiCall]
+        },
+        makeUUID: [Getter],
+        ChannelCredentials: [Getter],
+        warn: [Getter],
+        serializer: { toProto3JSON: [Getter], fromProto3JSON: [Getter] },
+        lro: [Function: lro] {
+          SERVICE_ADDRESS: 'longrunning.googleapis.com',
+          ALL_SCOPES: []
+        }
+      }
+    },
+    _path: ResourcePath {
+      segments: [ 'dashboardData', 'match_data', 'leagues', '25' ]
+    },
+    _converter: {
+      toFirestore: [Function: toFirestore],
+      fromFirestore: [Function: fromFirestore]
+    }
+  },
+  operationType: 'set',
+  failedAttempts: 1
+}
+
+
+Node.js v25.9.0
+
+completed_at=2026-05-17T17:35:11.062Z
+exit_code=1
+
+completed_at=2026-05-17T17:35:11.062Z
+status=failed

@@ -63,6 +63,12 @@ npm.cmd run get:data
 ```
 This is a data-only operation. It must not commit, push, run a production build, or deploy; live customers receive the new data because the app reads Firestore only.
 
+`get:data` is the full slate builder and intentionally pulls the 7-day fixture window. For scheduled result checks, use the smaller time-aware path:
+```
+npm.cmd run get:data:results
+```
+The results path keeps a shrinking result checklist in `docs/agent-system/outputs/result_check_schedule_latest.md`, checks only unresolved matches whose kickoff time plus the completion buffer has passed, settles/backfills finished matches, prunes stale unresolved matches outside the result lookback window, runs result review/calibration, and uploads Firestore. When today/overdue matches remaining reaches zero, it seeds day+1 once instead of pulling the full 7-day window again.
+
 Use `npm.cmd run data:refresh:local` when Firestore credentials are not available. Do not add proxy/IP rotation to bypass provider controls; prefer API/fallback sources, caching, gentle sleeps, and backoff.
 
 **Prompt shortcut** — when the user says `get data`, `update data`, `refresh data`, `get latest data`, or similar, treat it as a request to run the full Firestore publish path from `C:\Betting\Soccer Stats`:

@@ -1,13 +1,13 @@
 {
-  "runId": "20260517T173825Z",
+  "runId": "20260517T173556Z",
   "mode": "results-only",
   "status": "ok",
-  "startedAt": "2026-05-17T17:38:25.937Z",
-  "completedAt": "2026-05-17T17:40:03.182Z",
+  "startedAt": "2026-05-17T17:35:56.559Z",
+  "completedAt": "2026-05-17T17:37:20.123Z",
   "paths": {
-    "json": "docs\\agent-system\\outputs\\get_data_20260517T173825Z.json",
-    "markdown": "docs\\agent-system\\outputs\\get_data_20260517T173825Z.md",
-    "transcript": "docs\\agent-system\\outputs\\get_data_20260517T173825Z.log"
+    "json": "docs\\agent-system\\outputs\\get_data_20260517T173556Z.json",
+    "markdown": "docs\\agent-system\\outputs\\get_data_20260517T173556Z.md",
+    "transcript": "docs\\agent-system\\outputs\\get_data_20260517T173556Z.log"
   },
   "steps": [
     {
@@ -21,12 +21,12 @@
       ],
       "status": "ok",
       "exitCode": 0,
-      "startedAt": "2026-05-17T17:38:25.938Z",
-      "completedAt": "2026-05-17T17:38:29.468Z",
-      "durationMs": 3531,
-      "stdout": "=== soccer_routine.py results-only � 2026-05-18 (Adelaide) ===\r\n  result_check_buffer_minutes=130\r\n  result_backfill_dates=2026-05-15, 2026-05-16, 2026-05-17, 2026-05-18\r\n  due_for_result_check=1\r\n\r\n[Results A] settle due pending matches\r\n  settled=0  skipped=0  not_due=91\r\n\r\n[Results B] backfill finished + enrich recent FT\r\n  added=0  enriched=1\r\n\r\n[Results C] protect resulted predictions\r\n  protected=379\r\n\r\n[Results D] prune stale unresolved matches\r\n  pruned=1\r\n  result_schedule=docs\\agent-system\\outputs\\result_check_schedule_20260518T030829+0930.md\r\n\r\n=== TOTAL: 470  FT: 379  upcoming: 91  | winner hit: 188  miss: 191  pending: 91 ===\r\n",
+      "startedAt": "2026-05-17T17:35:56.560Z",
+      "completedAt": "2026-05-17T17:36:00.123Z",
+      "durationMs": 3563,
+      "stdout": "=== soccer_routine.py results-only � 2026-05-18 (Adelaide) ===\r\n  result_check_buffer_minutes=130\r\n  result_backfill_dates=2026-05-15, 2026-05-16, 2026-05-17, 2026-05-18\r\n  due_for_result_check=1\r\n\r\n[Results A] settle due pending matches\r\n  settled=0  skipped=0  not_due=91\r\n\r\n[Results B] backfill finished + enrich recent FT\r\n  added=0  enriched=1\r\n\r\n[Results C] protect resulted predictions\r\n  protected=379\r\n  result_schedule=docs\\agent-system\\outputs\\result_check_schedule_20260518T030600+0930.md\r\n\r\n=== TOTAL: 471  FT: 379  upcoming: 92  | winner hit: 188  miss: 191  pending: 92 ===\r\n",
       "stderr": "",
-      "stdoutTail": "=== soccer_routine.py results-only � 2026-05-18 (Adelaide) ===\r\n  result_check_buffer_minutes=130\r\n  result_backfill_dates=2026-05-15, 2026-05-16, 2026-05-17, 2026-05-18\r\n  due_for_result_check=1\r\n\r\n[Results A] settle due pending matches\r\n  settled=0  skipped=0  not_due=91\r\n\r\n[Results B] backfill finished + enrich recent FT\r\n  added=0  enriched=1\r\n\r\n[Results C] protect resulted predictions\r\n  protected=379\r\n\r\n[Results D] prune stale unresolved matches\r\n  pruned=1\r\n  result_schedule=docs\\agent-system\\outputs\\result_check_schedule_20260518T030829+0930.md\r\n\r\n=== TOTAL: 470  FT: 379  upcoming: 91  | winner hit: 188  miss: 191  pending: 91 ===\r\n",
+      "stdoutTail": "=== soccer_routine.py results-only � 2026-05-18 (Adelaide) ===\r\n  result_check_buffer_minutes=130\r\n  result_backfill_dates=2026-05-15, 2026-05-16, 2026-05-17, 2026-05-18\r\n  due_for_result_check=1\r\n\r\n[Results A] settle due pending matches\r\n  settled=0  skipped=0  not_due=91\r\n\r\n[Results B] backfill finished + enrich recent FT\r\n  added=0  enriched=1\r\n\r\n[Results C] protect resulted predictions\r\n  protected=379\r\n  result_schedule=docs\\agent-system\\outputs\\result_check_schedule_20260518T030600+0930.md\r\n\r\n=== TOTAL: 471  FT: 379  upcoming: 92  | winner hit: 188  miss: 191  pending: 92 ===\r\n",
       "stderrTail": ""
     },
     {
@@ -39,9 +39,9 @@
       ],
       "status": "ok",
       "exitCode": 0,
-      "startedAt": "2026-05-17T17:38:29.469Z",
-      "completedAt": "2026-05-17T17:38:29.624Z",
-      "durationMs": 155,
+      "startedAt": "2026-05-17T17:36:00.123Z",
+      "completedAt": "2026-05-17T17:36:00.297Z",
+      "durationMs": 174,
       "stdout": "Result review written: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_result_review_current.md\r\nCSV: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_result_review_current.csv\r\nsettled_market_rows=1490 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the review agent can compare confidence bands to actual hit rate.\r\n",
       "stderr": "",
       "stdoutTail": "Result review written: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_result_review_current.md\r\nCSV: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_result_review_current.csv\r\nsettled_market_rows=1490 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the review agent can compare confidence bands to actual hit rate.\r\n",
@@ -57,9 +57,9 @@
       ],
       "status": "ok",
       "exitCode": 0,
-      "startedAt": "2026-05-17T17:38:29.624Z",
-      "completedAt": "2026-05-17T17:38:29.752Z",
-      "durationMs": 129,
+      "startedAt": "2026-05-17T17:36:00.297Z",
+      "completedAt": "2026-05-17T17:36:00.425Z",
+      "durationMs": 128,
       "stdout": "Model calibration written: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_calibration.json\r\nMarkdown: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_calibration.md\r\nmarket_adjustments=4 league_market_adjustments=8\r\n",
       "stderr": "",
       "stdoutTail": "Model calibration written: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_calibration.json\r\nMarkdown: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_calibration.md\r\nmarket_adjustments=4 league_market_adjustments=8\r\n",
@@ -74,13 +74,13 @@
       ],
       "status": "ok",
       "exitCode": 0,
-      "startedAt": "2026-05-17T17:38:29.754Z",
-      "completedAt": "2026-05-17T17:40:03.182Z",
-      "durationMs": 93428,
+      "startedAt": "2026-05-17T17:36:00.427Z",
+      "completedAt": "2026-05-17T17:37:20.123Z",
+      "durationMs": 79696,
       "stdout": "Uploaded C:\\Betting\\Soccer Stats\\match_data.json to Firestore dashboardData/match_data as 15 league docs and 31 date docs.\nUploaded fast dashboard doc dashboardData/match_data_fast.\n",
-      "stderr": "Retrying Firestore set dashboardData/match_data/leagues/25 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.000s,metadata filters: 0.374s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-04-22 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.000s,metadata filters: 0.374s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-04-23 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.000s,metadata filters: 0.374s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-04-25 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.000s,metadata filters: 0.374s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-04-26 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.000s,metadata filters: 0.374s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-04-28 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.000s,metadata filters: 0.374s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-02 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.000s,metadata filters: 0.374s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-03 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.000s,metadata filters: 0.374s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-04 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.000s,metadata filters: 0.374s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-05 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.000s,metadata filters: 0.374s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-09 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.000s,metadata filters: 0.374s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-10 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.000s,metadata filters: 0.374s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-11 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.000s,metadata filters: 0.374s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-12 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.000s,metadata filters: 0.374s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-14 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.000s,metadata filters: 0.374s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-16 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.000s,metadata filters: 0.374s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-17 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.000s,metadata filters: 0.374s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-18 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.000s,metadata filters: 0.374s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-19 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.000s,metadata filters: 0.374s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-20 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.000s,metadata filters: 0.374s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-25 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.013s,metadata filters: 0.107s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-04-27 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.013s,metadata filters: 0.107s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-13 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.013s,metadata filters: 0.107s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-15 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.013s,metadata filters: 0.107s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-24 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.013s,metadata filters: 0.107s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-22 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.013s,metadata filters: 0.107s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-04-29 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.013s,metadata filters: 0.107s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-04-30 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.013s,metadata filters: 0.107s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-06 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.013s,metadata filters: 0.107s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-07 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.013s,metadata filters: 0.107s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-21 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.013s,metadata filters: 0.107s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-23 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.013s,metadata filters: 0.107s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.013s,metadata filters: 0.107s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data_fast after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.013s,metadata filters: 0.107s,LB pick: 0.003s,remote_addr=142.250.195.170:443\n",
+      "stderr": "Retrying Firestore set dashboardData/match_data/dates/2026-05-11 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-12 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-14 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-16 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-17 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-18 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-19 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-20 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-25 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-04-27 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-13 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-15 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-24 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-22 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-04-29 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-04-30 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-06 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-07 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-21 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-23 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.010s,metadata filters: 0.030s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data_fast after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.010s,metadata filters: 0.030s,LB pick: 0.004s,remote_addr=142.250.195.170:443\n",
       "stdoutTail": "Uploaded C:\\Betting\\Soccer Stats\\match_data.json to Firestore dashboardData/match_data as 15 league docs and 31 date docs.\nUploaded fast dashboard doc dashboardData/match_data_fast.\n",
-      "stderrTail": "d after 60.000s,metadata filters: 0.374s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-14 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.000s,metadata filters: 0.374s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-16 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.000s,metadata filters: 0.374s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-17 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.000s,metadata filters: 0.374s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-18 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.000s,metadata filters: 0.374s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-19 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.000s,metadata filters: 0.374s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-20 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.000s,metadata filters: 0.374s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-25 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.013s,metadata filters: 0.107s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-04-27 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.013s,metadata filters: 0.107s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-13 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.013s,metadata filters: 0.107s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-15 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.013s,metadata filters: 0.107s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-24 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.013s,metadata filters: 0.107s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-22 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.013s,metadata filters: 0.107s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-04-29 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.013s,metadata filters: 0.107s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-04-30 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.013s,metadata filters: 0.107s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-06 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.013s,metadata filters: 0.107s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-07 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.013s,metadata filters: 0.107s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-21 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.013s,metadata filters: 0.107s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-23 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.013s,metadata filters: 0.107s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.013s,metadata filters: 0.107s,LB pick: 0.003s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data_fast after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.013s,metadata filters: 0.107s,LB pick: 0.003s,remote_addr=142.250.195.170:443\n"
+      "stderrTail": "d after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-14 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-16 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-17 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-18 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-19 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-20 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-25 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-04-27 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-13 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-15 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-24 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-22 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-04-29 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-04-30 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-06 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-07 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-21 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data/dates/2026-05-23 after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.001s,metadata filters: 0.164s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.010s,metadata filters: 0.030s,LB pick: 0.004s,remote_addr=142.250.195.170:443\nRetrying Firestore set dashboardData/match_data_fast after 4 DEADLINE_EXCEEDED: Deadline exceeded after 60.010s,metadata filters: 0.030s,LB pick: 0.004s,remote_addr=142.250.195.170:443\n"
     }
   ],
   "artifacts": {
@@ -89,11 +89,11 @@
       "capturedAt": "2026-05-18",
       "source": "sofascore.com",
       "leagueCount": 15,
-      "matchCount": 470,
+      "matchCount": 471,
       "largestLeagueDocBytes": 244202,
       "statusCounts": {
         "FT": 379,
-        "upcoming": 91
+        "upcoming": 92
       },
       "dateWindow": {
         "start": "2026-04-22",
@@ -101,29 +101,32 @@
       }
     },
     "resultSchedule": {
-      "generated_at": "2026-05-18T03:08:29.442264+09:30",
+      "generated_at": "2026-05-18T03:06:00.097196+09:30",
       "result_check_buffer_minutes": 130,
       "result_lookback_days": 3,
-      "due_count": 0,
-      "remaining_count": 26,
+      "due_count": 1,
+      "remaining_count": 27,
       "tomorrow_count": 1,
       "phase_summary": {
         "settled": [],
         "backfilled": 0,
         "enriched": 1,
-        "protected": 379,
-        "pruned": [
-          {
-            "league": "Eredivisie",
-            "date": "2026-05-02",
-            "time": "12:00",
-            "home": "Roda JC Kerkrade",
-            "away": "RKC Waalwijk",
-            "event_id": 16072838
-          }
-        ]
+        "protected": 379
       },
       "matches": [
+        {
+          "scope": "overdue",
+          "league": "Eredivisie",
+          "date": "2026-05-02",
+          "time": "12:00",
+          "home": "Roda JC Kerkrade",
+          "away": "RKC Waalwijk",
+          "status": "upcoming",
+          "kickoff_at": "2026-05-02T12:00:00+09:30",
+          "check_after": "2026-05-02T14:10:00+09:30",
+          "due_for_check": true,
+          "event_id": 16072838
+        },
         {
           "scope": "today",
           "league": "Serie A",

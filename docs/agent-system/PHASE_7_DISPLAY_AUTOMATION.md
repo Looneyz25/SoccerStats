@@ -33,9 +33,17 @@ For normal daily operations, use:
 npm.cmd run get:data
 ```
 
-This is a data-only refresh. It runs the routine, updates generated local artifacts and phase outputs, and uploads `match_data.json` to Firestore as small per-league documents through `scripts/upload_match_data_to_firestore.mjs`.
+This is the full data-only refresh. It runs the routine across the 7-day fixture window, updates generated local artifacts and phase outputs, and uploads `match_data.json` to Firestore as small per-league documents through `scripts/upload_match_data_to_firestore.mjs`.
 
 It must not commit, push, build, or deploy unless the user explicitly asks for those steps. If Firestore credentials are missing, the local data refresh can still complete, but the upload will fail with instructions to restore `.secrets/firebase-service-account.json` or configure `GOOGLE_APPLICATION_CREDENTIALS` / `FIREBASE_SERVICE_ACCOUNT_JSON`.
+
+For scheduled result checks, use:
+
+```powershell
+npm.cmd run get:data:results
+```
+
+This is the smaller automation loop after the initial 7-day pull. It writes `docs/agent-system/outputs/result_check_schedule_latest.md`, checks only unresolved matches whose kickoff time plus the completion buffer has passed, settles/backfills finished matches, prunes stale unresolved matches outside the result lookback window, runs result review/calibration, and uploads Firestore. Each run should reduce the today/overdue remaining count as matches become `FT`. When that count reaches zero, it seeds day+1 once instead of re-running the full 7-day pull.
 
 ## Required Agents
 
