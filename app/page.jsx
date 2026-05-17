@@ -51,18 +51,18 @@ function ProductPreview() {
   ];
 
   return (
-    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[58%] overflow-hidden sm:h-[70%] lg:inset-y-16 lg:left-auto lg:right-0 lg:h-auto lg:w-[58%]">
+    <div className="relative mt-8 h-[20rem] overflow-hidden sm:h-[24rem] lg:pointer-events-none lg:absolute lg:inset-y-16 lg:left-auto lg:right-0 lg:mt-0 lg:h-auto lg:w-[58%]">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_65%_35%,rgba(15,118,110,0.14),transparent_32%)]" />
-      <div className="absolute bottom-[-5rem] right-[-5rem] w-[44rem] max-w-[115vw] rotate-[-3deg] rounded-lg border border-line bg-white/95 shadow-panel">
+      <div className="absolute bottom-[-2.5rem] left-3 right-3 rotate-[-2deg] rounded-lg border border-line bg-white/95 shadow-panel sm:left-auto sm:right-[-2rem] sm:w-[36rem] lg:bottom-[-5rem] lg:right-[-5rem] lg:w-[44rem] lg:max-w-[115vw] lg:rotate-[-3deg]">
         <div className="border-b border-line px-4 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-3">
             <div>
               <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">Live model desk</div>
-              <div className="mt-1 text-xl font-semibold text-ink">Prediction slate</div>
+              <div className="mt-1 text-lg font-semibold text-ink sm:text-xl">Prediction slate</div>
             </div>
-            <div className="rounded-md bg-ink px-3 py-2 text-sm font-semibold text-white">Today</div>
+            <div className="shrink-0 rounded-md bg-ink px-3 py-2 text-sm font-semibold text-white">Today</div>
           </div>
-          <div className="mt-4 grid grid-cols-3 gap-2">
+          <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
             {metrics.map((metric) => (
               <div key={metric.label} className="rounded-md border border-line bg-field px-3 py-2">
                 <div className="text-xs text-slate-500">{metric.label}</div>
@@ -73,11 +73,11 @@ function ProductPreview() {
         </div>
         <div className="grid gap-2 p-3">
           {rows.map((row) => (
-            <div key={`${row[0]}-${row[1]}`} className="grid grid-cols-[7rem_1fr_1fr_5rem_4rem] items-center gap-2 rounded-md border border-line bg-white px-3 py-3 text-sm">
+            <div key={`${row[0]}-${row[1]}`} className="grid grid-cols-[minmax(0,1fr)_4.5rem] items-center gap-2 rounded-md border border-line bg-white px-3 py-3 text-sm sm:grid-cols-[7rem_1fr_1fr_5rem_4rem]">
               <span className="truncate text-xs font-semibold uppercase tracking-wide text-slate-500">{row[0]}</span>
-              <span className="truncate font-semibold text-ink">{row[1]}</span>
-              <span className="truncate font-semibold text-ink">{row[2]}</span>
-              <span className="rounded bg-field px-2 py-1 text-center text-xs font-semibold text-signal">{row[3]}</span>
+              <span className="hidden truncate font-semibold text-ink sm:block">{row[1]}</span>
+              <span className="hidden truncate font-semibold text-ink sm:block">{row[2]}</span>
+              <span className="hidden rounded bg-field px-2 py-1 text-center text-xs font-semibold text-signal sm:block">{row[3]}</span>
               <span className="text-right font-semibold text-ink">{row[4]}</span>
             </div>
           ))}
@@ -90,8 +90,7 @@ function ProductPreview() {
 export default function LandingPage() {
   return (
     <main className="min-h-screen bg-field text-ink">
-      <section className="relative min-h-[92vh] overflow-hidden border-b border-line bg-white">
-        <ProductPreview />
+      <section className="relative overflow-hidden border-b border-line bg-white lg:min-h-[92vh]">
         <header className="relative z-10 mx-auto flex max-w-7xl items-center justify-end px-4 py-5 lg:px-8">
           <Link
             href="/dashboard/"
@@ -102,8 +101,8 @@ export default function LandingPage() {
           </Link>
         </header>
 
-        <div className="relative z-10 mx-auto flex max-w-7xl px-4 pb-24 pt-14 sm:pt-24 lg:px-8">
-          <div className="max-w-2xl">
+        <div className="relative z-10 mx-auto flex max-w-7xl flex-col px-4 pb-10 pt-8 sm:pt-16 lg:block lg:px-8 lg:pb-24 lg:pt-24">
+          <div className="max-w-2xl lg:pb-24">
             <div className="inline-flex items-center gap-2 rounded-md border border-line bg-field px-3 py-2 text-sm font-semibold text-signal">
               <Activity className="h-4 w-4" />
               Stats-led football picks across Europe&apos;s top leagues
@@ -134,6 +133,7 @@ export default function LandingPage() {
               </a>
             </div>
           </div>
+          <ProductPreview />
         </div>
       </section>
 
