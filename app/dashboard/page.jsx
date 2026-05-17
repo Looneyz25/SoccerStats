@@ -3388,8 +3388,9 @@ function PredictionSummaryCard({ match, allMatches }) {
             <span className="min-w-0 leading-5 text-slate-600">
               {row.text}
               {row.result && row.result !== 'miss' && (
-                <span className={`ml-2 inline-flex rounded-md px-2 py-0.5 text-xs font-semibold ${resultBadgeClass(row.result)}`}>
-                  {row.result}
+                <span className={`ml-2 inline-flex items-center gap-1 whitespace-nowrap rounded-md px-2 py-0.5 align-baseline text-xs font-semibold leading-none ${resultBadgeClass(row.result)}`}>
+                  {resultIcon(row.result)}
+                  <span>{row.result}</span>
                 </span>
               )}
             </span>
@@ -3912,6 +3913,7 @@ function HomeInner() {
       setData(cached);
       setError('');
     }
+    const hasUsableData = Boolean(data && Array.isArray(data.leagues) && data.leagues.length);
     loadMatchData(cacheDate)
       .then((nextData) => {
         if (cancelled) return;
@@ -3919,7 +3921,7 @@ function HomeInner() {
         setError('');
       })
       .catch(() => {
-        if (!cancelled && !(cached && Array.isArray(cached.leagues) && cached.leagues.length)) {
+        if (!cancelled && !hasUsableData && !(cached && Array.isArray(cached.leagues) && cached.leagues.length)) {
           setError('Could not load Firestore match data. Try refreshing in a moment.');
         }
       });
