@@ -409,23 +409,37 @@ function formatOddsTotal(value) {
 
 function formatMarketDetail(market) {
   if (!market) return '-';
-  if (market.pick === 'Pass') return 'Pass';
   return market.line ? `${market.pick} ${market.line}` : market.pick || '-';
 }
 
-function displayBttsMarket(market) {
+function displayBttsMarket(market, match = null) {
   if (!market) return null;
-  const threshold = Number(market.take_threshold || 0.56);
-  const probability = Number(market.probability);
-  if ((market.pick === 'Yes' || market.pick === 'No') && Number.isFinite(probability) && probability < threshold) {
-    return {
-      ...market,
-      pick: 'Pass',
-      result: market.result === 'hit' || market.result === 'miss' ? 'pass' : market.result,
-      take_threshold: threshold,
-    };
-  }
-  return market;
+  const f = match?.predictions?.factors || {};
+  const probs = poissonMarketProbabilities(
+    Number(f.lambda_home),
+    Number(f.lambda_away),
+    Number(f.dixon_coles_rho) || 0,
+  );
+  const pYes = probs?.bttsYes;
+  const nextPick = Number.isFinite(pYes)
+    ? pYes > 0.56 ? 'Yes' : 'No'
+    : market.pick === 'Pass' ? 'No' : market.pick;
+  if (nextPick === market.pick && market.pick !== 'Pass') return market;
+
+  const probability = Number.isFinite(pYes)
+    ? nextPick === 'Yes' ? pYes : 1 - pYes
+    : Number(market.probability);
+  const actual = market.actual_btts;
+  const result = typeof actual === 'boolean'
+    ? (nextPick === 'Yes') === actual ? 'hit' : 'miss'
+    : market.result === 'pass' ? undefined : market.result;
+
+  return {
+    ...market,
+    pick: nextPick,
+    probability: Number.isFinite(probability) ? Number(probability.toFixed(4)) : market.probability,
+    result,
+  };
 }
 
 function parseStreakRatio(value) {
@@ -782,7 +796,6 @@ function modelVsBookmakerComparison(match, marketKey, market) {
   }
 
   if (marketKey === 'btts' && probs) {
-    if (market.pick === 'Pass') return null;
     const modelProb = market.pick === 'No' ? 1 - probs.bttsYes : probs.bttsYes;
     return comparisonFromPrices({ title: 'BTTS', modelProb, marketOdds: Number(market.odds) });
   }
@@ -1435,7 +1448,7 @@ function winnerRationale(match, allMatches) {
 }
 
 function bttsRationale(match) {
-  const b = displayBttsMarket(match.predictions?.btts);
+  const b = displayBttsMarket(match.predictions?.btts, match);
   const f = match.predictions?.factors || {};
   if (!b) return null;
   const lh = Number(f.lambda_home);
@@ -1443,10 +1456,7 @@ function bttsRationale(match) {
   const parts = [];
   if (Number.isFinite(lh) && Number.isFinite(la)) {
     const pBoth = (1 - Math.exp(-lh)) * (1 - Math.exp(-la));
-    if (b.pick === 'Pass') {
-      const threshold = Number(b.take_threshold || 0.56);
-      parts.push(`${(pBoth * 100).toFixed(0)}% chance both teams score is below the ${(threshold * 100).toFixed(0)}% take line`);
-    } else if (b.pick === 'No') {
+    if (b.pick === 'No') {
       parts.push(`${((1 - pBoth) * 100).toFixed(0)}% chance at least one team blanks`);
     } else {
       parts.push(`${(pBoth * 100).toFixed(0)}% chance both teams score`);
@@ -2510,7 +2520,7 @@ function PredictionSummaryCard({ match, allMatches }) {
   const quality = confidence.quality;
   const winner = predictions.winner;
   const winnerComparison = modelVsBookmakerComparison(matchWithContext, 'winner', winner);
-  const displayBtts = displayBttsMarket(predictions.btts);
+  const displayBtts = displayBttsMarket(predictions.btts, match);
   const bttsComparison = modelVsBookmakerComparison(match, 'btts', displayBtts);
   const goalsComparison = modelVsBookmakerComparison(match, 'ou_goals', predictions.ou_goals);
   const displayCards = cardsMarketWithModelProbability(match, allMatches);
@@ -2525,7 +2535,7 @@ function PredictionSummaryCard({ match, allMatches }) {
     const line = predictions.ou_goals.line ?? 2.5;
     headlineParts.push(`${predictions.ou_goals.pick} ${line} goals`);
   }
-  if (displayBtts?.pick && displayBtts.pick !== 'Pass') {
+  if (displayBtts?.pick) {
     headlineParts.push(displayBtts.pick === 'Yes' ? 'both teams to score' : 'one team blanks');
   }
   if (displayCards?.pick) {
@@ -2737,7 +2747,7 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches }) {
   const selectedBookmaker = BOOKMAKERS[bookmakerId] || BOOKMAKERS.sportsbet;
   const hasDirectBookmakerLink = hasDirectBookmakerMatchLink(match, selectedBookmaker.id);
   const winnerComparison = modelVsBookmakerComparison(matchWithContext, 'winner', predictions.winner);
-  const displayBtts = displayBttsMarket(predictions.btts);
+  const displayBtts = displayBttsMarket(predictions.btts, match);
   const bttsComparison = modelVsBookmakerComparison(match, 'btts', displayBtts);
   const goalsComparison = modelVsBookmakerComparison(match, 'ou_goals', predictions.ou_goals);
   const displayCards = cardsMarketWithModelProbability(match, allMatches);

@@ -156,7 +156,7 @@ for (const match of matches) {
   if (winnerIssue) issues.push({ id: match.id, market: 'winner', issue: winnerIssue });
 
   for (const [key, allowed] of [
-    ['btts', ['Yes', 'No', 'Pass']],
+    ['btts', ['Yes', 'No']],
     ['ou_goals', ['Over', 'Under']],
     ['ou_cards', ['Over', 'Under']],
   ]) {
