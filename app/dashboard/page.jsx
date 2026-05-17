@@ -472,6 +472,14 @@ function marketProbabilityFromTotalAverage(market, averageTotal) {
   return null;
 }
 
+function modelProbabilityForMarket(market) {
+  for (const key of ['model_probability', 'probability']) {
+    const value = Number(market?.[key]);
+    if (Number.isFinite(value) && value > 0 && value < 1) return value;
+  }
+  return NaN;
+}
+
 function cornerBookmakerOdds(match, line, pick) {
   const lineKey = String(line ?? 10.5);
   const lineOdds = match.corner_odds?.[lineKey] || match.corner_odds?.[Number(line).toFixed(1)];
@@ -543,12 +551,13 @@ function cornerMarketFromStreaks(match, allMatches = []) {
   const available = [homeCorners, awayCorners].filter(Boolean);
   const average = available.length ? available.reduce((sum, item) => sum + item.avg, 0) / available.length : null;
   const selected = { pick: best.pick, line: best.line };
+  const averageProbability = marketProbabilityFromTotalAverage(selected, average);
   return {
     pick: best.pick,
     line: best.line,
     odds: best.odds || cornerBookmakerOdds(match, best.line, best.pick),
     actual,
-    model_probability: marketProbabilityFromTotalAverage(selected, average),
+    model_probability: Number.isFinite(averageProbability) ? averageProbability : best.ratio?.rate,
     model_average_total: average,
     result: marketResultFromActual(best, actual),
     sourceLabel: best.label,
@@ -788,7 +797,7 @@ function modelVsBookmakerComparison(match, marketKey, market) {
     const line = market.line ?? 4.5;
     return comparisonFromPrices({
       title: `${market.pick || 'Cards'} ${line} Cards`,
-      modelProb: Number(market.model_probability),
+      modelProb: modelProbabilityForMarket(market),
       marketOdds: Number(market.odds),
       fallbackLabel: 'Trend pick',
     });
@@ -798,7 +807,7 @@ function modelVsBookmakerComparison(match, marketKey, market) {
     const line = market.line ?? 10.5;
     return comparisonFromPrices({
       title: `${market.pick || 'Corners'} ${line} Corners`,
-      modelProb: Number(market.model_probability),
+      modelProb: modelProbabilityForMarket(market),
       marketOdds: Number(market.odds),
       fallbackLabel: 'Trend pick',
     });
