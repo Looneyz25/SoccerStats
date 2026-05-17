@@ -9,16 +9,19 @@ as `flashscore_score` so soccer_routine.py's Phase A can settle from it as a hin
 Format: each event is a record terminated by `~`. Inside a record, fields are
 `KEY÷VALUE` separated by `¬`. Useful keys per event:
   AA = match id (Flashscore's, not SofaScore's)
-  AT, AE = home/away team names (note: Flashscore uses different keys in some feeds)
+  AE/CX/FH = home team name (Flashscore varies keys between feeds)
+  AF/FK = away team name
   AG, AH = home/away current score
   AD = start timestamp (UTC)
   AB = match status code (`3` = finished)
 """
 import json
+import os
 import pathlib
 import random
 import re
 import time
+import urllib.parse
 from datetime import datetime, timedelta, timezone
 
 from curl_cffi import requests
@@ -31,20 +34,44 @@ ADL = timezone(timedelta(hours=9, minutes=30))
 _PROFILES = ["chrome120", "chrome124", "chrome131", "chrome116", "edge101", "safari17_0"]
 def _profile(): return random.choice(_PROFILES)
 
-FEED_URL = "https://2.flashscore.ninja/2/x/feed/f_1_0_3_en-uk_1"
+DEFAULT_FEED_URLS = (
+    "https://www.flashscore.com.au/x/feed/f_1_0_3_en-au_1",
+    "https://www.flashscore.com.au/x/feed/f_1_0_2_en-au_1",
+    "https://www.flashscore.com/x/feed/f_1_0_3_en-uk_1",
+    "https://2.flashscore.ninja/2/x/feed/f_1_0_3_en-uk_1",
+)
+FEED_URLS = tuple(
+    url.strip()
+    for url in os.environ.get("FLASHSCORE_FEED_URLS", "").split(",")
+    if url.strip()
+) or DEFAULT_FEED_URLS
+LAST_FEED_URL = FEED_URLS[0]
+
+
+def feed_headers(url):
+    parsed = urllib.parse.urlsplit(url)
+    origin = f"{parsed.scheme}://{parsed.netloc}"
+    return {
+        "X-Fsign": "SW9D1eZo",
+        "Referer": origin + "/",
+        "Origin": origin,
+    }
 
 
 def fetch_feed():
-    headers = {
-        "X-Fsign": "SW9D1eZo",
-        "Referer": "https://www.flashscore.com/",
-        "Origin": "https://www.flashscore.com",
-    }
-    r = requests.get(FEED_URL, impersonate=_profile(), timeout=20, headers=headers)
-    if r.status_code != 200:
-        print(f"Flashscore feed returned {r.status_code}")
-        return None
-    return r.text
+    global LAST_FEED_URL
+    errors = []
+    for url in FEED_URLS:
+        try:
+            r = requests.get(url, impersonate=_profile(), timeout=20, headers=feed_headers(url))
+            if r.status_code == 200:
+                LAST_FEED_URL = url
+                return r.text
+            errors.append(f"{url}: HTTP {r.status_code}")
+        except Exception as exc:
+            errors.append(f"{url}: {exc}")
+    print("Flashscore feeds failed: " + " | ".join(errors))
+    return None
 
 
 def parse_feed(raw):
@@ -77,8 +104,8 @@ def parse_feed(raw):
             "id": fields.get("AA"),
             "league": league_name or "",
             "country": league_country or "",
-            "home": fields.get("AT") or fields.get("FH") or "",
-            "away": fields.get("AE") or fields.get("FK") or "",
+            "home": fields.get("AE") or fields.get("CX") or fields.get("FH") or "",
+            "away": fields.get("AF") or fields.get("FK") or "",
             "home_score": fields.get("AG"),
             "away_score": fields.get("AH"),
             "status": fields.get("AB") or fields.get("AC") or "",
@@ -167,7 +194,7 @@ def main():
         return
     events = parse_feed(raw)
     finished = [e for e in events if e.get("status") == "3" and e.get("home_score") and e.get("away_score")]
-    print(f"  parsed {len(events)} events, {len(finished)} finished")
+    print(f"  parsed {len(events)} events, {len(finished)} finished from {LAST_FEED_URL}")
 
     today = datetime.now(ADL).date().isoformat()
     matched = 0

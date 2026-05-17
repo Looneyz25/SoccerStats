@@ -45,7 +45,19 @@ THESPORTSDB_KEY_ENV = ("THESPORTSDB_KEY", "THESPORTSDB_API_KEY")
 THESPORTSDB_DEFAULT_KEY = "123"
 THESPORTSDB_BASE = "https://www.thesportsdb.com/api/v1/json"
 LOCAL_TZ = "Australia/Adelaide"
-FLASHSCORE_FEED_URL = "https://2.flashscore.ninja/2/x/feed/f_1_0_3_en-uk_1"
+DEFAULT_FLASHSCORE_FEED_URLS = (
+    "https://www.flashscore.com.au/x/feed/f_1_0_3_en-au_1",
+    "https://www.flashscore.com.au/x/feed/f_1_0_2_en-au_1",
+    "https://www.flashscore.com/x/feed/f_1_0_3_en-uk_1",
+    "https://2.flashscore.ninja/2/x/feed/f_1_0_3_en-uk_1",
+)
+FLASHSCORE_FEED_URLS = tuple(
+    url.strip()
+    for url in os.environ.get("FLASHSCORE_FEED_URLS", "").split(",")
+    if url.strip()
+) or DEFAULT_FLASHSCORE_FEED_URLS
+FLASHSCORE_FEED_URL = FLASHSCORE_FEED_URLS[0]
+LAST_FLASHSCORE_FEED_URL = FLASHSCORE_FEED_URL
 
 # API-Football league IDs. The legacy IDs match the existing project league IDs.
 LEAGUES = [
@@ -285,18 +297,30 @@ def fetch_api_fixtures(day, league, key):
         return json.loads(resp.read().decode("utf-8"))
 
 
+def flashscore_headers(url):
+    parsed = urllib.parse.urlsplit(url)
+    origin = f"{parsed.scheme}://{parsed.netloc}"
+    return {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        "Accept": "*/*",
+        "X-Fsign": "SW9D1eZo",
+        "Referer": origin + "/",
+        "Origin": origin,
+    }
+
+
 def fetch_flashscore_feed():
-    req = urllib.request.Request(
-        FLASHSCORE_FEED_URL,
-        headers={
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-            "X-Fsign": "SW9D1eZo",
-            "Referer": "https://www.flashscore.com/",
-            "Origin": "https://www.flashscore.com",
-        },
-    )
-    with urllib.request.urlopen(req, timeout=25) as resp:
-        return resp.read().decode("utf-8", errors="replace")
+    global LAST_FLASHSCORE_FEED_URL
+    errors = []
+    for url in FLASHSCORE_FEED_URLS:
+        req = urllib.request.Request(url, headers=flashscore_headers(url))
+        try:
+            with urllib.request.urlopen(req, timeout=25) as resp:
+                LAST_FLASHSCORE_FEED_URL = url
+                return resp.read().decode("utf-8", errors="replace")
+        except Exception as exc:
+            errors.append(f"{url}: {exc}")
+    raise RuntimeError("Flashscore feeds failed: " + " | ".join(errors))
 
 
 def flashscore_fields(chunk):
@@ -396,7 +420,7 @@ def rows_from_flashscore(start_date, days, run_ts):
         return [], [{
             "run_timestamp": run_ts,
             "source": "Flashscore",
-            "endpoint": FLASHSCORE_FEED_URL,
+            "endpoint": ", ".join(FLASHSCORE_FEED_URLS),
             "date": "",
             "league": "",
             "source_health": "blocked",
@@ -469,7 +493,7 @@ def rows_from_flashscore(start_date, days, run_ts):
     return rows, [{
         "run_timestamp": run_ts,
         "source": "Flashscore",
-        "endpoint": FLASHSCORE_FEED_URL,
+        "endpoint": LAST_FLASHSCORE_FEED_URL,
         "date": f"{min(allowed_dates)} to {max(allowed_dates)}" if allowed_dates else "",
         "league": "listed leagues",
         "source_health": health,

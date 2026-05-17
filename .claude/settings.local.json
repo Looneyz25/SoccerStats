@@ -55,7 +55,10 @@
       "Bash(python -c \"import numpy; print\\('numpy', numpy.__version__\\)\")",
       "Bash(python scripts/soccer_backtest_confidence_filter.py)",
       "Bash(npx tsc *)",
-      "PowerShell(Get-NetTCPConnection -LocalPort 3001 -ErrorAction SilentlyContinue)"
+      "PowerShell(Get-NetTCPConnection -LocalPort 3001 -ErrorAction SilentlyContinue)",
+      "Bash(git fetch *)",
+      "Bash(python -c \"import json; d=json.load\\(open\\('match_data.json', encoding='utf-8'\\)\\); from collections import Counter; c=Counter\\(\\); [c.update\\([m.get\\('date',''\\)]\\) for L in d.get\\('leagues',[]\\) for m in \\(L.get\\('matches'\\) or []\\) if m.get\\('status'\\)=='FT']; [print\\(k, c[k]\\) for k in sorted\\(c\\) if k]\")",
+      "Bash(python -c \"import json; d=json.load\\(open\\('match_data.json',encoding='utf-8'\\)\\); print\\('total matches:', sum\\(len\\(L.get\\('matches'\\) or []\\) for L in d.get\\('leagues',[]\\)\\)\\); print\\('finished:', sum\\(1 for L in d.get\\('leagues',[]\\) for m in \\(L.get\\('matches'\\) or []\\) if m.get\\('status'\\)=='FT'\\)\\)\")"
     ]
   }
 }
