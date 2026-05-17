@@ -95,6 +95,10 @@ Phase 1 must produce `docs/agent-system/outputs/Phase1_Fixture_Slate.xlsx` with 
 - Treat Understat xG as high-value enrichment when matched, but do not block analysis if unavailable.
 - Never claim certainty. Use probability, fair odds, market odds, edge, and confidence.
 - Separate model picks from value picks. A likely winner is not automatically a bet.
+- For two-way totals such as goals, cards, and corners, display the side with the stronger model probability. If the current side is below 50%, flip the recommendation to the opposite side on the same line and keep the weaker side as a caution signal. If only the opposite bookmaker price exists, label any inverse price as estimated. Completed-match hit rates and odds totals must use this same guided side.
+- The dashboard headline hit rate should summarize all settled visible markets after guidance, not only the winner market.
+- For winner markets, apply a conservative market guard: do not keep a low-conviction model side when the 1X2 bookmaker favourite is clearly stronger and match context supports the favourite. Display and settle the guided winner side.
+- Match-card display should place the original winner prediction and model percentage on the predicted team card, or on the centre draw chip for draw picks, and highlight that card by hit/miss. BTTS, goals, cards, and corners should remain compact one-row cards.
 
 ## Agent Definition Files
 

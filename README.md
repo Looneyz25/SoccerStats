@@ -135,6 +135,16 @@ Fixture source order:
 3. TheSportsDB v1 free API using `THESPORTSDB_KEY`, `THESPORTSDB_API_KEY`, or the documented free key `123`
 4. Local `match_data.json` fallback
 
+## Prediction Display Rules
+
+- For two-way totals such as goals, cards, and corners, show the side with the stronger model probability.
+- If a displayed total side is below 50%, flip the visible recommendation to the opposite side on the same line. Example: `Over 4.5 cards` at 44% should display as `Under 4.5 cards` at 56%.
+- Only show bookmaker odds as direct prices when they belong to the exact visible side and line. If the UI derives an inverse price from the opposite side, label it as estimated.
+- Completed-match summaries and hit-rate reviews must score two-way totals against the guided visible side, not the weaker raw side.
+- The dashboard headline hit rate is the settled market hit rate across all visible guided markets, not winner-only accuracy.
+- Winner picks use a market guard: when a model winner is below 50% or only narrowly ahead and the bookmaker favourite is clearly stronger with supporting context, the visible pick should switch to the bookmaker-backed side and completed results should be scored from that guided winner.
+- Match cards show the original winner prediction and model percentage directly on the predicted team card, or on the centre draw chip for draw picks. The highlighted card reflects the winner prediction hit/miss; BTTS, goals, cards, and corners stay as compact one-row market cards.
+
 ## Legacy Files
 
 - `Soccer_Stats_Dashboard.xlsx` - source workbook

@@ -17,6 +17,15 @@ The frontend lives in [app/page.jsx](app/page.jsx) (App Router) with Tailwind st
 | PWA assets | [public/](public/) (manifest, icons) |
 | App Hosting env vars (public) | [apphosting.yaml](apphosting.yaml) |
 
+## Prediction display rules
+
+- For two-way total markets such as goals, cards, and corners, guide the customer to the side with the stronger model probability. If the stored/displayed side is below 50%, flip the visible recommendation to the opposite side and treat the original side as a caution or conflict note.
+- Do not make customers infer inverse markets from weak probabilities. A visible `Over 4.5` cards model at 44% should be shown as `Under 4.5` cards at 56% when the line is the same.
+- Keep bookmaker odds tied to the exact visible side and line. If only the opposite-side price is available, an estimated inverse price may be shown, but it must be labelled as estimated and never treated as a direct bookmaker quote.
+- Apply the same guided two-way total logic to completed matches, results review, hit-rate summaries, and odds hit/loss totals so settled cards/corners are scored against the visible guided side.
+- For winner markets, do not promote a low-conviction model lean against a strong 1X2 market. If the selected side is below 50% model probability or only narrowly ahead, and the bookmaker favourite is clearly stronger with context support such as no exact H2H or poor picked-team form, guide the visible winner to the bookmaker-backed side and rescore completed results from that guided side.
+- On match cards, show the original winner prediction and model percentage on the predicted team card (or the centre draw chip), and highlight that card by hit/miss. Do not render a separate winner market tile. Keep BTTS, goals, cards, and corners as compact one-row market cards.
+
 ## Deploy
 
 **Live site uses Firebase App Hosting** — deploys automatically on `git push origin main`.
