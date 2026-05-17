@@ -38,6 +38,10 @@ READY = "ready_for_phase_5"
 HOME_ADV = 0.20
 GRID = 7
 LAMBDA_FLOOR = 0.20
+WINNER_BOOKMAKER_BLEND = 0.40
+DRAW_MIN_PROBABILITY = 0.28
+DRAW_MAX_HOME_AWAY_GAP = 0.15
+DRAW_MAX_FAVOURITE_GAP = 0.15
 
 
 def load_model_calibration():
@@ -78,6 +82,45 @@ def to_float(value):
         return float(value)
     except (TypeError, ValueError):
         return None
+
+
+def normalize_three_way(home, draw, away):
+    total = home + draw + away
+    if total <= 0:
+        return {"p_home": 1 / 3, "p_draw": 1 / 3, "p_away": 1 / 3}
+    return {"p_home": home / total, "p_draw": draw / total, "p_away": away / total}
+
+
+def bookmaker_probabilities(market):
+    prices = {side: to_float(market.get(side)) for side in ("home", "draw", "away")}
+    if any(value is None or value <= 1.01 for value in prices.values()):
+        return None
+    probs = normalize_three_way(1 / prices["home"], 1 / prices["draw"], 1 / prices["away"])
+    return {side: probs[f"p_{side}"] for side in ("home", "draw", "away")}
+
+
+def blend_with_bookmaker(probs, market, weight=WINNER_BOOKMAKER_BLEND):
+    bookmaker = bookmaker_probabilities(market)
+    if not bookmaker:
+        return probs, None
+    blended = {}
+    for side in ("home", "draw", "away"):
+        blended[f"p_{side}"] = (probs[f"p_{side}"] * (1 - weight)) + (bookmaker[side] * weight)
+    return normalize_three_way(blended["p_home"], blended["p_draw"], blended["p_away"]), bookmaker
+
+
+def choose_winner_side(probs):
+    home = probs["p_home"]
+    draw = probs["p_draw"]
+    away = probs["p_away"]
+    favourite = max(home, away)
+    if (
+        draw >= DRAW_MIN_PROBABILITY
+        and abs(home - away) <= DRAW_MAX_HOME_AWAY_GAP
+        and favourite - draw <= DRAW_MAX_FAVOURITE_GAP
+    ):
+        return "draw"
+    return max(("home", "draw", "away"), key=lambda k: probs[f"p_{k}"])
 
 
 def poisson_pmf(k, lam):
@@ -287,9 +330,6 @@ def main():
 
         raw_probs = aggregate(score_grid(lh, la))
         probs, winner_cal = apply_three_way_calibration(raw_probs, out["league"])
-        out.update(probs)
-        out.update(fair_odds(probs))
-        out["model_pick"] = max(("home", "draw", "away"), key=lambda k: probs[f"p_{k}"])
 
         market = {}
         p2_row = p2.get(out["event_id"])
@@ -299,11 +339,17 @@ def main():
                 if v:
                     market[side] = v
                     out[f"market_{side}"] = v
+        probs, bookmaker_probs = blend_with_bookmaker(probs, market)
+        out.update(probs)
+        out.update(fair_odds(probs))
+        out["model_pick"] = choose_winner_side(probs)
         out.update(edge(probs, market))
 
         if all(side in market for side in ("home", "draw", "away")):
             out["phase4_status"] = READY
             note = "Probabilities + fair odds attached; market joined."
+            if bookmaker_probs:
+                note += f" Winner blended with no-vig bookmaker probabilities at {WINNER_BOOKMAKER_BLEND:.0%} weight."
         else:
             out["phase4_status"] = "model_only"
             note = "Probabilities computed but Phase 2 odds incomplete; no edge."

@@ -6,6 +6,8 @@ Use this phase when the prompt asks to get fixtures, refresh the slate, gather m
 
 Collect fixtures for the listed leagues only, validate the source endpoint behavior, store all fixture dates/times in Australia/Adelaide local time, and produce a clean fixture slate that later agents can trust.
 
+Default run window: 7 Adelaide-local calendar days, starting today. Override only for targeted checks with `SOCCER_FIXTURE_DAYS` or `--days`.
+
 Phase 1 is a `run_daily` foundation phase. It does not form streaks, predictions, value picks, or stakes.
 
 ## Listed Leagues

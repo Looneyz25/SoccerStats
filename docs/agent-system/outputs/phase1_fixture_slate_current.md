@@ -6,7 +6,7 @@ Timezone: Australia/Adelaide
 
 | Item | Value |
 | --- | --- |
-| date_window | 2026-05-17 to 2026-05-18 |
+| date_window | 2026-05-17 to 2026-05-23 |
 | timezone | Australia/Adelaide |
 | source_mode | Flashscore |
 | total_fixtures | 60 |
@@ -20,14 +20,12 @@ Timezone: Australia/Adelaide
 
 | Source | Endpoint | Date | League | Health | Records | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
-| Flashscore | https://2.flashscore.ninja/2/x/feed/f_1_0_3_en-uk_1 | 2026-05-17 to 2026-05-18 | listed leagues | healthy | 60 | events=1188 league_hit=63 skipped_women=3 out_of_window=0 matched=60 by_league={&#x27;Premier League&#x27;: 4, &#x27;Ligue 1&#x27;: 9, &#x27;Serie A&#x27;: 10, &#x27;J1 League&#x27 |
+| Flashscore | https://2.flashscore.ninja/2/x/feed/f_1_0_3_en-uk_1 | 2026-05-17 to 2026-05-23 | listed leagues | healthy | 60 | events=1188 league_hit=63 skipped_women=3 out_of_window=0 matched=60 by_league={&#x27;Premier League&#x27;: 4, &#x27;Ligue 1&#x27;: 9, &#x27;Serie A&#x27;: 10, &#x27;J1 League&#x27 |
 
 ## Fixtures
 
 | Date | Time | League | Home | Away | Event ID | Status | Phase 1 Status | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-17 | 12:00 | MLS | San Jose Earthquakes | FC Dallas | flashscore:juAhRoT7 | live | ready_for_phase_2 | Keyless Flashscore fixture feed. |
-| 2026-05-17 | 13:30 | J1 League | V-Varen Nagasaki | Vissel Kobe | flashscore:GMTLJkHb | live | ready_for_phase_2 | Keyless Flashscore fixture feed. |
 | 2026-05-17 | 14:30 | J1 League | Chiba | Kashima Antlers | flashscore:ClNUHToB | live | ready_for_phase_2 | Keyless Flashscore fixture feed. |
 | 2026-05-17 | 14:30 | J1 League | Okayama | Shimizu S-Pulse | flashscore:p2LxG7GN | live | ready_for_phase_2 | Keyless Flashscore fixture feed. |
 | 2026-05-17 | 15:30 | J1 League | Cerezo Osaka | Nagoya Grampus | flashscore:UPgeYlWi | live | ready_for_phase_2 | Keyless Flashscore fixture feed. |
@@ -52,6 +50,7 @@ Timezone: Australia/Adelaide
 | 2026-05-17 | 23:30 | Premier League | Brentford | Crystal Palace | flashscore:MF2Xj8on | live | ready_for_phase_2 | Keyless Flashscore fixture feed. |
 | 2026-05-17 | 23:30 | Premier League | Everton | Sunderland | flashscore:jeflmQpB | live | ready_for_phase_2 | Keyless Flashscore fixture feed. |
 | 2026-05-17 | 23:30 | Premier League | Leeds | Brighton | flashscore:OM7eo4FN | live | ready_for_phase_2 | Keyless Flashscore fixture feed. |
+| 2026-05-17 | FT | J1 League | V-Varen Nagasaki | Vissel Kobe | flashscore:GMTLJkHb | FT | ready_for_phase_2 | Keyless Flashscore fixture feed. |
 | 2026-05-17 | FT | MLS | Austin FC | Sporting Kansas City | flashscore:dIYdxCy9 | FT | ready_for_phase_2 | Keyless Flashscore fixture feed. |
 | 2026-05-17 | FT | MLS | CF Montreal | Chicago Fire | flashscore:bX3pLsxi | FT | ready_for_phase_2 | Keyless Flashscore fixture feed. |
 | 2026-05-17 | FT | MLS | Charlotte | Toronto FC | flashscore:21IEQ3ET | FT | ready_for_phase_2 | Keyless Flashscore fixture feed. |
@@ -62,6 +61,7 @@ Timezone: Australia/Adelaide
 | 2026-05-17 | FT | MLS | Philadelphia Union | Columbus Crew | flashscore:tAjAE8q2 | FT | ready_for_phase_2 | Keyless Flashscore fixture feed. |
 | 2026-05-17 | FT | MLS | Real Salt Lake | Colorado Rapids | flashscore:nmDyVTTr | FT | ready_for_phase_2 | Keyless Flashscore fixture feed. |
 | 2026-05-17 | FT | MLS | San Diego FC | FC Cincinnati | flashscore:fDGqT7be | FT | ready_for_phase_2 | Keyless Flashscore fixture feed. |
+| 2026-05-17 | FT | MLS | San Jose Earthquakes | FC Dallas | flashscore:juAhRoT7 | FT | ready_for_phase_2 | Keyless Flashscore fixture feed. |
 | 2026-05-17 | FT | MLS | Seattle Sounders | Los Angeles Galaxy | flashscore:2Fy5zj6L | FT | ready_for_phase_2 | Keyless Flashscore fixture feed. |
 | 2026-05-18 | 01:30 | Serie A | Atalanta | Bologna | flashscore:I9QHhKRp | live | ready_for_phase_2 | Keyless Flashscore fixture feed. |
 | 2026-05-18 | 02:30 | LaLiga | Ath Bilbao | Celta Vigo | flashscore:vyaxjXte | live | ready_for_phase_2 | Keyless Flashscore fixture feed. |

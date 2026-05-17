@@ -4,7 +4,7 @@ Use this phase when the prompt asks to run all phases, refresh the daily slate, 
 
 ## Objective
 
-Run Phases 1-8 in order, capture each phase's exit status and headline counts, produce a single human-readable daily summary, and prepare the generated JSON consumed by the Next.js dashboard.
+Run Phases 1-8 in order, capture each phase's exit status and headline counts, produce a single human-readable daily summary, and publish dashboard data to Firestore.
 
 Phase 9 owns orchestration and presentation. It does not collect data, score, value, settle, or recalibrate on its own.
 
@@ -23,7 +23,7 @@ All Phase 1-8 outputs in `docs/agent-system/outputs/`.
    - Cumulative history accuracy + ROI
    - Result Review Agent top model-feedback action
    - Model Calibration Agent adjustment counts
-4. Prepare Next.js dashboard data with `scripts/soccer_prepare_next_data.py` when the dashboard needs refreshed static data under `public/data/`.
+4. Upload dashboard data to Firestore with `scripts/upload_match_data_to_firestore.mjs`. Do not prepare or rely on public JSON for the live dashboard.
 
 ## Firestore Data Publish
 
@@ -33,7 +33,7 @@ For normal daily operations, use:
 npm.cmd run get:data
 ```
 
-This is a data-only refresh. It runs the routine, updates generated JSON and phase outputs, prepares the static fallback, and uploads `match_data.json` to Firestore as small per-league documents through `scripts/upload_match_data_to_firestore.mjs`.
+This is a data-only refresh. It runs the routine, updates generated local artifacts and phase outputs, and uploads `match_data.json` to Firestore as small per-league documents through `scripts/upload_match_data_to_firestore.mjs`.
 
 It must not commit, push, build, or deploy unless the user explicitly asks for those steps. If Firestore credentials are missing, the local data refresh can still complete, but the upload will fail with instructions to restore `.secrets/firebase-service-account.json` or configure `GOOGLE_APPLICATION_CREDENTIALS` / `FIREBASE_SERVICE_ACCOUNT_JSON`.
 
@@ -53,7 +53,7 @@ It must not commit, push, build, or deploy unless the user explicitly asks for t
 | `docs/agent-system/outputs/Phase7_Run_Log.json` | Per-phase exit code, last stdout line, duration |
 | `docs/agent-system/outputs/model_result_review_current.md` | Daily model-feedback review from resulted matches |
 | `docs/agent-system/outputs/model_calibration.md` | Conservative automatic-learning controls |
-| `public/data/*.json` | Static dashboard data prepared from generated JSON |
+| Firestore `dashboardData/match_data/leagues/*` | Live dashboard data |
 
 ## Acceptance Criteria
 

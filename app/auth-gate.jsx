@@ -294,7 +294,7 @@ export default function AuthGate({ children }) {
             <div className="inline-flex h-11 w-11 items-center justify-center rounded-md border border-line bg-white text-signal shadow-panel">
               <ShieldCheck className="h-5 w-5" />
             </div>
-            <h1 className="mt-4 text-2xl font-semibold text-ink">Lonny&apos;s Predictions</h1>
+            <h1 className="mt-4 text-2xl font-semibold text-ink">LVRstats.com</h1>
             <p className="mt-1 text-sm text-slate-600">
               Sign in to view the prediction dashboard and model review data.
             </p>

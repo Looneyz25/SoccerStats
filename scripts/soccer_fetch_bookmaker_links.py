@@ -3,8 +3,8 @@
 
 Sportsbet already has structured event IDs in `sportsbet_odds`. The other AU
 bookmakers often render event links from protected app APIs, so this helper only
-writes a direct link when a public soccer/sports page exposes a URL containing
-both teams. Generic bookmaker landing pages are handled by the UI fallback.
+writes a direct link when a trusted public API exposes a stable match URL.
+Generic bookmaker landing pages are handled by the UI fallback.
 """
 from __future__ import annotations
 
@@ -37,20 +37,6 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 STORE_PATH = ROOT / "match_data.json"
 
 BOOKMAKERS = {
-    "bet365": {
-        "name": "bet365",
-        "urls": [
-            "https://www.bet365.com.au/hub/en-au/sports-betting",
-            "https://www.bet365.com.au/",
-        ],
-    },
-    "tab": {
-        "name": "TAB",
-        "urls": [
-            "https://www.tab.com.au/sports/betting/Soccer",
-            "https://www.tab.com.au/sports",
-        ],
-    },
     "ladbrokes": {
         "name": "Ladbrokes",
         "urls": [
@@ -66,6 +52,8 @@ BOOKMAKERS = {
         ],
     },
 }
+
+NON_DIRECT_BOOKMAKERS = {"bet365", "tab"}
 
 ENTAIN_BOOKMAKERS = {
     "ladbrokes": {
@@ -403,6 +391,23 @@ def clear_entain_links(store: dict) -> int:
     return removed
 
 
+def clear_non_direct_bookmaker_links(store: dict) -> int:
+    removed = 0
+    for _, match in iter_matches(store):
+        links = match.get("bookmaker_links") or {}
+        meta = match.get("bookmaker_meta") or {}
+        for bookmaker_id in NON_DIRECT_BOOKMAKERS:
+            if links.pop(bookmaker_id, None):
+                removed += 1
+            if meta.pop(bookmaker_id, None):
+                removed += 1
+        if not links and "bookmaker_links" in match:
+            match.pop("bookmaker_links", None)
+        if not meta and "bookmaker_meta" in match:
+            match.pop("bookmaker_meta", None)
+    return removed
+
+
 def enrich_entain_links(store: dict, dry_run: bool) -> dict[str, int]:
     counts = {bookmaker_id: 0 for bookmaker_id in ENTAIN_BOOKMAKERS}
     matches = [match for _, match in iter_matches(store)]
@@ -486,6 +491,7 @@ def main() -> int:
     store = json.loads(STORE_PATH.read_text(encoding="utf-8"))
     sportsbet_count = mirror_sportsbet_links(store)
     entain_removed = 0 if args.dry_run else clear_entain_links(store)
+    non_direct_removed = 0 if args.dry_run else clear_non_direct_bookmaker_links(store)
     entain_counts = enrich_entain_links(store, dry_run=args.dry_run)
     counts = scrape_bookmaker_links(store, dry_run=args.dry_run)
 
@@ -495,6 +501,7 @@ def main() -> int:
     print(f"[sportsbet] mirrored direct links: {sportsbet_count}")
     if not args.dry_run:
         print(f"[entain] cleared generated links: {entain_removed}")
+        print(f"[non-direct] cleared TAB/bet365 links: {non_direct_removed}")
     for bookmaker_id, count in entain_counts.items():
         print(f"[{bookmaker_id}] event API links found: {count}")
     for bookmaker_id, count in counts.items():

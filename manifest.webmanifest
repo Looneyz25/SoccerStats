@@ -1,12 +1,12 @@
 {
-  "name": "Looneyz Predictions",
-  "short_name": "Looneyz",
+  "name": "LVRstats.com",
+  "short_name": "LVRstats",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#14181f",
   "theme_color": "#14181f",
-  "description": "Soccer match predictions and stats dashboard.",
+  "description": "Football stats, odds, predictions, and model review dashboard.",
   "icons": []
 }

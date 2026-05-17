@@ -6,8 +6,8 @@ Runs the full pipeline against a fixed 10-tournament whitelist:
 - Phase A:   settle pending matches (only if SofaScore confirms `status.type == "finished"`)
 - Phase A.5: backfill finished-but-untracked matches + enrich every FT record
              (odds + h2h_streaks + team_streaks + actuals)
-- Phase A.6: retrospective Poisson predictions for FT records that lack them
-- Phase B:   forecast new upcoming matches (today + tomorrow Adelaide-local)
+- Phase A.6: lock resulted matches so newer model logic cannot rewrite them
+- Phase B:   forecast new upcoming matches over the fixture horizon
 - Phase B.5: attach sportsbet.com.au Win-Draw-Win odds (90-min regular)
 - Phase B.6: attach SofaScore market odds to each streak entry
 - Phase B.7: attach odds to each prediction (sportsbet first, SofaScore fallback)
@@ -19,6 +19,7 @@ Usage:
     python3 scripts/soccer_routine.py
 """
 import json, math, random, re, subprocess, sys, time
+import os
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
@@ -77,9 +78,15 @@ ELO_HOME_ADV = 50.0
 ELO_LAMBDA_SCALE = 400.0
 ELO_LAMBDA_CAP = 0.4
 BTTS_YES_THRESHOLD = 0.56
+WINNER_BOOKMAKER_BLEND = 0.40
+DRAW_MIN_PROBABILITY = 0.28
+DRAW_MAX_HOME_AWAY_GAP = 0.15
+DRAW_MAX_FAVOURITE_GAP = 0.15
+CARDS_OVER_THRESHOLD = 0.68
 TODAY     = datetime.now(ADL).date()
 YESTERDAY = TODAY - timedelta(days=1)
 TOMORROW  = TODAY + timedelta(days=1)
+FIXTURE_LOOKAHEAD_DAYS = max(1, int(os.environ.get("SOCCER_FIXTURE_DAYS", "7")))
 
 TOURNAMENTS = {
     7:   "UEFA Champions League",
@@ -147,6 +154,57 @@ def normalize_three_way(home, draw, away):
     if total <= 0:
         return 1 / 3, 1 / 3, 1 / 3
     return home / total, draw / total, away / total
+
+
+def to_float(value):
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def bookmaker_three_way_probabilities(odds):
+    """Return no-vig 1X2 probabilities from decimal odds when available."""
+    if not odds:
+        return None
+    home = to_float(odds.get("home"))
+    draw = to_float(odds.get("draw"))
+    away = to_float(odds.get("away"))
+    if not (home and draw and away) or min(home, draw, away) <= 1.01:
+        return None
+    raw_home, raw_draw, raw_away = 1 / home, 1 / draw, 1 / away
+    home_p, draw_p, away_p = normalize_three_way(raw_home, raw_draw, raw_away)
+    return {"home": home_p, "draw": draw_p, "away": away_p}
+
+
+def blend_three_way_with_bookmaker(model_probs, odds, weight=WINNER_BOOKMAKER_BLEND):
+    market = bookmaker_three_way_probabilities(odds)
+    if not market:
+        return model_probs, None
+    blended = {
+        side: (model_probs[side] * (1 - weight)) + (market[side] * weight)
+        for side in ("home", "draw", "away")
+    }
+    home, draw, away = normalize_three_way(blended["home"], blended["draw"], blended["away"])
+    return {"home": home, "draw": draw, "away": away}, market
+
+
+def choose_winner_side(probabilities):
+    home = probabilities["home"]
+    draw = probabilities["draw"]
+    away = probabilities["away"]
+    favourite = max(home, away)
+    if (
+        draw >= DRAW_MIN_PROBABILITY
+        and abs(home - away) <= DRAW_MAX_HOME_AWAY_GAP
+        and favourite - draw <= DRAW_MAX_FAVOURITE_GAP
+    ):
+        return "draw"
+    if home >= max(draw, away):
+        return "home"
+    if away >= draw:
+        return "away"
+    return "draw"
 
 
 # ----------------------------------------------------------------------------
@@ -307,6 +365,8 @@ def settle(m, e):
     m.setdefault("home", {})["goals"] = hs
     m.setdefault("away", {})["goals"] = as_
     m["settled_at"] = TODAY.isoformat()
+    m["prediction_locked"] = True
+    m["prediction_locked_at"] = datetime.now(ADL).isoformat()
     pred = m.get("predictions") or {}
     actual = "home" if hs > as_ else ("away" if as_ > hs else "draw")
     if pred.get("winner"):
@@ -716,7 +776,7 @@ def compute_team_elo(store):
 
 def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
                      h2h=None, h_rank=None, h_pts=None, a_rank=None, a_pts=None,
-                     h_team_id=None, a_team_id=None, league=None):
+                     h_team_id=None, a_team_id=None, league=None, market_odds=None):
     """Poisson prediction enhanced with H2H, Elo, and Dixon-Coles correction.
 
     Lambda construction:
@@ -797,14 +857,22 @@ def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
     p_d = shrink_probability(raw_p_d, winner_cal["trust_factor"], 1 / 3)
     p_a = shrink_probability(raw_p_a, winner_cal["trust_factor"], 1 / 3)
     p_h, p_d, p_a = normalize_three_way(p_h, p_d, p_a)
-    if p_h >= max(p_d, p_a):
+    model_probabilities = {"home": p_h, "draw": p_d, "away": p_a}
+    winner_probabilities, bookmaker_probabilities = blend_three_way_with_bookmaker(model_probabilities, market_odds)
+    p_h, p_d, p_a = winner_probabilities["home"], winner_probabilities["draw"], winner_probabilities["away"]
+    winner_side = choose_winner_side(winner_probabilities)
+    if winner_side == "home":
         w = {"pick": h_name, "type": "home", "probability": round(p_h, 4), "raw_probability": round(raw_p_h, 4)}
-    elif p_a >= p_d:
+    elif winner_side == "away":
         w = {"pick": a_name, "type": "away", "probability": round(p_a, 4), "raw_probability": round(raw_p_a, 4)}
     else:
         w = {"pick": "Draw", "type": "draw", "probability": round(p_d, 4), "raw_probability": round(raw_p_d, 4)}
     w["probabilities"] = {"home": round(p_h, 4), "draw": round(p_d, 4), "away": round(p_a, 4)}
+    w["model_probabilities"] = {side: round(value, 4) for side, value in model_probabilities.items()}
     w["raw_probabilities"] = {"home": round(raw_p_h, 4), "draw": round(raw_p_d, 4), "away": round(raw_p_a, 4)}
+    if bookmaker_probabilities:
+        w["bookmaker_probabilities"] = {side: round(value, 4) for side, value in bookmaker_probabilities.items()}
+        w["bookmaker_blend_weight"] = WINNER_BOOKMAKER_BLEND
     if winner_cal["sources"]:
         w["calibration"] = winner_cal
 
@@ -845,7 +913,7 @@ def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
     card_raw_over_probability = (over + 1) / (over + under + 2)
     cards_cal = calibration_adjustment(league, "ou_cards")
     card_over_probability = shrink_probability(card_raw_over_probability, cards_cal["trust_factor"], 0.5)
-    cards_pick = "Over" if card_over_probability >= 0.50 else "Under"
+    cards_pick = "Over" if card_over_probability >= CARDS_OVER_THRESHOLD else "Under"
     cards_probability = card_over_probability if cards_pick == "Over" else 1 - card_over_probability
     cards_raw_probability = card_raw_over_probability if cards_pick == "Over" else 1 - card_raw_over_probability
     cards = {
@@ -853,6 +921,9 @@ def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
         "line": 4.5,
         "probability": round(cards_probability, 4),
         "raw_probability": round(cards_raw_probability, 4),
+        "over_probability": round(card_over_probability, 4),
+        "raw_over_probability": round(card_raw_over_probability, 4),
+        "over_threshold": CARDS_OVER_THRESHOLD,
     }
     if cards_cal["sources"]:
         cards["calibration"] = cards_cal
@@ -869,6 +940,15 @@ def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
         "home_elo": round(home_elo, 1),
         "away_elo": round(away_elo, 1),
         "dixon_coles_rho": DIXON_COLES_RHO,
+        "winner_bookmaker_blend": WINNER_BOOKMAKER_BLEND if bookmaker_probabilities else 0,
+        "draw_rule": {
+            "min_probability": DRAW_MIN_PROBABILITY,
+            "max_home_away_gap": DRAW_MAX_HOME_AWAY_GAP,
+            "max_favourite_gap": DRAW_MAX_FAVOURITE_GAP,
+        },
+        "cards_over_threshold": CARDS_OVER_THRESHOLD,
+        "cards_over_streaks": over,
+        "cards_under_streaks": under,
         "model_calibration": _MODEL_CALIBRATION.get("generated_at", "") if _MODEL_CALIBRATION else "",
     }
     return {"winner": w, "btts": btts, "ou_goals": ou_goals, "ou_cards": cards,
@@ -878,66 +958,33 @@ def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
 # Backwards-compat shim — keeps phase_a6_retro working without an explicit
 # context payload. Accepts optional team ids so Elo still applies in retro mode.
 def predict_poisson(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
-                    h_team_id=None, a_team_id=None, league=None):
+                    h_team_id=None, a_team_id=None, league=None, market_odds=None):
     return predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
-                            h_team_id=h_team_id, a_team_id=a_team_id, league=league)
+                            h_team_id=h_team_id, a_team_id=a_team_id, league=league,
+                            market_odds=market_odds)
 
 
 def phase_a6_retro(store):
     done = 0
     factors_backfilled = 0
+    protected = 0
     for L in store["leagues"]:
         for m in L["matches"]:
             if m.get("status") != "FT": continue
-            if m.get("predictions"):
-                preds = m["predictions"]
-                if not preds.get("factors"):
-                    h_id = m.get("home", {}).get("team_id"); a_id = m.get("away", {}).get("team_id")
-                    h_rank = (m.get("home") or {}).get("rank")
-                    a_rank = (m.get("away") or {}).get("rank")
-                    home_elo = _TEAM_ELO.get(h_id, ELO_INIT) if h_id else ELO_INIT
-                    away_elo = _TEAM_ELO.get(a_id, ELO_INIT) if a_id else ELO_INIT
-                    preds["factors"] = {
-                        "h_rank": h_rank, "a_rank": a_rank,
-                        "home_elo": round(home_elo, 1),
-                        "away_elo": round(away_elo, 1),
-                        "source": "retro_snapshot",
-                    }
-                    factors_backfilled += 1
-                continue
-            h_id = m.get("home", {}).get("team_id"); a_id = m.get("away", {}).get("team_id")
-            hg = m["home"].get("goals"); ag = m["away"].get("goals")
-            if hg is None or ag is None: continue
-            ev_id = m.get("id")
-            h_att, h_def = fetch_form(h_id, ev_id)
-            a_att, a_def = fetch_form(a_id, ev_id)
-            pred = predict_poisson(h_att, h_def, a_att, a_def,
-                                   m["home"]["name"], m["away"]["name"], m.get("team_streaks") or [],
-                                   h_team_id=h_id, a_team_id=a_id, league=L.get("name"))
-            actual = "home" if hg > ag else ("away" if ag > hg else "draw")
-            pred["winner"]["result"] = "hit" if pred["winner"]["type"] == actual else "miss"
-            abtts = (hg > 0 and ag > 0)
-            pred["btts"]["actual_btts"] = abtts
-            pred["btts"]["result"] = "hit" if (pred["btts"]["pick"] == "Yes") == abtts else "miss"
-            tot = hg + ag
-            pred["ou_goals"]["actual"] = tot
-            pred["ou_goals"]["result"] = ("hit" if (pred["ou_goals"]["pick"] == "Over" and tot > 2.5) or
-                                          (pred["ou_goals"]["pick"] == "Under" and tot < 2.5) else "miss")
-            cards = cards_count(ev_id)
-            if cards is not None:
-                pred["ou_cards"]["actual"] = cards
-                pred["ou_cards"]["result"] = ("hit" if (pred["ou_cards"]["pick"] == "Over" and cards > 4.5) or
-                                              (pred["ou_cards"]["pick"] == "Under" and cards < 4.5) else "miss")
-            m["predictions"] = pred
-            done += 1
-    return {"retro": done, "factors_backfilled": factors_backfilled}
+            # Hard rule: once a match is resulted, never create or reshape its
+            # predictions with newer model logic. Only settlement may attach
+            # actuals/results to predictions that already existed pre-result.
+            m["prediction_locked"] = True
+            protected += 1
+    return {"retro": done, "factors_backfilled": factors_backfilled, "protected": protected}
 
 
 # ----------------------------------------------------------------------------
 def phase_b_forecast(store, seen_ids):
     by_name = {L["name"]: L for L in store["leagues"]}
     added = 0; add_brk = {}
-    for d in (TODAY.isoformat(), TOMORROW.isoformat()):
+    forecast_days = [(TODAY + timedelta(days=i)).isoformat() for i in range(FIXTURE_LOOKAHEAD_DAYS)]
+    for d in forecast_days:
         data = fetch(f"/api/v1/sport/football/scheduled-events/{d}"); time.sleep(0.6)
         if not data: continue
         for ev in data.get("events", []):
@@ -968,7 +1015,8 @@ def phase_b_forecast(store, seen_ids):
                                         h_rank=hr.get("rank"), h_pts=hr.get("pts"),
                                         a_rank=ar.get("rank"), a_pts=ar.get("pts"),
                                         h_team_id=h.get("id"), a_team_id=a.get("id"),
-                                        league=TOURNAMENTS[utid])
+                                        league=TOURNAMENTS[utid],
+                                        market_odds=odds)
                 ts = ev.get("startTimestamp")
                 rec = {
                     "id": eid, "date": adl_date(ts) if ts else d, "time": adl_time(ts) if ts else "00:00",
@@ -1076,12 +1124,12 @@ def main():
     print(f"  teams_rated={len(elo)}  teams_with_xg={n_teams_xg}  elo_file={ELO_STORE.name}")
 
     # Phase A.6
-    print("\n[Phase A.6] retrospective predictions")
+    print("\n[Phase A.6] protect resulted predictions")
     pa6 = phase_a6_retro(store)
-    print(f"  retro={pa6['retro']}")
+    print(f"  retro={pa6['retro']}  protected={pa6.get('protected', 0)}")
 
     # Phase B
-    print("\n[Phase B] forecast new upcoming")
+    print(f"\n[Phase B] forecast new upcoming (+{FIXTURE_LOOKAHEAD_DAYS} days)")
     pb = phase_b_forecast(store, seen_ids)
     print(f"  added={pb['added']}")
 

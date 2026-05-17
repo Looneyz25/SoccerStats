@@ -25,13 +25,19 @@ STORE = ROOT / "match_data.json"
 CSV_PATH = OUT_DIR / "model_result_review_current.csv"
 MD_PATH = OUT_DIR / "model_result_review_current.md"
 SUMMARY_JSON = OUT_DIR / "model_result_review_summary.json"
+PREDICTION_TRACKING_START_DATE = "2026-04-24"
 
 MARKETS = [
     ("winner", "Winner"),
     ("btts", "BTTS"),
     ("ou_goals", "Goals"),
     ("ou_cards", "Cards"),
+    ("ou_corners", "Corners"),
 ]
+
+# Truth guard: rows generated after a result was known are audit history, not
+# prediction performance. Do not include retro snapshots in hit-rate summaries.
+EXCLUDED_REVIEW_FLAGS = {"retro_snapshot"}
 
 ROW_HEADERS = [
     "run_timestamp", "league", "event_id", "date", "home", "away",
@@ -61,7 +67,7 @@ def flatten_matches(data):
 def market_pick(market_key, market):
     if market_key == "winner":
         return market.get("pick") or market.get("type") or ""
-    if market_key in ("ou_goals", "ou_cards"):
+    if market_key in ("ou_goals", "ou_cards", "ou_corners"):
         line = market.get("line")
         return f"{market.get('pick', '')} {line}".strip() if line not in (None, "") else market.get("pick", "")
     return market.get("pick", "")
@@ -89,6 +95,8 @@ def market_actual(market_key, match, market):
         return market.get("actual")
     if market_key == "ou_cards":
         return market.get("actual") if "actual" in market else actuals.get("cards_total")
+    if market_key == "ou_corners":
+        return market.get("actual") if "actual" in market else actuals.get("corners_total")
     return ""
 
 
@@ -134,6 +142,8 @@ def model_note(flag, market_key, market):
         return "Audit draw threshold separately; draw picks can distort winner-market calibration."
     if market_key == "ou_cards" and market.get("result") == "miss":
         return "Check cards line source and referee/team-card weighting."
+    if market_key == "ou_corners" and market.get("result") == "miss":
+        return "Check corners line source and team corner-volume weighting."
     return ""
 
 
@@ -142,6 +152,8 @@ def build_rows(data):
     rows = []
     for match in flatten_matches(data):
         if match.get("status") != "FT":
+            continue
+        if str(match.get("date") or "") < PREDICTION_TRACKING_START_DATE:
             continue
         predictions = match.get("predictions") or {}
         for market_key, label in MARKETS:
@@ -152,6 +164,8 @@ def build_rows(data):
             odds = to_float(market.get("odds"))
             probability = model_probability(market)
             flag = review_flag(market_key, match, market)
+            if flag in EXCLUDED_REVIEW_FLAGS:
+                continue
             rows.append({
                 "run_timestamp": run_ts,
                 "league": match.get("league", ""),
@@ -254,6 +268,7 @@ def write_md(rows, market_summary, league_summary, weak, recs):
         "# Model Result Review",
         "",
         f"Generated: {run_ts}",
+        f"Prediction tracking start: {PREDICTION_TRACKING_START_DATE}",
         f"Settled market rows: {len(rows)}",
         "",
         "## Market Summary",
@@ -309,6 +324,7 @@ def write_md(rows, market_summary, league_summary, weak, recs):
 def write_summary_json(rows, market_summary, league_summary, weak, recs):
     payload = {
         "generated_at": rows[0]["run_timestamp"] if rows else datetime.now(ADL).strftime("%Y-%m-%d %H:%M:%S %Z"),
+        "prediction_tracking_start_date": PREDICTION_TRACKING_START_DATE,
         "settled_market_rows": len(rows),
         "market_summary": market_summary,
         "league_summary": league_summary,

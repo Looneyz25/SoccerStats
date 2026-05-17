@@ -140,6 +140,7 @@ function AdminDashboard() {
     return users.filter((user) => {
       return [
         user.displayName,
+        user.nickname,
         user.email,
         user.uid,
         user.stripeCustomerId,
@@ -326,11 +327,15 @@ function AdminDashboard() {
                   const isBusy = busyUid === user.uid;
                   const inheritsStripe = user.inheritStripeStatus !== false;
                   const trialDaysLeft = daysUntil(user.subscriptionTrialEnd);
+                  const memberName = user.displayName || user.nickname || 'No name';
 
                   return (
                     <tr key={user.uid} className="align-top">
                       <td className="px-4 py-4">
-                        <div className="font-semibold text-ink">{user.displayName || 'No name'}</div>
+                        <div className="font-semibold text-ink">{memberName}</div>
+                        {user.nickname && (
+                          <div className="mt-0.5 text-xs font-semibold text-signal">Nickname: {user.nickname}</div>
+                        )}
                         <div className="mt-0.5 text-sm text-slate-600">{user.email || '-'}</div>
                         <div className="mt-1 max-w-[260px] truncate font-mono text-xs text-slate-400">{user.uid}</div>
                         {user.isPlatformOwner && (

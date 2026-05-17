@@ -1,7 +1,7 @@
 {
-  "name": "Looneyz Predictions",
-  "short_name": "Looneyz",
-  "description": "Fixture, odds, and prediction dashboard for selected football leagues.",
+  "name": "LVRstats.com",
+  "short_name": "LVRstats",
+  "description": "Football stats, odds, predictions, and model review dashboard.",
   "start_url": ".",
   "scope": ".",
   "display": "standalone",

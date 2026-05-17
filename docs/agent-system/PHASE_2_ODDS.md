@@ -36,7 +36,7 @@ The daily `get:data` path also enriches dashboard markets outside the Phase 2 WD
 - `scripts/soccer_enrich_streak_odds.py` attaches odds to H2H and team streak rows.
 - If SofaScore omits a direct streak market, streak cards reuse matching prediction odds where safe, for example `Without Clean Sheet` and `Both teams scoring` use BTTS Yes odds.
 - `No Wins`, `No Losses`, and `No Draws` can derive conservative double-chance prices from available 1X2 odds.
-- `scripts/soccer_fetch_pred_odds.py` stores match-level `corner_odds` by line so UI-generated corner models can compare against bookmaker prices.
+- `scripts/soccer_fetch_pred_odds.py` checks the five visible prediction cards (winner, BTTS, goals, cards, corners), stores match-level `corner_odds` by line so UI-generated corner models can compare against bookmaker prices, and logs any upcoming fixtures still missing visible market odds.
 - Derived or fallback prices should be displayed as context, not treated as confirmed bookmaker markets unless the source market exists for the exact line.
 
 ## League Slugs

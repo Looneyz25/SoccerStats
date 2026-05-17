@@ -13,7 +13,7 @@ Firebase Hosting serves the static Next.js export from `out/`. Stripe subscripti
 ## Frontend
 
 - `app/` - Next.js dashboard
-- `public/data/` - generated static JSON data, created during build
+- Firestore `dashboardData/match_data/leagues/*` - live dashboard data source
 - `next.config.js` - static export config
 - `firebase.json` - Firebase Hosting, Firestore rules, and Functions rewrite config
 - `firestore.rules` - public read rules for dashboard data
@@ -34,7 +34,19 @@ Refresh live match data and publish it to Firestore:
 npm.cmd run data:refresh
 ```
 
-This runs `scripts/soccer_routine.py`, runs the phase pipeline for fixtures, odds, team context/stats, predictions, settlement, and calibration, refreshes the static JSON fallback in `public/data/`, then uploads `match_data.json` to Firestore at `dashboardData/match_data`.
+This runs `scripts/soccer_routine.py`, runs the phase pipeline for fixtures, odds, team context/stats, predictions, settlement, and calibration, then uploads `match_data.json` to Firestore at `dashboardData/match_data` as small per-league documents. The live dashboard reads Firestore only, not the generated public JSON files. The runner defaults to a 7-day fixture horizon and a 420-second odds-enrichment budget so the five visible prediction cards can get prices where the provider exposes those markets.
+
+For a double-clickable local runner, use:
+
+```powershell
+.\GetDataAndUpload.bat
+```
+
+The logged `get:data` path writes:
+
+- `docs/agent-system/outputs/get_data_latest.md` - human-readable latest run summary
+- `docs/agent-system/outputs/get_data_latest.json` - machine-readable latest run log with step stdout/stderr
+- `docs/agent-system/outputs/get_data_YYYYMMDDTHHMMSSZ.*` - timestamped Markdown, JSON, and transcript logs
 
 To collect locally without Firestore credentials:
 
@@ -50,7 +62,7 @@ Firestore upload requires one credential source in the shell:
 
 Firestore writes are admin-only. Browser users can read subscribed dashboard data, but Firestore rules keep `dashboardData` writes disabled for all client users.
 
-Do not use proxy/IP rotation to bypass provider controls. The local routines prefer API/fallback sources, cache existing data, and use gentle sleeps/backoff. You can slow Sportsbet collection further with `SOCCER_PHASE2_SLEEP` and cap odds enrichment with `SOCCER_ODDS_BUDGET`.
+Do not use proxy/IP rotation to bypass provider controls. The local routines prefer API/fallback sources, cache existing data, and use gentle sleeps/backoff. You can slow Sportsbet collection further with `SOCCER_PHASE2_SLEEP`, override the fixture horizon with `SOCCER_FIXTURE_DAYS`, and cap odds enrichment with `SOCCER_ODDS_BUDGET`.
 
 Deploy to Firebase Hosting, Firestore rules, and Functions:
 
@@ -119,12 +131,12 @@ The webhook updates `users/{uid}` with `hasAccess`, `accessSource`, `stripeCusto
 - `scripts/soccer_routine.py` - daily data routine
 - `scripts/soccer_result_review_agent.py` - daily resulted-match review for model feedback
 - `scripts/soccer_model_calibration_agent.py` - turns review feedback into conservative automatic-learning controls
-- `scripts/upload_match_data_to_firestore.mjs` - uploads dashboard data into Firestore chunks
-- `scripts/soccer_prepare_next_data.py` - copies JSON into `public/data/` for the static frontend
-- `match_data.json` - local generated fallback data
+- `scripts/upload_match_data_to_firestore.mjs` - uploads dashboard data into small Firestore league documents
+- `scripts/soccer_prepare_next_data.py` - legacy helper; the live dashboard does not use it
+- `match_data.json` - local generated upload artifact
 - `predictions_*.json` - dated snapshots
 
-The live app reads Firestore first from `dashboardData/match_data`, then falls back to generated JSON files when Firestore is unavailable.
+The live app reads Firestore from `dashboardData/match_data/leagues/*` and does not fall back to generated JSON files.
 
 Scheduled daily runs use `run_daily.bat`, which runs the routine, uploads to Firestore, and then commits/pushes data changes.
 
@@ -133,7 +145,7 @@ Fixture source order:
 1. API-Football when `API_FOOTBALL_KEY` or `APISPORTS_KEY` is set
 2. Flashscore keyless feed
 3. TheSportsDB v1 free API using `THESPORTSDB_KEY`, `THESPORTSDB_API_KEY`, or the documented free key `123`
-4. Local `match_data.json` fallback
+4. Local `match_data.json` only as a pipeline recovery source, never as browser fallback data
 
 ## Prediction Display Rules
 
@@ -142,7 +154,7 @@ Fixture source order:
 - Only show bookmaker odds as direct prices when they belong to the exact visible side and line. If the UI derives an inverse price from the opposite side, label it as estimated.
 - Completed-match summaries and hit-rate reviews must score two-way totals against the guided visible side, not the weaker raw side.
 - The dashboard headline hit rate is the settled market hit rate across all visible guided markets, not winner-only accuracy.
-- Winner picks use a market guard: when a model winner is below 50% or only narrowly ahead and the bookmaker favourite is clearly stronger with supporting context, the visible pick should switch to the bookmaker-backed side and completed results should be scored from that guided winner.
+- Winner picks use a market guard: when direct 1X2 bookmaker odds strongly disagree with the model (25+ implied-probability points or roughly 3x+ price ratio), the visible pick should switch to the bookmaker-backed side unless the model is genuinely overwhelming. Completed results should be scored from that guided winner.
 - Match cards show the original winner prediction and model percentage directly on the predicted team card, or on the centre draw chip for draw picks. The highlighted card reflects the winner prediction hit/miss; BTTS, goals, cards, and corners stay as compact one-row market cards.
 
 ## Legacy Files

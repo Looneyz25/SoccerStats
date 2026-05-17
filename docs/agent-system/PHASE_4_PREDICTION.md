@@ -47,6 +47,12 @@ Outputs derived from the scoreline grid:
 - `edge_home`, `edge_draw`, `edge_away` (market - fair, percentage points of probability)
 - `model_pick` (highest-probability outcome)
 
+Winner probabilities are then blended with the bookmaker market when full home/draw/away odds exist. Convert bookmaker prices to no-vig probabilities, then use a 60% internal model / 40% bookmaker blend. This keeps the model from fighting high-signal market consensus while still allowing the football model to create value differences.
+
+Draw selection has its own lane because football draws are common but rarely the highest raw probability. Select draw when `p_draw >= 0.28`, home/away probabilities are within 0.15, and the leading home/away side is no more than 0.15 ahead of draw.
+
+Cards use a stricter learned gate because recent resulted data showed Over 4.5 was over-selected. Store both the raw over probability and the chosen-side probability. Only select `Over 4.5` when `over_probability >= 0.68`; otherwise select `Under 4.5`.
+
 ## Required Agents
 
 | Agent | Role In Phase 4 |
@@ -58,9 +64,10 @@ Outputs derived from the scoreline grid:
 1. Prediction Modeler joins Phase 3 (form) and Phase 2 (odds) by `event_id`.
 2. For each `ready_for_phase_4` row, compute `lambda_home` and `lambda_away`.
 3. Build a 7x7 Poisson scoreline grid; aggregate to 1X2, BTTS, O/U 2.5.
-4. Compute fair odds and edge vs Phase 2 prices.
-5. Assign `phase4_status`.
-6. Write the Phase 4 review workbook.
+4. Blend 1X2 probabilities with no-vig bookmaker probabilities where available.
+5. Compute fair odds and edge vs Phase 2 prices.
+6. Assign `phase4_status`.
+7. Write the Phase 4 review workbook.
 
 ## Required Fields
 
@@ -109,3 +116,4 @@ Workbook sheets:
 - Every `ready_for_phase_5` row has `lambda_home`, `lambda_away`, `p_home/draw/away` (sum to 1.0 ± 0.001 after capping), `fair_xxx`, `market_xxx`, `edge_xxx`.
 - BTTS and O2.5 probabilities are reported.
 - Lambdas are floored at 0.20 to avoid pathological zero-goal predictions.
+- Dashboard winner display applies a bookmaker guard after model probabilities are produced: if direct 1X2 odds heavily favour another side (25+ implied-probability-point gap or roughly 3x+ price ratio), display the bookmaker-backed side unless model support is overwhelming. This keeps visible predictions aligned with high-signal market disagreement.

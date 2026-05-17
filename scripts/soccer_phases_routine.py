@@ -273,7 +273,7 @@ def write_summary(run_results):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--update-html", action="store_true",
-                        help="(legacy no-op) The dashboard now reads generated JSON via the Next.js app.")
+                        help="(legacy no-op) The dashboard reads Firestore only.")
     args = parser.parse_args()
 
     run_results = []
@@ -289,7 +289,7 @@ def main():
     print(f"Run log: {RUN_LOG_PATH}")
 
     if args.update_html:
-        print("--update-html is a legacy no-op. The Next.js dashboard reads generated JSON from public/data/.")
+        print("--update-html is a legacy no-op. The Next.js dashboard reads Firestore only.")
 
 
 if __name__ == "__main__":

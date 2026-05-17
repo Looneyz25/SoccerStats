@@ -8,6 +8,7 @@ import {
   Activity,
   AlertTriangle,
   ArrowLeft,
+  ArrowUp,
   BarChart3,
   CalendarDays,
   CheckCircle2,
@@ -15,7 +16,6 @@ import {
   ChevronRight,
   Clock3,
   CreditCard,
-  Filter,
   Goal,
   Loader2,
   LogOut,
@@ -28,34 +28,15 @@ import {
   XCircle,
 } from 'lucide-react';
 
-const DATA_URLS = ['/data/match_data.json', '/match_data.json'];
 const GAMBLING_HELP_URL = 'https://www.gamblinghelponline.org.au/';
 const BETSTOP_URL = 'https://www.betstop.gov.au/';
 const SUPPORT_EMAIL = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'lvrstats.com@gmail.com';
 const FAVORITE_LEAGUES_STORAGE_KEY = 'favoriteLeagues';
+const FAVORITE_TEAMS_STORAGE_KEY = 'favoriteTeams';
+const PREDICTION_TRACKING_START_DATE = '2026-04-24';
 
 async function loadMatchData() {
-  const firestoreData = await loadFreshMatchData();
-  return firestoreData || loadStaticMatchData();
-}
-
-async function loadStaticMatchData() {
-  return Promise.any(
-    DATA_URLS.map((url) =>
-      fetch(url, { cache: 'no-store' }).then((response) => {
-        if (!response.ok) throw new Error(`Could not load ${url}`);
-        return response.json();
-      }),
-    ),
-  );
-}
-
-async function loadFreshMatchData() {
-  try {
-    return await loadMatchDataFromFirestore();
-  } catch (firestoreError) {
-    return null;
-  }
+  return loadMatchDataFromFirestore();
 }
 
 const SPORTSBET_LEAGUE_SLUGS = {
@@ -74,24 +55,6 @@ const SPORTSBET_LEAGUE_SLUGS = {
   'A-League Men': 'australia/australian-a-league-men',
   'Scottish Premiership': 'united-kingdom/scottish-premiership',
   'J1 League': 'asia/japanese-j1-league',
-};
-
-const TAB_LEAGUE_NAMES = {
-  'Premier League': 'English Premier League',
-  Championship: 'English Championship',
-  'League One': 'English League One',
-  'League Two': 'English League Two',
-  LaLiga: 'Spanish La Liga',
-  'Serie A': 'Italian Serie A',
-  Bundesliga: 'German Bundesliga',
-  'Ligue 1': 'French Ligue 1',
-  Eredivisie: 'Dutch Eredivisie',
-  'Primeira Liga': 'Portuguese Primeira Liga',
-  'UEFA Champions League': 'UEFA Champions League',
-  MLS: 'US Major League Soccer',
-  'A-League Men': 'A-League Men',
-  'Scottish Premiership': 'Scottish Premiership',
-  'J1 League': 'Japanese J1 League',
 };
 
 const LEAGUE_LOGOS = {
@@ -150,7 +113,8 @@ const BOOKMAKERS = {
   },
 };
 
-const BOOKMAKER_OPTIONS = Object.values(BOOKMAKERS);
+const DIRECT_MATCH_BOOKMAKERS = new Set(['sportsbet', 'ladbrokes', 'neds']);
+const BOOKMAKER_OPTIONS = Object.values(BOOKMAKERS).filter((bookmaker) => DIRECT_MATCH_BOOKMAKERS.has(bookmaker.id));
 
 function sportsbetSlug(value) {
   return String(value || '')
@@ -184,46 +148,35 @@ function bookmakerMatchQuery(match) {
   return [bookmakerTeamName(match.home?.name), bookmakerTeamName(match.away?.name)].filter(Boolean).join(' v ');
 }
 
-function tabMatchUrl(match) {
-  const competition = TAB_LEAGUE_NAMES[match.league] || match.league;
-  const query = bookmakerMatchQuery(match);
-  if (!competition || !query) return null;
-  return `https://www.tab.com.au/sports/betting/Soccer/competitions/${encodeURIComponent(
-    competition,
-  )}/matches/${encodeURIComponent(query)}`;
-}
-
 function bookmakerMatchSearchUrl(match, bookmakerId) {
   const query = encodeURIComponent(bookmakerMatchQuery(match));
   if (!query) return null;
 
-  if (bookmakerId === 'tab') return `https://www.tab.com.au/sports/betting/Soccer?search=${query}`;
   if (bookmakerId === 'ladbrokes') return `https://www.ladbrokes.com.au/sports/soccer?search=${query}`;
   if (bookmakerId === 'neds') return `https://www.neds.com.au/sports/soccer?search=${query}`;
-  if (bookmakerId === 'bet365') return `https://www.bet365.com.au/hub/en-au/sports-betting?search=${query}`;
   return null;
 }
 
 function bookmakerUrl(match, bookmakerId) {
   const bookmaker = BOOKMAKERS[bookmakerId] || BOOKMAKERS.sportsbet;
+  if (!DIRECT_MATCH_BOOKMAKERS.has(bookmaker.id)) return bookmaker.entryUrl;
   const eventUrl =
     match.bookmaker_links?.[bookmaker.id] ||
     match.bookmaker_urls?.[bookmaker.id] ||
     match[`${bookmaker.id}_odds`]?.event_url;
   if (eventUrl) return eventUrl;
   if (bookmaker.id === 'sportsbet') return sportsbetEventUrl(match) || bookmaker.entryUrl;
-  if (bookmaker.id === 'tab') return tabMatchUrl(match) || bookmaker.entryUrl;
   return bookmakerMatchSearchUrl(match, bookmaker.id) || bookmaker.entryUrl;
 }
 
 function hasDirectBookmakerMatchLink(match, bookmakerId) {
   const bookmaker = BOOKMAKERS[bookmakerId] || BOOKMAKERS.sportsbet;
+  if (!DIRECT_MATCH_BOOKMAKERS.has(bookmaker.id)) return false;
   return Boolean(
       match.bookmaker_links?.[bookmaker.id] ||
       match.bookmaker_urls?.[bookmaker.id] ||
       match[`${bookmaker.id}_odds`]?.event_url ||
-      (bookmaker.id === 'sportsbet' && sportsbetEventUrl(match)) ||
-      (bookmaker.id === 'tab' && tabMatchUrl(match)),
+      (bookmaker.id === 'sportsbet' && sportsbetEventUrl(match)),
   );
 }
 
@@ -413,7 +366,7 @@ function formatOdds(value) {
 }
 
 function formatOddsTotal(value) {
-  return Number(value || 0).toFixed(2);
+  return Number(value || 0).toFixed(1);
 }
 
 function formatMarketDetail(market) {
@@ -423,6 +376,7 @@ function formatMarketDetail(market) {
 
 function displayBttsMarket(market, match = null) {
   if (!market) return null;
+  if (match?.status === 'FT') return market;
   const f = match?.predictions?.factors || {};
   const probs = poissonMarketProbabilities(
     Number(f.lambda_home),
@@ -560,6 +514,15 @@ function oppositeTotalPick(pick) {
 }
 
 function cornerMarketFromStreaks(match, allMatches = []) {
+  if (match.predictions?.ou_corners) {
+    const prediction = match.predictions.ou_corners;
+    return {
+      ...prediction,
+      actual: prediction.actual ?? match.actuals?.corners_total,
+      result: prediction.result || marketResultFromActual(prediction, match.actuals?.corners_total),
+    };
+  }
+  if (match.status === 'FT') return null;
   const streaks = [...(match.h2h_streaks || []), ...(match.team_streaks || [])];
   const seen = new Set();
   const candidates = streaks
@@ -674,8 +637,23 @@ function decimalFromProbability(probability) {
   return Number.isFinite(probability) && probability > 0 ? 1 / probability : null;
 }
 
+function hasThreeWayOdds(odds) {
+  return ['home', 'draw', 'away'].every((key) => {
+    const value = Number(odds?.[key]);
+    return Number.isFinite(value) && value > 1.01;
+  });
+}
+
+function displayThreeWayOdds(match) {
+  const originalOdds = match?.odds || {};
+  const bookmakerOdds = match?.sportsbet_odds || {};
+  if (match?.status === 'FT' && hasThreeWayOdds(originalOdds)) return originalOdds;
+  if (hasThreeWayOdds(bookmakerOdds)) return bookmakerOdds;
+  return originalOdds;
+}
+
 function derivedDoubleChanceOdds(match, keys) {
-  const odds = match.sportsbet_odds || match.odds || {};
+  const odds = displayThreeWayOdds(match);
   const probability = keys
     .map((key) => impliedProbability(odds[key]))
     .filter((value) => Number.isFinite(value))
@@ -689,7 +667,7 @@ function fallbackStreakOdds(streak, match) {
   if (Number.isFinite(existing) && existing > 1.01) return existing;
   const label = String(streak?.label || '').toLowerCase();
   const team = streak?.team;
-  const odds = match.sportsbet_odds || match.odds || {};
+  const odds = displayThreeWayOdds(match);
   const btts = match.predictions?.btts;
 
   if (label.includes('both teams scoring') || label.includes('both teams to score') || label.includes('without clean sheet') || label.includes('no clean sheet')) {
@@ -825,7 +803,7 @@ function withWinnerRiskCaution(comparison, match, market) {
   const bookmakerProb = impliedProbability(Number(comparison.bookmaker?.odds));
   const modelProb = impliedProbability(Number(comparison.model?.odds));
   const fallbackOdds = Number((match.odds || {})[market.type]);
-  const selectedOdds = Number(((match.sportsbet_odds || match.odds) || {})[market.type]);
+  const selectedOdds = Number(displayThreeWayOdds(match)[market.type]);
   const fallbackProb = impliedProbability(fallbackOdds);
   const selectedProb = impliedProbability(selectedOdds);
   const pickedNoWins = (match.team_streaks || []).some((streak) => {
@@ -979,7 +957,7 @@ function winnerResultFromActual(match, type) {
 }
 
 function winnerGuidanceOdds(match) {
-  return match.sportsbet_odds || match.odds || {};
+  return displayThreeWayOdds(match);
 }
 
 function strongestBookmakerSide(odds) {
@@ -1000,6 +978,7 @@ function sideHasNoWinsStreak(match, side, minimum = 5) {
 function winnerMarketWithGuidance(match, allMatches = []) {
   const market = match.predictions?.winner;
   if (!market?.type) return market || null;
+  if (match.status === 'FT') return market;
   const rows = winnerProbabilityBreakdown(match);
   const selected = rows?.find((row) => row.key === market.type);
   const selectedModel = selected?.model;
@@ -1112,10 +1091,18 @@ const MARKET_CONFIG = [
   { key: 'ou_cards', label: 'Cards', getMarket: (match, allMatches) => cardsMarketWithModelProbability(match, allMatches) },
   { key: 'ou_corners', label: 'Corners', getMarket: (match, allMatches) => cornerMarketFromStreaks(match, allMatches) },
 ];
+const HEADLINE_STATS_MARKETS = ['winner', 'btts', 'ou_goals', 'ou_cards', 'ou_corners'];
 
 function marketForConfig(config, match, allMatches) {
   if (config.getMarket) return config.getMarket(match, allMatches || match.__allMatches);
   return match.predictions?.[config.key];
+}
+
+function headlineStatsMarkets(match) {
+  if (match.status !== 'FT' || String(match.date || '') < PREDICTION_TRACKING_START_DATE) return [];
+  return HEADLINE_STATS_MARKETS
+    .map((key) => match.predictions?.[key])
+    .filter((market) => market?.result === 'hit' || market?.result === 'miss');
 }
 
 function marketRowsForMatch(match, allMatches) {
@@ -1141,7 +1128,7 @@ function topDivisionRank(league) {
 
 function dataQualityForMatch(match) {
   const f = match.predictions?.factors || {};
-  const odds = match.sportsbet_odds || match.odds || {};
+  const odds = displayThreeWayOdds(match);
   const signals = [];
   const cautions = [];
 
@@ -1184,19 +1171,6 @@ function confidenceForMatch(match, allMatches) {
     return { label: 'Watchlist', tone: 'neutral', reason: `${edges[0].label} ${edges[0].comparison.badge.label}`, edge: bestEdge, quality };
   }
   return { label: 'Data weak', tone: 'warning', reason: quality.cautions[0] || 'Thin supporting data', edge: bestEdge, quality };
-}
-
-function filterMatchesByValue(match, valueFilter, allMatches) {
-  if (valueFilter === 'all') return true;
-  const confidence = confidenceForMatch(match, allMatches);
-  const edges = positiveEdgesForMatch(match, allMatches);
-  if (valueFilter === 'strong') return confidence.label === 'Strong edge';
-  if (valueFilter === 'watchlist') return confidence.label === 'Strong edge' || confidence.label === 'Watchlist';
-  if (valueFilter === 'edge5') return edges.some((row) => row.comparison.modelEdge >= 0.05);
-  if (valueFilter === 'direct') return Boolean(match.sportsbet_odds?.event_url);
-  if (valueFilter === 'quality') return confidence.quality.score >= 4;
-  if (valueFilter === 'top') return topDivisionRank(match.league);
-  return true;
 }
 
 function sameTeamId(left, right) {
@@ -1655,7 +1629,7 @@ function winnerRationale(match, allMatches, winnerMarket = null) {
   }
 
   if (!priceComparison) {
-    const odds = match.sportsbet_odds || match.odds || {};
+    const odds = displayThreeWayOdds(match);
     if (odds.home && odds.away) {
       const oh = Number(odds.home);
       const oa = Number(odds.away);
@@ -1775,6 +1749,7 @@ function recentTeamCards(allMatches, teamId, currentMatchId, n = 5) {
 function cardsMarketWithModelProbability(match, allMatches) {
   const market = match.predictions?.ou_cards;
   if (!market) return null;
+  if (match.status === 'FT') return market;
   const homeCards = recentTeamCards(allMatches, match.home?.team_id, match.id);
   const awayCards = recentTeamCards(allMatches, match.away?.team_id, match.id);
   const available = [homeCards, awayCards].filter(Boolean);
@@ -1876,11 +1851,23 @@ function cornersRationale(match, allMatches, cornerMarket) {
 }
 
 function localTodayDate() {
-  const date = new Date();
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Australia/Adelaide',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(new Date());
+  const date = Object.fromEntries(
+    parts.filter((part) => part.type !== 'literal').map((part) => [part.type, part.value]),
+  );
+  return `${date.year}-${date.month}-${date.day}`;
+}
+
+function addDaysToIsoDate(iso, days) {
+  const [year, month, day] = String(iso || '').split('-').map(Number);
+  if (!year || !month || !day) return '';
+  const date = new Date(Date.UTC(year, month - 1, day + days));
+  return date.toISOString().slice(0, 10);
 }
 
 function formatDateDMY(iso) {
@@ -1954,6 +1941,34 @@ function flattenMatches(data) {
   );
 }
 
+function teamPreferenceKey(value) {
+  return String(value || '')
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '');
+}
+
+function favoriteTeamSet(favoriteTeams = []) {
+  return new Set(favoriteTeams.map(teamPreferenceKey).filter(Boolean));
+}
+
+function matchHasFavoriteTeam(match, favoriteSet) {
+  if (!favoriteSet?.size) return false;
+  return favoriteSet.has(teamPreferenceKey(match.home?.name)) || favoriteSet.has(teamPreferenceKey(match.away?.name));
+}
+
+function teamOptionsFromMatches(matches) {
+  const teams = new Map();
+  matches.forEach((match) => {
+    [match.home?.name, match.away?.name].forEach((name) => {
+      const key = teamPreferenceKey(name);
+      if (key && !teams.has(key)) teams.set(key, name);
+    });
+  });
+  return [...teams.values()].sort((a, b) => a.localeCompare(b));
+}
+
 function describeLoadError(err) {
   if (err instanceof Error && err.message) return err.message;
   if (typeof err === 'string' && err.trim()) return err;
@@ -2024,14 +2039,30 @@ function groupMatchesByLeague(matches, favoriteLeagues = []) {
     .sort((a, b) => compareLeagueGroups(a, b, favoriteLeagues));
 }
 
+function groupMatchesForDisplay(matches, favoriteLeagues = [], favoriteTeams = []) {
+  const favSet = favoriteTeamSet(favoriteTeams);
+  const favoriteMatches = matches.filter((match) => matchHasFavoriteTeam(match, favSet));
+  const regularMatches = favSet.size ? matches.filter((match) => !matchHasFavoriteTeam(match, favSet)) : matches;
+  const groups = groupMatchesByLeague(regularMatches, favoriteLeagues);
+  if (!favoriteMatches.length) return groups;
+
+  return [
+    {
+      league: 'Favourite teams',
+      leagueId: 'favorite-teams',
+      logo: null,
+      matches: favoriteMatches.sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`)),
+      isFavoriteTeamGroup: true,
+    },
+    ...groups,
+  ];
+}
+
 function summarize(matches) {
   const total = matches.length;
   const finished = matches.filter((m) => m.status === 'FT').length;
   const upcoming = total - finished;
-  const settledMarkets = matches.flatMap((match) =>
-    MARKET_CONFIG.map((config) => marketForConfig(config, match, matches))
-      .filter((market) => market?.result === 'hit' || market?.result === 'miss'),
-  );
+  const settledMarkets = matches.flatMap(headlineStatsMarkets);
   const hits = settledMarkets.filter((market) => market.result === 'hit').length;
   const accuracy = settledMarkets.length ? Math.round((hits / settledMarkets.length) * 100) : 0;
   const oddsTotals = settledMarkets.reduce((totals, market) => {
@@ -2067,11 +2098,10 @@ function summarizeResultsByMarket(matches) {
   });
 }
 
-function recentFinishedMatches(matches, limit = 80) {
+function trackedFinishedMatches(matches) {
   return matches
-    .filter((match) => match.status === 'FT')
-    .sort((a, b) => matchSortKey(b).localeCompare(matchSortKey(a)))
-    .slice(0, limit);
+    .filter((match) => match.status === 'FT' && String(match.date || '') >= PREDICTION_TRACKING_START_DATE)
+    .sort((a, b) => matchSortKey(b).localeCompare(matchSortKey(a)));
 }
 
 function getNumericLine(label) {
@@ -2246,9 +2276,9 @@ function BookmakerLink({ bookmakerId, href, label }) {
 
 function BookmakerStatusChip({ bookmaker, hasDirectLink }) {
   if (!bookmaker) return null;
+  const chipClass = `${bookmaker.buttonClass} text-white shadow-sm`;
   return (
-    <span className={`inline-flex h-7 items-center justify-center gap-1.5 rounded-full px-2.5 text-xs font-semibold ${hasDirectLink ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600'}`}>
-      {hasDirectLink && <CheckCircle2 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />}
+    <span className={`inline-flex h-7 items-center justify-center gap-0.5 rounded-full border px-2.5 text-xs font-semibold ${chipClass}`}>
       {bookmaker.logoSrc ? (
         <>
           <img src={bookmaker.logoSrc} alt="" className="h-5 w-auto max-w-20" aria-hidden="true" />
@@ -2257,7 +2287,79 @@ function BookmakerStatusChip({ bookmaker, hasDirectLink }) {
       ) : (
         <span>{bookmaker.name}</span>
       )}
+      {hasDirectLink && <CheckCircle2 className="-ml-0.5 h-3.5 w-3.5 shrink-0 text-white" aria-hidden="true" />}
     </span>
+  );
+}
+
+function TeamFavoriteButton({ teamName, favoriteTeams = [], onToggleFavoriteTeam }) {
+  const cleanTeamName = String(teamName || '').trim();
+  const isFavorite = favoriteTeamSet(favoriteTeams).has(teamPreferenceKey(cleanTeamName));
+  if (!cleanTeamName || !onToggleFavoriteTeam) return null;
+
+  return (
+    <button
+      type="button"
+      onClick={(event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        onToggleFavoriteTeam(cleanTeamName);
+      }}
+      onKeyDown={(event) => event.stopPropagation()}
+      className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border transition ${
+        isFavorite
+          ? 'border-amber-300 bg-amber-50 text-amber-600'
+          : 'border-slate-200 bg-white/80 text-slate-400 hover:border-amber-200 hover:bg-amber-50 hover:text-amber-600'
+      }`}
+      aria-label={`${isFavorite ? 'Remove' : 'Add'} ${cleanTeamName} as favourite team`}
+      title={`${isFavorite ? 'Remove from' : 'Add to'} favourite teams`}
+    >
+      <Star className={`h-4 w-4 ${isFavorite ? 'fill-amber-400' : ''}`} aria-hidden="true" />
+    </button>
+  );
+}
+
+function BackToTopButton() {
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  useEffect(() => {
+    function updateProgress() {
+      if (typeof window === 'undefined') return;
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      const nextProgress = scrollable > 0 ? window.scrollY / scrollable : 0;
+      setScrollProgress(Math.max(0, Math.min(1, nextProgress)));
+    }
+
+    updateProgress();
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    window.addEventListener('resize', updateProgress);
+    return () => {
+      window.removeEventListener('scroll', updateProgress);
+      window.removeEventListener('resize', updateProgress);
+    };
+  }, []);
+
+  const scrollToTop = useCallback(() => {
+    if (typeof window === 'undefined') return;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  const progressDegrees = `${Math.round(scrollProgress * 360)}deg`;
+
+  return (
+    <button
+      type="button"
+      onClick={scrollToTop}
+      className="fixed bottom-[calc(env(safe-area-inset-bottom)+1rem)] right-4 z-40 inline-flex h-12 w-12 items-center justify-center rounded-full text-ink shadow-[0_14px_35px_rgba(15,23,42,0.22)] active:scale-95 sm:hidden"
+      style={{
+        background: `conic-gradient(#0078be ${progressDegrees}, #e2e8f0 0deg)`,
+      }}
+      aria-label="Back to top"
+      title="Back to top"
+    >
+      <span className="absolute inset-1 rounded-full bg-white ring-1 ring-white/80" aria-hidden="true" />
+      <ArrowUp className="relative h-5 w-5" aria-hidden="true" />
+    </button>
   );
 }
 
@@ -2300,7 +2402,7 @@ function ResponsibleGamblingNotice({ compact = false }) {
   );
 }
 
-function SettingsView({ bookmakerId, onBookmakerChange, onBack }) {
+function SettingsView({ bookmakerId, onBookmakerChange, onBack, teamOptions = [], favoriteTeams = [], onFavoriteTeamsChange }) {
   const selectedBookmaker = BOOKMAKERS[bookmakerId] || BOOKMAKERS.sportsbet;
   const [isPlatformOwner, setIsPlatformOwner] = useState(false);
   const [profile, setProfile] = useState(null);
@@ -2308,7 +2410,8 @@ function SettingsView({ bookmakerId, onBookmakerChange, onBack }) {
   const [billingBusy, setBillingBusy] = useState(false);
   const [billingMessage, setBillingMessage] = useState('');
   const [billingError, setBillingError] = useState('');
-  const [profileForm, setProfileForm] = useState({ displayName: '', nickname: '' });
+  const [profileForm, setProfileForm] = useState({ displayName: '', nickname: '', favoriteTeams });
+  const [teamToAdd, setTeamToAdd] = useState('');
   const [profileBusy, setProfileBusy] = useState(false);
   const [profileMessage, setProfileMessage] = useState('');
   const [profileError, setProfileError] = useState('');
@@ -2328,7 +2431,9 @@ function SettingsView({ bookmakerId, onBookmakerChange, onBack }) {
           setProfileForm({
             displayName: nextProfile?.displayName || user.displayName || '',
             nickname: nextProfile?.nickname || '',
+            favoriteTeams: Array.isArray(nextProfile?.favoriteTeams) ? nextProfile.favoriteTeams : favoriteTeams,
           });
+          if (Array.isArray(nextProfile?.favoriteTeams)) onFavoriteTeamsChange?.(nextProfile.favoriteTeams);
           setIsPlatformOwner(Boolean(nextProfile?.isPlatformOwner));
         }
       } catch (error) {
@@ -2349,6 +2454,32 @@ function SettingsView({ bookmakerId, onBookmakerChange, onBack }) {
     setProfileError('');
   }
 
+  function addFavoriteTeam() {
+    const nextTeam = String(teamToAdd || '').trim();
+    if (!nextTeam) return;
+    setProfileForm((current) => {
+      const existing = favoriteTeamSet(current.favoriteTeams);
+      if (existing.has(teamPreferenceKey(nextTeam))) return current;
+      const next = [...(current.favoriteTeams || []), nextTeam].slice(0, 20);
+      onFavoriteTeamsChange?.(next);
+      return { ...current, favoriteTeams: next };
+    });
+    setTeamToAdd('');
+    setProfileMessage('');
+    setProfileError('');
+  }
+
+  function removeFavoriteTeam(team) {
+    setProfileForm((current) => {
+      const removeKey = teamPreferenceKey(team);
+      const next = (current.favoriteTeams || []).filter((item) => teamPreferenceKey(item) !== removeKey);
+      onFavoriteTeamsChange?.(next);
+      return { ...current, favoriteTeams: next };
+    });
+    setProfileMessage('');
+    setProfileError('');
+  }
+
   async function saveProfile() {
     setProfileBusy(true);
     setProfileMessage('');
@@ -2363,10 +2494,12 @@ function SettingsView({ bookmakerId, onBookmakerChange, onBack }) {
 
       const displayName = profileForm.displayName.trim().slice(0, 80);
       const nickname = profileForm.nickname.trim().slice(0, 40);
+      const favoriteTeams = [...new Set((profileForm.favoriteTeams || []).map((team) => String(team || '').trim()).filter(Boolean))].slice(0, 20);
       await updateProfile(user, { displayName });
-      const savedProfile = await updateUserProfile(user.uid, { displayName, nickname });
+      const savedProfile = await updateUserProfile(user.uid, { displayName, nickname, favoriteTeams });
       setProfile((current) => ({ ...(current || {}), ...savedProfile, profileUpdatedAt: new Date().toISOString() }));
       setProfileForm(savedProfile);
+      onFavoriteTeamsChange?.(savedProfile.favoriteTeams || []);
       setProfileMessage('Profile updated.');
     } catch (error) {
       setProfileError(error.message || 'Profile could not be updated.');
@@ -2532,6 +2665,56 @@ function SettingsView({ bookmakerId, onBookmakerChange, onBack }) {
                   placeholder="Optional nickname"
                 />
               </label>
+            </div>
+            <div className="rounded-md border border-line bg-field p-3">
+              <div className="flex items-center gap-2 text-xs font-semibold uppercase text-slate-500">
+                <Star className="h-3.5 w-3.5 text-amber-500" aria-hidden="true" />
+                Favourite teams
+              </div>
+              <div className="mt-2 flex gap-2">
+                <select
+                  value={teamToAdd}
+                  onChange={(event) => setTeamToAdd(event.target.value)}
+                  className="h-10 min-w-0 flex-1 rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink outline-none focus:border-slate-400"
+                  aria-label="Add favourite team"
+                >
+                  <option value="">Select a team</option>
+                  {teamOptions
+                    .filter((team) => !favoriteTeamSet(profileForm.favoriteTeams).has(teamPreferenceKey(team)))
+                    .map((team) => (
+                      <option key={team} value={team}>
+                        {team}
+                      </option>
+                    ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={addFavoriteTeam}
+                  disabled={!teamToAdd}
+                  className="inline-flex h-10 shrink-0 items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink shadow-panel hover:bg-field disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  Add
+                </button>
+              </div>
+              {(profileForm.favoriteTeams || []).length > 0 ? (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {profileForm.favoriteTeams.map((team) => (
+                    <span key={teamPreferenceKey(team)} className="inline-flex h-8 max-w-full items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-2.5 text-xs font-semibold text-amber-900">
+                      <span className="truncate">{team}</span>
+                      <button
+                        type="button"
+                        onClick={() => removeFavoriteTeam(team)}
+                        className="-mr-1 inline-flex h-6 w-6 items-center justify-center rounded-full text-amber-800 hover:bg-amber-100"
+                        aria-label={`Remove ${team} from favourite teams`}
+                      >
+                        <XCircle className="h-3.5 w-3.5" aria-hidden="true" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-2 text-sm text-slate-500">Favourite team matches will appear at the top of the dashboard.</p>
+              )}
             </div>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="text-sm text-slate-500">
@@ -2758,26 +2941,62 @@ function StreakList({ title, streaks, match }) {
 }
 
 function ResultsReview({ matches }) {
-  const recent = recentFinishedMatches(matches);
-  const rows = summarizeResultsByMarket(recent).filter((row) => row.total > 0);
-  if (!rows.length) return null;
+  const [reviewScope, setReviewScope] = useState('all');
+  const today = useMemo(() => localTodayDate(), []);
+  const weekEnd = useMemo(() => addDaysToIsoDate(today, 6), [today]);
+  const allResulted = trackedFinishedMatches(matches);
+  const resulted = allResulted.filter((match) => {
+    const matchDate = String(match.date || '');
+    if (reviewScope === 'today') return matchDate === today;
+    if (reviewScope === 'week') return matchDate >= today && matchDate <= weekEnd;
+    return true;
+  });
+  const rows = summarizeResultsByMarket(resulted).filter((row) => row.total > 0);
+  if (!allResulted.length) return null;
   const best = [...rows].sort((a, b) => b.hitRate - a.hitRate)[0];
   const worst = [...rows].sort((a, b) => a.hitRate - b.hitRate)[0];
+  const scopeLabel = reviewScope === 'week'
+    ? `this week (${formatDateDMY(today)}-${formatDateDMY(weekEnd)})`
+    : reviewScope === 'today'
+      ? `today (${formatDateDMY(today)})`
+      : 'all resulted matches';
 
   return (
     <section className="mt-3 rounded-lg border border-slate-300 bg-white p-3 shadow-panel sm:mt-5 sm:p-4">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-base font-semibold text-ink">Results review</h2>
-          <p className="mt-1 text-xs text-slate-500">Last {recent.length} settled matches across the loaded data.</p>
+          <p className="mt-1 text-xs text-slate-500">Since {PREDICTION_TRACKING_START_DATE}: {resulted.length} resulted matches for {scopeLabel}.</p>
         </div>
-        <div className="flex flex-wrap gap-1.5 text-xs font-semibold">
-          <span className="rounded-md border border-emerald-200 bg-emerald-50 px-2 py-1 text-emerald-700">Best {best.label} {best.hitRate}%</span>
-          <span className="rounded-md border border-red-200 bg-red-50 px-2 py-1 text-red-700">Weakest {worst.label} {worst.hitRate}%</span>
+        <div className="flex flex-wrap items-center gap-1.5 text-xs font-semibold">
+          <button
+            type="button"
+            onClick={() => setReviewScope('today')}
+            className={`rounded-md border px-2 py-1 ${reviewScope === 'today' ? 'border-ink bg-ink text-white' : 'border-slate-300 bg-white text-slate-700 hover:bg-field'}`}
+          >
+            Today
+          </button>
+          <button
+            type="button"
+            onClick={() => setReviewScope('week')}
+            className={`rounded-md border px-2 py-1 ${reviewScope === 'week' ? 'border-ink bg-ink text-white' : 'border-slate-300 bg-white text-slate-700 hover:bg-field'}`}
+          >
+            This week
+          </button>
+          <button
+            type="button"
+            onClick={() => setReviewScope('all')}
+            className={`rounded-md border px-2 py-1 ${reviewScope === 'all' ? 'border-ink bg-ink text-white' : 'border-slate-300 bg-white text-slate-700 hover:bg-field'}`}
+          >
+            All
+          </button>
+          {best && <span className="rounded-md border border-emerald-200 bg-emerald-50 px-2 py-1 text-emerald-700">Best {best.label} {best.hitRate}%</span>}
+          {worst && <span className="rounded-md border border-red-200 bg-red-50 px-2 py-1 text-red-700">Weakest {worst.label} {worst.hitRate}%</span>}
         </div>
       </div>
-      <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
-        {rows.map((row) => (
+      {rows.length ? (
+        <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {rows.map((row) => (
           <div key={row.key} className="rounded-md border border-slate-300 bg-field px-2.5 py-2 sm:px-3">
             <div className="flex items-center justify-between gap-1.5">
               <span className="text-xs font-semibold uppercase text-slate-500">{row.label}</span>
@@ -2790,8 +3009,13 @@ function ResultsReview({ matches }) {
               Odds {formatOddsTotal(row.oddsHit)} v {formatOddsTotal(row.oddsMiss)}
             </div>
           </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div className="mt-3 rounded-md border border-slate-300 bg-field px-3 py-3 text-sm text-slate-500">
+          No resulted prediction markets in this range yet.
+        </div>
+      )}
     </section>
   );
 }
@@ -2888,7 +3112,6 @@ function H2HContextPanel({ match, allMatches }) {
 }
 
 function PredictionSummaryCard({ match, allMatches }) {
-  const [showPredictionCards, setShowPredictionCards] = useState(false);
   const matchWithContext = { ...match, __allMatches: allMatches };
   const predictions = match.predictions || {};
   const confidence = confidenceForMatch(match, allMatches);
@@ -2919,50 +3142,41 @@ function PredictionSummaryCard({ match, allMatches }) {
           <h3 className="text-base font-semibold leading-6 text-ink">Prediction summary</h3>
           <p className="mt-1 text-xs text-slate-500">{confidence.reason}</p>
         </div>
-        <button
-          type="button"
-          onClick={() => setShowPredictionCards((value) => !value)}
-          className="inline-flex h-9 shrink-0 items-center justify-center rounded-md border border-line bg-field px-3 text-sm font-semibold text-ink shadow-panel hover:bg-white"
-        >
-          {showPredictionCards ? 'Hide prediction cards' : 'View prediction cards'}
-        </button>
       </div>
-      {showPredictionCards && (
-        <ul className="mt-4 space-y-3 text-sm">
-          {lines.map((row) => (
-            <li key={row.label} className={`grid gap-3 rounded-md px-3 py-3 sm:grid-cols-[24rem_minmax(0,1fr)] sm:items-start ${summaryRowClass(row.result)}`}>
-              <span className="min-w-0">
-                <span className="grid min-h-6 grid-cols-[7rem_minmax(0,1fr)] items-center gap-2">
-                  <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    {row.result && resultIcon(row.result)}
-                    <span>{row.label}</span>
-                  </span>
-                  <span className="min-w-0 truncate font-semibold leading-5 text-ink">{row.pick}</span>
+      <ul className="mt-4 space-y-3 text-sm">
+        {lines.map((row) => (
+          <li key={row.label} className={`grid gap-3 rounded-md px-3 py-3 sm:grid-cols-[24rem_minmax(0,1fr)] sm:items-start ${summaryRowClass(row.result)}`}>
+            <span className="min-w-0">
+              <span className="grid min-h-6 grid-cols-[7rem_minmax(0,1fr)] items-center gap-2">
+                <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  {row.result && resultIcon(row.result)}
+                  <span>{row.label}</span>
                 </span>
-                <span className="mt-2 block">
-                  <ModelVsBookmakerComparison comparison={row.comparison} />
-                  {row.label === 'Winner' && <WinnerProbabilityBreakdown match={matchWithContext} comparison={winnerComparison} />}
+                <span className="min-w-0 truncate font-semibold leading-5 text-ink">{row.pick}</span>
+              </span>
+              <span className="mt-2 block">
+                <ModelVsBookmakerComparison comparison={row.comparison} />
+                {row.label === 'Winner' && <WinnerProbabilityBreakdown match={matchWithContext} comparison={winnerComparison} />}
+              </span>
+            </span>
+            <span className="min-w-0 leading-5 text-slate-600">
+              {row.text}
+              {row.result && row.result !== 'miss' && (
+                <span className={`ml-2 inline-flex rounded-md px-2 py-0.5 text-xs font-semibold ${resultBadgeClass(row.result)}`}>
+                  {row.result}
                 </span>
-              </span>
-              <span className="min-w-0 leading-5 text-slate-600">
-                {row.text}
-                {row.result && row.result !== 'miss' && (
-                  <span className={`ml-2 inline-flex rounded-md px-2 py-0.5 text-xs font-semibold ${resultBadgeClass(row.result)}`}>
-                    {row.result}
-                  </span>
-                )}
-              </span>
-            </li>
-          ))}
-        </ul>
-      )}
+              )}
+            </span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
 
-function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerChange }) {
+function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerChange, favoriteTeams = [], onToggleFavoriteTeam }) {
   const predictions = match.predictions || {};
-  const odds = match.sportsbet_odds || match.odds || {};
+  const odds = displayThreeWayOdds(match);
   const actuals = match.actuals || {};
   const selectedBookmaker = BOOKMAKERS[bookmakerId] || BOOKMAKERS.sportsbet;
   const selectedBookmakerHref = bookmakerUrl(match, selectedBookmaker.id);
@@ -3013,6 +3227,7 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
             <div className="flex min-w-0 items-center justify-center gap-2 sm:justify-start">
               <TeamBadge src={teamLogo(match, 'home')} name={match.home?.name} />
               <div className="min-w-0 whitespace-normal break-words text-base font-semibold leading-snug text-ink">{match.home?.name}</div>
+              <TeamFavoriteButton teamName={match.home?.name} favoriteTeams={favoriteTeams} onToggleFavoriteTeam={onToggleFavoriteTeam} />
             </div>
             <div className="mt-1 text-xs text-slate-500">Rank {match.home?.rank ?? '-'} · {match.home?.pts ?? '-'} pts</div>
           </div>
@@ -3026,6 +3241,7 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
             <div className="flex min-w-0 items-center justify-center gap-2 sm:justify-start">
               <TeamBadge src={teamLogo(match, 'away')} name={match.away?.name} />
               <div className="min-w-0 whitespace-normal break-words text-base font-semibold leading-snug text-ink">{match.away?.name}</div>
+              <TeamFavoriteButton teamName={match.away?.name} favoriteTeams={favoriteTeams} onToggleFavoriteTeam={onToggleFavoriteTeam} />
             </div>
             <div className="mt-1 text-xs text-slate-500">Rank {match.away?.rank ?? '-'} · {match.away?.pts ?? '-'} pts</div>
           </div>
@@ -3078,13 +3294,14 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
 
         <StreakList title="Team streaks" streaks={match.team_streaks} match={match} />
       </div>
+      <BackToTopButton />
     </div>
   );
 }
 
-function MatchCard({ match, onSelect, bookmakerId, allMatches }) {
+function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [], onToggleFavoriteTeam }) {
   const predictions = match.predictions || {};
-  const odds = match.sportsbet_odds || match.odds || {};
+  const odds = displayThreeWayOdds(match);
   const actuals = match.actuals || {};
   const selectedBookmaker = BOOKMAKERS[bookmakerId] || BOOKMAKERS.sportsbet;
   const hasDirectBookmakerLink = hasDirectBookmakerMatchLink(match, selectedBookmaker.id);
@@ -3107,12 +3324,20 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches }) {
         displayCards ? { label: 'Cards', value: formatMarketDetail(displayCards), result: displayCards.result, edge: edgeBadgeFor(cardsComparison) } :
           cornerMarket ? { label: 'Corners', value: formatMarketDetail(cornerMarket), result: cornerMarket.result, edge: edgeBadgeFor(cornersComparison) } :
             null;
+  const openMatch = () => onSelect(match);
+  const handleCardKeyDown = (event) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    openMatch();
+  };
 
   return (
     <article className="rounded-lg border border-line bg-white shadow-panel transition active:scale-[0.99] sm:hover:-translate-y-0.5 sm:hover:border-slate-300 sm:hover:shadow-lg">
-      <button
-        type="button"
-        onClick={() => onSelect(match)}
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={openMatch}
+        onKeyDown={handleCardKeyDown}
         className="block w-full rounded-lg text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-ink focus-visible:ring-offset-2"
         aria-label={`View details for ${match.home?.name} vs ${match.away?.name}`}
       >
@@ -3140,7 +3365,10 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches }) {
                 <TeamBadge src={teamLogo(match, 'home')} name={match.home?.name} />
                 <div className="min-w-0 whitespace-normal break-words text-left text-sm font-semibold leading-snug text-ink sm:text-base">{match.home?.name}</div>
               </div>
-              {isFinished && <TeamScoreBadge value={match.home?.goals} />}
+              <div className="flex shrink-0 items-center gap-1">
+                <TeamFavoriteButton teamName={match.home?.name} favoriteTeams={favoriteTeams} onToggleFavoriteTeam={onToggleFavoriteTeam} />
+                {isFinished && <TeamScoreBadge value={match.home?.goals} />}
+              </div>
             </div>
             <WinnerPredictionMeta match={match} side="home" modelProbability={winnerModelPct} winner={displayWinner} />
           </div>
@@ -3150,7 +3378,10 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches }) {
                 <TeamBadge src={teamLogo(match, 'away')} name={match.away?.name} />
                 <div className="min-w-0 whitespace-normal break-words text-left text-sm font-semibold leading-snug text-ink sm:text-base">{match.away?.name}</div>
               </div>
-              {isFinished && <TeamScoreBadge value={match.away?.goals} />}
+              <div className="flex shrink-0 items-center gap-1">
+                <TeamFavoriteButton teamName={match.away?.name} favoriteTeams={favoriteTeams} onToggleFavoriteTeam={onToggleFavoriteTeam} />
+                {isFinished && <TeamScoreBadge value={match.away?.goals} />}
+              </div>
             </div>
             <WinnerPredictionMeta match={match} side="away" modelProbability={winnerModelPct} winner={displayWinner} />
           </div>
@@ -3167,6 +3398,7 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches }) {
             <div className="flex min-w-0 items-center gap-2">
               <TeamBadge src={teamLogo(match, 'home')} name={match.home?.name} />
               <div className="min-w-0 whitespace-normal break-words text-base font-semibold leading-snug text-ink">{match.home?.name}</div>
+              <TeamFavoriteButton teamName={match.home?.name} favoriteTeams={favoriteTeams} onToggleFavoriteTeam={onToggleFavoriteTeam} />
             </div>
             <WinnerPredictionMeta match={match} side="home" modelProbability={winnerModelPct} winner={displayWinner} />
           </div>
@@ -3186,6 +3418,7 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches }) {
             <div className="flex min-w-0 items-center gap-2">
               <TeamBadge src={teamLogo(match, 'away')} name={match.away?.name} />
               <div className="min-w-0 whitespace-normal break-words text-base font-semibold leading-snug text-ink">{match.away?.name}</div>
+              <TeamFavoriteButton teamName={match.away?.name} favoriteTeams={favoriteTeams} onToggleFavoriteTeam={onToggleFavoriteTeam} />
             </div>
             <WinnerPredictionMeta match={match} side="away" modelProbability={winnerModelPct} winner={displayWinner} />
           </div>
@@ -3253,12 +3486,13 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches }) {
           </div>
         )}
       </div>
-      </button>
+      </div>
     </article>
   );
 }
 
-function LeagueSection({ group, onSelectMatch, bookmakerId, allMatches, isFavorite = false, onToggleFavorite }) {
+function LeagueSection({ group, onSelectMatch, bookmakerId, allMatches, isFavorite = false, onToggleFavorite, favoriteTeams = [], onToggleFavoriteTeam }) {
+  const isFavoriteTeamGroup = Boolean(group.isFavoriteTeamGroup);
   const finished = group.matches.filter((match) => match.status === 'FT').length;
   const upcoming = group.matches.length - finished;
 
@@ -3266,21 +3500,29 @@ function LeagueSection({ group, onSelectMatch, bookmakerId, allMatches, isFavori
     <section className="overflow-hidden rounded-lg border border-line bg-white">
       <div className="flex flex-col gap-2 border-b border-line bg-ink px-3 py-3 text-white sm:flex-row sm:items-center sm:justify-between sm:px-4">
         <div className="flex min-w-0 items-center gap-2">
-          <LeagueBadge src={group.logo} name={group.league} />
+          {isFavoriteTeamGroup ? (
+            <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-amber-300/40 bg-amber-400/15 text-amber-200">
+              <Star className="h-4 w-4 fill-amber-300" aria-hidden="true" />
+            </span>
+          ) : (
+            <LeagueBadge src={group.logo} name={group.league} />
+          )}
           <h2 className="truncate text-base font-semibold sm:text-lg">{group.league}</h2>
-          <button
-            type="button"
-            onClick={() => onToggleFavorite(group.league)}
-            className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border transition ${
-              isFavorite
-                ? 'border-amber-300 bg-amber-400/15 text-amber-300'
-                : 'border-white/15 bg-white/5 text-white/65 hover:bg-white/10 hover:text-white'
-            }`}
-            aria-label={`${isFavorite ? 'Remove' : 'Add'} ${group.league} as favourite league`}
-            title={`${isFavorite ? 'Remove from' : 'Add to'} favourite leagues`}
-          >
-            <Star className={`h-4 w-4 ${isFavorite ? 'fill-amber-300' : ''}`} aria-hidden="true" />
-          </button>
+          {!isFavoriteTeamGroup && (
+            <button
+              type="button"
+              onClick={() => onToggleFavorite(group.league)}
+              className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border transition ${
+                isFavorite
+                  ? 'border-amber-300 bg-amber-400/15 text-amber-300'
+                  : 'border-white/15 bg-white/5 text-white/65 hover:bg-white/10 hover:text-white'
+              }`}
+              aria-label={`${isFavorite ? 'Remove' : 'Add'} ${group.league} as favourite league`}
+              title={`${isFavorite ? 'Remove from' : 'Add to'} favourite leagues`}
+            >
+              <Star className={`h-4 w-4 ${isFavorite ? 'fill-amber-300' : ''}`} aria-hidden="true" />
+            </button>
+          )}
         </div>
         <div className="flex flex-wrap items-center gap-1.5 text-xs font-semibold">
           <span className="rounded-full bg-white/12 px-2.5 py-1">{group.matches.length} matches</span>
@@ -3290,7 +3532,15 @@ function LeagueSection({ group, onSelectMatch, bookmakerId, allMatches, isFavori
       </div>
       <div className="grid grid-cols-1 gap-3 bg-field p-2 sm:gap-4 sm:p-4 lg:grid-cols-2">
         {group.matches.map((match) => (
-          <MatchCard key={`${match.league}-${match.id}`} match={match} onSelect={onSelectMatch} bookmakerId={bookmakerId} allMatches={allMatches} />
+          <MatchCard
+            key={`${match.league}-${match.id}`}
+            match={match}
+            onSelect={onSelectMatch}
+            bookmakerId={bookmakerId}
+            allMatches={allMatches}
+            favoriteTeams={favoriteTeams}
+            onToggleFavoriteTeam={onToggleFavoriteTeam}
+          />
         ))}
       </div>
     </section>
@@ -3308,10 +3558,10 @@ function HomeInner() {
   const [league, setLeague] = useState('all');
   const [status, setStatus] = useState('all');
   const [selectedDate, setSelectedDate] = useState('');
-  const [valueFilter, setValueFilter] = useState('all');
   const [query, setQuery] = useState('');
   const [bookmakerId, setBookmakerId] = useState('sportsbet');
   const [favoriteLeagues, setFavoriteLeagues] = useState([]);
+  const [favoriteTeams, setFavoriteTeams] = useState([]);
 
   const scrollPositionRef = useRef(0);
   const swipeStartRef = useRef(null);
@@ -3326,7 +3576,7 @@ function HomeInner() {
         setError('');
       })
       .catch((err) => {
-        if (!cancelled) setError(`Could not load ${DATA_URLS.join(' or ')}`);
+        if (!cancelled) setError('Could not load Firestore match data. Try refreshing in a moment.');
       });
 
     return () => {
@@ -3336,7 +3586,8 @@ function HomeInner() {
 
   useEffect(() => {
     const saved = window.localStorage.getItem('preferredBookmaker');
-    if (saved && BOOKMAKERS[saved]) setBookmakerId(saved);
+    if (saved && DIRECT_MATCH_BOOKMAKERS.has(saved)) setBookmakerId(saved);
+    else if (saved) window.localStorage.setItem('preferredBookmaker', 'sportsbet');
   }, []);
 
   useEffect(() => {
@@ -3350,21 +3601,62 @@ function HomeInner() {
     }
   }, []);
 
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(window.localStorage.getItem(FAVORITE_TEAMS_STORAGE_KEY) || '[]');
+      if (Array.isArray(saved)) {
+        setFavoriteTeams(saved.filter((item) => typeof item === 'string' && item.trim()));
+      }
+    } catch {
+      setFavoriteTeams([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadFavoriteTeamsFromProfile() {
+      try {
+        const { getFirebaseAuth } = await import('../firebase');
+        const { getUserProfile } = await import('../firestore-data');
+        const user = getFirebaseAuth().currentUser;
+        if (!user) return;
+        const nextProfile = await getUserProfile(user.uid);
+        const nextTeams = Array.isArray(nextProfile?.favoriteTeams) ? nextProfile.favoriteTeams : [];
+        if (!active || !nextTeams.length) return;
+        setFavoriteTeams(nextTeams);
+        window.localStorage.setItem(FAVORITE_TEAMS_STORAGE_KEY, JSON.stringify(nextTeams));
+      } catch {
+        // Local preferences remain available if profile loading is unavailable.
+      }
+    }
+
+    loadFavoriteTeamsFromProfile();
+    return () => { active = false; };
+  }, []);
+
   const handleBookmakerChange = useCallback((nextBookmakerId) => {
-    const safeBookmakerId = BOOKMAKERS[nextBookmakerId] ? nextBookmakerId : 'sportsbet';
+    const safeBookmakerId = DIRECT_MATCH_BOOKMAKERS.has(nextBookmakerId) ? nextBookmakerId : 'sportsbet';
     setBookmakerId(safeBookmakerId);
     window.localStorage.setItem('preferredBookmaker', safeBookmakerId);
   }, []);
 
   const matches = useMemo(() => flattenMatches(data), [data]);
   const leagues = useMemo(() => [...new Set(matches.map((match) => match.league))].sort(compareLeagues), [matches]);
+  const teamOptions = useMemo(() => teamOptionsFromMatches(matches), [matches]);
   const favoriteLeagueSet = useMemo(() => new Set(favoriteLeagues), [favoriteLeagues]);
   const dates = useMemo(
     () => [...new Set(matches.map((match) => match.date).filter(Boolean))].sort((a, b) => a.localeCompare(b)),
     [matches],
   );
   const stats = useMemo(() => summarize(matches), [matches]);
-  const selectedDateIndex = dates.indexOf(selectedDate);
+  const todayDate = useMemo(() => localTodayDate(), []);
+  const dateOptions = useMemo(
+    () => [...new Set([...dates, todayDate].filter(Boolean))].sort((a, b) => a.localeCompare(b)),
+    [dates, todayDate],
+  );
+  const selectedDateIndex = dateOptions.indexOf(selectedDate);
+  const todayDateIndex = dateOptions.indexOf(todayDate);
 
   useEffect(() => {
     if (selectedDate || !dates.length) return;
@@ -3381,6 +3673,54 @@ function HomeInner() {
     }
   }, [favoriteLeagues, leagues]);
 
+  useEffect(() => {
+    if (!teamOptions.length || !favoriteTeams.length) return;
+    const available = favoriteTeamSet(teamOptions);
+    const nextFavorites = favoriteTeams.filter((item) => available.has(teamPreferenceKey(item)));
+    if (nextFavorites.length !== favoriteTeams.length) {
+      setFavoriteTeams(nextFavorites);
+      window.localStorage.setItem(FAVORITE_TEAMS_STORAGE_KEY, JSON.stringify(nextFavorites));
+    }
+  }, [favoriteTeams, teamOptions]);
+
+  const handleFavoriteTeamsChange = useCallback((nextTeams) => {
+    const cleanTeams = [...new Set((nextTeams || []).map((team) => String(team || '').trim()).filter(Boolean))].slice(0, 20);
+    setFavoriteTeams(cleanTeams);
+    window.localStorage.setItem(FAVORITE_TEAMS_STORAGE_KEY, JSON.stringify(cleanTeams));
+  }, []);
+
+  const saveFavoriteTeamsToProfile = useCallback((nextTeams) => {
+    async function save() {
+      try {
+        const { getFirebaseAuth } = await import('../firebase');
+        const { updateUserFavoriteTeams } = await import('../firestore-data');
+        const user = getFirebaseAuth().currentUser;
+        if (!user) return;
+        await updateUserFavoriteTeams(user.uid, nextTeams);
+      } catch {
+        // Local favourites still work if profile persistence is temporarily unavailable.
+      }
+    }
+
+    save();
+  }, []);
+
+  const handleFavoriteTeamToggle = useCallback((teamName) => {
+    const cleanTeam = String(teamName || '').trim();
+    const cleanKey = teamPreferenceKey(cleanTeam);
+    if (!cleanTeam || !cleanKey) return;
+
+    setFavoriteTeams((current) => {
+      const currentSet = favoriteTeamSet(current);
+      const next = currentSet.has(cleanKey)
+        ? current.filter((item) => teamPreferenceKey(item) !== cleanKey)
+        : [...current, cleanTeam].slice(0, 20);
+      window.localStorage.setItem(FAVORITE_TEAMS_STORAGE_KEY, JSON.stringify(next));
+      saveFavoriteTeamsToProfile(next);
+      return next;
+    });
+  }, [saveFavoriteTeamsToProfile]);
+
   const handleFavoriteLeagueToggle = useCallback((nextLeague) => {
     setFavoriteLeagues((current) => {
       const next = current.includes(nextLeague)
@@ -3392,20 +3732,33 @@ function HomeInner() {
   }, []);
 
   const [slideDir, setSlideDir] = useState(0);
+  const selectToday = useCallback(() => {
+    if (todayDateIndex === -1) return;
+    const nextDirection = selectedDateIndex === -1 ? 0 : todayDateIndex > selectedDateIndex ? 1 : todayDateIndex < selectedDateIndex ? -1 : 0;
+    setSlideDir(nextDirection);
+    setSelectedDate(todayDate);
+  }, [selectedDateIndex, todayDate, todayDateIndex]);
+
+  const selectAllResulted = useCallback(() => {
+    setSlideDir(0);
+    setSelectedDate('all');
+    setStatus('FT');
+  }, []);
+
   const moveDate = useCallback(
     (direction) => {
-      if (!dates.length) return;
+      if (!dateOptions.length) return;
       setSlideDir(direction > 0 ? 1 : -1);
 
       if (selectedDateIndex === -1) {
-        setSelectedDate(direction > 0 ? dates[0] : dates[dates.length - 1]);
+        setSelectedDate(direction > 0 ? dateOptions[0] : dateOptions[dateOptions.length - 1]);
         return;
       }
 
-      const nextIndex = Math.min(Math.max(selectedDateIndex + direction, 0), dates.length - 1);
-      setSelectedDate(dates[nextIndex]);
+      const nextIndex = Math.min(Math.max(selectedDateIndex + direction, 0), dateOptions.length - 1);
+      setSelectedDate(dateOptions[nextIndex]);
     },
-    [dates, selectedDateIndex],
+    [dateOptions, selectedDateIndex],
   );
 
   const filtered = useMemo(() => {
@@ -3418,14 +3771,13 @@ function HomeInner() {
         if (status === 'FT') return match.status === 'FT';
         return match.status !== 'FT';
       })
-      .filter((match) => filterMatchesByValue(match, valueFilter, matches))
       .filter((match) => {
         if (!normalized) return true;
         return `${match.home?.name || ''} ${match.away?.name || ''} ${match.league}`.toLowerCase().includes(normalized);
       })
       .sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`));
-  }, [league, matches, query, selectedDate, status, valueFilter]);
-  const groupedMatches = useMemo(() => groupMatchesByLeague(filtered, favoriteLeagues), [favoriteLeagues, filtered]);
+  }, [league, matches, query, selectedDate, status]);
+  const groupedMatches = useMemo(() => groupMatchesForDisplay(filtered, favoriteLeagues, favoriteTeams), [favoriteLeagues, favoriteTeams, filtered]);
 
   // Look up the selected match across the entire dataset so detail view works
   // even when the current filters would exclude it.
@@ -3522,12 +3874,23 @@ function HomeInner() {
         allMatches={matches}
         bookmakerId={bookmakerId}
         onBookmakerChange={handleBookmakerChange}
+        favoriteTeams={favoriteTeams}
+        onToggleFavoriteTeam={handleFavoriteTeamToggle}
       />
     );
   }
 
   if (isSettingsView) {
-    return <SettingsView bookmakerId={bookmakerId} onBookmakerChange={handleBookmakerChange} onBack={closeSettings} />;
+    return (
+      <SettingsView
+        bookmakerId={bookmakerId}
+        onBookmakerChange={handleBookmakerChange}
+        onBack={closeSettings}
+        teamOptions={teamOptions}
+        favoriteTeams={favoriteTeams}
+        onFavoriteTeamsChange={handleFavoriteTeamsChange}
+      />
+    );
   }
 
   return (
@@ -3545,8 +3908,8 @@ function HomeInner() {
                 />
               </div>
               <div className="hidden min-w-0 sm:block">
-                <div className="text-sm font-semibold uppercase tracking-wide text-slate-500">Prediction dashboard</div>
-                <div className="mt-0.5 text-base font-semibold text-ink">Stats-led picks across top leagues</div>
+                <div className="text-sm font-semibold uppercase tracking-wide text-slate-500">Smarter football picks</div>
+                <div className="mt-0.5 text-base font-semibold text-ink">Model-backed edges, odds and match signals in one view</div>
               </div>
             </div>
             <button
@@ -3585,11 +3948,7 @@ function HomeInner() {
 
         <ResultsReview matches={matches} />
 
-        <div className="mt-3 grid gap-2 rounded-lg border border-line bg-white p-3 sm:mt-5 sm:grid-cols-[auto_12rem_10rem_12rem_16rem_minmax(0,1fr)] sm:items-center sm:gap-3">
-          <div className="flex items-center gap-2 text-sm font-semibold text-slate-600">
-            <Filter className="h-4 w-4" aria-hidden="true" />
-            Filters
-          </div>
+        <div className="mt-3 grid gap-2 rounded-lg border border-line bg-white p-3 sm:mt-5 sm:grid-cols-[12rem_10rem_auto_16rem_minmax(0,1fr)] sm:items-center sm:gap-3">
           <select
             value={league}
             onChange={(event) => setLeague(event.target.value)}
@@ -3613,25 +3972,29 @@ function HomeInner() {
             <option value="FT">Finished</option>
             <option value="all">All statuses</option>
           </select>
-          <select
-            value={valueFilter}
-            onChange={(event) => setValueFilter(event.target.value)}
-            className="h-11 w-full min-w-0 rounded-md border border-line bg-white px-3 text-sm sm:h-10"
-            aria-label="Value filter"
-          >
-            <option value="all">All values</option>
-            <option value="strong">Strong edge</option>
-            <option value="watchlist">Watchlist+</option>
-            <option value="edge5">Model edge &gt; 5%</option>
-            <option value="direct">Sportsbet links</option>
-            <option value="quality">Data strong</option>
-            <option value="top">Top divisions</option>
-          </select>
           <div className="flex min-w-0 items-center gap-2">
             <button
               type="button"
+              onClick={selectAllResulted}
+              disabled={status === 'FT' && selectedDate === 'all'}
+              className="inline-flex h-11 shrink-0 items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-slate-700 hover:bg-field disabled:cursor-not-allowed disabled:opacity-40 sm:h-10"
+              aria-label="Show all resulted matches"
+            >
+              All resulted
+            </button>
+            <button
+              type="button"
+              onClick={selectToday}
+              disabled={selectedDate === todayDate}
+              className="inline-flex h-11 shrink-0 items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-slate-700 hover:bg-field disabled:cursor-not-allowed disabled:opacity-40 sm:h-10"
+              aria-label="Show today's matches"
+            >
+              Today
+            </button>
+            <button
+              type="button"
               onClick={() => moveDate(-1)}
-              disabled={!dates.length || selectedDateIndex === 0}
+              disabled={!dateOptions.length || selectedDateIndex === 0}
               className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-line bg-white text-slate-600 hover:bg-field disabled:cursor-not-allowed disabled:opacity-40 sm:h-10 sm:w-10"
               aria-label="Previous match date"
             >
@@ -3644,7 +4007,7 @@ function HomeInner() {
               aria-label="Match date"
             >
               <option value="all">All dates</option>
-              {dates.map((date) => (
+              {dateOptions.map((date) => (
                 <option key={date} value={date}>
                   {formatDateDMY(date)}
                 </option>
@@ -3653,7 +4016,7 @@ function HomeInner() {
             <button
               type="button"
               onClick={() => moveDate(1)}
-              disabled={!dates.length || selectedDateIndex === dates.length - 1}
+              disabled={!dateOptions.length || selectedDateIndex === dateOptions.length - 1}
               className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-line bg-white text-slate-600 hover:bg-field disabled:cursor-not-allowed disabled:opacity-40 sm:h-10 sm:w-10"
               aria-label="Next match date"
             >
@@ -3694,6 +4057,8 @@ function HomeInner() {
               allMatches={matches}
               isFavorite={favoriteLeagueSet.has(group.league)}
               onToggleFavorite={handleFavoriteLeagueToggle}
+              favoriteTeams={favoriteTeams}
+              onToggleFavoriteTeam={handleFavoriteTeamToggle}
             />
           ))}
 
@@ -3706,6 +4071,7 @@ function HomeInner() {
         </div>
 
       </section>
+      <BackToTopButton />
     </main>
   );
 }

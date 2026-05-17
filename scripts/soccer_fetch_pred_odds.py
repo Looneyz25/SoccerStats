@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Attach `odds` to every prediction (winner, btts, ou_goals, ou_cards) for upcoming matches.
+"""Attach odds to the five visible prediction cards for upcoming matches.
 
 Sportsbet.com.au odds (from `sportsbet_odds`) take priority for the winner pick. Fallback to
 SofaScore "Full time" 1X2. Other prediction types (BTTS / O-U goals / O-U cards) use SofaScore
@@ -15,8 +15,9 @@ def _profile(): return random.choice(_PROFILES)
 
 FOLDER = pathlib.Path(__file__).resolve().parent.parent
 STORE_PATH = FOLDER / "match_data.json"
-BUDGET = int(os.environ.get("SOCCER_ODDS_BUDGET", "180"))
+BUDGET = int(os.environ.get("SOCCER_ODDS_BUDGET", "420"))
 START = time.time()
+PREDICTION_MARKETS = ("winner", "btts", "ou_goals", "ou_cards")
 
 def fetch(path):
     try:
@@ -70,6 +71,81 @@ def any_line(market_odds, prefix, choice):
             return choices[choice]
     return None
 
+def is_price(value):
+    try:
+        return float(value) > 1.01
+    except Exception:
+        return False
+
+def matching_corner_streak_has_odds(m):
+    for streak in (m.get("h2h_streaks") or []) + (m.get("team_streaks") or []):
+        if "corner" in str(streak.get("label") or "").lower() and is_price(streak.get("odds")):
+            return True
+    return False
+
+def has_corner_odds(m):
+    corner_odds = m.get("corner_odds") or {}
+    if matching_corner_streak_has_odds(m):
+        return True
+    for line in ("7.5", "8.5", "9.5", "10.5", "11.5", "12.5"):
+        prices = corner_odds.get(line) or {}
+        if is_price(prices.get("Over")) or is_price(prices.get("Under")):
+            return True
+    return False
+
+def missing_major_market_odds(m):
+    p = m.get("predictions") or {}
+    missing = []
+    for key in PREDICTION_MARKETS:
+        market = p.get(key) or {}
+        if market.get("pick") and not is_price(market.get("odds")):
+            missing.append(key)
+    if not has_corner_odds(m):
+        missing.append("corners")
+    return missing
+
+def opposite_pick(pick):
+    if pick == "Over":
+        return "Under"
+    if pick == "Under":
+        return "Over"
+    if pick == "Yes":
+        return "No"
+    if pick == "No":
+        return "Yes"
+    return pick
+
+def inverse_two_way_odds(known_odds):
+    try:
+        implied = 1.0 / float(known_odds)
+        if implied <= 0 or implied >= 1:
+            return None
+        return round(1.0 / (1.0 - implied), 2)
+    except Exception:
+        return None
+
+def streak_price(m, keyword, line=None, pick=None):
+    target_pick = (pick or "").lower()
+    target_line = str(line) if line is not None else None
+    for streak in (m.get("h2h_streaks") or []) + (m.get("team_streaks") or []):
+        label = str(streak.get("label") or "").lower()
+        if keyword not in label:
+            continue
+        if target_line and target_line not in label:
+            continue
+        if target_pick:
+            is_over = "over" in label or "more than" in label
+            is_under = "under" in label or "less than" in label
+            is_yes = "both teams scoring" in label or "btts" in label
+            is_no = "clean sheet" in label or "without clean sheet" in label
+            label_pick = "over" if is_over else "under" if is_under else "yes" if is_yes else "no" if is_no else ""
+            if label_pick and label_pick != target_pick:
+                continue
+        odds = streak.get("odds")
+        if is_price(odds):
+            return odds
+    return None
+
 def attach_corner_odds(m, market):
     """Store available two-way corner prices by line for UI-generated corner picks."""
     corner_odds = m.setdefault("corner_odds", {})
@@ -111,12 +187,16 @@ def attach_pred_odds(m, market):
     if og.get("pick") and og.get("odds") is None:
         line = str(og.get("line", 2.5))
         v = (market.get(f"Match goals {line}") or {}).get(og["pick"])
+        if v is None:
+            v = streak_price(m, "goals", line, og["pick"])
         if v is not None: og["odds"] = v
 
     # BTTS
     b = p.get("btts") or {}
     if b.get("pick") and b.get("odds") is None:
         v = (market.get("Both teams to score") or {}).get(b["pick"])
+        if v is None:
+            v = streak_price(m, "scoring", None, b["pick"]) or streak_price(m, "clean sheet", None, b["pick"])
         if v is not None: b["odds"] = v
 
     # Cards
@@ -125,7 +205,16 @@ def attach_pred_odds(m, market):
         line = str(oc.get("line", 4.5))
         v = (market.get(f"Cards in match {line}") or {}).get(oc["pick"]) \
             or any_line(market, "Cards in match", oc["pick"])
-        if v is not None: oc["odds"] = v
+        if v is None:
+            v = streak_price(m, "cards", line, oc["pick"])
+        if v is not None:
+            oc["odds"] = v
+        else:
+            opposite = streak_price(m, "cards", line, opposite_pick(oc["pick"]))
+            estimated = inverse_two_way_odds(opposite)
+            if estimated is not None:
+                oc["odds"] = estimated
+                oc["odds_estimated"] = True
 
     return attach_corner_odds(m, market)
 
@@ -153,9 +242,10 @@ def main():
         if not eid: continue
         p = m.get("predictions") or {}
         need = (
-            any(p.get(k) and p[k].get("pick") and p[k].get("odds") is None
-                for k in ("winner", "ou_goals", "btts", "ou_cards"))
+            any(p.get(k) and p[k].get("pick") and not is_price(p[k].get("odds"))
+                for k in PREDICTION_MARKETS)
             or not (m.get("corner_odds") or {}).get("10.5")
+            or not has_corner_odds(m)
         )
         if not need: continue
         market = seed_match_odds(m)
@@ -163,17 +253,24 @@ def main():
         if fetched:
             market.update(fetched)
         if not market: continue
-        before = sum(1 for k in ("winner","ou_goals","btts","ou_cards") if (p.get(k) or {}).get("odds") is not None)
+        before = sum(1 for k in PREDICTION_MARKETS if is_price((p.get(k) or {}).get("odds")))
         before_corners = sum(len(v or {}) for v in (m.get("corner_odds") or {}).values())
         attach_pred_odds(m, market)
-        after = sum(1 for k in ("winner","ou_goals","btts","ou_cards") if (p.get(k) or {}).get("odds") is not None)
+        after = sum(1 for k in PREDICTION_MARKETS if is_price((p.get(k) or {}).get("odds")))
         after_corners = sum(len(v or {}) for v in (m.get("corner_odds") or {}).values())
         delta = (after - before) + (after_corners - before_corners)
         if delta:
             added += delta
             print(f" +{delta} {m['home']['name']} vs {m['away']['name']}")
     STORE_PATH.write_text(json.dumps(store, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(f"DONE. added={added}")
+    missing_rows = []
+    for L, m in matches:
+        missing = missing_major_market_odds(m)
+        if missing:
+            missing_rows.append((L.get("name", ""), m, missing))
+    print(f"DONE. added={added} five_market_missing={len(missing_rows)}")
+    for league, m, missing in missing_rows[:20]:
+        print(f"  missing {','.join(missing)}: {league} {m['home']['name']} vs {m['away']['name']} ({m.get('date','')})")
 
 if __name__ == "__main__":
     main()

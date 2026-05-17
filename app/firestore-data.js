@@ -74,6 +74,7 @@ export async function createUserProfile(user) {
     email: user.email,
     displayName: user.displayName || '',
     nickname: '',
+    favoriteTeams: [],
     isPlatformOwner: isPlatformOwner,
     manualAccess: false,
     inheritStripeStatus: true,
@@ -91,14 +92,33 @@ export async function updateUserProfile(uid, profile) {
   const userRef = doc(db, 'users', uid);
   const displayName = String(profile?.displayName || '').trim().slice(0, 80);
   const nickname = String(profile?.nickname || '').trim().slice(0, 40);
+  const favoriteTeams = Array.isArray(profile?.favoriteTeams)
+    ? [...new Set(profile.favoriteTeams.map((team) => String(team || '').trim()).filter(Boolean))].slice(0, 20)
+    : [];
 
   await setDoc(userRef, {
     displayName,
     nickname,
+    favoriteTeams,
     profileUpdatedAt: new Date().toISOString()
   }, { merge: true });
 
-  return { displayName, nickname };
+  return { displayName, nickname, favoriteTeams };
+}
+
+export async function updateUserFavoriteTeams(uid, favoriteTeams) {
+  const db = getFirebaseDb();
+  const userRef = doc(db, 'users', uid);
+  const cleanFavoriteTeams = Array.isArray(favoriteTeams)
+    ? [...new Set(favoriteTeams.map((team) => String(team || '').trim()).filter(Boolean))].slice(0, 20)
+    : [];
+
+  await setDoc(userRef, {
+    favoriteTeams: cleanFavoriteTeams,
+    profileUpdatedAt: new Date().toISOString()
+  }, { merge: true });
+
+  return { favoriteTeams: cleanFavoriteTeams };
 }
 
 export async function getAllUsers() {

@@ -960,7 +960,12 @@ def write_xlsx(sheets):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--start", help="Start date in YYYY-MM-DD. Defaults to today in Adelaide.")
-    parser.add_argument("--days", type=int, default=2, help="Number of days to collect. Defaults to 2.")
+    parser.add_argument(
+        "--days",
+        type=int,
+        default=int(os.environ.get("SOCCER_FIXTURE_DAYS", "7")),
+        help="Number of days to collect. Defaults to SOCCER_FIXTURE_DAYS or 7.",
+    )
     args = parser.parse_args()
 
     start_date = date.fromisoformat(args.start) if args.start else now_adelaide().date()

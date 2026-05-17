@@ -89,15 +89,22 @@ Phase 1 must produce `docs/agent-system/outputs/Phase1_Fixture_Slate.xlsx` with 
 ## Decision Rules
 
 - Prefer current local `match_data.json` for the app state, then dated `predictions_YYYY-MM-DD.json` snapshots for history.
+- Hard truth rule: once a match is resulted, never amend its prediction pick, probabilities, factors, or model logic snapshot. Settlement may only add final scores, actuals, and hit/miss fields. Retro/post-result predictions must be excluded from hit-rate summaries.
+- Official hit-rate tracking starts from `2026-04-24`; earlier resulted rows are dev-mode calibration history and should not drive public/model baseline rates.
 - Use API-Football as the primary fixture/status/source-of-truth for Phase 1.
+- Daily fixture collection should cover today plus the next 6 Adelaide-local days by default.
 - Use Sportsbet as the only Phase 2 odds source until a second odds provider is deliberately added.
 - Treat TheSportsDB and Flashscore as fallback score sources, not primary model inputs.
 - Treat Understat xG as high-value enrichment when matched, but do not block analysis if unavailable.
 - Never claim certainty. Use probability, fair odds, market odds, edge, and confidence.
 - Separate model picks from value picks. A likely winner is not automatically a bet.
+- The target model-review hit rate is 60% overall across the visible markets. Calibration should penalize markets, sides, or leagues below 60% once sample sizes are meaningful.
+- For Winner, treat bookmaker odds as a model factor. When full home/draw/away prices are available, use no-vig bookmaker probabilities as a 40% blend with the internal model and store the blend weight/factors for later review.
+- Draws need a separate decision lane. They do not need to be the highest raw probability if the match is tight: `p_draw >= 0.28`, home/away gap <= 0.15, and favourite-vs-draw gap <= 0.15.
 - For two-way totals such as goals, cards, and corners, display the side with the stronger model probability. If the current side is below 50%, flip the recommendation to the opposite side on the same line and keep the weaker side as a caution signal. If only the opposite bookmaker price exists, label any inverse price as estimated. Completed-match hit rates and odds totals must use this same guided side.
-- The dashboard headline hit rate should summarize all settled visible markets after guidance, not only the winner market.
-- For winner markets, apply a conservative market guard: do not keep a low-conviction model side when the 1X2 bookmaker favourite is clearly stronger and match context supports the favourite. Display and settle the guided winner side.
+- For Cards, recent resulted data showed Over 4.5 was over-picked. Require strong evidence for Over 4.5 (`over_probability >= 0.68`) and otherwise prefer Under 4.5 until calibration recovers.
+- The dashboard headline hit rate should summarize stored settled prediction markets from `2026-04-24` onward, before later display-only guidance rewrites. Use the original prediction snapshot for public model performance.
+- For winner markets, apply a conservative market guard: do not keep a model side when direct 1X2 bookmaker odds are heavily against it. A 25+ implied-probability-point disagreement or roughly 3x+ price ratio should guide the visible pick to the bookmaker favourite unless model support is overwhelming. Display and settle the guided winner side.
 - Match-card display should place the original winner prediction and model percentage on the predicted team card, or on the centre draw chip for draw picks, and highlight that card by hit/miss. BTTS, goals, cards, and corners should remain compact one-row cards.
 
 ## Agent Definition Files

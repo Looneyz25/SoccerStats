@@ -8,6 +8,10 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT_DIR = path.join(ROOT, 'docs', 'agent-system', 'outputs');
 const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+const DEFAULT_ENV = {
+  SOCCER_FIXTURE_DAYS: '7',
+  SOCCER_ODDS_BUDGET: '420',
+};
 
 const STEPS = [
   {
@@ -21,12 +25,6 @@ const STEPS = [
     label: 'Run phase pipeline',
     command: 'node',
     args: ['scripts/run-python.js', 'scripts/soccer_phases_routine.py'],
-  },
-  {
-    id: 'prepare_static_json',
-    label: 'Refresh static JSON fallback',
-    command: 'node',
-    args: ['scripts/run-python.js', 'scripts/soccer_prepare_next_data.py'],
   },
   {
     id: 'upload_firestore',
@@ -73,7 +71,7 @@ function runStep(step, transcript) {
     const child = spawn(step.command, step.args, {
       cwd: ROOT,
       shell: false,
-      env: process.env,
+      env: { ...DEFAULT_ENV, ...process.env },
     });
 
     child.stdout.on('data', (chunk) => {

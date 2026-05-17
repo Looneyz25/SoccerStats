@@ -2,6 +2,11 @@ import './globals.css';
 import { IBM_Plex_Sans } from 'next/font/google';
 import FirebaseAnalytics from './firebase-analytics';
 
+const SITE_URL = 'https://lvrstats.com';
+const SITE_NAME = 'LVRstats.com';
+const SITE_DESCRIPTION = 'Football stats, odds, predictions, and model review dashboard for selected leagues.';
+const SOCIAL_IMAGE = '/LVR-LOGO.png';
+
 const plexSans = IBM_Plex_Sans({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
@@ -9,17 +14,69 @@ const plexSans = IBM_Plex_Sans({
 });
 
 export const metadata = {
-  title: 'Looneyz Predictions',
-  description: 'Fixture, odds, and prediction dashboard for selected football leagues.',
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
+  },
+  applicationName: SITE_NAME,
+  description: SITE_DESCRIPTION,
+  keywords: [
+    'LVRstats',
+    'football stats',
+    'soccer stats',
+    'football predictions',
+    'soccer predictions',
+    'odds dashboard',
+    'model review',
+  ],
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
+  alternates: {
+    canonical: '/',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  category: 'sports',
   manifest: '/manifest.webmanifest',
   icons: {
     icon: '/icon.svg',
     apple: '/icon-192.png',
   },
+  openGraph: {
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    locale: 'en_AU',
+    type: 'website',
+    images: [
+      {
+        url: SOCIAL_IMAGE,
+        width: 2172,
+        height: 724,
+        alt: SITE_NAME,
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: SITE_NAME,
+    description: SITE_DESCRIPTION,
+    images: [SOCIAL_IMAGE],
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
-    title: 'Looneyz',
+    title: SITE_NAME,
+  },
+  formatDetection: {
+    telephone: false,
+    email: false,
+    address: false,
   },
 };
 

@@ -1,0 +1,285 @@
+# get:data transcript 20260517T053406Z
+root=C:\Betting\Soccer Stats
+started_at=2026-05-17T05:34:06.402Z
+npm_command=npm.cmd
+
+## Collect dashboard data
+$ node scripts/run-python.js scripts/soccer_routine.py
+started_at=2026-05-17T05:34:06.402Z
+=== soccer_routine.py � 2026-05-17 (Adelaide) ===
+
+[Phase 0] validate + dedupe + re-date
+  dedupe=0  no_id=0  foreign=0  moved=0  re_dated=0
+
+[Phase A] settle pending
+  settled=1  skipped=56
+
+[Phase A.5] backfill finished + enrich
+  added=0  enriched=2
+
+[Phase A.7] compute team Elo + build xG index
+  teams_rated=247  teams_with_xg=0  elo_file=team_elo.json
+
+[Phase A.6] retrospective predictions
+  retro=0
+
+[Phase B] forecast new upcoming
+  added=0
+
+[Phase B.3] attach standings to home/away
+  attached=771
+
+[Phase B.4] computed team streaks (PRIMARY) � derived from team match history
+  + Premier League            Manchester United vs Nottingham Forest: 1 home / 1 away
+  + Premier League            Brentford vs Crystal Palace: 1 home / 2 away
+  + Premier League            Everton vs Sunderland: 3 home / 1 away
+  + Premier League            Leeds United vs Brighton & Hove Albion: 1 home / 1 away
+  + Premier League            Wolverhampton vs Fulham: 2 home / 1 away
+  + Premier League            Newcastle United vs West Ham United: 2 home / 1 away
+  + Premier League            Arsenal vs Burnley: 4 home / 2 away
+  + LaLiga                    Athletic Club vs Celta Vigo: 1 home / 1 away
+  + LaLiga                    Atl�tico Madrid vs Girona FC: 2 home / 3 away
+  + LaLiga                    Elche vs Getafe: 3 home / 1 away
+  + LaLiga                    Levante UD vs Mallorca: 1 home / 1 away
+  + LaLiga                    Osasuna vs Espanyol: 4 home / 1 away
+  + LaLiga                    Rayo Vallecano vs Villarreal: 2 home / 2 away
+  + LaLiga                    Real Oviedo vs Deportivo Alav�s: 2 home / 1 away
+  + LaLiga                    Real Sociedad vs Valencia: 2 home / 1 away
+  + LaLiga                    Sevilla vs Real Madrid: 2 home / 1 away
+  + LaLiga                    FC Barcelona vs Real Betis: 1 home / 2 away
+  + Ligue 1                   Lille vs Auxerre: 2 home / 2 away
+  + Ligue 1                   Lorient vs Le Havre: 0 home / 3 away
+  + Ligue 1                   Nantes vs Toulouse: 0 home / 3 away
+  + Ligue 1                   Nice vs Metz: 3 home / 3 away
+  + Ligue 1                   Olympique Lyonnais vs RC Lens: 3 home / 0 away
+  + Ligue 1                   Olympique de Marseille vs Stade Rennais: 0 home / 2 away
+  + Ligue 1                   Paris FC vs Paris Saint-Germain: 1 home / 1 away
+  + Ligue 1                   RC Strasbourg vs AS Monaco: 1 home / 3 away
+  + Ligue 1                   Stade Brestois vs Angers: 3 home / 3 away
+  + Serie A                   AS Roma vs Lazio: 2 home / 2 away
+  + Serie A                   Como vs Parma: 2 home / 1 away
+  + Serie A                   Genoa vs Milan: 2 home / 1 away
+  + Serie A                   Juventus vs Fiorentina: 2 home / 2 away
+  + Serie A                   Pisa vs SSC Napoli: 4 home / 0 away
+  + Serie A                   Inter vs Hellas Verona: 3 home / 2 away
+  + Serie A                   Atalanta vs Bologna: 1 home / 0 away
+  + Serie A                   Cagliari vs Torino: 0 home / 1 away
+  + Serie A                   Sassuolo vs Lecce: 0 home / 1 away
+  + Serie A                   Udinese vs Cremonese: 1 home / 0 away
+  + Eredivisie                Roda JC Kerkrade vs RKC Waalwijk: 3 home / 2 away
+  + Eredivisie                AZ Alkmaar vs NAC Breda: 4 home / 1 away
+  + Eredivisie                FC Utrecht vs Fortuna Sittard: 1 home / 3 away
+  + Eredivisie                FC Volendam vs SC Telstar: 1 home / 2 away
+  + Eredivisie                Heracles Almelo vs FC Groningen: 4 home / 1 away
+  + Eredivisie                NEC Nijmegen vs Go Ahead Eagles: 3 home / 1 away
+  + Eredivisie                PEC Zwolle vs Feyenoord: 1 home / 3 away
+  + Eredivisie                PSV Eindhoven vs FC Twente: 4 home / 3 away
+  + Eredivisie                SC Heerenveen vs AFC Ajax: 1 home / 1 away
+  + Eredivisie                Sparta Rotterdam vs Excelsior: 2 home / 1 away
+  + MLS                       Inter Miami CF vs Portland Timbers: 2 home / 0 away
+  + MLS                       Nashville SC vs Los Angeles FC: 0 home / 4 away
+  + Scottish Premiership      Dundee FC vs Aberdeen: 1 home / 1 away
+  + Scottish Premiership      Livingston vs Kilmarnock: 1 home / 3 away
+  + Scottish Premiership      St. Mirren vs Dundee United: 0 home / 2 away
+  + J1 League                 V-Varen Nagasaki vs Vissel Kobe: 3 home / 1 away
+  + J1 League                 JEF United Chiba vs Kashima Antlers: 0 home / 3 away
+  + J1 League                 Fagiano Okayama vs Shimizu S-Pulse: 0 home / 4 away
+  + J1 League                 Cerezo Osaka vs Nagoya Grampus: 2 home / 3 away
+  + J1 League                 Kyoto Sanga FC vs Sanfrecce Hiroshima: 4 home / 0 away
+  + J1 League                 Kawasaki Frontale vs Machida Zelvia: 1 home / 2 away
+
+DONE. enriched=57
+
+[Phase B.5] sportsbet odds
+Fetching Premier League (united-kingdom/english-premier-league)
+  events with odds: 9
+Fetching LaLiga (spain/spanish-la-liga)
+  events with odds: 10
+Fetching Bundesliga (germany/german-bundesliga)
+  events with odds: 1
+Fetching Ligue 1 (france/french-ligue-1)
+  events with odds: 9
+Fetching UEFA Champions League (uefa-competitions/uefa-champions-league)
+  events with odds: 1
+Fetching Serie A (italy/italian-serie-a)
+  events with odds: 10
+Fetching Eredivisie (rest-of-europe/dutch-eredivisie)
+  events with odds: 9
+Fetching Primeira Liga (rest-of-europe/portuguese-primeira-liga)
+  events with odds: 1
+Fetching MLS (north-america/usa-major-league-soccer)
+  events with odds: 212
+Fetching A-League Men (australia/australian-a-league-men)
+  events with odds: 1
+Fetching Scottish Premiership (united-kingdom/scottish-premiership)
+  events with odds: 3
+Fetching J1 League (asia/japanese-j1-league)
+  events with odds: 4
+Fetching Championship (united-kingdom/english-championship)
+  events with odds: 1
+Fetching League One (united-kingdom/english-league-one)
+  events with odds: 9
+Fetching League Two (united-kingdom/english-league-two)
+  events with odds: 9
+=== matched: 49 | unmatched: 8
+  - ('Ligue 1', 'Paris FC', 'Paris Saint-Germain')
+  - ('Eredivisie', 'Roda JC Kerkrade', 'RKC Waalwijk')
+  - ('J1 League', 'V-Varen Nagasaki', 'Vissel Kobe')
+  - ('J1 League', 'JEF United Chiba', 'Kashima Antlers')
+  - ('J1 League', 'Fagiano Okayama', 'Shimizu S-Pulse')
+  - ('J1 League', 'Cerezo Osaka', 'Nagoya Grampus')
+  - ('J1 League', 'Kyoto Sanga FC', 'Sanfrecce Hiroshima')
+  - ('J1 League', 'Kawasaki Frontale', 'Machida Zelvia')
+
+[Phase B.5a] bookmaker direct links
+[ladbrokes] scanning event-request API
+  events: 1672
+[neds] scanning event-request API
+  events: 1672
+[bet365] scanning public soccer/sports pages
+  https://www.bet365.com.au/hub/en-au/sports-betting -> 449 candidates
+[tab] scanning public soccer/sports pages
+  https://www.tab.com.au/sports/betting/Soccer -> 123 candidates
+  https://www.tab.com.au/sports -> 123 candidates
+[ladbrokes] scanning public soccer/sports pages
+  https://www.ladbrokes.com.au/sports/soccer -> 567 candidates
+  https://www.ladbrokes.com.au/sports -> 567 candidates
+[neds] scanning public soccer/sports pages
+  https://www.neds.com.au/sports/soccer -> 518 candidates
+  https://www.neds.com.au/sports -> 518 candidates
+[sportsbet] mirrored direct links: 0
+[entain] cleared generated links: 98
+[ladbrokes] event API links found: 48
+[neds] event API links found: 48
+[bet365] direct links found: 0
+[tab] direct links found: 0
+[ladbrokes] direct links found: 0
+[neds] direct links found: 0
+
+[Phase B.6] streak odds
+ +4 V-Varen Nagasaki vs Vissel Kobe
+ +4 Fagiano Okayama vs Shimizu S-Pulse
+ +3 JEF United Chiba vs Kashima Antlers
+ +5 Cerezo Osaka vs Nagoya Grampus
+ +4 Kyoto Sanga FC vs Sanfrecce Hiroshima
+ +3 Kawasaki Frontale vs Machida Zelvia
+ +4 AS Roma vs Lazio
+ +3 Como vs Parma
+ +2 Genoa vs Milan
+ +3 Juventus vs Fiorentina
+ +4 Pisa vs SSC Napoli
+ +2 Manchester United vs Nottingham Forest
+ +5 AZ Alkmaar vs NAC Breda
+ +4 FC Utrecht vs Fortuna Sittard
+ +3 FC Volendam vs SC Telstar
+ +4 Heracles Almelo vs FC Groningen
+ +4 NEC Nijmegen vs Go Ahead Eagles
+ +4 PEC Zwolle vs Feyenoord
+ +7 PSV Eindhoven vs FC Twente
+ +2 SC Heerenveen vs AFC Ajax
+ +3 Sparta Rotterdam vs Excelsior
+ +2 Dundee FC vs Aberdeen
+ +4 Livingston vs Kilmarnock
+ +1 St. Mirren vs Dundee United
+ +5 Inter vs Hellas Verona
+ +3 Brentford vs Crystal Palace
+ +4 Everton vs Sunderland
+ +2 Leeds United vs Brighton & Hove Albion
+ +3 Wolverhampton vs Fulham
+ +1 Atalanta vs Bologna
+ +3 Newcastle United vs West Ham United
+ +2 Athletic Club vs Celta Vigo
+ +5 Atl�tico Madrid vs Girona FC
+ +4 Elche vs Getafe
+ +2 Levante UD vs Mallorca
+ +5 Osasuna vs Espanyol
+ +4 Rayo Vallecano vs Villarreal
+ +2 Real Oviedo vs Deportivo Alav�s
+ +3 Real Sociedad vs Valencia
+ +3 Sevilla vs Real Madrid
+ +1 Cagliari vs Torino
+ +1 Sassuolo vs Lecce
+ +1 Udinese vs Cremonese
+ +4 Lille vs Auxerre
+ +3 Lorient vs Le Havre
+ +3 Nantes vs Toulouse
+ +6 Nice vs Metz
+ +3 Olympique Lyonnais vs RC Lens
+ +2 Olympique de Marseille vs Stade Rennais
+ +2 Paris FC vs Paris Saint-Germain
+ +4 RC Strasbourg vs AS Monaco
+ +6 Stade Brestois vs Angers
+ +3 FC Barcelona vs Real Betis
+ +2 Inter Miami CF vs Portland Timbers
+ +4 Nashville SC vs Los Angeles FC
+ +6 Arsenal vs Burnley
+DONE. odds_added=186
+
+
+[Phase B.7] prediction odds
+ +6 V-Varen Nagasaki vs Vissel Kobe
+ +4 Fagiano Okayama vs Shimizu S-Pulse
+ +6 JEF United Chiba vs Kashima Antlers
+DONE. added=16
+
+[Phase B.8] TheSportsDB fallback (records score hint when SofaScore was 403)
+  2026-05-16: 3 total events / 3 finished
+  2026-05-17: 3 total events / 0 finished
+
+DONE. matched=0
+
+[Phase B.9] Understat xG enrichment
+  fetching Understat: Premier League (EPL)
+    found 0 events, 0 finished
+  fetching Understat: LaLiga (La_liga)
+    found 0 events, 0 finished
+  fetching Understat: Serie A (Serie_A)
+    found 0 events, 0 finished
+  fetching Understat: Bundesliga (Bundesliga)
+    found 0 events, 0 finished
+  fetching Understat: Ligue 1 (Ligue_1)
+    found 0 events, 0 finished
+
+DONE. enriched=0
+
+=== TOTAL: 407  FT: 350  upcoming: 57  | winner hit: 156  miss: 194  pending: 57 ===
+
+completed_at=2026-05-17T05:38:39.808Z
+exit_code=0
+
+## Run phase pipeline
+$ node scripts/run-python.js scripts/soccer_phases_routine.py
+started_at=2026-05-17T05:38:39.808Z
+[1 Fixtures] ok  NOTE: Missing API_FOOTBALL_KEY/APISPORTS_KEY; used keyless Flashscore feed.
+[2 Odds] ok  total=60 ready_for_phase_3=38 unmatched=22 blocked=0
+[3 Team Context] ok  total=60 ready_for_phase_4=34 unresolved=4 upstream_blocked=22
+[4 Predictions] ok  total=60 ready_for_phase_5=34 model_only=0 upstream_blocked=26
+[5 Value & Risk] ok  total=60 bets=16 leans=11 no_value=7 upstream_blocked=26 scale=0.3125
+[6 Settlement] ok  settled_this_run=0 won=0 lost=0 pending=27 history_hit_rate=0.0 history_roi=-1.0
+[Result Review] ok  settled_market_rows=1376 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the review agent can compare confidence bands to actual hit rate.
+[Model Calibration] ok  market_adjustments=2 league_market_adjustments=11
+
+Daily summary: C:\Betting\Soccer Stats\docs\agent-system\outputs\Phase7_Daily_Summary.md
+Run log: C:\Betting\Soccer Stats\docs\agent-system\outputs\Phase7_Run_Log.json
+
+completed_at=2026-05-17T05:43:36.220Z
+exit_code=0
+
+## Refresh static JSON fallback
+$ node scripts/run-python.js scripts/soccer_prepare_next_data.py
+started_at=2026-05-17T05:43:36.220Z
+Prepared Next.js data: match_data.json, predictions_2026-04-26.json, predictions_2026-04-27.json, predictions_2026-04-28.json, predictions_2026-04-29.json, predictions_2026-04-30.json, predictions_2026-05-01.json, predictions_2026-05-02.json, predictions_2026-05-03.json, predictions_2026-05-04.json, predictions_2026-05-05.json, predictions_2026-05-06.json, predictions_2026-05-07.json, predictions_2026-05-09.json, predictions_2026-05-10.json, predictions_2026-05-14.json, predictions_2026-05-15.json, predictions_2026-05-16.json, predictions_2026-05-17.json, latest_predictions.json
+
+completed_at=2026-05-17T05:43:36.426Z
+exit_code=0
+
+## Upload match_data.json to Firestore
+$ node scripts/upload_match_data_to_firestore.mjs
+started_at=2026-05-17T05:43:36.426Z
+Uploaded C:\Betting\Soccer Stats\match_data.json to Firestore dashboardData/match_data in 3 chunks.
+
+completed_at=2026-05-17T05:43:50.937Z
+exit_code=0
+
+completed_at=2026-05-17T05:43:50.937Z
+status=ok

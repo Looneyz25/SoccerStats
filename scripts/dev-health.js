@@ -1,7 +1,7 @@
 const http = require('node:http');
 
 const BASE_URL = process.env.SOCCER_STATS_DEV_URL || 'http://localhost:3001';
-const DATA_URL = `${BASE_URL}/data/match_data.json?health=${Date.now()}`;
+const DASHBOARD_URL = `${BASE_URL.replace(/\/$/, '')}/dashboard`;
 
 function getText(url) {
   return new Promise((resolve, reject) => {
@@ -32,53 +32,20 @@ function fail(message) {
 async function main() {
   let page;
   try {
-    page = await getText(BASE_URL);
+    page = await getText(DASHBOARD_URL);
   } catch (error) {
-    fail(`dev server is not reachable at ${BASE_URL} (${error.message})`);
+    fail(`dev server is not reachable at ${DASHBOARD_URL} (${error.message})`);
     return;
   }
 
   if (page.statusCode !== 200) {
-    fail(`dev server returned HTTP ${page.statusCode} for ${BASE_URL}`);
-    return;
-  }
-
-  let dataResponse;
-  try {
-    dataResponse = await getText(DATA_URL);
-  } catch (error) {
-    fail(`data endpoint is not reachable (${error.message})`);
-    return;
-  }
-
-  if (dataResponse.statusCode !== 200) {
-    fail(`data endpoint returned HTTP ${dataResponse.statusCode}`);
-    return;
-  }
-
-  let data;
-  try {
-    data = JSON.parse(dataResponse.body);
-  } catch (error) {
-    fail(`data endpoint did not return valid JSON (${error.message})`);
-    return;
-  }
-
-  const leagues = Array.isArray(data.leagues) ? data.leagues : [];
-  const matchCount = leagues.reduce((total, league) => total + (Array.isArray(league.matches) ? league.matches.length : 0), 0);
-  const firstLeague = leagues[0]?.name || 'none';
-
-  if (!leagues.length || !matchCount) {
-    fail(`data loaded but contains ${leagues.length} leagues and ${matchCount} matches`);
+    fail(`dev server returned HTTP ${page.statusCode} for ${DASHBOARD_URL}`);
     return;
   }
 
   console.log('Dev health OK');
-  console.log(`URL: ${BASE_URL}`);
-  console.log(`Leagues: ${leagues.length}`);
-  console.log(`Matches: ${matchCount}`);
-  console.log(`First data league: ${firstLeague}`);
-  console.log(`Captured at: ${data.captured_at || 'unknown'}`);
+  console.log(`URL: ${DASHBOARD_URL}`);
+  console.log('Dashboard data source: Firestore only');
 }
 
 main().catch((error) => {

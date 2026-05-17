@@ -1,46 +1,47 @@
 {
-  "generated_at": "2026-05-17 13:40:09 ACST",
-  "settled_market_rows": 1372,
+  "generated_at": "2026-05-17 16:47:23 ACST",
+  "prediction_tracking_start_date": "2026-04-24",
+  "settled_market_rows": 599,
   "market_summary": [
     {
       "market": "BTTS",
-      "settled": 349,
-      "hits": 211,
-      "misses": 138,
-      "hit_rate": 0.6046,
-      "odds_hit": 322.97,
-      "odds_loss": 208.1,
-      "odds_net": 114.87
+      "settled": 152,
+      "hits": 86,
+      "misses": 66,
+      "hit_rate": 0.5658,
+      "odds_hit": 114.17,
+      "odds_loss": 80.76,
+      "odds_net": 33.41
     },
     {
       "market": "Cards",
-      "settled": 325,
-      "hits": 128,
-      "misses": 197,
-      "hit_rate": 0.3938,
-      "odds_hit": 182.82,
-      "odds_loss": 249.1,
-      "odds_net": -66.28
+      "settled": 143,
+      "hits": 63,
+      "misses": 80,
+      "hit_rate": 0.4406,
+      "odds_hit": 86.12,
+      "odds_loss": 104.93,
+      "odds_net": -18.81
     },
     {
       "market": "Goals",
-      "settled": 349,
-      "hits": 198,
-      "misses": 151,
-      "hit_rate": 0.5673,
-      "odds_hit": 299.54,
-      "odds_loss": 256.13,
-      "odds_net": 43.41
+      "settled": 152,
+      "hits": 86,
+      "misses": 66,
+      "hit_rate": 0.5658,
+      "odds_hit": 108.41,
+      "odds_loss": 94.49,
+      "odds_net": 13.92
     },
     {
       "market": "Winner",
-      "settled": 349,
-      "hits": 156,
-      "misses": 193,
-      "hit_rate": 0.447,
-      "odds_hit": 270.88,
-      "odds_loss": 427.21,
-      "odds_net": -156.33
+      "settled": 152,
+      "hits": 65,
+      "misses": 87,
+      "hit_rate": 0.4276,
+      "odds_hit": 99.51,
+      "odds_loss": 166.26,
+      "odds_net": -66.75
     }
   ],
   "league_summary": [
@@ -56,103 +57,103 @@
     },
     {
       "league": "Bundesliga",
-      "settled": 143,
-      "hits": 75,
-      "misses": 68,
-      "hit_rate": 0.5245,
-      "odds_hit": 125.1,
-      "odds_loss": 129.61,
-      "odds_net": -4.51
+      "settled": 71,
+      "hits": 36,
+      "misses": 35,
+      "hit_rate": 0.507,
+      "odds_hit": 57.93,
+      "odds_loss": 63.18,
+      "odds_net": -5.25
     },
     {
       "league": "Championship",
-      "settled": 109,
-      "hits": 54,
-      "misses": 55,
-      "hit_rate": 0.4954,
-      "odds_hit": 83.97,
-      "odds_loss": 106.11,
-      "odds_net": -22.14
+      "settled": 16,
+      "hits": 7,
+      "misses": 9,
+      "hit_rate": 0.4375,
+      "odds_hit": 0,
+      "odds_loss": 12.14,
+      "odds_net": -12.14
     },
     {
       "league": "Eredivisie",
-      "settled": 130,
-      "hits": 63,
-      "misses": 67,
-      "hit_rate": 0.4846,
-      "odds_hit": 90.11,
-      "odds_loss": 96.27,
-      "odds_net": -6.16
+      "settled": 58,
+      "hits": 27,
+      "misses": 31,
+      "hit_rate": 0.4655,
+      "odds_hit": 37.4,
+      "odds_loss": 44.53,
+      "odds_net": -7.13
     },
     {
       "league": "J1 League",
-      "settled": 11,
-      "hits": 5,
+      "settled": 15,
+      "hits": 9,
       "misses": 6,
-      "hit_rate": 0.4545,
+      "hit_rate": 0.6,
+      "odds_hit": 8.41,
+      "odds_loss": 0,
+      "odds_net": 8.41
+    },
+    {
+      "league": "LaLiga",
+      "settled": 78,
+      "hits": 31,
+      "misses": 47,
+      "hit_rate": 0.3974,
+      "odds_hit": 54.77,
+      "odds_loss": 97.0,
+      "odds_net": -42.23
+    },
+    {
+      "league": "League One",
+      "settled": 16,
+      "hits": 5,
+      "misses": 11,
+      "hit_rate": 0.3125,
       "odds_hit": 0,
       "odds_loss": 0,
       "odds_net": 0
     },
     {
-      "league": "LaLiga",
-      "settled": 156,
-      "hits": 71,
-      "misses": 85,
-      "hit_rate": 0.4551,
-      "odds_hit": 127.72,
-      "odds_loss": 177.74,
-      "odds_net": -50.02
-    },
-    {
-      "league": "League One",
-      "settled": 121,
-      "hits": 61,
-      "misses": 60,
-      "hit_rate": 0.5041,
-      "odds_hit": 87.9,
-      "odds_loss": 74.72,
-      "odds_net": 13.18
-    },
-    {
       "league": "League Two",
-      "settled": 107,
-      "hits": 45,
-      "misses": 62,
-      "hit_rate": 0.4206,
-      "odds_hit": 64.91,
-      "odds_loss": 87.65,
-      "odds_net": -22.74
+      "settled": 16,
+      "hits": 5,
+      "misses": 11,
+      "hit_rate": 0.3125,
+      "odds_hit": 3.77,
+      "odds_loss": 12.88,
+      "odds_net": -9.11
     },
     {
       "league": "Ligue 1",
-      "settled": 119,
-      "hits": 55,
-      "misses": 64,
-      "hit_rate": 0.4622,
-      "odds_hit": 95.82,
-      "odds_loss": 123.74,
-      "odds_net": -27.92
+      "settled": 51,
+      "hits": 25,
+      "misses": 26,
+      "hit_rate": 0.4902,
+      "odds_hit": 43.12,
+      "odds_loss": 47.38,
+      "odds_net": -4.26
     },
     {
       "league": "MLS",
-      "settled": 284,
-      "hits": 152,
-      "misses": 132,
-      "hit_rate": 0.5352,
-      "odds_hit": 253.7,
-      "odds_loss": 229.61,
-      "odds_net": 24.09
+      "settled": 168,
+      "hits": 95,
+      "misses": 73,
+      "hit_rate": 0.5655,
+      "odds_hit": 150.2,
+      "odds_loss": 119.2,
+      "odds_net": 31.0
     },
     {
       "league": "Premier League",
-      "settled": 124,
-      "hits": 75,
-      "misses": 49,
-      "hit_rate": 0.6048,
-      "odds_hit": 135.52,
-      "odds_loss": 101.58,
-      "odds_net": 33.94
+      "settled": 48,
+      "hits": 27,
+      "misses": 21,
+      "hit_rate": 0.5625,
+      "odds_hit": 48.12,
+      "odds_loss": 41.62,
+      "odds_net": 6.5
     },
     {
       "league": "Primeira Liga",
@@ -176,62 +177,62 @@
     },
     {
       "league": "UEFA Champions League",
-      "settled": 14,
-      "hits": 7,
-      "misses": 7,
-      "hit_rate": 0.5,
-      "odds_hit": 11.46,
-      "odds_loss": 13.51,
-      "odds_net": -2.05
+      "settled": 8,
+      "hits": 3,
+      "misses": 5,
+      "hit_rate": 0.375,
+      "odds_hit": 4.49,
+      "odds_loss": 8.51,
+      "odds_net": -4.02
     }
   ],
   "weak_spots": [
     {
-      "league": "Championship",
-      "market": "Cards",
-      "settled": 25,
-      "hit_rate": 0.2,
-      "odds_net": -32.94,
-      "action": "review_weighting"
-    },
-    {
-      "league": "League One",
-      "market": "Cards",
-      "settled": 28,
-      "hit_rate": 0.2143,
-      "odds_net": -2.1,
-      "action": "review_weighting"
-    },
-    {
-      "league": "League Two",
-      "market": "Cards",
-      "settled": 26,
-      "hit_rate": 0.2692,
-      "odds_net": -4.2,
-      "action": "review_weighting"
-    },
-    {
       "league": "Bundesliga",
       "market": "Cards",
-      "settled": 35,
-      "hit_rate": 0.3143,
-      "odds_net": -23.9,
-      "action": "review_weighting"
-    },
-    {
-      "league": "Eredivisie",
-      "market": "Cards",
-      "settled": 28,
-      "hit_rate": 0.3214,
-      "odds_net": -3.45,
+      "settled": 17,
+      "hit_rate": 0.1765,
+      "odds_net": -20.89,
       "action": "review_weighting"
     },
     {
       "league": "LaLiga",
       "market": "Winner",
-      "settled": 40,
-      "hit_rate": 0.325,
-      "odds_net": -47.94,
+      "settled": 20,
+      "hit_rate": 0.2,
+      "odds_net": -34.46,
+      "action": "review_weighting"
+    },
+    {
+      "league": "Eredivisie",
+      "market": "Cards",
+      "settled": 13,
+      "hit_rate": 0.3077,
+      "odds_net": -3.83,
+      "action": "review_weighting"
+    },
+    {
+      "league": "Premier League",
+      "market": "Cards",
+      "settled": 12,
+      "hit_rate": 0.3333,
+      "odds_net": -7.88,
+      "action": "review_weighting"
+    },
+    {
+      "league": "Ligue 1",
+      "market": "Cards",
+      "settled": 12,
+      "hit_rate": 0.3333,
+      "odds_net": -7.73,
+      "action": "review_weighting"
+    },
+    {
+      "league": "MLS",
+      "market": "Winner",
+      "settled": 42,
+      "hit_rate": 0.3571,
+      "odds_net": -18.37,
       "action": "review_weighting"
     },
     {
@@ -244,42 +245,34 @@
     },
     {
       "league": "Ligue 1",
-      "market": "Cards",
-      "settled": 29,
-      "hit_rate": 0.3793,
-      "odds_net": -13.24,
+      "market": "Goals",
+      "settled": 13,
+      "hit_rate": 0.3846,
+      "odds_net": -5.03,
+      "action": "review_weighting"
+    },
+    {
+      "league": "LaLiga",
+      "market": "Goals",
+      "settled": 20,
+      "hit_rate": 0.4,
+      "odds_net": -6.17,
       "action": "review_weighting"
     },
     {
       "league": "Bundesliga",
       "market": "Winner",
-      "settled": 36,
-      "hit_rate": 0.3889,
-      "odds_net": -23.89,
+      "settled": 18,
+      "hit_rate": 0.4444,
+      "odds_net": -7.47,
       "action": "review_weighting"
     },
     {
-      "league": "Ligue 1",
-      "market": "Goals",
-      "settled": 30,
-      "hit_rate": 0.4,
-      "odds_net": -13.84,
-      "action": "review_weighting"
-    },
-    {
-      "league": "MLS",
-      "market": "Winner",
-      "settled": 71,
-      "hit_rate": 0.4085,
-      "odds_net": -21.32,
-      "action": "review_weighting"
-    },
-    {
-      "league": "Championship",
-      "market": "Winner",
-      "settled": 28,
-      "hit_rate": 0.4286,
-      "odds_net": -13.61,
+      "league": "Primeira Liga",
+      "market": "BTTS",
+      "settled": 9,
+      "hit_rate": 0.4444,
+      "odds_net": 0,
       "action": "review_weighting"
     }
   ],
@@ -287,7 +280,7 @@
     "Persist model probabilities per market in match_data.json so the review agent can compare confidence bands to actual hit rate.",
     "Reduce trust or raise the value threshold for Cards until its recent hit rate recovers.",
     "Reduce trust or raise the value threshold for Winner until its recent hit rate recovers.",
-    "First targeted review: Championship Cards (25 settled, 20.0% hit rate)."
+    "First targeted review: Bundesliga Cards (17 settled, 17.6% hit rate)."
   ],
   "outputs": {
     "csv": "docs\\agent-system\\outputs\\model_result_review_current.csv",

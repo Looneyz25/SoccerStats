@@ -9,8 +9,8 @@ Make the betting dashboard clear, useful, and safe to scan.
 - `app/page.jsx`
 - `app/globals.css`
 - `app/layout.jsx`
-- `match_data.json`
-- `public/data/match_data.json`
+- Firestore `dashboardData/match_data/leagues/*`
+- `match_data.json` as the local upload artifact
 - dashboard user goals
 
 ## Responsibilities

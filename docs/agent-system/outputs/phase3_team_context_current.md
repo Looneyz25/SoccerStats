@@ -7,34 +7,32 @@ Source: SofaScore (smart-mimic session)
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-17 13:36:03 ACST |
+| run_timestamp | 2026-05-17 16:12:46 ACST |
 | timezone | Australia/Adelaide |
 | source | SofaScore (smart-mimic session) |
 | phase2_input_rows | 60 |
-| phase2_ready_rows | 39 |
+| phase2_ready_rows | 38 |
 | phase3_total_rows | 60 |
-| ready_for_phase_4 | 35 |
+| ready_for_phase_4 | 34 |
 | team_unresolved | 2 |
 | partial_form | 2 |
 | source_blocked | 0 |
-| upstream_blocked | 21 |
+| upstream_blocked | 22 |
 | next_action | Review Source Health for degraded endpoints, then proceed with Phase 4. |
 
 ## Source Health
 
 | Endpoint | Calls | OK | Errors | Health | Notes |
 | --- | --- | --- | --- | --- | --- |
-| search | 78 | 78 | 0 | healthy |  |
-| team_events | 74 | 73 | 1 | degraded | HTTP 404 |
-| team_events_next | 37 | 33 | 4 | degraded | HTTP 404 |
-| h2h | 29 | 29 | 0 | healthy |  |
+| search | 76 | 76 | 0 | healthy |  |
+| team_events | 72 | 71 | 1 | degraded | HTTP 404 |
+| team_events_next | 36 | 32 | 4 | degraded | HTTP 404 |
+| h2h | 28 | 28 | 0 | healthy |  |
 
 ## Form Summary
 
 | Date | League | Home | Away | H last5 (W-D-L GF-GA) | A last5 (W-D-L GF-GA) | H Streaks | A Streaks | H2H | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-17 | MLS | San Jose Earthquakes | FC Dallas | 2-2-1 11-9 | 2-0-3 8-7 | No wins 3 | Without clean sheet 7 | More than 2.5 goals 7/10 | More than 2.5 goals 7/10 | Both teams scoring 7/10 | 0 (H0/A0/D0) | ready_for_phase_4 |
-| 2026-05-17 | J1 League | V-Varen Nagasaki | Vissel Kobe | -- - | -- - |  |  |  (H/A/D) | upstream_blocked |
 | 2026-05-17 | J1 League | Chiba | Kashima Antlers | -- - | -- - |  |  |  (H/A/D) | upstream_blocked |
 | 2026-05-17 | J1 League | Okayama | Shimizu S-Pulse | -- - | -- - |  |  |  (H/A/D) | upstream_blocked |
 | 2026-05-17 | J1 League | Cerezo Osaka | Nagoya Grampus | -- - | -- - |  |  |  (H/A/D) | upstream_blocked |
@@ -59,6 +57,7 @@ Source: SofaScore (smart-mimic session)
 | 2026-05-17 | Premier League | Brentford | Crystal Palace | 1-2-2 6-7 | 2-1-2 7-10 | More than 2.5 goals 7/10 | Without clean sheet 6 | More than 2.5 goals 9/10 | Both team | 10 (H0/A0/D0) | ready_for_phase_4 |
 | 2026-05-17 | Premier League | Everton | Sunderland | 0-3-2 9-11 | 1-2-2 5-10 | Draws 2 | No wins 5 | Without clean sheet 5 | More than 2.5  | Draws 2 | No wins 4 | 7 (H0/A0/D0) | ready_for_phase_4 |
 | 2026-05-17 | Premier League | Leeds | Brighton | 2-2-1 9-5 | 3-1-1 11-5 | Without clean sheet 4 | More than 2.5 goals 6/10 | More than 2.5 goals 6/10 | 9 (H0/A0/D0) | ready_for_phase_4 |
+| 2026-05-17 | J1 League | V-Varen Nagasaki | Vissel Kobe | -- - | -- - |  |  |  (H/A/D) | upstream_blocked |
 | 2026-05-17 | MLS | Austin FC | Sporting Kansas City | -- - | -- - |  |  |  (H/A/D) | upstream_blocked |
 | 2026-05-17 | MLS | CF Montreal | Chicago Fire | -- - | -- - |  |  |  (H/A/D) | upstream_blocked |
 | 2026-05-17 | MLS | Charlotte | Toronto FC | -- - | -- - |  |  |  (H/A/D) | upstream_blocked |
@@ -69,6 +68,7 @@ Source: SofaScore (smart-mimic session)
 | 2026-05-17 | MLS | Philadelphia Union | Columbus Crew | -- - | -- - |  |  |  (H/A/D) | upstream_blocked |
 | 2026-05-17 | MLS | Real Salt Lake | Colorado Rapids | -- - | -- - |  |  |  (H/A/D) | upstream_blocked |
 | 2026-05-17 | MLS | San Diego FC | FC Cincinnati | -- - | -- - |  |  |  (H/A/D) | upstream_blocked |
+| 2026-05-17 | MLS | San Jose Earthquakes | FC Dallas | -- - | -- - |  |  |  (H/A/D) | upstream_blocked |
 | 2026-05-17 | MLS | Seattle Sounders | Los Angeles Galaxy | -- - | -- - |  |  |  (H/A/D) | upstream_blocked |
 | 2026-05-18 | Serie A | Atalanta | Bologna | 1-2-2 8-9 | 1-1-3 3-10 | Both teams scoring 6/10 |  | 10 (H0/A0/D0) | ready_for_phase_4 |
 | 2026-05-18 | LaLiga | Ath Bilbao | Celta Vigo | -- - | -- - |  |  |  (H/A/D) | upstream_blocked |
