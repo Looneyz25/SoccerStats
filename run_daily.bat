@@ -58,9 +58,9 @@ if errorlevel 1 (
   exit /b 2
 )
 
-REM Publish dashboard data to Firestore. Non-fatal; static JSON remains fallback.
+REM Publish dashboard data to Firestore league docs. Non-fatal; static JSON remains fallback.
 echo. >> "%LOG%"
-echo [%date% %time%] uploading match_data.json to Firestore >> "%LOG%"
+echo [%date% %time%] uploading match_data.json to Firestore league docs >> "%LOG%"
 call npm.cmd run data:firebase >> "%LOG%" 2>&1
 if errorlevel 1 (
   echo [%date% %time%] Firestore data upload failed with errorlevel %errorlevel% (continuing with JSON fallback) >> "%LOG%"

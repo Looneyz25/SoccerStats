@@ -13,7 +13,7 @@
     "data:firebase": "node scripts/upload_match_data_to_firestore.mjs",
     "data:collect": "node scripts/run-python.js scripts/soccer_phases_routine.py",
     "data:refresh:local": "node scripts/run-python.js scripts/soccer_routine.py && npm.cmd run data:collect && npm.cmd run prebuild",
-    "data:refresh": "npm.cmd run data:refresh:local && npm.cmd run data:firebase",
+    "data:refresh": "node scripts/get-data-with-log.mjs",
     "data:update": "npm.cmd run data:refresh",
     "data:get": "npm.cmd run data:refresh",
     "get:data": "npm.cmd run data:refresh",

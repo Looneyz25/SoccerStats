@@ -33,7 +33,7 @@ For normal daily operations, use:
 npm.cmd run get:data
 ```
 
-This is a data-only refresh. It runs the routine, updates generated JSON and phase outputs, prepares the static fallback, and uploads `match_data.json` to Firestore through `scripts/upload_match_data_to_firestore.mjs`.
+This is a data-only refresh. It runs the routine, updates generated JSON and phase outputs, prepares the static fallback, and uploads `match_data.json` to Firestore as small per-league documents through `scripts/upload_match_data_to_firestore.mjs`.
 
 It must not commit, push, build, or deploy unless the user explicitly asks for those steps. If Firestore credentials are missing, the local data refresh can still complete, but the upload will fail with instructions to restore `.secrets/firebase-service-account.json` or configure `GOOGLE_APPLICATION_CREDENTIALS` / `FIREBASE_SERVICE_ACCOUNT_JSON`.
 
