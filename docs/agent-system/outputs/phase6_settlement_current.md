@@ -6,7 +6,7 @@ Timezone: Australia/Adelaide
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-18 04:09:11 ACST |
+| run_timestamp | 2026-05-18 05:57:50 ACST |
 | sofa_health | healthy |
 | flashscore_health | healthy |
 | flashscore_note |  |
@@ -36,15 +36,6 @@ Timezone: Australia/Adelaide
 
 | Date | Match | Pick | Odds | Stake | Actual | Outcome | Status | Return |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-18 | Ath. Bilbao vs Celta Vigo |  |  |  |  |  | skipped | 0.0 |
-| 2026-05-18 | Atl. Madrid vs Girona |  |  |  |  |  | skipped | 0.0 |
-| 2026-05-18 | Elche vs Getafe |  |  |  |  |  | skipped | 0.0 |
-| 2026-05-18 | Levante vs Mallorca |  |  |  |  |  | skipped | 0.0 |
-| 2026-05-18 | Osasuna vs Espanyol |  |  |  |  |  | skipped | 0.0 |
-| 2026-05-18 | Oviedo vs Alaves |  |  |  |  |  | skipped | 0.0 |
-| 2026-05-18 | Real Sociedad vs Valencia |  |  |  |  |  | skipped | 0.0 |
-| 2026-05-18 | Sevilla vs Real Madrid |  |  |  |  |  | skipped | 0.0 |
-| 2026-05-18 | Vallecano vs Villarreal |  |  |  |  |  | skipped | 0.0 |
 | 2026-05-18 | Cagliari vs Torino |  |  |  |  |  | skipped | 0.0 |
 | 2026-05-18 | Sassuolo vs Lecce |  |  |  |  |  | skipped | 0.0 |
 | 2026-05-18 | Udinese vs Cremonese |  |  |  |  |  | skipped | 0.0 |
@@ -53,9 +44,18 @@ Timezone: Australia/Adelaide
 | 2026-05-18 | Lorient vs Le Havre |  |  |  |  |  | skipped | 0.0 |
 | 2026-05-18 | Lyon vs Lens |  |  |  |  |  | skipped | 0.0 |
 | 2026-05-18 | Marseille vs Rennes |  |  |  |  |  | skipped | 0.0 |
-| 2026-05-18 | Nantes vs Toulouse |  |  |  |  |  | skipped | 0.0 |
 | 2026-05-18 | Nice vs Metz |  |  |  |  |  | skipped | 0.0 |
 | 2026-05-18 | Paris FC vs PSG |  |  |  |  |  | skipped | 0.0 |
 | 2026-05-18 | Strasbourg vs Monaco |  |  |  |  |  | skipped | 0.0 |
 | 2026-05-18 | Barcelona vs Betis |  |  |  |  |  | skipped | 0.0 |
 | 2026-05-18 | Atalanta vs Bologna |  |  |  |  |  | skipped | 0.0 |
+| 2026-05-18 | Ath. Bilbao vs Celta Vigo |  |  |  |  |  | skipped | 0.0 |
+| 2026-05-18 | Atl. Madrid vs Girona |  |  |  |  |  | skipped | 0.0 |
+| 2026-05-18 | Elche vs Getafe |  |  |  |  |  | skipped | 0.0 |
+| 2026-05-18 | Levante vs Mallorca |  |  |  |  |  | skipped | 0.0 |
+| 2026-05-18 | Nantes vs Toulouse |  |  |  |  |  | skipped | 0.0 |
+| 2026-05-18 | Osasuna vs Espanyol |  |  |  |  |  | skipped | 0.0 |
+| 2026-05-18 | Oviedo vs Alaves |  |  |  |  |  | skipped | 0.0 |
+| 2026-05-18 | Real Sociedad vs Valencia |  |  |  |  |  | skipped | 0.0 |
+| 2026-05-18 | Sevilla vs Real Madrid |  |  |  |  |  | skipped | 0.0 |
+| 2026-05-18 | Vallecano vs Villarreal |  |  |  |  |  | skipped | 0.0 |

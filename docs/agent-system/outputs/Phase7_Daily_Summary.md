@@ -1,18 +1,18 @@
 # Soccer Stats Daily Summary
 
-Generated: 2026-05-18 04:09 ACST
+Generated: 2026-05-18 05:57 ACST
 Date window: 2026-05-18 to 2026-05-18
 
 ## Phase Run Status
 
 | Phase | Status | Exit | Duration | Last line |
 | --- | --- | --- | --- | --- |
-| 1 Fixtures | ok | 0 | 3.61s | NOTE: Missing API_FOOTBALL_KEY/APISPORTS_KEY; used keyless Flashscore feed. |
-| 2 Odds | ok | 0 | 24.02s | total=23 ready_for_phase_3=19 unmatched=4 blocked=0 |
-| 3 Team Context | ok | 0 | 375.94s | total=23 ready_for_phase_4=0 unresolved=19 upstream_blocked=4 |
-| 4 Predictions | ok | 0 | 0.12s | total=23 ready_for_phase_5=0 model_only=0 upstream_blocked=23 |
+| 1 Fixtures | ok | 0 | 3.2s | NOTE: Missing API_FOOTBALL_KEY/APISPORTS_KEY; used keyless Flashscore feed. |
+| 2 Odds | ok | 0 | 19.16s | total=23 ready_for_phase_3=10 unmatched=13 blocked=0 |
+| 3 Team Context | ok | 0 | 199.91s | total=23 ready_for_phase_4=0 unresolved=10 upstream_blocked=13 |
+| 4 Predictions | ok | 0 | 0.14s | total=23 ready_for_phase_5=0 model_only=0 upstream_blocked=23 |
 | 5 Value & Risk | ok | 0 | 0.11s | total=23 bets=0 leans=0 no_value=0 upstream_blocked=23 scale=1.0 |
-| 6 Settlement | ok | 0 | 3.02s | settled_this_run=0 won=0 lost=0 pending=0 history_hit_rate=0.0 history_roi=-1.0 |
+| 6 Settlement | ok | 0 | 1.88s | settled_this_run=0 won=0 lost=0 pending=0 history_hit_rate=0.0 history_roi=-1.0 |
 | Result Review | ok | 0 | 0.12s | settled_market_rows=1490 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the revie |
 | Model Calibration | ok | 0 | 0.08s | market_adjustments=4 league_market_adjustments=8 |
 
@@ -21,7 +21,7 @@ Date window: 2026-05-18 to 2026-05-18
 | Phase | Ready | Blocked | Source |
 | --- | --- | --- | --- |
 | 1 Fixtures | 23 | 0 | Flashscore |
-| 2 Odds | 19 | 4 | Sportsbet (mimic) |
+| 2 Odds | 10 | 13 | Sportsbet (mimic) |
 | 3 Team Context | 0 | 23 | SofaScore (mimic) |
 | 4 Predictions | 0 | 23 | model |
 | 5 Value & Risk | 0 bets / 0 leans | 23 | model |

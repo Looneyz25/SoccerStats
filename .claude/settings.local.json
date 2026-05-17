@@ -58,7 +58,9 @@
       "PowerShell(Get-NetTCPConnection -LocalPort 3001 -ErrorAction SilentlyContinue)",
       "Bash(git fetch *)",
       "Bash(python -c \"import json; d=json.load\\(open\\('match_data.json', encoding='utf-8'\\)\\); from collections import Counter; c=Counter\\(\\); [c.update\\([m.get\\('date',''\\)]\\) for L in d.get\\('leagues',[]\\) for m in \\(L.get\\('matches'\\) or []\\) if m.get\\('status'\\)=='FT']; [print\\(k, c[k]\\) for k in sorted\\(c\\) if k]\")",
-      "Bash(python -c \"import json; d=json.load\\(open\\('match_data.json',encoding='utf-8'\\)\\); print\\('total matches:', sum\\(len\\(L.get\\('matches'\\) or []\\) for L in d.get\\('leagues',[]\\)\\)\\); print\\('finished:', sum\\(1 for L in d.get\\('leagues',[]\\) for m in \\(L.get\\('matches'\\) or []\\) if m.get\\('status'\\)=='FT'\\)\\)\")"
+      "Bash(python -c \"import json; d=json.load\\(open\\('match_data.json',encoding='utf-8'\\)\\); print\\('total matches:', sum\\(len\\(L.get\\('matches'\\) or []\\) for L in d.get\\('leagues',[]\\)\\)\\); print\\('finished:', sum\\(1 for L in d.get\\('leagues',[]\\) for m in \\(L.get\\('matches'\\) or []\\) if m.get\\('status'\\)=='FT'\\)\\)\")",
+      "Bash(npm.cmd run *)",
+      "Bash(tasklist)"
     ]
   }
 }
