@@ -604,7 +604,7 @@ function confidenceForMatch(match, displayMarkets) {
     .sort((a, b) => Number(b[1].comparison.modelEdge) - Number(a[1].comparison.modelEdge));
   const bestEdge = Number(edges[0]?.[1]?.comparison?.modelEdge || 0);
   const quality = dataQualityForMatch(match);
-  if (!edges.length) return { label: 'Avoid', tone: 'warning', reason: 'Our model does not see better odds than the bookmaker', edge: 0, quality };
+  if (!edges.length) return { label: 'Avoid picking a winner', tone: 'warning', reason: 'Our model does not see better odds than the bookmaker', edge: 0, quality };
   if (bestEdge >= 0.05 && quality.score >= 3) return { label: 'Strong edge', tone: 'positive', reason: `${edges[0][1].label} ${edges[0][1].comparison.badge.label}`, edge: bestEdge, quality };
   if (bestEdge >= 0.02 && quality.score >= 2) return { label: 'Watchlist', tone: 'neutral', reason: `${edges[0][1].label} ${edges[0][1].comparison.badge.label}`, edge: bestEdge, quality };
   return { label: 'Data weak', tone: 'warning', reason: quality.cautions[0] || 'Thin supporting data', edge: bestEdge, quality };

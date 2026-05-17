@@ -1245,6 +1245,16 @@ function confidenceForMatch(match, allMatches) {
   return { label: 'Data weak', tone: 'warning', reason: quality.cautions[0] || 'Thin supporting data', edge: bestEdge, quality };
 }
 
+function normalizeConfidenceLabel(confidence) {
+  if (!confidence) return confidence;
+  if (confidence.label === 'Avoid') return { ...confidence, label: 'Avoid picking a winner' };
+  return confidence;
+}
+
+function loadMatchConfidence(match, allMatches) {
+  return normalizeConfidenceLabel(match.display_summary?.confidence) || confidenceForMatch(match, allMatches);
+}
+
 function sameTeamId(left, right) {
   return left !== null && left !== undefined && right !== null && right !== undefined && String(left) === String(right);
 }
@@ -3402,7 +3412,7 @@ function PredictionSummaryCard({ match, allMatches }) {
   const matchWithContext = { ...match, __allMatches: allMatches };
   const predictions = match.predictions || {};
   const precomputed = match.display_markets || {};
-  const confidence = match.display_summary?.confidence || confidenceForMatch(match, allMatches);
+  const confidence = loadMatchConfidence(match, allMatches);
   const winner = precomputed.winner?.market || winnerMarketWithGuidance(match, allMatches);
   const winnerLowConfidence = Boolean(winner?.lowConfidence);
   const winnerComparison = winnerLowConfidence ? null : precomputed.winner?.comparison || modelVsBookmakerComparison(matchWithContext, 'winner', winner);
@@ -3607,7 +3617,7 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
   const cardsComparison = precomputed.cards?.comparison || modelVsBookmakerComparison(match, 'ou_cards', displayCards);
   const cornerMarket = precomputed.corners?.market || cornerMarketFromStreaks(match, allMatches);
   const cornersComparison = precomputed.corners?.comparison || modelVsBookmakerComparison(match, 'ou_corners', cornerMarket);
-  const confidence = match.display_summary?.confidence || confidenceForMatch(match, allMatches);
+  const confidence = loadMatchConfidence(match, allMatches);
   const winnerModelPct = precomputed.winner?.modelProbability ?? winnerModelProbability(match, displayWinner);
   const edgeBadgeFor = (comparison) =>
     comparison?.badge?.tone === 'positive' && comparison.edgePoints > 0 ? comparison.badge.label : null;
