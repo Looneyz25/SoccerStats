@@ -1,8 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 286 72" role="img" aria-label="Sportsbet logo">
   <title>sportsbet</title>
   <g transform="skewX(-11)">
-    <text x="20" y="50" fill="#fff" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="43" font-weight="900" letter-spacing="-4">sports</text>
-    <text x="151" y="50" fill="#ffdc1c" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="43" font-weight="900" letter-spacing="-4">bet</text>
+    <text x="18" y="50" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="43" font-weight="900" letter-spacing="-4">
+      <tspan fill="#fff">sports</tspan><tspan fill="#ffdc1c">bet</tspan>
+    </text>
   </g>
   <circle cx="245" cy="21" r="12" fill="#65bf31"/>
   <path d="M239.5 20.6l4.1 4.1 7.9-8.9" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
