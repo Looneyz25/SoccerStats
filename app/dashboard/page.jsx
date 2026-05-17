@@ -201,10 +201,10 @@ function teamLogo(match, side) {
 function leagueLogo(value) {
   return imageValue(
     value?.leagueLogo,
+    LEAGUE_LOGOS[value?.league || value?.name],
     value?.league_logo,
     value?.logo,
     value?.logo_url,
-    LEAGUE_LOGOS[value?.league || value?.name],
   );
 }
 
@@ -241,11 +241,14 @@ function TeamScoreBadge({ value }) {
 
 function LeagueBadge({ src, name }) {
   const [failed, setFailed] = useState(false);
+  useEffect(() => {
+    setFailed(false);
+  }, [src]);
 
   if (src && !failed) {
     return (
       <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-md border border-white/20 bg-white">
-        <img src={src} alt="" className="h-full w-full object-contain p-1" aria-hidden="true" onError={() => setFailed(true)} />
+        <img src={src} alt="" className="h-full w-full object-contain p-1" aria-hidden="true" referrerPolicy="no-referrer" onError={() => setFailed(true)} />
       </span>
     );
   }
@@ -2173,7 +2176,31 @@ function groupMatchesForDisplay(matches, favoriteLeagues = [], favoriteTeams = [
   ];
 }
 
-function summarize(matches) {
+function normalizeAllTimeSummary(summary) {
+  if (!summary || typeof summary !== 'object') return null;
+  const total = Number(summary.total);
+  const finished = Number(summary.finished);
+  const upcoming = Number(summary.upcoming);
+  const accuracy = Number(summary.accuracy);
+  const oddsHit = Number(summary.oddsTotals?.hit);
+  const oddsLoss = Number(summary.oddsTotals?.loss);
+  if (![total, finished, upcoming, accuracy].every(Number.isFinite)) return null;
+  return {
+    total,
+    finished,
+    upcoming,
+    accuracy,
+    oddsTotals: {
+      hit: Number.isFinite(oddsHit) ? oddsHit : 0,
+      loss: Number.isFinite(oddsLoss) ? oddsLoss : 0,
+    },
+  };
+}
+
+function summarize(matches, allTimeSummary = null) {
+  const storedSummary = normalizeAllTimeSummary(allTimeSummary);
+  if (storedSummary) return storedSummary;
+
   const total = matches.length;
   const finished = matches.filter((m) => m.status === 'FT').length;
   const upcoming = total - finished;
@@ -3218,57 +3245,15 @@ function StreakList({ title, streaks, match }) {
 }
 
 function ResultsReview({ matches, activeReviewFilter = 'all', onReviewFilterChange }) {
-  const [reviewScope, setReviewScope] = useState('all');
-  const today = useMemo(() => localTodayDate(), []);
-  const weekStart = useMemo(() => addDaysToIsoDate(today, -6), [today]);
   const allResulted = trackedFinishedMatches(matches);
-  const matchesForScope = (scope) => allResulted.filter((match) => {
-    const matchDate = String(match.date || '');
-    if (scope === 'today') return matchDate === today;
-    if (scope === 'week') return matchDate >= weekStart && matchDate <= today;
-    return true;
-  });
-  const scopeRows = {
-    today: summarizeResultsByMarket(matchesForScope('today'), matches).filter((row) => row.total > 0),
-    week: summarizeResultsByMarket(matchesForScope('week'), matches).filter((row) => row.total > 0),
-    all: summarizeResultsByMarket(matchesForScope('all'), matches).filter((row) => row.total > 0),
-  };
-  const effectiveScope = scopeRows[reviewScope]?.length ? reviewScope : scopeRows.week.length ? 'week' : 'all';
-  const rows = scopeRows[effectiveScope] || [];
+  const rows = summarizeResultsByMarket(allResulted, matches).filter((row) => row.total > 0);
   if (!allResulted.length) return null;
   const best = [...rows].sort((a, b) => b.hitRate - a.hitRate)[0];
   const worst = [...rows].sort((a, b) => a.hitRate - b.hitRate)[0];
-  const scopeOptions = [
-    { key: 'today', label: 'Today', shortLabel: 'Today' },
-    { key: 'week', label: 'This week', shortLabel: 'Week' },
-    { key: 'all', label: 'All', shortLabel: 'All' },
-  ];
 
   return (
     <section className="mt-3 rounded-lg border border-slate-300 bg-white p-3 shadow-panel sm:mt-5 sm:p-4">
-      <div className="flex items-center justify-between gap-2">
-        <h2 className="shrink-0 text-base font-semibold text-ink">Results review</h2>
-        <div className="grid shrink-0 grid-cols-3 gap-1 text-xs font-semibold">
-          {scopeOptions.map((option) => {
-            const disabled = !scopeRows[option.key]?.length;
-            const active = effectiveScope === option.key;
-            return (
-              <button
-                key={option.key}
-                type="button"
-                onClick={() => setReviewScope(option.key)}
-                disabled={disabled}
-                className={`rounded-md border px-2 py-1 ${
-                  active ? 'border-ink bg-ink text-white' : 'border-slate-300 bg-white text-slate-700 hover:bg-field'
-                } disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-400`}
-              >
-                <span className="sm:hidden">{option.shortLabel}</span>
-                <span className="hidden sm:inline">{option.label}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      <h2 className="text-base font-semibold text-ink">Results review</h2>
       {(best || worst) && (
         <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs font-semibold">
           {best && <span className="rounded-md border border-emerald-200 bg-emerald-50 px-2 py-1 text-emerald-700">Best {best.label} {best.hitRate}%</span>}
@@ -3960,7 +3945,7 @@ function HomeInner() {
     () => [...new Set((data?.availableDates?.length ? data.availableDates : matches.map((match) => match.date)).filter(Boolean))].sort((a, b) => a.localeCompare(b)),
     [data?.availableDates, matches],
   );
-  const stats = useMemo(() => summarize(matches), [matches]);
+  const stats = useMemo(() => summarize(matches, data?.allTimeSummary), [matches, data?.allTimeSummary]);
   const todayDate = useMemo(() => localTodayDate(), []);
   const dateOptions = useMemo(
     () => [...new Set([...dates, todayDate].filter(Boolean))].sort((a, b) => a.localeCompare(b)),
@@ -4356,10 +4341,10 @@ function HomeInner() {
             <Stat icon={Activity} label="Matches" value={stats.total} />
             <Stat icon={CheckCircle2} label="Finished" value={stats.finished} tone="text-signal" />
             <Stat icon={Clock3} label="Upcoming" value={stats.upcoming} tone="text-blue-700" />
-            <Stat icon={Goal} label="Market Hit Rate" value={`${stats.accuracy}%`} />
+            <Stat icon={Goal} label="All-Time Hit Rate" value={`${stats.accuracy}%`} />
             <Stat
               icon={BarChart3}
-              label="Odds Hit / Loss"
+              label="All-Time Odds"
               value={
                 <span className="flex flex-nowrap items-baseline gap-x-1.5 whitespace-nowrap text-lg sm:gap-x-2 sm:text-2xl">
                   <span className="text-signal">{formatOddsTotal(stats.oddsTotals?.hit)}</span>
