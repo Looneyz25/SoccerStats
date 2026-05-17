@@ -1,0 +1,45 @@
+name: Upload dashboard data to Firestore
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  upload-data:
+    name: Upload match data
+    runs-on: ubuntu-latest
+    if: ${{ github.repository == 'Looneyz25/SoccerStats' }}
+    env:
+      FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Prepare dashboard data
+        run: npm run prebuild
+
+      - name: Check Firebase credentials
+        id: firebase-credentials
+        run: |
+          if [ -z "$FIREBASE_SERVICE_ACCOUNT_JSON" ]; then
+            echo "::warning::Missing repo secret FIREBASE_SERVICE_ACCOUNT_JSON. Skipping Firestore data upload."
+            echo "has_credentials=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_credentials=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload data to Firestore
+        if: steps.firebase-credentials.outputs.has_credentials == 'true'
+        run: npm run data:firebase

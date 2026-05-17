@@ -35,17 +35,25 @@ const SUPPORT_EMAIL = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'lvrstats.com@gma
 const FAVORITE_LEAGUES_STORAGE_KEY = 'favoriteLeagues';
 
 async function loadMatchData() {
+  return loadStaticMatchData();
+}
+
+async function loadStaticMatchData() {
+  return Promise.any(
+    DATA_URLS.map((url) =>
+      fetch(url, { cache: 'no-store' }).then((response) => {
+        if (!response.ok) throw new Error(`Could not load ${url}`);
+        return response.json();
+      }),
+    ),
+  );
+}
+
+async function loadFreshMatchData() {
   try {
     return await loadMatchDataFromFirestore();
   } catch (firestoreError) {
-    return Promise.any(
-      DATA_URLS.map((url) =>
-        fetch(url, { cache: 'no-store' }).then((response) => {
-          if (!response.ok) throw new Error(`Could not load ${url}`);
-          return response.json();
-        }),
-      ),
-    );
+    return null;
   }
 }
 
@@ -2570,6 +2578,13 @@ function HomeInner() {
       })
       .catch((err) => {
         if (!cancelled) setError(`Could not load ${DATA_URLS.join(' or ')}`);
+      });
+
+    loadFreshMatchData()
+      .then((freshData) => {
+        if (cancelled || !freshData) return;
+        setData(freshData);
+        setError('');
       });
 
     return () => {

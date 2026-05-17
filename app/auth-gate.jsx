@@ -15,6 +15,7 @@ import { getUserProfile, createUserProfile } from './firestore-data';
 
 const AUTH_RETURN_PATH_KEY = 'looneyz-auth-return-path';
 const AUTH_GOOGLE_PENDING_KEY = 'looneyz-google-sign-in-pending';
+const PLATFORM_OWNER_EMAIL = 'l.vorabouth@gmail.com';
 
 function currentReturnPath() {
   if (typeof window === 'undefined') return '/dashboard';
@@ -162,6 +163,17 @@ export default function AuthGate({ children }) {
     async function loadProfile() {
       setCheckingAccess(true);
       try {
+        if (user.email === PLATFORM_OWNER_EMAIL && !checkoutSucceeded()) {
+          setProfile({
+            email: user.email,
+            displayName: user.displayName || '',
+            isPlatformOwner: true,
+            hasAccess: true,
+            accessSource: 'owner',
+          });
+          return;
+        }
+
         await syncStripeAfterCheckout();
         const p = await loadProfileWithRetry();
         if (active) setProfile(p);

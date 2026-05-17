@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import LandingAuthRedirect from './landing-auth-redirect';
 import {
   Activity,
   ArrowRight,
@@ -90,6 +91,7 @@ function ProductPreview() {
 export default function LandingPage() {
   return (
     <main className="min-h-screen bg-field text-ink">
+      <LandingAuthRedirect />
       <section className="relative overflow-hidden border-b border-line bg-white xl:min-h-[92vh]">
         <header className="relative z-10 mx-auto h-4 max-w-2xl px-5 sm:px-6 lg:max-w-7xl lg:px-8" />
 
