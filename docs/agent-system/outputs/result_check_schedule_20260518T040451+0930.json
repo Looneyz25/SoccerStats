@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-05-18T05:06:52.489416+09:30",
-  "result_check_buffer_minutes": 45,
+  "generated_at": "2026-05-18T04:04:51.526109+09:30",
+  "result_check_buffer_minutes": 130,
   "result_lookback_days": 3,
-  "due_count": 14,
+  "due_count": 1,
   "remaining_count": 26,
   "tomorrow_count": 1,
   "phase_summary": {
@@ -22,7 +22,7 @@
       "away": "Bologna",
       "status": "upcoming",
       "kickoff_at": "2026-05-18T01:30:00+09:30",
-      "check_after": "2026-05-18T02:15:00+09:30",
+      "check_after": "2026-05-18T03:40:00+09:30",
       "due_for_check": true,
       "event_id": 13980058
     },
@@ -35,8 +35,8 @@
       "away": "West Ham United",
       "status": "upcoming",
       "kickoff_at": "2026-05-18T02:00:00+09:30",
-      "check_after": "2026-05-18T02:45:00+09:30",
-      "due_for_check": true,
+      "check_after": "2026-05-18T04:10:00+09:30",
+      "due_for_check": false,
       "event_id": 14023957
     },
     {
@@ -48,8 +48,8 @@
       "away": "Celta Vigo",
       "status": "upcoming",
       "kickoff_at": "2026-05-18T02:30:00+09:30",
-      "check_after": "2026-05-18T03:15:00+09:30",
-      "due_for_check": true,
+      "check_after": "2026-05-18T04:40:00+09:30",
+      "due_for_check": false,
       "event_id": 14083656
     },
     {
@@ -61,8 +61,8 @@
       "away": "Girona FC",
       "status": "upcoming",
       "kickoff_at": "2026-05-18T02:30:00+09:30",
-      "check_after": "2026-05-18T03:15:00+09:30",
-      "due_for_check": true,
+      "check_after": "2026-05-18T04:40:00+09:30",
+      "due_for_check": false,
       "event_id": 14083661
     },
     {
@@ -74,8 +74,8 @@
       "away": "Getafe",
       "status": "upcoming",
       "kickoff_at": "2026-05-18T02:30:00+09:30",
-      "check_after": "2026-05-18T03:15:00+09:30",
-      "due_for_check": true,
+      "check_after": "2026-05-18T04:40:00+09:30",
+      "due_for_check": false,
       "event_id": 14083671
     },
     {
@@ -87,8 +87,8 @@
       "away": "Mallorca",
       "status": "upcoming",
       "kickoff_at": "2026-05-18T02:30:00+09:30",
-      "check_after": "2026-05-18T03:15:00+09:30",
-      "due_for_check": true,
+      "check_after": "2026-05-18T04:40:00+09:30",
+      "due_for_check": false,
       "event_id": 14083676
     },
     {
@@ -100,8 +100,8 @@
       "away": "Espanyol",
       "status": "upcoming",
       "kickoff_at": "2026-05-18T02:30:00+09:30",
-      "check_after": "2026-05-18T03:15:00+09:30",
-      "due_for_check": true,
+      "check_after": "2026-05-18T04:40:00+09:30",
+      "due_for_check": false,
       "event_id": 14083696
     },
     {
@@ -113,8 +113,8 @@
       "away": "Villarreal",
       "status": "upcoming",
       "kickoff_at": "2026-05-18T02:30:00+09:30",
-      "check_after": "2026-05-18T03:15:00+09:30",
-      "due_for_check": true,
+      "check_after": "2026-05-18T04:40:00+09:30",
+      "due_for_check": false,
       "event_id": 14083682
     },
     {
@@ -126,8 +126,8 @@
       "away": "Deportivo Alavés",
       "status": "upcoming",
       "kickoff_at": "2026-05-18T02:30:00+09:30",
-      "check_after": "2026-05-18T03:15:00+09:30",
-      "due_for_check": true,
+      "check_after": "2026-05-18T04:40:00+09:30",
+      "due_for_check": false,
       "event_id": 14083692
     },
     {
@@ -139,8 +139,8 @@
       "away": "Valencia",
       "status": "upcoming",
       "kickoff_at": "2026-05-18T02:30:00+09:30",
-      "check_after": "2026-05-18T03:15:00+09:30",
-      "due_for_check": true,
+      "check_after": "2026-05-18T04:40:00+09:30",
+      "due_for_check": false,
       "event_id": 14083687
     },
     {
@@ -152,8 +152,8 @@
       "away": "Real Madrid",
       "status": "upcoming",
       "kickoff_at": "2026-05-18T02:30:00+09:30",
-      "check_after": "2026-05-18T03:15:00+09:30",
-      "due_for_check": true,
+      "check_after": "2026-05-18T04:40:00+09:30",
+      "due_for_check": false,
       "event_id": 14083702
     },
     {
@@ -165,8 +165,8 @@
       "away": "Torino",
       "status": "upcoming",
       "kickoff_at": "2026-05-18T04:15:00+09:30",
-      "check_after": "2026-05-18T05:00:00+09:30",
-      "due_for_check": true,
+      "check_after": "2026-05-18T06:25:00+09:30",
+      "due_for_check": false,
       "event_id": 13980060
     },
     {
@@ -178,8 +178,8 @@
       "away": "Lecce",
       "status": "upcoming",
       "kickoff_at": "2026-05-18T04:15:00+09:30",
-      "check_after": "2026-05-18T05:00:00+09:30",
-      "due_for_check": true,
+      "check_after": "2026-05-18T06:25:00+09:30",
+      "due_for_check": false,
       "event_id": 13980078
     },
     {
@@ -191,8 +191,8 @@
       "away": "Cremonese",
       "status": "upcoming",
       "kickoff_at": "2026-05-18T04:15:00+09:30",
-      "check_after": "2026-05-18T05:00:00+09:30",
-      "due_for_check": true,
+      "check_after": "2026-05-18T06:25:00+09:30",
+      "due_for_check": false,
       "event_id": 13980076
     },
     {
@@ -204,7 +204,7 @@
       "away": "Auxerre",
       "status": "upcoming",
       "kickoff_at": "2026-05-18T04:30:00+09:30",
-      "check_after": "2026-05-18T05:15:00+09:30",
+      "check_after": "2026-05-18T06:40:00+09:30",
       "due_for_check": false,
       "event_id": 14061906
     },
@@ -217,7 +217,7 @@
       "away": "Le Havre",
       "status": "upcoming",
       "kickoff_at": "2026-05-18T04:30:00+09:30",
-      "check_after": "2026-05-18T05:15:00+09:30",
+      "check_after": "2026-05-18T06:40:00+09:30",
       "due_for_check": false,
       "event_id": 14061904
     },
@@ -230,7 +230,7 @@
       "away": "Toulouse",
       "status": "upcoming",
       "kickoff_at": "2026-05-18T04:30:00+09:30",
-      "check_after": "2026-05-18T05:15:00+09:30",
+      "check_after": "2026-05-18T06:40:00+09:30",
       "due_for_check": false,
       "event_id": 14061912
     },
@@ -243,7 +243,7 @@
       "away": "Metz",
       "status": "upcoming",
       "kickoff_at": "2026-05-18T04:30:00+09:30",
-      "check_after": "2026-05-18T05:15:00+09:30",
+      "check_after": "2026-05-18T06:40:00+09:30",
       "due_for_check": false,
       "event_id": 14061909
     },
@@ -256,7 +256,7 @@
       "away": "RC Lens",
       "status": "upcoming",
       "kickoff_at": "2026-05-18T04:30:00+09:30",
-      "check_after": "2026-05-18T05:15:00+09:30",
+      "check_after": "2026-05-18T06:40:00+09:30",
       "due_for_check": false,
       "event_id": 14061911
     },
@@ -269,7 +269,7 @@
       "away": "Stade Rennais",
       "status": "upcoming",
       "kickoff_at": "2026-05-18T04:30:00+09:30",
-      "check_after": "2026-05-18T05:15:00+09:30",
+      "check_after": "2026-05-18T06:40:00+09:30",
       "due_for_check": false,
       "event_id": 14061907
     },
@@ -282,7 +282,7 @@
       "away": "Paris Saint-Germain",
       "status": "upcoming",
       "kickoff_at": "2026-05-18T04:30:00+09:30",
-      "check_after": "2026-05-18T05:15:00+09:30",
+      "check_after": "2026-05-18T06:40:00+09:30",
       "due_for_check": false,
       "event_id": 14061910
     },
@@ -295,7 +295,7 @@
       "away": "AS Monaco",
       "status": "upcoming",
       "kickoff_at": "2026-05-18T04:30:00+09:30",
-      "check_after": "2026-05-18T05:15:00+09:30",
+      "check_after": "2026-05-18T06:40:00+09:30",
       "due_for_check": false,
       "event_id": 14061905
     },
@@ -308,7 +308,7 @@
       "away": "Angers",
       "status": "upcoming",
       "kickoff_at": "2026-05-18T04:30:00+09:30",
-      "check_after": "2026-05-18T05:15:00+09:30",
+      "check_after": "2026-05-18T06:40:00+09:30",
       "due_for_check": false,
       "event_id": 14061908
     },
@@ -321,7 +321,7 @@
       "away": "Real Betis",
       "status": "upcoming",
       "kickoff_at": "2026-05-18T04:45:00+09:30",
-      "check_after": "2026-05-18T05:30:00+09:30",
+      "check_after": "2026-05-18T06:55:00+09:30",
       "due_for_check": false,
       "event_id": 14083666
     },
@@ -334,7 +334,7 @@
       "away": "Portland Timbers",
       "status": "upcoming",
       "kickoff_at": "2026-05-18T07:30:00+09:30",
-      "check_after": "2026-05-18T08:15:00+09:30",
+      "check_after": "2026-05-18T09:40:00+09:30",
       "due_for_check": false,
       "event_id": 15171567
     },
@@ -347,7 +347,7 @@
       "away": "Los Angeles FC",
       "status": "upcoming",
       "kickoff_at": "2026-05-18T09:30:00+09:30",
-      "check_after": "2026-05-18T10:15:00+09:30",
+      "check_after": "2026-05-18T11:40:00+09:30",
       "due_for_check": false,
       "event_id": 15171570
     },
@@ -360,7 +360,7 @@
       "away": "Burnley",
       "status": "upcoming",
       "kickoff_at": "2026-05-19T04:30:00+09:30",
-      "check_after": "2026-05-19T05:15:00+09:30",
+      "check_after": "2026-05-19T06:40:00+09:30",
       "due_for_check": false,
       "event_id": 14023950
     }

@@ -78,6 +78,16 @@ async function fetchMatchDataFromApi(date = '') {
 
 async function fetchMatchDataFromFirestoreSdk(date = '') {
   const db = getFirebaseDb();
+  let metaSummary = null;
+
+  async function loadMetaSummary() {
+    if (metaSummary) return metaSummary;
+    const metaRef = doc(db, 'dashboardData', DASHBOARD_DOC);
+    const metaSnap = await getDoc(metaRef);
+    metaSummary = metaSnap.exists() ? metaSnap.data()?.allTimeSummary || null : null;
+    return metaSummary;
+  }
+
   if (date) {
     const dateRef = doc(db, 'dashboardData', DASHBOARD_DOC, 'dates', date);
     const dateSnap = await getDoc(dateRef);
@@ -89,6 +99,7 @@ async function fetchMatchDataFromFirestoreSdk(date = '') {
           source: data.source || null,
           date: data.date || date,
           availableDates: Array.isArray(data.availableDates) ? data.availableDates : [],
+          allTimeSummary: data.allTimeSummary || await loadMetaSummary(),
           leagues: data.leagues,
         };
         writeMatchDataCache(result, date);
@@ -107,6 +118,7 @@ async function fetchMatchDataFromFirestoreSdk(date = '') {
         captured_at: fast.capturedAt || null,
         source: fast.source || null,
         availableDates: Array.isArray(fast.availableDates) ? fast.availableDates : [],
+        allTimeSummary: fast.allTimeSummary || null,
         leagues: fast.leagues,
       };
       writeMatchDataCache(result, date);
@@ -146,6 +158,7 @@ async function fetchMatchDataFromFirestoreSdk(date = '') {
       captured_at: meta.capturedAt || null,
       source: meta.source || null,
       availableDates: Array.isArray(meta.availableDates) ? meta.availableDates : [],
+      allTimeSummary: meta.allTimeSummary || null,
       leagues,
     };
     writeMatchDataCache(result, date);

@@ -654,7 +654,7 @@ function precomputeMatch(match, allMatches) {
     displayMarkets.goals,
     displayMarkets.cards,
     displayMarkets.corners,
-  ], match.status === 'FT');
+  ]);
   const odds = displayThreeWayOdds(match);
   const headline = headlineMarkets(match, displayMarkets);
   return {

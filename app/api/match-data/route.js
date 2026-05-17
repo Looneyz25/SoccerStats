@@ -18,6 +18,36 @@ let inflightData = null;
 const cachedDateData = new Map();
 const inflightDateData = new Map();
 const accessCache = new Map();
+let cachedAllTimeSummary = null;
+let cachedAllTimeSummaryAt = 0;
+let inflightAllTimeSummary = null;
+
+function summarizeAllTime(leagues) {
+  const matches = (Array.isArray(leagues) ? leagues : []).flatMap((league) => Array.isArray(league.matches) ? league.matches : []);
+  const markets = matches.flatMap((match) => Array.isArray(match.display_summary?.headlineMarkets) ? match.display_summary.headlineMarkets : []);
+  const hits = markets.filter((market) => market?.result === 'hit').length;
+  const oddsTotals = markets.reduce((totals, market) => {
+    const odds = Number(market?.odds);
+    if (!Number.isFinite(odds)) return totals;
+    if (market.result === 'hit') totals.hit += odds;
+    if (market.result === 'miss') totals.loss += odds;
+    return totals;
+  }, { hit: 0, loss: 0 });
+  const finished = matches.filter((match) => match.status === 'FT').length;
+  return {
+    total: matches.length,
+    finished,
+    upcoming: matches.length - finished,
+    settledMarkets: markets.length,
+    marketHits: hits,
+    marketMisses: markets.length - hits,
+    accuracy: markets.length ? Math.round((hits / markets.length) * 100) : 0,
+    oddsTotals: {
+      hit: Math.round(oddsTotals.hit * 10) / 10,
+      loss: Math.round(oddsTotals.loss * 10) / 10,
+    },
+  };
+}
 
 function getAdminApp() {
   if (adminApp) return adminApp;
@@ -66,10 +96,15 @@ async function loadFastDoc() {
     if (fast.format !== 'single_doc_v1' || !Array.isArray(fast.leagues)) {
       throw new Error('match_data_fast format unexpected');
     }
+    let allTimeSummary = fast.allTimeSummary || null;
+    if (!allTimeSummary) {
+      allTimeSummary = await loadAllTimeSummary();
+    }
     const payload = {
       captured_at: fast.capturedAt || null,
       source: fast.source || null,
       availableDates: Array.isArray(fast.availableDates) ? fast.availableDates : [],
+      allTimeSummary,
       leagues: fast.leagues,
     };
     cachedData = payload;
@@ -80,6 +115,44 @@ async function loadFastDoc() {
   });
 
   return inflightData;
+}
+
+async function loadLeagueDocs() {
+  const db = getFirestore(getAdminApp());
+  const snap = await db
+    .collection(META_DOC_PATH[0])
+    .doc(META_DOC_PATH[1])
+    .collection('leagues')
+    .orderBy('index', 'asc')
+    .get();
+  return snap.docs.map((leagueDoc) => {
+    const league = leagueDoc.data() || {};
+    return {
+      id: league.id,
+      name: league.name,
+      matches: Array.isArray(league.matches) ? league.matches : [],
+    };
+  });
+}
+
+async function loadAllTimeSummary() {
+  const now = Date.now();
+  if (cachedAllTimeSummary && now - cachedAllTimeSummaryAt < DATA_CACHE_TTL_MS) {
+    return cachedAllTimeSummary;
+  }
+  if (inflightAllTimeSummary) return inflightAllTimeSummary;
+  inflightAllTimeSummary = (async () => {
+    const db = getFirestore(getAdminApp());
+    const metaSnap = await db.collection(META_DOC_PATH[0]).doc(META_DOC_PATH[1]).get();
+    const metaSummary = metaSnap.exists ? metaSnap.data()?.allTimeSummary : null;
+    const summary = metaSummary || summarizeAllTime(await loadLeagueDocs());
+    cachedAllTimeSummary = summary;
+    cachedAllTimeSummaryAt = Date.now();
+    return summary;
+  })().finally(() => {
+    inflightAllTimeSummary = null;
+  });
+  return inflightAllTimeSummary;
 }
 
 async function loadDateDoc(date) {
@@ -103,11 +176,16 @@ async function loadDateDoc(date) {
     if (data.format !== 'date_doc_v1' || !Array.isArray(data.leagues)) {
       throw new Error('date doc format unexpected');
     }
+    let allTimeSummary = data.allTimeSummary || null;
+    if (!allTimeSummary) {
+      allTimeSummary = await loadAllTimeSummary();
+    }
     const payload = {
       captured_at: data.capturedAt || null,
       source: data.source || null,
       date: data.date || safeDate,
       availableDates: Array.isArray(data.availableDates) ? data.availableDates : [],
+      allTimeSummary,
       leagues: data.leagues,
     };
     cachedDateData.set(safeDate, { payload, at: Date.now() });

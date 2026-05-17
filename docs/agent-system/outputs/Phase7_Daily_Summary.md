@@ -1,18 +1,18 @@
 # Soccer Stats Daily Summary
 
-Generated: 2026-05-18 01:57 ACST
+Generated: 2026-05-18 04:09 ACST
 Date window: 2026-05-18 to 2026-05-18
 
 ## Phase Run Status
 
 | Phase | Status | Exit | Duration | Last line |
 | --- | --- | --- | --- | --- |
-| 1 Fixtures | ok | 0 | 13.22s | NOTE: Missing API_FOOTBALL_KEY/APISPORTS_KEY; used keyless Flashscore feed. |
-| 2 Odds | ok | 0 | 17.33s | total=23 ready_for_phase_3=21 unmatched=2 blocked=0 |
-| 3 Team Context | ok | 0 | 92.27s | total=23 ready_for_phase_4=17 unresolved=4 upstream_blocked=2 |
-| 4 Predictions | ok | 0 | 0.11s | total=23 ready_for_phase_5=17 model_only=0 upstream_blocked=6 |
-| 5 Value & Risk | ok | 0 | 0.11s | total=23 bets=3 leans=4 no_value=10 upstream_blocked=6 scale=1.0 |
-| 6 Settlement | ok | 0 | 11.69s | settled_this_run=0 won=0 lost=0 pending=7 history_hit_rate=0.0 history_roi=-1.0 |
+| 1 Fixtures | ok | 0 | 3.61s | NOTE: Missing API_FOOTBALL_KEY/APISPORTS_KEY; used keyless Flashscore feed. |
+| 2 Odds | ok | 0 | 24.02s | total=23 ready_for_phase_3=19 unmatched=4 blocked=0 |
+| 3 Team Context | ok | 0 | 375.94s | total=23 ready_for_phase_4=0 unresolved=19 upstream_blocked=4 |
+| 4 Predictions | ok | 0 | 0.12s | total=23 ready_for_phase_5=0 model_only=0 upstream_blocked=23 |
+| 5 Value & Risk | ok | 0 | 0.11s | total=23 bets=0 leans=0 no_value=0 upstream_blocked=23 scale=1.0 |
+| 6 Settlement | ok | 0 | 3.02s | settled_this_run=0 won=0 lost=0 pending=0 history_hit_rate=0.0 history_roi=-1.0 |
 | Result Review | ok | 0 | 0.12s | settled_market_rows=1490 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the revie |
 | Model Calibration | ok | 0 | 0.08s | market_adjustments=4 league_market_adjustments=8 |
 
@@ -21,30 +21,17 @@ Date window: 2026-05-18 to 2026-05-18
 | Phase | Ready | Blocked | Source |
 | --- | --- | --- | --- |
 | 1 Fixtures | 23 | 0 | Flashscore |
-| 2 Odds | 21 | 2 | Sportsbet (mimic) |
-| 3 Team Context | 17 | 6 | SofaScore (mimic) |
-| 4 Predictions | 17 | 6 | model |
-| 5 Value & Risk | 3 bets / 4 leans | 16 | model |
-| 6 Settlement | 0 won / 0 lost | 7 | Flashscore |
+| 2 Odds | 19 | 4 | Sportsbet (mimic) |
+| 3 Team Context | 0 | 23 | SofaScore (mimic) |
+| 4 Predictions | 0 | 23 | model |
+| 5 Value & Risk | 0 bets / 0 leans | 23 | model |
+| 6 Settlement | 0 won / 0 lost | 0 | Flashscore |
 | Result Review | 1490 | 12 | match_data.json |
 | Model Calibration | 4 | 8 | model_calibration.json |
 
 ## Today's Bets
 
-| Date | Time | League | Match | Pick | Model p | Fair | Market | Edge | Stake |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-18 | 04:15 | Serie A | Udinese vs Cremonese | home | 0.5228536976696226 | 1.913 | 2.45 | 0.1147 | 20.0 |
-| 2026-05-18 | 04:30 | Ligue 1 | Strasbourg vs Monaco | home | 0.4294426966292135 | 2.329 | 3.0 | 0.0961 | 20.0 |
-| 2026-05-18 | 04:45 | LaLiga | Barcelona vs Betis | away | 0.22190990936555893 | 4.506 | 8.0 | 0.0969 | 20.0 |
-
-## Leans (below bet threshold)
-
-| Match | Pick | Model p | Market | Edge |
-| --- | --- | --- | --- | --- |
-| Osasuna vs Espanyol | away | 0.2856162766780178 | 4.2 | 0.0475 |
-| Sassuolo vs Lecce | home | 0.43150495052825755 | 2.62 | 0.0498 |
-| Lille vs Auxerre | away | 0.18495036390101893 | 8.5 | 0.0673 |
-| Lorient vs Le Havre | home | 0.4516464966096222 | 2.55 | 0.0595 |
+No bets above threshold.
 
 ## History
 

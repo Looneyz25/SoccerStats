@@ -1988,6 +1988,15 @@ function addDaysToIsoDate(iso, days) {
   return date.toISOString().slice(0, 10);
 }
 
+function weekStartMonday(iso) {
+  const [year, month, day] = String(iso || '').split('-').map(Number);
+  if (!year || !month || !day) return '';
+  const date = new Date(Date.UTC(year, month - 1, day));
+  const mondayOffset = (date.getUTCDay() + 6) % 7;
+  date.setUTCDate(date.getUTCDate() - mondayOffset);
+  return date.toISOString().slice(0, 10);
+}
+
 function formatDateDMY(iso) {
   if (!iso) return iso;
   const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
@@ -3244,16 +3253,58 @@ function StreakList({ title, streaks, match }) {
   );
 }
 
-function ResultsReview({ matches, activeReviewFilter = 'all', onReviewFilterChange }) {
-  const allResulted = trackedFinishedMatches(matches);
-  const rows = summarizeResultsByMarket(allResulted, matches).filter((row) => row.total > 0);
-  if (!allResulted.length) return null;
+function ResultsReview({ matches, selectedDate, reviewSummary, activeReviewFilter = 'all', onReviewFilterChange }) {
+  const [reviewScope, setReviewScope] = useState('date');
+  const selectedWeek = useMemo(() => weekStartMonday(selectedDate), [selectedDate]);
+  const rowsForScope = useCallback((scope) => {
+    if (scope === 'date' && selectedDate && selectedDate !== 'all') {
+      return reviewSummary?.byDate?.[selectedDate] || summarizeResultsByMarket(trackedFinishedMatches(matches).filter((match) => match.date === selectedDate), matches).filter((row) => row.total > 0);
+    }
+    if (scope === 'week' && selectedWeek) {
+      return reviewSummary?.byWeek?.[selectedWeek] || summarizeResultsByMarket(
+        trackedFinishedMatches(matches).filter((match) => weekStartMonday(match.date) === selectedWeek),
+        matches,
+      ).filter((row) => row.total > 0);
+    }
+    return reviewSummary?.all || summarizeResultsByMarket(trackedFinishedMatches(matches), matches).filter((row) => row.total > 0);
+  }, [matches, reviewSummary, selectedDate, selectedWeek]);
+  const scopeRows = {
+    date: rowsForScope('date'),
+    week: rowsForScope('week'),
+    all: rowsForScope('all'),
+  };
+  const rows = scopeRows[reviewScope] || [];
+  if (!rows.length && !scopeRows.all.length) return null;
   const best = [...rows].sort((a, b) => b.hitRate - a.hitRate)[0];
   const worst = [...rows].sort((a, b) => a.hitRate - b.hitRate)[0];
+  const scopeOptions = [
+    { key: 'date', label: selectedDate && selectedDate !== 'all' ? formatDateDMY(selectedDate) : 'Selected date' },
+    { key: 'week', label: 'This week' },
+    { key: 'all', label: 'All time' },
+  ];
 
   return (
     <section className="mt-3 rounded-lg border border-slate-300 bg-white p-3 shadow-panel sm:mt-5 sm:p-4">
-      <h2 className="text-base font-semibold text-ink">Results review</h2>
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <h2 className="text-base font-semibold text-ink">Results review</h2>
+        <div className="grid shrink-0 grid-cols-3 gap-1 text-xs font-semibold">
+          {scopeOptions.map((option) => {
+            const active = reviewScope === option.key;
+            return (
+              <button
+                key={option.key}
+                type="button"
+                onClick={() => setReviewScope(option.key)}
+                className={`rounded-md border px-2 py-1 ${
+                  active ? 'border-ink bg-ink text-white' : 'border-slate-300 bg-white text-slate-700 hover:bg-field'
+                }`}
+              >
+                {option.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
       {(best || worst) && (
         <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs font-semibold">
           {best && <span className="rounded-md border border-emerald-200 bg-emerald-50 px-2 py-1 text-emerald-700">Best {best.label} {best.hitRate}%</span>}
@@ -4092,7 +4143,6 @@ function HomeInner() {
     if (safeFilter !== 'all') {
       setStatus('FT');
       setSlideDir(0);
-      setSelectedDate('all');
     }
   }, []);
 
@@ -4358,6 +4408,8 @@ function HomeInner() {
 
         <ResultsReview
           matches={matches}
+          selectedDate={selectedDate}
+          reviewSummary={data?.allTimeSummary?.review}
           activeReviewFilter={reviewFilter}
           onReviewFilterChange={handleReviewFilterChange}
         />

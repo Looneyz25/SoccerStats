@@ -90,7 +90,7 @@ TODAY     = datetime.now(ADL).date()
 YESTERDAY = TODAY - timedelta(days=1)
 TOMORROW  = TODAY + timedelta(days=1)
 FIXTURE_LOOKAHEAD_DAYS = max(1, int(os.environ.get("SOCCER_FIXTURE_DAYS", "7")))
-RESULT_CHECK_BUFFER_MINUTES = max(90, int(os.environ.get("SOCCER_RESULT_BUFFER_MINUTES", "130")))
+RESULT_CHECK_BUFFER_MINUTES = max(45, int(os.environ.get("SOCCER_RESULT_BUFFER_MINUTES", "45")))
 RESULT_LOOKBACK_DAYS = max(1, int(os.environ.get("SOCCER_RESULT_LOOKBACK_DAYS", "3")))
 
 TOURNAMENTS = {

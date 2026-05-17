@@ -83,6 +83,95 @@ function slimLeague(league, index) {
   };
 }
 
+function summarizeAllTime(leagues) {
+  const matches = (Array.isArray(leagues) ? leagues : []).flatMap((league) => Array.isArray(league.matches) ? league.matches : []);
+  const markets = matches.flatMap((match) => Array.isArray(match.display_summary?.headlineMarkets) ? match.display_summary.headlineMarkets : []);
+  const hits = markets.filter((market) => market?.result === 'hit').length;
+  const oddsTotals = markets.reduce((totals, market) => {
+    const odds = Number(market?.odds);
+    if (!Number.isFinite(odds)) return totals;
+    if (market.result === 'hit') totals.hit += odds;
+    if (market.result === 'miss') totals.loss += odds;
+    return totals;
+  }, { hit: 0, loss: 0 });
+  const finished = matches.filter((match) => match.status === 'FT').length;
+  return {
+    total: matches.length,
+    finished,
+    upcoming: matches.length - finished,
+    settledMarkets: markets.length,
+    marketHits: hits,
+    marketMisses: markets.length - hits,
+    accuracy: markets.length ? Math.round((hits / markets.length) * 100) : 0,
+    oddsTotals: {
+      hit: Math.round(oddsTotals.hit * 10) / 10,
+      loss: Math.round(oddsTotals.loss * 10) / 10,
+    },
+    review: summarizeReviewMarkets(matches),
+  };
+}
+
+function weekStartMonday(iso) {
+  const [year, month, day] = String(iso || '').split('-').map(Number);
+  if (!year || !month || !day) return '';
+  const date = new Date(Date.UTC(year, month - 1, day));
+  const dayIndex = date.getUTCDay();
+  const mondayOffset = (dayIndex + 6) % 7;
+  date.setUTCDate(date.getUTCDate() - mondayOffset);
+  return date.toISOString().slice(0, 10);
+}
+
+function summarizeReviewRows(matches) {
+  const configs = [
+    { key: 'suggested', label: 'Suggested pick', getMarket: (match) => match.display_summary?.compactMarket?.market },
+    { key: 'winner', label: 'Winner', getMarket: (match) => match.display_markets?.winner?.market || match.predictions?.winner },
+    { key: 'btts', label: 'BTTS', getMarket: (match) => match.display_markets?.btts?.market || match.predictions?.btts },
+    { key: 'goals', label: 'Goals', getMarket: (match) => match.display_markets?.goals?.market || match.predictions?.ou_goals },
+    { key: 'cards', label: 'Cards', getMarket: (match) => match.display_markets?.cards?.market || match.predictions?.ou_cards },
+    { key: 'corners', label: 'Corners', getMarket: (match) => match.display_markets?.corners?.market || match.predictions?.ou_corners },
+  ];
+
+  return configs.map((config) => {
+    const settled = matches
+      .map((match) => config.getMarket(match))
+      .filter((market) => market?.result === 'hit' || market?.result === 'miss');
+    const hits = settled.filter((market) => market.result === 'hit');
+    const misses = settled.filter((market) => market.result === 'miss');
+    const oddsHit = hits.reduce((sum, market) => sum + (Number(market.odds) || 0), 0);
+    const oddsMiss = misses.reduce((sum, market) => sum + (Number(market.odds) || 0), 0);
+    return {
+      key: config.key,
+      label: config.label,
+      total: settled.length,
+      hits: hits.length,
+      misses: misses.length,
+      hitRate: settled.length ? Math.round((hits.length / settled.length) * 100) : 0,
+      oddsHit: Math.round(oddsHit * 10) / 10,
+      oddsMiss: Math.round(oddsMiss * 10) / 10,
+      net: Math.round((oddsHit - oddsMiss) * 10) / 10,
+    };
+  }).filter((row) => row.total > 0);
+}
+
+function summarizeReviewMarkets(matches) {
+  const tracked = matches.filter((match) => match.status === 'FT' && String(match.date || '') >= '2026-04-22');
+  const byDate = {};
+  const byWeek = {};
+  for (const match of tracked) {
+    const date = String(match.date || '');
+    if (!date) continue;
+    (byDate[date] ||= []).push(match);
+    const week = weekStartMonday(date);
+    if (week) (byWeek[week] ||= []).push(match);
+  }
+  return {
+    format: 'review_summary_v1',
+    all: summarizeReviewRows(tracked),
+    byDate: Object.fromEntries(Object.entries(byDate).map(([date, rows]) => [date, summarizeReviewRows(rows)])),
+    byWeek: Object.fromEntries(Object.entries(byWeek).map(([week, rows]) => [week, summarizeReviewRows(rows)])),
+  };
+}
+
 function adelaideTodayIso() {
   const parts = new Intl.DateTimeFormat('en-US', {
     timeZone: 'Australia/Adelaide',
@@ -187,6 +276,7 @@ async function main() {
   const raw = await readFile(dataPath, 'utf8');
   const parsed = precomputeDisplayData(JSON.parse(raw));
   const leagues = Array.isArray(parsed.leagues) ? parsed.leagues : [];
+  const allTimeSummary = summarizeAllTime(leagues);
 
   if (!getApps().length) {
     initializeApp(credentialOptions());
@@ -221,14 +311,7 @@ async function main() {
     writer.delete(ref);
   }
 
-  for (const ref of existingLeagues) {
-    writer.delete(ref);
-  }
-
-  for (const ref of existingDates) {
-    writer.delete(ref);
-  }
-
+  const targetLeagueIds = new Set(leagues.map((league, index) => slugify(league.id || league.name, String(index).padStart(2, '0'))));
   leagues.forEach((league, index) => {
     const id = slugify(league.id || league.name, String(index).padStart(2, '0'));
     writer.set(leaguesRef.doc(id), firestoreSafe({
@@ -265,6 +348,15 @@ async function main() {
     });
   });
 
+  const targetDateIds = new Set([...dateBuckets.keys()].map((date) => slugify(date, 'unknown')));
+  for (const ref of existingLeagues) {
+    if (!targetLeagueIds.has(ref.id)) writer.delete(ref);
+  }
+
+  for (const ref of existingDates) {
+    if (!targetDateIds.has(ref.id)) writer.delete(ref);
+  }
+
   const availableDates = [...dateBuckets.keys()].filter((date) => date !== 'unknown').sort();
   for (const [date, leaguesByDate] of dateBuckets.entries()) {
     const dateLeagues = [...leaguesByDate.values()];
@@ -288,6 +380,7 @@ async function main() {
     leagueCount: leagues.length,
     matchCount: leagues.reduce((sum, league) => sum + (Array.isArray(league.matches) ? league.matches.length : 0), 0),
     availableDates,
+    allTimeSummary,
     dateDocCount: dateBuckets.size,
     byteLength: Buffer.byteLength(raw),
     updatedAt: FieldValue.serverTimestamp(),
@@ -299,6 +392,7 @@ async function main() {
     capturedAt: parsed.captured_at || null,
     source: parsed.source || null,
     availableDates,
+    allTimeSummary,
     leagueCount: fastLeagues.length,
     matchCount: fastLeagues.reduce((sum, league) => sum + league.matches.length, 0),
     byteLength: fastByteLength,
