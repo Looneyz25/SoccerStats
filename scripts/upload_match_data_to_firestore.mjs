@@ -83,6 +83,67 @@ function slimLeague(league, index) {
   };
 }
 
+function adelaideTodayIso() {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Australia/Adelaide',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(new Date());
+  const map = Object.fromEntries(
+    parts.filter((part) => part.type !== 'literal').map((part) => [part.type, part.value]),
+  );
+  return `${map.year}-${map.month}-${map.day}`;
+}
+
+function isoMinusDays(iso, days) {
+  const [year, month, day] = iso.split('-').map(Number);
+  const d = new Date(Date.UTC(year, month - 1, day - days));
+  return d.toISOString().slice(0, 10);
+}
+
+function buildFastLeagues(leagues, cutoffIso) {
+  return leagues
+    .map((league, index) => {
+      const id = slugify(league.id || league.name, String(index).padStart(2, '0'));
+      const matches = (Array.isArray(league.matches) ? league.matches : [])
+        .filter((match) => match.status !== 'FT' || String(match.date || '') >= cutoffIso)
+        .map(slimMatch);
+      return {
+        id: league.id ?? id,
+        name: league.name || id,
+        season: league.season || null,
+        round: league.round ?? null,
+        logo: league.logo || null,
+        matches,
+      };
+    })
+    .filter((league) => league.matches.length > 0);
+}
+
+const FIRESTORE_DOC_SAFE_BYTES = 900_000;
+const FAST_DOC_WINDOW_DAYS = [14, 7, 3, 1];
+
+function selectFastLeagues(leagues) {
+  const today = adelaideTodayIso();
+  for (const days of FAST_DOC_WINDOW_DAYS) {
+    const cutoff = isoMinusDays(today, days);
+    const fastLeagues = buildFastLeagues(leagues, cutoff);
+    const byteLength = Buffer.byteLength(JSON.stringify({ leagues: fastLeagues }));
+    if (byteLength <= FIRESTORE_DOC_SAFE_BYTES) {
+      return { fastLeagues, cutoff, byteLength, days };
+    }
+    console.warn(`Fast doc payload ${(byteLength / 1024).toFixed(1)} KB at ${days}d window, retrying with smaller window`);
+  }
+  // Fall back to upcoming-only if every finished window is too big.
+  const fastLeagues = buildFastLeagues(leagues, today).map((league) => ({
+    ...league,
+    matches: league.matches.filter((match) => match.status !== 'FT'),
+  })).filter((league) => league.matches.length > 0);
+  const byteLength = Buffer.byteLength(JSON.stringify({ leagues: fastLeagues }));
+  return { fastLeagues, cutoff: today, byteLength, days: 0 };
+}
+
 function firestoreSafe(value) {
   if (Array.isArray(value)) return value.map(firestoreSafe);
   if (value && typeof value === 'object') {
@@ -232,7 +293,7 @@ async function main() {
     updatedAt: FieldValue.serverTimestamp(),
   });
 
-  const fastLeagues = leagues.map(slimLeague);
+  const { fastLeagues, cutoff: fastCutoff, byteLength: fastByteLength, days: fastDays } = selectFastLeagues(leagues);
   writer.set(fastRef, firestoreSafe({
     format: 'single_doc_v1',
     capturedAt: parsed.captured_at || null,
@@ -240,14 +301,16 @@ async function main() {
     availableDates,
     leagueCount: fastLeagues.length,
     matchCount: fastLeagues.reduce((sum, league) => sum + league.matches.length, 0),
-    byteLength: Buffer.byteLength(JSON.stringify({ leagues: fastLeagues })),
+    byteLength: fastByteLength,
+    fastWindowDays: fastDays,
+    fastWindowStart: fastCutoff,
     leagues: fastLeagues,
     updatedAt: FieldValue.serverTimestamp(),
   }));
 
   await writer.close();
   console.log(`Uploaded ${dataPath} to Firestore dashboardData/${DOC_ID} as ${leagues.length} league docs and ${dateBuckets.size} date docs.`);
-  console.log(`Uploaded fast dashboard doc dashboardData/${FAST_DOC_ID}.`);
+  console.log(`Uploaded fast dashboard doc dashboardData/${FAST_DOC_ID} (${fastDays}-day window from ${fastCutoff}, ${(fastByteLength / 1024).toFixed(1)} KB).`);
 }
 
 main().catch((error) => {
