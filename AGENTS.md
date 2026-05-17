@@ -35,6 +35,12 @@ npm.cmd run data:refresh
 ```
 Use `npm.cmd run data:refresh:local` when Firestore credentials are not available. Do not add proxy/IP rotation to bypass provider controls; prefer API/fallback sources, caching, gentle sleeps, and backoff.
 
+**Prompt shortcut** — when the user says `update data`, `refresh data`, `get latest data`, or similar, treat it as a request to run the full Firestore publish path from `C:\Betting\Soccer Stats`:
+```
+npm.cmd run data:update
+```
+Then report whether Firestore upload succeeded. If credentials are missing, tell the user to place the service account at `.secrets/firebase-service-account.json` and run again; do not ask customers or browser clients to write Firestore data.
+
 **Static Hosting fallback** (secondary, `out/` dir):
 ```
 npm run build && npx firebase-tools deploy --only hosting --project sports-predictions-f91fd
