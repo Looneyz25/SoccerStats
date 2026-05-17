@@ -9,7 +9,7 @@ import {
   signInWithPopup,
   signOut,
 } from 'firebase/auth';
-import { CreditCard, Loader2, LockKeyhole, LogIn, Mail, Clock } from 'lucide-react';
+import { CreditCard, Loader2, LockKeyhole, LogIn, Mail, ShieldCheck, Clock } from 'lucide-react';
 import { getFirebaseAuth, googleProvider } from './firebase';
 import { getUserProfile, createUserProfile } from './firestore-data';
 
