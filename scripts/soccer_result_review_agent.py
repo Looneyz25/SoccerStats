@@ -25,7 +25,7 @@ STORE = ROOT / "match_data.json"
 CSV_PATH = OUT_DIR / "model_result_review_current.csv"
 MD_PATH = OUT_DIR / "model_result_review_current.md"
 SUMMARY_JSON = OUT_DIR / "model_result_review_summary.json"
-PREDICTION_TRACKING_START_DATE = "2026-04-24"
+PREDICTION_TRACKING_START_DATE = "2026-04-22"
 
 MARKETS = [
     ("winner", "Winner"),

@@ -20,7 +20,7 @@ The frontend lives in [app/page.jsx](app/page.jsx) (App Router) with Tailwind st
 ## Prediction display rules
 
 - Hard truth rule: once a match is resulted, do not amend its prediction pick, probabilities, factors, or model snapshot. Settlement may only add final scores, actuals, and hit/miss fields to predictions that already existed before the result. Retro/post-result predictions must not count toward hit-rate summaries.
-- Official hit-rate tracking starts from `2026-04-24`. Earlier resulted data was dev-mode calibration history and must stay out of public/model hit-rate baselines.
+- Official hit-rate tracking starts from `2026-04-22`. Earlier resulted data was dev-mode calibration history and must stay out of public/model hit-rate baselines.
 - For two-way total markets such as goals, cards, and corners, guide the customer to the side with the stronger model probability. If the stored/displayed side is below 50%, flip the visible recommendation to the opposite side and treat the original side as a caution or conflict note.
 - Do not make customers infer inverse markets from weak probabilities. A visible `Over 4.5` cards model at 44% should be shown as `Under 4.5` cards at 56% when the line is the same.
 - Keep bookmaker odds tied to the exact visible side and line. If only the opposite-side price is available, an estimated inverse price may be shown, but it must be labelled as estimated and never treated as a direct bookmaker quote.

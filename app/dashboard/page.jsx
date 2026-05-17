@@ -3,7 +3,7 @@
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import AuthGate from '../auth-gate';
-import { loadMatchDataFromFirestore } from '../firestore-data';
+import { loadMatchDataFromFirestore, readMatchDataCache } from '../firestore-data';
 import {
   Activity,
   AlertTriangle,
@@ -35,7 +35,8 @@ const BETSTOP_URL = 'https://www.betstop.gov.au/';
 const SUPPORT_EMAIL = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'lvrstats.com@gmail.com';
 const FAVORITE_LEAGUES_STORAGE_KEY = 'favoriteLeagues';
 const FAVORITE_TEAMS_STORAGE_KEY = 'favoriteTeams';
-const PREDICTION_TRACKING_START_DATE = '2026-04-24';
+const PREDICTION_TRACKING_START_DATE = '2026-04-22';
+const WINNER_CONFIDENCE_THRESHOLD = 0.40;
 
 async function loadMatchData() {
   return loadMatchDataFromFirestore();
@@ -634,6 +635,17 @@ function impliedProbability(odds) {
   return Number.isFinite(value) && value > 0 ? 1 / value : null;
 }
 
+function bookmakerNoVigProbability(odds, side) {
+  const home = impliedProbability(odds?.home);
+  const draw = impliedProbability(odds?.draw);
+  const away = impliedProbability(odds?.away);
+  if (![home, draw, away].every((p) => Number.isFinite(p) && p > 0)) return null;
+  const total = home + draw + away;
+  if (!(total > 0)) return null;
+  const map = { home: home / total, draw: draw / total, away: away / total };
+  return side ? map[side] ?? null : map;
+}
+
 function decimalFromProbability(probability) {
   return Number.isFinite(probability) && probability > 0 ? 1 / probability : null;
 }
@@ -989,6 +1001,16 @@ function sideHasNoWinsStreak(match, side, minimum = 5) {
   });
 }
 
+function withWinnerConfidenceGate(match, market) {
+  if (!market?.type) return market;
+  if (match.status === 'FT') return market;
+  const odds = winnerGuidanceOdds(match);
+  const noVig = bookmakerNoVigProbability(odds, market.type);
+  if (!Number.isFinite(noVig)) return market;
+  if (noVig >= WINNER_CONFIDENCE_THRESHOLD) return market;
+  return { ...market, lowConfidence: true, lowConfidenceProb: noVig };
+}
+
 function winnerMarketWithGuidance(match, allMatches = []) {
   const market = match.predictions?.winner;
   if (!market?.type) return market || null;
@@ -1002,7 +1024,9 @@ function winnerMarketWithGuidance(match, allMatches = []) {
     : 0;
   const odds = winnerGuidanceOdds(match);
   const bookmakerSide = strongestBookmakerSide(odds);
-  if (!bookmakerSide || bookmakerSide.type === market.type || bookmakerSide.type === 'draw') return market;
+  if (!bookmakerSide || bookmakerSide.type === market.type || bookmakerSide.type === 'draw') {
+    return withWinnerConfidenceGate(match, market);
+  }
 
   const pickedOdds = Number(odds?.[market.type]);
   const pickedBookProbability = impliedProbability(pickedOdds);
@@ -1028,7 +1052,7 @@ function winnerMarketWithGuidance(match, allMatches = []) {
   const shouldGuideToBookmaker =
     !modelCanOverrideBookmaker &&
     (majorMarketDisagreement || (strongMarketDisagreement && modelIsNotClear && contextSupportsBookmaker));
-  if (!shouldGuideToBookmaker) return market;
+  if (!shouldGuideToBookmaker) return withWinnerConfidenceGate(match, market);
 
   const guided = {
     ...market,
@@ -1048,7 +1072,7 @@ function winnerMarketWithGuidance(match, allMatches = []) {
         : 'Bookmaker and context overrode a low-conviction model lean.',
     },
   };
-  return guided;
+  return withWinnerConfidenceGate(match, guided);
 }
 
 function winnerModelProbability(match, winner = match.predictions?.winner) {
@@ -1060,6 +1084,7 @@ function winnerModelProbability(match, winner = match.predictions?.winner) {
 }
 
 function winnerPredictionSide(match, winner = match.predictions?.winner) {
+  if (winner?.lowConfidence) return null;
   const side = winner?.type;
   return side === 'home' || side === 'away' || side === 'draw' ? side : null;
 }
@@ -1080,6 +1105,15 @@ function winnerPredictionScoreClass(match, winner = match.predictions?.winner) {
 }
 
 function WinnerPredictionMeta({ match, side, modelProbability, winner = match.predictions?.winner }) {
+  if (winner?.lowConfidence && side === 'home') {
+    return (
+      <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs">
+        <span className="inline-flex h-7 items-center rounded-md bg-slate-100 px-2 font-semibold text-slate-500">
+          Low confidence — no Winner pick
+        </span>
+      </div>
+    );
+  }
   if (!winner || winnerPredictionSide(match, winner) !== side) {
     return <div className="mt-2 h-7" aria-hidden="true" />;
   }
@@ -2321,11 +2355,11 @@ function BookmakerLink({ bookmakerId, href, label }) {
   );
 }
 
-function BookmakerStatusChip({ bookmaker, hasDirectLink }) {
+function BookmakerStatusChip({ bookmaker }) {
   if (!bookmaker) return null;
   const chipClass = `${bookmaker.buttonClass} text-white shadow-sm`;
   return (
-    <span className={`inline-flex h-7 items-center justify-center gap-0.5 rounded-full border px-2.5 text-xs font-semibold ${chipClass}`}>
+    <span className={`inline-flex h-7 items-center justify-center rounded-full border px-2.5 text-xs font-semibold ${chipClass}`}>
       {bookmaker.logoSrc ? (
         <>
           <img src={bookmaker.logoSrc} alt="" className="h-5 w-auto max-w-20" aria-hidden="true" />
@@ -2334,7 +2368,6 @@ function BookmakerStatusChip({ bookmaker, hasDirectLink }) {
       ) : (
         <span>{bookmaker.name}</span>
       )}
-      {hasDirectLink && <CheckCircle2 className="-ml-0.5 h-3.5 w-3.5 shrink-0 text-white" aria-hidden="true" />}
     </span>
   );
 }
@@ -3297,7 +3330,8 @@ function PredictionSummaryCard({ match, allMatches }) {
   const predictions = match.predictions || {};
   const confidence = confidenceForMatch(match, allMatches);
   const winner = winnerMarketWithGuidance(match, allMatches);
-  const winnerComparison = modelVsBookmakerComparison(matchWithContext, 'winner', winner);
+  const winnerLowConfidence = Boolean(winner?.lowConfidence);
+  const winnerComparison = winnerLowConfidence ? null : modelVsBookmakerComparison(matchWithContext, 'winner', winner);
   const displayBtts = displayBttsMarket(predictions.btts, match);
   const bttsComparison = modelVsBookmakerComparison(match, 'btts', displayBtts);
   const goalsComparison = modelVsBookmakerComparison(match, 'ou_goals', predictions.ou_goals);
@@ -3306,8 +3340,13 @@ function PredictionSummaryCard({ match, allMatches }) {
   const cornerMarket = cornerMarketFromStreaks(match, allMatches);
   const cornersComparison = modelVsBookmakerComparison(match, 'ou_corners', cornerMarket);
 
+  const winnerPick = winnerLowConfidence ? 'Low confidence — no Winner pick' : (winner ? formatMarketDetail(winner) : null);
+  const winnerText = winnerLowConfidence
+    ? `Bookmaker no-vig probability for every side is below ${Math.round(WINNER_CONFIDENCE_THRESHOLD * 100)}%; outside the band where our backtest shows real edge.`
+    : winnerRationale(match, allMatches, winner);
+
   const lines = [
-    { label: 'Winner', pick: winner ? formatMarketDetail(winner) : null, text: winnerRationale(match, allMatches, winner), comparison: winnerComparison, result: winner?.result },
+    { label: 'Winner', pick: winnerPick, text: winnerText, comparison: winnerComparison, result: winnerLowConfidence ? null : winner?.result },
     { label: 'BTTS', pick: displayBtts ? formatMarketDetail(displayBtts) : null, text: bttsRationale(match), comparison: bttsComparison, result: displayBtts?.result },
     { label: 'Goals', pick: predictions.ou_goals ? formatMarketDetail(predictions.ou_goals) : null, text: goalsRationale(match, allMatches), comparison: goalsComparison, result: predictions.ou_goals?.result },
     { label: 'Cards', pick: displayCards ? formatMarketDetail(displayCards) : null, text: cardsRationale(match, allMatches), comparison: cardsComparison, result: displayCards?.result },
@@ -3337,7 +3376,7 @@ function PredictionSummaryCard({ match, allMatches }) {
               </span>
               <span className="mt-2 block">
                 <ModelVsBookmakerComparison comparison={row.comparison} />
-                {row.label === 'Winner' && <WinnerProbabilityBreakdown match={matchWithContext} comparison={winnerComparison} />}
+                {row.label === 'Winner' && !winnerLowConfidence && <WinnerProbabilityBreakdown match={matchWithContext} comparison={winnerComparison} />}
               </span>
             </span>
             <span className="min-w-0 leading-5 text-slate-600">
@@ -3485,7 +3524,6 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
   const odds = displayThreeWayOdds(match);
   const actuals = match.actuals || {};
   const selectedBookmaker = BOOKMAKERS[bookmakerId] || BOOKMAKERS.sportsbet;
-  const hasDirectBookmakerLink = hasDirectBookmakerMatchLink(match, selectedBookmaker.id);
   const displayWinner = winnerMarketWithGuidance(match, allMatches);
   const displayBtts = displayBttsMarket(predictions.btts, match);
   const bttsComparison = modelVsBookmakerComparison(match, 'btts', displayBtts);
@@ -3653,7 +3691,7 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
         <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
           <ConfidenceBadge confidence={confidence} />
           <QualityBadges quality={confidence.quality} compact />
-          <BookmakerStatusChip bookmaker={selectedBookmaker} hasDirectLink={hasDirectBookmakerLink} />
+          <BookmakerStatusChip bookmaker={selectedBookmaker} />
         </div>
 
         {match.status === 'FT' && (
@@ -3743,9 +3781,21 @@ function HomeInner() {
 
   const scrollPositionRef = useRef(0);
   const swipeStartRef = useRef(null);
+  const longPressTimerRef = useRef(null);
+  const dragStateRef = useRef({ active: false, committed: false });
+  const [dragOffset, setDragOffset] = useState(0);
+  const [dragActive, setDragActive] = useState(false);
+  const [snapBack, setSnapBack] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
+
+    const cached = readMatchDataCache();
+    const hasCache = Boolean(cached && Array.isArray(cached.leagues) && cached.leagues.length);
+    if (hasCache) {
+      setData(cached);
+      setError('');
+    }
 
     loadMatchData()
       .then((nextData) => {
@@ -3754,7 +3804,10 @@ function HomeInner() {
         setError('');
       })
       .catch((err) => {
-        if (!cancelled) setError('Could not load Firestore match data. Try refreshing in a moment.');
+        if (cancelled) return;
+        if (!hasCache) {
+          setError('Could not load Firestore match data. Try refreshing in a moment.');
+        }
       });
 
     return () => {
@@ -3926,12 +3979,6 @@ function HomeInner() {
     setSelectedDate(todayDate);
   }, [selectedDateIndex, todayDate, todayDateIndex]);
 
-  const selectAllResulted = useCallback(() => {
-    setSlideDir(0);
-    setSelectedDate('all');
-    setStatus('FT');
-  }, []);
-
   const moveDate = useCallback(
     (direction) => {
       if (!dateOptions.length) return;
@@ -4016,10 +4063,18 @@ function HomeInner() {
     }
   }, [matchParam]);
 
-  // Swipe handlers — bound to the list wrapper only.
+  // Touch handlers — fast-swipe for quick flicks, long-press-and-drag for grabbable scrubbing.
+  const clearLongPressTimer = useCallback(() => {
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+  }, []);
+
   const onTouchStart = useCallback((event) => {
     if (event.touches.length !== 1) {
       swipeStartRef.current = null;
+      clearLongPressTimer();
       return;
     }
     const touch = event.touches[0];
@@ -4028,30 +4083,93 @@ function HomeInner() {
       y: touch.clientY,
       time: Date.now(),
     };
-  }, []);
+    dragStateRef.current = { active: false, committed: false };
+    setSnapBack(false);
+    clearLongPressTimer();
+    longPressTimerRef.current = setTimeout(() => {
+      longPressTimerRef.current = null;
+      dragStateRef.current.active = true;
+      setDragActive(true);
+      if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+        try { navigator.vibrate(8); } catch {}
+      }
+    }, 260);
+  }, [clearLongPressTimer]);
 
-  const onTouchMove = useCallback(() => {
-    // Intentionally empty — never preventDefault, so vertical scrolling stays smooth.
-  }, []);
+  const onTouchMove = useCallback((event) => {
+    const start = swipeStartRef.current;
+    if (!start) return;
+    const touch = event.touches[0];
+    if (!touch) return;
+    const dx = touch.clientX - start.x;
+    const dy = touch.clientY - start.y;
+    if (!dragStateRef.current.active) {
+      if (Math.abs(dx) > 10 || Math.abs(dy) > 10) clearLongPressTimer();
+      return;
+    }
+    // Rubber-band damping past 40% of viewport width
+    const w = typeof window !== 'undefined' ? window.innerWidth || 360 : 360;
+    const max = w * 0.4;
+    const damped = Math.abs(dx) <= max ? dx : Math.sign(dx) * (max + (Math.abs(dx) - max) * 0.35);
+    setDragOffset(damped);
+  }, [clearLongPressTimer]);
 
   const onTouchEnd = useCallback(
     (event) => {
       const start = swipeStartRef.current;
       swipeStartRef.current = null;
-      if (!start) return;
+      clearLongPressTimer();
+      const dragging = dragStateRef.current.active;
+      dragStateRef.current.active = false;
+
+      if (!start) {
+        if (dragging) {
+          setDragActive(false);
+          setDragOffset(0);
+        }
+        return;
+      }
       const touch = event.changedTouches[0];
-      if (!touch) return;
-      const dx = touch.clientX - start.x;
-      const dy = touch.clientY - start.y;
+      const dx = touch ? touch.clientX - start.x : 0;
+      const dy = touch ? touch.clientY - start.y : 0;
       const dt = Date.now() - start.time;
+
+      if (dragging) {
+        const w = typeof window !== 'undefined' ? window.innerWidth || 360 : 360;
+        const commitThreshold = Math.min(120, w * 0.22);
+        if (Math.abs(dx) >= commitThreshold) {
+          setDragActive(false);
+          setDragOffset(0);
+          moveDate(dx < 0 ? 1 : -1);
+        } else {
+          setSnapBack(true);
+          setDragOffset(0);
+          setDragActive(false);
+          setTimeout(() => setSnapBack(false), 220);
+        }
+        return;
+      }
+
+      // Fast-swipe fallback (no long-press): keep the original quick-flick behaviour.
       if (dt > 600) return;
       if (Math.abs(dy) > 30) return;
       if (Math.abs(dx) < 50) return;
-      // Swipe left (dx < 0) → next date; swipe right (dx > 0) → previous date.
       moveDate(dx < 0 ? 1 : -1);
     },
-    [moveDate],
+    [clearLongPressTimer, moveDate],
   );
+
+  const onTouchCancel = useCallback(() => {
+    swipeStartRef.current = null;
+    clearLongPressTimer();
+    if (dragStateRef.current.active) {
+      dragStateRef.current.active = false;
+      setDragActive(false);
+      setSnapBack(true);
+      setDragOffset(0);
+      setTimeout(() => setSnapBack(false), 220);
+    }
+  }, [clearLongPressTimer]);
 
   if (selectedMatch) {
     return (
@@ -4138,11 +4256,66 @@ function HomeInner() {
 
         <ResultsReview matches={matches} />
 
+        <div className="mt-3 rounded-lg border border-line bg-white p-3 sm:hidden">
+          <div className="flex items-center justify-between gap-2">
+            <button
+              type="button"
+              onClick={() => moveDate(-1)}
+              disabled={!dateOptions.length || selectedDateIndex === 0}
+              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-line bg-white text-slate-600 disabled:cursor-not-allowed disabled:opacity-40"
+              aria-label="Previous match date"
+            >
+              <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              onClick={selectToday}
+              className="inline-flex flex-1 items-center justify-center text-base font-semibold text-ink"
+              aria-label="Show today's matches"
+            >
+              {!selectedDate || selectedDate === todayDate
+                ? 'Today'
+                : selectedDate === 'all'
+                  ? 'All dates'
+                  : formatDateDMY(selectedDate)}
+            </button>
+            <button
+              type="button"
+              onClick={() => moveDate(1)}
+              disabled={!dateOptions.length || selectedDateIndex === dateOptions.length - 1}
+              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-line bg-white text-slate-600 disabled:cursor-not-allowed disabled:opacity-40"
+              aria-label="Next match date"
+            >
+              <ChevronRight className="h-5 w-5" aria-hidden="true" />
+            </button>
+          </div>
+          <div className="mt-3 flex items-center justify-center gap-2 overflow-x-auto sm:justify-start">
+            {[
+              { value: 'all', label: 'All' },
+              { value: 'FT', label: 'Finished' },
+              { value: 'upcoming', label: 'Upcoming' },
+            ].map(({ value, label }) => {
+              const active = status === value;
+              return (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setStatus(value)}
+                  aria-pressed={active}
+                  className={`inline-flex h-9 shrink-0 items-center rounded-full px-4 text-sm font-semibold transition ${active ? 'border border-ink bg-ink text-white' : 'border border-line bg-white text-slate-700'}`}
+                >
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         <div className="mt-3 grid gap-2 rounded-lg border border-line bg-white p-3 sm:mt-5 sm:grid-cols-[12rem_10rem_minmax(18rem,1fr)_minmax(16rem,1fr)] sm:items-center sm:gap-3">
           <select
             value={league}
             onChange={(event) => setLeague(event.target.value)}
-            className="h-11 w-full min-w-0 rounded-md border border-line bg-white px-3 text-sm sm:h-10"
+            className="h-11 w-full min-w-0 rounded-md border border-line bg-white px-3 text-center text-sm sm:h-10 sm:text-left"
             aria-label="League"
           >
             <option value="all">All leagues</option>
@@ -4155,14 +4328,14 @@ function HomeInner() {
           <select
             value={status}
             onChange={(event) => setStatus(event.target.value)}
-            className="h-11 w-full min-w-0 rounded-md border border-line bg-white px-3 text-sm sm:h-10"
+            className="hidden h-11 w-full min-w-0 rounded-md border border-line bg-white px-3 text-sm sm:block sm:h-10"
             aria-label="Status"
           >
             <option value="upcoming">Upcoming</option>
             <option value="FT">Finished</option>
             <option value="all">All statuses</option>
           </select>
-          <div className="flex min-w-0 flex-nowrap items-center gap-1.5 rounded-md border border-line bg-field p-1">
+          <div className="hidden min-w-0 flex-nowrap items-center gap-1.5 rounded-md border border-line bg-field p-1 sm:flex">
             <button
               type="button"
               onClick={selectToday}
@@ -4184,7 +4357,7 @@ function HomeInner() {
             <select
               value={selectedDate || 'all'}
               onChange={(event) => { setSlideDir(0); setSelectedDate(event.target.value); }}
-              className="h-9 min-w-0 flex-1 rounded-md border border-line bg-white px-2 text-sm"
+              className="h-9 min-w-0 flex-1 rounded-md border border-line bg-white px-2 text-center text-sm sm:text-left"
               aria-label="Match date"
             >
               <option value="all">All dates</option>
@@ -4204,23 +4377,12 @@ function HomeInner() {
               <ChevronRight className="h-4 w-4" aria-hidden="true" />
             </button>
           </div>
-          <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] gap-2">
-            <input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search teams or league"
-              className="h-11 min-w-0 rounded-md border border-line bg-white px-3 text-sm sm:h-10"
-            />
-            <button
-              type="button"
-              onClick={selectAllResulted}
-              disabled={status === 'FT' && selectedDate === 'all'}
-              className="inline-flex h-11 shrink-0 items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-slate-700 hover:bg-field disabled:cursor-not-allowed disabled:opacity-40 sm:h-10"
-              aria-label="Show all resulted matches"
-            >
-              All resulted
-            </button>
-          </div>
+          <input
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search teams or league"
+            className="h-11 w-full min-w-0 rounded-md border border-line bg-white px-3 text-center text-sm placeholder:text-center sm:h-10 sm:text-left sm:placeholder:text-left"
+          />
         </div>
 
         {error && (
@@ -4231,14 +4393,16 @@ function HomeInner() {
         )}
 
         <div
-          className="date-slide-frame mt-3 sm:mt-5"
+          className={`date-slide-frame mt-3 sm:mt-5${dragActive ? ' date-slide-grabbing' : ''}`}
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
+          onTouchCancel={onTouchCancel}
         >
           <div
             key={`${selectedDate || 'all'}-${slideDir}`}
-            className={`space-y-4 sm:space-y-5 ${slideDir > 0 ? 'date-slide-next' : slideDir < 0 ? 'date-slide-prev' : ''}`}
+            className={`space-y-4 sm:space-y-5 ${slideDir > 0 ? 'date-slide-next' : slideDir < 0 ? 'date-slide-prev' : ''}${dragActive ? ' date-slide-dragging' : ''}${snapBack ? ' date-slide-snapback' : ''}`}
+            style={dragActive || snapBack ? { transform: `translateX(${dragOffset}px)` } : undefined}
           >
           {groupedMatches.map((group) => (
             <LeagueSection

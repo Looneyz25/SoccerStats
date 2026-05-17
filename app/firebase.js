@@ -1,7 +1,7 @@
 import { initializeApp, getApps } from 'firebase/app';
 import { getAnalytics, isSupported } from 'firebase/analytics';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, initializeFirestore, memoryLocalCache } from 'firebase/firestore';
 
 export const firebaseConfig = {
   apiKey: 'AIzaSyBZW2bs0T_0TWQRf_QnIMm9-lLEWwDfI7Q',
@@ -23,8 +23,21 @@ export async function initFirebaseAnalytics() {
   return getAnalytics(getFirebaseApp());
 }
 
+let firestoreInstance = null;
+
 export function getFirebaseDb() {
-  return getFirestore(getFirebaseApp());
+  if (firestoreInstance) return firestoreInstance;
+  const app = getFirebaseApp();
+  try {
+    firestoreInstance = initializeFirestore(app, {
+      experimentalAutoDetectLongPolling: true,
+      ignoreUndefinedProperties: true,
+      localCache: memoryLocalCache(),
+    });
+  } catch {
+    firestoreInstance = getFirestore(app);
+  }
+  return firestoreInstance;
 }
 
 export function getFirebaseAuth() {

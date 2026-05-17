@@ -68,6 +68,21 @@ textarea {
   touch-action: pan-y;
 }
 
+.date-slide-grabbing {
+  touch-action: none;
+  cursor: grabbing;
+}
+
+.date-slide-dragging {
+  transition: none;
+  will-change: transform;
+}
+
+.date-slide-snapback {
+  transition: transform 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform;
+}
+
 .date-slide-next,
 .date-slide-prev {
   will-change: transform, opacity;

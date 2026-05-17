@@ -1,10 +1,76 @@
 import { collection, doc, getDoc, getDocs, orderBy, query, setDoc, updateDoc } from 'firebase/firestore';
-import { getFirebaseDb } from './firebase';
+import { getFirebaseAuth, getFirebaseDb } from './firebase';
 
 const DASHBOARD_DOC = 'match_data';
 const FAST_DASHBOARD_DOC = 'match_data_fast';
+const MATCH_DATA_CACHE_KEY = 'matchDataCache_v1';
 
-export async function loadMatchDataFromFirestore() {
+export function readMatchDataCache() {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = window.localStorage.getItem(MATCH_DATA_CACHE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || !parsed.data || !Array.isArray(parsed.data.leagues)) return null;
+    return parsed.data;
+  } catch {
+    return null;
+  }
+}
+
+function writeMatchDataCache(data) {
+  if (typeof window === 'undefined') return;
+  try {
+    window.localStorage.setItem(
+      MATCH_DATA_CACHE_KEY,
+      JSON.stringify({ data, cachedAt: Date.now() }),
+    );
+  } catch {
+    try {
+      window.localStorage.removeItem(MATCH_DATA_CACHE_KEY);
+    } catch {}
+  }
+}
+
+let inflightMatchDataPromise = null;
+
+export function loadMatchDataFromFirestore() {
+  if (!inflightMatchDataPromise) {
+    inflightMatchDataPromise = fetchMatchData().finally(() => {
+      inflightMatchDataPromise = null;
+    });
+  }
+  return inflightMatchDataPromise;
+}
+
+async function fetchMatchData() {
+  try {
+    const apiResult = await fetchMatchDataFromApi();
+    if (apiResult) return apiResult;
+  } catch {
+    // fall through to direct Firestore SDK read
+  }
+  return fetchMatchDataFromFirestoreSdk();
+}
+
+async function fetchMatchDataFromApi() {
+  if (typeof window === 'undefined' || typeof fetch !== 'function') return null;
+  const auth = getFirebaseAuth();
+  const user = auth.currentUser;
+  if (!user) return null;
+  const token = await user.getIdToken();
+  const response = await fetch('/api/match-data', {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: 'no-store',
+  });
+  if (!response.ok) return null;
+  const payload = await response.json();
+  if (!payload || !Array.isArray(payload.leagues)) return null;
+  writeMatchDataCache(payload);
+  return payload;
+}
+
+async function fetchMatchDataFromFirestoreSdk() {
   const db = getFirebaseDb();
   const fastRef = doc(db, 'dashboardData', FAST_DASHBOARD_DOC);
   const fastSnap = await getDoc(fastRef);
@@ -12,11 +78,13 @@ export async function loadMatchDataFromFirestore() {
   if (fastSnap.exists()) {
     const fast = fastSnap.data();
     if (fast.format === 'single_doc_v1' && Array.isArray(fast.leagues)) {
-      return {
+      const result = {
         captured_at: fast.capturedAt || null,
         source: fast.source || null,
         leagues: fast.leagues,
       };
+      writeMatchDataCache(result);
+      return result;
     }
   }
 
@@ -48,11 +116,13 @@ export async function loadMatchDataFromFirestore() {
       throw new Error('Firestore league match data is incomplete');
     }
 
-    return {
+    const result = {
       captured_at: meta.capturedAt || null,
       source: meta.source || null,
       leagues,
     };
+    writeMatchDataCache(result);
+    return result;
   }
 
   const chunksRef = collection(db, 'dashboardData', DASHBOARD_DOC, 'chunks');
@@ -63,7 +133,9 @@ export async function loadMatchDataFromFirestore() {
     throw new Error('Firestore match data chunks are incomplete');
   }
 
-  return JSON.parse(chunks.join(''));
+  const parsed = JSON.parse(chunks.join(''));
+  if (parsed && Array.isArray(parsed.leagues)) writeMatchDataCache(parsed);
+  return parsed;
 }
 
 export async function getUserProfile(uid) {

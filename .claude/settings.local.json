@@ -40,7 +40,22 @@
       "Bash(tee logs/manual_run_2026-05-15.log)",
       "Bash(curl -s -o /tmp/live_match_data.json -w \"%{http_code} bytes:%{size_download}\\\\n\" \"https://looneyz25.github.io/SoccerStats/data/match_data.json?cb=$\\(date +%s\\)\")",
       "Bash(curl -s 'https://looneyz25.github.io/SoccerStats/data/match_data.json?cb=__CMDSUB_OUTPUT__' -o __TRACKED_VAR__/live_match_data.json)",
-      "Bash(python scripts/soccer_fetch_sportsbet.py)"
+      "Bash(python scripts/soccer_fetch_sportsbet.py)",
+      "PowerShell(Get-NetTCPConnection -LocalPort 3001 -ErrorAction SilentlyContinue | Select-Object LocalAddress,LocalPort,State,OwningProcess | Format-Table -AutoSize; Get-NetTCPConnection -LocalPort 3001 -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { Get-Process -Id $_ -ErrorAction SilentlyContinue | Select-Object Id,ProcessName,StartTime } | Format-Table -AutoSize)",
+      "Bash(python scripts/soccer_result_review_agent.py)",
+      "Bash(python -c \"import json; d=json.load\\(open\\('match_data.json'\\)\\); from collections import Counter; c=Counter\\(\\); [c.update\\([m.get\\('date',''\\)]\\) for L in d.get\\('leagues',[]\\) for m in \\(L.get\\('matches'\\) or []\\) if m.get\\('status'\\)=='FT']; [print\\(k, c[k]\\) for k in sorted\\(c\\) if k >= '2026-04-20' and k <= '2026-04-26']\")",
+      "Bash(python -c \"import json; d=json.load\\(open\\('match_data.json', encoding='utf-8'\\)\\); from collections import Counter; c=Counter\\(\\); [c.update\\([m.get\\('date',''\\)]\\) for L in d.get\\('leagues',[]\\) for m in \\(L.get\\('matches'\\) or []\\) if m.get\\('status'\\)=='FT']; [print\\(k, c[k]\\) for k in sorted\\(c\\) if k >= '2026-04-20' and k <= '2026-04-26']\")",
+      "Bash(python scripts/soccer_backfill_repredict.py)",
+      "Bash(python scripts/soccer_backtest_walkforward.py --start-date 2026-04-22)",
+      "Bash(python scripts/soccer_backtest_walkforward.py --start-date 2026-04-22 --blend 0)",
+      "Bash(python scripts/soccer_backtest_walkforward.py --start-date 2026-04-22 --blend 0 --no-calibration)",
+      "Bash(python scripts/soccer_backtest_walkforward.py --start-date 2026-04-22 --blend 0.40 --no-calibration)",
+      "Bash(python scripts/soccer_backtest_winner_models.py)",
+      "Bash(python -c \"import sklearn; print\\('sklearn', sklearn.__version__\\)\")",
+      "Bash(python -c \"import numpy; print\\('numpy', numpy.__version__\\)\")",
+      "Bash(python scripts/soccer_backtest_confidence_filter.py)",
+      "Bash(npx tsc *)",
+      "PowerShell(Get-NetTCPConnection -LocalPort 3001 -ErrorAction SilentlyContinue)"
     ]
   }
 }

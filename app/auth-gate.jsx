@@ -11,7 +11,7 @@ import {
 } from 'firebase/auth';
 import { CreditCard, Loader2, LockKeyhole, LogIn, Mail, Clock } from 'lucide-react';
 import { getFirebaseAuth, googleProvider } from './firebase';
-import { getUserProfile, createUserProfile } from './firestore-data';
+import { getUserProfile, createUserProfile, loadMatchDataFromFirestore } from './firestore-data';
 
 const AUTH_RETURN_PATH_KEY = 'looneyz-auth-return-path';
 const AUTH_GOOGLE_PENDING_KEY = 'looneyz-google-sign-in-pending';
@@ -110,7 +110,9 @@ export default function AuthGate({ children }) {
       resolved = true;
       window.clearTimeout(fallback);
       setUser(nextUser);
-      if (!nextUser) {
+      if (nextUser) {
+        loadMatchDataFromFirestore().catch(() => {});
+      } else {
         setProfile(null);
         setReady(true);
         setMessage('');
