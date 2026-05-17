@@ -10,13 +10,14 @@ import {
   ArrowLeft,
   ArrowUp,
   BarChart3,
-  CalendarDays,
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
+  ChevronUp,
   Clock3,
   CreditCard,
   Goal,
+  GripVertical,
   Loader2,
   LogOut,
   Mail,
@@ -26,6 +27,7 @@ import {
   Star,
   UserRound,
   XCircle,
+  ChevronDown,
 } from 'lucide-react';
 
 const GAMBLING_HELP_URL = 'https://www.gamblinghelponline.org.au/';
@@ -2401,7 +2403,17 @@ function ResponsibleGamblingNotice({ compact = false }) {
   );
 }
 
-function SettingsView({ bookmakerId, onBookmakerChange, onBack, teamOptions = [], favoriteTeams = [], onFavoriteTeamsChange }) {
+function SettingsView({
+  bookmakerId,
+  onBookmakerChange,
+  onBack,
+  leagueOptions = [],
+  favoriteLeagues = [],
+  onFavoriteLeaguesChange,
+  teamOptions = [],
+  favoriteTeams = [],
+  onFavoriteTeamsChange,
+}) {
   const selectedBookmaker = BOOKMAKERS[bookmakerId] || BOOKMAKERS.sportsbet;
   const [isPlatformOwner, setIsPlatformOwner] = useState(false);
   const [profile, setProfile] = useState(null);
@@ -2410,6 +2422,8 @@ function SettingsView({ bookmakerId, onBookmakerChange, onBack, teamOptions = []
   const [billingMessage, setBillingMessage] = useState('');
   const [billingError, setBillingError] = useState('');
   const [profileForm, setProfileForm] = useState({ displayName: '', nickname: '', favoriteTeams });
+  const [leagueToAdd, setLeagueToAdd] = useState('');
+  const [dragLeague, setDragLeague] = useState('');
   const [teamToAdd, setTeamToAdd] = useState('');
   const [profileBusy, setProfileBusy] = useState(false);
   const [profileMessage, setProfileMessage] = useState('');
@@ -2451,6 +2465,45 @@ function SettingsView({ bookmakerId, onBookmakerChange, onBack, teamOptions = []
     setProfileForm((current) => ({ ...current, [field]: value }));
     setProfileMessage('');
     setProfileError('');
+  }
+
+  function updateFavoriteLeagueOrder(nextLeagues) {
+    const cleanLeagues = [...new Set((nextLeagues || []).map((item) => String(item || '').trim()).filter(Boolean))]
+      .filter((item) => !leagueOptions.length || leagueOptions.includes(item))
+      .slice(0, 20);
+    onFavoriteLeaguesChange?.(cleanLeagues);
+    setProfileMessage('');
+    setProfileError('');
+  }
+
+  function addFavoriteLeague() {
+    const nextLeague = String(leagueToAdd || '').trim();
+    if (!nextLeague || favoriteLeagues.includes(nextLeague)) return;
+    updateFavoriteLeagueOrder([...favoriteLeagues, nextLeague]);
+    setLeagueToAdd('');
+  }
+
+  function removeFavoriteLeague(leagueName) {
+    updateFavoriteLeagueOrder(favoriteLeagues.filter((item) => item !== leagueName));
+  }
+
+  function moveFavoriteLeague(leagueName, direction) {
+    const index = favoriteLeagues.indexOf(leagueName);
+    const nextIndex = index + direction;
+    if (index === -1 || nextIndex < 0 || nextIndex >= favoriteLeagues.length) return;
+    const next = [...favoriteLeagues];
+    [next[index], next[nextIndex]] = [next[nextIndex], next[index]];
+    updateFavoriteLeagueOrder(next);
+  }
+
+  function dropFavoriteLeague(targetLeague) {
+    if (!dragLeague || dragLeague === targetLeague) return;
+    const next = favoriteLeagues.filter((item) => item !== dragLeague);
+    const targetIndex = next.indexOf(targetLeague);
+    if (targetIndex === -1) return;
+    next.splice(targetIndex, 0, dragLeague);
+    updateFavoriteLeagueOrder(next);
+    setDragLeague('');
   }
 
   function addFavoriteTeam() {
@@ -2664,6 +2717,87 @@ function SettingsView({ bookmakerId, onBookmakerChange, onBack, teamOptions = []
                   placeholder="Optional nickname"
                 />
               </label>
+            </div>
+            <div className="rounded-md border border-line bg-field p-3">
+              <div className="flex items-center gap-2 text-xs font-semibold uppercase text-slate-500">
+                <Star className="h-3.5 w-3.5 text-amber-500" aria-hidden="true" />
+                Favourite leagues
+              </div>
+              <div className="mt-2 flex gap-2">
+                <select
+                  value={leagueToAdd}
+                  onChange={(event) => setLeagueToAdd(event.target.value)}
+                  className="h-10 min-w-0 flex-1 rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink outline-none focus:border-slate-400"
+                  aria-label="Add favourite league"
+                >
+                  <option value="">Select a league</option>
+                  {leagueOptions
+                    .filter((item) => !favoriteLeagues.includes(item))
+                    .map((item) => (
+                      <option key={item} value={item}>
+                        {item}
+                      </option>
+                    ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={addFavoriteLeague}
+                  disabled={!leagueToAdd}
+                  className="inline-flex h-10 shrink-0 items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink shadow-panel hover:bg-field disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  Add
+                </button>
+              </div>
+              {favoriteLeagues.length > 0 ? (
+                <div className="mt-3 grid gap-2">
+                  {favoriteLeagues.map((leagueName, index) => (
+                    <div
+                      key={leagueName}
+                      draggable
+                      onDragStart={() => setDragLeague(leagueName)}
+                      onDragEnd={() => setDragLeague('')}
+                      onDragOver={(event) => event.preventDefault()}
+                      onDrop={() => dropFavoriteLeague(leagueName)}
+                      className={`flex items-center gap-2 rounded-md border bg-white px-2.5 py-2 text-sm shadow-panel ${
+                        dragLeague === leagueName ? 'border-ink opacity-70' : 'border-line'
+                      }`}
+                    >
+                      <GripVertical className="h-4 w-4 shrink-0 cursor-grab text-slate-400" aria-hidden="true" />
+                      <span className="min-w-0 flex-1 truncate font-semibold text-ink">{leagueName}</span>
+                      <div className="flex shrink-0 items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={() => moveFavoriteLeague(leagueName, -1)}
+                          disabled={index === 0}
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-line bg-white text-slate-600 hover:bg-field disabled:cursor-not-allowed disabled:opacity-35"
+                          aria-label={`Move ${leagueName} up`}
+                        >
+                          <ChevronUp className="h-4 w-4" aria-hidden="true" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => moveFavoriteLeague(leagueName, 1)}
+                          disabled={index === favoriteLeagues.length - 1}
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-line bg-white text-slate-600 hover:bg-field disabled:cursor-not-allowed disabled:opacity-35"
+                          aria-label={`Move ${leagueName} down`}
+                        >
+                          <ChevronDown className="h-4 w-4" aria-hidden="true" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => removeFavoriteLeague(leagueName)}
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-line bg-white text-slate-600 hover:bg-red-50 hover:text-miss"
+                          aria-label={`Remove ${leagueName} from favourite leagues`}
+                        >
+                          <XCircle className="h-4 w-4" aria-hidden="true" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-2 text-sm text-slate-500">Favourite leagues appear first on the dashboard. Star a league or add one here.</p>
+              )}
             </div>
             <div className="rounded-md border border-line bg-field p-3">
               <div className="flex items-center gap-2 text-xs font-semibold uppercase text-slate-500">
@@ -2957,11 +3091,9 @@ function ResultsReview({ matches }) {
 
   return (
     <section className="mt-3 rounded-lg border border-slate-300 bg-white p-3 shadow-panel sm:mt-5 sm:p-4">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h2 className="text-base font-semibold text-ink">Results review</h2>
-        </div>
-        <div className="flex flex-wrap items-center gap-1.5 text-xs font-semibold">
+      <div className="flex items-center justify-between gap-2">
+        <h2 className="shrink-0 text-base font-semibold text-ink">Results review</h2>
+        <div className="grid shrink-0 grid-cols-3 gap-1 text-xs font-semibold">
           <button
             type="button"
             onClick={() => setReviewScope('today')}
@@ -2974,7 +3106,8 @@ function ResultsReview({ matches }) {
             onClick={() => setReviewScope('week')}
             className={`rounded-md border px-2 py-1 ${reviewScope === 'week' ? 'border-ink bg-ink text-white' : 'border-slate-300 bg-white text-slate-700 hover:bg-field'}`}
           >
-            This week
+            <span className="sm:hidden">Week</span>
+            <span className="hidden sm:inline">This week</span>
           </button>
           <button
             type="button"
@@ -2983,10 +3116,14 @@ function ResultsReview({ matches }) {
           >
             All
           </button>
+        </div>
+      </div>
+      {(best || worst) && (
+        <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs font-semibold">
           {best && <span className="rounded-md border border-emerald-200 bg-emerald-50 px-2 py-1 text-emerald-700">Best {best.label} {best.hitRate}%</span>}
           {worst && <span className="rounded-md border border-red-200 bg-red-50 px-2 py-1 text-red-700">Weakest {worst.label} {worst.hitRate}%</span>}
         </div>
-      </div>
+      )}
       {rows.length ? (
         <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
           {rows.map((row) => (
@@ -3336,10 +3473,7 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
       >
       <div className="border-b border-line px-3 py-3 sm:px-4">
         <div className="grid grid-cols-[1fr_1fr_auto] items-center gap-2 text-sm text-slate-600">
-          <span className="flex min-w-0 items-center gap-1">
-            <CalendarDays className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-            <span className="truncate">{matchDisplayDate(match)}</span>
-          </span>
+          <span className="min-w-0 truncate">{matchDisplayDate(match)}</span>
           <span className="flex min-w-0 items-center justify-center gap-1">
             <Clock3 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
             <span className="truncate">{matchDisplayTime(match)}</span>
@@ -3682,6 +3816,15 @@ function HomeInner() {
     window.localStorage.setItem(FAVORITE_TEAMS_STORAGE_KEY, JSON.stringify(cleanTeams));
   }, []);
 
+  const handleFavoriteLeaguesChange = useCallback((nextLeagues) => {
+    const available = new Set(leagues);
+    const cleanLeagues = [...new Set((nextLeagues || []).map((item) => String(item || '').trim()).filter(Boolean))]
+      .filter((item) => !available.size || available.has(item))
+      .slice(0, 20);
+    setFavoriteLeagues(cleanLeagues);
+    window.localStorage.setItem(FAVORITE_LEAGUES_STORAGE_KEY, JSON.stringify(cleanLeagues));
+  }, [leagues]);
+
   const saveFavoriteTeamsToProfile = useCallback((nextTeams) => {
     async function save() {
       try {
@@ -3879,6 +4022,9 @@ function HomeInner() {
         bookmakerId={bookmakerId}
         onBookmakerChange={handleBookmakerChange}
         onBack={closeSettings}
+        leagueOptions={leagues}
+        favoriteLeagues={favoriteLeagues}
+        onFavoriteLeaguesChange={handleFavoriteLeaguesChange}
         teamOptions={teamOptions}
         favoriteTeams={favoriteTeams}
         onFavoriteTeamsChange={handleFavoriteTeamsChange}
