@@ -279,6 +279,28 @@ function TeamScoreBadge({ value }) {
   );
 }
 
+function teamResultClass(match, side) {
+  if (match.status !== 'FT') return 'border-line bg-field/60 text-ink';
+  const homeGoals = Number(match.home?.goals);
+  const awayGoals = Number(match.away?.goals);
+  if (!Number.isFinite(homeGoals) || !Number.isFinite(awayGoals) || homeGoals === awayGoals) {
+    return 'border-slate-300 bg-slate-50 text-ink';
+  }
+  const won = side === 'home' ? homeGoals > awayGoals : awayGoals > homeGoals;
+  return won
+    ? 'border-emerald-400 bg-emerald-100 text-emerald-900 ring-1 ring-emerald-500'
+    : 'border-red-300 bg-red-50 text-slate-700';
+}
+
+function teamNameResultClass(match, side) {
+  if (match.status !== 'FT') return 'text-ink';
+  const homeGoals = Number(match.home?.goals);
+  const awayGoals = Number(match.away?.goals);
+  if (!Number.isFinite(homeGoals) || !Number.isFinite(awayGoals) || homeGoals === awayGoals) return 'text-ink';
+  const won = side === 'home' ? homeGoals > awayGoals : awayGoals > homeGoals;
+  return won ? 'text-emerald-900' : 'text-slate-700';
+}
+
 function LeagueBadge({ src, name }) {
   const [failed, setFailed] = useState(false);
 
@@ -889,11 +911,17 @@ const MARKET_CONFIG = [
   { key: 'btts', label: 'BTTS' },
   { key: 'ou_goals', label: 'Goals' },
   { key: 'ou_cards', label: 'Cards' },
+  { key: 'ou_corners', label: 'Corners', getMarket: (match, allMatches) => cornerMarketFromStreaks(match, allMatches) },
 ];
 
-function marketRowsForMatch(match) {
+function marketForConfig(config, match, allMatches) {
+  if (config.getMarket) return config.getMarket(match, allMatches || match.__allMatches);
+  return match.predictions?.[config.key];
+}
+
+function marketRowsForMatch(match, allMatches) {
   return MARKET_CONFIG.map((config) => {
-    const market = match.predictions?.[config.key];
+    const market = marketForConfig(config, match, allMatches);
     return {
       ...config,
       market,
@@ -902,8 +930,8 @@ function marketRowsForMatch(match) {
   }).filter((row) => row.market);
 }
 
-function positiveEdgesForMatch(match) {
-  return marketRowsForMatch(match)
+function positiveEdgesForMatch(match, allMatches) {
+  return marketRowsForMatch(match, allMatches)
     .filter((row) => row.comparison?.badge?.tone === 'positive' && row.comparison.modelEdge > 0)
     .sort((a, b) => b.comparison.modelEdge - a.comparison.modelEdge);
 }
@@ -942,8 +970,8 @@ function dataQualityForMatch(match) {
   return { label, tone, score, signals, cautions };
 }
 
-function confidenceForMatch(match) {
-  const edges = positiveEdgesForMatch(match);
+function confidenceForMatch(match, allMatches) {
+  const edges = positiveEdgesForMatch(match, allMatches);
   const bestEdge = edges[0]?.comparison?.modelEdge || 0;
   const quality = dataQualityForMatch(match);
 
@@ -959,10 +987,10 @@ function confidenceForMatch(match) {
   return { label: 'Data weak', tone: 'warning', reason: quality.cautions[0] || 'Thin supporting data', edge: bestEdge, quality };
 }
 
-function filterMatchesByValue(match, valueFilter) {
+function filterMatchesByValue(match, valueFilter, allMatches) {
   if (valueFilter === 'all') return true;
-  const confidence = confidenceForMatch(match);
-  const edges = positiveEdgesForMatch(match);
+  const confidence = confidenceForMatch(match, allMatches);
+  const edges = positiveEdgesForMatch(match, allMatches);
   if (valueFilter === 'strong') return confidence.label === 'Strong edge';
   if (valueFilter === 'watchlist') return confidence.label === 'Strong edge' || confidence.label === 'Watchlist';
   if (valueFilter === 'edge5') return edges.some((row) => row.comparison.modelEdge >= 0.05);
@@ -1792,7 +1820,7 @@ function summarize(matches) {
 function summarizeResultsByMarket(matches) {
   return MARKET_CONFIG.map((config) => {
     const settled = matches
-      .map((match) => match.predictions?.[config.key])
+      .map((match) => marketForConfig(config, match, matches))
       .filter((market) => market?.result === 'hit' || market?.result === 'miss');
     const hits = settled.filter((market) => market.result === 'hit');
     const misses = settled.filter((market) => market.result === 'miss');
@@ -2516,7 +2544,7 @@ function H2HContextPanel({ match, allMatches }) {
 function PredictionSummaryCard({ match, allMatches }) {
   const matchWithContext = { ...match, __allMatches: allMatches };
   const predictions = match.predictions || {};
-  const confidence = confidenceForMatch(match);
+  const confidence = confidenceForMatch(match, allMatches);
   const quality = confidence.quality;
   const winner = predictions.winner;
   const winnerComparison = modelVsBookmakerComparison(matchWithContext, 'winner', winner);
@@ -2754,17 +2782,16 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches }) {
   const cardsComparison = modelVsBookmakerComparison(match, 'ou_cards', displayCards);
   const cornerMarket = cornerMarketFromStreaks(match, allMatches);
   const cornersComparison = modelVsBookmakerComparison(match, 'ou_corners', cornerMarket);
-  const confidence = confidenceForMatch(match);
+  const confidence = confidenceForMatch(match, allMatches);
   const edgeBadgeFor = (comparison) =>
     comparison?.badge?.tone === 'positive' && comparison.edgePoints > 0 ? comparison.badge.label : null;
   const isFinished = match.status === 'FT';
   const compactPick =
-    predictions.winner ? { label: 'Winner', value: formatMarketDetail(predictions.winner), result: predictions.winner.result, edge: edgeBadgeFor(winnerComparison) } :
-      predictions.ou_goals ? { label: 'Goals', value: formatMarketDetail(predictions.ou_goals), result: predictions.ou_goals.result, edge: edgeBadgeFor(goalsComparison) } :
-        displayBtts ? { label: 'BTTS', value: formatMarketDetail(displayBtts), result: displayBtts.result, edge: edgeBadgeFor(bttsComparison) } :
-          displayCards ? { label: 'Cards', value: formatMarketDetail(displayCards), result: displayCards.result, edge: edgeBadgeFor(cardsComparison) } :
-            cornerMarket ? { label: 'Corners', value: formatMarketDetail(cornerMarket), result: cornerMarket.result, edge: edgeBadgeFor(cornersComparison) } :
-              null;
+    predictions.ou_goals ? { label: 'Goals', value: formatMarketDetail(predictions.ou_goals), result: predictions.ou_goals.result, edge: edgeBadgeFor(goalsComparison) } :
+      displayBtts ? { label: 'BTTS', value: formatMarketDetail(displayBtts), result: displayBtts.result, edge: edgeBadgeFor(bttsComparison) } :
+        displayCards ? { label: 'Cards', value: formatMarketDetail(displayCards), result: displayCards.result, edge: edgeBadgeFor(cardsComparison) } :
+          cornerMarket ? { label: 'Corners', value: formatMarketDetail(cornerMarket), result: cornerMarket.result, edge: edgeBadgeFor(cornersComparison) } :
+            null;
 
   return (
     <article className="rounded-lg border border-line bg-white shadow-panel transition active:scale-[0.99] sm:hover:-translate-y-0.5 sm:hover:border-slate-300 sm:hover:shadow-lg">
@@ -2792,20 +2819,20 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches }) {
 
       <div className="px-3 py-3 sm:px-4 sm:py-4">
         <div className="grid gap-1.5 sm:hidden">
-          <div className="rounded-md border border-line bg-field/60 px-2.5 py-2">
+          <div className={`rounded-md border px-2.5 py-2 ${teamResultClass(match, 'home')}`}>
             <div className="flex min-w-0 items-center justify-between gap-2">
               <div className="flex min-w-0 items-center gap-2">
                 <TeamBadge src={teamLogo(match, 'home')} name={match.home?.name} />
-                <div className="min-w-0 whitespace-normal break-words text-left text-sm font-semibold leading-snug text-ink sm:text-base">{match.home?.name}</div>
+                <div className={`min-w-0 whitespace-normal break-words text-left text-sm font-semibold leading-snug sm:text-base ${teamNameResultClass(match, 'home')}`}>{match.home?.name}</div>
               </div>
               {isFinished && <TeamScoreBadge value={match.home?.goals} />}
             </div>
           </div>
-          <div className="rounded-md border border-line bg-field/60 px-2.5 py-2">
+          <div className={`rounded-md border px-2.5 py-2 ${teamResultClass(match, 'away')}`}>
             <div className="flex min-w-0 items-center justify-between gap-2">
               <div className="flex min-w-0 items-center gap-2">
                 <TeamBadge src={teamLogo(match, 'away')} name={match.away?.name} />
-                <div className="min-w-0 whitespace-normal break-words text-left text-sm font-semibold leading-snug text-ink sm:text-base">{match.away?.name}</div>
+                <div className={`min-w-0 whitespace-normal break-words text-left text-sm font-semibold leading-snug sm:text-base ${teamNameResultClass(match, 'away')}`}>{match.away?.name}</div>
               </div>
               {isFinished && <TeamScoreBadge value={match.away?.goals} />}
             </div>
@@ -2813,10 +2840,10 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches }) {
         </div>
 
         <div className="hidden items-center gap-3 sm:grid sm:grid-cols-[1fr_auto_1fr]">
-          <div className="min-w-0 text-left">
+          <div className={`min-w-0 rounded-md border px-2.5 py-2 text-left ${teamResultClass(match, 'home')}`}>
             <div className="flex min-w-0 items-center gap-2">
               <TeamBadge src={teamLogo(match, 'home')} name={match.home?.name} />
-              <div className="min-w-0 whitespace-normal break-words text-base font-semibold leading-snug text-ink">{match.home?.name}</div>
+              <div className={`min-w-0 whitespace-normal break-words text-base font-semibold leading-snug ${teamNameResultClass(match, 'home')}`}>{match.home?.name}</div>
             </div>
             <div className="mt-1 text-xs text-slate-500">Home</div>
           </div>
@@ -2829,10 +2856,10 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches }) {
               </span>
             )}
           </div>
-          <div className="min-w-0 text-left">
+          <div className={`min-w-0 rounded-md border px-2.5 py-2 text-left ${teamResultClass(match, 'away')}`}>
             <div className="flex min-w-0 items-center gap-2">
               <TeamBadge src={teamLogo(match, 'away')} name={match.away?.name} />
-              <div className="min-w-0 whitespace-normal break-words text-base font-semibold leading-snug text-ink">{match.away?.name}</div>
+              <div className={`min-w-0 whitespace-normal break-words text-base font-semibold leading-snug ${teamNameResultClass(match, 'away')}`}>{match.away?.name}</div>
             </div>
             <div className="mt-1 text-xs text-slate-500">Away</div>
           </div>
@@ -2862,7 +2889,6 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches }) {
         )}
 
         <div className="mt-4 grid grid-cols-2 gap-2">
-          <MarketPill label="Winner" market={predictions.winner} edgeBadge={edgeBadgeFor(winnerComparison)} />
           <MarketPill label="BTTS" market={displayBtts} edgeBadge={edgeBadgeFor(bttsComparison)} />
           <MarketPill label="Goals" market={predictions.ou_goals} edgeBadge={edgeBadgeFor(goalsComparison)} />
           <MarketPill label="Cards" market={displayCards} edgeBadge={edgeBadgeFor(cardsComparison)} />
@@ -3072,7 +3098,7 @@ function HomeInner() {
         if (status === 'FT') return match.status === 'FT';
         return match.status !== 'FT';
       })
-      .filter((match) => filterMatchesByValue(match, valueFilter))
+      .filter((match) => filterMatchesByValue(match, valueFilter, matches))
       .filter((match) => {
         if (!normalized) return true;
         return `${match.home?.name || ''} ${match.away?.name || ''} ${match.league}`.toLowerCase().includes(normalized);
