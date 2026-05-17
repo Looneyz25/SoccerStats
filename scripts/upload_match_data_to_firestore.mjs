@@ -83,6 +83,18 @@ function slimLeague(league, index) {
   };
 }
 
+function firestoreSafe(value) {
+  if (Array.isArray(value)) return value.map(firestoreSafe);
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value)
+        .filter(([, item]) => item !== undefined)
+        .map(([key, item]) => [key, firestoreSafe(item)]),
+    );
+  }
+  return value;
+}
+
 function credentialOptions() {
   const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
   if (serviceAccountJson) {
@@ -144,7 +156,7 @@ async function main() {
 
   leagues.forEach((league, index) => {
     const id = slugify(league.id || league.name, String(index).padStart(2, '0'));
-    writer.set(leaguesRef.doc(id), {
+    writer.set(leaguesRef.doc(id), firestoreSafe({
       index,
       id: league.id ?? id,
       name: league.name || id,
@@ -154,7 +166,7 @@ async function main() {
       matchCount: Array.isArray(league.matches) ? league.matches.length : 0,
       matches: Array.isArray(league.matches) ? league.matches : [],
       updatedAt: FieldValue.serverTimestamp(),
-    });
+    }));
   });
 
   const dateBuckets = new Map();
@@ -181,7 +193,7 @@ async function main() {
   const availableDates = [...dateBuckets.keys()].filter((date) => date !== 'unknown').sort();
   for (const [date, leaguesByDate] of dateBuckets.entries()) {
     const dateLeagues = [...leaguesByDate.values()];
-    writer.set(datesRef.doc(slugify(date, 'unknown')), {
+    writer.set(datesRef.doc(slugify(date, 'unknown')), firestoreSafe({
       format: 'date_doc_v1',
       date,
       capturedAt: parsed.captured_at || null,
@@ -191,7 +203,7 @@ async function main() {
       matchCount: dateLeagues.reduce((sum, league) => sum + league.matches.length, 0),
       leagues: dateLeagues,
       updatedAt: FieldValue.serverTimestamp(),
-    });
+    }));
   }
 
   writer.set(metaRef, {
@@ -207,7 +219,7 @@ async function main() {
   });
 
   const fastLeagues = leagues.map(slimLeague);
-  writer.set(fastRef, {
+  writer.set(fastRef, firestoreSafe({
     format: 'single_doc_v1',
     capturedAt: parsed.captured_at || null,
     source: parsed.source || null,
@@ -217,7 +229,7 @@ async function main() {
     byteLength: Buffer.byteLength(JSON.stringify({ leagues: fastLeagues })),
     leagues: fastLeagues,
     updatedAt: FieldValue.serverTimestamp(),
-  });
+  }));
 
   await writer.close();
   console.log(`Uploaded ${dataPath} to Firestore dashboardData/${DOC_ID} as ${leagues.length} league docs and ${dateBuckets.size} date docs.`);
