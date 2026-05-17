@@ -76,6 +76,8 @@ ELO_HOME_ADV = 50.0
 # previous rank/pts table_adj magnitude so behaviour stays in the same range.
 ELO_LAMBDA_SCALE = 400.0
 ELO_LAMBDA_CAP = 0.4
+BTTS_TAKE_THRESHOLD = 0.56
+BTTS_PASS_PICK = "Pass"
 TODAY     = datetime.now(ADL).date()
 YESTERDAY = TODAY - timedelta(days=1)
 TOMORROW  = TODAY + timedelta(days=1)
@@ -313,7 +315,11 @@ def settle(m, e):
     abtts = (hs > 0 and as_ > 0)
     if pred.get("btts"):
         pred["btts"]["actual_btts"] = abtts
-        pred["btts"]["result"] = "hit" if (str(pred["btts"].get("pick", "")).lower() == "yes") == abtts else "miss"
+        btts_pick = str(pred["btts"].get("pick", "")).lower()
+        if btts_pick in ("yes", "no"):
+            pred["btts"]["result"] = "hit" if (btts_pick == "yes") == abtts else "miss"
+        else:
+            pred["btts"]["result"] = "pass"
     if pred.get("ou_goals"):
         line = float(pred["ou_goals"].get("line", 2.5)); tot = hs + as_
         pred["ou_goals"]["actual"] = tot
@@ -811,13 +817,23 @@ def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
     p_btts_yes = sum(grid[i][j] for i in range(7) for j in range(7) if i > 0 and j > 0)
     btts_cal = calibration_adjustment(league, "btts")
     p_btts_yes_cal = shrink_probability(p_btts_yes, btts_cal["trust_factor"], 0.5)
-    btts_pick = "Yes" if p_btts_yes_cal >= 0.50 else "No"
-    btts_probability = p_btts_yes_cal if btts_pick == "Yes" else 1 - p_btts_yes_cal
-    btts_raw_probability = p_btts_yes if btts_pick == "Yes" else 1 - p_btts_yes
+    if p_btts_yes_cal > BTTS_TAKE_THRESHOLD:
+        btts_pick = "Yes"
+        btts_probability = p_btts_yes_cal
+        btts_raw_probability = p_btts_yes
+    elif p_btts_yes_cal < (1 - BTTS_TAKE_THRESHOLD):
+        btts_pick = "No"
+        btts_probability = 1 - p_btts_yes_cal
+        btts_raw_probability = 1 - p_btts_yes
+    else:
+        btts_pick = BTTS_PASS_PICK
+        btts_probability = max(p_btts_yes_cal, 1 - p_btts_yes_cal)
+        btts_raw_probability = max(p_btts_yes, 1 - p_btts_yes)
     btts = {
         "pick": btts_pick,
         "probability": round(btts_probability, 4),
         "raw_probability": round(btts_raw_probability, 4),
+        "take_threshold": BTTS_TAKE_THRESHOLD,
     }
     if btts_cal["sources"]:
         btts["calibration"] = btts_cal
@@ -916,7 +932,10 @@ def phase_a6_retro(store):
             pred["winner"]["result"] = "hit" if pred["winner"]["type"] == actual else "miss"
             abtts = (hg > 0 and ag > 0)
             pred["btts"]["actual_btts"] = abtts
-            pred["btts"]["result"] = "hit" if (pred["btts"]["pick"] == "Yes") == abtts else "miss"
+            if pred["btts"]["pick"] in ("Yes", "No"):
+                pred["btts"]["result"] = "hit" if (pred["btts"]["pick"] == "Yes") == abtts else "miss"
+            else:
+                pred["btts"]["result"] = "pass"
             tot = hg + ag
             pred["ou_goals"]["actual"] = tot
             pred["ou_goals"]["result"] = ("hit" if (pred["ou_goals"]["pick"] == "Over" and tot > 2.5) or

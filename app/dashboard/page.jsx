@@ -271,6 +271,14 @@ function TeamBadge({ src, name }) {
   );
 }
 
+function TeamScoreBadge({ value }) {
+  return (
+    <span className="inline-flex h-8 min-w-8 shrink-0 items-center justify-center rounded-md bg-ink px-2 text-sm font-semibold text-white shadow-sm">
+      {value ?? '-'}
+    </span>
+  );
+}
+
 function LeagueBadge({ src, name }) {
   const [failed, setFailed] = useState(false);
 
@@ -304,6 +312,7 @@ function resultIcon(result) {
 function marketPillClass(result) {
   if (result === 'hit') return 'border-emerald-400 bg-emerald-100 shadow-panel';
   if (result === 'miss') return 'border-red-400 bg-red-100 shadow-panel';
+  if (result === 'pass') return 'border-slate-300 bg-slate-100 shadow-panel';
   return 'border-slate-300 bg-white shadow-panel';
 }
 
@@ -311,6 +320,12 @@ function marketValueClass(result) {
   if (result === 'hit') return 'text-emerald-700';
   if (result === 'miss') return 'text-red-700';
   return 'text-ink';
+}
+
+function resultBadgeClass(result) {
+  if (result === 'hit') return 'bg-emerald-100 text-emerald-700';
+  if (result === 'miss') return 'bg-red-100 text-red-700';
+  return 'bg-slate-200 text-slate-600';
 }
 
 function streakCardClass(result) {
@@ -394,7 +409,152 @@ function formatOddsTotal(value) {
 
 function formatMarketDetail(market) {
   if (!market) return '-';
+  if (market.pick === 'Pass') return 'Pass';
   return market.line ? `${market.pick} ${market.line}` : market.pick || '-';
+}
+
+function displayBttsMarket(market) {
+  if (!market) return null;
+  const threshold = Number(market.take_threshold || 0.56);
+  const probability = Number(market.probability);
+  if ((market.pick === 'Yes' || market.pick === 'No') && Number.isFinite(probability) && probability < threshold) {
+    return {
+      ...market,
+      pick: 'Pass',
+      result: market.result === 'hit' || market.result === 'miss' ? 'pass' : market.result,
+      take_threshold: threshold,
+    };
+  }
+  return market;
+}
+
+function parseStreakRatio(value) {
+  const match = String(value || '').match(/(\d+)\s*\/\s*(\d+)/);
+  if (!match) return null;
+  const hits = Number(match[1]);
+  const total = Number(match[2]);
+  if (!total) return null;
+  return { hits, total, rate: hits / total };
+}
+
+function marketResultFromActual(market, actual) {
+  if (!market || actual === null || actual === undefined || Number.isNaN(Number(actual))) return undefined;
+  const line = Number(market.line);
+  if (!Number.isFinite(line)) return undefined;
+  if (market.pick === 'Over') return Number(actual) > line ? 'hit' : 'miss';
+  if (market.pick === 'Under') return Number(actual) < line ? 'hit' : 'miss';
+  return undefined;
+}
+
+function factorial(n) {
+  let value = 1;
+  for (let i = 2; i <= n; i++) value *= i;
+  return value;
+}
+
+function poissonOverTotalProbability(lambda, line, max = 40) {
+  if (!Number.isFinite(lambda) || lambda <= 0 || !Number.isFinite(line)) return null;
+  const cutoff = Math.floor(line);
+  let pUnderOrEqual = 0;
+  for (let k = 0; k <= Math.min(cutoff, max); k++) {
+    pUnderOrEqual += Math.exp(-lambda) * Math.pow(lambda, k) / factorial(k);
+  }
+  return Math.max(0, Math.min(1, 1 - pUnderOrEqual));
+}
+
+function marketProbabilityFromTotalAverage(market, averageTotal) {
+  if (!market) return null;
+  const line = Number(market.line);
+  const pOver = poissonOverTotalProbability(averageTotal, line);
+  if (!Number.isFinite(pOver)) return null;
+  if (market.pick === 'Over') return pOver;
+  if (market.pick === 'Under') return 1 - pOver;
+  return null;
+}
+
+function cornerBookmakerOdds(match, line, pick) {
+  const lineKey = String(line ?? 10.5);
+  const lineOdds = match.corner_odds?.[lineKey] || match.corner_odds?.[Number(line).toFixed(1)];
+  const value = lineOdds?.[pick];
+  return Number.isFinite(Number(value)) ? Number(value) : undefined;
+}
+
+function cornerMarketFromStreaks(match, allMatches = []) {
+  const streaks = [...(match.h2h_streaks || []), ...(match.team_streaks || [])];
+  const seen = new Set();
+  const candidates = streaks
+    .map((streak) => {
+      const label = String(streak.label || '');
+      const lower = label.toLowerCase();
+      if (!lower.includes('corner')) return null;
+      const lineMatch = lower.match(/(\d+(?:\.\d+)?)/);
+      const line = lineMatch ? Number(lineMatch[1]) : 10.5;
+      const pick = lower.includes('over') || lower.includes('more than') ? 'Over' :
+        lower.includes('under') || lower.includes('less than') ? 'Under' :
+          null;
+      if (!pick || !Number.isFinite(line)) return null;
+      const ratio = parseStreakRatio(streak.value);
+      const key = `${streak.team || 'both'}|${pick}|${line}|${streak.value || ''}`;
+      if (seen.has(key)) return null;
+      seen.add(key);
+      return {
+        pick,
+        line,
+        odds: Number(streak.odds) || undefined,
+        ratio,
+        team: streak.team,
+        label,
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => {
+      const rateDiff = (b.ratio?.rate || 0) - (a.ratio?.rate || 0);
+      if (rateDiff) return rateDiff;
+      return (b.ratio?.total || 0) - (a.ratio?.total || 0);
+    });
+
+  const best = candidates[0];
+  if (!best) {
+    const homeCorners = recentTeamCorners(allMatches, match.home?.team_id, match.id);
+    const awayCorners = recentTeamCorners(allMatches, match.away?.team_id, match.id);
+    if (!homeCorners && !awayCorners) return null;
+    const available = [homeCorners, awayCorners].filter(Boolean);
+    const average = available.reduce((sum, item) => sum + item.avg, 0) / available.length;
+    const line = 10.5;
+    const fallback = {
+      pick: average >= line ? 'Over' : 'Under',
+      line,
+      odds: cornerBookmakerOdds(match, line, average >= line ? 'Over' : 'Under'),
+      actual: match.actuals?.corners_total,
+      model_probability: marketProbabilityFromTotalAverage({ pick: average >= line ? 'Over' : 'Under', line }, average),
+      model_average_total: average,
+      sourceLabel: 'Recent corner average',
+      sourceValue: `${average.toFixed(1)} avg`,
+      team: 'both',
+    };
+    return {
+      ...fallback,
+      result: marketResultFromActual(fallback, fallback.actual),
+    };
+  }
+  const actual = match.actuals?.corners_total;
+  const homeCorners = recentTeamCorners(allMatches, match.home?.team_id, match.id);
+  const awayCorners = recentTeamCorners(allMatches, match.away?.team_id, match.id);
+  const available = [homeCorners, awayCorners].filter(Boolean);
+  const average = available.length ? available.reduce((sum, item) => sum + item.avg, 0) / available.length : null;
+  const selected = { pick: best.pick, line: best.line };
+  return {
+    pick: best.pick,
+    line: best.line,
+    odds: best.odds || cornerBookmakerOdds(match, best.line, best.pick),
+    actual,
+    model_probability: marketProbabilityFromTotalAverage(selected, average),
+    model_average_total: average,
+    result: marketResultFromActual(best, actual),
+    sourceLabel: best.label,
+    sourceValue: best.ratio ? `${best.ratio.hits}/${best.ratio.total}` : best.label,
+    team: best.team,
+  };
 }
 
 function fmtLambda(value) {
@@ -415,6 +575,63 @@ function fmtPrice(value) {
 function impliedProbability(odds) {
   const value = Number(odds);
   return Number.isFinite(value) && value > 0 ? 1 / value : null;
+}
+
+function decimalFromProbability(probability) {
+  return Number.isFinite(probability) && probability > 0 ? 1 / probability : null;
+}
+
+function derivedDoubleChanceOdds(match, keys) {
+  const odds = match.sportsbet_odds || match.odds || {};
+  const probability = keys
+    .map((key) => impliedProbability(odds[key]))
+    .filter((value) => Number.isFinite(value))
+    .reduce((sum, value) => sum + value, 0);
+  if (!probability) return null;
+  return decimalFromProbability(Math.min(probability * 1.06, 0.99));
+}
+
+function fallbackStreakOdds(streak, match) {
+  const existing = Number(streak?.odds);
+  if (Number.isFinite(existing) && existing > 1.01) return existing;
+  const label = String(streak?.label || '').toLowerCase();
+  const team = streak?.team;
+  const odds = match.sportsbet_odds || match.odds || {};
+  const btts = match.predictions?.btts;
+
+  if (label.includes('both teams scoring') || label.includes('both teams to score') || label.includes('without clean sheet') || label.includes('no clean sheet')) {
+    return Number.isFinite(Number(btts?.odds)) && btts?.pick === 'Yes' ? Number(btts.odds) : null;
+  }
+  if (label === 'clean sheet' || label.includes('no goals conceded')) {
+    return Number.isFinite(Number(btts?.odds)) && btts?.pick === 'No' ? Number(btts.odds) : null;
+  }
+  if (label === 'wins') {
+    return team === 'home' ? odds.home : team === 'away' ? odds.away : null;
+  }
+  if (label === 'losses') {
+    return team === 'home' ? odds.away : team === 'away' ? odds.home : null;
+  }
+  if (label === 'draws') return odds.draw;
+  if (label === 'no wins') {
+    return team === 'home' ? derivedDoubleChanceOdds(match, ['draw', 'away']) : team === 'away' ? derivedDoubleChanceOdds(match, ['home', 'draw']) : null;
+  }
+  if (label === 'no losses') {
+    return team === 'home' ? derivedDoubleChanceOdds(match, ['home', 'draw']) : team === 'away' ? derivedDoubleChanceOdds(match, ['draw', 'away']) : null;
+  }
+  if (label === 'no draws') return derivedDoubleChanceOdds(match, ['home', 'away']);
+
+  const lineMatch = label.match(/(\d+(?:\.\d+)?)/);
+  const line = lineMatch ? lineMatch[1] : null;
+  const pick = label.includes('over') || label.includes('more than') ? 'Over' : label.includes('under') || label.includes('less than') ? 'Under' : null;
+  if (line && pick && label.includes('corner')) return match.corner_odds?.[line]?.[pick] ?? null;
+  if (line && pick && label.includes('card') && Number(match.predictions?.ou_cards?.line) === Number(line) && match.predictions?.ou_cards?.pick === pick) {
+    return match.predictions.ou_cards.odds ?? null;
+  }
+  if (line && pick && label.includes('goal') && Number(match.predictions?.ou_goals?.line) === Number(line) && match.predictions?.ou_goals?.pick === pick) {
+    return match.predictions.ou_goals.odds ?? null;
+  }
+
+  return Number.isFinite(existing) && existing > 0 ? existing : null;
 }
 
 function poissonMarketProbabilities(lh, la, rho = 0, line = 2.5) {
@@ -449,11 +666,10 @@ function poissonMarketProbabilities(lh, la, rho = 0, line = 2.5) {
 function comparisonFromPrices({ title, modelProb, marketOdds, fallbackLabel = null }) {
   if (!Number.isFinite(modelProb)) {
     const marketPrice = fmtPrice(marketOdds);
-    if (!marketPrice) return null;
     return {
       title,
       badge: { label: fallbackLabel || 'Trend pick', tone: 'neutral' },
-      bookmaker: { odds: marketPrice, probability: impliedProbability(marketOdds) ? fmtPct(impliedProbability(marketOdds)) : '-' },
+      bookmaker: { odds: marketPrice || '-', probability: impliedProbability(marketOdds) ? fmtPct(impliedProbability(marketOdds)) : '-' },
       model: { odds: fallbackLabel || 'Trend pick', probability: '-' },
       edgePoints: 0,
       modelEdge: 0,
@@ -464,7 +680,22 @@ function comparisonFromPrices({ title, modelProb, marketOdds, fallbackLabel = nu
   const modelPrice = fmtPrice(1 / modelProb);
   const marketPrice = fmtPrice(marketOdds);
   const marketProb = impliedProbability(marketOdds);
-  if (!modelPrice || !marketPrice || !Number.isFinite(marketProb)) return null;
+  if (!modelPrice) return null;
+
+  if (!marketPrice || !Number.isFinite(marketProb)) {
+    const isModelSuggestion = modelProb >= 0.56;
+    return {
+      title,
+      badge: { label: isModelSuggestion ? 'Model suggestion' : 'Model odds', tone: isModelSuggestion ? 'positive' : 'neutral' },
+      bookmaker: { odds: '-', probability: '-' },
+      model: { odds: modelPrice, probability: fmtPct(modelProb) },
+      edgePoints: 0,
+      modelEdge: 0,
+      note: isModelSuggestion
+        ? 'Model suggests this from recent totals; bookmaker price is not available.'
+        : 'Model fair odds from recent totals; bookmaker price is not available.',
+    };
+  }
 
   const diff = modelProb - marketProb;
   const points = Math.abs(diff * 100).toFixed(0);
@@ -487,6 +718,43 @@ function comparisonFromPrices({ title, modelProb, marketOdds, fallbackLabel = nu
   };
 }
 
+function withWinnerRiskCaution(comparison, match, market) {
+  if (!comparison || !market || market.type === 'draw') return comparison;
+  const teamId = market.type === 'home' ? match.home?.team_id : match.away?.team_id;
+  const form = recentTeamForm(match.__allMatches || [], teamId, match.id);
+  const bookmakerProb = impliedProbability(Number(comparison.bookmaker?.odds));
+  const modelProb = impliedProbability(Number(comparison.model?.odds));
+  const fallbackOdds = Number((match.odds || {})[market.type]);
+  const selectedOdds = Number(((match.sportsbet_odds || match.odds) || {})[market.type]);
+  const fallbackProb = impliedProbability(fallbackOdds);
+  const selectedProb = impliedProbability(selectedOdds);
+  const pickedNoWins = (match.team_streaks || []).some((streak) => {
+    const value = Number(String(streak.value || '').match(/\d+/)?.[0]);
+    return streak.team === market.type && String(streak.label || '').toLowerCase() === 'no wins' && Number.isFinite(value) && value >= 5;
+  });
+  const poorForm = Number.isFinite(form?.pointsPerMatch) && form.pointsPerMatch < 1;
+  const extremeMarketDisagreement =
+    Number.isFinite(bookmakerProb) && Number.isFinite(modelProb) && Math.abs(modelProb - bookmakerProb) >= 0.2;
+  const priceSourceMismatch =
+    Number.isFinite(fallbackProb) && Number.isFinite(selectedProb) &&
+    (Math.abs(fallbackProb - selectedProb) >= 0.1 || Math.max(fallbackOdds, selectedOdds) / Math.min(fallbackOdds, selectedOdds) >= 2.5);
+  const noH2hAndMarketDisagrees = Number(match.predictions?.factors?.h2h_n || 0) === 0 && extremeMarketDisagreement;
+  if (!poorForm && !pickedNoWins && !extremeMarketDisagreement && !priceSourceMismatch && !noH2hAndMarketDisagrees) return comparison;
+
+  const reasons = [];
+  if (poorForm) reasons.push(`picked team is only ${form.pointsPerMatch.toFixed(1)} PPG recently`);
+  if (pickedNoWins) reasons.push('picked team has a long no-win streak');
+  if (extremeMarketDisagreement) reasons.push('bookmaker market strongly disagrees');
+  if (priceSourceMismatch) reasons.push('bookmaker sources are not aligned');
+  if (noH2hAndMarketDisagrees) reasons.push('there is no exact H2H base for this market disagreement');
+
+  return {
+    ...comparison,
+    badge: { label: 'Verify pick', tone: 'warning' },
+    note: `Caution before taking this winner: ${reasons.join(' and ')}.`,
+  };
+}
+
 function modelVsBookmakerComparison(match, marketKey, market) {
   if (!market) return null;
   const f = match.predictions?.factors || {};
@@ -497,14 +765,15 @@ function modelVsBookmakerComparison(match, marketKey, market) {
   if (marketKey === 'winner') {
     if (!market.type || market.type === 'draw' || !probs) return null;
     const odds = match.sportsbet_odds || match.odds || {};
-    return comparisonFromPrices({
+    return withWinnerRiskCaution(comparisonFromPrices({
       title: 'Winner',
       modelProb: probs[market.type],
       marketOdds: Number(odds[market.type]),
-    });
+    }), match, market);
   }
 
   if (marketKey === 'btts' && probs) {
+    if (market.pick === 'Pass') return null;
     const modelProb = market.pick === 'No' ? 1 - probs.bttsYes : probs.bttsYes;
     return comparisonFromPrices({ title: 'BTTS', modelProb, marketOdds: Number(market.odds) });
   }
@@ -519,7 +788,17 @@ function modelVsBookmakerComparison(match, marketKey, market) {
     const line = market.line ?? 4.5;
     return comparisonFromPrices({
       title: `${market.pick || 'Cards'} ${line} Cards`,
-      modelProb: NaN,
+      modelProb: Number(market.model_probability),
+      marketOdds: Number(market.odds),
+      fallbackLabel: 'Trend pick',
+    });
+  }
+
+  if (marketKey === 'ou_corners') {
+    const line = market.line ?? 10.5;
+    return comparisonFromPrices({
+      title: `${market.pick || 'Corners'} ${line} Corners`,
+      modelProb: Number(market.model_probability),
       marketOdds: Number(market.odds),
       fallbackLabel: 'Trend pick',
     });
@@ -545,9 +824,10 @@ function winnerProbabilityBreakdown(match) {
   ];
 }
 
-function WinnerProbabilityBreakdown({ match }) {
+function WinnerProbabilityBreakdown({ match, comparison }) {
   const rows = winnerProbabilityBreakdown(match);
   const pickType = match.predictions?.winner?.type;
+  const verifyPick = comparison?.badge?.label === 'Verify pick';
   if (!rows) return null;
 
   return (
@@ -560,15 +840,19 @@ function WinnerProbabilityBreakdown({ match }) {
       <div className="grid gap-1">
         {rows.map((row) => {
           const selected = row.key === pickType;
+          const selectedClass = verifyPick
+            ? 'bg-amber-50 text-amber-950 ring-1 ring-amber-400'
+            : 'bg-emerald-100 text-emerald-900 ring-1 ring-emerald-500';
+          const selectedText = verifyPick ? 'font-semibold text-amber-800' : 'font-semibold text-emerald-800';
           return (
             <div
               key={row.key}
               className={`grid grid-cols-[minmax(0,1fr)_3.5rem_5rem] items-center gap-2 rounded px-1.5 py-1 ${
-                selected ? 'bg-emerald-100 text-emerald-900 ring-1 ring-emerald-500' : 'text-slate-600'
+                selected ? selectedClass : 'text-slate-600'
               }`}
             >
-              <span className={`truncate ${selected ? 'font-semibold text-emerald-800' : ''}`}>{row.label}</span>
-              <span className={`text-right ${selected ? 'font-semibold text-emerald-800' : ''}`}>{fmtPct(row.model) || '-'}</span>
+              <span className={`truncate ${selected ? selectedText : ''}`}>{row.label}</span>
+              <span className={`text-right ${selected ? selectedText : ''}`}>{fmtPct(row.model) || '-'}</span>
               <span className="text-right text-slate-500">{fmtPct(row.bookmaker) || '-'}</span>
             </div>
           );
@@ -1028,7 +1312,7 @@ function winnerRationale(match, allMatches) {
   const pickedName = w.type === 'away' ? awayName : w.type === 'draw' ? 'Draw' : homeName;
   const pickedTeamId = w.type === 'away' ? match.away?.team_id : w.type === 'home' ? match.home?.team_id : null;
   const otherTeamId = w.type === 'away' ? match.home?.team_id : w.type === 'home' ? match.away?.team_id : null;
-  const priceComparison = modelVsBookmakerComparison(match, 'winner', w);
+  const priceComparison = modelVsBookmakerComparison({ ...match, __allMatches: allMatches }, 'winner', w);
   const parts = [];
 
   if (w.type === 'home') {
@@ -1037,6 +1321,9 @@ function winnerRationale(match, allMatches) {
     parts.push(`The model leans ${awayName} because it expects them to create more good chances than ${homeName}.`);
   } else {
     parts.push('The model sees this as tight, with both teams projected close on chances.');
+  }
+  if (priceComparison?.badge?.label === 'Verify pick') {
+    parts.push('This is not a clean value bet yet; the market/context mismatch needs checking before trusting the winner.');
   }
   const pickedOverall = recentTeamForm(allMatches, pickedTeamId, match.id, 10);
   const otherOverall = recentTeamForm(allMatches, otherTeamId, match.id, 10);
@@ -1139,7 +1426,7 @@ function winnerRationale(match, allMatches) {
 }
 
 function bttsRationale(match) {
-  const b = match.predictions?.btts;
+  const b = displayBttsMarket(match.predictions?.btts);
   const f = match.predictions?.factors || {};
   if (!b) return null;
   const lh = Number(f.lambda_home);
@@ -1147,7 +1434,10 @@ function bttsRationale(match) {
   const parts = [];
   if (Number.isFinite(lh) && Number.isFinite(la)) {
     const pBoth = (1 - Math.exp(-lh)) * (1 - Math.exp(-la));
-    if (b.pick === 'No') {
+    if (b.pick === 'Pass') {
+      const threshold = Number(b.take_threshold || 0.56);
+      parts.push(`${(pBoth * 100).toFixed(0)}% chance both teams score is below the ${(threshold * 100).toFixed(0)}% take line`);
+    } else if (b.pick === 'No') {
       parts.push(`${((1 - pBoth) * 100).toFixed(0)}% chance at least one team blanks`);
     } else {
       parts.push(`${(pBoth * 100).toFixed(0)}% chance both teams score`);
@@ -1233,8 +1523,23 @@ function recentTeamCards(allMatches, teamId, currentMatchId, n = 5) {
   return { count: played.length, avg: total / played.length };
 }
 
+function cardsMarketWithModelProbability(match, allMatches) {
+  const market = match.predictions?.ou_cards;
+  if (!market) return null;
+  const homeCards = recentTeamCards(allMatches, match.home?.team_id, match.id);
+  const awayCards = recentTeamCards(allMatches, match.away?.team_id, match.id);
+  const available = [homeCards, awayCards].filter(Boolean);
+  if (!available.length) return market;
+  const average = available.reduce((sum, item) => sum + item.avg, 0) / available.length;
+  return {
+    ...market,
+    model_probability: marketProbabilityFromTotalAverage(market, average),
+    model_average_total: average,
+  };
+}
+
 function cardsRationale(match, allMatches) {
-  const c = match.predictions?.ou_cards;
+  const c = cardsMarketWithModelProbability(match, allMatches);
   if (!c) return null;
   const homeCards = recentTeamCards(allMatches, match.home?.team_id, match.id);
   const awayCards = recentTeamCards(allMatches, match.away?.team_id, match.id);
@@ -1254,6 +1559,39 @@ function cardsRationale(match, allMatches) {
       const supportsPick = c.pick === 'Over' ? avg > line : avg < line;
       parts.unshift(`Recent card trend ${supportsPick ? 'supports' : 'cautions against'} ${c.pick} ${line}.`);
     }
+  }
+  return parts.join(' · ');
+}
+
+function recentTeamCorners(allMatches, teamId, currentMatchId, n = 5) {
+  if (!teamId || !Array.isArray(allMatches)) return null;
+  const played = allMatches
+    .filter((m) => {
+      if (m.status !== 'FT' || m.id === currentMatchId) return false;
+      if (m.home?.team_id !== teamId && m.away?.team_id !== teamId) return false;
+      return typeof m.actuals?.corners_total === 'number';
+    })
+    .sort((a, b) => `${b.date} ${b.time}`.localeCompare(`${a.date} ${a.time}`))
+    .slice(0, n);
+  if (!played.length) return null;
+  const total = played.reduce((sum, m) => sum + m.actuals.corners_total, 0);
+  return { count: played.length, avg: total / played.length };
+}
+
+function cornersRationale(match, allMatches, cornerMarket) {
+  if (!cornerMarket) return null;
+  const homeCorners = recentTeamCorners(allMatches, match.home?.team_id, match.id);
+  const awayCorners = recentTeamCorners(allMatches, match.away?.team_id, match.id);
+  const parts = [];
+  const line = Number(cornerMarket.line ?? 10.5);
+  if (cornerMarket.sourceValue) {
+    parts.push(`Corner trend ${cornerMarket.sourceValue} for ${cornerMarket.pick} ${line}.`);
+  }
+  if (homeCorners) {
+    parts.push(`${teamNameForCopy(match.home?.name || 'Home')} matches averaging ${homeCorners.avg.toFixed(1)} corners over last ${homeCorners.count}`);
+  }
+  if (awayCorners) {
+    parts.push(`${teamNameForCopy(match.away?.name || 'Away')} matches averaging ${awayCorners.avg.toFixed(1)} corners over last ${awayCorners.count}`);
   }
   return parts.join(' · ');
 }
@@ -1943,7 +2281,7 @@ function PredictionDetail({ label, market }) {
 
 function comparisonBadgeClass(tone) {
   if (tone === 'positive') return 'border-emerald-600 bg-emerald-100 text-emerald-800';
-  if (tone === 'warning') return 'border-amber-200 bg-amber-50 text-amber-700';
+  if (tone === 'warning') return 'border-amber-400 bg-amber-100 text-amber-800';
   return 'border-slate-200 bg-slate-50 text-slate-600';
 }
 
@@ -1960,6 +2298,12 @@ function summaryRowClass(result) {
 function ModelVsBookmakerComparison({ comparison }) {
   if (!comparison?.badge?.label) return null;
   const modelFavoured = comparison.badge.tone === 'positive';
+  const bookmakerFavoured = comparison.badge.tone === 'warning';
+  const modelPanelClass = modelFavoured
+    ? 'bg-emerald-100 text-emerald-900 ring-1 ring-emerald-500'
+    : bookmakerFavoured
+      ? 'bg-amber-50 text-amber-950 ring-1 ring-amber-400'
+      : 'bg-white text-slate-600 ring-1 ring-slate-300';
   return (
     <div className="w-full rounded-md border border-slate-500 bg-white p-2 text-xs shadow-panel">
       <div className="mb-1.5 flex items-center justify-between gap-2">
@@ -1974,14 +2318,16 @@ function ModelVsBookmakerComparison({ comparison }) {
           <span className="text-right font-semibold text-ink">{comparisonOddsText(comparison.bookmaker.odds)}</span>
           <span className="text-right text-slate-500">{comparison.bookmaker.probability}</span>
         </div>
-        <div className={`grid grid-cols-[5.5rem_5.25rem_3.5rem] items-center gap-2 rounded px-1.5 py-1 ${modelFavoured ? 'bg-emerald-100 text-emerald-900 ring-1 ring-emerald-500' : ''}`}>
-          <span className={modelFavoured ? 'font-semibold text-emerald-800' : 'text-slate-500'}>Model</span>
-          <span className="text-right font-semibold text-ink">{comparisonOddsText(comparison.model.odds)}</span>
-          <span className={modelFavoured ? 'text-right font-semibold text-emerald-800' : 'text-right text-slate-500'}>{comparison.model.probability}</span>
-        </div>
-        <div className={`rounded px-1.5 py-1 leading-5 ${modelFavoured ? 'bg-emerald-50 text-slate-800 ring-1 ring-emerald-400' : 'bg-white text-slate-600 ring-1 ring-slate-300'}`}>
-          <span className="font-semibold text-slate-500">Bet note: </span>
-          {comparison.note}
+        <div className={`rounded px-1.5 py-1 ${modelPanelClass}`}>
+          <div className="grid grid-cols-[5.5rem_5.25rem_3.5rem] items-center gap-2">
+            <span className={modelFavoured ? 'font-semibold text-emerald-800' : bookmakerFavoured ? 'font-semibold text-amber-800' : 'text-slate-500'}>Model</span>
+            <span className="text-right font-semibold text-ink">{comparisonOddsText(comparison.model.odds)}</span>
+            <span className={modelFavoured ? 'text-right font-semibold text-emerald-800' : bookmakerFavoured ? 'text-right font-semibold text-amber-800' : 'text-right text-slate-500'}>{comparison.model.probability}</span>
+          </div>
+          <div className={`mt-1 leading-5 ${modelFavoured ? 'text-slate-800' : bookmakerFavoured ? 'text-amber-950' : 'text-slate-600'}`}>
+            <span className={`font-semibold ${bookmakerFavoured ? 'text-amber-800' : 'text-slate-500'}`}>{bookmakerFavoured ? 'Caution: ' : 'Bet note: '}</span>
+            {comparison.note}
+          </div>
         </div>
       </div>
     </div>
@@ -1997,6 +2343,7 @@ function StreakList({ title, streaks, match }) {
         {streaks.map((streak, index) => {
           const result = streakResultFor(streak, match);
           const displayTeam = displayTeamForStreak(streak, match);
+          const displayOdds = fallbackStreakOdds(streak, match);
           return (
             <div key={`${title}-${streak.team}-${streak.label}-${index}`} className={`rounded-md border px-3 py-2 ${streakCardClass(result)}`}>
               <div className="flex items-center justify-between gap-2">
@@ -2007,7 +2354,7 @@ function StreakList({ title, streaks, match }) {
               </div>
               <div className={`mt-1 flex items-center justify-between gap-2 text-xs ${streakMetaClass(result)}`}>
                 <span>{streak.value}</span>
-                <span>Odds {formatOdds(streak.odds)}</span>
+                <span>Odds {formatOdds(displayOdds)}</span>
               </div>
             </div>
           );
@@ -2148,14 +2495,19 @@ function H2HContextPanel({ match, allMatches }) {
 }
 
 function PredictionSummaryCard({ match, allMatches }) {
+  const matchWithContext = { ...match, __allMatches: allMatches };
   const predictions = match.predictions || {};
   const confidence = confidenceForMatch(match);
   const quality = confidence.quality;
   const winner = predictions.winner;
-  const winnerComparison = modelVsBookmakerComparison(match, 'winner', winner);
-  const bttsComparison = modelVsBookmakerComparison(match, 'btts', predictions.btts);
+  const winnerComparison = modelVsBookmakerComparison(matchWithContext, 'winner', winner);
+  const displayBtts = displayBttsMarket(predictions.btts);
+  const bttsComparison = modelVsBookmakerComparison(match, 'btts', displayBtts);
   const goalsComparison = modelVsBookmakerComparison(match, 'ou_goals', predictions.ou_goals);
-  const cardsComparison = modelVsBookmakerComparison(match, 'ou_cards', predictions.ou_cards);
+  const displayCards = cardsMarketWithModelProbability(match, allMatches);
+  const cardsComparison = modelVsBookmakerComparison(match, 'ou_cards', displayCards);
+  const cornerMarket = cornerMarketFromStreaks(match, allMatches);
+  const cornersComparison = modelVsBookmakerComparison(match, 'ou_corners', cornerMarket);
 
   // Headline = one-line summary of every pick, so it doesn't duplicate the per-market bullets below.
   const headlineParts = [];
@@ -2164,20 +2516,25 @@ function PredictionSummaryCard({ match, allMatches }) {
     const line = predictions.ou_goals.line ?? 2.5;
     headlineParts.push(`${predictions.ou_goals.pick} ${line} goals`);
   }
-  if (predictions.btts?.pick) {
-    headlineParts.push(predictions.btts.pick === 'Yes' ? 'both teams to score' : 'one team blanks');
+  if (displayBtts?.pick && displayBtts.pick !== 'Pass') {
+    headlineParts.push(displayBtts.pick === 'Yes' ? 'both teams to score' : 'one team blanks');
   }
-  if (predictions.ou_cards?.pick) {
-    const line = predictions.ou_cards.line ?? 4.5;
-    headlineParts.push(`${predictions.ou_cards.pick} ${line} cards`);
+  if (displayCards?.pick) {
+    const line = displayCards.line ?? 4.5;
+    headlineParts.push(`${displayCards.pick} ${line} cards`);
+  }
+  if (cornerMarket?.pick) {
+    const line = cornerMarket.line ?? 10.5;
+    headlineParts.push(`${cornerMarket.pick} ${line} corners`);
   }
   const headline = headlineParts.length ? `Picks: ${headlineParts.join(' / ')}.` : null;
 
   const lines = [
     { label: 'Winner', pick: winner ? formatMarketDetail(winner) : null, text: winnerRationale(match, allMatches), comparison: winnerComparison, result: winner?.result },
-    { label: 'BTTS', pick: predictions.btts ? formatMarketDetail(predictions.btts) : null, text: bttsRationale(match), comparison: bttsComparison, result: predictions.btts?.result },
+    { label: 'BTTS', pick: displayBtts ? formatMarketDetail(displayBtts) : null, text: bttsRationale(match), comparison: bttsComparison, result: displayBtts?.result },
     { label: 'Goals', pick: predictions.ou_goals ? formatMarketDetail(predictions.ou_goals) : null, text: goalsRationale(match, allMatches), comparison: goalsComparison, result: predictions.ou_goals?.result },
-    { label: 'Cards', pick: predictions.ou_cards ? formatMarketDetail(predictions.ou_cards) : null, text: cardsRationale(match, allMatches), comparison: cardsComparison, result: predictions.ou_cards?.result },
+    { label: 'Cards', pick: displayCards ? formatMarketDetail(displayCards) : null, text: cardsRationale(match, allMatches), comparison: cardsComparison, result: displayCards?.result },
+    { label: 'Corners', pick: cornerMarket ? formatMarketDetail(cornerMarket) : null, text: cornersRationale(match, allMatches, cornerMarket), comparison: cornersComparison, result: cornerMarket?.result },
   ].filter((row) => row.pick && (row.text || row.comparison));
 
   if (!headlineParts.length && !lines.length) return null;
@@ -2222,13 +2579,13 @@ function PredictionSummaryCard({ match, allMatches }) {
                 </span>
                 <span className="mt-2 block">
                   <ModelVsBookmakerComparison comparison={row.comparison} />
-                  {row.label === 'Winner' && <WinnerProbabilityBreakdown match={match} />}
+                  {row.label === 'Winner' && <WinnerProbabilityBreakdown match={matchWithContext} comparison={winnerComparison} />}
                 </span>
               </span>
               <span className="min-w-0 leading-5 text-slate-600">
                 {row.text}
                 {row.result && (
-                  <span className={`ml-2 inline-flex rounded-md px-2 py-0.5 text-xs font-semibold ${row.result === 'hit' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>
+                  <span className={`ml-2 inline-flex rounded-md px-2 py-0.5 text-xs font-semibold ${resultBadgeClass(row.result)}`}>
                     {row.result}
                   </span>
                 )}
@@ -2363,25 +2720,32 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
   );
 }
 
-function MatchCard({ match, onSelect, bookmakerId }) {
+function MatchCard({ match, onSelect, bookmakerId, allMatches }) {
+  const matchWithContext = { ...match, __allMatches: allMatches };
   const predictions = match.predictions || {};
   const odds = match.sportsbet_odds || match.odds || {};
   const actuals = match.actuals || {};
   const selectedBookmaker = BOOKMAKERS[bookmakerId] || BOOKMAKERS.sportsbet;
   const hasDirectBookmakerLink = hasDirectBookmakerMatchLink(match, selectedBookmaker.id);
-  const winnerComparison = modelVsBookmakerComparison(match, 'winner', predictions.winner);
-  const bttsComparison = modelVsBookmakerComparison(match, 'btts', predictions.btts);
+  const winnerComparison = modelVsBookmakerComparison(matchWithContext, 'winner', predictions.winner);
+  const displayBtts = displayBttsMarket(predictions.btts);
+  const bttsComparison = modelVsBookmakerComparison(match, 'btts', displayBtts);
   const goalsComparison = modelVsBookmakerComparison(match, 'ou_goals', predictions.ou_goals);
-  const cardsComparison = modelVsBookmakerComparison(match, 'ou_cards', predictions.ou_cards);
+  const displayCards = cardsMarketWithModelProbability(match, allMatches);
+  const cardsComparison = modelVsBookmakerComparison(match, 'ou_cards', displayCards);
+  const cornerMarket = cornerMarketFromStreaks(match, allMatches);
+  const cornersComparison = modelVsBookmakerComparison(match, 'ou_corners', cornerMarket);
   const confidence = confidenceForMatch(match);
   const edgeBadgeFor = (comparison) =>
     comparison?.badge?.tone === 'positive' && comparison.edgePoints > 0 ? comparison.badge.label : null;
+  const isFinished = match.status === 'FT';
   const compactPick =
-    predictions.winner ? { label: 'Winner', value: formatMarketDetail(predictions.winner), edge: edgeBadgeFor(winnerComparison) } :
-      predictions.ou_goals ? { label: 'Goals', value: formatMarketDetail(predictions.ou_goals), edge: edgeBadgeFor(goalsComparison) } :
-        predictions.btts ? { label: 'BTTS', value: formatMarketDetail(predictions.btts), edge: edgeBadgeFor(bttsComparison) } :
-          predictions.ou_cards ? { label: 'Cards', value: formatMarketDetail(predictions.ou_cards), edge: edgeBadgeFor(cardsComparison) } :
-            null;
+    predictions.winner ? { label: 'Winner', value: formatMarketDetail(predictions.winner), result: predictions.winner.result, edge: edgeBadgeFor(winnerComparison) } :
+      predictions.ou_goals ? { label: 'Goals', value: formatMarketDetail(predictions.ou_goals), result: predictions.ou_goals.result, edge: edgeBadgeFor(goalsComparison) } :
+        displayBtts ? { label: 'BTTS', value: formatMarketDetail(displayBtts), result: displayBtts.result, edge: edgeBadgeFor(bttsComparison) } :
+          displayCards ? { label: 'Cards', value: formatMarketDetail(displayCards), result: displayCards.result, edge: edgeBadgeFor(cardsComparison) } :
+            cornerMarket ? { label: 'Corners', value: formatMarketDetail(cornerMarket), result: cornerMarket.result, edge: edgeBadgeFor(cornersComparison) } :
+              null;
 
   return (
     <article className="rounded-lg border border-line bg-white shadow-panel transition active:scale-[0.99] sm:hover:-translate-y-0.5 sm:hover:border-slate-300 sm:hover:shadow-lg">
@@ -2410,20 +2774,21 @@ function MatchCard({ match, onSelect, bookmakerId }) {
       <div className="px-3 py-3 sm:px-4 sm:py-4">
         <div className="grid gap-1.5 sm:hidden">
           <div className="rounded-md border border-line bg-field/60 px-2.5 py-2">
-            <div className="flex min-w-0 items-center justify-start gap-2">
-              <TeamBadge src={teamLogo(match, 'home')} name={match.home?.name} />
-              <div className="min-w-0 whitespace-normal break-words text-left text-sm font-semibold leading-snug text-ink sm:text-base">{match.home?.name}</div>
+            <div className="flex min-w-0 items-center justify-between gap-2">
+              <div className="flex min-w-0 items-center gap-2">
+                <TeamBadge src={teamLogo(match, 'home')} name={match.home?.name} />
+                <div className="min-w-0 whitespace-normal break-words text-left text-sm font-semibold leading-snug text-ink sm:text-base">{match.home?.name}</div>
+              </div>
+              {isFinished && <TeamScoreBadge value={match.home?.goals} />}
             </div>
           </div>
-          {match.status === 'FT' && (
-            <div className="justify-self-center rounded-md bg-ink px-3 py-1.5 text-center text-sm font-semibold text-white">
-              {match.home?.goals ?? '-'}-{match.away?.goals ?? '-'}
-            </div>
-          )}
           <div className="rounded-md border border-line bg-field/60 px-2.5 py-2">
-            <div className="flex min-w-0 items-center justify-start gap-2">
-              <TeamBadge src={teamLogo(match, 'away')} name={match.away?.name} />
-              <div className="min-w-0 whitespace-normal break-words text-left text-sm font-semibold leading-snug text-ink sm:text-base">{match.away?.name}</div>
+            <div className="flex min-w-0 items-center justify-between gap-2">
+              <div className="flex min-w-0 items-center gap-2">
+                <TeamBadge src={teamLogo(match, 'away')} name={match.away?.name} />
+                <div className="min-w-0 whitespace-normal break-words text-left text-sm font-semibold leading-snug text-ink sm:text-base">{match.away?.name}</div>
+              </div>
+              {isFinished && <TeamScoreBadge value={match.away?.goals} />}
             </div>
           </div>
         </div>
@@ -2455,25 +2820,34 @@ function MatchCard({ match, onSelect, bookmakerId }) {
         </div>
 
         {compactPick && (
-          <div className="mt-3 rounded-md border border-line bg-white px-3 py-2 sm:hidden">
+          <div className={`mt-3 rounded-md border px-3 py-2 sm:hidden ${marketPillClass(compactPick.result)}`}>
             <div className="flex items-center justify-between gap-3">
               <span className="text-xs font-semibold uppercase text-slate-500">{compactPick.label}</span>
-              {compactPick.edge && (
-                <span className="inline-flex shrink-0 items-center gap-1 rounded-md border border-amber-300 bg-amber-50 px-1.5 py-0.5 text-[11px] font-semibold leading-none text-amber-700">
-                  <Star className="h-3 w-3 fill-amber-400 text-amber-500" aria-hidden="true" />
-                  {compactPick.edge}
-                </span>
-              )}
+              <span className="flex shrink-0 items-center gap-1.5">
+                {compactPick.result && (
+                  <span className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] font-semibold leading-none ${resultBadgeClass(compactPick.result)}`}>
+                    {resultIcon(compactPick.result)}
+                    {compactPick.result}
+                  </span>
+                )}
+                {compactPick.edge && (
+                  <span className="inline-flex items-center gap-1 rounded-md border border-amber-300 bg-amber-50 px-1.5 py-0.5 text-[11px] font-semibold leading-none text-amber-700">
+                    <Star className="h-3 w-3 fill-amber-400 text-amber-500" aria-hidden="true" />
+                    {compactPick.edge}
+                  </span>
+                )}
+              </span>
             </div>
             <div className="mt-1 text-base font-semibold leading-6 text-ink">{compactPick.value}</div>
           </div>
         )}
 
-        <div className="mt-4 hidden grid-cols-1 gap-2 sm:grid sm:grid-cols-2">
+        <div className="mt-4 grid grid-cols-2 gap-2">
           <MarketPill label="Winner" market={predictions.winner} edgeBadge={edgeBadgeFor(winnerComparison)} />
-          <MarketPill label="BTTS" market={predictions.btts} edgeBadge={edgeBadgeFor(bttsComparison)} />
+          <MarketPill label="BTTS" market={displayBtts} edgeBadge={edgeBadgeFor(bttsComparison)} />
           <MarketPill label="Goals" market={predictions.ou_goals} edgeBadge={edgeBadgeFor(goalsComparison)} />
-          <MarketPill label="Cards" market={predictions.ou_cards} edgeBadge={edgeBadgeFor(cardsComparison)} />
+          <MarketPill label="Cards" market={displayCards} edgeBadge={edgeBadgeFor(cardsComparison)} />
+          <MarketPill label="Corners" market={cornerMarket} edgeBadge={edgeBadgeFor(cornersComparison)} />
         </div>
 
         <div className="mt-3 grid grid-cols-3 gap-1 rounded-md bg-field p-2 text-center sm:mt-4 sm:gap-2">
@@ -2512,7 +2886,7 @@ function MatchCard({ match, onSelect, bookmakerId }) {
   );
 }
 
-function LeagueSection({ group, onSelectMatch, bookmakerId, isFavorite = false, onToggleFavorite }) {
+function LeagueSection({ group, onSelectMatch, bookmakerId, allMatches, isFavorite = false, onToggleFavorite }) {
   const finished = group.matches.filter((match) => match.status === 'FT').length;
   const upcoming = group.matches.length - finished;
 
@@ -2544,7 +2918,7 @@ function LeagueSection({ group, onSelectMatch, bookmakerId, isFavorite = false, 
       </div>
       <div className="grid grid-cols-1 gap-3 bg-field p-2 sm:gap-4 sm:p-4 lg:grid-cols-2">
         {group.matches.map((match) => (
-          <MatchCard key={`${match.league}-${match.id}`} match={match} onSelect={onSelectMatch} bookmakerId={bookmakerId} />
+          <MatchCard key={`${match.league}-${match.id}`} match={match} onSelect={onSelectMatch} bookmakerId={bookmakerId} allMatches={allMatches} />
         ))}
       </div>
     </section>
@@ -2802,16 +3176,6 @@ function HomeInner() {
                 alt="LVRstats.com"
                 className="h-16 w-auto max-w-[19rem] object-contain sm:h-20 sm:max-w-sm"
               />
-              <div className="min-w-0">
-                <p className="text-sm text-slate-500">
-                  Stats-led football picks across top leagues worldwide — refreshed every few hours.
-                </p>
-                {data?.captured_at && (
-                  <p className="mt-0.5 text-xs text-slate-400">
-                    Last updated {formatDateDMY(data.captured_at)}
-                  </p>
-                )}
-              </div>
             </div>
             <button
               type="button"
@@ -2955,6 +3319,7 @@ function HomeInner() {
               group={group}
               onSelectMatch={handleSelectMatch}
               bookmakerId={bookmakerId}
+              allMatches={matches}
               isFavorite={favoriteLeagueSet.has(group.league)}
               onToggleFavorite={handleFavoriteLeagueToggle}
             />

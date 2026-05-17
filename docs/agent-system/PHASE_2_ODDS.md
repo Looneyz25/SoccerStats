@@ -29,6 +29,16 @@ Sportsbet pages are scraped with `curl_cffi` browser impersonation. No additiona
 
 Markets matched: `Win-Draw-Win`, `Match Result`, `1X2`. Extra-time and anytime/specials markets are excluded.
 
+## Dashboard Odds Enrichment
+
+The daily `get:data` path also enriches dashboard markets outside the Phase 2 WDW workbook:
+
+- `scripts/soccer_enrich_streak_odds.py` attaches odds to H2H and team streak rows.
+- If SofaScore omits a direct streak market, streak cards reuse matching prediction odds where safe, for example `Without Clean Sheet` and `Both teams scoring` use BTTS Yes odds.
+- `No Wins`, `No Losses`, and `No Draws` can derive conservative double-chance prices from available 1X2 odds.
+- `scripts/soccer_fetch_pred_odds.py` stores match-level `corner_odds` by line so UI-generated corner models can compare against bookmaker prices.
+- Derived or fallback prices should be displayed as context, not treated as confirmed bookmaker markets unless the source market exists for the exact line.
+
 ## League Slugs
 
 | Listed League | Sportsbet Slug |

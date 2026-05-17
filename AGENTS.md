@@ -31,15 +31,17 @@ npx firebase-tools deploy --only functions --project sports-predictions-f91fd
 
 **Match data refresh** — run the routine, refresh static JSON fallback, then upload `match_data.json` to Firestore:
 ```
-npm.cmd run data:refresh
+npm.cmd run get:data
 ```
+This is a data-only operation. It must not commit, push, run a production build, or deploy; live customers receive the new data because the app reads Firestore.
+
 Use `npm.cmd run data:refresh:local` when Firestore credentials are not available. Do not add proxy/IP rotation to bypass provider controls; prefer API/fallback sources, caching, gentle sleeps, and backoff.
 
-**Prompt shortcut** — when the user says `update data`, `refresh data`, `get latest data`, or similar, treat it as a request to run the full Firestore publish path from `C:\Betting\Soccer Stats`:
+**Prompt shortcut** — when the user says `get data`, `update data`, `refresh data`, `get latest data`, or similar, treat it as a request to run the full Firestore publish path from `C:\Betting\Soccer Stats`:
 ```
-npm.cmd run data:update
+npm.cmd run get:data
 ```
-Then report whether Firestore upload succeeded. If credentials are missing, tell the user to place the service account at `.secrets/firebase-service-account.json` and run again; do not ask customers or browser clients to write Firestore data.
+Then report whether Firestore upload succeeded. Do not stage, commit, push, or deploy for a data-only refresh unless the user explicitly asks. If credentials are missing, tell the user to place the service account at `.secrets/firebase-service-account.json` and run again; do not ask customers or browser clients to write Firestore data.
 
 **Static Hosting fallback** (secondary, `out/` dir):
 ```

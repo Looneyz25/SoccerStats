@@ -25,6 +25,18 @@ All Phase 1-8 outputs in `docs/agent-system/outputs/`.
    - Model Calibration Agent adjustment counts
 4. Prepare Next.js dashboard data with `scripts/soccer_prepare_next_data.py` when the dashboard needs refreshed static data under `public/data/`.
 
+## Firestore Data Publish
+
+For normal daily operations, use:
+
+```powershell
+npm.cmd run get:data
+```
+
+This is a data-only refresh. It runs the routine, updates generated JSON and phase outputs, prepares the static fallback, and uploads `match_data.json` to Firestore through `scripts/upload_match_data_to_firestore.mjs`.
+
+It must not commit, push, build, or deploy unless the user explicitly asks for those steps. If Firestore credentials are missing, the local data refresh can still complete, but the upload will fail with instructions to restore `.secrets/firebase-service-account.json` or configure `GOOGLE_APPLICATION_CREDENTIALS` / `FIREBASE_SERVICE_ACCOUNT_JSON`.
+
 ## Required Agents
 
 | Agent | Role In Phase 7 |

@@ -90,6 +90,41 @@ def combine_double_chance(market_odds, first, second):
     # Keep a conservative bookmaker margin so derived prices don't look too generous.
     return round(1.0 / min(p * 1.06, 0.99), 2)
 
+def combine_match_double_chance(m, keys):
+    odds = m.get("sportsbet_odds") or m.get("odds") or {}
+    p = sum(implied_prob(odds.get(k)) for k in keys)
+    if p <= 0:
+        return None
+    return round(1.0 / min(p * 1.06, 0.99), 2)
+
+def prediction_fallback_streak_odds(streak, m):
+    """Reuse match/prediction odds when SofaScore streak markets omit a row."""
+    label = (streak.get("label") or "").lower()
+    who = streak.get("team", "both")
+    odds = m.get("sportsbet_odds") or m.get("odds") or {}
+    predictions = m.get("predictions") or {}
+    btts = predictions.get("btts") or {}
+
+    if "both teams scoring" in label or "both teams to score" in label or "without clean sheet" in label or "no clean sheet" in label:
+        if btts.get("pick") == "Yes":
+            return btts.get("odds")
+    if label == "clean sheet" or "no goals conceded" in label:
+        if btts.get("pick") == "No":
+            return btts.get("odds")
+    if label == "wins":
+        return odds.get("home") if who == "home" else odds.get("away") if who == "away" else None
+    if label == "losses":
+        return odds.get("away") if who == "home" else odds.get("home") if who == "away" else None
+    if label == "draws":
+        return odds.get("draw")
+    if label == "no wins":
+        return combine_match_double_chance(m, ("draw", "away")) if who == "home" else combine_match_double_chance(m, ("home", "draw")) if who == "away" else None
+    if label == "no losses":
+        return combine_match_double_chance(m, ("home", "draw")) if who == "home" else combine_match_double_chance(m, ("draw", "away")) if who == "away" else None
+    if label == "no draws":
+        return combine_match_double_chance(m, ("home", "away"))
+    return None
+
 def get_streak_odds(label, who, market_odds, home_name, away_name):
     """Map a SofaScore streak (label + which team) to the matching 90-minute market price."""
     lab = (label or '').lower()
@@ -203,6 +238,8 @@ def main():
         count = 0
         for s in need:
             o = get_streak_odds(s.get("label"), s.get("team", "both"), market, home_name, away_name)
+            if o is None:
+                o = prediction_fallback_streak_odds(s, m)
             if o is not None:
                 s["odds"] = o
                 count += 1

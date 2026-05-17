@@ -29,6 +29,28 @@ A side is a **bet** (`pick`) when `edge_s >= MIN_EDGE` and `ev_s > 0` and `marke
 
 A bet is a **lean** when `edge_s >= 0.5 * MIN_EDGE` but below the bet threshold.
 
+## Winner Value Gate
+
+The dashboard must not show a winner as a clean green value bet just because model probability is higher than bookmaker implied probability. Winner value needs supporting context.
+
+Show **green value** only when:
+
+- Model edge is positive and meaningful.
+- The selected bookmaker price is broadly aligned with the generated/fallback price.
+- The picked team is not in poor recent form.
+- The picked team does not have a long no-win streak.
+- H2H, table, or team context does not directly contradict the pick.
+
+Show **amber verify/caution** when any major warning exists:
+
+- Picked team recent form is below `1.0` points per game.
+- Picked team has `No Wins >= 5`.
+- Model and bookmaker implied probabilities differ by `20pp+`.
+- Selected bookmaker price and fallback/generated odds differ by `10pp+` implied probability, or odds ratio is `2.5x+`.
+- Exact H2H base is missing and the market strongly disagrees.
+
+Suppress or avoid promoting winner value when poor form, no-win streaks, and extreme market disagreement combine. Charlotte FC v Toronto FC on `2026-05-17` is the reference case: Toronto had model edge, but weak recent form and a large Sportsbet-vs-fallback price mismatch mean the pick should be `Verify pick`, not green value.
+
 Defaults:
 
 | Constant | Value | Reason |

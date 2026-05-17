@@ -3,7 +3,7 @@ const path = require('path');
 
 const root = path.resolve(__dirname, '..');
 const dataPath = path.join(root, 'match_data.json');
-const pagePath = path.join(root, 'app', 'page.jsx');
+const pagePath = path.join(root, 'app', 'dashboard', 'page.jsx');
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf8'));
@@ -156,7 +156,7 @@ for (const match of matches) {
   if (winnerIssue) issues.push({ id: match.id, market: 'winner', issue: winnerIssue });
 
   for (const [key, allowed] of [
-    ['btts', ['Yes', 'No']],
+    ['btts', ['Yes', 'No', 'Pass']],
     ['ou_goals', ['Over', 'Under']],
     ['ou_cards', ['Over', 'Under']],
   ]) {

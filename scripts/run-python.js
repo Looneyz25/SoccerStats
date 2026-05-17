@@ -4,6 +4,9 @@ const path = require('node:path');
 const root = path.join(__dirname, '..');
 const script = process.argv[2];
 const args = process.argv.slice(3);
+const localPython = process.platform === 'win32'
+  ? path.join(root, '.venv-local', 'Scripts', 'python.exe')
+  : path.join(root, '.venv-local', 'bin', 'python');
 
 if (!script) {
   console.error('Usage: node scripts/run-python.js <script.py> [args...]');
@@ -12,11 +15,13 @@ if (!script) {
 
 const candidates = process.platform === 'win32'
   ? [
+      { command: localPython, args: [] },
       { command: 'py', args: ['-3'] },
       { command: 'python3', args: [] },
       { command: 'python', args: [] },
     ]
   : [
+      { command: localPython, args: [] },
       { command: 'python3', args: [] },
       { command: 'python', args: [] },
     ];

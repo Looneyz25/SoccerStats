@@ -3,7 +3,8 @@
 
 Sportsbet.com.au odds (from `sportsbet_odds`) take priority for the winner pick. Fallback to
 SofaScore "Full time" 1X2. Other prediction types (BTTS / O-U goals / O-U cards) use SofaScore
-90-minute regular-time markets only.
+90-minute regular-time markets only. Match-level corner odds are also cached so the UI can price
+synthetic corner picks derived from recent averages.
 """
 import json, os, time, pathlib
 import random
@@ -69,6 +70,27 @@ def any_line(market_odds, prefix, choice):
             return choices[choice]
     return None
 
+def attach_corner_odds(m, market):
+    """Store available two-way corner prices by line for UI-generated corner picks."""
+    corner_odds = m.setdefault("corner_odds", {})
+    added = 0
+    for line in ("7.5", "8.5", "9.5", "10.5", "11.5", "12.5"):
+        choices = market.get("Corners 2-Way " + line) or market.get("Corners " + line) or {}
+        over = choices.get("Over")
+        under = choices.get("Under")
+        if over is None and under is None:
+            continue
+        existing = corner_odds.setdefault(line, {})
+        before = len(existing)
+        if over is not None:
+            existing["Over"] = over
+        if under is not None:
+            existing["Under"] = under
+        added += max(0, len(existing) - before)
+    if not corner_odds:
+        m.pop("corner_odds", None)
+    return added
+
 def attach_pred_odds(m, market):
     p = m.get("predictions") or {}
 
@@ -105,6 +127,8 @@ def attach_pred_odds(m, market):
             or any_line(market, "Cards in match", oc["pick"])
         if v is not None: oc["odds"] = v
 
+    return attach_corner_odds(m, market)
+
 def main():
     store = json.loads(STORE_PATH.read_text(encoding="utf-8"))
     added = 0
@@ -128,8 +152,11 @@ def main():
         eid = m.get("id")
         if not eid: continue
         p = m.get("predictions") or {}
-        need = any(p.get(k) and p[k].get("pick") and p[k].get("odds") is None
-                   for k in ("winner", "ou_goals", "btts", "ou_cards"))
+        need = (
+            any(p.get(k) and p[k].get("pick") and p[k].get("odds") is None
+                for k in ("winner", "ou_goals", "btts", "ou_cards"))
+            or not (m.get("corner_odds") or {}).get("10.5")
+        )
         if not need: continue
         market = seed_match_odds(m)
         fetched = fetch_all_odds(eid)
@@ -137,9 +164,11 @@ def main():
             market.update(fetched)
         if not market: continue
         before = sum(1 for k in ("winner","ou_goals","btts","ou_cards") if (p.get(k) or {}).get("odds") is not None)
+        before_corners = sum(len(v or {}) for v in (m.get("corner_odds") or {}).values())
         attach_pred_odds(m, market)
         after = sum(1 for k in ("winner","ou_goals","btts","ou_cards") if (p.get(k) or {}).get("odds") is not None)
-        delta = after - before
+        after_corners = sum(len(v or {}) for v in (m.get("corner_odds") or {}).values())
+        delta = (after - before) + (after_corners - before_corners)
         if delta:
             added += delta
             print(f" +{delta} {m['home']['name']} vs {m['away']['name']}")

@@ -4892,6 +4892,12 @@
               "event_id": "fd47ff5d-21e8-4ad8-ba48-0401e6bd3c97",
               "event_name": "Manchester United vs Nottingham Forest"
             }
+          },
+          "corner_odds": {
+            "10.5": {
+              "Over": 1.83,
+              "Under": 1.83
+            }
           }
         },
         {
@@ -5030,6 +5036,12 @@
               "source": "entain_event_request",
               "event_id": "8dbdf1ae-61dc-4df0-b05d-9b3ccfcd13e7",
               "event_name": "Brentford vs Crystal Palace"
+            }
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.83,
+              "Under": 1.83
             }
           }
         },
@@ -5171,6 +5183,12 @@
               "event_id": "0b1e3bd1-d796-4c09-a724-757e6ee457d4",
               "event_name": "Everton FC vs Sunderland AFC"
             }
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.83,
+              "Under": 1.83
+            }
           }
         },
         {
@@ -5302,6 +5320,12 @@
               "source": "entain_event_request",
               "event_id": "5d957147-c91b-4729-a669-5c4f74899371",
               "event_name": "Leeds United vs Brighton & Hove Albion"
+            }
+          },
+          "corner_odds": {
+            "10.5": {
+              "Over": 2.1,
+              "Under": 1.67
             }
           }
         },
@@ -5448,6 +5472,12 @@
               "event_id": "eba7bb3c-5577-4b54-8f20-26fc4642bc5c",
               "event_name": "Wolverhampton Wanderers vs Fulham FC"
             }
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.83,
+              "Under": 1.83
+            }
           }
         },
         {
@@ -5558,7 +5588,7 @@
           ],
           "sportsbet_odds": {
             "home": 2.15,
-            "draw": 3.8,
+            "draw": 3.75,
             "away": 3.0,
             "event_id": 10445161,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/newcastle-v-west-ham-10445161"
@@ -5580,6 +5610,12 @@
               "source": "entain_event_request",
               "event_id": "c31b2ab6-b296-4c30-9f9b-60192926cee4",
               "event_name": "Newcastle United vs West Ham United"
+            }
+          },
+          "corner_odds": {
+            "10.5": {
+              "Over": 1.8,
+              "Under": 1.91
             }
           }
         },
@@ -5762,6 +5798,12 @@
               "source": "entain_event_request",
               "event_id": "041cd3f2-f40f-4dee-956d-120c506bd0f6",
               "event_name": "Arsenal FC vs Burnley"
+            }
+          },
+          "corner_odds": {
+            "11.5": {
+              "Over": 2.1,
+              "Under": 1.67
             }
           }
         }
@@ -12335,7 +12377,7 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 2.1,
+            "home": 2.15,
             "draw": 3.0,
             "away": 3.6,
             "event_id": 10445186,
@@ -12343,6 +12385,12 @@
           },
           "bookmaker_links": {
             "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/athletic-bilbao-v-celta-vigo-10445186"
+          },
+          "corner_odds": {
+            "8.5": {
+              "Over": 1.67,
+              "Under": 2.1
+            }
           }
         },
         {
@@ -12466,7 +12514,7 @@
               "source": "computed",
               "label": "No Wins",
               "value": "6",
-              "odds": 1.18
+              "odds": 1.2
             },
             {
               "team": "away",
@@ -12507,6 +12555,12 @@
               "source": "entain_event_request",
               "event_id": "2e10c7a2-2c27-4261-a89e-157fcdc16b7f",
               "event_name": "Atletico Madrid vs Girona FC"
+            }
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.83,
+              "Under": 1.83
             }
           }
         },
@@ -12614,13 +12668,13 @@
               "source": "computed",
               "label": "Less than 2.5 goals",
               "value": "8/10",
-              "odds": 1.5
+              "odds": 1.44
             }
           ],
           "sportsbet_odds": {
             "home": 2.25,
-            "draw": 2.88,
-            "away": 3.7,
+            "draw": 3.0,
+            "away": 3.5,
             "event_id": 10445210,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/elche-v-getafe-10445210"
           },
@@ -12641,6 +12695,12 @@
               "source": "entain_event_request",
               "event_id": "bc6965c2-790a-4859-9526-fde525e730bf",
               "event_name": "Elche CF vs Getafe CF"
+            }
+          },
+          "corner_odds": {
+            "8.5": {
+              "Over": 1.67,
+              "Under": 2.1
             }
           }
         },
@@ -12755,6 +12815,12 @@
               "source": "entain_event_request",
               "event_id": "fe6585cf-455a-4983-84c2-ca427a8fd973",
               "event_name": "Levante UD vs RCD Mallorca"
+            }
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.83,
+              "Under": 1.83
             }
           }
         },
@@ -12884,6 +12950,12 @@
               "source": "entain_event_request",
               "event_id": "bb4760a5-1e67-4550-a09b-927e011a22c9",
               "event_name": "CA Osasuna vs Espanyol Barcelona"
+            }
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 2.1,
+              "Under": 1.67
             }
           }
         },
@@ -13031,6 +13103,12 @@
               "event_id": "bedbaa74-b146-444e-a5cc-95f6cd139db9",
               "event_name": "Rayo Vallecano vs Villarreal CF"
             }
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.83,
+              "Under": 1.83
+            }
           }
         },
         {
@@ -13151,6 +13229,12 @@
               "event_id": "8437a1b0-614b-4f58-8ccb-4e46ebe2e34d",
               "event_name": "Real Oviedo vs Deportivo Alaves"
             }
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.8,
+              "Under": 1.91
+            }
           }
         },
         {
@@ -13242,9 +13326,9 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 2.05,
+            "home": 2.15,
             "draw": 3.4,
-            "away": 3.5,
+            "away": 3.3,
             "event_id": 10445208,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/real-sociedad-v-valencia-10445208"
           },
@@ -13265,6 +13349,12 @@
               "source": "entain_event_request",
               "event_id": "6aabe008-7d71-431b-b5b0-337fb432b23d",
               "event_name": "Real Sociedad vs Valencia CF"
+            }
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.73,
+              "Under": 2.0
             }
           }
         },
@@ -13393,9 +13483,9 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 3.25,
+            "home": 3.3,
             "draw": 3.5,
-            "away": 2.15,
+            "away": 2.1,
             "event_id": 10445202,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/sevilla-v-real-madrid-10445202"
           },
@@ -13416,6 +13506,12 @@
               "source": "entain_event_request",
               "event_id": "db5bcd03-0f71-4f46-b5b2-b1b6a0c147ca",
               "event_name": "Sevilla FC vs Real Madrid"
+            }
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.83,
+              "Under": 1.83
             }
           }
         },
@@ -13573,6 +13669,12 @@
               "source": "entain_event_request",
               "event_id": "02bd6e42-6a1a-41a0-9091-cbbd78599d84",
               "event_name": "FC Barcelona vs Real Betis"
+            }
+          },
+          "corner_odds": {
+            "10.5": {
+              "Over": 1.91,
+              "Under": 1.8
             }
           }
         }
@@ -24667,6 +24769,12 @@
               "event_id": "3d89e8fd-2815-48dc-bc7f-868c00bf2980",
               "event_name": "Lille OSC vs AJ Auxerre"
             }
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.83,
+              "Under": 1.83
+            }
           }
         },
         {
@@ -24794,6 +24902,12 @@
               "event_id": "e1f15895-f387-4c35-b908-006e37205c54",
               "event_name": "FC Lorient vs Le Havre AC"
             }
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.8,
+              "Under": 1.91
+            }
           }
         },
         {
@@ -24887,13 +25001,13 @@
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "8/10",
-              "odds": 1.73
+              "odds": 1.8
             }
           ],
           "sportsbet_odds": {
             "home": 2.55,
-            "draw": 3.7,
-            "away": 2.55,
+            "draw": 3.5,
+            "away": 2.62,
             "event_id": 10469369,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/nantes-v-toulouse-10469369"
           },
@@ -24914,6 +25028,12 @@
               "source": "entain_event_request",
               "event_id": "977af469-a339-4c2c-876f-6f32fa00f48e",
               "event_name": "FC Nantes vs Toulouse FC"
+            }
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.91,
+              "Under": 1.8
             }
           }
         },
@@ -25026,7 +25146,7 @@
               "source": "computed",
               "label": "Less than 2.5 goals",
               "value": "5/6",
-              "odds": 2.38
+              "odds": 2.5
             },
             {
               "team": "away",
@@ -25047,12 +25167,12 @@
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "5/6",
-              "odds": 1.57
+              "odds": 1.53
             }
           ],
           "sportsbet_odds": {
             "home": 1.3,
-            "draw": 5.0,
+            "draw": 5.5,
             "away": 9.5,
             "event_id": 10469361,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/nice-v-metz-10469361"
@@ -25074,6 +25194,12 @@
               "source": "entain_event_request",
               "event_id": "69c7039f-a84d-4bb7-8db3-088126377bff",
               "event_name": "OGC Nice vs FC Metz"
+            }
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.8,
+              "Under": 1.91
             }
           }
         },
@@ -25161,7 +25287,7 @@
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "4/5",
-              "odds": 1.57
+              "odds": 1.62
             },
             {
               "team": "home",
@@ -25180,6 +25306,12 @@
           },
           "bookmaker_links": {
             "sportsbet": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/lyon-v-lens-10469365"
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.91,
+              "Under": 1.8
+            }
           }
         },
         {
@@ -25272,13 +25404,13 @@
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "8/10",
-              "odds": 1.57
+              "odds": 1.53
             }
           ],
           "sportsbet_odds": {
             "home": 2.05,
             "draw": 3.7,
-            "away": 3.3,
+            "away": 3.4,
             "event_id": 10469357,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/marseille-v-rennes-10469357"
           },
@@ -25299,6 +25431,12 @@
               "source": "entain_event_request",
               "event_id": "0fd4a3a1-3e05-4774-9e80-ac40f14828dc",
               "event_name": "Olympique Marseille vs Stade Rennais"
+            }
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.8,
+              "Under": 1.91
             }
           }
         },
@@ -25391,7 +25529,7 @@
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "4/5",
-              "odds": 1.4
+              "odds": 1.44
             },
             {
               "team": "away",
@@ -25417,6 +25555,12 @@
               "source": "entain_event_request",
               "event_id": "789ae7bc-be8b-485b-9285-a16022cafe63",
               "event_name": "Paris FC vs Paris Saint-Germain"
+            }
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.91,
+              "Under": 1.8
             }
           }
         },
@@ -25545,6 +25689,12 @@
               "source": "entain_event_request",
               "event_id": "037453bf-eea3-45c3-9f01-178a5ac6635e",
               "event_name": "RC Strasbourg Alsace vs AS Monaco"
+            }
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.83,
+              "Under": 1.83
             }
           }
         },
@@ -25684,6 +25834,12 @@
           },
           "bookmaker_links": {
             "sportsbet": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/brest-v-angers-10469364"
+          },
+          "corner_odds": {
+            "8.5": {
+              "Over": 1.73,
+              "Under": 2.0
+            }
           }
         }
       ],
@@ -26512,7 +26668,7 @@
               "source": "computed",
               "label": "No Losses",
               "value": "5",
-              "odds": 1.12
+              "odds": 1.11
             },
             {
               "team": "away",
@@ -26553,6 +26709,12 @@
               "source": "entain_event_request",
               "event_id": "5bf4da15-b5ab-4dbf-b499-9d1a00ed8849",
               "event_name": "AS Roma vs SS Lazio"
+            }
+          },
+          "corner_odds": {
+            "8.5": {
+              "Over": 1.73,
+              "Under": 2.0
             }
           }
         },
@@ -26730,6 +26892,12 @@
               "event_id": "b917c103-0b4f-48d6-bd21-4744a1b60388",
               "event_name": "Como 1907 vs Parma Calcio"
             }
+          },
+          "corner_odds": {
+            "8.5": {
+              "Over": 1.8,
+              "Under": 1.91
+            }
           }
         },
         {
@@ -26879,7 +27047,7 @@
               "source": "computed",
               "label": "No Wins",
               "value": "3",
-              "odds": 2.0
+              "odds": 2.05
             }
           ],
           "sportsbet_odds": {
@@ -26906,6 +27074,12 @@
               "source": "entain_event_request",
               "event_id": "e76a3249-8aa5-4e75-bc28-21f8092de421",
               "event_name": "Genoa CFC vs AC Milan"
+            }
+          },
+          "corner_odds": {
+            "8.5": {
+              "Over": 1.67,
+              "Under": 2.1
             }
           }
         },
@@ -27095,6 +27269,12 @@
               "event_id": "62681436-310a-41e9-a136-3105de4fdf58",
               "event_name": "Juventus FC vs ACF Fiorentina"
             }
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 2.0,
+              "Under": 1.73
+            }
           }
         },
         {
@@ -27277,6 +27457,12 @@
               "source": "entain_event_request",
               "event_id": "7a59eeb7-ff7a-44c5-a330-ce8fbea9249e",
               "event_name": "Pisa Sporting Club vs SSC Napoli"
+            }
+          },
+          "corner_odds": {
+            "8.5": {
+              "Over": 1.83,
+              "Under": 1.83
             }
           }
         },
@@ -27492,6 +27678,12 @@
               "event_id": "6c2b09e6-2dc2-4d86-876b-fbb6964805a7",
               "event_name": "Inter Milan vs Hellas Verona"
             }
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.83,
+              "Under": 1.83
+            }
           }
         },
         {
@@ -27662,6 +27854,12 @@
               "event_id": "f1a5588b-d24f-480a-a31a-72c815fba105",
               "event_name": "Atalanta BC vs Bologna FC"
             }
+          },
+          "corner_odds": {
+            "8.5": {
+              "Over": 1.67,
+              "Under": 2.1
+            }
           }
         },
         {
@@ -27826,6 +28024,12 @@
               "event_id": "0a90d179-9aed-489d-b34d-e6139a99323c",
               "event_name": "Cagliari vs Torino FC"
             }
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 2.1,
+              "Under": 1.67
+            }
           }
         },
         {
@@ -27962,7 +28166,7 @@
               "source": "computed",
               "label": "Less than 2.5 goals",
               "value": "4/5",
-              "odds": 1.73
+              "odds": 1.8
             }
           ],
           "sportsbet_odds": {
@@ -27989,6 +28193,12 @@
               "source": "entain_event_request",
               "event_id": "21e1d62a-5869-4fe0-a0e7-e885b1e203a4",
               "event_name": "US Sassuolo Calcio vs US Lecce"
+            }
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.83,
+              "Under": 1.83
             }
           }
         },
@@ -28157,6 +28367,12 @@
               "source": "entain_event_request",
               "event_id": "20ce5bda-5d48-46d9-973d-6f44f595025e",
               "event_name": "Udinese Calcio vs US Cremonese"
+            }
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.91,
+              "Under": 1.8
             }
           }
         }
@@ -33854,7 +34070,7 @@
               "source": "computed",
               "label": "No Losses",
               "value": "6",
-              "odds": 1.08
+              "odds": 1.1
             },
             {
               "team": "home",
@@ -33895,6 +34111,12 @@
               "source": "entain_event_request",
               "event_id": "2e4b7928-1a56-4305-9634-5b10f37d42c4",
               "event_name": "AZ Alkmaar vs NAC Breda"
+            }
+          },
+          "corner_odds": {
+            "10.5": {
+              "Over": 2.0,
+              "Under": 1.73
             }
           }
         },
@@ -33973,7 +34195,7 @@
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "4/5",
-              "odds": 1.4
+              "odds": 1.44
             },
             {
               "team": "away",
@@ -33987,7 +34209,7 @@
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "8/10",
-              "odds": 1.4
+              "odds": 1.44
             },
             {
               "team": "away",
@@ -34021,6 +34243,12 @@
               "source": "entain_event_request",
               "event_id": "f2f07008-d655-4140-a3ca-bd73fc4d1dc7",
               "event_name": "FC Utrecht vs Fortuna Sittard"
+            }
+          },
+          "corner_odds": {
+            "10.5": {
+              "Over": 1.91,
+              "Under": 1.8
             }
           }
         },
@@ -34117,7 +34345,7 @@
               "source": "computed",
               "label": "Less than 2.5 goals",
               "value": "4/5",
-              "odds": 2.4
+              "odds": 2.5
             },
             {
               "team": "away",
@@ -34131,7 +34359,7 @@
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "8/10",
-              "odds": 1.53
+              "odds": 1.5
             }
           ],
           "sportsbet_odds": {
@@ -34158,6 +34386,12 @@
               "source": "entain_event_request",
               "event_id": "6cd13d1f-ed83-4371-becf-758519e4b342",
               "event_name": "FC Volendam vs SC Telstar"
+            }
+          },
+          "corner_odds": {
+            "10.5": {
+              "Over": 2.0,
+              "Under": 1.73
             }
           }
         },
@@ -34303,6 +34537,12 @@
               "event_id": "7a844cbe-0ee7-4b58-a8a2-3b5dfdfc45f2",
               "event_name": "Heracles Almelo vs FC Groningen"
             }
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.67,
+              "Under": 2.1
+            }
           }
         },
         {
@@ -34404,7 +34644,7 @@
               "source": "computed",
               "label": "No Wins",
               "value": "5",
-              "odds": 3.0
+              "odds": 2.75
             },
             {
               "team": "home",
@@ -34425,7 +34665,7 @@
               "source": "computed",
               "label": "No Wins",
               "value": "4",
-              "odds": 1.1
+              "odds": 1.11
             }
           ],
           "sportsbet_odds": {
@@ -34452,6 +34692,12 @@
               "source": "entain_event_request",
               "event_id": "d9213fab-a6dd-407c-b452-33603669a4dd",
               "event_name": "NEC Nijmegen vs Go Ahead Eagles"
+            }
+          },
+          "corner_odds": {
+            "10.5": {
+              "Over": 1.8,
+              "Under": 1.91
             }
           }
         },
@@ -34602,6 +34848,12 @@
               "source": "entain_event_request",
               "event_id": "f66594ff-b5eb-41c6-a072-b65119f523e5",
               "event_name": "PEC Zwolle vs Feyenoord Rotterdam"
+            }
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.8,
+              "Under": 1.91
             }
           }
         },
@@ -34759,8 +35011,8 @@
           ],
           "sportsbet_odds": {
             "home": 2.15,
-            "draw": 3.9,
-            "away": 2.75,
+            "draw": 4.0,
+            "away": 2.8,
             "event_id": 10471814,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/dutch-eredivisie/psv-v-fc-twente-10471814"
           },
@@ -34781,6 +35033,12 @@
               "source": "entain_event_request",
               "event_id": "cfb66f5e-3fbe-40b2-bc40-87935af77632",
               "event_name": "PSV Eindhoven vs FC Twente"
+            }
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.73,
+              "Under": 2.0
             }
           }
         },
@@ -34877,25 +35135,31 @@
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "8/10",
-              "odds": 1.36
+              "odds": 1.33
             },
             {
               "team": "away",
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "5/6",
-              "odds": 1.36
+              "odds": 1.33
             }
           ],
           "sportsbet_odds": {
             "home": 2.88,
-            "draw": 4.0,
+            "draw": 4.1,
             "away": 2.05,
             "event_id": 10471788,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/dutch-eredivisie/heerenveen-v-ajax-10471788"
           },
           "bookmaker_links": {
             "sportsbet": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/dutch-eredivisie/heerenveen-v-ajax-10471788"
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.83,
+              "Under": 1.83
+            }
           }
         },
         {
@@ -35027,6 +35291,12 @@
               "source": "entain_event_request",
               "event_id": "5ff95e68-5c10-4678-8dea-c54d704b750c",
               "event_name": "Sparta Rotterdam vs Excelsior Rotterdam"
+            }
+          },
+          "corner_odds": {
+            "10.5": {
+              "Over": 1.91,
+              "Under": 1.8
             }
           }
         },
@@ -36946,8 +37216,8 @@
             "short": "DC United",
             "team_id": 2502,
             "goals": 3,
-            "rank": 10,
-            "pts": 16,
+            "rank": 8,
+            "pts": 17,
             "logo": "https://api.sofascore.app/api/v1/team/2502/image"
           },
           "away": {
@@ -36955,8 +37225,8 @@
             "short": "Orlando",
             "team_id": 52237,
             "goals": 2,
-            "rank": 8,
-            "pts": 16,
+            "rank": 10,
+            "pts": 14,
             "logo": "https://api.sofascore.app/api/v1/team/52237/image"
           },
           "odds": {
@@ -37064,7 +37334,7 @@
             "team_id": 215167,
             "goals": 2,
             "rank": 9,
-            "pts": 16,
+            "pts": 17,
             "logo": "https://api.sofascore.app/api/v1/team/215167/image"
           },
           "away": {
@@ -37484,7 +37754,7 @@
             "short": "Seattle",
             "team_id": 22009,
             "goals": 2,
-            "rank": 3,
+            "rank": 7,
             "pts": 24,
             "logo": "https://api.sofascore.app/api/v1/team/22009/image"
           },
@@ -37493,8 +37763,8 @@
             "short": "Dallas",
             "team_id": 2512,
             "goals": 1,
-            "rank": 8,
-            "pts": 19,
+            "rank": 9,
+            "pts": 22,
             "logo": "https://api.sofascore.app/api/v1/team/2512/image"
           },
           "odds": {
@@ -37602,7 +37872,7 @@
             "team_id": 22010,
             "goals": 3,
             "rank": 1,
-            "pts": 30,
+            "pts": 29,
             "logo": "https://api.sofascore.app/api/v1/team/22010/image"
           },
           "away": {
@@ -37610,7 +37880,7 @@
             "short": "Colorado",
             "team_id": 2510,
             "goals": 1,
-            "rank": 9,
+            "rank": 20,
             "pts": 16,
             "logo": "https://api.sofascore.app/api/v1/team/2510/image"
           },
@@ -37784,8 +38054,8 @@
             "short": "Austin",
             "team_id": 377973,
             "goals": 2,
-            "rank": 13,
-            "pts": 15,
+            "rank": 24,
+            "pts": 14,
             "logo": "https://api.sofascore.app/api/v1/team/377973/image"
           },
           "away": {
@@ -37793,8 +38063,8 @@
             "short": "Houston Dynamo",
             "team_id": 2508,
             "goals": 0,
-            "rank": 7,
-            "pts": 19,
+            "rank": 10,
+            "pts": 21,
             "logo": "https://api.sofascore.app/api/v1/team/2508/image"
           },
           "odds": {
@@ -37976,8 +38246,8 @@
             "short": "Sporting",
             "team_id": 2509,
             "goals": 0,
-            "rank": 15,
-            "pts": 9,
+            "rank": 29,
+            "pts": 11,
             "logo": "https://api.sofascore.app/api/v1/team/2509/image"
           },
           "odds": {
@@ -38344,8 +38614,8 @@
             "short": "St.Louis City",
             "team_id": 407803,
             "goals": 2,
-            "rank": 12,
-            "pts": 15,
+            "rank": 27,
+            "pts": 13,
             "logo": "https://api.sofascore.app/api/v1/team/407803/image"
           },
           "away": {
@@ -38483,8 +38753,8 @@
             "short": "San Diego",
             "team_id": 1043961,
             "goals": 1,
-            "rank": 10,
-            "pts": 16,
+            "rank": 17,
+            "pts": 17,
             "logo": "https://api.sofascore.app/api/v1/team/1043961/image"
           },
           "away": {
@@ -38492,7 +38762,7 @@
             "short": "Portland",
             "team_id": 22007,
             "goals": 2,
-            "rank": 14,
+            "rank": 21,
             "pts": 14,
             "logo": "https://api.sofascore.app/api/v1/team/22007/image"
           },
@@ -38698,7 +38968,7 @@
             "team_id": 243211,
             "goals": 2,
             "rank": 14,
-            "pts": 10,
+            "pts": 11,
             "logo": "https://api.sofascore.app/api/v1/team/243211/image"
           },
           "settled_at": "2026-04-27",
@@ -39094,7 +39364,7 @@
             "short": "Minnesota",
             "team_id": 41618,
             "goals": 0,
-            "rank": 6,
+            "rank": 12,
             "pts": 21,
             "logo": "https://api.sofascore.app/api/v1/team/41618/image"
           },
@@ -39103,7 +39373,7 @@
             "short": "Los Angeles",
             "team_id": 274650,
             "goals": 1,
-            "rank": 5,
+            "rank": 11,
             "pts": 21,
             "logo": "https://api.sofascore.app/api/v1/team/274650/image"
           },
@@ -39252,8 +39522,8 @@
             "short": "LA Galaxy",
             "team_id": 2513,
             "goals": 2,
-            "rank": 11,
-            "pts": 16,
+            "rank": 14,
+            "pts": 19,
             "logo": "https://api.sofascore.app/api/v1/team/2513/image"
           },
           "away": {
@@ -39262,7 +39532,7 @@
             "team_id": 5133,
             "goals": 1,
             "rank": 4,
-            "pts": 22,
+            "pts": 25,
             "logo": "https://api.sofascore.app/api/v1/team/5133/image"
           },
           "odds": {
@@ -39655,8 +39925,8 @@
             "short": "Sporting",
             "team_id": 2509,
             "goals": 1,
-            "rank": 15,
-            "pts": 9,
+            "rank": 29,
+            "pts": 11,
             "logo": "https://api.sofascore.app/api/v1/team/2509/image"
           },
           "away": {
@@ -39664,7 +39934,7 @@
             "short": "Seattle",
             "team_id": 22009,
             "goals": 1,
-            "rank": 3,
+            "rank": 7,
             "pts": 24,
             "logo": "https://api.sofascore.app/api/v1/team/22009/image"
           },
@@ -39838,7 +40108,7 @@
             "team_id": 5133,
             "goals": 2,
             "rank": 4,
-            "pts": 22,
+            "pts": 25,
             "logo": "https://api.sofascore.app/api/v1/team/5133/image"
           },
           "away": {
@@ -39846,7 +40116,7 @@
             "short": "Portland",
             "team_id": 22007,
             "goals": 0,
-            "rank": 14,
+            "rank": 21,
             "pts": 14,
             "logo": "https://api.sofascore.app/api/v1/team/22007/image"
           },
@@ -40018,8 +40288,8 @@
             "short": "Orlando",
             "team_id": 52237,
             "goals": 4,
-            "rank": 8,
-            "pts": 16,
+            "rank": 10,
+            "pts": 14,
             "logo": "https://api.sofascore.app/api/v1/team/52237/image"
           },
           "odds": {
@@ -40144,7 +40414,7 @@
             "team_id": 243211,
             "goals": 3,
             "rank": 14,
-            "pts": 10,
+            "pts": 11,
             "logo": "https://api.sofascore.app/api/v1/team/243211/image"
           },
           "away": {
@@ -40319,7 +40589,7 @@
             "short": "Minnesota",
             "team_id": 41618,
             "goals": 3,
-            "rank": 6,
+            "rank": 12,
             "pts": 21,
             "logo": "https://api.sofascore.app/api/v1/team/41618/image"
           },
@@ -40666,8 +40936,8 @@
             "short": "Dallas",
             "team_id": 2512,
             "goals": 2,
-            "rank": 8,
-            "pts": 19,
+            "rank": 9,
+            "pts": 22,
             "logo": "https://api.sofascore.app/api/v1/team/2512/image"
           },
           "odds": {
@@ -41037,7 +41307,7 @@
             "team_id": 215167,
             "goals": 3,
             "rank": 9,
-            "pts": 16,
+            "pts": 17,
             "logo": "https://api.sofascore.app/api/v1/team/215167/image"
           },
           "odds": {
@@ -41241,8 +41511,8 @@
             "short": "Houston Dynamo",
             "team_id": 2508,
             "goals": 1,
-            "rank": 7,
-            "pts": 19,
+            "rank": 10,
+            "pts": 21,
             "logo": "https://api.sofascore.app/api/v1/team/2508/image"
           },
           "away": {
@@ -41250,7 +41520,7 @@
             "short": "Colorado",
             "team_id": 2510,
             "goals": 0,
-            "rank": 9,
+            "rank": 20,
             "pts": 16,
             "logo": "https://api.sofascore.app/api/v1/team/2510/image"
           },
@@ -41403,8 +41673,8 @@
             "short": "San Diego",
             "team_id": 1043961,
             "goals": 2,
-            "rank": 10,
-            "pts": 16,
+            "rank": 17,
+            "pts": 17,
             "logo": "https://api.sofascore.app/api/v1/team/1043961/image"
           },
           "away": {
@@ -41412,7 +41682,7 @@
             "short": "Los Angeles",
             "team_id": 274650,
             "goals": 2,
-            "rank": 5,
+            "rank": 11,
             "pts": 21,
             "logo": "https://api.sofascore.app/api/v1/team/274650/image"
           },
@@ -41592,8 +41862,8 @@
             "short": "LA Galaxy",
             "team_id": 2513,
             "goals": 1,
-            "rank": 11,
-            "pts": 16,
+            "rank": 14,
+            "pts": 19,
             "logo": "https://api.sofascore.app/api/v1/team/2513/image"
           },
           "away": {
@@ -41602,7 +41872,7 @@
             "team_id": 22010,
             "goals": 1,
             "rank": 1,
-            "pts": 30,
+            "pts": 29,
             "logo": "https://api.sofascore.app/api/v1/team/22010/image"
           },
           "odds": {
@@ -41803,8 +42073,8 @@
             "short": "Austin",
             "team_id": 377973,
             "goals": 2,
-            "rank": 13,
-            "pts": 15,
+            "rank": 24,
+            "pts": 14,
             "logo": "https://api.sofascore.app/api/v1/team/377973/image"
           },
           "away": {
@@ -41812,8 +42082,8 @@
             "short": "St. Louis",
             "team_id": 407803,
             "goals": 0,
-            "rank": 12,
-            "pts": 15,
+            "rank": 27,
+            "pts": 13,
             "logo": "https://api.sofascore.app/api/v1/team/407803/image"
           },
           "predictions": {
@@ -41977,8 +42247,8 @@
             "short": "DC United",
             "team_id": 2502,
             "goals": 2,
-            "rank": 10,
-            "pts": 16,
+            "rank": 8,
+            "pts": 17,
             "logo": "https://api.sofascore.app/api/v1/team/2502/image"
           },
           "predictions": {
@@ -42488,8 +42758,8 @@
             "short": "Orlando",
             "team_id": 52237,
             "goals": 0,
-            "rank": 8,
-            "pts": 16,
+            "rank": 10,
+            "pts": 14,
             "logo": "https://api.sofascore.app/api/v1/team/52237/image"
           },
           "predictions": {
@@ -42633,7 +42903,7 @@
             "team_id": 243211,
             "goals": 1,
             "rank": 14,
-            "pts": 10,
+            "pts": 11,
             "logo": "https://api.sofascore.app/api/v1/team/243211/image"
           },
           "away": {
@@ -42641,8 +42911,8 @@
             "short": "LA Galaxy",
             "team_id": 2513,
             "goals": 2,
-            "rank": 11,
-            "pts": 16,
+            "rank": 14,
+            "pts": 19,
             "logo": "https://api.sofascore.app/api/v1/team/2513/image"
           },
           "predictions": {
@@ -42792,7 +43062,7 @@
             "team_id": 215167,
             "goals": 2,
             "rank": 9,
-            "pts": 16,
+            "pts": 17,
             "logo": "https://api.sofascore.app/api/v1/team/215167/image"
           },
           "predictions": {
@@ -43090,8 +43360,8 @@
             "short": "Dallas",
             "team_id": 2512,
             "goals": 3,
-            "rank": 8,
-            "pts": 19,
+            "rank": 9,
+            "pts": 22,
             "logo": "https://api.sofascore.app/api/v1/team/2512/image"
           },
           "away": {
@@ -43100,7 +43370,7 @@
             "team_id": 5133,
             "goals": 1,
             "rank": 4,
-            "pts": 22,
+            "pts": 25,
             "logo": "https://api.sofascore.app/api/v1/team/5133/image"
           },
           "predictions": {
@@ -43229,8 +43499,8 @@
             "short": "DC United",
             "team_id": 2502,
             "goals": 2,
-            "rank": 10,
-            "pts": 16,
+            "rank": 8,
+            "pts": 17,
             "logo": "https://api.sofascore.app/api/v1/team/2502/image"
           },
           "predictions": {
@@ -43369,7 +43639,7 @@
             "short": "Colorado",
             "team_id": 2510,
             "goals": 0,
-            "rank": 9,
+            "rank": 20,
             "pts": 16,
             "logo": "https://api.sofascore.app/api/v1/team/2510/image"
           },
@@ -43378,8 +43648,8 @@
             "short": "St. Louis",
             "team_id": 407803,
             "goals": 1,
-            "rank": 12,
-            "pts": 15,
+            "rank": 27,
+            "pts": 13,
             "logo": "https://api.sofascore.app/api/v1/team/407803/image"
           },
           "predictions": {
@@ -43517,7 +43787,7 @@
             "short": "Portland",
             "team_id": 22007,
             "goals": 6,
-            "rank": 14,
+            "rank": 21,
             "pts": 14,
             "logo": "https://api.sofascore.app/api/v1/team/22007/image"
           },
@@ -43526,8 +43796,8 @@
             "short": "Kansas",
             "team_id": 2509,
             "goals": 0,
-            "rank": 15,
-            "pts": 9,
+            "rank": 29,
+            "pts": 11,
             "logo": "https://api.sofascore.app/api/v1/team/2509/image"
           },
           "predictions": {
@@ -43691,7 +43961,7 @@
             "team_id": 22010,
             "goals": 1,
             "rank": 1,
-            "pts": 30,
+            "pts": 29,
             "logo": "https://api.sofascore.app/api/v1/team/22010/image"
           },
           "predictions": {
@@ -43840,7 +44110,7 @@
             "short": "Seattle",
             "team_id": 22009,
             "goals": 1,
-            "rank": 3,
+            "rank": 7,
             "pts": 24,
             "logo": "https://api.sofascore.app/api/v1/team/22009/image"
           },
@@ -43849,8 +44119,8 @@
             "short": "San Diego",
             "team_id": 1043961,
             "goals": 1,
-            "rank": 10,
-            "pts": 16,
+            "rank": 17,
+            "pts": 17,
             "logo": "https://api.sofascore.app/api/v1/team/1043961/image"
           },
           "predictions": {
@@ -44158,7 +44428,7 @@
             "short": "Minnesota",
             "team_id": 41618,
             "goals": 2,
-            "rank": 6,
+            "rank": 12,
             "pts": 21,
             "logo": "https://api.sofascore.app/api/v1/team/41618/image"
           },
@@ -44167,8 +44437,8 @@
             "short": "Austin",
             "team_id": 377973,
             "goals": 2,
-            "rank": 13,
-            "pts": 15,
+            "rank": 24,
+            "pts": 14,
             "logo": "https://api.sofascore.app/api/v1/team/377973/image"
           },
           "predictions": {
@@ -44289,7 +44559,7 @@
             "short": "Los Angeles",
             "team_id": 274650,
             "goals": 1,
-            "rank": 5,
+            "rank": 11,
             "pts": 21,
             "logo": "https://api.sofascore.app/api/v1/team/274650/image"
           },
@@ -44298,8 +44568,8 @@
             "short": "Houston",
             "team_id": 2508,
             "goals": 4,
-            "rank": 7,
-            "pts": 19,
+            "rank": 10,
+            "pts": 21,
             "logo": "https://api.sofascore.app/api/v1/team/2508/image"
           },
           "predictions": {
@@ -44568,7 +44838,7 @@
             "short": "Portland",
             "team_id": 22007,
             "goals": 2,
-            "rank": 14,
+            "rank": 21,
             "pts": 14,
             "logo": "https://api.sofascore.app/api/v1/team/22007/image"
           },
@@ -44674,8 +44944,8 @@
             "short": "DC United",
             "team_id": 2502,
             "goals": 1,
-            "rank": 10,
-            "pts": 16,
+            "rank": 8,
+            "pts": 17,
             "logo": "https://api.sofascore.app/api/v1/team/2502/image"
           },
           "away": {
@@ -44835,7 +45105,7 @@
             "team_id": 215167,
             "goals": 3,
             "rank": 9,
-            "pts": 16,
+            "pts": 17,
             "logo": "https://api.sofascore.app/api/v1/team/215167/image"
           },
           "away": {
@@ -45301,8 +45571,8 @@
             "short": "Orlando",
             "team_id": 52237,
             "goals": 4,
-            "rank": 8,
-            "pts": 16,
+            "rank": 10,
+            "pts": 14,
             "logo": "https://api.sofascore.app/api/v1/team/52237/image"
           },
           "away": {
@@ -45445,8 +45715,8 @@
             "short": "Dallas",
             "team_id": 2512,
             "goals": 2,
-            "rank": 8,
-            "pts": 19,
+            "rank": 9,
+            "pts": 22,
             "logo": "https://api.sofascore.app/api/v1/team/2512/image"
           },
           "away": {
@@ -45455,7 +45725,7 @@
             "team_id": 22010,
             "goals": 3,
             "rank": 1,
-            "pts": 30,
+            "pts": 29,
             "logo": "https://api.sofascore.app/api/v1/team/22010/image"
           },
           "predictions": {
@@ -45572,7 +45842,7 @@
             "short": "Minnesota",
             "team_id": 41618,
             "goals": 0,
-            "rank": 6,
+            "rank": 12,
             "pts": 21,
             "logo": "https://api.sofascore.app/api/v1/team/41618/image"
           },
@@ -45581,7 +45851,7 @@
             "short": "Colorado",
             "team_id": 2510,
             "goals": 1,
-            "rank": 9,
+            "rank": 20,
             "pts": 16,
             "logo": "https://api.sofascore.app/api/v1/team/2510/image"
           },
@@ -45709,8 +45979,8 @@
             "short": "Kansas",
             "team_id": 2509,
             "goals": 3,
-            "rank": 15,
-            "pts": 9,
+            "rank": 29,
+            "pts": 11,
             "logo": "https://api.sofascore.app/api/v1/team/2509/image"
           },
           "away": {
@@ -45718,8 +45988,8 @@
             "short": "LA Galaxy",
             "team_id": 2513,
             "goals": 1,
-            "rank": 11,
-            "pts": 16,
+            "rank": 14,
+            "pts": 19,
             "logo": "https://api.sofascore.app/api/v1/team/2513/image"
           },
           "predictions": {
@@ -45887,8 +46157,8 @@
             "short": "St. Louis",
             "team_id": 407803,
             "goals": 2,
-            "rank": 12,
-            "pts": 15,
+            "rank": 27,
+            "pts": 13,
             "logo": "https://api.sofascore.app/api/v1/team/407803/image"
           },
           "away": {
@@ -45896,7 +46166,7 @@
             "short": "Los Angeles",
             "team_id": 274650,
             "goals": 1,
-            "rank": 5,
+            "rank": 11,
             "pts": 21,
             "logo": "https://api.sofascore.app/api/v1/team/274650/image"
           },
@@ -46032,7 +46302,7 @@
             "team_id": 5133,
             "goals": 3,
             "rank": 4,
-            "pts": 22,
+            "pts": 25,
             "logo": "https://api.sofascore.app/api/v1/team/5133/image"
           },
           "away": {
@@ -46040,8 +46310,8 @@
             "short": "Houston",
             "team_id": 2508,
             "goals": 0,
-            "rank": 7,
-            "pts": 19,
+            "rank": 10,
+            "pts": 21,
             "logo": "https://api.sofascore.app/api/v1/team/2508/image"
           },
           "predictions": {
@@ -46181,8 +46451,8 @@
             "short": "San Diego",
             "team_id": 1043961,
             "goals": 5,
-            "rank": 10,
-            "pts": 16,
+            "rank": 17,
+            "pts": 17,
             "logo": "https://api.sofascore.app/api/v1/team/1043961/image"
           },
           "away": {
@@ -46190,8 +46460,8 @@
             "short": "Austin",
             "team_id": 377973,
             "goals": 0,
-            "rank": 13,
-            "pts": 15,
+            "rank": 24,
+            "pts": 14,
             "logo": "https://api.sofascore.app/api/v1/team/377973/image"
           },
           "predictions": {
@@ -46346,7 +46616,7 @@
             "short": "Seattle",
             "team_id": 22009,
             "goals": 3,
-            "rank": 3,
+            "rank": 7,
             "pts": 24,
             "logo": "https://api.sofascore.app/api/v1/team/22009/image"
           },
@@ -46504,17 +46774,171 @@
           }
         },
         {
+          "id": 15171565,
+          "date": "2026-05-17",
+          "time": "12:00",
+          "status": "upcoming",
+          "home": {
+            "name": "San Jose Earthquakes",
+            "short": "San Jose",
+            "team_id": 21825,
+            "rank": 2,
+            "pts": 29,
+            "logo": "https://api.sofascore.app/api/v1/team/21825/image"
+          },
+          "away": {
+            "name": "FC Dallas",
+            "short": "Dallas",
+            "team_id": 2512,
+            "rank": 9,
+            "pts": 22,
+            "logo": "https://api.sofascore.app/api/v1/team/2512/image"
+          },
+          "predictions": {
+            "winner": {
+              "pick": "San Jose Earthquakes",
+              "type": "home",
+              "odds": 1.8
+            },
+            "btts": {
+              "pick": "Yes",
+              "odds": 1.44
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "odds": 1.44
+            },
+            "ou_cards": {
+              "pick": "Over",
+              "line": 4.5,
+              "odds": 1.83
+            },
+            "factors": {
+              "lambda_home": 2.289,
+              "lambda_away": 1.611,
+              "h2h_n": 0,
+              "h_rank": 2,
+              "a_rank": 7,
+              "home_elo": 1502.1,
+              "away_elo": 1499.9,
+              "dixon_coles_rho": -0.1
+            }
+          },
+          "odds": {
+            "home": 1.79,
+            "draw": 4.1,
+            "away": 3.75
+          },
+          "h2h_streaks": [
+            {
+              "team": "home",
+              "label": "No losses",
+              "value": "3",
+              "odds": 1.25
+            },
+            {
+              "team": "both",
+              "label": "Without clean sheet",
+              "value": "12",
+              "odds": 1.44
+            },
+            {
+              "team": "both",
+              "label": "More than 2.5 goals",
+              "value": "4/5",
+              "odds": 1.44
+            },
+            {
+              "team": "both",
+              "label": "Both teams scoring",
+              "value": "10/10",
+              "odds": 1.44
+            },
+            {
+              "team": "home",
+              "label": "First to score",
+              "value": "5/6",
+              "odds": 1.62
+            },
+            {
+              "team": "both",
+              "label": "More than 4.5 cards",
+              "value": "5/7",
+              "odds": 1.83
+            },
+            {
+              "team": "both",
+              "label": "Less than 10.5 corners",
+              "value": "8/9",
+              "odds": 1.83
+            }
+          ],
+          "team_streaks": [
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "No Wins",
+              "value": "3",
+              "odds": 1.07
+            },
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "Without Clean Sheet",
+              "value": "7",
+              "odds": 1.44
+            },
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "Both teams scoring",
+              "value": "8/10",
+              "odds": 1.44
+            }
+          ],
+          "sportsbet_odds": {
+            "home": 9.0,
+            "draw": 3.5,
+            "away": 1.47,
+            "event_id": 10472112,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/san-jose-earthquakes-v-fc-dallas-10472112"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/san-jose-earthquakes-v-fc-dallas-10472112"
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.8,
+              "Under": 1.91
+            },
+            "10.5": {
+              "Over": 1.73,
+              "Under": 2.0
+            },
+            "11.5": {
+              "Over": 1.8,
+              "Under": 1.91
+            },
+            "12.5": {
+              "Over": 1.83,
+              "Under": 1.83
+            }
+          }
+        },
+        {
           "id": 15171553,
           "date": "2026-05-17",
-          "time": "09:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Charlotte FC",
             "short": "Charlotte",
             "team_id": 404108,
             "rank": 7,
             "pts": 18,
-            "logo": "https://api.sofascore.app/api/v1/team/404108/image"
+            "logo": "https://api.sofascore.app/api/v1/team/404108/image",
+            "goals": 3
           },
           "away": {
             "name": "Toronto FC",
@@ -46522,27 +46946,35 @@
             "team_id": 7080,
             "rank": 11,
             "pts": 14,
-            "logo": "https://api.sofascore.app/api/v1/team/7080/image"
+            "logo": "https://api.sofascore.app/api/v1/team/7080/image",
+            "goals": 1
           },
           "predictions": {
             "winner": {
               "pick": "Toronto FC",
               "type": "away",
-              "odds": 4.1
+              "odds": 4.1,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.67
+              "odds": 1.67,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.7
+              "odds": 1.7,
+              "actual": 4,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.8
+              "odds": 1.8,
+              "actual": 4,
+              "result": "miss"
             },
             "factors": {
               "lambda_home": 1.938,
@@ -46623,48 +47055,73 @@
           },
           "bookmaker_links": {
             "sportsbet": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/charlotte-fc-v-toronto-fc-10472096"
+          },
+          "settled_at": "2026-05-17",
+          "actuals": {
+            "home_corners": 7,
+            "away_corners": 3,
+            "corners_total": 10,
+            "home_fouls": 8,
+            "away_fouls": 13,
+            "fouls_total": 21,
+            "home_sot": 6,
+            "away_sot": 4,
+            "first_to_score": "home",
+            "first_scorer": "Wilfried Zaha",
+            "ht_home": 2,
+            "ht_away": 1,
+            "ht_winner": "home"
           }
         },
         {
           "id": 15171555,
           "date": "2026-05-17",
-          "time": "09:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "DC United",
             "short": "DC United",
             "team_id": 2502,
-            "rank": 10,
-            "pts": 16,
-            "logo": "https://api.sofascore.app/api/v1/team/2502/image"
+            "rank": 8,
+            "pts": 17,
+            "logo": "https://api.sofascore.app/api/v1/team/2502/image",
+            "goals": 1
           },
           "away": {
             "name": "St.Louis City",
             "short": "St. Louis",
             "team_id": 407803,
-            "rank": 12,
-            "pts": 15,
-            "logo": "https://api.sofascore.app/api/v1/team/407803/image"
+            "rank": 27,
+            "pts": 13,
+            "logo": "https://api.sofascore.app/api/v1/team/407803/image",
+            "goals": 1
           },
           "predictions": {
             "winner": {
               "pick": "DC United",
               "type": "home",
-              "odds": 2.38
+              "odds": 2.38,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.62
+              "odds": 1.62,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.8
+              "odds": 1.8,
+              "actual": 2,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.91
+              "odds": 1.91,
+              "actual": 9,
+              "result": "hit"
             },
             "factors": {
               "lambda_home": 2.135,
@@ -46749,48 +47206,73 @@
           },
           "bookmaker_links": {
             "sportsbet": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/dc-utd-v-st-louis-city-sc-10472091"
+          },
+          "settled_at": "2026-05-17",
+          "actuals": {
+            "home_corners": 5,
+            "away_corners": 8,
+            "corners_total": 13,
+            "home_fouls": 17,
+            "away_fouls": 11,
+            "fouls_total": 28,
+            "home_sot": 5,
+            "away_sot": 3,
+            "first_to_score": "away",
+            "first_scorer": "Christopher Durkin",
+            "ht_home": 0,
+            "ht_away": 0,
+            "ht_winner": "draw"
           }
         },
         {
           "id": 15171561,
           "date": "2026-05-17",
-          "time": "09:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "New England Revolution",
             "short": "New England",
             "team_id": 2511,
             "rank": 2,
             "pts": 25,
-            "logo": "https://api.sofascore.app/api/v1/team/2511/image"
+            "logo": "https://api.sofascore.app/api/v1/team/2511/image",
+            "goals": 2
           },
           "away": {
             "name": "Minnesota United",
             "short": "Minnesota",
             "team_id": 41618,
-            "rank": 6,
+            "rank": 12,
             "pts": 21,
-            "logo": "https://api.sofascore.app/api/v1/team/41618/image"
+            "logo": "https://api.sofascore.app/api/v1/team/41618/image",
+            "goals": 1
           },
           "predictions": {
             "winner": {
               "pick": "New England Revolution",
               "type": "home",
-              "odds": 2.15
+              "odds": 2.15,
+              "result": "hit"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.62
+              "odds": 1.62,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.73
+              "odds": 1.73,
+              "actual": 3,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.62
+              "odds": 1.62,
+              "actual": 3,
+              "result": "miss"
             },
             "factors": {
               "lambda_home": 1.831,
@@ -46857,20 +47339,37 @@
           },
           "bookmaker_links": {
             "sportsbet": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/new-england-v-minnesota-utd-10472097"
+          },
+          "settled_at": "2026-05-17",
+          "actuals": {
+            "home_corners": 8,
+            "away_corners": 11,
+            "corners_total": 19,
+            "home_fouls": 11,
+            "away_fouls": 12,
+            "fouls_total": 23,
+            "home_sot": 5,
+            "away_sot": 6,
+            "first_to_score": "home",
+            "first_scorer": "Carles Gil",
+            "ht_home": 1,
+            "ht_away": 1,
+            "ht_winner": "draw"
           }
         },
         {
           "id": 15171562,
           "date": "2026-05-17",
-          "time": "09:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "New York Red Bulls",
             "short": "NY Red",
             "team_id": 2506,
             "rank": 6,
             "pts": 19,
-            "logo": "https://api.sofascore.app/api/v1/team/2506/image"
+            "logo": "https://api.sofascore.app/api/v1/team/2506/image",
+            "goals": 1
           },
           "away": {
             "name": "New York City FC",
@@ -46878,27 +47377,35 @@
             "team_id": 187643,
             "rank": 5,
             "pts": 19,
-            "logo": "https://api.sofascore.app/api/v1/team/187643/image"
+            "logo": "https://api.sofascore.app/api/v1/team/187643/image",
+            "goals": 1
           },
           "predictions": {
             "winner": {
               "pick": "New York City FC",
               "type": "away",
-              "odds": 2.4
+              "odds": 2.4,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.5
+              "odds": 1.5,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.57
+              "odds": 1.57,
+              "actual": 2,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.73
+              "odds": 1.73,
+              "actual": 7,
+              "result": "hit"
             },
             "factors": {
               "lambda_home": 1.762,
@@ -46978,48 +47485,73 @@
           },
           "bookmaker_links": {
             "sportsbet": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/new-york-red-bulls-v-new-york-city-10472106"
+          },
+          "settled_at": "2026-05-17",
+          "actuals": {
+            "home_corners": 9,
+            "away_corners": 3,
+            "corners_total": 12,
+            "home_fouls": 16,
+            "away_fouls": 10,
+            "fouls_total": 26,
+            "home_sot": 5,
+            "away_sot": 5,
+            "first_to_score": "home",
+            "first_scorer": "Jorge Ruvalcaba",
+            "ht_home": 1,
+            "ht_away": 0,
+            "ht_winner": "home"
           }
         },
         {
           "id": 15171556,
           "date": "2026-05-17",
-          "time": "09:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Orlando City SC",
             "short": "Orlando",
             "team_id": 52237,
-            "rank": 8,
-            "pts": 16,
-            "logo": "https://api.sofascore.app/api/v1/team/52237/image"
+            "rank": 10,
+            "pts": 14,
+            "logo": "https://api.sofascore.app/api/v1/team/52237/image",
+            "goals": 1
           },
           "away": {
             "name": "Atlanta United",
             "short": "Atlanta",
             "team_id": 243211,
             "rank": 14,
-            "pts": 10,
-            "logo": "https://api.sofascore.app/api/v1/team/243211/image"
+            "pts": 11,
+            "logo": "https://api.sofascore.app/api/v1/team/243211/image",
+            "goals": 1
           },
           "predictions": {
             "winner": {
               "pick": "Orlando City SC",
               "type": "home",
-              "odds": 2.0
+              "odds": 2.0,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.44
+              "odds": 1.44,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.5
+              "odds": 1.5,
+              "actual": 2,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 2.2
+              "odds": 2.2,
+              "actual": 3,
+              "result": "miss"
             },
             "factors": {
               "lambda_home": 2.353,
@@ -47091,20 +47623,37 @@
           },
           "bookmaker_links": {
             "sportsbet": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/orlando-city-v-atlanta-utd-10472095"
+          },
+          "settled_at": "2026-05-17",
+          "actuals": {
+            "home_corners": 4,
+            "away_corners": 10,
+            "corners_total": 14,
+            "home_fouls": 8,
+            "away_fouls": 12,
+            "fouls_total": 20,
+            "home_sot": 3,
+            "away_sot": 6,
+            "first_to_score": "home",
+            "first_scorer": "Griffin Dorsey",
+            "ht_home": 1,
+            "ht_away": 0,
+            "ht_winner": "home"
           }
         },
         {
           "id": 15171558,
           "date": "2026-05-17",
-          "time": "09:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Philadelphia Union",
             "short": "Philadelphia",
             "team_id": 39833,
             "rank": 15,
             "pts": 7,
-            "logo": "https://api.sofascore.app/api/v1/team/39833/image"
+            "logo": "https://api.sofascore.app/api/v1/team/39833/image",
+            "goals": 1
           },
           "away": {
             "name": "Columbus Crew",
@@ -47112,27 +47661,35 @@
             "team_id": 2504,
             "rank": 13,
             "pts": 13,
-            "logo": "https://api.sofascore.app/api/v1/team/2504/image"
+            "logo": "https://api.sofascore.app/api/v1/team/2504/image",
+            "goals": 1
           },
           "predictions": {
             "winner": {
               "pick": "Columbus Crew",
               "type": "away",
-              "odds": 2.88
+              "odds": 2.88,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.62
+              "odds": 1.62,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.73
+              "odds": 1.73,
+              "actual": 2,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 2.1
+              "odds": 2.1,
+              "actual": 4,
+              "result": "miss"
             },
             "factors": {
               "lambda_home": 1.338,
@@ -47221,48 +47778,73 @@
           },
           "bookmaker_links": {
             "sportsbet": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/philadelphia-v-columbus-10472099"
+          },
+          "settled_at": "2026-05-17",
+          "actuals": {
+            "home_corners": 4,
+            "away_corners": 4,
+            "corners_total": 8,
+            "home_fouls": 14,
+            "away_fouls": 12,
+            "fouls_total": 26,
+            "home_sot": 5,
+            "away_sot": 1,
+            "first_to_score": "away",
+            "first_scorer": "Hugo Picard",
+            "ht_home": 0,
+            "ht_away": 1,
+            "ht_winner": "away"
           }
         },
         {
           "id": 15171560,
           "date": "2026-05-17",
-          "time": "10:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Austin FC",
             "short": "Austin",
             "team_id": 377973,
-            "rank": 13,
-            "pts": 15,
-            "logo": "https://api.sofascore.app/api/v1/team/377973/image"
+            "rank": 24,
+            "pts": 14,
+            "logo": "https://api.sofascore.app/api/v1/team/377973/image",
+            "goals": 1
           },
           "away": {
             "name": "Sporting Kansas City",
             "short": "Kansas",
             "team_id": 2509,
-            "rank": 15,
-            "pts": 9,
-            "logo": "https://api.sofascore.app/api/v1/team/2509/image"
+            "rank": 29,
+            "pts": 11,
+            "logo": "https://api.sofascore.app/api/v1/team/2509/image",
+            "goals": 2
           },
           "predictions": {
             "winner": {
               "pick": "Austin FC",
               "type": "home",
-              "odds": 1.44
+              "odds": 1.44,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.57
+              "odds": 1.57,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.48
+              "odds": 1.48,
+              "actual": 3,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.83
+              "odds": 1.83,
+              "actual": 7,
+              "result": "hit"
             },
             "factors": {
               "lambda_home": 2.157,
@@ -47319,48 +47901,73 @@
           },
           "bookmaker_links": {
             "sportsbet": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/austin-fc-v-kansas-city-10472105"
+          },
+          "settled_at": "2026-05-17",
+          "actuals": {
+            "home_corners": 3,
+            "away_corners": 7,
+            "corners_total": 10,
+            "home_fouls": 13,
+            "away_fouls": 21,
+            "fouls_total": 34,
+            "home_sot": 3,
+            "away_sot": 8,
+            "first_to_score": "home",
+            "first_scorer": "Mikkel Desler",
+            "ht_home": 1,
+            "ht_away": 0,
+            "ht_winner": "home"
           }
         },
         {
           "id": 15171566,
           "date": "2026-05-17",
-          "time": "10:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Houston Dynamo",
             "short": "Houston",
             "team_id": 2508,
-            "rank": 7,
-            "pts": 19,
-            "logo": "https://api.sofascore.app/api/v1/team/2508/image"
+            "rank": 10,
+            "pts": 21,
+            "logo": "https://api.sofascore.app/api/v1/team/2508/image",
+            "goals": 1
           },
           "away": {
             "name": "Vancouver Whitecaps",
             "short": "Vancouver",
             "team_id": 22010,
             "rank": 1,
-            "pts": 30,
-            "logo": "https://api.sofascore.app/api/v1/team/22010/image"
+            "pts": 29,
+            "logo": "https://api.sofascore.app/api/v1/team/22010/image",
+            "goals": 0
           },
           "predictions": {
             "winner": {
               "pick": "Vancouver Whitecaps",
               "type": "away",
-              "odds": 1.91
+              "odds": 1.91,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.57
+              "odds": 1.57,
+              "actual_btts": false,
+              "result": "miss"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.62
+              "odds": 1.62,
+              "actual": 1,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.67
+              "odds": 1.67,
+              "actual": 6,
+              "result": "hit"
             },
             "factors": {
               "lambda_home": 1.233,
@@ -47448,48 +48055,73 @@
           },
           "bookmaker_links": {
             "sportsbet": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/houston-dynamo-v-vancouver-whitecaps-10472116"
+          },
+          "settled_at": "2026-05-17",
+          "actuals": {
+            "home_corners": 4,
+            "away_corners": 3,
+            "corners_total": 7,
+            "home_fouls": 16,
+            "away_fouls": 13,
+            "fouls_total": 29,
+            "home_sot": 7,
+            "away_sot": 3,
+            "first_to_score": "home",
+            "first_scorer": "Guilherme",
+            "ht_home": 0,
+            "ht_away": 0,
+            "ht_winner": "draw"
           }
         },
         {
           "id": 15171564,
           "date": "2026-05-17",
-          "time": "10:45",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Seattle Sounders FC",
             "short": "Seattle",
             "team_id": 22009,
-            "rank": 3,
+            "rank": 7,
             "pts": 24,
-            "logo": "https://api.sofascore.app/api/v1/team/22009/image"
+            "logo": "https://api.sofascore.app/api/v1/team/22009/image",
+            "goals": 0
           },
           "away": {
             "name": "LA Galaxy",
             "short": "LA Galaxy",
             "team_id": 2513,
-            "rank": 11,
-            "pts": 16,
-            "logo": "https://api.sofascore.app/api/v1/team/2513/image"
+            "rank": 14,
+            "pts": 19,
+            "logo": "https://api.sofascore.app/api/v1/team/2513/image",
+            "goals": 2
           },
           "predictions": {
             "winner": {
               "pick": "Seattle Sounders FC",
               "type": "home",
-              "odds": 1.65
+              "odds": 1.65,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.57
+              "odds": 1.57,
+              "actual_btts": false,
+              "result": "miss"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.53
+              "odds": 1.53,
+              "actual": 2,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 2.1
+              "odds": 2.1,
+              "actual": 5,
+              "result": "hit"
             },
             "factors": {
               "lambda_home": 2.217,
@@ -47592,48 +48224,73 @@
           },
           "bookmaker_links": {
             "sportsbet": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/seattle-sounders-v-la-galaxy-10472118"
+          },
+          "settled_at": "2026-05-17",
+          "actuals": {
+            "home_corners": 5,
+            "away_corners": 1,
+            "corners_total": 6,
+            "home_fouls": 3,
+            "away_fouls": 13,
+            "fouls_total": 16,
+            "home_sot": 5,
+            "away_sot": 2,
+            "first_to_score": "away",
+            "first_scorer": "Gabriel Pec",
+            "ht_home": 0,
+            "ht_away": 1,
+            "ht_winner": "away"
           }
         },
         {
           "id": 15171563,
           "date": "2026-05-17",
-          "time": "11:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Real Salt Lake",
             "short": "Salt",
             "team_id": 5133,
             "rank": 4,
-            "pts": 22,
-            "logo": "https://api.sofascore.app/api/v1/team/5133/image"
+            "pts": 25,
+            "logo": "https://api.sofascore.app/api/v1/team/5133/image",
+            "goals": 2
           },
           "away": {
             "name": "Colorado Rapids",
             "short": "Colorado",
             "team_id": 2510,
-            "rank": 9,
+            "rank": 20,
             "pts": 16,
-            "logo": "https://api.sofascore.app/api/v1/team/2510/image"
+            "logo": "https://api.sofascore.app/api/v1/team/2510/image",
+            "goals": 1
           },
           "predictions": {
             "winner": {
               "pick": "Real Salt Lake",
               "type": "home",
-              "odds": 1.65
+              "odds": 1.65,
+              "result": "hit"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.5
+              "odds": 1.5,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.48
+              "odds": 1.48,
+              "actual": 3,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 1.91
+              "odds": 1.91,
+              "actual": 5,
+              "result": "hit"
             },
             "factors": {
               "lambda_home": 1.869,
@@ -47688,65 +48345,74 @@
             "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/real-salt-lake-v-colorado-10472110"
           },
           "bookmaker_links": {
-            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/real-salt-lake-v-colorado-10472110",
-            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/americas/us-major-league-soccer/real-salt-lake-vs-colorado-rapids/266d7397-c595-4fdc-bbac-4676bde38d3f",
-            "neds": "https://www.neds.com.au/sports/soccer/americas/us-major-league-soccer/real-salt-lake-vs-colorado-rapids/266d7397-c595-4fdc-bbac-4676bde38d3f"
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/real-salt-lake-v-colorado-10472110"
           },
-          "bookmaker_meta": {
-            "ladbrokes": {
-              "matched": true,
-              "source": "entain_event_request",
-              "event_id": "266d7397-c595-4fdc-bbac-4676bde38d3f",
-              "event_name": "Real Salt Lake vs Colorado Rapids"
-            },
-            "neds": {
-              "matched": true,
-              "source": "entain_event_request",
-              "event_id": "266d7397-c595-4fdc-bbac-4676bde38d3f",
-              "event_name": "Real Salt Lake vs Colorado Rapids"
-            }
+          "settled_at": "2026-05-17",
+          "actuals": {
+            "home_corners": 2,
+            "away_corners": 6,
+            "corners_total": 8,
+            "home_fouls": 18,
+            "away_fouls": 8,
+            "fouls_total": 26,
+            "home_sot": 8,
+            "away_sot": 4,
+            "first_to_score": "away",
+            "first_scorer": "Wayne Frederick",
+            "ht_home": 1,
+            "ht_away": 1,
+            "ht_winner": "draw"
           }
         },
         {
           "id": 15171568,
           "date": "2026-05-17",
-          "time": "11:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "San Diego FC",
             "short": "San Diego",
             "team_id": 1043961,
-            "rank": 10,
-            "pts": 16,
-            "logo": "https://api.sofascore.app/api/v1/team/1043961/image"
+            "rank": 17,
+            "pts": 17,
+            "logo": "https://api.sofascore.app/api/v1/team/1043961/image",
+            "goals": 3
           },
           "away": {
             "name": "FC Cincinnati",
             "short": "Cincinnati",
             "team_id": 215167,
             "rank": 9,
-            "pts": 16,
-            "logo": "https://api.sofascore.app/api/v1/team/215167/image"
+            "pts": 17,
+            "logo": "https://api.sofascore.app/api/v1/team/215167/image",
+            "goals": 3
           },
           "predictions": {
             "winner": {
               "pick": "San Diego FC",
               "type": "home",
-              "odds": 1.95
+              "odds": 1.95,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.33
+              "odds": 1.33,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.33
+              "odds": 1.33,
+              "actual": 6,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Over",
               "line": 4.5,
-              "odds": 2.2
+              "odds": 2.2,
+              "actual": 4,
+              "result": "miss"
             },
             "factors": {
               "lambda_home": 2.427,
@@ -47863,174 +48529,23 @@
             "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/san-diego-fc-v-fc-cincinnati-10472117"
           },
           "bookmaker_links": {
-            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/san-diego-fc-v-fc-cincinnati-10472117",
-            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/americas/us-major-league-soccer/san-diego-fc-vs-fc-cincinnati/43ae69be-f794-4ade-8774-240775a91eaf",
-            "neds": "https://www.neds.com.au/sports/soccer/americas/us-major-league-soccer/san-diego-fc-vs-fc-cincinnati/43ae69be-f794-4ade-8774-240775a91eaf"
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/san-diego-fc-v-fc-cincinnati-10472117"
           },
-          "bookmaker_meta": {
-            "ladbrokes": {
-              "matched": true,
-              "source": "entain_event_request",
-              "event_id": "43ae69be-f794-4ade-8774-240775a91eaf",
-              "event_name": "San Diego FC vs FC Cincinnati"
-            },
-            "neds": {
-              "matched": true,
-              "source": "entain_event_request",
-              "event_id": "43ae69be-f794-4ade-8774-240775a91eaf",
-              "event_name": "San Diego FC vs FC Cincinnati"
-            }
-          }
-        },
-        {
-          "id": 15171565,
-          "date": "2026-05-17",
-          "time": "12:00",
-          "status": "upcoming",
-          "home": {
-            "name": "San Jose Earthquakes",
-            "short": "San Jose",
-            "team_id": 21825,
-            "rank": 2,
-            "pts": 29,
-            "logo": "https://api.sofascore.app/api/v1/team/21825/image"
-          },
-          "away": {
-            "name": "FC Dallas",
-            "short": "Dallas",
-            "team_id": 2512,
-            "rank": 8,
-            "pts": 19,
-            "logo": "https://api.sofascore.app/api/v1/team/2512/image"
-          },
-          "predictions": {
-            "winner": {
-              "pick": "San Jose Earthquakes",
-              "type": "home",
-              "odds": 1.8
-            },
-            "btts": {
-              "pick": "Yes",
-              "odds": 1.44
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5,
-              "odds": 1.44
-            },
-            "ou_cards": {
-              "pick": "Over",
-              "line": 4.5,
-              "odds": 1.83
-            },
-            "factors": {
-              "lambda_home": 2.289,
-              "lambda_away": 1.611,
-              "h2h_n": 0,
-              "h_rank": 2,
-              "a_rank": 7,
-              "home_elo": 1502.1,
-              "away_elo": 1499.9,
-              "dixon_coles_rho": -0.1
-            }
-          },
-          "odds": {
-            "home": 1.79,
-            "draw": 4.1,
-            "away": 3.75
-          },
-          "h2h_streaks": [
-            {
-              "team": "home",
-              "label": "No losses",
-              "value": "3",
-              "odds": 1.25
-            },
-            {
-              "team": "both",
-              "label": "Without clean sheet",
-              "value": "12",
-              "odds": 1.44
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "4/5",
-              "odds": 1.44
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "10/10",
-              "odds": 1.44
-            },
-            {
-              "team": "home",
-              "label": "First to score",
-              "value": "5/6",
-              "odds": 1.62
-            },
-            {
-              "team": "both",
-              "label": "More than 4.5 cards",
-              "value": "5/7",
-              "odds": 1.83
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "8/9",
-              "odds": 1.83
-            }
-          ],
-          "team_streaks": [
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "No Wins",
-              "value": "3",
-              "odds": 1.83
-            },
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "Without Clean Sheet",
-              "value": "7",
-              "odds": 1.44
-            },
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "Both teams scoring",
-              "value": "8/10",
-              "odds": 1.44
-            }
-          ],
-          "sportsbet_odds": {
-            "home": 1.9,
-            "draw": 3.9,
-            "away": 3.7,
-            "event_id": 10472112,
-            "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/san-jose-earthquakes-v-fc-dallas-10472112"
-          },
-          "bookmaker_links": {
-            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/san-jose-earthquakes-v-fc-dallas-10472112",
-            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/americas/us-major-league-soccer/san-jose-earthquakes-vs-fc-dallas/00395cc0-3efe-4ee7-bd06-55d29ac507de",
-            "neds": "https://www.neds.com.au/sports/soccer/americas/us-major-league-soccer/san-jose-earthquakes-vs-fc-dallas/00395cc0-3efe-4ee7-bd06-55d29ac507de"
-          },
-          "bookmaker_meta": {
-            "ladbrokes": {
-              "matched": true,
-              "source": "entain_event_request",
-              "event_id": "00395cc0-3efe-4ee7-bd06-55d29ac507de",
-              "event_name": "San Jose Earthquakes vs FC Dallas"
-            },
-            "neds": {
-              "matched": true,
-              "source": "entain_event_request",
-              "event_id": "00395cc0-3efe-4ee7-bd06-55d29ac507de",
-              "event_name": "San Jose Earthquakes vs FC Dallas"
-            }
+          "settled_at": "2026-05-17",
+          "actuals": {
+            "home_corners": 7,
+            "away_corners": 2,
+            "corners_total": 9,
+            "home_fouls": 8,
+            "away_fouls": 9,
+            "fouls_total": 17,
+            "home_sot": 5,
+            "away_sot": 6,
+            "first_to_score": "away",
+            "first_scorer": "Kenji Mboma Dem",
+            "ht_home": 1,
+            "ht_away": 1,
+            "ht_winner": "draw"
           }
         },
         {
@@ -48193,7 +48708,7 @@
             "name": "Portland Timbers",
             "short": "Portland",
             "team_id": 22007,
-            "rank": 14,
+            "rank": 21,
             "pts": 14,
             "logo": "https://api.sofascore.app/api/v1/team/22007/image"
           },
@@ -48300,6 +48815,12 @@
           },
           "bookmaker_links": {
             "sportsbet": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/inter-miami-cf-v-portland-timbers-10472111"
+          },
+          "corner_odds": {
+            "10.5": {
+              "Over": 2.1,
+              "Under": 1.67
+            }
           }
         },
         {
@@ -48319,7 +48840,7 @@
             "name": "Los Angeles FC",
             "short": "Los Angeles",
             "team_id": 274650,
-            "rank": 5,
+            "rank": 11,
             "pts": 21,
             "logo": "https://api.sofascore.app/api/v1/team/274650/image"
           },
@@ -48464,6 +48985,12 @@
               "source": "entain_event_request",
               "event_id": "5eb5fb37-a187-4384-a5c4-a3b817f28dac",
               "event_name": "Nashville SC vs Los Angeles FC"
+            }
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.83,
+              "Under": 1.83
             }
           }
         }
@@ -49641,6 +50168,12 @@
               "event_id": "8fecaf37-4338-4612-8e55-9fc6eaf89779",
               "event_name": "Dundee FC vs Aberdeen FC"
             }
+          },
+          "corner_odds": {
+            "10.5": {
+              "Over": 1.83,
+              "Under": 1.83
+            }
           }
         },
         {
@@ -49862,6 +50395,12 @@
               "event_id": "3da3a065-e880-48da-bb7e-770442d2d9e7",
               "event_name": "Livingston vs Kilmarnock FC"
             }
+          },
+          "corner_odds": {
+            "10.5": {
+              "Over": 2.0,
+              "Under": 1.73
+            }
           }
         },
         {
@@ -50037,6 +50576,12 @@
               "source": "entain_event_request",
               "event_id": "1ad010f5-d9a2-475d-b439-dc5fb5551287",
               "event_name": "St Mirren vs Dundee United"
+            }
+          },
+          "corner_odds": {
+            "10.5": {
+              "Over": 1.91,
+              "Under": 1.8
             }
           }
         }
@@ -50732,46 +51277,34 @@
               "source": "computed",
               "label": "Without Clean Sheet",
               "value": "8",
-              "odds": 1.91
+              "odds": 1.95
             },
             {
               "team": "home",
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "5/6",
-              "odds": 2.0
+              "odds": 1.95
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Both teams scoring",
               "value": "5/6",
-              "odds": 1.91
+              "odds": 1.95
             },
             {
               "team": "away",
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "8/10",
-              "odds": 2.0
+              "odds": 1.95
             }
           ],
-          "bookmaker_links": {
-            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/japan/japanese-j1-league/v-varen-nagasaki-vs-vissel-kobe/0812149f-e738-4952-9321-d108b6b83e00",
-            "neds": "https://www.neds.com.au/sports/soccer/japan/japanese-j1-league/v-varen-nagasaki-vs-vissel-kobe/0812149f-e738-4952-9321-d108b6b83e00"
-          },
-          "bookmaker_meta": {
-            "ladbrokes": {
-              "matched": true,
-              "source": "entain_event_request",
-              "event_id": "0812149f-e738-4952-9321-d108b6b83e00",
-              "event_name": "V-Varen Nagasaki vs Vissel Kobe"
-            },
-            "neds": {
-              "matched": true,
-              "source": "entain_event_request",
-              "event_id": "0812149f-e738-4952-9321-d108b6b83e00",
-              "event_name": "V-Varen Nagasaki vs Vissel Kobe"
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.83,
+              "Under": 1.83
             }
           }
         },
@@ -50901,23 +51434,29 @@
               "source": "computed",
               "label": "Wins",
               "value": "3",
-              "odds": 1.66
+              "odds": 1.62
             },
             {
               "team": "away",
               "source": "computed",
               "label": "No Losses",
               "value": "3",
-              "odds": 1.18
+              "odds": 1.17
             },
             {
               "team": "away",
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "4/5",
-              "odds": 2.05
+              "odds": 2.08
             }
-          ]
+          ],
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.73,
+              "Under": 2.0
+            }
+          }
         },
         {
           "id": 15345870,
@@ -51108,7 +51647,7 @@
               "source": "computed",
               "label": "More than 2.5 goals",
               "value": "8/10",
-              "odds": 2.15
+              "odds": 2.2
             }
           ],
           "bookmaker_links": {
@@ -51127,6 +51666,12 @@
               "source": "entain_event_request",
               "event_id": "a7970997-1b5d-46a5-8b0f-4986f1a23397",
               "event_name": "Fagiano Okayama vs Shimizu S-Pulse"
+            }
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.73,
+              "Under": 2.0
             }
           }
         },
@@ -51312,14 +51857,14 @@
               "source": "computed",
               "label": "Wins",
               "value": "3",
-              "odds": 2.82
+              "odds": 2.7
             },
             {
               "team": "away",
               "source": "computed",
               "label": "No Losses",
               "value": "3",
-              "odds": 1.57
+              "odds": 1.53
             },
             {
               "team": "away",
@@ -51345,6 +51890,12 @@
               "source": "entain_event_request",
               "event_id": "0b3cb275-01c6-4de8-82d1-97df6083a388",
               "event_name": "Cerezo Osaka vs Nagoya Grampus"
+            }
+          },
+          "corner_odds": {
+            "10.5": {
+              "Over": 1.91,
+              "Under": 1.8
             }
           }
         },
@@ -51545,6 +52096,12 @@
               "event_id": "324085dd-a5fe-4bb7-a3d1-be09fbcc6d56",
               "event_name": "Kyoto Sanga FC vs Sanfrecce Hiroshima"
             }
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.67,
+              "Under": 2.1
+            }
           }
         },
         {
@@ -51730,6 +52287,12 @@
               "source": "entain_event_request",
               "event_id": "d8e3b17b-4bfc-403b-b525-a3ef09f4bb1f",
               "event_name": "Kawasaki Frontale vs Machida Zelvia"
+            }
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.91,
+              "Under": 1.8
             }
           }
         }
