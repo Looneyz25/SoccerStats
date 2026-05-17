@@ -341,6 +341,7 @@ def write_result_schedule_log(store, phase_summary):
         "## This Run",
         "",
         f"- Settled: {len(phase_summary.get('settled', []))}",
+        f"- Flashscore settled: {phase_summary.get('flashscore_settled', 0)}",
         f"- Backfilled finished: {phase_summary.get('backfilled', 0)}",
         f"- Enriched FT: {phase_summary.get('enriched', 0)}",
         f"- Pruned stale unresolved: {len(phase_summary.get('pruned', []))}",
@@ -524,6 +525,139 @@ def settle(m, e):
     return True
 
 
+FLASH_LEAGUE_ALIASES = {
+    "Premier League": ("england", {"premier league", "epl"}),
+    "Championship": ("england", {"championship"}),
+    "League One": ("england", {"league one"}),
+    "League Two": ("england", {"league two"}),
+    "LaLiga": ("spain", {"laliga"}),
+    "Bundesliga": ("germany", {"bundesliga"}),
+    "Serie A": ("italy", {"serie a"}),
+    "Ligue 1": ("france", {"ligue 1"}),
+    "Eredivisie": ("netherlands", {"eredivisie"}),
+    "Primeira Liga": ("portugal", {"liga portugal", "liga portugal betclic", "primeira liga"}),
+    "A-League Men": ("australia", {"a-league men", "a-league"}),
+    "Scottish Premiership": ("scotland", {"premiership", "scottish premiership"}),
+    "J1 League": ("japan", {"j1 league"}),
+    "UEFA Champions League": ("europe", {"champions league"}),
+    "MLS": ("usa", {"mls", "major league soccer"}),
+}
+
+TEAM_ALIASES = {
+    "manutd": "manchesterunited",
+    "manunited": "manchesterunited",
+    "mancity": "manchestercity",
+    "spurs": "tottenham",
+    "atletico": "atleticomadrid",
+    "athletic": "athleticbilbao",
+    "psg": "parissaintgermain",
+    "betis": "realbetis",
+    "sociedad": "realsociedad",
+    "newcastle": "newcastleunited",
+    "westham": "westhamunited",
+    "wolves": "wolverhampton",
+    "forest": "nottinghamforest",
+}
+
+
+def team_norm(value):
+    text = re.sub(r"[^a-z0-9]", "", (value or "").lower())
+    return text.replace("fc", "").replace("utd", "united")
+
+
+def team_names_match(a, b):
+    a_norm = team_norm(a)
+    b_norm = team_norm(b)
+    if not a_norm or not b_norm:
+        return False
+    if a_norm == b_norm or a_norm in b_norm or b_norm in a_norm:
+        return True
+    for token, expanded in TEAM_ALIASES.items():
+        if token in a_norm and expanded in b_norm:
+            return True
+        if token in b_norm and expanded in a_norm:
+            return True
+    return False
+
+
+def flashscore_league_matches(canonical, event):
+    expected_country, accepted = FLASH_LEAGUE_ALIASES.get(canonical, ("", set()))
+    country = (event.get("country") or "").lower()
+    league = (event.get("league") or "").lower()
+    bare = league.split(":", 1)[1].strip() if ":" in league else league
+    if expected_country and expected_country not in country:
+        return False
+    return bare in accepted
+
+
+def load_flashscore_finished_events():
+    try:
+        import soccer_phase1_fixtures as flashsource
+        raw = flashsource.fetch_flashscore_feed()
+        events = flashsource.parse_flashscore_feed(raw)
+        return [
+            event for event in events
+            if flashsource.flashscore_status(event.get("status")) == "FT"
+            and event.get("home_score") not in ("", None)
+            and event.get("away_score") not in ("", None)
+        ], getattr(flashsource, "LAST_FLASHSCORE_FEED_URL", "")
+    except Exception as exc:
+        print(f"  flashscore_fallback_error={exc}")
+        return [], ""
+
+
+def flashscore_result_for_match(events, league_name, match):
+    match_date = str(match.get("date") or "")
+    home_name = (match.get("home") or {}).get("name", "")
+    away_name = (match.get("away") or {}).get("name", "")
+    for event in events:
+        ts = event.get("ts")
+        if not ts:
+            continue
+        try:
+            event_date = adl_date(int(ts))
+        except Exception:
+            continue
+        if event_date != match_date:
+            continue
+        if not flashscore_league_matches(league_name, event):
+            continue
+        if not team_names_match(home_name, event.get("home")):
+            continue
+        if not team_names_match(away_name, event.get("away")):
+            continue
+        try:
+            home_score = int(event.get("home_score"))
+            away_score = int(event.get("away_score"))
+        except (TypeError, ValueError):
+            continue
+        return {
+            "event": event,
+            "home_score": home_score,
+            "away_score": away_score,
+        }
+    return None
+
+
+def settle_from_flashscore(match, result):
+    event = result["event"]
+    fake_event = {
+        "homeScore": {"current": result["home_score"]},
+        "awayScore": {"current": result["away_score"]},
+    }
+    if not settle(match, fake_event):
+        return False
+    match["flashscore_score"] = {
+        "home": result["home_score"],
+        "away": result["away_score"],
+        "status": "FT",
+        "source_match_id": event.get("id"),
+        "fetched_at": TODAY.isoformat(),
+    }
+    match["settled_source"] = "Flashscore"
+    return True
+
+
 def cards_count(eid):
     s = fetch(f"/api/v1/event/{eid}/statistics"); time.sleep(0.6)
     if not s: return None
@@ -543,7 +677,9 @@ def cards_count(eid):
 
 
 def phase_a_settle(store, cache, due_only=False):
-    settled = []; skipped = 0; not_due = 0
+    settled = []; skipped = 0; not_due = 0; flashscore_settled = 0
+    flashscore_events = None
+    flashscore_source = ""
     now = datetime.now(ADL)
     for L in store["leagues"]:
         for m in L["matches"]:
@@ -554,11 +690,24 @@ def phase_a_settle(store, cache, due_only=False):
                 not_due += 1
                 continue
             ev = cache.get(eid) or fetch(f"/api/v1/event/{eid}")
-            if not ev: continue
-            e = ev.get("event") or ev
-            if (e.get("status") or {}).get("type") != "finished":
-                skipped += 1; continue
-            if settle(m, e):
+            e = (ev.get("event") or ev) if ev else None
+            is_finished = bool(e and (e.get("status") or {}).get("type") == "finished")
+
+            used_flashscore = False
+            if not is_finished:
+                if flashscore_events is None:
+                    flashscore_events, flashscore_source = load_flashscore_finished_events()
+                    if flashscore_source:
+                        print(f"  flashscore_fallback_source={flashscore_source}")
+                result = flashscore_result_for_match(flashscore_events, L.get("name", ""), m)
+                if result and settle_from_flashscore(m, result):
+                    used_flashscore = True
+                    flashscore_settled += 1
+                else:
+                    skipped += 1
+                    continue
+
+            if used_flashscore or settle(m, e):
                 # also try cards
                 c = (m.get("predictions") or {}).get("ou_cards") or {}
                 if c.get("pick"):
@@ -568,8 +717,9 @@ def phase_a_settle(store, cache, due_only=False):
                         c["actual"] = cards
                         c["result"] = ("hit" if (c["pick"] == "Over" and cards > line) or
                                        (c["pick"] == "Under" and cards < line) else "miss")
-                settled.append(f"{L['name']}: {m['home']['name']} {m['home']['goals']}-{m['away']['goals']} {m['away']['name']}")
-    return {"settled": settled, "skipped": skipped, "not_due": not_due}
+                source_note = " [Flashscore]" if used_flashscore else ""
+                settled.append(f"{L['name']}: {m['home']['name']} {m['home']['goals']}-{m['away']['goals']} {m['away']['name']}{source_note}")
+    return {"settled": settled, "skipped": skipped, "not_due": not_due, "flashscore_settled": flashscore_settled}
 
 
 # ----------------------------------------------------------------------------
@@ -611,6 +761,179 @@ def parse_full_time_odds(payload):
                 elif k == "2": out["away"] = round(v, 2)
             if len(out) == 3: return out
     return None
+
+
+_LIVESCORE_DAY_CACHE = {}
+LIVESCORE_BASE = "https://www.livescore.com"
+LIVESCORE_API_BASE = "https://prod-cdn-mev-api.livescore.com"
+
+
+def slugify_path(value):
+    return re.sub(r"[^a-z0-9]+", "-", (value or "").lower()).strip("-")
+
+
+def livescore_tz_offset_for(match):
+    kickoff = match_kickoff_datetime(match)
+    if kickoff and kickoff.utcoffset():
+        return kickoff.utcoffset().total_seconds() / 3600
+    return 9.5
+
+
+def livescore_date_payload(match_date, tz_offset):
+    key = (match_date, tz_offset)
+    if key in _LIVESCORE_DAY_CACHE:
+        return _LIVESCORE_DAY_CACHE[key]
+    compact_date = (match_date or "").replace("-", "")
+    if not compact_date:
+        return None
+    url = (
+        f"{LIVESCORE_API_BASE}/v1/api/app/date/soccer/{compact_date}/{tz_offset:g}"
+        "?countryCode=AU&locale=en"
+    )
+    try:
+        resp = requests.get(url, impersonate=_profile(), timeout=20, headers={"Accept": "application/json"})
+        if resp.status_code != 200:
+            _LIVESCORE_DAY_CACHE[key] = None
+            return None
+        payload = resp.json()
+    except Exception:
+        payload = None
+    _LIVESCORE_DAY_CACHE[key] = payload
+    return payload
+
+
+def stage_matches_league(stage, league_name):
+    country = (stage.get("Cnm") or stage.get("Ccd") or "").lower()
+    league = (stage.get("CompN") or stage.get("Snm") or "").lower()
+    pseudo_event = {"country": country, "league": league}
+    return flashscore_league_matches(league_name, pseudo_event) or team_norm(league_name) == team_norm(league)
+
+
+def find_livescore_event(league_name, match):
+    payload = livescore_date_payload(match.get("date"), livescore_tz_offset_for(match))
+    if not payload:
+        return None
+    home_name = (match.get("home") or {}).get("name", "")
+    away_name = (match.get("away") or {}).get("name", "")
+    for stage in payload.get("Stages") or []:
+        if not stage_matches_league(stage, league_name):
+            continue
+        for event in stage.get("Events") or []:
+            home = ((event.get("T1") or [{}])[0] or {}).get("Nm", "")
+            away = ((event.get("T2") or [{}])[0] or {}).get("Nm", "")
+            if team_names_match(home_name, home) and team_names_match(away_name, away):
+                return stage, event
+    return None
+
+
+def livescore_event_page(stage, event, suffix=""):
+    country_slug = slugify_path(stage.get("Ccd") or stage.get("Cnm") or "")
+    competition_slug = slugify_path(stage.get("CompUrlName") or stage.get("CompN") or stage.get("Snm") or "")
+    home = ((event.get("T1") or [{}])[0] or {}).get("Nm", "")
+    away = ((event.get("T2") or [{}])[0] or {}).get("Nm", "")
+    match_slug = f"{slugify_path(home)}-vs-{slugify_path(away)}"
+    event_id = event.get("Eid")
+    if not (country_slug and competition_slug and match_slug and event_id):
+        return None
+    return f"{LIVESCORE_BASE}/en/football/{country_slug}/{competition_slug}/{match_slug}/{event_id}/{suffix}"
+
+
+def livescore_page_event(url):
+    if not url:
+        return None
+    try:
+        resp = requests.get(url, impersonate=_profile(), timeout=20, headers={"Accept": "text/html"})
+        if resp.status_code != 200:
+            return None
+        match = re.search(r'<script id="__NEXT_DATA__" type="application/json">(.*?)</script>', resp.text, re.S)
+        if not match:
+            return None
+        data = json.loads(match.group(1))
+        return (((data.get("props") or {}).get("pageProps") or {}).get("initialEventData") or {}).get("event")
+    except Exception:
+        return None
+
+
+def first_goal_from_livescore_incidents(event):
+    goals = []
+    for period in ((event or {}).get("incidents") or {}).get("incs", {}).values():
+        for minute, groups in period.items():
+            try:
+                minute_number = int(str(minute).split("+", 1)[0])
+            except Exception:
+                minute_number = 999
+            for group in groups or []:
+                for side_key, side in (("HOME", "home"), ("AWAY", "away")):
+                    for incident in group.get(side_key) or []:
+                        if incident.get("type") == "FootballGoal":
+                            goals.append((minute_number, side, incident))
+    if not goals:
+        return {}
+    _, side, incident = sorted(goals, key=lambda item: item[0])[0]
+    return {
+        "first_to_score": side,
+        "first_scorer": incident.get("name") or incident.get("shortName"),
+    }
+
+
+def livescore_actuals_for_match(league_name, match):
+    found = find_livescore_event(league_name, match)
+    if not found:
+        return None
+    stage, event = found
+    stats_event = livescore_page_event(livescore_event_page(stage, event, "stats/"))
+    summary_event = livescore_page_event(livescore_event_page(stage, event, ""))
+    stats = (stats_event or {}).get("statistics") or {}
+    if not stats and not summary_event:
+        return None
+    out = {"source": "LiveScore"}
+    corners = stats.get("corners")
+    if isinstance(corners, list) and len(corners) >= 2:
+        out.update(home_corners=int(corners[0] or 0), away_corners=int(corners[1] or 0))
+        out["corners_total"] = out["home_corners"] + out["away_corners"]
+    fouls = stats.get("fouls")
+    if isinstance(fouls, list) and len(fouls) >= 2:
+        out.update(home_fouls=int(fouls[0] or 0), away_fouls=int(fouls[1] or 0))
+        out["fouls_total"] = out["home_fouls"] + out["away_fouls"]
+    shots = stats.get("shotsOnTarget")
+    if isinstance(shots, list) and len(shots) >= 2:
+        out.update(home_sot=int(shots[0] or 0), away_sot=int(shots[1] or 0))
+    yellow = stats.get("yellowCards") if isinstance(stats.get("yellowCards"), list) else [0, 0]
+    red = stats.get("redCards") if isinstance(stats.get("redCards"), list) else [0, 0]
+    if len(yellow) >= 2 and len(red) >= 2:
+        out.update(
+            home_cards=int(yellow[0] or 0) + int(red[0] or 0),
+            away_cards=int(yellow[1] or 0) + int(red[1] or 0),
+        )
+        out["cards_total"] = out["home_cards"] + out["away_cards"]
+    out.update(first_goal_from_livescore_incidents(summary_event))
+    if event.get("Trh1") not in ("", None) and event.get("Trh2") not in ("", None):
+        out["ht_home"] = int(event.get("Trh1") or 0)
+        out["ht_away"] = int(event.get("Trh2") or 0)
+        out["ht_winner"] = "home" if out["ht_home"] > out["ht_away"] else ("away" if out["ht_away"] > out["ht_home"] else "draw")
+    return out if len(out) > 1 else None
+
+
+def settle_total_market(market, actual):
+    if not market or actual is None:
+        return
+    try:
+        line = float(market.get("line"))
+    except (TypeError, ValueError):
+        return
+    pick = market.get("pick")
+    market["actual"] = actual
+    if pick == "Over":
+        market["result"] = "hit" if actual > line else "miss"
+    elif pick == "Under":
+        market["result"] = "hit" if actual < line else "miss"
+
+
+def settle_stat_markets(match):
+    actuals = match.get("actuals") or {}
+    predictions = match.get("predictions") or {}
+    settle_total_market(predictions.get("ou_cards"), actuals.get("cards_total"))
+    settle_total_market(predictions.get("ou_corners"), actuals.get("corners_total"))
 
 
 def actuals_for(eid):
@@ -694,7 +1017,13 @@ def phase_a5_backfill_enrich(store, seen_ids, backfill_dates=None, recent_only=F
                     if tstr and need_team: m["team_streaks"] = tstr
             if need_actuals:
                 act = actuals_for(eid)
-                if act: m["actuals"] = act
+                if act: m["actuals"] = {**(m.get("actuals") or {}), **act}
+            actuals = m.get("actuals") or {}
+            if not all(key in actuals for key in ("corners_total", "fouls_total", "home_sot", "away_sot", "cards_total", "first_to_score")):
+                fallback_actuals = livescore_actuals_for_match(L.get("name", ""), m)
+                if fallback_actuals:
+                    m["actuals"] = {**actuals, **fallback_actuals}
+            settle_stat_markets(m)
             enriched += 1
     return {"added": added, "add_brk": add_brk, "enriched": enriched}
 
@@ -1358,7 +1687,7 @@ def run_full_refresh():
     # Phase A
     print("\n[Phase A] settle pending")
     pa = phase_a_settle(store, p0["cache"])
-    print(f"  settled={len(pa['settled'])}  skipped={pa['skipped']}")
+    print(f"  settled={len(pa['settled'])}  skipped={pa['skipped']}  flashscore_settled={pa.get('flashscore_settled', 0)}")
 
     # Phase A.5
     print("\n[Phase A.5] backfill finished + enrich")
@@ -1420,7 +1749,7 @@ def run_results_only():
 
     print("\n[Results A] settle due pending matches")
     pa = phase_a_settle(store, {}, due_only=True)
-    print(f"  settled={len(pa['settled'])}  skipped={pa['skipped']}  not_due={pa['not_due']}")
+    print(f"  settled={len(pa['settled'])}  skipped={pa['skipped']}  not_due={pa['not_due']}  flashscore_settled={pa.get('flashscore_settled', 0)}")
 
     print("\n[Results B] backfill finished + enrich recent FT")
     pa5 = phase_a5_backfill_enrich(
@@ -1443,6 +1772,7 @@ def run_results_only():
     save_store(store)
     schedule_paths = write_result_schedule_log(store, {
         "settled": pa["settled"],
+        "flashscore_settled": pa.get("flashscore_settled", 0),
         "backfilled": pa5["added"],
         "enriched": pa5["enriched"],
         "protected": pa6.get("protected", 0),

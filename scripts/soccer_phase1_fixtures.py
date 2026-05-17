@@ -120,7 +120,7 @@ THESPORTSDB_LEAGUE_HINTS = {
 # strip that before comparison. Exact match prevents LaLiga2/MLS Next Pro
 # style leaks where substring matches succeed.
 FLASHSCORE_LEAGUE_NAMES = {
-    "Premier League": ("england", {"premier league"}),
+    "Premier League": ("england", {"premier league", "epl"}),
     "Championship": ("england", {"championship"}),
     "League One": ("england", {"league one"}),
     "League Two": ("england", {"league two"}),

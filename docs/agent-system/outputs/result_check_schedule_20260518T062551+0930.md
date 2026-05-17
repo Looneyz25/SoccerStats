@@ -1,6 +1,6 @@
 # Result Check Schedule
 
-Generated: 2026-05-18T06:26:16.189592+09:30
+Generated: 2026-05-18T06:25:51.749457+09:30
 Completion buffer: 45 minutes after kickoff
 Due now: 7
 Remaining today/overdue: 9
@@ -8,10 +8,10 @@ Tomorrow visible: 1
 
 ## This Run
 
-- Settled: 0
-- Flashscore settled: 0
+- Settled: 5
+- Flashscore settled: 5
 - Backfilled finished: 0
-- Enriched FT: 1
+- Enriched FT: 18
 - Pruned stale unresolved: 0
 
 ## Match Checks

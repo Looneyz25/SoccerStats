@@ -1,17 +1,17 @@
 # Result Check Schedule
 
-Generated: 2026-05-18T06:26:16.189592+09:30
+Generated: 2026-05-18T06:17:33.429424+09:30
 Completion buffer: 45 minutes after kickoff
-Due now: 7
-Remaining today/overdue: 9
+Due now: 12
+Remaining today/overdue: 14
 Tomorrow visible: 1
 
 ## This Run
 
-- Settled: 0
-- Flashscore settled: 0
+- Settled: 12
+- Flashscore settled: 12
 - Backfilled finished: 0
-- Enriched FT: 1
+- Enriched FT: 13
 - Pruned stale unresolved: 0
 
 ## Match Checks
@@ -21,9 +21,14 @@ Tomorrow visible: 1
 | today | yes | 2026-05-18 | 02:30 | 03:15 | LaLiga | Athletic Club vs Celta Vigo | upcoming |
 | today | yes | 2026-05-18 | 02:30 | 03:15 | LaLiga | Atlético Madrid vs Girona FC | upcoming |
 | today | yes | 2026-05-18 | 02:30 | 03:15 | LaLiga | Real Oviedo vs Deportivo Alavés | upcoming |
+| today | yes | 2026-05-18 | 04:30 | 05:15 | Ligue 1 | Lille vs Auxerre | upcoming |
 | today | yes | 2026-05-18 | 04:30 | 05:15 | Ligue 1 | Lorient vs Le Havre | upcoming |
+| today | yes | 2026-05-18 | 04:30 | 05:15 | Ligue 1 | Nice vs Metz | upcoming |
+| today | yes | 2026-05-18 | 04:30 | 05:15 | Ligue 1 | Olympique Lyonnais vs RC Lens | upcoming |
 | today | yes | 2026-05-18 | 04:30 | 05:15 | Ligue 1 | Olympique de Marseille vs Stade Rennais | upcoming |
+| today | yes | 2026-05-18 | 04:30 | 05:15 | Ligue 1 | Paris FC vs Paris Saint-Germain | upcoming |
 | today | yes | 2026-05-18 | 04:30 | 05:15 | Ligue 1 | RC Strasbourg vs AS Monaco | upcoming |
+| today | yes | 2026-05-18 | 04:30 | 05:15 | Ligue 1 | Stade Brestois vs Angers | upcoming |
 | today | yes | 2026-05-18 | 04:45 | 05:30 | LaLiga | FC Barcelona vs Real Betis | upcoming |
 | today | no | 2026-05-18 | 07:30 | 08:15 | MLS | Inter Miami CF vs Portland Timbers | upcoming |
 | today | no | 2026-05-18 | 09:30 | 10:15 | MLS | Nashville SC vs Los Angeles FC | upcoming |

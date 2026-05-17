@@ -1,15 +1,21 @@
 {
-  "generated_at": "2026-05-18T06:26:16.189592+09:30",
+  "generated_at": "2026-05-18T06:25:51.749457+09:30",
   "result_check_buffer_minutes": 45,
   "result_lookback_days": 3,
   "due_count": 7,
   "remaining_count": 9,
   "tomorrow_count": 1,
   "phase_summary": {
-    "settled": [],
-    "flashscore_settled": 0,
+    "settled": [
+      "Ligue 1: Lille 0-2 Auxerre [Flashscore]",
+      "Ligue 1: Nice 0-0 Metz [Flashscore]",
+      "Ligue 1: Olympique Lyonnais 0-4 RC Lens [Flashscore]",
+      "Ligue 1: Paris FC 2-1 Paris Saint-Germain [Flashscore]",
+      "Ligue 1: Stade Brestois 1-1 Angers [Flashscore]"
+    ],
+    "flashscore_settled": 5,
     "backfilled": 0,
-    "enriched": 1,
+    "enriched": 18,
     "protected": 396,
     "pruned": []
   },

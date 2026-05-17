@@ -6668,15 +6668,16 @@
         {
           "id": 14023957,
           "date": "2026-05-18",
-          "time": "02:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Newcastle United",
             "short": "Newcastle",
             "team_id": 39,
             "rank": 14,
             "pts": 46,
-            "logo": "https://api.sofascore.app/api/v1/team/39/image"
+            "logo": "https://api.sofascore.app/api/v1/team/39/image",
+            "goals": 3
           },
           "away": {
             "name": "West Ham United",
@@ -6684,22 +6685,28 @@
             "team_id": 37,
             "rank": 18,
             "pts": 36,
-            "logo": "https://api.sofascore.app/api/v1/team/37/image"
+            "logo": "https://api.sofascore.app/api/v1/team/37/image",
+            "goals": 1
           },
           "predictions": {
             "winner": {
               "pick": "Newcastle United",
               "type": "home",
-              "odds": 2.2
+              "odds": 2.2,
+              "result": "hit"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.44
+              "odds": 1.44,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.53
+              "odds": 1.53,
+              "actual": 4,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Under",
@@ -6708,7 +6715,9 @@
               "over_probability": 0.5,
               "raw_over_probability": 0.5,
               "over_threshold": 0.68,
-              "probability": 0.5
+              "probability": 0.5,
+              "actual": 4,
+              "result": "hit"
             },
             "factors": {
               "lambda_home": 1.727,
@@ -6791,6 +6800,36 @@
               "Over": 1.8,
               "Under": 1.91
             }
+          },
+          "settled_at": "2026-05-18",
+          "prediction_locked": true,
+          "prediction_locked_at": "2026-05-18T06:17:07.771634+09:30",
+          "flashscore_score": {
+            "home": 3,
+            "away": 1,
+            "status": "FT",
+            "source_match_id": "z1yE3oVi",
+            "fetched_at": "2026-05-18"
+          },
+          "settled_source": "Flashscore",
+          "actuals": {
+            "source": "LiveScore",
+            "home_corners": 9,
+            "away_corners": 1,
+            "corners_total": 10,
+            "home_fouls": 8,
+            "away_fouls": 11,
+            "fouls_total": 19,
+            "home_sot": 7,
+            "away_sot": 8,
+            "home_cards": 1,
+            "away_cards": 3,
+            "cards_total": 4,
+            "first_to_score": "home",
+            "first_scorer": "Nick Woltemade",
+            "ht_home": 2,
+            "ht_away": 0,
+            "ht_winner": "home"
           }
         },
         {
@@ -17105,509 +17144,6 @@
           }
         },
         {
-          "id": 14083671,
-          "date": "2026-05-18",
-          "time": "02:30",
-          "status": "upcoming",
-          "home": {
-            "name": "Elche",
-            "short": "Elche",
-            "team_id": 2846,
-            "rank": 17,
-            "pts": 39,
-            "logo": "https://api.sofascore.app/api/v1/team/2846/image"
-          },
-          "away": {
-            "name": "Getafe",
-            "short": "Getafe",
-            "team_id": 2859,
-            "rank": 7,
-            "pts": 48,
-            "logo": "https://api.sofascore.app/api/v1/team/2859/image"
-          },
-          "predictions": {
-            "winner": {
-              "pick": "Elche",
-              "type": "home",
-              "odds": 2.2
-            },
-            "btts": {
-              "pick": "No",
-              "odds": 1.62
-            },
-            "ou_goals": {
-              "pick": "Under",
-              "line": 2.5,
-              "odds": 1.44
-            },
-            "ou_cards": {
-              "pick": "Under",
-              "line": 4.5,
-              "odds": 1.67,
-              "over_probability": 0.5,
-              "raw_over_probability": 0.5,
-              "over_threshold": 0.68,
-              "probability": 0.5
-            },
-            "factors": {
-              "lambda_home": 1.147,
-              "lambda_away": 1.003,
-              "h2h_n": 1,
-              "h_rank": 17,
-              "a_rank": 7,
-              "home_elo": 1492.1,
-              "away_elo": 1488.4,
-              "dixon_coles_rho": -0.1,
-              "cards_over_threshold": 0.68
-            }
-          },
-          "odds": {
-            "home": 2.2,
-            "draw": 3,
-            "away": 3.4
-          },
-          "h2h_streaks": [
-            {
-              "team": "home",
-              "label": "Without clean sheet",
-              "value": "4",
-              "odds": 2.2
-            },
-            {
-              "team": "both",
-              "label": "Less than 2.5 goals",
-              "value": "4/5",
-              "odds": 1.44
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "5/6",
-              "odds": 2.1
-            }
-          ],
-          "team_streaks": [
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "No Wins",
-              "value": "3",
-              "odds": 1.57
-            },
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "Without Clean Sheet",
-              "value": "5",
-              "odds": 2.1
-            },
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "Both teams scoring",
-              "value": "8/10",
-              "odds": 2.1
-            },
-            {
-              "team": "away",
-              "source": "computed",
-              "label": "Less than 2.5 goals",
-              "value": "8/10",
-              "odds": 1.5
-            }
-          ],
-          "sportsbet_odds": {
-            "home": 2.3,
-            "draw": 2.9,
-            "away": 3.4,
-            "event_id": 10445210,
-            "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/elche-v-getafe-10445210"
-          },
-          "bookmaker_links": {
-            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/elche-v-getafe-10445210"
-          },
-          "corner_odds": {
-            "8.5": {
-              "Over": 1.67,
-              "Under": 2.1
-            }
-          }
-        },
-        {
-          "id": 14083676,
-          "date": "2026-05-18",
-          "time": "02:30",
-          "status": "upcoming",
-          "home": {
-            "name": "Levante UD",
-            "short": "Levante",
-            "team_id": 2849,
-            "rank": 19,
-            "pts": 39,
-            "logo": "https://api.sofascore.app/api/v1/team/2849/image"
-          },
-          "away": {
-            "name": "Mallorca",
-            "short": "Mallorca",
-            "team_id": 2826,
-            "rank": 18,
-            "pts": 39,
-            "logo": "https://api.sofascore.app/api/v1/team/2826/image"
-          },
-          "predictions": {
-            "winner": {
-              "pick": "Levante UD",
-              "type": "home",
-              "odds": 2.1
-            },
-            "btts": {
-              "pick": "Yes",
-              "odds": 1.67
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5,
-              "odds": 1.8
-            },
-            "ou_cards": {
-              "pick": "Under",
-              "line": 4.5,
-              "odds": 1.91,
-              "over_probability": 0.5,
-              "raw_over_probability": 0.5,
-              "over_threshold": 0.68,
-              "probability": 0.5
-            },
-            "factors": {
-              "lambda_home": 1.649,
-              "lambda_away": 1.335,
-              "h2h_n": 0,
-              "h_rank": 19,
-              "a_rank": 18,
-              "home_elo": 1513.2,
-              "away_elo": 1500.5,
-              "dixon_coles_rho": -0.1,
-              "cards_over_threshold": 0.68
-            }
-          },
-          "odds": {
-            "home": 2.1,
-            "draw": 3.4,
-            "away": 3.3
-          },
-          "h2h_streaks": [
-            {
-              "team": "both",
-              "label": "Less than 2.5 goals",
-              "value": "4/5",
-              "odds": 2
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "6/7",
-              "odds": 1.83
-            }
-          ],
-          "team_streaks": [
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "Without Clean Sheet",
-              "value": "3",
-              "odds": 1.7
-            },
-            {
-              "team": "away",
-              "source": "computed",
-              "label": "Both teams scoring",
-              "value": "8/10",
-              "odds": 1.7
-            }
-          ],
-          "sportsbet_odds": {
-            "home": 1.25,
-            "draw": 4.5,
-            "away": 15.0,
-            "event_id": 10445204,
-            "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/levante-v-mallorca-10445204"
-          },
-          "bookmaker_links": {
-            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/levante-v-mallorca-10445204"
-          },
-          "corner_odds": {
-            "9.5": {
-              "Over": 1.83,
-              "Under": 1.83
-            }
-          }
-        },
-        {
-          "id": 14083696,
-          "date": "2026-05-18",
-          "time": "02:30",
-          "status": "upcoming",
-          "home": {
-            "name": "Osasuna",
-            "short": "Osasuna",
-            "team_id": 2820,
-            "rank": 13,
-            "pts": 42,
-            "logo": "https://api.sofascore.app/api/v1/team/2820/image"
-          },
-          "away": {
-            "name": "Espanyol",
-            "short": "Espanyol",
-            "team_id": 2814,
-            "rank": 14,
-            "pts": 42,
-            "logo": "https://api.sofascore.app/api/v1/team/2814/image"
-          },
-          "predictions": {
-            "winner": {
-              "pick": "Osasuna",
-              "type": "home",
-              "odds": 2.1
-            },
-            "btts": {
-              "pick": "Yes",
-              "odds": 1.91
-            },
-            "ou_goals": {
-              "pick": "Under",
-              "line": 2.5,
-              "odds": 1.67
-            },
-            "ou_cards": {
-              "pick": "Under",
-              "line": 4.5,
-              "odds": 1.67,
-              "over_probability": 0.5,
-              "raw_over_probability": 0.5,
-              "over_threshold": 0.68,
-              "probability": 0.5
-            },
-            "factors": {
-              "lambda_home": 1.506,
-              "lambda_away": 1.144,
-              "h2h_n": 0,
-              "h_rank": 13,
-              "a_rank": 14,
-              "home_elo": 1477.4,
-              "away_elo": 1488.2,
-              "dixon_coles_rho": -0.1,
-              "cards_over_threshold": 0.68
-            }
-          },
-          "odds": {
-            "home": 2,
-            "draw": 3,
-            "away": 4
-          },
-          "h2h_streaks": [
-            {
-              "team": "both",
-              "label": "Less than 2.5 goals",
-              "value": "9/9",
-              "odds": 1.67
-            }
-          ],
-          "team_streaks": [
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "Losses",
-              "value": "3",
-              "odds": 3.9
-            },
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "No Wins",
-              "value": "3",
-              "odds": 1.67
-            },
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "Without Clean Sheet",
-              "value": "7",
-              "odds": 2.0
-            },
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "Both teams scoring",
-              "value": "8/10",
-              "odds": 2.0
-            },
-            {
-              "team": "away",
-              "source": "computed",
-              "label": "Less than 2.5 goals",
-              "value": "4/5",
-              "odds": 1.57
-            }
-          ],
-          "sportsbet_odds": {
-            "home": 11.0,
-            "draw": 3.3,
-            "away": 1.4,
-            "event_id": 10445212,
-            "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/osasuna-v-espanyol-10445212"
-          },
-          "bookmaker_links": {
-            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/osasuna-v-espanyol-10445212"
-          },
-          "corner_odds": {
-            "9.5": {
-              "Over": 2.1,
-              "Under": 1.67
-            }
-          }
-        },
-        {
-          "id": 14083682,
-          "date": "2026-05-18",
-          "time": "02:30",
-          "status": "upcoming",
-          "home": {
-            "name": "Rayo Vallecano",
-            "short": "Rayo",
-            "team_id": 2818,
-            "rank": 10,
-            "pts": 44,
-            "logo": "https://api.sofascore.app/api/v1/team/2818/image"
-          },
-          "away": {
-            "name": "Villarreal",
-            "short": "Villarreal",
-            "team_id": 2819,
-            "rank": 3,
-            "pts": 69,
-            "logo": "https://api.sofascore.app/api/v1/team/2819/image"
-          },
-          "predictions": {
-            "winner": {
-              "pick": "Rayo Vallecano",
-              "type": "home",
-              "odds": 2.3
-            },
-            "btts": {
-              "pick": "Yes",
-              "odds": 1.62
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5,
-              "odds": 1.73
-            },
-            "ou_cards": {
-              "pick": "Under",
-              "line": 4.5,
-              "odds": 1.62,
-              "over_probability": 0.5,
-              "raw_over_probability": 0.5,
-              "over_threshold": 0.68,
-              "probability": 0.5
-            },
-            "factors": {
-              "lambda_home": 1.642,
-              "lambda_away": 1.424,
-              "h2h_n": 0,
-              "h_rank": 10,
-              "a_rank": 3,
-              "home_elo": 1509.2,
-              "away_elo": 1498.9,
-              "dixon_coles_rho": -0.1,
-              "cards_over_threshold": 0.68
-            }
-          },
-          "odds": {
-            "home": 2.25,
-            "draw": 3.5,
-            "away": 2.7
-          },
-          "h2h_streaks": [
-            {
-              "team": "away",
-              "label": "No losses",
-              "value": "5",
-              "odds": 1.53
-            },
-            {
-              "team": "home",
-              "label": "Without clean sheet",
-              "value": "6",
-              "odds": 1.62
-            },
-            {
-              "team": "away",
-              "label": "First to score",
-              "value": "4/5",
-              "odds": 2
-            },
-            {
-              "team": "both",
-              "label": "More than 4.5 cards",
-              "value": "6/8",
-              "odds": 1.62
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "6/7",
-              "odds": 1.83
-            }
-          ],
-          "team_streaks": [
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "No Losses",
-              "value": "7",
-              "odds": 1.29
-            },
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "Less than 2.5 goals",
-              "value": "6/7",
-              "odds": 2.1
-            },
-            {
-              "team": "away",
-              "source": "computed",
-              "label": "Without Clean Sheet",
-              "value": "10",
-              "odds": 1.62
-            },
-            {
-              "team": "away",
-              "source": "computed",
-              "label": "Both teams scoring",
-              "value": "9/10",
-              "odds": 1.62
-            }
-          ],
-          "sportsbet_odds": {
-            "home": 1.01,
-            "draw": 16.0,
-            "away": 81.0,
-            "event_id": 10445209,
-            "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/rayo-vallecano-v-villarreal-10445209"
-          },
-          "bookmaker_links": {
-            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/rayo-vallecano-v-villarreal-10445209"
-          },
-          "corner_odds": {
-            "9.5": {
-              "Over": 1.83,
-              "Under": 1.83
-            }
-          }
-        },
-        {
           "id": 14083692,
           "date": "2026-05-18",
           "time": "02:30",
@@ -17719,262 +17255,6 @@
             "9.5": {
               "Over": 1.8,
               "Under": 1.91
-            }
-          }
-        },
-        {
-          "id": 14083687,
-          "date": "2026-05-18",
-          "time": "02:30",
-          "status": "upcoming",
-          "home": {
-            "name": "Real Sociedad",
-            "short": "Real",
-            "team_id": 2824,
-            "rank": 8,
-            "pts": 45,
-            "logo": "https://api.sofascore.app/api/v1/team/2824/image"
-          },
-          "away": {
-            "name": "Valencia",
-            "short": "Valencia",
-            "team_id": 2828,
-            "rank": 11,
-            "pts": 43,
-            "logo": "https://api.sofascore.app/api/v1/team/2828/image"
-          },
-          "predictions": {
-            "winner": {
-              "pick": "Real Sociedad",
-              "type": "home",
-              "odds": 2.15
-            },
-            "btts": {
-              "pick": "Yes",
-              "odds": 1.7
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5,
-              "odds": 1.91
-            },
-            "ou_cards": {
-              "pick": "Under",
-              "line": 4.5,
-              "odds": 1.83,
-              "over_probability": 0.5,
-              "raw_over_probability": 0.5,
-              "over_threshold": 0.68,
-              "probability": 0.5
-            },
-            "factors": {
-              "lambda_home": 1.664,
-              "lambda_away": 1.486,
-              "h2h_n": 0,
-              "h_rank": 8,
-              "a_rank": 11,
-              "home_elo": 1493,
-              "away_elo": 1507.5,
-              "dixon_coles_rho": -0.1,
-              "cards_over_threshold": 0.68
-            }
-          },
-          "odds": {
-            "home": 2.15,
-            "draw": 3.4,
-            "away": 3.2
-          },
-          "h2h_streaks": [
-            {
-              "team": "both",
-              "label": "Less than 2.5 goals",
-              "value": "8/9",
-              "odds": 1.91
-            }
-          ],
-          "team_streaks": [
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "No Wins",
-              "value": "5",
-              "odds": 1.62
-            },
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "Without Clean Sheet",
-              "value": "7",
-              "odds": 1.67
-            },
-            {
-              "team": "away",
-              "source": "computed",
-              "label": "Less than 2.5 goals",
-              "value": "5/6",
-              "odds": 1.91
-            }
-          ],
-          "sportsbet_odds": {
-            "home": 2.4,
-            "draw": 3.2,
-            "away": 3.1,
-            "event_id": 10445208,
-            "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/real-sociedad-v-valencia-10445208"
-          },
-          "bookmaker_links": {
-            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/real-sociedad-v-valencia-10445208"
-          },
-          "corner_odds": {
-            "9.5": {
-              "Over": 1.73,
-              "Under": 2.0
-            }
-          }
-        },
-        {
-          "id": 14083702,
-          "date": "2026-05-18",
-          "time": "02:30",
-          "status": "upcoming",
-          "home": {
-            "name": "Sevilla",
-            "short": "Sevilla",
-            "team_id": 2833,
-            "rank": 12,
-            "pts": 43,
-            "logo": "https://api.sofascore.app/api/v1/team/2833/image"
-          },
-          "away": {
-            "name": "Real Madrid",
-            "short": "Real",
-            "team_id": 2829,
-            "rank": 2,
-            "pts": 80,
-            "logo": "https://api.sofascore.app/api/v1/team/2829/image"
-          },
-          "predictions": {
-            "winner": {
-              "pick": "Real Madrid",
-              "type": "away",
-              "odds": 2.15
-            },
-            "btts": {
-              "pick": "Yes",
-              "odds": 1.62
-            },
-            "ou_goals": {
-              "pick": "Under",
-              "line": 2.5,
-              "odds": 2.1
-            },
-            "ou_cards": {
-              "pick": "Under",
-              "line": 4.5,
-              "odds": 2.1,
-              "over_probability": 0.5,
-              "raw_over_probability": 0.5,
-              "over_threshold": 0.68,
-              "probability": 0.5
-            },
-            "factors": {
-              "lambda_home": 1.282,
-              "lambda_away": 1.556,
-              "h2h_n": 1,
-              "h_rank": 12,
-              "a_rank": 2,
-              "home_elo": 1520,
-              "away_elo": 1512.3,
-              "dixon_coles_rho": -0.1,
-              "cards_over_threshold": 0.68
-            }
-          },
-          "odds": {
-            "home": 3,
-            "draw": 3.5,
-            "away": 2.15
-          },
-          "h2h_streaks": [
-            {
-              "team": "away",
-              "label": "Wins",
-              "value": "4",
-              "odds": 2.15
-            },
-            {
-              "team": "away",
-              "label": "No losses",
-              "value": "14",
-              "odds": 1.36
-            },
-            {
-              "team": "home",
-              "label": "Without clean sheet",
-              "value": "14",
-              "odds": 1.62
-            },
-            {
-              "team": "both",
-              "label": "Less than 2.5 goals",
-              "value": "4/5",
-              "odds": 2.1
-            },
-            {
-              "team": "away",
-              "label": "First to score",
-              "value": "4/5",
-              "odds": 1.8
-            },
-            {
-              "team": "both",
-              "label": "More than 4.5 cards",
-              "value": "7/9",
-              "odds": 2.1
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "8/10",
-              "odds": 1.83
-            }
-          ],
-          "team_streaks": [
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "Wins",
-              "value": "3",
-              "odds": 3.1
-            },
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "No Losses",
-              "value": "3",
-              "odds": 1.67
-            },
-            {
-              "team": "away",
-              "source": "computed",
-              "label": "Less than 2.5 goals",
-              "value": "4/5",
-              "odds": 2.1
-            }
-          ],
-          "sportsbet_odds": {
-            "home": 15.0,
-            "draw": 4.6,
-            "away": 1.25,
-            "event_id": 10445202,
-            "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/sevilla-v-real-madrid-10445202"
-          },
-          "bookmaker_links": {
-            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/sevilla-v-real-madrid-10445202"
-          },
-          "corner_odds": {
-            "9.5": {
-              "Over": 1.83,
-              "Under": 1.83
             }
           }
         },
@@ -18128,6 +17408,999 @@
               "Over": 1.91,
               "Under": 1.8
             }
+          }
+        },
+        {
+          "id": 14083671,
+          "date": "2026-05-18",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Elche",
+            "short": "Elche",
+            "team_id": 2846,
+            "rank": 17,
+            "pts": 39,
+            "logo": "https://api.sofascore.app/api/v1/team/2846/image",
+            "goals": 1
+          },
+          "away": {
+            "name": "Getafe",
+            "short": "Getafe",
+            "team_id": 2859,
+            "rank": 7,
+            "pts": 48,
+            "logo": "https://api.sofascore.app/api/v1/team/2859/image",
+            "goals": 0
+          },
+          "predictions": {
+            "winner": {
+              "pick": "Elche",
+              "type": "home",
+              "odds": 2.2,
+              "result": "hit"
+            },
+            "btts": {
+              "pick": "No",
+              "odds": 1.62,
+              "actual_btts": false,
+              "result": "hit"
+            },
+            "ou_goals": {
+              "pick": "Under",
+              "line": 2.5,
+              "odds": 1.44,
+              "actual": 1,
+              "result": "hit"
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "odds": 1.67,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "probability": 0.5,
+              "actual": 5,
+              "result": "miss"
+            },
+            "factors": {
+              "lambda_home": 1.147,
+              "lambda_away": 1.003,
+              "h2h_n": 1,
+              "h_rank": 17,
+              "a_rank": 7,
+              "home_elo": 1492.1,
+              "away_elo": 1488.4,
+              "dixon_coles_rho": -0.1,
+              "cards_over_threshold": 0.68
+            }
+          },
+          "odds": {
+            "home": 2.2,
+            "draw": 3,
+            "away": 3.4
+          },
+          "h2h_streaks": [
+            {
+              "team": "home",
+              "label": "Without clean sheet",
+              "value": "4",
+              "odds": 2.2
+            },
+            {
+              "team": "both",
+              "label": "Less than 2.5 goals",
+              "value": "4/5",
+              "odds": 1.44
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "5/6",
+              "odds": 2.1
+            }
+          ],
+          "team_streaks": [
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "No Wins",
+              "value": "3",
+              "odds": 1.57
+            },
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "Without Clean Sheet",
+              "value": "5",
+              "odds": 2.1
+            },
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "Both teams scoring",
+              "value": "8/10",
+              "odds": 2.1
+            },
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "Less than 2.5 goals",
+              "value": "8/10",
+              "odds": 1.5
+            }
+          ],
+          "sportsbet_odds": {
+            "home": 2.3,
+            "draw": 2.9,
+            "away": 3.4,
+            "event_id": 10445210,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/elche-v-getafe-10445210"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/elche-v-getafe-10445210"
+          },
+          "corner_odds": {
+            "8.5": {
+              "Over": 1.67,
+              "Under": 2.1
+            }
+          },
+          "settled_at": "2026-05-18",
+          "prediction_locked": true,
+          "prediction_locked_at": "2026-05-18T06:17:08.429064+09:30",
+          "flashscore_score": {
+            "home": 1,
+            "away": 0,
+            "status": "FT",
+            "source_match_id": "0OhvAhYQ",
+            "fetched_at": "2026-05-18"
+          },
+          "settled_source": "Flashscore",
+          "actuals": {
+            "source": "LiveScore",
+            "home_corners": 4,
+            "away_corners": 0,
+            "corners_total": 4,
+            "home_fouls": 18,
+            "away_fouls": 13,
+            "fouls_total": 31,
+            "home_sot": 3,
+            "away_sot": 0,
+            "home_cards": 3,
+            "away_cards": 2,
+            "cards_total": 5,
+            "first_to_score": "home",
+            "first_scorer": "Víctor Chust",
+            "ht_home": 1,
+            "ht_away": 0,
+            "ht_winner": "home"
+          }
+        },
+        {
+          "id": 14083676,
+          "date": "2026-05-18",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Levante UD",
+            "short": "Levante",
+            "team_id": 2849,
+            "rank": 19,
+            "pts": 39,
+            "logo": "https://api.sofascore.app/api/v1/team/2849/image",
+            "goals": 2
+          },
+          "away": {
+            "name": "Mallorca",
+            "short": "Mallorca",
+            "team_id": 2826,
+            "rank": 18,
+            "pts": 39,
+            "logo": "https://api.sofascore.app/api/v1/team/2826/image",
+            "goals": 0
+          },
+          "predictions": {
+            "winner": {
+              "pick": "Levante UD",
+              "type": "home",
+              "odds": 2.1,
+              "result": "hit"
+            },
+            "btts": {
+              "pick": "Yes",
+              "odds": 1.67,
+              "actual_btts": false,
+              "result": "miss"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "odds": 1.8,
+              "actual": 2,
+              "result": "miss"
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "odds": 1.91,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "probability": 0.5,
+              "actual": 4,
+              "result": "hit"
+            },
+            "factors": {
+              "lambda_home": 1.649,
+              "lambda_away": 1.335,
+              "h2h_n": 0,
+              "h_rank": 19,
+              "a_rank": 18,
+              "home_elo": 1513.2,
+              "away_elo": 1500.5,
+              "dixon_coles_rho": -0.1,
+              "cards_over_threshold": 0.68
+            }
+          },
+          "odds": {
+            "home": 2.1,
+            "draw": 3.4,
+            "away": 3.3
+          },
+          "h2h_streaks": [
+            {
+              "team": "both",
+              "label": "Less than 2.5 goals",
+              "value": "4/5",
+              "odds": 2
+            },
+            {
+              "team": "both",
+              "label": "Less than 10.5 corners",
+              "value": "6/7",
+              "odds": 1.83
+            }
+          ],
+          "team_streaks": [
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "Without Clean Sheet",
+              "value": "3",
+              "odds": 1.7
+            },
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "Both teams scoring",
+              "value": "8/10",
+              "odds": 1.7
+            }
+          ],
+          "sportsbet_odds": {
+            "home": 1.25,
+            "draw": 4.5,
+            "away": 15.0,
+            "event_id": 10445204,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/levante-v-mallorca-10445204"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/levante-v-mallorca-10445204"
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.83,
+              "Under": 1.83
+            }
+          },
+          "settled_at": "2026-05-18",
+          "prediction_locked": true,
+          "prediction_locked_at": "2026-05-18T06:17:09.053217+09:30",
+          "flashscore_score": {
+            "home": 2,
+            "away": 0,
+            "status": "FT",
+            "source_match_id": "K8ZA4Wel",
+            "fetched_at": "2026-05-18"
+          },
+          "settled_source": "Flashscore",
+          "actuals": {
+            "source": "LiveScore",
+            "home_corners": 4,
+            "away_corners": 6,
+            "corners_total": 10,
+            "home_fouls": 11,
+            "away_fouls": 15,
+            "fouls_total": 26,
+            "home_sot": 3,
+            "away_sot": 3,
+            "home_cards": 3,
+            "away_cards": 1,
+            "cards_total": 4,
+            "first_to_score": "home",
+            "first_scorer": "Carlos Espi",
+            "ht_home": 1,
+            "ht_away": 0,
+            "ht_winner": "home"
+          }
+        },
+        {
+          "id": 14083696,
+          "date": "2026-05-18",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Osasuna",
+            "short": "Osasuna",
+            "team_id": 2820,
+            "rank": 13,
+            "pts": 42,
+            "logo": "https://api.sofascore.app/api/v1/team/2820/image",
+            "goals": 1
+          },
+          "away": {
+            "name": "Espanyol",
+            "short": "Espanyol",
+            "team_id": 2814,
+            "rank": 14,
+            "pts": 42,
+            "logo": "https://api.sofascore.app/api/v1/team/2814/image",
+            "goals": 2
+          },
+          "predictions": {
+            "winner": {
+              "pick": "Osasuna",
+              "type": "home",
+              "odds": 2.1,
+              "result": "miss"
+            },
+            "btts": {
+              "pick": "Yes",
+              "odds": 1.91,
+              "actual_btts": true,
+              "result": "hit"
+            },
+            "ou_goals": {
+              "pick": "Under",
+              "line": 2.5,
+              "odds": 1.67,
+              "actual": 3,
+              "result": "miss"
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "odds": 1.67,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "probability": 0.5,
+              "actual": 3,
+              "result": "hit"
+            },
+            "factors": {
+              "lambda_home": 1.506,
+              "lambda_away": 1.144,
+              "h2h_n": 0,
+              "h_rank": 13,
+              "a_rank": 14,
+              "home_elo": 1477.4,
+              "away_elo": 1488.2,
+              "dixon_coles_rho": -0.1,
+              "cards_over_threshold": 0.68
+            }
+          },
+          "odds": {
+            "home": 2,
+            "draw": 3,
+            "away": 4
+          },
+          "h2h_streaks": [
+            {
+              "team": "both",
+              "label": "Less than 2.5 goals",
+              "value": "9/9",
+              "odds": 1.67
+            }
+          ],
+          "team_streaks": [
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "Losses",
+              "value": "3",
+              "odds": 3.9
+            },
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "No Wins",
+              "value": "3",
+              "odds": 1.67
+            },
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "Without Clean Sheet",
+              "value": "7",
+              "odds": 2.0
+            },
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "Both teams scoring",
+              "value": "8/10",
+              "odds": 2.0
+            },
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "Less than 2.5 goals",
+              "value": "4/5",
+              "odds": 1.57
+            }
+          ],
+          "sportsbet_odds": {
+            "home": 11.0,
+            "draw": 3.3,
+            "away": 1.4,
+            "event_id": 10445212,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/osasuna-v-espanyol-10445212"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/osasuna-v-espanyol-10445212"
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 2.1,
+              "Under": 1.67
+            }
+          },
+          "settled_at": "2026-05-18",
+          "prediction_locked": true,
+          "prediction_locked_at": "2026-05-18T06:17:09.676747+09:30",
+          "flashscore_score": {
+            "home": 1,
+            "away": 2,
+            "status": "FT",
+            "source_match_id": "YFVo6qXh",
+            "fetched_at": "2026-05-18"
+          },
+          "settled_source": "Flashscore",
+          "actuals": {
+            "source": "LiveScore",
+            "home_corners": 9,
+            "away_corners": 2,
+            "corners_total": 11,
+            "home_fouls": 10,
+            "away_fouls": 13,
+            "fouls_total": 23,
+            "home_sot": 9,
+            "away_sot": 3,
+            "home_cards": 1,
+            "away_cards": 2,
+            "cards_total": 3,
+            "first_to_score": "away",
+            "first_scorer": "Carlos Romero",
+            "ht_home": 0,
+            "ht_away": 1,
+            "ht_winner": "away"
+          }
+        },
+        {
+          "id": 14083682,
+          "date": "2026-05-18",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Rayo Vallecano",
+            "short": "Rayo",
+            "team_id": 2818,
+            "rank": 10,
+            "pts": 44,
+            "logo": "https://api.sofascore.app/api/v1/team/2818/image",
+            "goals": 2
+          },
+          "away": {
+            "name": "Villarreal",
+            "short": "Villarreal",
+            "team_id": 2819,
+            "rank": 3,
+            "pts": 69,
+            "logo": "https://api.sofascore.app/api/v1/team/2819/image",
+            "goals": 0
+          },
+          "predictions": {
+            "winner": {
+              "pick": "Rayo Vallecano",
+              "type": "home",
+              "odds": 2.3,
+              "result": "hit"
+            },
+            "btts": {
+              "pick": "Yes",
+              "odds": 1.62,
+              "actual_btts": false,
+              "result": "miss"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "odds": 1.73,
+              "actual": 2,
+              "result": "miss"
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "odds": 1.62,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "probability": 0.5,
+              "actual": 3,
+              "result": "hit"
+            },
+            "factors": {
+              "lambda_home": 1.642,
+              "lambda_away": 1.424,
+              "h2h_n": 0,
+              "h_rank": 10,
+              "a_rank": 3,
+              "home_elo": 1509.2,
+              "away_elo": 1498.9,
+              "dixon_coles_rho": -0.1,
+              "cards_over_threshold": 0.68
+            }
+          },
+          "odds": {
+            "home": 2.25,
+            "draw": 3.5,
+            "away": 2.7
+          },
+          "h2h_streaks": [
+            {
+              "team": "away",
+              "label": "No losses",
+              "value": "5",
+              "odds": 1.53
+            },
+            {
+              "team": "home",
+              "label": "Without clean sheet",
+              "value": "6",
+              "odds": 1.62
+            },
+            {
+              "team": "away",
+              "label": "First to score",
+              "value": "4/5",
+              "odds": 2
+            },
+            {
+              "team": "both",
+              "label": "More than 4.5 cards",
+              "value": "6/8",
+              "odds": 1.62
+            },
+            {
+              "team": "both",
+              "label": "Less than 10.5 corners",
+              "value": "6/7",
+              "odds": 1.83
+            }
+          ],
+          "team_streaks": [
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "No Losses",
+              "value": "7",
+              "odds": 1.29
+            },
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "Less than 2.5 goals",
+              "value": "6/7",
+              "odds": 2.1
+            },
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "Without Clean Sheet",
+              "value": "10",
+              "odds": 1.62
+            },
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "Both teams scoring",
+              "value": "9/10",
+              "odds": 1.62
+            }
+          ],
+          "sportsbet_odds": {
+            "home": 1.01,
+            "draw": 16.0,
+            "away": 81.0,
+            "event_id": 10445209,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/rayo-vallecano-v-villarreal-10445209"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/rayo-vallecano-v-villarreal-10445209"
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.83,
+              "Under": 1.83
+            }
+          },
+          "settled_at": "2026-05-18",
+          "prediction_locked": true,
+          "prediction_locked_at": "2026-05-18T06:17:10.304536+09:30",
+          "flashscore_score": {
+            "home": 2,
+            "away": 0,
+            "status": "FT",
+            "source_match_id": "hMXI2AQ0",
+            "fetched_at": "2026-05-18"
+          },
+          "settled_source": "Flashscore",
+          "actuals": {
+            "source": "LiveScore",
+            "home_corners": 1,
+            "away_corners": 9,
+            "corners_total": 10,
+            "home_fouls": 12,
+            "away_fouls": 10,
+            "fouls_total": 22,
+            "home_sot": 7,
+            "away_sot": 2,
+            "home_cards": 2,
+            "away_cards": 1,
+            "cards_total": 3,
+            "first_to_score": "home",
+            "first_scorer": "Sergio Camello",
+            "ht_home": 1,
+            "ht_away": 0,
+            "ht_winner": "home"
+          }
+        },
+        {
+          "id": 14083687,
+          "date": "2026-05-18",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Real Sociedad",
+            "short": "Real",
+            "team_id": 2824,
+            "rank": 8,
+            "pts": 45,
+            "logo": "https://api.sofascore.app/api/v1/team/2824/image",
+            "goals": 3
+          },
+          "away": {
+            "name": "Valencia",
+            "short": "Valencia",
+            "team_id": 2828,
+            "rank": 11,
+            "pts": 43,
+            "logo": "https://api.sofascore.app/api/v1/team/2828/image",
+            "goals": 4
+          },
+          "predictions": {
+            "winner": {
+              "pick": "Real Sociedad",
+              "type": "home",
+              "odds": 2.15,
+              "result": "miss"
+            },
+            "btts": {
+              "pick": "Yes",
+              "odds": 1.7,
+              "actual_btts": true,
+              "result": "hit"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "odds": 1.91,
+              "actual": 7,
+              "result": "hit"
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "odds": 1.83,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "probability": 0.5,
+              "actual": 5,
+              "result": "miss"
+            },
+            "factors": {
+              "lambda_home": 1.664,
+              "lambda_away": 1.486,
+              "h2h_n": 0,
+              "h_rank": 8,
+              "a_rank": 11,
+              "home_elo": 1493,
+              "away_elo": 1507.5,
+              "dixon_coles_rho": -0.1,
+              "cards_over_threshold": 0.68
+            }
+          },
+          "odds": {
+            "home": 2.15,
+            "draw": 3.4,
+            "away": 3.2
+          },
+          "h2h_streaks": [
+            {
+              "team": "both",
+              "label": "Less than 2.5 goals",
+              "value": "8/9",
+              "odds": 1.91
+            }
+          ],
+          "team_streaks": [
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "No Wins",
+              "value": "5",
+              "odds": 1.62
+            },
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "Without Clean Sheet",
+              "value": "7",
+              "odds": 1.67
+            },
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "Less than 2.5 goals",
+              "value": "5/6",
+              "odds": 1.91
+            }
+          ],
+          "sportsbet_odds": {
+            "home": 2.4,
+            "draw": 3.2,
+            "away": 3.1,
+            "event_id": 10445208,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/real-sociedad-v-valencia-10445208"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/real-sociedad-v-valencia-10445208"
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.73,
+              "Under": 2.0
+            }
+          },
+          "settled_at": "2026-05-18",
+          "prediction_locked": true,
+          "prediction_locked_at": "2026-05-18T06:17:10.959315+09:30",
+          "flashscore_score": {
+            "home": 3,
+            "away": 4,
+            "status": "FT",
+            "source_match_id": "llRR0leD",
+            "fetched_at": "2026-05-18"
+          },
+          "settled_source": "Flashscore",
+          "actuals": {
+            "source": "LiveScore",
+            "home_corners": 3,
+            "away_corners": 2,
+            "corners_total": 5,
+            "home_fouls": 13,
+            "away_fouls": 11,
+            "fouls_total": 24,
+            "home_sot": 3,
+            "away_sot": 6,
+            "home_cards": 4,
+            "away_cards": 1,
+            "cards_total": 5,
+            "first_to_score": "home",
+            "first_scorer": "Aihen Muñoz",
+            "ht_home": 1,
+            "ht_away": 2,
+            "ht_winner": "away"
+          }
+        },
+        {
+          "id": 14083702,
+          "date": "2026-05-18",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Sevilla",
+            "short": "Sevilla",
+            "team_id": 2833,
+            "rank": 12,
+            "pts": 43,
+            "logo": "https://api.sofascore.app/api/v1/team/2833/image",
+            "goals": 0
+          },
+          "away": {
+            "name": "Real Madrid",
+            "short": "Real",
+            "team_id": 2829,
+            "rank": 2,
+            "pts": 80,
+            "logo": "https://api.sofascore.app/api/v1/team/2829/image",
+            "goals": 1
+          },
+          "predictions": {
+            "winner": {
+              "pick": "Real Madrid",
+              "type": "away",
+              "odds": 2.15,
+              "result": "hit"
+            },
+            "btts": {
+              "pick": "Yes",
+              "odds": 1.62,
+              "actual_btts": false,
+              "result": "miss"
+            },
+            "ou_goals": {
+              "pick": "Under",
+              "line": 2.5,
+              "odds": 2.1,
+              "actual": 1,
+              "result": "hit"
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "odds": 2.1,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "probability": 0.5,
+              "actual": 4,
+              "result": "hit"
+            },
+            "factors": {
+              "lambda_home": 1.282,
+              "lambda_away": 1.556,
+              "h2h_n": 1,
+              "h_rank": 12,
+              "a_rank": 2,
+              "home_elo": 1520,
+              "away_elo": 1512.3,
+              "dixon_coles_rho": -0.1,
+              "cards_over_threshold": 0.68
+            }
+          },
+          "odds": {
+            "home": 3,
+            "draw": 3.5,
+            "away": 2.15
+          },
+          "h2h_streaks": [
+            {
+              "team": "away",
+              "label": "Wins",
+              "value": "4",
+              "odds": 2.15
+            },
+            {
+              "team": "away",
+              "label": "No losses",
+              "value": "14",
+              "odds": 1.36
+            },
+            {
+              "team": "home",
+              "label": "Without clean sheet",
+              "value": "14",
+              "odds": 1.62
+            },
+            {
+              "team": "both",
+              "label": "Less than 2.5 goals",
+              "value": "4/5",
+              "odds": 2.1
+            },
+            {
+              "team": "away",
+              "label": "First to score",
+              "value": "4/5",
+              "odds": 1.8
+            },
+            {
+              "team": "both",
+              "label": "More than 4.5 cards",
+              "value": "7/9",
+              "odds": 2.1
+            },
+            {
+              "team": "both",
+              "label": "Less than 10.5 corners",
+              "value": "8/10",
+              "odds": 1.83
+            }
+          ],
+          "team_streaks": [
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "Wins",
+              "value": "3",
+              "odds": 3.1
+            },
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "No Losses",
+              "value": "3",
+              "odds": 1.67
+            },
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "Less than 2.5 goals",
+              "value": "4/5",
+              "odds": 2.1
+            }
+          ],
+          "sportsbet_odds": {
+            "home": 15.0,
+            "draw": 4.6,
+            "away": 1.25,
+            "event_id": 10445202,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/sevilla-v-real-madrid-10445202"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/sevilla-v-real-madrid-10445202"
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.83,
+              "Under": 1.83
+            }
+          },
+          "settled_at": "2026-05-18",
+          "prediction_locked": true,
+          "prediction_locked_at": "2026-05-18T06:17:11.583979+09:30",
+          "flashscore_score": {
+            "home": 0,
+            "away": 1,
+            "status": "FT",
+            "source_match_id": "ttZg4N15",
+            "fetched_at": "2026-05-18"
+          },
+          "settled_source": "Flashscore",
+          "actuals": {
+            "source": "LiveScore",
+            "home_corners": 4,
+            "away_corners": 4,
+            "corners_total": 8,
+            "home_fouls": 18,
+            "away_fouls": 12,
+            "fouls_total": 30,
+            "home_sot": 6,
+            "away_sot": 1,
+            "home_cards": 4,
+            "away_cards": 0,
+            "cards_total": 4,
+            "first_to_score": "away",
+            "first_scorer": "Vinicius Junior",
+            "ht_home": 0,
+            "ht_away": 1,
+            "ht_winner": "away"
           }
         },
         {
@@ -33033,147 +33306,6 @@
           "prediction_locked": true
         },
         {
-          "id": 14061906,
-          "date": "2026-05-18",
-          "time": "04:30",
-          "status": "upcoming",
-          "home": {
-            "name": "Lille",
-            "short": "Lille",
-            "team_id": 1643,
-            "rank": 3,
-            "pts": 61,
-            "logo": "https://api.sofascore.app/api/v1/team/1643/image"
-          },
-          "away": {
-            "name": "Auxerre",
-            "short": "Auxerre",
-            "team_id": 1646,
-            "rank": 15,
-            "pts": 31,
-            "logo": "https://api.sofascore.app/api/v1/team/1646/image"
-          },
-          "predictions": {
-            "winner": {
-              "pick": "Lille",
-              "type": "home",
-              "odds": 1.36
-            },
-            "btts": {
-              "pick": "Yes",
-              "odds": 2
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5,
-              "odds": 1.73
-            },
-            "ou_cards": {
-              "pick": "Under",
-              "line": 4.5,
-              "odds": 1.91,
-              "over_probability": 0.5,
-              "raw_over_probability": 0.5,
-              "over_threshold": 0.68,
-              "probability": 0.5
-            },
-            "factors": {
-              "lambda_home": 2.232,
-              "lambda_away": 1.335,
-              "h2h_n": 1,
-              "h_rank": 3,
-              "a_rank": 15,
-              "home_elo": 1521.2,
-              "away_elo": 1508.5,
-              "dixon_coles_rho": -0.1,
-              "cards_over_threshold": 0.68
-            }
-          },
-          "odds": {
-            "home": 1.36,
-            "draw": 4.5,
-            "away": 7.5
-          },
-          "h2h_streaks": [
-            {
-              "team": "home",
-              "label": "No losses",
-              "value": "6",
-              "odds": 1.1
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "5/6",
-              "odds": 2
-            },
-            {
-              "team": "home",
-              "label": "First to score",
-              "value": "5/6",
-              "odds": 1.36
-            },
-            {
-              "team": "home",
-              "label": "First half winner",
-              "value": "5/6",
-              "odds": 1.83
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "5/7",
-              "odds": 1.8
-            }
-          ],
-          "team_streaks": [
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "No Losses",
-              "value": "7",
-              "odds": 1.08
-            },
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "Less than 2.5 goals",
-              "value": "4/5",
-              "odds": 2.1
-            },
-            {
-              "team": "away",
-              "source": "computed",
-              "label": "Without Clean Sheet",
-              "value": "4",
-              "odds": 1.95
-            },
-            {
-              "team": "away",
-              "source": "computed",
-              "label": "Both teams scoring",
-              "value": "5/6",
-              "odds": 1.95
-            }
-          ],
-          "sportsbet_odds": {
-            "home": 4.6,
-            "draw": 2.88,
-            "away": 1.95,
-            "event_id": 10469368,
-            "event_url": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/lille-v-auxerre-10469368"
-          },
-          "bookmaker_links": {
-            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/lille-v-auxerre-10469368"
-          },
-          "corner_odds": {
-            "9.5": {
-              "Over": 1.83,
-              "Under": 1.83
-            }
-          }
-        },
-        {
           "id": 14061904,
           "date": "2026-05-18",
           "time": "04:30",
@@ -33296,393 +33428,6 @@
           }
         },
         {
-          "id": 14061912,
-          "date": "2026-05-18",
-          "time": "04:30",
-          "status": "upcoming",
-          "home": {
-            "name": "Nantes",
-            "short": "Nantes",
-            "team_id": 1647,
-            "rank": 17,
-            "pts": 23,
-            "logo": "https://api.sofascore.app/api/v1/team/1647/image"
-          },
-          "away": {
-            "name": "Toulouse",
-            "short": "Toulouse",
-            "team_id": 1681,
-            "rank": 10,
-            "pts": 44,
-            "logo": "https://api.sofascore.app/api/v1/team/1681/image"
-          },
-          "predictions": {
-            "winner": {
-              "pick": "Nantes",
-              "type": "home",
-              "odds": 2.55
-            },
-            "btts": {
-              "pick": "Yes",
-              "odds": 1.62
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5,
-              "odds": 1.73
-            },
-            "ou_cards": {
-              "pick": "Under",
-              "line": 4.5,
-              "odds": 1.83,
-              "over_probability": 0.5,
-              "raw_over_probability": 0.5,
-              "over_threshold": 0.68,
-              "probability": 0.5
-            },
-            "factors": {
-              "lambda_home": 1.881,
-              "lambda_away": 1.519,
-              "h2h_n": 1,
-              "h_rank": 17,
-              "a_rank": 10,
-              "home_elo": 1491.7,
-              "away_elo": 1519.1,
-              "dixon_coles_rho": -0.1,
-              "cards_over_threshold": 0.68
-            }
-          },
-          "odds": {
-            "home": 2.5,
-            "draw": 3.5,
-            "away": 2.5
-          },
-          "h2h_streaks": [
-            {
-              "team": "home",
-              "label": "No losses",
-              "value": "4",
-              "odds": 1.5
-            },
-            {
-              "team": "away",
-              "label": "No losses",
-              "value": "3",
-              "odds": 1.5
-            }
-          ],
-          "team_streaks": [
-            {
-              "team": "away",
-              "source": "computed",
-              "label": "No Losses",
-              "value": "3",
-              "odds": 1.44
-            },
-            {
-              "team": "away",
-              "source": "computed",
-              "label": "Without Clean Sheet",
-              "value": "7",
-              "odds": 1.62
-            },
-            {
-              "team": "away",
-              "source": "computed",
-              "label": "More than 2.5 goals",
-              "value": "8/10",
-              "odds": 1.73
-            }
-          ],
-          "sportsbet_odds": {
-            "home": 2.7,
-            "draw": 3.5,
-            "away": 2.5,
-            "event_id": 10469369,
-            "event_url": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/nantes-v-toulouse-10469369"
-          },
-          "bookmaker_links": {
-            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/nantes-v-toulouse-10469369"
-          },
-          "corner_odds": {
-            "9.5": {
-              "Over": 1.91,
-              "Under": 1.8
-            }
-          }
-        },
-        {
-          "id": 14061909,
-          "date": "2026-05-18",
-          "time": "04:30",
-          "status": "upcoming",
-          "home": {
-            "name": "Nice",
-            "short": "Nice",
-            "team_id": 1661,
-            "rank": 16,
-            "pts": 31,
-            "logo": "https://api.sofascore.app/api/v1/team/1661/image"
-          },
-          "away": {
-            "name": "Metz",
-            "short": "Metz",
-            "team_id": 1651,
-            "rank": 18,
-            "pts": 16,
-            "logo": "https://api.sofascore.app/api/v1/team/1651/image"
-          },
-          "predictions": {
-            "winner": {
-              "pick": "Nice",
-              "type": "home",
-              "odds": 1.3
-            },
-            "btts": {
-              "pick": "Yes",
-              "odds": 1.91
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5,
-              "odds": 1.57
-            },
-            "ou_cards": {
-              "pick": "Under",
-              "line": 4.5,
-              "odds": 1.8,
-              "over_probability": 0.5,
-              "raw_over_probability": 0.5,
-              "over_threshold": 0.68,
-              "probability": 0.5
-            },
-            "factors": {
-              "lambda_home": 2.065,
-              "lambda_away": 0.918,
-              "h2h_n": 0,
-              "h_rank": 16,
-              "a_rank": 18,
-              "home_elo": 1491.4,
-              "away_elo": 1478.6,
-              "dixon_coles_rho": -0.1,
-              "cards_over_threshold": 0.68
-            }
-          },
-          "odds": {
-            "home": 1.33,
-            "draw": 5.25,
-            "away": 7.5
-          },
-          "h2h_streaks": [
-            {
-              "team": "away",
-              "label": "Without clean sheet",
-              "value": "4",
-              "odds": 1.91
-            },
-            {
-              "team": "both",
-              "label": "Less than 2.5 goals",
-              "value": "4/5",
-              "odds": 2.38
-            },
-            {
-              "team": "home",
-              "label": "First to score",
-              "value": "4/5",
-              "odds": 1.33
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "7/8",
-              "odds": 1.91
-            },
-            {
-              "team": "both",
-              "label": "Less than 10.5 corners",
-              "value": "10/10",
-              "odds": 1.91
-            }
-          ],
-          "team_streaks": [
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "No Wins",
-              "value": "3",
-              "odds": 3.4
-            },
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "Without Clean Sheet",
-              "value": "3",
-              "odds": 1.91
-            },
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "Less than 2.5 goals",
-              "value": "5/6",
-              "odds": 2.5
-            },
-            {
-              "team": "away",
-              "source": "computed",
-              "label": "No Wins",
-              "value": "10",
-              "odds": 1.07
-            },
-            {
-              "team": "away",
-              "source": "computed",
-              "label": "Without Clean Sheet",
-              "value": "5",
-              "odds": 1.91
-            },
-            {
-              "team": "away",
-              "source": "computed",
-              "label": "More than 2.5 goals",
-              "value": "5/6",
-              "odds": 1.53
-            }
-          ],
-          "sportsbet_odds": {
-            "home": 1.87,
-            "draw": 2.4,
-            "away": 8.0,
-            "event_id": 10469361,
-            "event_url": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/nice-v-metz-10469361"
-          },
-          "bookmaker_links": {
-            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/nice-v-metz-10469361"
-          },
-          "corner_odds": {
-            "9.5": {
-              "Over": 1.8,
-              "Under": 1.91
-            }
-          }
-        },
-        {
-          "id": 14061911,
-          "date": "2026-05-18",
-          "time": "04:30",
-          "status": "upcoming",
-          "home": {
-            "name": "Olympique Lyonnais",
-            "short": "Lyon",
-            "team_id": 1649,
-            "rank": 4,
-            "pts": 60,
-            "logo": "https://api.sofascore.app/api/v1/team/1649/image"
-          },
-          "away": {
-            "name": "RC Lens",
-            "short": "Lens",
-            "team_id": 1648,
-            "rank": 2,
-            "pts": 67,
-            "logo": "https://api.sofascore.app/api/v1/team/1648/image"
-          },
-          "predictions": {
-            "winner": {
-              "pick": "Olympique Lyonnais",
-              "type": "home",
-              "odds": 1.73
-            },
-            "btts": {
-              "pick": "Yes",
-              "odds": 1.57
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5,
-              "odds": 1.53
-            },
-            "ou_cards": {
-              "pick": "Under",
-              "line": 4.5,
-              "odds": 2,
-              "over_probability": 0.5,
-              "raw_over_probability": 0.5,
-              "over_threshold": 0.68,
-              "probability": 0.5
-            },
-            "factors": {
-              "lambda_home": 2.473,
-              "lambda_away": 2.01,
-              "h2h_n": 1,
-              "h_rank": 4,
-              "a_rank": 2,
-              "home_elo": 1508.4,
-              "away_elo": 1499,
-              "dixon_coles_rho": -0.1,
-              "cards_over_threshold": 0.68
-            }
-          },
-          "odds": {
-            "home": 1.7,
-            "draw": 4,
-            "away": 4.2
-          },
-          "h2h_streaks": [
-            {
-              "team": "away",
-              "label": "Without clean sheet",
-              "value": "3",
-              "odds": 1.57
-            },
-            {
-              "team": "both",
-              "label": "More than 2.5 goals",
-              "value": "5/7",
-              "odds": 1.53
-            }
-          ],
-          "team_streaks": [
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "Without Clean Sheet",
-              "value": "4",
-              "odds": 1.53
-            },
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "More than 2.5 goals",
-              "value": "4/5",
-              "odds": 1.53
-            },
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "Both teams scoring",
-              "value": "4/5",
-              "odds": 1.53
-            }
-          ],
-          "sportsbet_odds": {
-            "home": 81.0,
-            "draw": 51.0,
-            "away": 1.0,
-            "event_id": 10469365,
-            "event_url": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/lyon-v-lens-10469365"
-          },
-          "bookmaker_links": {
-            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/lyon-v-lens-10469365"
-          },
-          "corner_odds": {
-            "9.5": {
-              "Over": 1.91,
-              "Under": 1.8
-            }
-          }
-        },
-        {
           "id": 14061907,
           "date": "2026-05-18",
           "time": "04:30",
@@ -33794,117 +33539,6 @@
             "9.5": {
               "Over": 1.8,
               "Under": 1.91
-            }
-          }
-        },
-        {
-          "id": 14061910,
-          "date": "2026-05-18",
-          "time": "04:30",
-          "status": "upcoming",
-          "home": {
-            "name": "Paris FC",
-            "short": "Paris",
-            "team_id": 6070,
-            "rank": 11,
-            "pts": 41,
-            "logo": "https://api.sofascore.app/api/v1/team/6070/image"
-          },
-          "away": {
-            "name": "Paris Saint-Germain",
-            "short": "PSG",
-            "team_id": 1644,
-            "rank": 1,
-            "pts": 76,
-            "logo": "https://api.sofascore.app/api/v1/team/1644/image"
-          },
-          "predictions": {
-            "winner": {
-              "pick": "Paris FC",
-              "type": "home",
-              "odds": 5.5
-            },
-            "btts": {
-              "pick": "Yes",
-              "odds": 1.5
-            },
-            "ou_goals": {
-              "pick": "Over",
-              "line": 2.5,
-              "odds": 1.4
-            },
-            "ou_cards": {
-              "pick": "Under",
-              "line": 4.5,
-              "odds": 2.2,
-              "over_probability": 0.5,
-              "raw_over_probability": 0.5,
-              "over_threshold": 0.68,
-              "probability": 0.5
-            },
-            "factors": {
-              "lambda_home": 1.579,
-              "lambda_away": 1.571,
-              "h2h_n": 2,
-              "h_rank": 11,
-              "a_rank": 1,
-              "home_elo": 1489,
-              "away_elo": 1537.4,
-              "dixon_coles_rho": -0.1,
-              "cards_over_threshold": 0.68
-            }
-          },
-          "odds": {
-            "home": 5.5,
-            "draw": 4.1,
-            "away": 1.53
-          },
-          "h2h_streaks": [
-            {
-              "team": "away",
-              "label": "Without clean sheet",
-              "value": "5",
-              "odds": 1.5
-            },
-            {
-              "team": "both",
-              "label": "Both teams scoring",
-              "value": "4/5",
-              "odds": 1.5
-            },
-            {
-              "team": "away",
-              "label": "First to score",
-              "value": "4/5",
-              "odds": 3.15
-            },
-            {
-              "team": "both",
-              "label": "Less than 4.5 cards",
-              "value": "5/5",
-              "odds": 1.62
-            }
-          ],
-          "team_streaks": [
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "More than 2.5 goals",
-              "value": "4/5",
-              "odds": 1.4
-            },
-            {
-              "team": "away",
-              "source": "computed",
-              "label": "No Losses",
-              "value": "7",
-              "odds": 1.17
-            }
-          ],
-          "corner_odds": {
-            "9.5": {
-              "Over": 1.91,
-              "Under": 1.8
             }
           }
         },
@@ -34032,40 +33666,419 @@
           }
         },
         {
-          "id": 14061908,
+          "id": 14061906,
           "date": "2026-05-18",
-          "time": "04:30",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
-            "name": "Stade Brestois",
-            "short": "Brest",
-            "team_id": 1715,
-            "rank": 12,
-            "pts": 38,
-            "logo": "https://api.sofascore.app/api/v1/team/1715/image"
+            "name": "Lille",
+            "short": "Lille",
+            "team_id": 1643,
+            "rank": 3,
+            "pts": 61,
+            "logo": "https://api.sofascore.app/api/v1/team/1643/image",
+            "goals": 0
           },
           "away": {
-            "name": "Angers",
-            "short": "Angers",
-            "team_id": 1684,
-            "rank": 13,
-            "pts": 35,
-            "logo": "https://api.sofascore.app/api/v1/team/1684/image"
+            "name": "Auxerre",
+            "short": "Auxerre",
+            "team_id": 1646,
+            "rank": 15,
+            "pts": 31,
+            "logo": "https://api.sofascore.app/api/v1/team/1646/image",
+            "goals": 2
           },
           "predictions": {
             "winner": {
-              "pick": "Stade Brestois",
+              "pick": "Lille",
               "type": "home",
-              "odds": 1.8
+              "odds": 1.36,
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.75
+              "odds": 2,
+              "actual_btts": false,
+              "result": "miss"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
+              "odds": 1.73,
+              "actual": 2,
+              "result": "miss"
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "odds": 1.91,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "probability": 0.5,
+              "actual": 5,
+              "result": "miss"
+            },
+            "factors": {
+              "lambda_home": 2.232,
+              "lambda_away": 1.335,
+              "h2h_n": 1,
+              "h_rank": 3,
+              "a_rank": 15,
+              "home_elo": 1521.2,
+              "away_elo": 1508.5,
+              "dixon_coles_rho": -0.1,
+              "cards_over_threshold": 0.68
+            }
+          },
+          "odds": {
+            "home": 1.36,
+            "draw": 4.5,
+            "away": 7.5
+          },
+          "h2h_streaks": [
+            {
+              "team": "home",
+              "label": "No losses",
+              "value": "6",
+              "odds": 1.1
+            },
+            {
+              "team": "both",
+              "label": "Both teams scoring",
+              "value": "5/6",
+              "odds": 2
+            },
+            {
+              "team": "home",
+              "label": "First to score",
+              "value": "5/6",
+              "odds": 1.36
+            },
+            {
+              "team": "home",
+              "label": "First half winner",
+              "value": "5/6",
+              "odds": 1.83
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "5/7",
               "odds": 1.8
+            }
+          ],
+          "team_streaks": [
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "No Losses",
+              "value": "7",
+              "odds": 1.08
+            },
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "Less than 2.5 goals",
+              "value": "4/5",
+              "odds": 2.1
+            },
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "Without Clean Sheet",
+              "value": "4",
+              "odds": 1.95
+            },
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "Both teams scoring",
+              "value": "5/6",
+              "odds": 1.95
+            }
+          ],
+          "sportsbet_odds": {
+            "home": 4.6,
+            "draw": 2.88,
+            "away": 1.95,
+            "event_id": 10469368,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/lille-v-auxerre-10469368"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/lille-v-auxerre-10469368"
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.83,
+              "Under": 1.83
+            }
+          },
+          "settled_at": "2026-05-18",
+          "prediction_locked": true,
+          "prediction_locked_at": "2026-05-18T06:25:09.140075+09:30",
+          "flashscore_score": {
+            "home": 0,
+            "away": 2,
+            "status": "FT",
+            "source_match_id": "IXv8WJG8",
+            "fetched_at": "2026-05-18"
+          },
+          "settled_source": "Flashscore",
+          "actuals": {
+            "source": "LiveScore",
+            "home_corners": 4,
+            "away_corners": 2,
+            "corners_total": 6,
+            "home_fouls": 9,
+            "away_fouls": 16,
+            "fouls_total": 25,
+            "home_sot": 3,
+            "away_sot": 4,
+            "home_cards": 3,
+            "away_cards": 2,
+            "cards_total": 5,
+            "first_to_score": "away",
+            "first_scorer": "Lassine Sinayoko",
+            "ht_home": 0,
+            "ht_away": 1,
+            "ht_winner": "away"
+          }
+        },
+        {
+          "id": 14061909,
+          "date": "2026-05-18",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Nice",
+            "short": "Nice",
+            "team_id": 1661,
+            "rank": 16,
+            "pts": 31,
+            "logo": "https://api.sofascore.app/api/v1/team/1661/image",
+            "goals": 0
+          },
+          "away": {
+            "name": "Metz",
+            "short": "Metz",
+            "team_id": 1651,
+            "rank": 18,
+            "pts": 16,
+            "logo": "https://api.sofascore.app/api/v1/team/1651/image",
+            "goals": 0
+          },
+          "predictions": {
+            "winner": {
+              "pick": "Nice",
+              "type": "home",
+              "odds": 1.3,
+              "result": "miss"
+            },
+            "btts": {
+              "pick": "Yes",
+              "odds": 1.91,
+              "actual_btts": false,
+              "result": "miss"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "odds": 1.57,
+              "actual": 0,
+              "result": "miss"
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "odds": 1.8,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "probability": 0.5,
+              "actual": 3,
+              "result": "hit"
+            },
+            "factors": {
+              "lambda_home": 2.065,
+              "lambda_away": 0.918,
+              "h2h_n": 0,
+              "h_rank": 16,
+              "a_rank": 18,
+              "home_elo": 1491.4,
+              "away_elo": 1478.6,
+              "dixon_coles_rho": -0.1,
+              "cards_over_threshold": 0.68
+            }
+          },
+          "odds": {
+            "home": 1.33,
+            "draw": 5.25,
+            "away": 7.5
+          },
+          "h2h_streaks": [
+            {
+              "team": "away",
+              "label": "Without clean sheet",
+              "value": "4",
+              "odds": 1.91
+            },
+            {
+              "team": "both",
+              "label": "Less than 2.5 goals",
+              "value": "4/5",
+              "odds": 2.38
+            },
+            {
+              "team": "home",
+              "label": "First to score",
+              "value": "4/5",
+              "odds": 1.33
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "7/8",
+              "odds": 1.91
+            },
+            {
+              "team": "both",
+              "label": "Less than 10.5 corners",
+              "value": "10/10",
+              "odds": 1.91
+            }
+          ],
+          "team_streaks": [
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "No Wins",
+              "value": "3",
+              "odds": 3.4
+            },
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "Without Clean Sheet",
+              "value": "3",
+              "odds": 1.91
+            },
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "Less than 2.5 goals",
+              "value": "5/6",
+              "odds": 2.5
+            },
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "No Wins",
+              "value": "10",
+              "odds": 1.07
+            },
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "Without Clean Sheet",
+              "value": "5",
+              "odds": 1.91
+            },
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "More than 2.5 goals",
+              "value": "5/6",
+              "odds": 1.53
+            }
+          ],
+          "sportsbet_odds": {
+            "home": 1.87,
+            "draw": 2.4,
+            "away": 8.0,
+            "event_id": 10469361,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/nice-v-metz-10469361"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/nice-v-metz-10469361"
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.8,
+              "Under": 1.91
+            }
+          },
+          "settled_at": "2026-05-18",
+          "prediction_locked": true,
+          "prediction_locked_at": "2026-05-18T06:25:09.773172+09:30",
+          "flashscore_score": {
+            "home": 0,
+            "away": 0,
+            "status": "FT",
+            "source_match_id": "QcrGUcoL",
+            "fetched_at": "2026-05-18"
+          },
+          "settled_source": "Flashscore",
+          "actuals": {
+            "source": "LiveScore",
+            "home_corners": 10,
+            "away_corners": 4,
+            "corners_total": 14,
+            "home_fouls": 11,
+            "away_fouls": 15,
+            "fouls_total": 26,
+            "home_sot": 4,
+            "away_sot": 4,
+            "home_cards": 2,
+            "away_cards": 1,
+            "cards_total": 3,
+            "ht_home": 0,
+            "ht_away": 0,
+            "ht_winner": "draw"
+          }
+        },
+        {
+          "id": 14061911,
+          "date": "2026-05-18",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Olympique Lyonnais",
+            "short": "Lyon",
+            "team_id": 1649,
+            "rank": 4,
+            "pts": 60,
+            "logo": "https://api.sofascore.app/api/v1/team/1649/image",
+            "goals": 0
+          },
+          "away": {
+            "name": "RC Lens",
+            "short": "Lens",
+            "team_id": 1648,
+            "rank": 2,
+            "pts": 67,
+            "logo": "https://api.sofascore.app/api/v1/team/1648/image",
+            "goals": 4
+          },
+          "predictions": {
+            "winner": {
+              "pick": "Olympique Lyonnais",
+              "type": "home",
+              "odds": 1.73,
+              "result": "miss"
+            },
+            "btts": {
+              "pick": "Yes",
+              "odds": 1.57,
+              "actual_btts": false,
+              "result": "miss"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "odds": 1.53,
+              "actual": 4,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Under",
@@ -34074,7 +34087,314 @@
               "over_probability": 0.5,
               "raw_over_probability": 0.5,
               "over_threshold": 0.68,
-              "probability": 0.5
+              "probability": 0.5,
+              "actual": 5,
+              "result": "miss"
+            },
+            "factors": {
+              "lambda_home": 2.473,
+              "lambda_away": 2.01,
+              "h2h_n": 1,
+              "h_rank": 4,
+              "a_rank": 2,
+              "home_elo": 1508.4,
+              "away_elo": 1499,
+              "dixon_coles_rho": -0.1,
+              "cards_over_threshold": 0.68
+            }
+          },
+          "odds": {
+            "home": 1.7,
+            "draw": 4,
+            "away": 4.2
+          },
+          "h2h_streaks": [
+            {
+              "team": "away",
+              "label": "Without clean sheet",
+              "value": "3",
+              "odds": 1.57
+            },
+            {
+              "team": "both",
+              "label": "More than 2.5 goals",
+              "value": "5/7",
+              "odds": 1.53
+            }
+          ],
+          "team_streaks": [
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "Without Clean Sheet",
+              "value": "4",
+              "odds": 1.53
+            },
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "More than 2.5 goals",
+              "value": "4/5",
+              "odds": 1.53
+            },
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "Both teams scoring",
+              "value": "4/5",
+              "odds": 1.53
+            }
+          ],
+          "sportsbet_odds": {
+            "home": 81.0,
+            "draw": 51.0,
+            "away": 1.0,
+            "event_id": 10469365,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/lyon-v-lens-10469365"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/lyon-v-lens-10469365"
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.91,
+              "Under": 1.8
+            }
+          },
+          "settled_at": "2026-05-18",
+          "prediction_locked": true,
+          "prediction_locked_at": "2026-05-18T06:25:10.395385+09:30",
+          "flashscore_score": {
+            "home": 0,
+            "away": 4,
+            "status": "FT",
+            "source_match_id": "OhrGQlpm",
+            "fetched_at": "2026-05-18"
+          },
+          "settled_source": "Flashscore",
+          "actuals": {
+            "source": "LiveScore",
+            "home_corners": 20,
+            "away_corners": 8,
+            "corners_total": 28,
+            "home_fouls": 10,
+            "away_fouls": 11,
+            "fouls_total": 21,
+            "home_sot": 5,
+            "away_sot": 4,
+            "home_cards": 1,
+            "away_cards": 4,
+            "cards_total": 5,
+            "first_to_score": "away",
+            "first_scorer": "Wesley Said",
+            "ht_home": 0,
+            "ht_away": 3,
+            "ht_winner": "away"
+          }
+        },
+        {
+          "id": 14061910,
+          "date": "2026-05-18",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Paris FC",
+            "short": "Paris",
+            "team_id": 6070,
+            "rank": 11,
+            "pts": 41,
+            "logo": "https://api.sofascore.app/api/v1/team/6070/image",
+            "goals": 2
+          },
+          "away": {
+            "name": "Paris Saint-Germain",
+            "short": "PSG",
+            "team_id": 1644,
+            "rank": 1,
+            "pts": 76,
+            "logo": "https://api.sofascore.app/api/v1/team/1644/image",
+            "goals": 1
+          },
+          "predictions": {
+            "winner": {
+              "pick": "Paris FC",
+              "type": "home",
+              "odds": 5.5,
+              "result": "hit"
+            },
+            "btts": {
+              "pick": "Yes",
+              "odds": 1.5,
+              "actual_btts": true,
+              "result": "hit"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "odds": 1.4,
+              "actual": 3,
+              "result": "hit"
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "odds": 2.2,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "probability": 0.5,
+              "actual": 2,
+              "result": "hit"
+            },
+            "factors": {
+              "lambda_home": 1.579,
+              "lambda_away": 1.571,
+              "h2h_n": 2,
+              "h_rank": 11,
+              "a_rank": 1,
+              "home_elo": 1489,
+              "away_elo": 1537.4,
+              "dixon_coles_rho": -0.1,
+              "cards_over_threshold": 0.68
+            }
+          },
+          "odds": {
+            "home": 5.5,
+            "draw": 4.1,
+            "away": 1.53
+          },
+          "h2h_streaks": [
+            {
+              "team": "away",
+              "label": "Without clean sheet",
+              "value": "5",
+              "odds": 1.5
+            },
+            {
+              "team": "both",
+              "label": "Both teams scoring",
+              "value": "4/5",
+              "odds": 1.5
+            },
+            {
+              "team": "away",
+              "label": "First to score",
+              "value": "4/5",
+              "odds": 3.15
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "5/5",
+              "odds": 1.62
+            }
+          ],
+          "team_streaks": [
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "More than 2.5 goals",
+              "value": "4/5",
+              "odds": 1.4
+            },
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "No Losses",
+              "value": "7",
+              "odds": 1.17
+            }
+          ],
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.91,
+              "Under": 1.8
+            }
+          },
+          "settled_at": "2026-05-18",
+          "prediction_locked": true,
+          "prediction_locked_at": "2026-05-18T06:25:11.033501+09:30",
+          "flashscore_score": {
+            "home": 2,
+            "away": 1,
+            "status": "FT",
+            "source_match_id": "IeNfNFwe",
+            "fetched_at": "2026-05-18"
+          },
+          "settled_source": "Flashscore",
+          "actuals": {
+            "source": "LiveScore",
+            "home_corners": 3,
+            "away_corners": 3,
+            "corners_total": 6,
+            "home_fouls": 8,
+            "away_fouls": 9,
+            "fouls_total": 17,
+            "home_sot": 9,
+            "away_sot": 2,
+            "home_cards": 2,
+            "away_cards": 0,
+            "cards_total": 2,
+            "first_to_score": "away",
+            "first_scorer": "Bradley Barcola",
+            "ht_home": 0,
+            "ht_away": 0,
+            "ht_winner": "draw"
+          }
+        },
+        {
+          "id": 14061908,
+          "date": "2026-05-18",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Stade Brestois",
+            "short": "Brest",
+            "team_id": 1715,
+            "rank": 12,
+            "pts": 38,
+            "logo": "https://api.sofascore.app/api/v1/team/1715/image",
+            "goals": 1
+          },
+          "away": {
+            "name": "Angers",
+            "short": "Angers",
+            "team_id": 1684,
+            "rank": 13,
+            "pts": 35,
+            "logo": "https://api.sofascore.app/api/v1/team/1684/image",
+            "goals": 1
+          },
+          "predictions": {
+            "winner": {
+              "pick": "Stade Brestois",
+              "type": "home",
+              "odds": 1.8,
+              "result": "miss"
+            },
+            "btts": {
+              "pick": "Yes",
+              "odds": 1.75,
+              "actual_btts": true,
+              "result": "hit"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "odds": 1.8,
+              "actual": 2,
+              "result": "miss"
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "odds": 2,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "probability": 0.5,
+              "actual": 2,
+              "result": "hit"
             },
             "factors": {
               "lambda_home": 1.808,
@@ -34178,6 +34498,189 @@
               "Over": 1.73,
               "Under": 2.0
             }
+          },
+          "settled_at": "2026-05-18",
+          "prediction_locked": true,
+          "prediction_locked_at": "2026-05-18T06:25:11.672718+09:30",
+          "flashscore_score": {
+            "home": 1,
+            "away": 1,
+            "status": "FT",
+            "source_match_id": "prPnPy9r",
+            "fetched_at": "2026-05-18"
+          },
+          "settled_source": "Flashscore",
+          "actuals": {
+            "source": "LiveScore",
+            "home_corners": 6,
+            "away_corners": 3,
+            "corners_total": 9,
+            "home_fouls": 9,
+            "away_fouls": 8,
+            "fouls_total": 17,
+            "home_sot": 4,
+            "away_sot": 2,
+            "home_cards": 1,
+            "away_cards": 1,
+            "cards_total": 2,
+            "first_to_score": "home",
+            "first_scorer": "Romain Del Castillo",
+            "ht_home": 0,
+            "ht_away": 0,
+            "ht_winner": "draw"
+          }
+        },
+        {
+          "id": 14061912,
+          "date": "2026-05-18",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Nantes",
+            "short": "Nantes",
+            "team_id": 1647,
+            "rank": 17,
+            "pts": 23,
+            "logo": "https://api.sofascore.app/api/v1/team/1647/image",
+            "goals": 0
+          },
+          "away": {
+            "name": "Toulouse",
+            "short": "Toulouse",
+            "team_id": 1681,
+            "rank": 10,
+            "pts": 44,
+            "logo": "https://api.sofascore.app/api/v1/team/1681/image",
+            "goals": 0
+          },
+          "predictions": {
+            "winner": {
+              "pick": "Nantes",
+              "type": "home",
+              "odds": 2.55,
+              "result": "miss"
+            },
+            "btts": {
+              "pick": "Yes",
+              "odds": 1.62,
+              "actual_btts": false,
+              "result": "miss"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "odds": 1.73,
+              "actual": 0,
+              "result": "miss"
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "odds": 1.83,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "probability": 0.5,
+              "actual": 0,
+              "result": "hit"
+            },
+            "factors": {
+              "lambda_home": 1.881,
+              "lambda_away": 1.519,
+              "h2h_n": 1,
+              "h_rank": 17,
+              "a_rank": 10,
+              "home_elo": 1491.7,
+              "away_elo": 1519.1,
+              "dixon_coles_rho": -0.1,
+              "cards_over_threshold": 0.68
+            }
+          },
+          "odds": {
+            "home": 2.5,
+            "draw": 3.5,
+            "away": 2.5
+          },
+          "h2h_streaks": [
+            {
+              "team": "home",
+              "label": "No losses",
+              "value": "4",
+              "odds": 1.5
+            },
+            {
+              "team": "away",
+              "label": "No losses",
+              "value": "3",
+              "odds": 1.5
+            }
+          ],
+          "team_streaks": [
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "No Losses",
+              "value": "3",
+              "odds": 1.44
+            },
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "Without Clean Sheet",
+              "value": "7",
+              "odds": 1.62
+            },
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "More than 2.5 goals",
+              "value": "8/10",
+              "odds": 1.73
+            }
+          ],
+          "sportsbet_odds": {
+            "home": 2.7,
+            "draw": 3.5,
+            "away": 2.5,
+            "event_id": 10469369,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/nantes-v-toulouse-10469369"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/france/french-ligue-1/nantes-v-toulouse-10469369"
+          },
+          "corner_odds": {
+            "9.5": {
+              "Over": 1.91,
+              "Under": 1.8
+            }
+          },
+          "settled_at": "2026-05-18",
+          "prediction_locked": true,
+          "prediction_locked_at": "2026-05-18T06:17:12.243590+09:30",
+          "flashscore_score": {
+            "home": 0,
+            "away": 0,
+            "status": "FT",
+            "source_match_id": "z9FNO7c2",
+            "fetched_at": "2026-05-18"
+          },
+          "settled_source": "Flashscore",
+          "actuals": {
+            "source": "LiveScore",
+            "home_corners": 2,
+            "away_corners": 2,
+            "corners_total": 4,
+            "home_fouls": 3,
+            "away_fouls": 5,
+            "fouls_total": 8,
+            "home_sot": 1,
+            "away_sot": 1,
+            "home_cards": 0,
+            "away_cards": 0,
+            "cards_total": 0,
+            "ht_home": 0,
+            "ht_away": 0,
+            "ht_winner": "draw"
           }
         }
       ],
@@ -36355,15 +36858,16 @@
         {
           "id": 13980058,
           "date": "2026-05-18",
-          "time": "01:30",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Atalanta",
             "short": "Atalanta",
             "team_id": 2686,
             "logo": "https://api.sofascore.app/api/v1/team/2686/image",
             "rank": 7,
-            "pts": 59
+            "pts": 59,
+            "goals": 0
           },
           "away": {
             "name": "Bologna",
@@ -36371,7 +36875,8 @@
             "team_id": 2685,
             "logo": "https://api.sofascore.app/api/v1/team/2685/image",
             "rank": 8,
-            "pts": 53
+            "pts": 53,
+            "goals": 1
           },
           "predictions": {
             "winner": {
@@ -36407,20 +36912,25 @@
                 "home": 0.5707,
                 "draw": 0.2525,
                 "away": 0.1769
-              }
+              },
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
               "probability": 0.504,
               "raw_probability": 0.504,
-              "odds": 1.67
+              "odds": 1.67,
+              "actual_btts": false,
+              "result": "miss"
             },
             "ou_goals": {
               "pick": "Under",
               "line": 2.5,
               "probability": 0.4919,
               "raw_probability": 0.4919,
-              "odds": 2.2
+              "odds": 2.2,
+              "actual": 1,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Under",
@@ -36437,7 +36947,9 @@
               "odds": 1.8,
               "over_probability": 0.25,
               "raw_over_probability": 0.25,
-              "over_threshold": 0.68
+              "over_threshold": 0.68,
+              "actual": 2,
+              "result": "hit"
             },
             "factors": {
               "lambda_home": 1.825,
@@ -36543,20 +37055,51 @@
               "Over": 2.0,
               "Under": 1.73
             }
+          },
+          "settled_at": "2026-05-18",
+          "prediction_locked": true,
+          "prediction_locked_at": "2026-05-18T06:17:12.954035+09:30",
+          "flashscore_score": {
+            "home": 0,
+            "away": 1,
+            "status": "FT",
+            "source_match_id": "I9QHhKRp",
+            "fetched_at": "2026-05-18"
+          },
+          "settled_source": "Flashscore",
+          "actuals": {
+            "source": "LiveScore",
+            "home_corners": 2,
+            "away_corners": 5,
+            "corners_total": 7,
+            "home_fouls": 17,
+            "away_fouls": 6,
+            "fouls_total": 23,
+            "home_sot": 1,
+            "away_sot": 5,
+            "home_cards": 1,
+            "away_cards": 1,
+            "cards_total": 2,
+            "first_to_score": "away",
+            "first_scorer": "Riccardo Orsolini",
+            "ht_home": 0,
+            "ht_away": 0,
+            "ht_winner": "draw"
           }
         },
         {
           "id": 13980060,
           "date": "2026-05-18",
-          "time": "04:15",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Cagliari",
             "short": "Cagliari",
             "team_id": 2719,
             "logo": "https://api.sofascore.app/api/v1/team/2719/image",
             "rank": 16,
-            "pts": 37
+            "pts": 37,
+            "goals": 2
           },
           "away": {
             "name": "Torino",
@@ -36564,7 +37107,8 @@
             "team_id": 2696,
             "logo": "https://api.sofascore.app/api/v1/team/2696/image",
             "rank": 12,
-            "pts": 44
+            "pts": 44,
+            "goals": 1
           },
           "predictions": {
             "winner": {
@@ -36600,20 +37144,25 @@
                 "home": 0.3963,
                 "draw": 0.2908,
                 "away": 0.313
-              }
+              },
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
               "probability": 0.5367,
               "raw_probability": 0.5367,
-              "odds": 1.95
+              "odds": 1.95,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Under",
               "line": 2.5,
               "probability": 0.522,
               "raw_probability": 0.522,
-              "odds": 1.62
+              "odds": 1.62,
+              "actual": 3,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Under",
@@ -36630,7 +37179,9 @@
               "odds": 1.67,
               "over_probability": 0.3333,
               "raw_over_probability": 0.3333,
-              "over_threshold": 0.68
+              "over_threshold": 0.68,
+              "actual": 2,
+              "result": "hit"
             },
             "factors": {
               "lambda_home": 1.387,
@@ -36722,20 +37273,51 @@
               "Over": 1.73,
               "Under": 2.0
             }
+          },
+          "settled_at": "2026-05-18",
+          "prediction_locked": true,
+          "prediction_locked_at": "2026-05-18T06:17:13.577662+09:30",
+          "flashscore_score": {
+            "home": 2,
+            "away": 1,
+            "status": "FT",
+            "source_match_id": "YH84GNJi",
+            "fetched_at": "2026-05-18"
+          },
+          "settled_source": "Flashscore",
+          "actuals": {
+            "source": "LiveScore",
+            "home_corners": 5,
+            "away_corners": 1,
+            "corners_total": 6,
+            "home_fouls": 8,
+            "away_fouls": 13,
+            "fouls_total": 21,
+            "home_sot": 4,
+            "away_sot": 3,
+            "home_cards": 1,
+            "away_cards": 1,
+            "cards_total": 2,
+            "first_to_score": "away",
+            "first_scorer": "Rafael Obrador",
+            "ht_home": 2,
+            "ht_away": 1,
+            "ht_winner": "home"
           }
         },
         {
           "id": 13980078,
           "date": "2026-05-18",
-          "time": "04:15",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Sassuolo",
             "short": "Sassuolo",
             "team_id": 2793,
             "logo": "https://api.sofascore.app/api/v1/team/2793/image",
             "rank": 11,
-            "pts": 49
+            "pts": 49,
+            "goals": 2
           },
           "away": {
             "name": "Lecce",
@@ -36743,7 +37325,8 @@
             "team_id": 2689,
             "logo": "https://api.sofascore.app/api/v1/team/2689/image",
             "rank": 17,
-            "pts": 32
+            "pts": 32,
+            "goals": 3
           },
           "predictions": {
             "winner": {
@@ -36779,20 +37362,25 @@
                 "home": 0.5116,
                 "draw": 0.332,
                 "away": 0.1564
-              }
+              },
+              "result": "miss"
             },
             "btts": {
               "pick": "No",
               "probability": 0.7087,
               "raw_probability": 0.7087,
-              "odds": 1.95
+              "odds": 1.95,
+              "actual_btts": true,
+              "result": "miss"
             },
             "ou_goals": {
               "pick": "Under",
               "line": 2.5,
               "probability": 0.7541,
               "raw_probability": 0.7541,
-              "odds": 1.73
+              "odds": 1.73,
+              "actual": 5,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Under",
@@ -36809,7 +37397,9 @@
               "odds": 2.2,
               "over_probability": 0.6667,
               "raw_over_probability": 0.6667,
-              "over_threshold": 0.68
+              "over_threshold": 0.68,
+              "actual": 5,
+              "result": "miss"
             },
             "factors": {
               "lambda_home": 1.2,
@@ -36897,20 +37487,51 @@
               "Over": 1.83,
               "Under": 1.83
             }
+          },
+          "settled_at": "2026-05-18",
+          "prediction_locked": true,
+          "prediction_locked_at": "2026-05-18T06:17:14.232653+09:30",
+          "flashscore_score": {
+            "home": 2,
+            "away": 3,
+            "status": "FT",
+            "source_match_id": "nmmS8WHr",
+            "fetched_at": "2026-05-18"
+          },
+          "settled_source": "Flashscore",
+          "actuals": {
+            "source": "LiveScore",
+            "home_corners": 2,
+            "away_corners": 8,
+            "corners_total": 10,
+            "home_fouls": 7,
+            "away_fouls": 13,
+            "fouls_total": 20,
+            "home_sot": 6,
+            "away_sot": 6,
+            "home_cards": 1,
+            "away_cards": 4,
+            "cards_total": 5,
+            "first_to_score": "away",
+            "first_scorer": "Walid Cheddira",
+            "ht_home": 1,
+            "ht_away": 2,
+            "ht_winner": "away"
           }
         },
         {
           "id": 13980076,
           "date": "2026-05-18",
-          "time": "04:15",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Udinese",
             "short": "Udinese",
             "team_id": 2695,
             "logo": "https://api.sofascore.app/api/v1/team/2695/image",
             "rank": 10,
-            "pts": 50
+            "pts": 50,
+            "goals": 0
           },
           "away": {
             "name": "Cremonese",
@@ -36918,7 +37539,8 @@
             "team_id": 2761,
             "logo": "https://api.sofascore.app/api/v1/team/2761/image",
             "rank": 18,
-            "pts": 31
+            "pts": 31,
+            "goals": 1
           },
           "predictions": {
             "winner": {
@@ -36954,20 +37576,25 @@
                 "home": 0.6079,
                 "draw": 0.2508,
                 "away": 0.1413
-              }
+              },
+              "result": "miss"
             },
             "btts": {
               "pick": "No",
               "probability": 0.571,
               "raw_probability": 0.571,
-              "odds": 1.95
+              "odds": 1.95,
+              "actual_btts": false,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Under",
               "line": 2.5,
               "probability": 0.5494,
               "raw_probability": 0.5494,
-              "odds": 1.73
+              "odds": 1.73,
+              "actual": 1,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Under",
@@ -36984,7 +37611,9 @@
               "odds": 1.83,
               "over_probability": 0.25,
               "raw_over_probability": 0.25,
-              "over_threshold": 0.68
+              "over_threshold": 0.68,
+              "actual": 4,
+              "result": "hit"
             },
             "factors": {
               "lambda_home": 1.783,
@@ -37076,6 +37705,36 @@
               "Over": 1.91,
               "Under": 1.8
             }
+          },
+          "settled_at": "2026-05-18",
+          "prediction_locked": true,
+          "prediction_locked_at": "2026-05-18T06:17:14.857311+09:30",
+          "flashscore_score": {
+            "home": 0,
+            "away": 1,
+            "status": "FT",
+            "source_match_id": "h0IS6Ane",
+            "fetched_at": "2026-05-18"
+          },
+          "settled_source": "Flashscore",
+          "actuals": {
+            "source": "LiveScore",
+            "home_corners": 5,
+            "away_corners": 5,
+            "corners_total": 10,
+            "home_fouls": 10,
+            "away_fouls": 8,
+            "fouls_total": 18,
+            "home_sot": 2,
+            "away_sot": 4,
+            "home_cards": 1,
+            "away_cards": 3,
+            "cards_total": 4,
+            "first_to_score": "away",
+            "first_scorer": "Jamie Vardy",
+            "ht_home": 0,
+            "ht_away": 1,
+            "ht_winner": "away"
           }
         },
         {

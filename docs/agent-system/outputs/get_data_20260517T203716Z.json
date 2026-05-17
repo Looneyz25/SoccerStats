@@ -1,13 +1,13 @@
 {
-  "runId": "20260517T205612Z",
+  "runId": "20260517T203716Z",
   "mode": "results-only",
   "status": "ok",
-  "startedAt": "2026-05-17T20:56:12.152Z",
-  "completedAt": "2026-05-17T21:07:00.568Z",
+  "startedAt": "2026-05-17T20:37:16.542Z",
+  "completedAt": "2026-05-17T20:48:03.467Z",
   "paths": {
-    "json": "docs\\agent-system\\outputs\\get_data_20260517T205612Z.json",
-    "markdown": "docs\\agent-system\\outputs\\get_data_20260517T205612Z.md",
-    "transcript": "docs\\agent-system\\outputs\\get_data_20260517T205612Z.log"
+    "json": "docs\\agent-system\\outputs\\get_data_20260517T203716Z.json",
+    "markdown": "docs\\agent-system\\outputs\\get_data_20260517T203716Z.md",
+    "transcript": "docs\\agent-system\\outputs\\get_data_20260517T203716Z.log"
   },
   "steps": [
     {
@@ -21,12 +21,12 @@
       ],
       "status": "ok",
       "exitCode": 0,
-      "startedAt": "2026-05-17T20:56:12.153Z",
-      "completedAt": "2026-05-17T20:56:16.218Z",
-      "durationMs": 4065,
-      "stdout": "=== soccer_routine.py results-only � 2026-05-18 (Adelaide) ===\r\n  result_check_buffer_minutes=45\r\n  result_backfill_dates=2026-05-15, 2026-05-16, 2026-05-17, 2026-05-18\r\n  due_for_result_check=7\r\n\r\n[Results A] settle due pending matches\r\n  flashscore_fallback_source=https://www.flashscore.com.au/x/feed/f_1_0_3_en-au_1\r\n  settled=0  skipped=7  not_due=67  flashscore_settled=0\r\n\r\n[Results B] backfill finished + enrich recent FT\r\n  added=0  enriched=1\r\n\r\n[Results C] protect resulted predictions\r\n  protected=396\r\n\r\n[Results D] prune stale unresolved matches\r\n  pruned=0\r\n  result_schedule=docs\\agent-system\\outputs\\result_check_schedule_20260518T062616+0930.md\r\n\r\n=== TOTAL: 470  FT: 396  upcoming: 74  | winner hit: 194  miss: 202  pending: 74 ===\r\n",
+      "startedAt": "2026-05-17T20:37:16.542Z",
+      "completedAt": "2026-05-17T20:37:20.355Z",
+      "durationMs": 3813,
+      "stdout": "=== soccer_routine.py results-only � 2026-05-18 (Adelaide) ===\r\n  result_check_buffer_minutes=45\r\n  result_backfill_dates=2026-05-15, 2026-05-16, 2026-05-17, 2026-05-18\r\n  due_for_result_check=24\r\n\r\n[Results A] settle due pending matches\r\n  settled=0  skipped=0  not_due=67\r\n\r\n[Results B] backfill finished + enrich recent FT\r\n  added=0  enriched=1\r\n\r\n[Results C] protect resulted predictions\r\n  protected=379\r\n\r\n[Results D] prune stale unresolved matches\r\n  pruned=0\r\n  result_schedule=docs\\agent-system\\outputs\\result_check_schedule_20260518T060720+0930.md\r\n\r\n=== TOTAL: 470  FT: 379  upcoming: 91  | winner hit: 188  miss: 191  pending: 91 ===\r\n",
       "stderr": "",
-      "stdoutTail": "=== soccer_routine.py results-only � 2026-05-18 (Adelaide) ===\r\n  result_check_buffer_minutes=45\r\n  result_backfill_dates=2026-05-15, 2026-05-16, 2026-05-17, 2026-05-18\r\n  due_for_result_check=7\r\n\r\n[Results A] settle due pending matches\r\n  flashscore_fallback_source=https://www.flashscore.com.au/x/feed/f_1_0_3_en-au_1\r\n  settled=0  skipped=7  not_due=67  flashscore_settled=0\r\n\r\n[Results B] backfill finished + enrich recent FT\r\n  added=0  enriched=1\r\n\r\n[Results C] protect resulted predictions\r\n  protected=396\r\n\r\n[Results D] prune stale unresolved matches\r\n  pruned=0\r\n  result_schedule=docs\\agent-system\\outputs\\result_check_schedule_20260518T062616+0930.md\r\n\r\n=== TOTAL: 470  FT: 396  upcoming: 74  | winner hit: 194  miss: 202  pending: 74 ===\r\n",
+      "stdoutTail": "=== soccer_routine.py results-only � 2026-05-18 (Adelaide) ===\r\n  result_check_buffer_minutes=45\r\n  result_backfill_dates=2026-05-15, 2026-05-16, 2026-05-17, 2026-05-18\r\n  due_for_result_check=24\r\n\r\n[Results A] settle due pending matches\r\n  settled=0  skipped=0  not_due=67\r\n\r\n[Results B] backfill finished + enrich recent FT\r\n  added=0  enriched=1\r\n\r\n[Results C] protect resulted predictions\r\n  protected=379\r\n\r\n[Results D] prune stale unresolved matches\r\n  pruned=0\r\n  result_schedule=docs\\agent-system\\outputs\\result_check_schedule_20260518T060720+0930.md\r\n\r\n=== TOTAL: 470  FT: 379  upcoming: 91  | winner hit: 188  miss: 191  pending: 91 ===\r\n",
       "stderrTail": ""
     },
     {
@@ -39,12 +39,12 @@
       ],
       "status": "ok",
       "exitCode": 0,
-      "startedAt": "2026-05-17T20:56:16.218Z",
-      "completedAt": "2026-05-17T20:56:16.372Z",
-      "durationMs": 154,
-      "stdout": "Result review written: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_result_review_current.md\r\nCSV: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_result_review_current.csv\r\nsettled_market_rows=1558 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the review agent can compare confidence bands to actual hit rate.\r\n",
+      "startedAt": "2026-05-17T20:37:20.355Z",
+      "completedAt": "2026-05-17T20:37:20.521Z",
+      "durationMs": 166,
+      "stdout": "Result review written: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_result_review_current.md\r\nCSV: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_result_review_current.csv\r\nsettled_market_rows=1490 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the review agent can compare confidence bands to actual hit rate.\r\n",
       "stderr": "",
-      "stdoutTail": "Result review written: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_result_review_current.md\r\nCSV: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_result_review_current.csv\r\nsettled_market_rows=1558 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the review agent can compare confidence bands to actual hit rate.\r\n",
+      "stdoutTail": "Result review written: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_result_review_current.md\r\nCSV: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_result_review_current.csv\r\nsettled_market_rows=1490 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the review agent can compare confidence bands to actual hit rate.\r\n",
       "stderrTail": ""
     },
     {
@@ -57,12 +57,12 @@
       ],
       "status": "ok",
       "exitCode": 0,
-      "startedAt": "2026-05-17T20:56:16.372Z",
-      "completedAt": "2026-05-17T20:56:16.489Z",
-      "durationMs": 117,
-      "stdout": "Model calibration written: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_calibration.json\r\nMarkdown: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_calibration.md\r\nmarket_adjustments=4 league_market_adjustments=7\r\n",
+      "startedAt": "2026-05-17T20:37:20.521Z",
+      "completedAt": "2026-05-17T20:37:20.642Z",
+      "durationMs": 121,
+      "stdout": "Model calibration written: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_calibration.json\r\nMarkdown: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_calibration.md\r\nmarket_adjustments=4 league_market_adjustments=8\r\n",
       "stderr": "",
-      "stdoutTail": "Model calibration written: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_calibration.json\r\nMarkdown: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_calibration.md\r\nmarket_adjustments=4 league_market_adjustments=7\r\n",
+      "stdoutTail": "Model calibration written: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_calibration.json\r\nMarkdown: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_calibration.md\r\nmarket_adjustments=4 league_market_adjustments=8\r\n",
       "stderrTail": ""
     },
     {
@@ -74,13 +74,13 @@
       ],
       "status": "ok",
       "exitCode": 0,
-      "startedAt": "2026-05-17T20:56:16.490Z",
-      "completedAt": "2026-05-17T21:07:00.567Z",
-      "durationMs": 644078,
-      "stdout": "Uploaded C:\\Betting\\Soccer Stats\\match_data.json to Firestore dashboardData/match_data as 15 league docs and 31 date docs.\nUploaded fast dashboard doc dashboardData/match_data_fast (14-day window from 2026-05-04, 431.3 KB).\n",
-      "stderr": "(node:16776) TimeoutNegativeWarning: -1 is a negative number.\nTimeout duration was set to 1.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
-      "stdoutTail": "Uploaded C:\\Betting\\Soccer Stats\\match_data.json to Firestore dashboardData/match_data as 15 league docs and 31 date docs.\nUploaded fast dashboard doc dashboardData/match_data_fast (14-day window from 2026-05-04, 431.3 KB).\n",
-      "stderrTail": "(node:16776) TimeoutNegativeWarning: -1 is a negative number.\nTimeout duration was set to 1.\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+      "startedAt": "2026-05-17T20:37:20.643Z",
+      "completedAt": "2026-05-17T20:48:03.467Z",
+      "durationMs": 642824,
+      "stdout": "Uploaded C:\\Betting\\Soccer Stats\\match_data.json to Firestore dashboardData/match_data as 15 league docs and 31 date docs.\nUploaded fast dashboard doc dashboardData/match_data_fast (14-day window from 2026-05-04, 424.4 KB).\n",
+      "stderr": "(node:31992) TimeoutNegativeWarning: -1 is a negative number.\nTimeout duration was set to 1.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
+      "stdoutTail": "Uploaded C:\\Betting\\Soccer Stats\\match_data.json to Firestore dashboardData/match_data as 15 league docs and 31 date docs.\nUploaded fast dashboard doc dashboardData/match_data_fast (14-day window from 2026-05-04, 424.4 KB).\n",
+      "stderrTail": "(node:31992) TimeoutNegativeWarning: -1 is a negative number.\nTimeout duration was set to 1.\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
     }
   ],
   "artifacts": {
@@ -92,8 +92,8 @@
       "matchCount": 470,
       "largestLeagueDocBytes": 244202,
       "statusCounts": {
-        "FT": 396,
-        "upcoming": 74
+        "FT": 391,
+        "upcoming": 79
       },
       "dateWindow": {
         "start": "2026-04-22",
@@ -101,18 +101,31 @@
       }
     },
     "resultSchedule": {
-      "generated_at": "2026-05-18T06:26:16.189592+09:30",
+      "generated_at": "2026-05-18T06:17:33.429424+09:30",
       "result_check_buffer_minutes": 45,
       "result_lookback_days": 3,
-      "due_count": 7,
-      "remaining_count": 9,
+      "due_count": 12,
+      "remaining_count": 14,
       "tomorrow_count": 1,
       "phase_summary": {
-        "settled": [],
-        "flashscore_settled": 0,
+        "settled": [
+          "Premier League: Newcastle United 3-1 West Ham United [Flashscore]",
+          "LaLiga: Elche 1-0 Getafe [Flashscore]",
+          "LaLiga: Levante UD 2-0 Mallorca [Flashscore]",
+          "LaLiga: Osasuna 1-2 Espanyol [Flashscore]",
+          "LaLiga: Rayo Vallecano 2-0 Villarreal [Flashscore]",
+          "LaLiga: Real Sociedad 3-4 Valencia [Flashscore]",
+          "LaLiga: Sevilla 0-1 Real Madrid [Flashscore]",
+          "Ligue 1: Nantes 0-0 Toulouse [Flashscore]",
+          "Serie A: Atalanta 0-1 Bologna [Flashscore]",
+          "Serie A: Cagliari 2-1 Torino [Flashscore]",
+          "Serie A: Sassuolo 2-3 Lecce [Flashscore]",
+          "Serie A: Udinese 0-1 Cremonese [Flashscore]"
+        ],
+        "flashscore_settled": 12,
         "backfilled": 0,
-        "enriched": 1,
-        "protected": 396,
+        "enriched": 13,
+        "protected": 391,
         "pruned": []
       },
       "matches": [
@@ -160,6 +173,19 @@
           "league": "Ligue 1",
           "date": "2026-05-18",
           "time": "04:30",
+          "home": "Lille",
+          "away": "Auxerre",
+          "status": "upcoming",
+          "kickoff_at": "2026-05-18T04:30:00+09:30",
+          "check_after": "2026-05-18T05:15:00+09:30",
+          "due_for_check": true,
+          "event_id": 14061906
+        },
+        {
+          "scope": "today",
+          "league": "Ligue 1",
+          "date": "2026-05-18",
+          "time": "04:30",
           "home": "Lorient",
           "away": "Le Havre",
           "status": "upcoming",
@@ -167,6 +193,32 @@
           "check_after": "2026-05-18T05:15:00+09:30",
           "due_for_check": true,
           "event_id": 14061904
+        },
+        {
+          "scope": "today",
+          "league": "Ligue 1",
+          "date": "2026-05-18",
+          "time": "04:30",
+          "home": "Nice",
+          "away": "Metz",
+          "status": "upcoming",
+          "kickoff_at": "2026-05-18T04:30:00+09:30",
+          "check_after": "2026-05-18T05:15:00+09:30",
+          "due_for_check": true,
+          "event_id": 14061909
+        },
+        {
+          "scope": "today",
+          "league": "Ligue 1",
+          "date": "2026-05-18",
+          "time": "04:30",
+          "home": "Olympique Lyonnais",
+          "away": "RC Lens",
+          "status": "upcoming",
+          "kickoff_at": "2026-05-18T04:30:00+09:30",
+          "check_after": "2026-05-18T05:15:00+09:30",
+          "due_for_check": true,
+          "event_id": 14061911
         },
         {
           "scope": "today",
@@ -186,6 +238,19 @@
           "league": "Ligue 1",
           "date": "2026-05-18",
           "time": "04:30",
+          "home": "Paris FC",
+          "away": "Paris Saint-Germain",
+          "status": "upcoming",
+          "kickoff_at": "2026-05-18T04:30:00+09:30",
+          "check_after": "2026-05-18T05:15:00+09:30",
+          "due_for_check": true,
+          "event_id": 14061910
+        },
+        {
+          "scope": "today",
+          "league": "Ligue 1",
+          "date": "2026-05-18",
+          "time": "04:30",
           "home": "RC Strasbourg",
           "away": "AS Monaco",
           "status": "upcoming",
@@ -193,6 +258,19 @@
           "check_after": "2026-05-18T05:15:00+09:30",
           "due_for_check": true,
           "event_id": 14061905
+        },
+        {
+          "scope": "today",
+          "league": "Ligue 1",
+          "date": "2026-05-18",
+          "time": "04:30",
+          "home": "Stade Brestois",
+          "away": "Angers",
+          "status": "upcoming",
+          "kickoff_at": "2026-05-18T04:30:00+09:30",
+          "check_after": "2026-05-18T05:15:00+09:30",
+          "due_for_check": true,
+          "event_id": 14061908
         },
         {
           "scope": "today",
