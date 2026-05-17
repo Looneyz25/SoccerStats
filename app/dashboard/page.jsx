@@ -18,6 +18,8 @@ import {
   Filter,
   Goal,
   Loader2,
+  LogOut,
+  Mail,
   MapPin,
   Settings,
   ShieldCheck,
@@ -29,6 +31,7 @@ import {
 const DATA_URLS = ['/data/match_data.json', '/match_data.json'];
 const GAMBLING_HELP_URL = 'https://www.gamblinghelponline.org.au/';
 const BETSTOP_URL = 'https://www.betstop.gov.au/';
+const SUPPORT_EMAIL = 'lvrstats.com@gmail.com';
 const FAVORITE_LEAGUES_STORAGE_KEY = 'favoriteLeagues';
 
 async function loadMatchData() {
@@ -240,7 +243,7 @@ function leagueLogo(value) {
   );
 }
 
-function TeamBadge({ src, name, align = 'left' }) {
+function TeamBadge({ src, name }) {
   const [failed, setFailed] = useState(false);
   const initials = String(name || '?')
     .split(/\s+/)
@@ -249,10 +252,8 @@ function TeamBadge({ src, name, align = 'left' }) {
     .map((part) => part[0])
     .join('')
     .toUpperCase();
-  const justify = align === 'right' ? 'ml-auto' : '';
-
   return (
-    <span className={`inline-flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-line bg-white text-xs font-bold text-slate-500 ${justify}`}>
+    <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-line bg-white text-xs font-bold text-slate-500">
       {src && !failed ? (
         <img src={src} alt="" className="h-full w-full object-contain p-1" aria-hidden="true" onError={() => setFailed(true)} />
       ) : (
@@ -1527,12 +1528,12 @@ function streakResultFor(streak, match) {
 
 function Stat({ icon: Icon, label, value, tone = 'text-ink' }) {
   return (
-    <div className="min-w-0 border-b border-line bg-white px-3 py-3 sm:border-b-0 sm:border-r sm:px-4 last:border-r-0">
-      <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-normal text-slate-500">
+    <div className="min-w-0 border-b border-line bg-white px-3 py-3 text-center sm:border-b-0 sm:border-r sm:px-4 last:border-r-0">
+      <div className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-normal text-slate-500">
         <Icon className="h-4 w-4" aria-hidden="true" />
         <span className="truncate">{label}</span>
       </div>
-      <div className={`mt-1 text-xl font-semibold sm:text-2xl ${tone}`}>{value}</div>
+      <div className={`mt-1 flex justify-center text-xl font-semibold sm:text-2xl ${tone}`}>{value}</div>
     </div>
   );
 }
@@ -1663,6 +1664,7 @@ function SettingsView({ bookmakerId, onBookmakerChange, onBack }) {
   const selectedBookmaker = BOOKMAKERS[bookmakerId] || BOOKMAKERS.sportsbet;
   const [isPlatformOwner, setIsPlatformOwner] = useState(false);
   const [profile, setProfile] = useState(null);
+  const [signOutBusy, setSignOutBusy] = useState(false);
   const [billingBusy, setBillingBusy] = useState(false);
   const [billingMessage, setBillingMessage] = useState('');
   const [billingError, setBillingError] = useState('');
@@ -1718,6 +1720,13 @@ function SettingsView({ bookmakerId, onBookmakerChange, onBack }) {
     }
   }
 
+  async function handleSignOut() {
+    setSignOutBusy(true);
+    const { signOut } = await import('firebase/auth');
+    const { getFirebaseAuth } = await import('../firebase');
+    await signOut(getFirebaseAuth());
+  }
+
   const subscriptionStatus = profile?.subscriptionStatus || 'No Stripe subscription';
   const subscriptionRenewal = profile?.subscriptionCurrentPeriodEnd
     ? new Date(profile.subscriptionCurrentPeriodEnd).toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })
@@ -1762,8 +1771,55 @@ function SettingsView({ bookmakerId, onBookmakerChange, onBack }) {
           </div>
         </div>
 
-        <div className="mt-4">
-          <ResponsibleGamblingNotice />
+        <div className="mt-4 rounded-lg border border-slate-300 bg-white p-4 shadow-panel">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-base font-semibold text-ink">Account</h2>
+              <p className="mt-1 text-sm text-slate-500">Leave this device signed out when you are finished.</p>
+            </div>
+            <button
+              type="button"
+              onClick={handleSignOut}
+              disabled={signOutBusy}
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink shadow-panel hover:bg-field disabled:cursor-wait disabled:opacity-70"
+            >
+              {signOutBusy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <LogOut className="h-4 w-4" aria-hidden="true" />}
+              Sign out
+            </button>
+          </div>
+        </div>
+
+        <div className="mt-4 rounded-lg border border-slate-300 bg-white p-4 shadow-panel">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <h2 className="flex items-center gap-2 text-base font-semibold text-ink">
+                <Mail className="h-4 w-4 text-signal" aria-hidden="true" />
+                Contact
+              </h2>
+              <p className="mt-1 text-sm text-slate-500">
+                Send through billing, access, data, or account questions.
+              </p>
+              <div className="mt-3 grid gap-2 text-sm text-slate-600 sm:grid-cols-2">
+                <div className="rounded-md border border-line bg-field px-3 py-2">
+                  <div className="text-xs font-semibold uppercase text-slate-500">Support email</div>
+                  <a href={`mailto:${SUPPORT_EMAIL}`} className="mt-0.5 block truncate font-semibold text-ink underline-offset-2 hover:underline">
+                    {SUPPORT_EMAIL}
+                  </a>
+                </div>
+                <div className="rounded-md border border-line bg-field px-3 py-2">
+                  <div className="text-xs font-semibold uppercase text-slate-500">Useful details</div>
+                  <div className="mt-0.5 font-medium text-ink">Account email, match name, and screenshot</div>
+                </div>
+              </div>
+            </div>
+            <a
+              href={`mailto:${SUPPORT_EMAIL}?subject=Soccer%20Stats%20support`}
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink shadow-panel hover:bg-field"
+            >
+              <Mail className="h-4 w-4" aria-hidden="true" />
+              Email support
+            </a>
+          </div>
         </div>
 
         <div className="mt-4 rounded-lg border border-slate-300 bg-white p-4 shadow-panel">
@@ -1848,6 +1904,10 @@ function SettingsView({ bookmakerId, onBookmakerChange, onBack }) {
             </div>
           </div>
         )}
+
+        <div className="mt-4">
+          <ResponsibleGamblingNotice />
+        </div>
       </section>
     </main>
   );
@@ -1968,16 +2028,16 @@ function ResultsReview({ matches }) {
           <span className="rounded-md border border-red-200 bg-red-50 px-2 py-1 text-red-700">Weakest {worst.label} {worst.hitRate}%</span>
         </div>
       </div>
-      <div className="mt-3 grid gap-2 sm:grid-cols-4">
+      <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
         {rows.map((row) => (
-          <div key={row.key} className="rounded-md border border-slate-300 bg-field px-3 py-2">
-            <div className="flex items-center justify-between gap-2">
+          <div key={row.key} className="rounded-md border border-slate-300 bg-field px-2.5 py-2 sm:px-3">
+            <div className="flex items-center justify-between gap-1.5">
               <span className="text-xs font-semibold uppercase text-slate-500">{row.label}</span>
               <span className={`rounded px-1.5 py-0.5 text-xs font-semibold ${row.hitRate >= 55 ? 'bg-emerald-100 text-emerald-700' : row.hitRate < 45 ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600'}`}>
                 {row.hitRate}%
               </span>
             </div>
-            <div className="mt-2 text-sm font-semibold text-ink">{row.hits} hit / {row.misses} miss</div>
+            <div className="mt-2 text-sm font-semibold leading-5 text-ink">{row.hits} hit / {row.misses} miss</div>
             <div className="mt-1 text-xs text-slate-500">
               Odds {formatOddsTotal(row.oddsHit)} v {formatOddsTotal(row.oddsMiss)}
             </div>
@@ -2232,10 +2292,10 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
           <div className="rounded-md bg-ink px-3 py-3 text-center text-base font-semibold text-white shadow-panel">
             {match.status === 'FT' ? `${match.home?.goals ?? '-'}-${match.away?.goals ?? '-'}` : 'vs'}
           </div>
-          <div className="min-w-0 rounded-md border border-slate-300 bg-white px-3 py-3 text-right shadow-panel">
-            <div className="flex min-w-0 items-center justify-end gap-2">
+          <div className="min-w-0 rounded-md border border-slate-300 bg-white px-3 py-3 text-left shadow-panel">
+            <div className="flex min-w-0 items-center gap-2">
+              <TeamBadge src={teamLogo(match, 'away')} name={match.away?.name} />
               <div className="truncate text-base font-semibold text-ink">{match.away?.name}</div>
-              <TeamBadge src={teamLogo(match, 'away')} name={match.away?.name} align="right" />
             </div>
             <div className="mt-1 text-xs text-slate-500">Rank {match.away?.rank ?? '-'} · {match.away?.pts ?? '-'} pts</div>
           </div>
@@ -2287,8 +2347,6 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
         <H2HContextPanel match={match} allMatches={allMatches} />
 
         <StreakList title="Team streaks" streaks={match.team_streaks} match={match} />
-
-        <ResponsibleGamblingNotice />
       </div>
     </div>
   );
@@ -2307,6 +2365,12 @@ function MatchCard({ match, onSelect, bookmakerId }) {
   const confidence = confidenceForMatch(match);
   const edgeBadgeFor = (comparison) =>
     comparison?.badge?.tone === 'positive' && comparison.edgePoints > 0 ? comparison.badge.label : null;
+  const compactPick =
+    predictions.winner ? { label: 'Winner', value: formatMarketDetail(predictions.winner), edge: edgeBadgeFor(winnerComparison) } :
+      predictions.ou_goals ? { label: 'Goals', value: formatMarketDetail(predictions.ou_goals), edge: edgeBadgeFor(goalsComparison) } :
+        predictions.btts ? { label: 'BTTS', value: formatMarketDetail(predictions.btts), edge: edgeBadgeFor(bttsComparison) } :
+          predictions.ou_cards ? { label: 'Cards', value: formatMarketDetail(predictions.ou_cards), edge: edgeBadgeFor(cardsComparison) } :
+            null;
 
   return (
     <article className="rounded-lg border border-line bg-white shadow-panel transition active:scale-[0.99] sm:hover:-translate-y-0.5 sm:hover:border-slate-300 sm:hover:shadow-lg">
@@ -2333,34 +2397,75 @@ function MatchCard({ match, onSelect, bookmakerId }) {
       </div>
 
       <div className="px-3 py-3 sm:px-4 sm:py-4">
-        <div className="grid grid-cols-[minmax(0,1fr)_3.25rem_minmax(0,1fr)] items-center gap-2 sm:grid-cols-[1fr_auto_1fr] sm:gap-3">
+        <div className="grid gap-1.5 sm:hidden">
+          <div className="rounded-md border border-line bg-field/60 px-2.5 py-2">
+            <div className="flex min-w-0 items-center justify-start gap-2">
+              <TeamBadge src={teamLogo(match, 'home')} name={match.home?.name} />
+              <div className="min-w-0 whitespace-normal break-words text-left text-sm font-semibold leading-snug text-ink sm:text-base">{match.home?.name}</div>
+            </div>
+          </div>
+          {match.status === 'FT' && (
+            <div className="justify-self-center rounded-md bg-ink px-3 py-1.5 text-center text-sm font-semibold text-white">
+              {match.home?.goals ?? '-'}-{match.away?.goals ?? '-'}
+            </div>
+          )}
+          <div className="rounded-md border border-line bg-field/60 px-2.5 py-2">
+            <div className="flex min-w-0 items-center justify-start gap-2">
+              <TeamBadge src={teamLogo(match, 'away')} name={match.away?.name} />
+              <div className="min-w-0 whitespace-normal break-words text-left text-sm font-semibold leading-snug text-ink sm:text-base">{match.away?.name}</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="hidden items-center gap-3 sm:grid sm:grid-cols-[1fr_auto_1fr]">
           <div className="min-w-0 text-left">
             <div className="flex min-w-0 items-center gap-2">
               <TeamBadge src={teamLogo(match, 'home')} name={match.home?.name} />
-              <div className="truncate text-sm font-semibold text-ink sm:text-base">{match.home?.name}</div>
+              <div className="min-w-0 whitespace-normal break-words text-base font-semibold leading-snug text-ink">{match.home?.name}</div>
             </div>
             <div className="mt-1 text-xs text-slate-500">Home</div>
           </div>
-          <div className="rounded-md bg-ink px-2 py-2 text-center text-sm font-semibold text-white">
-            {match.status === 'FT' ? `${match.home?.goals ?? '-'}-${match.away?.goals ?? '-'}` : 'vs'}
+          <div className={`justify-self-center text-center font-semibold ${match.status === 'FT' ? 'rounded-md bg-ink px-3 py-2 text-sm text-white' : 'text-xs text-slate-400'}`}>
+            {match.status === 'FT' ? (
+              `${match.home?.goals ?? '-'}-${match.away?.goals ?? '-'}`
+            ) : (
+              <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-line bg-field text-[11px] uppercase shadow-sm">
+                v
+              </span>
+            )}
           </div>
-          <div className="min-w-0 text-right">
-            <div className="flex min-w-0 items-center justify-end gap-2">
-              <div className="truncate text-sm font-semibold text-ink sm:text-base">{match.away?.name}</div>
-              <TeamBadge src={teamLogo(match, 'away')} name={match.away?.name} align="right" />
+          <div className="min-w-0 text-left">
+            <div className="flex min-w-0 items-center gap-2">
+              <TeamBadge src={teamLogo(match, 'away')} name={match.away?.name} />
+              <div className="min-w-0 whitespace-normal break-words text-base font-semibold leading-snug text-ink">{match.away?.name}</div>
             </div>
             <div className="mt-1 text-xs text-slate-500">Away</div>
           </div>
         </div>
 
-        <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+        {compactPick && (
+          <div className="mt-3 rounded-md border border-line bg-white px-3 py-2 sm:hidden">
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-xs font-semibold uppercase text-slate-500">{compactPick.label}</span>
+              {compactPick.edge && (
+                <span className="inline-flex shrink-0 items-center gap-1 rounded-md border border-amber-300 bg-amber-50 px-1.5 py-0.5 text-[11px] font-semibold leading-none text-amber-700">
+                  <Star className="h-3 w-3 fill-amber-400 text-amber-500" aria-hidden="true" />
+                  {compactPick.edge}
+                </span>
+              )}
+            </div>
+            <div className="mt-1 text-base font-semibold leading-6 text-ink">{compactPick.value}</div>
+          </div>
+        )}
+
+        <div className="mt-4 hidden grid-cols-1 gap-2 sm:grid sm:grid-cols-2">
           <MarketPill label="Winner" market={predictions.winner} edgeBadge={edgeBadgeFor(winnerComparison)} />
           <MarketPill label="BTTS" market={predictions.btts} edgeBadge={edgeBadgeFor(bttsComparison)} />
           <MarketPill label="Goals" market={predictions.ou_goals} edgeBadge={edgeBadgeFor(goalsComparison)} />
           <MarketPill label="Cards" market={predictions.ou_cards} edgeBadge={edgeBadgeFor(cardsComparison)} />
         </div>
 
-        <div className="mt-4 grid grid-cols-3 gap-1 rounded-md bg-field p-2 text-center sm:gap-2">
+        <div className="mt-3 grid grid-cols-3 gap-1 rounded-md bg-field p-2 text-center sm:mt-4 sm:gap-2">
           <div>
             <div className="text-xs text-slate-500">Home</div>
             <div className="text-sm font-semibold sm:text-base">{formatOdds(odds.home)}</div>
@@ -2671,13 +2776,13 @@ function HomeInner() {
   return (
     <main className="min-h-screen bg-field">
       <header className="border-b border-line bg-white">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-3 py-4 sm:px-6 sm:py-5 lg:px-8">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-3 py-4 sm:px-6 sm:py-5 lg:px-8">
+          <div className="flex items-start justify-between gap-3">
             <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center">
               <img
                 src="/LVR-LOGO.png"
                 alt="LVRstats.com"
-                className="h-12 w-auto max-w-[17rem] object-contain sm:h-14 sm:max-w-xs"
+                className="h-16 w-auto max-w-[19rem] object-contain sm:h-20 sm:max-w-sm"
               />
               <div className="min-w-0">
                 <p className="text-sm text-slate-500">
@@ -2693,10 +2798,11 @@ function HomeInner() {
             <button
               type="button"
               onClick={openSettings}
-              className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink shadow-panel hover:bg-field sm:w-auto"
+              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-line bg-white text-ink shadow-panel hover:bg-field"
+              aria-label="Open settings"
+              title="Settings"
             >
-              <Settings className="h-4 w-4" aria-hidden="true" />
-              Settings
+              <Settings className="h-5 w-5" aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -2713,7 +2819,7 @@ function HomeInner() {
               icon={BarChart3}
               label="Odds Hit / Loss"
               value={
-                <span className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                <span className="flex flex-nowrap items-baseline gap-x-1.5 whitespace-nowrap text-lg sm:gap-x-2 sm:text-2xl">
                   <span className="text-signal">{formatOddsTotal(stats.oddsTotals?.hit)}</span>
                   <span className="text-sm font-semibold text-slate-400">v</span>
                   <span className="text-miss">{formatOddsTotal(stats.oddsTotals?.loss)}</span>
@@ -2816,7 +2922,7 @@ function HomeInner() {
         )}
 
         <div
-          className="mt-3 sm:mt-5"
+          className="date-slide-frame mt-3 sm:mt-5"
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
@@ -2844,9 +2950,6 @@ function HomeInner() {
           </div>
         </div>
 
-        <div className="mt-3 sm:mt-5">
-          <ResponsibleGamblingNotice />
-        </div>
       </section>
     </main>
   );

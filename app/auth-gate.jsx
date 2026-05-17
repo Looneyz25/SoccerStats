@@ -9,7 +9,7 @@ import {
   signInWithPopup,
   signOut,
 } from 'firebase/auth';
-import { CreditCard, Loader2, LockKeyhole, LogIn, Mail, ShieldCheck, Clock } from 'lucide-react';
+import { CreditCard, Loader2, LockKeyhole, LogIn, Mail, Clock } from 'lucide-react';
 import { getFirebaseAuth, googleProvider } from './firebase';
 import { getUserProfile, createUserProfile } from './firestore-data';
 
@@ -420,9 +420,6 @@ export default function AuthGate({ children }) {
             </p>
           </div>
           <div className="rounded-lg border border-line bg-white p-6 shadow-panel text-center">
-            <p className="text-sm font-medium text-ink mb-4">
-              Signed in as <span className="font-semibold text-signal">{user.email}</span>
-            </p>
             <div className="mb-4 rounded-md border border-line bg-field px-3 py-3 text-left">
               <div className="text-sm font-semibold text-ink">A$19.99 / month</div>
               <div className="mt-1 text-xs text-slate-600">
@@ -461,30 +458,5 @@ export default function AuthGate({ children }) {
     );
   }
 
-  return (
-    <>
-      <div className="border-b border-line bg-white">
-        <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-2 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between lg:px-8">
-          <div className="min-w-0 truncate">
-            Signed in as <span className="font-semibold text-ink">{user.email || user.displayName || 'user'}</span>
-            {profile?.isPlatformOwner && (
-              <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-signal/10 px-2 py-0.5 text-xs font-semibold text-signal">
-                <ShieldCheck className="h-3 w-3" /> Admin
-              </span>
-            )}
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => signOut(auth)}
-              className="inline-flex h-9 items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink hover:bg-field"
-            >
-              Sign out
-            </button>
-          </div>
-        </div>
-      </div>
-      {children}
-    </>
-  );
+  return children;
 }

@@ -33,8 +33,8 @@ const features = [
   },
   {
     icon: Database,
-    title: 'Firebase data path',
-    copy: 'The app reads Firestore first and keeps generated JSON as a static fallback.',
+    title: 'Betting edge finder',
+    copy: 'Compare model picks against bookmaker odds, recent form, H2H trends, and home-ground signals before you choose a market.',
   },
   {
     icon: ShieldCheck,
@@ -51,9 +51,9 @@ function ProductPreview() {
   ];
 
   return (
-    <div className="relative mt-8 h-[20rem] overflow-hidden sm:h-[24rem] xl:pointer-events-none xl:absolute xl:inset-y-16 xl:left-auto xl:right-0 xl:mt-0 xl:h-auto xl:w-[58%]">
+    <div className="relative mt-8 hidden h-[20rem] overflow-hidden sm:h-[24rem] lg:block xl:pointer-events-none xl:absolute xl:inset-y-16 xl:left-auto xl:right-0 xl:mt-0 xl:h-auto xl:w-[58%]">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_65%_35%,rgba(15,118,110,0.14),transparent_32%)]" />
-      <div className="absolute bottom-[-2.5rem] left-3 right-3 rotate-[-2deg] rounded-lg border border-line bg-white/95 shadow-panel sm:left-auto sm:right-[-2rem] sm:w-[36rem] xl:bottom-[-5rem] xl:right-[-5rem] xl:w-[44rem] xl:max-w-[115vw] xl:rotate-[-3deg]">
+      <div className="absolute bottom-[-2.5rem] left-3 right-3 rotate-[-2deg] rounded-lg border border-line bg-white/95 shadow-panel sm:left-auto sm:right-[-2rem] sm:w-[36rem] xl:bottom-[-3rem] xl:right-6 xl:w-[40rem]">
         <div className="border-b border-line px-4 py-4">
           <div className="flex items-center justify-between gap-3">
             <div>
@@ -91,32 +91,33 @@ export default function LandingPage() {
   return (
     <main className="min-h-screen bg-field text-ink">
       <section className="relative overflow-hidden border-b border-line bg-white xl:min-h-[92vh]">
-        <header className="relative z-10 mx-auto flex max-w-7xl items-center justify-end px-4 py-5 lg:px-8">
-          <Link
-            href="/dashboard/"
-            className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink shadow-panel hover:bg-field"
-          >
-            <LockKeyhole className="h-4 w-4" />
-            Sign in
-          </Link>
-        </header>
+        <header className="relative z-10 mx-auto h-4 max-w-2xl px-5 sm:px-6 lg:max-w-7xl lg:px-8" />
 
-        <div className="relative z-10 mx-auto flex max-w-7xl flex-col px-4 pb-10 pt-8 sm:pt-16 lg:px-8 lg:pb-16 lg:pt-20 xl:block xl:pb-24 xl:pt-24">
+        <div className="relative z-10 mx-auto flex max-w-2xl flex-col px-5 pb-10 pt-5 sm:px-6 sm:pt-12 lg:max-w-7xl lg:px-8 lg:pb-16 lg:pt-20 xl:block xl:pb-24 xl:pt-24">
           <div className="max-w-2xl xl:pb-24">
-            <div className="inline-flex max-w-full flex-wrap items-center gap-2 rounded-md border border-line bg-field px-3 py-2 text-sm font-semibold leading-5 text-signal">
-              <Activity className="h-4 w-4 shrink-0" />
-              <span className="min-w-0">Stats-led football picks across Europe&apos;s top leagues</span>
-            </div>
             <h1 className="sr-only">Lonny&apos;s Predictions</h1>
-            <img
-              src="/LVR-LOGO.png"
-              alt="LVRstats.com"
-              className="mt-6 h-auto w-full max-w-[34rem] object-contain"
-            />
-            <p className="mt-5 max-w-xl text-base leading-7 text-slate-600 sm:text-lg">
+            <div className="flex justify-center sm:justify-start">
+              <img
+                src="/LVR-LOGO.png"
+                alt="LVRstats.com"
+                className="h-auto w-full max-w-[24rem] object-contain sm:max-w-[34rem]"
+              />
+            </div>
+            <div className="mt-7 flex items-center gap-2 text-sm font-semibold leading-5 text-signal">
+              <Activity className="h-4 w-4 shrink-0" aria-hidden="true" />
+              <span>Stats-led football picks</span>
+            </div>
+            <p className="mt-4 max-w-xl text-base leading-7 text-slate-600 sm:text-lg">
               A private match dashboard for fixtures, odds, model picks, result review, and conservative learning from prediction outcomes.
             </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-8 flex flex-col gap-3 sm:max-w-sm">
+              <Link
+                href="/dashboard/"
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-md border border-line bg-white px-5 text-sm font-semibold text-ink shadow-panel hover:bg-field"
+              >
+                <LockKeyhole className="h-4 w-4" />
+                Sign in
+              </Link>
               <Link
                 href="/dashboard/"
                 className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-ink px-5 text-sm font-semibold text-white shadow-panel hover:bg-slate-800"
@@ -126,7 +127,7 @@ export default function LandingPage() {
               </Link>
               <a
                 href="#system"
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-md border border-line bg-white px-5 text-sm font-semibold text-ink shadow-panel hover:bg-field"
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-md px-3 text-sm font-semibold text-slate-600 hover:text-ink"
               >
                 View system
                 <BarChart3 className="h-4 w-4" />
