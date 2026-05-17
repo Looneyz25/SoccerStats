@@ -22,10 +22,10 @@
   <rect width="512" height="512" rx="115" fill="url(#bg)"/>
 
   <!-- Soft contact shadow under the ball -->
-  <ellipse cx="256" cy="378" rx="118" ry="12" fill="#0a1428" opacity="0.12"/>
+  <ellipse cx="256" cy="332" rx="96" ry="11" fill="#0a1428" opacity="0.12"/>
 
-  <!-- Soccer ball -->
-  <g transform="translate(256 220)">
+  <!-- Soccer ball, scaled inside the mobile maskable safe area -->
+  <g transform="translate(256 210) scale(0.82)">
     <circle r="140" fill="url(#ballShade)" stroke="#0a1428" stroke-width="5"/>
 
     <g clip-path="url(#ballClip)" fill="#0a1428">
@@ -50,12 +50,11 @@
     </g>
   </g>
 
-  <!-- LVR pill badge -->
-  <g transform="translate(256 410)">
-    <rect x="-78" y="-30" width="156" height="60" rx="30" fill="url(#pillGrad)"/>
-    <text x="0" y="11"
-          font-family="Inter, Helvetica, Arial, sans-serif"
-          font-size="34" font-weight="900"
-          fill="#ffffff" text-anchor="middle" letter-spacing="4">LVR</text>
+  <!-- Large app-style LVR wordmark -->
+  <g transform="translate(256 398)">
+    <text x="0" y="36"
+          font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Arial, sans-serif"
+          font-size="132" font-weight="900"
+          fill="#050b18" text-anchor="middle" letter-spacing="0">LVR</text>
   </g>
 </svg>
