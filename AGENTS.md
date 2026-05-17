@@ -29,6 +29,12 @@ The frontend lives in [app/page.jsx](app/page.jsx) (App Router) with Tailwind st
 npx firebase-tools deploy --only functions --project sports-predictions-f91fd
 ```
 
+**Match data refresh** — run the routine, refresh static JSON fallback, then upload `match_data.json` to Firestore:
+```
+npm.cmd run data:refresh
+```
+Use `npm.cmd run data:refresh:local` when Firestore credentials are not available. Do not add proxy/IP rotation to bypass provider controls; prefer API/fallback sources, caching, gentle sleeps, and backoff.
+
 **Static Hosting fallback** (secondary, `out/` dir):
 ```
 npm run build && npx firebase-tools deploy --only hosting --project sports-predictions-f91fd
@@ -44,8 +50,8 @@ npm run build && npx firebase-tools deploy --only hosting --project sports-predi
 | `NEXT_PUBLIC_APP_URL` | `apphosting.yaml` | Build/runtime env var |
 
 - Cloud Function URL: `https://australia-southeast1-sports-predictions-f91fd.cloudfunctions.net/stripeApi`
-- Stripe Product ID: `prod_UWtFiyWb2LoEy0` (Soccer Stats Pro, A$19.99/month)
-- Stripe Price ID is hardcoded in `functions/index.js` for Checkout: `price_1TXpTJBbsFy1wAkF64nFdG26`.
+- Stripe Product ID: `STRIPE_PRO_PRODUCT_ID` in `.env` (Soccer Stats Pro, A$19.99/month)
+- Stripe Price ID: `STRIPE_PRO_PRICE_ID` in `.env` for Checkout.
 - Checkout starts new subscriptions with a 7-day free trial and no upfront payment requirement.
 - The free trial is one-time per Firebase user / Stripe customer; if `stripeTrialUsed` or prior Stripe trial history exists, Checkout does not attach another trial.
 - Stripe webhooks and `/api/stripe/sync-subscription` both sync trialing/active/cancelled subscription status into Firestore.

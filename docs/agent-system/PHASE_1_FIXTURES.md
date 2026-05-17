@@ -14,11 +14,16 @@ Phase 1 is a `run_daily` foundation phase. It does not form streaks, predictions
 | --- | --- |
 | 17 | Premier League |
 | 8 | LaLiga |
+| 23 | Serie A |
 | 35 | Bundesliga |
 | 34 | Ligue 1 |
 | 7 | UEFA Champions League |
 | 37 | Eredivisie |
+| 238 | Primeira Liga |
 | 242 | MLS |
+| 136 | A-League Men |
+| 36 | Scottish Premiership |
+| 196 | J1 League |
 | 18 | Championship |
 | 24 | League One |
 | 25 | League Two |
@@ -107,6 +112,7 @@ Every Phase 1 fixture row must include:
 | `source_health` | Whether the source was healthy, degraded, blocked, or unverified |
 | `league_id` | Confirms the fixture belongs to the listed leagues |
 | `league` | Human-readable competition name |
+| `league_logo` | Provider league badge/logo URL when available |
 | `event_id` | Stable key for all later phases |
 | `date` | Australia/Adelaide local date |
 | `time` | Australia/Adelaide local time |
@@ -115,8 +121,10 @@ Every Phase 1 fixture row must include:
 | `status` | Upcoming, live, FT, postponed, cancelled, or unresolved |
 | `home` | Home team name |
 | `home_team_id` | Team ID for later form/streak/standings phases |
+| `home_logo` | Provider home-team badge/logo URL when available |
 | `away` | Away team name |
 | `away_team_id` | Team ID for later form/streak/standings phases |
+| `away_logo` | Provider away-team badge/logo URL when available |
 | `is_duplicate` | Flags duplicate event IDs |
 | `is_stale` | Flags past fixtures still not settled |
 | `missing_fields` | Lists missing event/team/date/status fields |

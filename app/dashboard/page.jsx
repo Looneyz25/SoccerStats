@@ -29,6 +29,7 @@ import {
 const DATA_URLS = ['/data/match_data.json', '/match_data.json'];
 const GAMBLING_HELP_URL = 'https://www.gamblinghelponline.org.au/';
 const BETSTOP_URL = 'https://www.betstop.gov.au/';
+const FAVORITE_LEAGUES_STORAGE_KEY = 'favoriteLeagues';
 
 async function loadMatchData() {
   try {
@@ -58,7 +59,7 @@ const SPORTSBET_LEAGUE_SLUGS = {
   'Primeira Liga': 'rest-of-europe/portuguese-primeira-liga',
   'UEFA Champions League': 'uefa-competitions/uefa-champions-league',
   MLS: 'north-america/usa-major-league-soccer',
-  'A-League Men': 'australia/a-league-men',
+  'A-League Men': 'australia/australian-a-league-men',
   'Scottish Premiership': 'united-kingdom/scottish-premiership',
   'J1 League': 'asia/japanese-j1-league',
 };
@@ -79,6 +80,24 @@ const TAB_LEAGUE_NAMES = {
   'A-League Men': 'A-League Men',
   'Scottish Premiership': 'Scottish Premiership',
   'J1 League': 'Japanese J1 League',
+};
+
+const LEAGUE_LOGOS = {
+  'Premier League': 'https://media.api-sports.io/football/leagues/39.png',
+  Championship: 'https://media.api-sports.io/football/leagues/40.png',
+  'League One': 'https://media.api-sports.io/football/leagues/41.png',
+  'League Two': 'https://media.api-sports.io/football/leagues/42.png',
+  LaLiga: 'https://media.api-sports.io/football/leagues/140.png',
+  'Serie A': 'https://media.api-sports.io/football/leagues/135.png',
+  Bundesliga: 'https://media.api-sports.io/football/leagues/78.png',
+  'Ligue 1': 'https://media.api-sports.io/football/leagues/61.png',
+  Eredivisie: 'https://media.api-sports.io/football/leagues/88.png',
+  'Primeira Liga': 'https://media.api-sports.io/football/leagues/94.png',
+  'UEFA Champions League': 'https://media.api-sports.io/football/leagues/2.png',
+  MLS: 'https://media.api-sports.io/football/leagues/253.png',
+  'A-League Men': 'https://media.api-sports.io/football/leagues/188.png',
+  'Scottish Premiership': 'https://media.api-sports.io/football/leagues/179.png',
+  'J1 League': 'https://media.api-sports.io/football/leagues/98.png',
 };
 
 const BOOKMAKERS = {
@@ -202,11 +221,23 @@ function imageValue(...values) {
 
 function teamLogo(match, side) {
   const team = match?.[side] || {};
-  return imageValue(team.logo, team.logo_url, team.crest, team.badge);
+  return imageValue(
+    team.logo,
+    team.logo_url,
+    team.crest,
+    team.badge,
+    team.team_id ? `https://api.sofascore.app/api/v1/team/${team.team_id}/image` : '',
+  );
 }
 
 function leagueLogo(value) {
-  return imageValue(value?.leagueLogo, value?.league_logo, value?.logo, value?.logo_url);
+  return imageValue(
+    value?.leagueLogo,
+    value?.league_logo,
+    value?.logo,
+    value?.logo_url,
+    LEAGUE_LOGOS[value?.league || value?.name],
+  );
 }
 
 function TeamBadge({ src, name, align = 'left' }) {
@@ -486,6 +517,56 @@ function modelVsBookmakerComparison(match, marketKey, market) {
   }
 
   return null;
+}
+
+function winnerProbabilityBreakdown(match) {
+  const f = match.predictions?.factors || {};
+  const probs = poissonMarketProbabilities(
+    Number(f.lambda_home),
+    Number(f.lambda_away),
+    Number(f.dixon_coles_rho) || 0,
+  );
+  if (!probs) return null;
+
+  const odds = match.sportsbet_odds || match.odds || {};
+  return [
+    { key: 'home', label: match.home?.short || match.home?.name || 'Home', model: probs.home, bookmaker: impliedProbability(odds.home) },
+    { key: 'draw', label: 'Draw', model: probs.draw, bookmaker: impliedProbability(odds.draw) },
+    { key: 'away', label: match.away?.short || match.away?.name || 'Away', model: probs.away, bookmaker: impliedProbability(odds.away) },
+  ];
+}
+
+function WinnerProbabilityBreakdown({ match }) {
+  const rows = winnerProbabilityBreakdown(match);
+  const pickType = match.predictions?.winner?.type;
+  if (!rows) return null;
+
+  return (
+    <div className="mt-2 rounded-md border border-slate-300 bg-white p-2 text-xs shadow-panel">
+      <div className="mb-1.5 grid grid-cols-[minmax(0,1fr)_3.5rem_5rem] gap-2 px-1.5 text-[11px] font-semibold uppercase text-slate-500">
+        <span>1X2 split</span>
+        <span className="text-right">Model</span>
+        <span className="text-right">Bookmaker</span>
+      </div>
+      <div className="grid gap-1">
+        {rows.map((row) => {
+          const selected = row.key === pickType;
+          return (
+            <div
+              key={row.key}
+              className={`grid grid-cols-[minmax(0,1fr)_3.5rem_5rem] items-center gap-2 rounded px-1.5 py-1 ${
+                selected ? 'bg-emerald-100 text-emerald-900 ring-1 ring-emerald-500' : 'text-slate-600'
+              }`}
+            >
+              <span className={`truncate ${selected ? 'font-semibold text-emerald-800' : ''}`}>{row.label}</span>
+              <span className={`text-right ${selected ? 'font-semibold text-emerald-800' : ''}`}>{fmtPct(row.model) || '-'}</span>
+              <span className="text-right text-slate-500">{fmtPct(row.bookmaker) || '-'}</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
 const MARKET_CONFIG = [
@@ -825,12 +906,26 @@ function h2hContextForMatch(allMatches, match) {
   };
 }
 
+function h2hTrendSampleCount(match) {
+  const counts = (match.h2h_streaks || [])
+    .map((streak) => {
+      const text = String(streak?.value || '');
+      const fraction = text.match(/(\d+)\s*\/\s*(\d+)/);
+      if (fraction) return Number(fraction[2]);
+      const whole = text.match(/^(\d+)$/);
+      return whole ? Number(whole[1]) : 0;
+    })
+    .filter((count) => Number.isFinite(count) && count > 0);
+  return counts.length ? Math.max(...counts) : 0;
+}
+
 function advantageContextForMatch(allMatches, match) {
   const h2h = h2hContextForMatch(allMatches, match);
   const h2hHomeWins = h2h.summary?.count ? h2h.summary.homeWins : h2h.meetings.filter((meeting) => meeting.winner === 'home').length;
   const h2hAwayWins = h2h.summary?.count ? h2h.summary.awayWins : h2h.meetings.filter((meeting) => meeting.winner === 'away').length;
   const h2hDraws = h2h.summary?.count ? h2h.summary.draws : h2h.meetings.filter((meeting) => meeting.winner === 'draw').length;
   const h2hCount = h2h.summary?.count || h2h.meetings.length;
+  const h2hTrendCount = h2hTrendSampleCount(match);
   const homeForm = recentTeamForm(allMatches, match.home?.team_id, match.id, 10, { side: 'home' });
   const awayForm = recentTeamForm(allMatches, match.away?.team_id, match.id, 10, { side: 'away' });
   const f = match.predictions?.factors || {};
@@ -839,10 +934,6 @@ function advantageContextForMatch(allMatches, match) {
   const homeElo = Number(f.home_elo);
   const awayElo = Number(f.away_elo);
 
-  const h2hLeader =
-    h2hHomeWins > h2hAwayWins ? h2h.homeName :
-      h2hAwayWins > h2hHomeWins ? h2h.awayName :
-        h2hCount ? 'Even' : 'No exact rows';
   const groundLeader =
     homeForm && awayForm
       ? homeForm.pointsPerMatch > awayForm.pointsPerMatch ? match.home?.short || h2h.homeName :
@@ -851,6 +942,18 @@ function advantageContextForMatch(allMatches, match) {
       : homeForm ? match.home?.short || h2h.homeName :
         awayForm ? match.away?.short || h2h.awayName :
           'Not enough form';
+  const h2hLeader =
+    h2hHomeWins > h2hAwayWins ? h2h.homeName :
+      h2hAwayWins > h2hHomeWins ? h2h.awayName :
+        h2hCount ? 'Even' : groundLeader;
+  const h2hDetail =
+    h2hCount
+      ? `${h2hHomeWins}-${h2hAwayWins}-${h2hDraws} over last ${h2hCount}`
+      : h2hTrendCount
+        ? `H2H trend sample up to ${h2hTrendCount}; ground form used`
+        : homeForm && awayForm
+          ? `Home ${homeForm.count} at home · Away ${awayForm.count} away`
+          : 'Needs exact H2H rows';
   const tableLeader =
     Number.isFinite(homeRank) && Number.isFinite(awayRank)
       ? homeRank < awayRank ? match.home?.short || h2h.homeName :
@@ -869,7 +972,7 @@ function advantageContextForMatch(allMatches, match) {
     homeForm,
     awayForm,
     items: [
-      { label: 'H2H advantage', value: h2hLeader, detail: h2hCount ? `${h2hHomeWins}-${h2hAwayWins}-${h2hDraws} over last ${h2hCount}` : 'Trend-only data' },
+      { label: 'H2H advantage', value: h2hLeader, detail: h2hDetail },
       { label: 'Ground form', value: groundLeader, detail: homeForm && awayForm ? `Home ${homeForm.pointsPerMatch.toFixed(1)} PPG · Away ${awayForm.pointsPerMatch.toFixed(1)} PPG` : 'Needs more local form' },
       { label: 'Table edge', value: tableLeader, detail: Number.isFinite(homeRank) && Number.isFinite(awayRank) ? `Rank ${homeRank} vs ${awayRank}` : 'Unavailable' },
       { label: 'Elo edge', value: eloLeader, detail: Number.isFinite(homeElo) && Number.isFinite(awayElo) ? `${homeElo.toFixed(0)} vs ${awayElo.toFixed(0)}` : 'Unavailable' },
@@ -1260,7 +1363,18 @@ function compareLeagues(a, b) {
   return rankCompare || a.localeCompare(b);
 }
 
-function groupMatchesByLeague(matches) {
+function favoriteLeagueRank(league, favoriteLeagues) {
+  const index = favoriteLeagues.indexOf(league);
+  return index === -1 ? Number.POSITIVE_INFINITY : index;
+}
+
+function compareLeagueGroups(a, b, favoriteLeagues) {
+  const favoriteCompare = favoriteLeagueRank(a.league, favoriteLeagues) - favoriteLeagueRank(b.league, favoriteLeagues);
+  if (favoriteCompare !== 0) return favoriteCompare;
+  return compareLeagues(a.league, b.league);
+}
+
+function groupMatchesByLeague(matches, favoriteLeagues = []) {
   const grouped = new Map();
 
   matches.forEach((match) => {
@@ -1281,7 +1395,7 @@ function groupMatchesByLeague(matches) {
       ...group,
       matches: group.matches.sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`)),
     }))
-    .sort((a, b) => compareLeagues(a.league, b.league));
+    .sort((a, b) => compareLeagueGroups(a, b, favoriteLeagues));
 }
 
 function summarize(matches) {
@@ -1427,17 +1541,19 @@ function MarketPill({ label, market, edgeBadge }) {
   if (!market) return null;
   const detail = formatMarketDetail(market);
   return (
-    <div className={`flex min-h-11 items-center justify-between gap-2 rounded-md border px-2.5 py-2 sm:px-3 ${marketPillClass(market.result)}`}>
-      <span className="shrink-0 text-xs font-medium text-slate-500">{label}</span>
-      <span className={`flex min-w-0 items-center gap-1 text-right text-sm font-semibold ${marketValueClass(market.result)}`}>
+    <div className={`grid min-h-[4.25rem] gap-1 rounded-md border px-2.5 py-2 sm:px-3 ${marketPillClass(market.result)}`}>
+      <div className="flex min-w-0 items-center justify-between gap-2">
+        <span className="shrink-0 text-xs font-medium text-slate-500">{label}</span>
         {edgeBadge && (
           <span className="inline-flex shrink-0 items-center gap-1 rounded-md border border-amber-300 bg-amber-50 px-1.5 py-0.5 text-[11px] font-semibold leading-none text-amber-700">
             <Star className="h-3 w-3 fill-amber-400 text-amber-500" aria-hidden="true" />
             <span>{edgeBadge}</span>
           </span>
         )}
+      </div>
+      <span className={`flex min-w-0 items-start justify-end gap-1 text-right text-sm font-semibold leading-5 ${marketValueClass(market.result)}`}>
         {resultIcon(market.result)}
-        <span className="truncate">{detail || '-'}</span>
+        <span className="min-w-0 whitespace-normal break-words">{detail || '-'}</span>
       </span>
     </div>
   );
@@ -2038,6 +2154,7 @@ function PredictionSummaryCard({ match, allMatches }) {
                 </span>
                 <span className="mt-2 block">
                   <ModelVsBookmakerComparison comparison={row.comparison} />
+                  {row.label === 'Winner' && <WinnerProbabilityBreakdown match={match} />}
                 </span>
               </span>
               <span className="min-w-0 leading-5 text-slate-600">
@@ -2125,12 +2242,9 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
         </div>
 
         {selectedBookmakerHref && (
-          <div className="space-y-2">
-            <div className="flex flex-col items-stretch justify-center gap-2 sm:flex-row sm:items-center">
-              <BookmakerSelect value={selectedBookmaker.id} onChange={onBookmakerChange} />
-              <BookmakerLink bookmakerId={selectedBookmaker.id} href={selectedBookmakerHref} label={bookmakerButtonLabel} />
-            </div>
-            <ResponsibleGamblingNotice compact />
+          <div className="flex flex-col items-stretch justify-center gap-2 sm:flex-row sm:items-center">
+            <BookmakerSelect value={selectedBookmaker.id} onChange={onBookmakerChange} />
+            <BookmakerLink bookmakerId={selectedBookmaker.id} href={selectedBookmakerHref} label={bookmakerButtonLabel} />
           </div>
         )}
 
@@ -2173,6 +2287,8 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
         <H2HContextPanel match={match} allMatches={allMatches} />
 
         <StreakList title="Team streaks" streaks={match.team_streaks} match={match} />
+
+        <ResponsibleGamblingNotice />
       </div>
     </div>
   );
@@ -2280,7 +2396,7 @@ function MatchCard({ match, onSelect, bookmakerId }) {
   );
 }
 
-function LeagueSection({ group, onSelectMatch, bookmakerId }) {
+function LeagueSection({ group, onSelectMatch, bookmakerId, isFavorite = false, onToggleFavorite }) {
   const finished = group.matches.filter((match) => match.status === 'FT').length;
   const upcoming = group.matches.length - finished;
 
@@ -2290,6 +2406,19 @@ function LeagueSection({ group, onSelectMatch, bookmakerId }) {
         <div className="flex min-w-0 items-center gap-2">
           <LeagueBadge src={group.logo} name={group.league} />
           <h2 className="truncate text-base font-semibold sm:text-lg">{group.league}</h2>
+          <button
+            type="button"
+            onClick={() => onToggleFavorite(group.league)}
+            className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border transition ${
+              isFavorite
+                ? 'border-amber-300 bg-amber-400/15 text-amber-300'
+                : 'border-white/15 bg-white/5 text-white/65 hover:bg-white/10 hover:text-white'
+            }`}
+            aria-label={`${isFavorite ? 'Remove' : 'Add'} ${group.league} as favourite league`}
+            title={`${isFavorite ? 'Remove from' : 'Add to'} favourite leagues`}
+          >
+            <Star className={`h-4 w-4 ${isFavorite ? 'fill-amber-300' : ''}`} aria-hidden="true" />
+          </button>
         </div>
         <div className="flex flex-wrap items-center gap-1.5 text-xs font-semibold">
           <span className="rounded-full bg-white/12 px-2.5 py-1">{group.matches.length} matches</span>
@@ -2320,6 +2449,7 @@ function HomeInner() {
   const [valueFilter, setValueFilter] = useState('all');
   const [query, setQuery] = useState('');
   const [bookmakerId, setBookmakerId] = useState('sportsbet');
+  const [favoriteLeagues, setFavoriteLeagues] = useState([]);
 
   const scrollPositionRef = useRef(0);
   const swipeStartRef = useRef(null);
@@ -2347,6 +2477,17 @@ function HomeInner() {
     if (saved && BOOKMAKERS[saved]) setBookmakerId(saved);
   }, []);
 
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(window.localStorage.getItem(FAVORITE_LEAGUES_STORAGE_KEY) || '[]');
+      if (Array.isArray(saved)) {
+        setFavoriteLeagues(saved.filter((item) => typeof item === 'string' && item.trim()));
+      }
+    } catch {
+      setFavoriteLeagues([]);
+    }
+  }, []);
+
   const handleBookmakerChange = useCallback((nextBookmakerId) => {
     const safeBookmakerId = BOOKMAKERS[nextBookmakerId] ? nextBookmakerId : 'sportsbet';
     setBookmakerId(safeBookmakerId);
@@ -2355,6 +2496,7 @@ function HomeInner() {
 
   const matches = useMemo(() => flattenMatches(data), [data]);
   const leagues = useMemo(() => [...new Set(matches.map((match) => match.league))].sort(compareLeagues), [matches]);
+  const favoriteLeagueSet = useMemo(() => new Set(favoriteLeagues), [favoriteLeagues]);
   const dates = useMemo(
     () => [...new Set(matches.map((match) => match.date).filter(Boolean))].sort((a, b) => a.localeCompare(b)),
     [matches],
@@ -2366,6 +2508,26 @@ function HomeInner() {
     if (selectedDate || !dates.length) return;
     setSelectedDate(defaultMatchDate(dates, data?.captured_at));
   }, [data?.captured_at, dates, selectedDate]);
+
+  useEffect(() => {
+    if (!leagues.length || !favoriteLeagues.length) return;
+    const available = new Set(leagues);
+    const nextFavorites = favoriteLeagues.filter((item) => available.has(item));
+    if (nextFavorites.length !== favoriteLeagues.length) {
+      setFavoriteLeagues(nextFavorites);
+      window.localStorage.setItem(FAVORITE_LEAGUES_STORAGE_KEY, JSON.stringify(nextFavorites));
+    }
+  }, [favoriteLeagues, leagues]);
+
+  const handleFavoriteLeagueToggle = useCallback((nextLeague) => {
+    setFavoriteLeagues((current) => {
+      const next = current.includes(nextLeague)
+        ? current.filter((item) => item !== nextLeague)
+        : [...current, nextLeague];
+      window.localStorage.setItem(FAVORITE_LEAGUES_STORAGE_KEY, JSON.stringify(next));
+      return next;
+    });
+  }, []);
 
   const [slideDir, setSlideDir] = useState(0);
   const moveDate = useCallback(
@@ -2401,7 +2563,7 @@ function HomeInner() {
       })
       .sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`));
   }, [league, matches, query, selectedDate, status, valueFilter]);
-  const groupedMatches = useMemo(() => groupMatchesByLeague(filtered), [filtered]);
+  const groupedMatches = useMemo(() => groupMatchesByLeague(filtered, favoriteLeagues), [favoriteLeagues, filtered]);
 
   // Look up the selected match across the entire dataset so detail view works
   // even when the current filters would exclude it.
@@ -2669,6 +2831,8 @@ function HomeInner() {
               group={group}
               onSelectMatch={handleSelectMatch}
               bookmakerId={bookmakerId}
+              isFavorite={favoriteLeagueSet.has(group.league)}
+              onToggleFavorite={handleFavoriteLeagueToggle}
             />
           ))}
 

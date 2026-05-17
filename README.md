@@ -28,6 +28,27 @@ npm.cmd install --cache .\.npm-cache
 npm.cmd run build --cache .\.npm-cache
 ```
 
+Refresh live match data and publish it to Firestore:
+
+```powershell
+npm.cmd run data:refresh
+```
+
+This runs `scripts/soccer_routine.py`, runs the phase pipeline for fixtures, odds, team context/stats, predictions, settlement, and calibration, refreshes the static JSON fallback in `public/data/`, then uploads `match_data.json` to Firestore at `dashboardData/match_data`.
+
+To collect locally without Firestore credentials:
+
+```powershell
+npm.cmd run data:refresh:local
+```
+
+Firestore upload requires one credential source in the shell:
+
+- `FIREBASE_SERVICE_ACCOUNT_JSON` containing the service account JSON string
+- `GOOGLE_APPLICATION_CREDENTIALS` pointing to a service account JSON file
+
+Do not use proxy/IP rotation to bypass provider controls. The local routines prefer API/fallback sources, cache existing data, and use gentle sleeps/backoff. You can slow Sportsbet collection further with `SOCCER_PHASE2_SLEEP` and cap odds enrichment with `SOCCER_ODDS_BUDGET`.
+
 Deploy to Firebase Hosting, Firestore rules, and Functions:
 
 ```powershell
@@ -59,10 +80,10 @@ The single paid tier is `Soccer Stats Pro` at `A$19.99/month`.
 
 Stripe objects created for this app:
 
-- Product: `prod_UWtFiyWb2LoEy0`
-- Price: `price_1TXpTJBbsFy1wAkF64nFdG26`
+- Product: `STRIPE_PRO_PRODUCT_ID` in `.env`
+- Price: `STRIPE_PRO_PRICE_ID` in `.env`
 
-Subscription signup uses Stripe Checkout with the hardcoded price in `functions/index.js`. Each Stripe customer/Firebase user gets only one 7-day free trial with no upfront payment required. If a user cancels and subscribes again after using a trial, Checkout starts a normal paid subscription without another trial. Existing customers can manage billing through Stripe Customer Portal. When the trial ends, Stripe charges the saved payment method; if no payment method is attached, the subscription is cancelled and webhook sync removes dashboard access.
+Subscription signup uses Stripe Checkout with `STRIPE_PRO_PRICE_ID`. Each Stripe customer/Firebase user gets only one 7-day free trial with no upfront payment required. If a user cancels and subscribes again after using a trial, Checkout starts a normal paid subscription without another trial. Existing customers can manage billing through Stripe Customer Portal. When the trial ends, Stripe charges the saved payment method; if no payment method is attached, the subscription is cancelled and webhook sync removes dashboard access.
 
 Create a Stripe webhook endpoint pointing to:
 
@@ -101,6 +122,8 @@ The webhook updates `users/{uid}` with `hasAccess`, `accessSource`, `stripeCusto
 - `predictions_*.json` - dated snapshots
 
 The live app reads Firestore first from `dashboardData/match_data`, then falls back to generated JSON files when Firestore is unavailable.
+
+Scheduled daily runs use `run_daily.bat`, which runs the routine, uploads to Firestore, and then commits/pushes data changes.
 
 Fixture source order:
 

@@ -17,6 +17,7 @@ import argparse
 import csv
 import html
 import json
+import os
 import random
 import re
 import time
@@ -56,11 +57,16 @@ LEAGUE_PAGES = {
     "League One":             "united-kingdom/english-league-one",
     "League Two":             "united-kingdom/english-league-two",
     "LaLiga":                 "spain/spanish-la-liga",
+    "Serie A":                "italy/italian-serie-a",
     "Bundesliga":             "germany/german-bundesliga",
     "Ligue 1":                "france/french-ligue-1",
     "Eredivisie":             "rest-of-europe/dutch-eredivisie",
+    "Primeira Liga":          "rest-of-europe/portuguese-primeira-liga",
     "UEFA Champions League":  "uefa-competitions/uefa-champions-league",
     "MLS":                    "north-america/usa-major-league-soccer",
+    "A-League Men":           "australia/australian-a-league-men",
+    "Scottish Premiership":   "united-kingdom/scottish-premiership",
+    "J1 League":              "asia/japanese-j1-league",
 }
 
 # Bridges Flashscore short names to Sportsbet canonical names. Kept aligned with
@@ -577,7 +583,7 @@ def league_summary(rows):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--leagues", help="Comma-separated league names to limit fetch (default: all leagues with ready_for_phase_2 rows).")
-    parser.add_argument("--sleep", type=float, default=1.0, help="Seconds to sleep between league fetches.")
+    parser.add_argument("--sleep", type=float, default=float(os.environ.get("SOCCER_PHASE2_SLEEP", "2.5")), help="Seconds to sleep between league fetches.")
     args = parser.parse_args()
 
     run_ts = datetime.now(ADL).strftime("%Y-%m-%d %H:%M:%S %Z")

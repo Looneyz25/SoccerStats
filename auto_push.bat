@@ -4,7 +4,7 @@ REM Safe to run repeatedly: no-op if nothing changed.
 REM Triggered by Windows Task Scheduler every 15 minutes.
 
 setlocal enabledelayedexpansion
-cd /d "C:\Users\lvora\OneDrive\Betting\Soccer Stats" || exit /b 1
+cd /d "%~dp0" || exit /b 1
 
 REM Identity (only sets if missing)
 git config user.name >nul 2>&1 || git config user.name "Looneyz25"

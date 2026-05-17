@@ -20,6 +20,11 @@ if exist ".venv-local\Scripts\python.exe" (
 echo [%date% %time%] === run_daily start === > "%LOG%"
 echo [%date% %time%] python command: !PYTHON! >> "%LOG%"
 
+REM Polite collection defaults. Use official/API sources first and keep request
+REM cadence gentle instead of trying to bypass provider blocking.
+if not defined SOCCER_PHASE2_SLEEP set "SOCCER_PHASE2_SLEEP=2.5"
+if not defined SOCCER_ODDS_BUDGET set "SOCCER_ODDS_BUDGET=240"
+
 REM Ensure dependencies
 !PYTHON! -c "import curl_cffi, tzdata" >nul 2>&1
 if errorlevel 1 (
@@ -42,6 +47,15 @@ echo [%date% %time%] running soccer_phases_routine.py (Phases 1-8 + result revie
 !PYTHON! scripts\soccer_phases_routine.py >> "%LOG%" 2>&1
 if errorlevel 1 (
   echo [%date% %time%] phases routine failed with errorlevel %errorlevel% (continuing) >> "%LOG%"
+)
+
+REM Refresh static JSON fallback before any upload/deploy path.
+echo. >> "%LOG%"
+echo [%date% %time%] preparing Next.js static data fallback >> "%LOG%"
+call npm.cmd run prebuild >> "%LOG%" 2>&1
+if errorlevel 1 (
+  echo [%date% %time%] prebuild failed with errorlevel %errorlevel% >> "%LOG%"
+  exit /b 2
 )
 
 REM Publish dashboard data to Firestore. Non-fatal; static JSON remains fallback.

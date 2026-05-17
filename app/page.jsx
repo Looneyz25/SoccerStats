@@ -9,7 +9,6 @@ import {
   LockKeyhole,
   RefreshCw,
   ShieldCheck,
-  Target,
 } from 'lucide-react';
 
 const metrics = [
@@ -93,13 +92,7 @@ export default function LandingPage() {
     <main className="min-h-screen bg-field text-ink">
       <section className="relative min-h-[92vh] overflow-hidden border-b border-line bg-white">
         <ProductPreview />
-        <header className="relative z-10 mx-auto flex max-w-7xl items-center justify-between px-4 py-5 lg:px-8">
-          <div className="flex items-center gap-3">
-            <div className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-line bg-white text-signal shadow-panel">
-              <Target className="h-5 w-5" />
-            </div>
-            <span className="text-base font-semibold text-ink">Lonny&apos;s Predictions</span>
-          </div>
+        <header className="relative z-10 mx-auto flex max-w-7xl items-center justify-end px-4 py-5 lg:px-8">
           <Link
             href="/dashboard/"
             className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink shadow-panel hover:bg-field"
@@ -115,9 +108,12 @@ export default function LandingPage() {
               <Activity className="h-4 w-4" />
               Stats-led football picks across Europe&apos;s top leagues
             </div>
-            <h1 className="mt-6 max-w-2xl text-4xl font-semibold leading-tight text-ink sm:text-5xl lg:text-6xl">
-              Lonny&apos;s Predictions
-            </h1>
+            <h1 className="sr-only">Lonny&apos;s Predictions</h1>
+            <img
+              src="/LVR-LOGO.png"
+              alt="LVRstats.com"
+              className="mt-6 h-auto w-full max-w-[34rem] object-contain"
+            />
             <p className="mt-5 max-w-xl text-base leading-7 text-slate-600 sm:text-lg">
               A private match dashboard for fixtures, odds, model picks, result review, and conservative learning from prediction outcomes.
             </p>

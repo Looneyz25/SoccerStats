@@ -2,7 +2,7 @@ const admin = require('firebase-admin');
 const { onRequest } = require('firebase-functions/v2/https');
 const Stripe = require('stripe');
 
-const PRO_PRICE_ID = 'price_1TXpTJBbsFy1wAkF64nFdG26';
+const PRO_PRICE_ID = process.env.STRIPE_PRO_PRICE_ID;
 const PRO_PLAN_NAME = 'Soccer Stats Pro';
 const PRO_TRIAL_DAYS = 7;
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || 'https://lvrstats.com';
@@ -14,6 +14,9 @@ let stripeClient;
 function stripe() {
   if (!process.env.STRIPE_SECRET_KEY) {
     throw new Error('STRIPE_SECRET_KEY is not configured.');
+  }
+  if (!PRO_PRICE_ID) {
+    throw new Error('STRIPE_PRO_PRICE_ID is not configured.');
   }
   if (!stripeClient) {
     stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY, {
@@ -420,7 +423,7 @@ async function webhook(req, res) {
 
 exports.stripeApi = onRequest({
   region: 'australia-southeast1',
-  secrets: ['STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET'],
+  secrets: ['STRIPE_SECRET_KEY', 'STRIPE_WEBHOOK_SECRET', 'STRIPE_PRO_PRICE_ID'],
 }, async (req, res) => {
   try {
     const routePath = req.path || req.url || '';

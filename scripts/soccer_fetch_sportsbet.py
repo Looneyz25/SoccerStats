@@ -24,11 +24,16 @@ LEAGUE_PAGES = {
     "League One":             "united-kingdom/english-league-one",
     "League Two":             "united-kingdom/english-league-two",
     "LaLiga":                 "spain/spanish-la-liga",
+    "Serie A":                "italy/italian-serie-a",
     "Bundesliga":             "germany/german-bundesliga",
     "Ligue 1":                "france/french-ligue-1",
     "Eredivisie":             "rest-of-europe/dutch-eredivisie",
+    "Primeira Liga":          "rest-of-europe/portuguese-primeira-liga",
     "UEFA Champions League":  "uefa-competitions/uefa-champions-league",
     "MLS":                    "north-america/usa-major-league-soccer",
+    "A-League Men":           "australia/australian-a-league-men",
+    "Scottish Premiership":   "united-kingdom/scottish-premiership",
+    "J1 League":              "asia/japanese-j1-league",
 }
 
 ABBREV = {

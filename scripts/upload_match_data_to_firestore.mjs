@@ -26,6 +26,12 @@ function credentialOptions() {
 }
 
 async function main() {
+  if (!process.env.FIREBASE_SERVICE_ACCOUNT_JSON && !process.env.GOOGLE_APPLICATION_CREDENTIALS) {
+    console.error('Firestore upload needs credentials.');
+    console.error('Set FIREBASE_SERVICE_ACCOUNT_JSON to a service account JSON string, or set GOOGLE_APPLICATION_CREDENTIALS to a service account JSON file path.');
+    process.exit(1);
+  }
+
   const dataPath = path.join(ROOT, 'match_data.json');
   const raw = await readFile(dataPath, 'utf8');
   const parsed = JSON.parse(raw);

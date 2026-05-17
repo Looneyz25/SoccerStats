@@ -20,7 +20,7 @@ Goal: refresh the dashboard with data for matches that have not yet kicked off.
 
 Steps (work autonomously, no clarifying questions):
 
-1. Open C:\Users\lvora\OneDrive\Betting\Soccer Stats and load match_data.json.
+1. Open C:\Betting\Soccer Stats and load match_data.json.
    Note today's date.
 
 2. For SofaScore Premier League season 76986 (tournament 17), and the parallel
@@ -63,7 +63,7 @@ POST-MATCH RESULT CHECK — refresh results for completed matches.
 
 Steps (work autonomously, no clarifying questions):
 
-1. Load C:\Users\lvora\OneDrive\Betting\Soccer Stats\match_data.json.
+1. Load C:\Betting\Soccer Stats\match_data.json.
 
 2. For every match where `status != "FT"` and the kickoff is more than 2.5 hours
    in the past, look up the final score:
@@ -82,7 +82,7 @@ Steps (work autonomously, no clarifying questions):
    Summary tab, and the right-side "Predictions vs Outcome" card all show
    ✓ for positive outcomes and ✗ for misses.
 
-5. Save outputs to C:\Users\lvora\OneDrive\Betting\Soccer Stats and report
+5. Save outputs to C:\Betting\Soccer Stats and report
    the matches that flipped from upcoming to FT in this run.
 ```
 

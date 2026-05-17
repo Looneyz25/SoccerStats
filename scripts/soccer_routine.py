@@ -84,16 +84,22 @@ TOURNAMENTS = {
     7:   "UEFA Champions League",
     17:  "Premier League",
     8:   "LaLiga",
+    23:  "Serie A",
     35:  "Bundesliga",
     34:  "Ligue 1",
     37:  "Eredivisie",
+    238: "Primeira Liga",
     242: "MLS",
+    136: "A-League Men",
+    36:  "Scottish Premiership",
+    196: "J1 League",
     18:  "Championship",
     24:  "League One",
     25:  "League Two",
 }
 ORDER = ["Premier League","LaLiga","Bundesliga","Ligue 1","UEFA Champions League",
-         "Eredivisie","MLS","Championship","League One","League Two"]
+         "Serie A","Eredivisie","Primeira Liga","MLS","A-League Men",
+         "Scottish Premiership","J1 League","Championship","League One","League Two"]
 
 
 def load_model_calibration():
@@ -168,6 +174,26 @@ def short(name):
     return name
 
 
+def sofascore_team_logo(team_id):
+    return f"https://api.sofascore.app/api/v1/team/{team_id}/image" if team_id else ""
+
+
+def sofascore_league_logo(unique_tournament_id):
+    return f"https://api.sofascore.app/api/v1/unique-tournament/{unique_tournament_id}/image" if unique_tournament_id else ""
+
+
+def team_payload(team, score=None):
+    payload = {
+        "name": team.get("name", ""),
+        "short": short(team.get("shortName") or team.get("name", "")),
+        "team_id": team.get("id"),
+        "logo": sofascore_team_logo(team.get("id")),
+    }
+    if score is not None:
+        payload["goals"] = score
+    return payload
+
+
 def load_store():
     if STORE.exists():
         return json.loads(STORE.read_text(encoding="utf-8"))
@@ -200,7 +226,8 @@ def phase_0_validate(store):
     # ensure all canonical leagues exist
     for canon in TOURNAMENTS.values():
         if canon not in by_name:
-            new_lg = {"id": next(k for k, v in TOURNAMENTS.items() if v == canon), "name": canon, "season": "2025/26", "round": None, "matches": []}
+            league_id = next(k for k, v in TOURNAMENTS.items() if v == canon)
+            new_lg = {"id": league_id, "name": canon, "season": "2025/26", "round": None, "logo": sofascore_league_logo(league_id), "matches": []}
             store["leagues"].append(new_lg)
             by_name[canon] = new_lg
 
@@ -245,11 +272,21 @@ def phase_0_validate(store):
             if utid not in TOURNAMENTS:
                 drops_foreign += 1; continue
             correct = TOURNAMENTS[utid]
+            target_league = by_name.get(correct)
+            if target_league is not None:
+                target_league["id"] = utid
+                target_league["logo"] = sofascore_league_logo(utid)
             ts = e.get("startTimestamp")
             if ts:
                 new_d = adl_date(ts); new_t = "FT" if m.get("status") == "FT" else adl_time(ts)
                 if m.get("date") != new_d or m.get("time") != new_t:
                     m["date"] = new_d; m["time"] = new_t; re_dated += 1
+            h = e.get("homeTeam") or {}
+            a = e.get("awayTeam") or {}
+            if h.get("id"):
+                m.setdefault("home", {})["logo"] = sofascore_team_logo(h.get("id"))
+            if a.get("id"):
+                m.setdefault("away", {})["logo"] = sofascore_team_logo(a.get("id"))
             if correct != L["name"]:
                 by_name[correct]["matches"].append(m); moved += 1
             else:
@@ -417,10 +454,8 @@ def phase_a5_backfill_enrich(store, seen_ids):
             h = ev.get("homeTeam") or {}; a = ev.get("awayTeam") or {}
             rec = {
                 "id": eid, "date": adl_date(ts) if ts else d, "time": "FT", "status": "FT",
-                "home": {"name": h.get("name",""), "short": short(h.get("shortName") or h.get("name","")),
-                         "team_id": h.get("id"), "goals": (ev.get("homeScore") or {}).get("current")},
-                "away": {"name": a.get("name",""), "short": short(a.get("shortName") or a.get("name","")),
-                         "team_id": a.get("id"), "goals": (ev.get("awayScore") or {}).get("current")},
+                "home": team_payload(h, (ev.get("homeScore") or {}).get("current")),
+                "away": team_payload(a, (ev.get("awayScore") or {}).get("current")),
                 "settled_at": TODAY.isoformat(),
             }
             by_name[TOURNAMENTS[utid]]["matches"].append(rec)
@@ -466,9 +501,8 @@ def build_xg_index(store):
                          "event_id": int}, ...]} sorted oldest -> newest.
 
     Only FT matches that carry an `xg` block (attached by
-    soccer_fetch_understat.py — PL, LaLiga, Bundesliga, Ligue 1 are covered;
-    Serie A isn't in TOURNAMENTS; Eredivisie/MLS/Championship/League One/
-    League Two are NOT covered by Understat) are included. Teams that play
+    soccer_fetch_understat.py — PL, LaLiga, Serie A, Bundesliga, Ligue 1 are covered;
+    other supported competitions are NOT covered by Understat) are included. Teams that play
     in non-Understat leagues will simply have no entries here, and the
     fetch_form() call will fall back to raw SofaScore goals.
     """
@@ -937,8 +971,8 @@ def phase_b_forecast(store, seen_ids):
                 rec = {
                     "id": eid, "date": adl_date(ts) if ts else d, "time": adl_time(ts) if ts else "00:00",
                     "status": "upcoming",
-                    "home": {"name": h.get("name",""), "short": short(h.get("shortName") or h.get("name","")), "team_id": h.get("id")},
-                    "away": {"name": a.get("name",""), "short": short(a.get("shortName") or a.get("name","")), "team_id": a.get("id")},
+                    "home": team_payload(h),
+                    "away": team_payload(a),
                     "predictions": pred,
                 }
                 if odds: rec["odds"] = odds
