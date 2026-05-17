@@ -1,61 +1,24 @@
 run_timestamp,event_id,league,date,time,home,away,top_side,top_market_odds,top_p,top_edge,top_stake,phase5_status,actual_status,actual_home_score,actual_away_score,actual_outcome,phase6_status,realized_return,phase6_notes
-2026-05-17 16:16:15 ACST,flashscore:ClNUHToB,J1 League,2026-05-17,14:30,Chiba,Kashima Antlers,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-17 16:16:15 ACST,flashscore:p2LxG7GN,J1 League,2026-05-17,14:30,Okayama,Shimizu S-Pulse,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-17 16:16:15 ACST,flashscore:UPgeYlWi,J1 League,2026-05-17,15:30,Cerezo Osaka,Nagoya Grampus,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-17 16:16:15 ACST,flashscore:4n29Aovo,J1 League,2026-05-17,15:30,Kyoto,Sanfrecce Hiroshima,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-17 16:16:15 ACST,flashscore:jH1dEhfL,Serie A,2026-05-17,19:30,AS Roma,Lazio,,,,,0.0,no_value,,,,,skipped,0.0,No recommendation (phase5_status=no_value).
-2026-05-17 16:16:15 ACST,flashscore:6V6CE1l4,Serie A,2026-05-17,19:30,Como,Parma,away,11.0,0.19355830508474575,0.1026,20.0,bet,live,,,,pending,0.0,[Flashscore] Match in progress (None-None).
-2026-05-17 16:16:15 ACST,flashscore:2c0LCuJG,Serie A,2026-05-17,19:30,Genoa,AC Milan,home,5.0,0.2571843012364181,0.0572,0.0,lean,live,,,,pending,0.0,[Flashscore] Match in progress (None-None).
-2026-05-17 16:16:15 ACST,flashscore:SrG1hBX1,Serie A,2026-05-17,19:30,Juventus,Fiorentina,draw,5.5,0.2464353880927423,0.0646,0.0,lean,live,,,,pending,0.0,[Flashscore] Match in progress (None-None).
-2026-05-17 16:16:15 ACST,flashscore:b5oCU6VG,J1 League,2026-05-17,19:30,Kawasaki Frontale,Machida,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-17 16:16:15 ACST,flashscore:fk8mGEP8,Serie A,2026-05-17,19:30,Pisa,Napoli,home,9.0,0.18378077821011674,0.0727,0.0,lean,live,,,,pending,0.0,[Flashscore] Match in progress (None-None).
-2026-05-17 16:16:15 ACST,flashscore:r7lSurwo,Premier League,2026-05-17,21:00,Manchester Utd,Nottingham,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-17 16:16:15 ACST,flashscore:h8KKYP3b,Eredivisie,2026-05-17,22:00,AZ Alkmaar,NAC Breda,,,,,0.0,no_value,,,,,skipped,0.0,No recommendation (phase5_status=no_value).
-2026-05-17 16:16:15 ACST,flashscore:6Ho2GrlU,Eredivisie,2026-05-17,22:00,FC Volendam,Telstar,,,,,0.0,no_value,,,,,skipped,0.0,No recommendation (phase5_status=no_value).
-2026-05-17 16:16:15 ACST,flashscore:lIKARQtP,Eredivisie,2026-05-17,22:00,Heerenveen,Ajax,,,,,0.0,no_value,,,,,skipped,0.0,No recommendation (phase5_status=no_value).
-2026-05-17 16:16:15 ACST,flashscore:p2cgI4JH,Eredivisie,2026-05-17,22:00,Heracles,Groningen,,,,,0.0,no_value,,,,,skipped,0.0,No recommendation (phase5_status=no_value).
-2026-05-17 16:16:15 ACST,flashscore:hfunKQl5,Eredivisie,2026-05-17,22:00,Nijmegen,G.A. Eagles,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-17 16:16:15 ACST,flashscore:OEmVN8kt,Eredivisie,2026-05-17,22:00,PSV,Twente,,,,,0.0,no_value,,,,,skipped,0.0,No recommendation (phase5_status=no_value).
-2026-05-17 16:16:15 ACST,flashscore:21M2TnCC,Eredivisie,2026-05-17,22:00,Sparta Rotterdam,Excelsior,away,3.0,0.46492481856603696,0.1316,20.0,bet,live,,,,pending,0.0,[Flashscore] Match in progress (None-None).
-2026-05-17 16:16:15 ACST,flashscore:dtRBznZo,Eredivisie,2026-05-17,22:00,Utrecht,Sittard,away,6.0,0.24081564655916007,0.0741,0.0,lean,live,,,,pending,0.0,[Flashscore] Match in progress (None-None).
-2026-05-17 16:16:15 ACST,flashscore:dSowMnKh,Eredivisie,2026-05-17,22:00,Zwolle,Feyenoord,,,,,0.0,no_value,,,,,skipped,0.0,No recommendation (phase5_status=no_value).
-2026-05-17 16:16:15 ACST,flashscore:6TRhfX2k,Serie A,2026-05-17,22:30,Inter,Verona,,,,,0.0,no_value,,,,,skipped,0.0,No recommendation (phase5_status=no_value).
-2026-05-17 16:16:15 ACST,flashscore:MF2Xj8on,Premier League,2026-05-17,23:30,Brentford,Crystal Palace,away,5.0,0.2529180530373343,0.0529,0.0,lean,live,,,,pending,0.0,[Flashscore] Match in progress (None-None).
-2026-05-17 16:16:15 ACST,flashscore:jeflmQpB,Premier League,2026-05-17,23:30,Everton,Sunderland,,,,,0.0,no_value,,,,,skipped,0.0,No recommendation (phase5_status=no_value).
-2026-05-17 16:16:15 ACST,flashscore:OM7eo4FN,Premier League,2026-05-17,23:30,Leeds,Brighton,,,,,0.0,no_value,,,,,skipped,0.0,No recommendation (phase5_status=no_value).
-2026-05-17 16:16:15 ACST,flashscore:dIYdxCy9,MLS,2026-05-17,FT,Austin FC,Sporting Kansas City,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-17 16:16:15 ACST,flashscore:bX3pLsxi,MLS,2026-05-17,FT,CF Montreal,Chicago Fire,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-17 16:16:15 ACST,flashscore:21IEQ3ET,MLS,2026-05-17,FT,Charlotte,Toronto FC,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-17 16:16:15 ACST,flashscore:6PmDxLVi,MLS,2026-05-17,FT,DC United,St. Louis City,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-17 16:16:15 ACST,flashscore:SvxMza04,MLS,2026-05-17,FT,New England Revolution,Minnesota United,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-17 16:16:15 ACST,flashscore:EezUYxVG,MLS,2026-05-17,FT,New York Red Bulls,New York City,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-17 16:16:15 ACST,flashscore:8dh2GUEk,MLS,2026-05-17,FT,Orlando City,Atlanta Utd,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-17 16:16:15 ACST,flashscore:tAjAE8q2,MLS,2026-05-17,FT,Philadelphia Union,Columbus Crew,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-17 16:16:15 ACST,flashscore:nmDyVTTr,MLS,2026-05-17,FT,Real Salt Lake,Colorado Rapids,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-17 16:16:15 ACST,flashscore:fDGqT7be,MLS,2026-05-17,FT,San Diego FC,FC Cincinnati,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-17 16:16:15 ACST,flashscore:juAhRoT7,MLS,2026-05-17,FT,San Jose Earthquakes,FC Dallas,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-17 16:16:15 ACST,flashscore:2Fy5zj6L,MLS,2026-05-17,FT,Seattle Sounders,Los Angeles Galaxy,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-17 16:16:15 ACST,flashscore:GMTLJkHb,J1 League,2026-05-17,FT,V-Varen Nagasaki,Vissel Kobe,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-17 16:16:15 ACST,flashscore:I9QHhKRp,Serie A,2026-05-18,01:30,Atalanta,Bologna,,,,,0.0,no_value,,,,,skipped,0.0,No recommendation (phase5_status=no_value).
-2026-05-17 16:16:15 ACST,flashscore:vyaxjXte,LaLiga,2026-05-18,02:30,Ath Bilbao,Celta Vigo,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-17 16:16:15 ACST,flashscore:n12plBB7,LaLiga,2026-05-18,02:30,Atl. Madrid,Girona,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-17 16:16:15 ACST,flashscore:0OhvAhYQ,LaLiga,2026-05-18,02:30,Elche,Getafe,,,,,0.0,no_value,,,,,skipped,0.0,No recommendation (phase5_status=no_value).
-2026-05-17 16:16:15 ACST,flashscore:K8ZA4Wel,LaLiga,2026-05-18,02:30,Levante,Mallorca,,,,,0.0,no_value,,,,,skipped,0.0,No recommendation (phase5_status=no_value).
-2026-05-17 16:16:15 ACST,flashscore:YFVo6qXh,LaLiga,2026-05-18,02:30,Osasuna,Espanyol,away,4.33,0.2836728987320498,0.0527,0.0,lean,live,,,,pending,0.0,[Flashscore] Match in progress (None-None).
-2026-05-17 16:16:15 ACST,flashscore:C0sw852t,LaLiga,2026-05-18,02:30,Oviedo,Alaves,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-17 16:16:15 ACST,flashscore:hMXI2AQ0,LaLiga,2026-05-18,02:30,Rayo Vallecano,Villarreal,,,,,0.0,no_value,,,,,skipped,0.0,No recommendation (phase5_status=no_value).
-2026-05-17 16:16:15 ACST,flashscore:llRR0leD,LaLiga,2026-05-18,02:30,Real Sociedad,Valencia,,,,,0.0,no_value,,,,,skipped,0.0,No recommendation (phase5_status=no_value).
-2026-05-17 16:16:15 ACST,flashscore:ttZg4N15,LaLiga,2026-05-18,02:30,Sevilla,Real Madrid,,,,,0.0,no_value,,,,,skipped,0.0,No recommendation (phase5_status=no_value).
-2026-05-17 16:16:15 ACST,flashscore:YH84GNJi,Serie A,2026-05-18,04:15,Cagliari,Torino,,,,,0.0,no_value,,,,,skipped,0.0,No recommendation (phase5_status=no_value).
-2026-05-17 16:16:15 ACST,flashscore:nmmS8WHr,Serie A,2026-05-18,04:15,Sassuolo,Lecce,home,2.62,0.42763439123578717,0.046,0.0,lean,live,,,,pending,0.0,[Flashscore] Match in progress (None-None).
-2026-05-17 16:16:15 ACST,flashscore:h0IS6Ane,Serie A,2026-05-18,04:15,Udinese,Cremonese,home,2.4,0.5166484711779449,0.1,20.0,bet,live,,,,pending,0.0,[Flashscore] Match in progress (None-None).
-2026-05-17 16:16:15 ACST,flashscore:prPnPy9r,Ligue 1,2026-05-18,04:30,Brest,Angers,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-17 16:16:15 ACST,flashscore:IXv8WJG8,Ligue 1,2026-05-18,04:30,Lille,Auxerre,away,7.5,0.19364614172916342,0.0603,0.0,lean,live,,,,pending,0.0,[Flashscore] Match in progress (None-None).
-2026-05-17 16:16:15 ACST,flashscore:r1cGQTSk,Ligue 1,2026-05-18,04:30,Lorient,Le Havre,home,2.62,0.44293367303609343,0.0613,0.0,lean,live,,,,pending,0.0,[Flashscore] Match in progress (None-None).
-2026-05-17 16:16:15 ACST,flashscore:OhrGQlpm,Ligue 1,2026-05-18,04:30,Lyon,Lens,,,,,0.0,no_value,,,,,skipped,0.0,No recommendation (phase5_status=no_value).
-2026-05-17 16:16:15 ACST,flashscore:xbwdLg87,Ligue 1,2026-05-18,04:30,Marseille,Rennes,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-17 16:16:15 ACST,flashscore:z9FNO7c2,Ligue 1,2026-05-18,04:30,Nantes,Toulouse,,,,,0.0,no_value,,,,,skipped,0.0,No recommendation (phase5_status=no_value).
-2026-05-17 16:16:15 ACST,flashscore:QcrGUcoL,Ligue 1,2026-05-18,04:30,Nice,Metz,,,,,0.0,no_value,,,,,skipped,0.0,No recommendation (phase5_status=no_value).
-2026-05-17 16:16:15 ACST,flashscore:IeNfNFwe,Ligue 1,2026-05-18,04:30,Paris FC,PSG,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-17 16:16:15 ACST,flashscore:44Vsqc0E,Ligue 1,2026-05-18,04:30,Strasbourg,Monaco,home,3.0,0.42364591065292095,0.0903,20.0,bet,live,,,,pending,0.0,[Flashscore] Match in progress (None-None).
-2026-05-17 16:16:15 ACST,flashscore:SduXBE3E,LaLiga,2026-05-18,04:45,Barcelona,Betis,away,9.5,0.21563217634709592,0.1104,20.0,bet,live,,,,pending,0.0,[Flashscore] Match in progress (None-None).
+2026-05-18 01:57:08 ACST,flashscore:I9QHhKRp,Serie A,2026-05-18,01:30,Atalanta,Bologna,,,,,0.0,no_value,,,,,skipped,0.0,No recommendation (phase5_status=no_value).
+2026-05-18 01:57:08 ACST,flashscore:vyaxjXte,LaLiga,2026-05-18,02:30,Ath Bilbao,Celta Vigo,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-18 01:57:08 ACST,flashscore:n12plBB7,LaLiga,2026-05-18,02:30,Atl. Madrid,Girona,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-18 01:57:08 ACST,flashscore:0OhvAhYQ,LaLiga,2026-05-18,02:30,Elche,Getafe,,,,,0.0,no_value,,,,,skipped,0.0,No recommendation (phase5_status=no_value).
+2026-05-18 01:57:08 ACST,flashscore:K8ZA4Wel,LaLiga,2026-05-18,02:30,Levante,Mallorca,,,,,0.0,no_value,,,,,skipped,0.0,No recommendation (phase5_status=no_value).
+2026-05-18 01:57:08 ACST,flashscore:YFVo6qXh,LaLiga,2026-05-18,02:30,Osasuna,Espanyol,away,4.2,0.2856162766780178,0.0475,0.0,lean,live,,,,pending,0.0,[Flashscore] Match in progress (None-None).
+2026-05-18 01:57:08 ACST,flashscore:C0sw852t,LaLiga,2026-05-18,02:30,Oviedo,Alaves,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-18 01:57:08 ACST,flashscore:hMXI2AQ0,LaLiga,2026-05-18,02:30,Rayo Vallecano,Villarreal,,,,,0.0,no_value,,,,,skipped,0.0,No recommendation (phase5_status=no_value).
+2026-05-18 01:57:08 ACST,flashscore:llRR0leD,LaLiga,2026-05-18,02:30,Real Sociedad,Valencia,,,,,0.0,no_value,,,,,skipped,0.0,No recommendation (phase5_status=no_value).
+2026-05-18 01:57:08 ACST,flashscore:ttZg4N15,LaLiga,2026-05-18,02:30,Sevilla,Real Madrid,,,,,0.0,no_value,,,,,skipped,0.0,No recommendation (phase5_status=no_value).
+2026-05-18 01:57:08 ACST,flashscore:YH84GNJi,Serie A,2026-05-18,04:15,Cagliari,Torino,,,,,0.0,no_value,,,,,skipped,0.0,No recommendation (phase5_status=no_value).
+2026-05-18 01:57:08 ACST,flashscore:nmmS8WHr,Serie A,2026-05-18,04:15,Sassuolo,Lecce,home,2.62,0.43150495052825755,0.0498,0.0,lean,live,,,,pending,0.0,[Flashscore] Match in progress (None-None).
+2026-05-18 01:57:08 ACST,flashscore:h0IS6Ane,Serie A,2026-05-18,04:15,Udinese,Cremonese,home,2.45,0.5228536976696226,0.1147,20.0,bet,live,,,,pending,0.0,[Flashscore] Match in progress (None-None).
+2026-05-18 01:57:08 ACST,flashscore:prPnPy9r,Ligue 1,2026-05-18,04:30,Brest,Angers,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-18 01:57:08 ACST,flashscore:IXv8WJG8,Ligue 1,2026-05-18,04:30,Lille,Auxerre,away,8.5,0.18495036390101893,0.0673,0.0,lean,live,,,,pending,0.0,[Flashscore] Match in progress (None-None).
+2026-05-18 01:57:08 ACST,flashscore:r1cGQTSk,Ligue 1,2026-05-18,04:30,Lorient,Le Havre,home,2.55,0.4516464966096222,0.0595,0.0,lean,live,,,,pending,0.0,[Flashscore] Match in progress (None-None).
+2026-05-18 01:57:08 ACST,flashscore:OhrGQlpm,Ligue 1,2026-05-18,04:30,Lyon,Lens,,,,,0.0,no_value,,,,,skipped,0.0,No recommendation (phase5_status=no_value).
+2026-05-18 01:57:08 ACST,flashscore:xbwdLg87,Ligue 1,2026-05-18,04:30,Marseille,Rennes,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-18 01:57:08 ACST,flashscore:z9FNO7c2,Ligue 1,2026-05-18,04:30,Nantes,Toulouse,,,,,0.0,no_value,,,,,skipped,0.0,No recommendation (phase5_status=no_value).
+2026-05-18 01:57:08 ACST,flashscore:QcrGUcoL,Ligue 1,2026-05-18,04:30,Nice,Metz,,,,,0.0,no_value,,,,,skipped,0.0,No recommendation (phase5_status=no_value).
+2026-05-18 01:57:08 ACST,flashscore:IeNfNFwe,Ligue 1,2026-05-18,04:30,Paris FC,PSG,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-18 01:57:08 ACST,flashscore:44Vsqc0E,Ligue 1,2026-05-18,04:30,Strasbourg,Monaco,home,3.0,0.4294426966292135,0.0961,20.0,bet,live,,,,pending,0.0,[Flashscore] Match in progress (None-None).
+2026-05-18 01:57:08 ACST,flashscore:SduXBE3E,LaLiga,2026-05-18,04:45,Barcelona,Betis,away,8.0,0.22190990936555893,0.0969,20.0,bet,live,,,,pending,0.0,[Flashscore] Match in progress (None-None).

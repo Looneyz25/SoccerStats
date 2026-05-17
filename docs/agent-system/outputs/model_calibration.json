@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-17 16:47:23 ACST",
+  "generated_at": "2026-05-18 01:57:20 ACST",
   "source": "docs\\agent-system\\outputs\\model_result_review_summary.json",
   "mode": "conservative_auto_learning",
   "rules": {
@@ -10,8 +10,130 @@
     "max_market_edge_delta": 0.04,
     "max_league_edge_delta": 0.06
   },
-  "market_adjustments": {},
-  "league_market_adjustments": {},
+  "market_adjustments": {
+    "btts": {
+      "market": "BTTS",
+      "settled": 379,
+      "hit_rate": 0.5435,
+      "trust_factor": 0.9492,
+      "min_edge_delta": 0.0198,
+      "reason": "BTTS below 60% target over 379 settled markets."
+    },
+    "ou_cards": {
+      "market": "Cards",
+      "settled": 353,
+      "hit_rate": 0.5836,
+      "trust_factor": 0.9852,
+      "min_edge_delta": 0.0057,
+      "reason": "Cards below 60% target over 353 settled markets."
+    },
+    "ou_goals": {
+      "market": "Goals",
+      "settled": 379,
+      "hit_rate": 0.5594,
+      "trust_factor": 0.9635,
+      "min_edge_delta": 0.0142,
+      "reason": "Goals below 60% target over 379 settled markets."
+    },
+    "winner": {
+      "market": "Winner",
+      "settled": 379,
+      "hit_rate": 0.496,
+      "trust_factor": 0.9064,
+      "min_edge_delta": 0.0364,
+      "reason": "Winner below 60% target over 379 settled markets."
+    }
+  },
+  "league_market_adjustments": {
+    "LaLiga|winner": {
+      "league": "LaLiga",
+      "market": "Winner",
+      "market_key": "winner",
+      "settled": 40,
+      "hit_rate": 0.35,
+      "odds_net": -34.46,
+      "trust_factor": 0.91,
+      "min_edge_delta": 0.035,
+      "reason": "LaLiga Winner weak spot from result review."
+    },
+    "League One|btts": {
+      "league": "League One",
+      "market": "BTTS",
+      "market_key": "btts",
+      "settled": 31,
+      "hit_rate": 0.3548,
+      "odds_net": 0,
+      "trust_factor": 0.9316,
+      "min_edge_delta": 0.0266,
+      "reason": "League One BTTS weak spot from result review."
+    },
+    "Bundesliga|winner": {
+      "league": "Bundesliga",
+      "market": "Winner",
+      "market_key": "winner",
+      "settled": 36,
+      "hit_rate": 0.3611,
+      "odds_net": -7.47,
+      "trust_factor": 0.9226,
+      "min_edge_delta": 0.0301,
+      "reason": "Bundesliga Winner weak spot from result review."
+    },
+    "MLS|winner": {
+      "league": "MLS",
+      "market": "Winner",
+      "market_key": "winner",
+      "settled": 72,
+      "hit_rate": 0.3889,
+      "odds_net": -18.37,
+      "trust_factor": 0.8632,
+      "min_edge_delta": 0.0532,
+      "reason": "MLS Winner weak spot from result review."
+    },
+    "Bundesliga|ou_cards": {
+      "league": "Bundesliga",
+      "market": "Cards",
+      "market_key": "ou_cards",
+      "settled": 35,
+      "hit_rate": 0.4286,
+      "odds_net": -20.89,
+      "trust_factor": 0.946,
+      "min_edge_delta": 0.021,
+      "reason": "Bundesliga Cards weak spot from result review."
+    },
+    "LaLiga|ou_goals": {
+      "league": "LaLiga",
+      "market": "Goals",
+      "market_key": "ou_goals",
+      "settled": 40,
+      "hit_rate": 0.475,
+      "odds_net": -6.17,
+      "trust_factor": 0.955,
+      "min_edge_delta": 0.0175,
+      "reason": "LaLiga Goals weak spot from result review."
+    },
+    "Ligue 1|ou_cards": {
+      "league": "Ligue 1",
+      "market": "Cards",
+      "market_key": "ou_cards",
+      "settled": 29,
+      "hit_rate": 0.4828,
+      "odds_net": -7.73,
+      "trust_factor": 0.9694,
+      "min_edge_delta": 0.0119,
+      "reason": "Ligue 1 Cards weak spot from result review."
+    },
+    "Premier League|winner": {
+      "league": "Premier League",
+      "market": "Winner",
+      "market_key": "winner",
+      "settled": 36,
+      "hit_rate": 0.5,
+      "odds_net": -10.89,
+      "trust_factor": 0.9676,
+      "min_edge_delta": 0.0126,
+      "reason": "Premier League Winner weak spot from result review."
+    }
+  },
   "notes": [
     "Trust factors shrink model probabilities toward neutral, not toward the opposite pick.",
     "Edge deltas raise the threshold before a value pick becomes a bet.",
