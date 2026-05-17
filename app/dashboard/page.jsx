@@ -2751,9 +2751,13 @@ function SettingsView({
       const token = await user.getIdToken();
       const response = await fetch('/api/stripe/create-portal', {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: '{}',
       });
-      const payload = await response.json();
+      const payload = await response.json().catch(() => ({}));
       if (!response.ok || !payload.url) {
         throw new Error(payload.error || 'Billing portal could not be opened.');
       }

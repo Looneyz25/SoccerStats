@@ -14,7 +14,7 @@ const runMode = resultsOnly ? 'results-only' : 'full-refresh';
 const DEFAULT_ENV = {
   SOCCER_FIXTURE_DAYS: resultsOnly ? '1' : '7',
   SOCCER_ODDS_BUDGET: resultsOnly ? '80' : '420',
-  SOCCER_RESULT_BUFFER_MINUTES: process.env.SOCCER_RESULT_BUFFER_MINUTES || '45',
+  SOCCER_RESULT_BUFFER_MINUTES: process.env.SOCCER_RESULT_BUFFER_MINUTES || '150',
   SOCCER_RESULT_LOOKBACK_DAYS: process.env.SOCCER_RESULT_LOOKBACK_DAYS || '3',
 };
 

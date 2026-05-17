@@ -111,6 +111,9 @@ export default function AuthGate({ children }) {
       window.clearTimeout(fallback);
       setUser(nextUser);
       if (nextUser) {
+        setMessage('');
+        setError('');
+        setBusy(null);
         loadMatchDataFromFirestore().catch(() => {});
       } else {
         setProfile(null);
@@ -137,7 +140,11 @@ export default function AuthGate({ children }) {
       const token = await user.getIdToken(true);
       const response = await fetch('/api/stripe/sync-subscription', {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: '{}',
       });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) {
@@ -228,6 +235,8 @@ export default function AuthGate({ children }) {
       const result = await signInWithPopup(auth, googleProvider);
       window.sessionStorage.removeItem(AUTH_GOOGLE_PENDING_KEY);
       setUser(result.user);
+      setMessage('');
+      setBusy(null);
     } catch (googleError) {
       window.sessionStorage.removeItem(AUTH_GOOGLE_PENDING_KEY);
       setError(authErrorMessage(googleError));
@@ -262,9 +271,13 @@ export default function AuthGate({ children }) {
       const token = await user.getIdToken();
       const response = await fetch(endpoint, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: '{}',
       });
-      const payload = await response.json();
+      const payload = await response.json().catch(() => ({}));
       if (!response.ok || !payload.url) {
         throw new Error(payload.error || 'Stripe session could not be created.');
       }

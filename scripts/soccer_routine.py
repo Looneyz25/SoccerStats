@@ -20,7 +20,7 @@ Usage:
     python3 scripts/soccer_routine.py --results-only
 """
 import argparse
-import json, math, random, re, subprocess, sys, time
+import json, math, random, re, subprocess, sys, time, unicodedata
 import os
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
@@ -90,7 +90,7 @@ TODAY     = datetime.now(ADL).date()
 YESTERDAY = TODAY - timedelta(days=1)
 TOMORROW  = TODAY + timedelta(days=1)
 FIXTURE_LOOKAHEAD_DAYS = max(1, int(os.environ.get("SOCCER_FIXTURE_DAYS", "7")))
-RESULT_CHECK_BUFFER_MINUTES = max(45, int(os.environ.get("SOCCER_RESULT_BUFFER_MINUTES", "45")))
+RESULT_CHECK_BUFFER_MINUTES = max(150, int(os.environ.get("SOCCER_RESULT_BUFFER_MINUTES", "150")))
 RESULT_LOOKBACK_DAYS = max(1, int(os.environ.get("SOCCER_RESULT_LOOKBACK_DAYS", "3")))
 
 TOURNAMENTS = {
@@ -246,14 +246,27 @@ def match_kickoff_datetime(match):
     return datetime(d.year, d.month, d.day, hour, minute, tzinfo=ADL)
 
 
+def result_due_datetime(match):
+    kickoff = match_kickoff_datetime(match)
+    if not kickoff:
+        return None
+    return kickoff + timedelta(minutes=RESULT_CHECK_BUFFER_MINUTES)
+
+
+def result_due_label(due_at):
+    if not due_at:
+        return "DUE @ unknown"
+    return f"DUE @ {due_at.strftime('%H:%M')}"
+
+
 def match_due_for_result_check(match, now=None):
     if match.get("status") == "FT":
         return False
-    kickoff = match_kickoff_datetime(match)
-    if not kickoff:
+    due_at = result_due_datetime(match)
+    if not due_at:
         return False
     now = now or datetime.now(ADL)
-    return now >= kickoff + timedelta(minutes=RESULT_CHECK_BUFFER_MINUTES)
+    return now > due_at
 
 
 def result_backfill_dates():
@@ -276,7 +289,7 @@ def result_schedule_rows(store):
             if match.get("status") == "FT":
                 continue
             kickoff = match_kickoff_datetime(match)
-            check_after = kickoff + timedelta(minutes=RESULT_CHECK_BUFFER_MINUTES) if kickoff else None
+            due_at = result_due_datetime(match)
             match_date = parse_match_date(match.get("date"))
             due = match_due_for_result_check(match, now)
             if match_date and match_date < TODAY:
@@ -299,7 +312,9 @@ def result_schedule_rows(store):
                 "away": (match.get("away") or {}).get("name"),
                 "status": match.get("status"),
                 "kickoff_at": kickoff.isoformat() if kickoff else None,
-                "check_after": check_after.isoformat() if check_after else None,
+                "due_at": due_at.isoformat() if due_at else None,
+                "check_after": due_at.isoformat() if due_at else None,
+                "result_queue": result_due_label(due_at),
                 "due_for_check": due,
                 "event_id": match.get("id"),
             })
@@ -342,23 +357,26 @@ def write_result_schedule_log(store, phase_summary):
         "",
         f"- Settled: {len(phase_summary.get('settled', []))}",
         f"- Flashscore settled: {phase_summary.get('flashscore_settled', 0)}",
+        f"- LiveScore settled: {phase_summary.get('livescore_settled', 0)}",
+        f"- Due skipped / awaiting source: {phase_summary.get('skipped', 0)}",
+        f"- Not due yet: {phase_summary.get('not_due', 0)}",
         f"- Backfilled finished: {phase_summary.get('backfilled', 0)}",
         f"- Enriched FT: {phase_summary.get('enriched', 0)}",
         f"- Pruned stale unresolved: {len(phase_summary.get('pruned', []))}",
         "",
         "## Match Checks",
         "",
-        "| Scope | Due | Date | Time | Check after | League | Match | Status |",
+        "| Scope | Queue | Date | Kickoff | Due time | League | Match | Result queue |",
         "| --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for row in rows:
         due = "yes" if row["due_for_check"] else "no"
-        check_after = row.get("check_after") or "-"
-        if check_after != "-":
-            check_after = check_after[11:16]
+        due_time = row.get("due_at") or row.get("check_after") or "-"
+        if due_time != "-":
+            due_time = due_time[11:16]
         lines.append(
-            f"| {row.get('scope') or ''} | {due} | {row.get('date') or ''} | {row.get('time') or ''} | {check_after} | "
-            f"{row.get('league') or ''} | {row.get('home') or ''} vs {row.get('away') or ''} | {row.get('status') or ''} |"
+            f"| {row.get('scope') or ''} | {due} | {row.get('date') or ''} | {row.get('time') or ''} | {due_time} | "
+            f"{row.get('league') or ''} | {row.get('home') or ''} vs {row.get('away') or ''} | {row.get('result_queue') or ''} |"
         )
     md = "\n".join(lines) + "\n"
     md_path.write_text(md, encoding="utf-8")
@@ -561,7 +579,8 @@ TEAM_ALIASES = {
 
 
 def team_norm(value):
-    text = re.sub(r"[^a-z0-9]", "", (value or "").lower())
+    plain = unicodedata.normalize("NFKD", value or "").encode("ascii", "ignore").decode("ascii")
+    text = re.sub(r"[^a-z0-9]", "", plain.lower())
     return text.replace("fc", "").replace("utd", "united")
 
 
@@ -677,7 +696,7 @@ def cards_count(eid):
 
 
 def phase_a_settle(store, cache, due_only=False):
-    settled = []; skipped = 0; not_due = 0; flashscore_settled = 0
+    settled = []; skipped = 0; not_due = 0; flashscore_settled = 0; livescore_settled = 0
     flashscore_events = None
     flashscore_source = ""
     now = datetime.now(ADL)
@@ -686,40 +705,63 @@ def phase_a_settle(store, cache, due_only=False):
             if m.get("status") == "FT": continue
             eid = m.get("id")
             if not eid: continue
-            if due_only and not match_due_for_result_check(m, now):
+            due_for_check = match_due_for_result_check(m, now)
+            if due_only and not due_for_check:
                 not_due += 1
                 continue
             ev = cache.get(eid) or fetch(f"/api/v1/event/{eid}")
             e = (ev.get("event") or ev) if ev else None
             is_finished = bool(e and (e.get("status") or {}).get("type") == "finished")
 
-            used_flashscore = False
-            if not is_finished:
+            settled_this = False
+            source_note = ""
+            if e and (is_finished or due_for_check):
+                if settle(m, e):
+                    settled_this = True
+                    if not is_finished:
+                        m["settled_source"] = "SofaScoreDueTime"
+                        m["settled_by_due_time"] = True
+                        source_note = " [SofaScore due time]"
+
+            if not settled_this:
                 if flashscore_events is None:
                     flashscore_events, flashscore_source = load_flashscore_finished_events()
                     if flashscore_source:
                         print(f"  flashscore_fallback_source={flashscore_source}")
                 result = flashscore_result_for_match(flashscore_events, L.get("name", ""), m)
                 if result and settle_from_flashscore(m, result):
-                    used_flashscore = True
+                    settled_this = True
                     flashscore_settled += 1
-                else:
-                    skipped += 1
-                    continue
+                    source_note = " [Flashscore]"
 
-            if used_flashscore or settle(m, e):
-                # also try cards
-                c = (m.get("predictions") or {}).get("ou_cards") or {}
-                if c.get("pick"):
-                    cards = cards_count(eid)
-                    if cards is not None:
-                        line = float(c.get("line", 4.5))
-                        c["actual"] = cards
-                        c["result"] = ("hit" if (c["pick"] == "Over" and cards > line) or
-                                       (c["pick"] == "Under" and cards < line) else "miss")
-                source_note = " [Flashscore]" if used_flashscore else ""
-                settled.append(f"{L['name']}: {m['home']['name']} {m['home']['goals']}-{m['away']['goals']} {m['away']['name']}{source_note}")
-    return {"settled": settled, "skipped": skipped, "not_due": not_due, "flashscore_settled": flashscore_settled}
+            if not settled_this and due_for_check:
+                result = livescore_result_for_match(L.get("name", ""), m)
+                if result and settle_from_livescore(m, result):
+                    settled_this = True
+                    livescore_settled += 1
+                    source_note = " [LiveScore due time]"
+
+            if not settled_this:
+                skipped += 1
+                continue
+
+            # also try cards
+            c = (m.get("predictions") or {}).get("ou_cards") or {}
+            if c.get("pick"):
+                cards = cards_count(eid)
+                if cards is not None:
+                    line = float(c.get("line", 4.5))
+                    c["actual"] = cards
+                    c["result"] = ("hit" if (c["pick"] == "Over" and cards > line) or
+                                   (c["pick"] == "Under" and cards < line) else "miss")
+            settled.append(f"{L['name']}: {m['home']['name']} {m['home']['goals']}-{m['away']['goals']} {m['away']['name']}{source_note}")
+    return {
+        "settled": settled,
+        "skipped": skipped,
+        "not_due": not_due,
+        "flashscore_settled": flashscore_settled,
+        "livescore_settled": livescore_settled,
+    }
 
 
 # ----------------------------------------------------------------------------
@@ -824,6 +866,44 @@ def find_livescore_event(league_name, match):
             if team_names_match(home_name, home) and team_names_match(away_name, away):
                 return stage, event
     return None
+
+
+def livescore_result_for_match(league_name, match):
+    found = find_livescore_event(league_name, match)
+    if not found:
+        return None
+    stage, event = found
+    try:
+        home_score = int(event.get("Tr1"))
+        away_score = int(event.get("Tr2"))
+    except (TypeError, ValueError):
+        return None
+    return {
+        "stage": stage,
+        "event": event,
+        "home_score": home_score,
+        "away_score": away_score,
+        "status": event.get("Eps"),
+    }
+
+
+def settle_from_livescore(match, result):
+    event = result["event"]
+    fake_event = {
+        "homeScore": {"current": result["home_score"]},
+        "awayScore": {"current": result["away_score"]},
+    }
+    if not settle(match, fake_event):
+        return False
+    match["livescore_score"] = {
+        "home": result["home_score"],
+        "away": result["away_score"],
+        "status": result.get("status"),
+        "source_match_id": event.get("Eid"),
+        "fetched_at": TODAY.isoformat(),
+    }
+    match["settled_source"] = "LiveScore"
+    return True
 
 
 def livescore_event_page(stage, event, suffix=""):
@@ -1687,7 +1767,7 @@ def run_full_refresh():
     # Phase A
     print("\n[Phase A] settle pending")
     pa = phase_a_settle(store, p0["cache"])
-    print(f"  settled={len(pa['settled'])}  skipped={pa['skipped']}  flashscore_settled={pa.get('flashscore_settled', 0)}")
+    print(f"  settled={len(pa['settled'])}  skipped={pa['skipped']}  flashscore_settled={pa.get('flashscore_settled', 0)}  livescore_settled={pa.get('livescore_settled', 0)}")
 
     # Phase A.5
     print("\n[Phase A.5] backfill finished + enrich")
@@ -1749,7 +1829,7 @@ def run_results_only():
 
     print("\n[Results A] settle due pending matches")
     pa = phase_a_settle(store, {}, due_only=True)
-    print(f"  settled={len(pa['settled'])}  skipped={pa['skipped']}  not_due={pa['not_due']}  flashscore_settled={pa.get('flashscore_settled', 0)}")
+    print(f"  settled={len(pa['settled'])}  skipped={pa['skipped']}  not_due={pa['not_due']}  flashscore_settled={pa.get('flashscore_settled', 0)}  livescore_settled={pa.get('livescore_settled', 0)}")
 
     print("\n[Results B] backfill finished + enrich recent FT")
     pa5 = phase_a5_backfill_enrich(
@@ -1773,6 +1853,9 @@ def run_results_only():
     schedule_paths = write_result_schedule_log(store, {
         "settled": pa["settled"],
         "flashscore_settled": pa.get("flashscore_settled", 0),
+        "livescore_settled": pa.get("livescore_settled", 0),
+        "skipped": pa.get("skipped", 0),
+        "not_due": pa.get("not_due", 0),
         "backfilled": pa5["added"],
         "enriched": pa5["enriched"],
         "protected": pa6.get("protected", 0),
