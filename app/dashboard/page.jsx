@@ -3160,12 +3160,12 @@ function StreakList({ title, streaks, match }) {
 function ResultsReview({ matches }) {
   const [reviewScope, setReviewScope] = useState('all');
   const today = useMemo(() => localTodayDate(), []);
-  const weekEnd = useMemo(() => addDaysToIsoDate(today, 6), [today]);
+  const weekStart = useMemo(() => addDaysToIsoDate(today, -6), [today]);
   const allResulted = trackedFinishedMatches(matches);
   const resulted = allResulted.filter((match) => {
     const matchDate = String(match.date || '');
     if (reviewScope === 'today') return matchDate === today;
-    if (reviewScope === 'week') return matchDate >= today && matchDate <= weekEnd;
+    if (reviewScope === 'week') return matchDate >= weekStart && matchDate <= today;
     return true;
   });
   const rows = summarizeResultsByMarket(resulted, matches).filter((row) => row.total > 0);
