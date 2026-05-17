@@ -300,6 +300,12 @@ export default function AuthGate({ children }) {
                 className="h-20 w-auto max-w-full object-contain"
               />
             </div>
+            <div className="mt-3 rounded-lg border border-line bg-white px-4 py-3 text-center shadow-panel">
+              <h1 className="text-lg font-semibold leading-6 text-ink">Tired of researching every match?</h1>
+              <p className="mt-1 text-sm leading-5 text-slate-600">
+                We do the form, odds, and market checks for you, then show the picks worth reviewing.
+              </p>
+            </div>
           </div>
 
           <section className="rounded-lg border border-line bg-white p-4 shadow-panel sm:p-5">

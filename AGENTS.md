@@ -4,6 +4,22 @@
 
 The frontend lives in [app/page.jsx](app/page.jsx) (App Router) with Tailwind styling. Make all UI changes there. The live Next.js dashboard reads Firestore from `dashboardData/match_data/leagues/*`; do not add a public JSON fallback for dashboard loading. The local `match_data.json` file is an auto-generated pipeline/upload artifact, not the browser data source. The legacy `index.html` static dashboard and its `DATA_SOCCER` splicer have been removed.
 
+## Local dev verification
+
+After every app/UI edit, refresh or verify the local dev loop before handing work back:
+```
+npm.cmd run dev:clean
+npm.cmd run dev
+npm.cmd run dev:health
+```
+
+If the dev server is already intentionally running and hot reload is enough, still run:
+```
+npm.cmd run dev:health
+```
+
+Port `3001` is the expected local dashboard port. If startup fails with `EADDRINUSE`, identify the process on port `3001`; if it is the stale Soccer Stats Next.js server, clear it with `npm.cmd run dev:clean` and then restart dev.
+
 ## Where to make changes
 
 | Task | File / area |
@@ -27,6 +43,7 @@ The frontend lives in [app/page.jsx](app/page.jsx) (App Router) with Tailwind st
 - Apply the same guided two-way total logic to completed matches, results review, hit-rate summaries, and odds hit/loss totals so settled cards/corners are scored against the visible guided side.
 - For winner markets, do not promote a model lean against a major direct 1X2 market disagreement. If Sportsbet/direct bookmaker odds make another side a clear favourite by 25+ implied-probability points or roughly 3x+ price ratio, guide the visible winner to the bookmaker-backed side unless the model is genuinely overwhelming (about 60%+ with a large model gap). Apply this before kickoff only; never rescore completed results from new guided-side logic.
 - On match cards, show the original winner prediction and model percentage on the predicted team card (or the centre draw chip), and highlight that card by hit/miss. Do not render a separate winner market tile. Keep BTTS, goals, cards, and corners as compact one-row market cards.
+- Match cards must always render five market cards below the teams on mobile and desktop: one Suggested pick card, then BTTS, Goals, Cards, and Corners. If a market is missing, keep its card visible with `No pick` instead of hiding the card. This applies to every league, including Serie A.
 
 ## Deploy
 

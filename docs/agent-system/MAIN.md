@@ -105,7 +105,7 @@ Phase 1 must produce `docs/agent-system/outputs/Phase1_Fixture_Slate.xlsx` with 
 - For Cards, recent resulted data showed Over 4.5 was over-picked. Require strong evidence for Over 4.5 (`over_probability >= 0.68`) and otherwise prefer Under 4.5 until calibration recovers.
 - The dashboard headline hit rate should summarize stored settled prediction markets from `2026-04-22` onward, before later display-only guidance rewrites. Use the original prediction snapshot for public model performance.
 - For winner markets, apply a conservative market guard: do not keep a model side when direct 1X2 bookmaker odds are heavily against it. A 25+ implied-probability-point disagreement or roughly 3x+ price ratio should guide the visible pick to the bookmaker favourite unless model support is overwhelming. Display and settle the guided winner side.
-- Match-card display should place the original winner prediction and model percentage on the predicted team card, or on the centre draw chip for draw picks, and highlight that card by hit/miss. BTTS, goals, cards, and corners should remain compact one-row cards.
+- Match-card display should place the original winner prediction and model percentage on the predicted team card, or on the centre draw chip for draw picks, and highlight that card by hit/miss. Match cards must always show five market cards below the teams on mobile and desktop: Suggested pick, BTTS, Goals, Cards, and Corners. If a market is missing, keep the card visible with `No pick` instead of hiding it. This applies to every league, including Serie A.
 
 ## Agent Definition Files
 

@@ -1169,6 +1169,25 @@ function marketRowsForMatch(match, allMatches) {
   }).filter((row) => row.market);
 }
 
+function suggestedPickForMatch(match, allMatches) {
+  const predictions = match.predictions || {};
+  const precomputed = match.display_markets || {};
+  const displayBtts = precomputed.btts?.market || displayBttsMarket(predictions.btts, match);
+  const bttsComparison = precomputed.btts?.comparison || modelVsBookmakerComparison(match, 'btts', displayBtts);
+  const goalsComparison = precomputed.goals?.comparison || modelVsBookmakerComparison(match, 'ou_goals', predictions.ou_goals);
+  const displayCards = precomputed.cards?.market || cardsMarketWithModelProbability(match, allMatches);
+  const cardsComparison = precomputed.cards?.comparison || modelVsBookmakerComparison(match, 'ou_cards', displayCards);
+  const cornerMarket = precomputed.corners?.market || cornerMarketFromStreaks(match, allMatches);
+  const cornersComparison = precomputed.corners?.comparison || modelVsBookmakerComparison(match, 'ou_corners', cornerMarket);
+
+  return suggestedMarketPick([
+    { label: 'BTTS', market: displayBtts, comparison: bttsComparison, modelProbability: precomputed.btts?.modelProbability },
+    { label: 'Goals', market: predictions.ou_goals, comparison: goalsComparison, modelProbability: precomputed.goals?.modelProbability },
+    { label: 'Cards', market: displayCards, comparison: cardsComparison, modelProbability: precomputed.cards?.modelProbability },
+    { label: 'Corners', market: cornerMarket, comparison: cornersComparison, modelProbability: precomputed.corners?.modelProbability },
+  ]);
+}
+
 function positiveEdgesForMatch(match, allMatches) {
   return marketRowsForMatch(match, allMatches)
     .filter((row) => row.comparison?.badge?.tone === 'positive' && row.comparison.modelEdge > 0)
@@ -1215,7 +1234,7 @@ function confidenceForMatch(match, allMatches) {
   const quality = dataQualityForMatch(match);
 
   if (!edges.length) {
-    return { label: 'Avoid', tone: 'warning', reason: 'Our model does not see better odds than the bookmaker', edge: 0, quality };
+    return { label: 'Avoid picking a winner', tone: 'warning', reason: 'Our model does not see better odds than the bookmaker', edge: 0, quality };
   }
   if (bestEdge >= 0.05 && quality.score >= 3) {
     return { label: 'Strong edge', tone: 'positive', reason: `${edges[0].label} ${edges[0].comparison.badge.label}`, edge: bestEdge, quality };
@@ -2163,7 +2182,25 @@ function summarize(matches) {
 }
 
 function summarizeResultsByMarket(matches, allMatches = matches) {
-  return MARKET_CONFIG.map((config) => {
+  const suggestedSettled = matches
+    .map((match) => suggestedPickForMatch(match, allMatches)?.market)
+    .filter((market) => market?.result === 'hit' || market?.result === 'miss');
+  const suggestedHits = suggestedSettled.filter((market) => market.result === 'hit');
+  const suggestedMisses = suggestedSettled.filter((market) => market.result === 'miss');
+  const suggestedRow = {
+    key: 'suggested',
+    label: 'Suggested pick',
+    total: suggestedSettled.length,
+    hits: suggestedHits.length,
+    misses: suggestedMisses.length,
+    hitRate: suggestedSettled.length ? Math.round((suggestedHits.length / suggestedSettled.length) * 100) : 0,
+    oddsHit: suggestedHits.reduce((sum, market) => sum + (Number(market.odds) || 0), 0),
+    oddsMiss: suggestedMisses.reduce((sum, market) => sum + (Number(market.odds) || 0), 0),
+    net: 0,
+  };
+  suggestedRow.net = suggestedRow.oddsHit - suggestedRow.oddsMiss;
+
+  return [suggestedRow, ...MARKET_CONFIG.map((config) => {
     const settled = matches
       .map((match) => marketForConfig(config, match, allMatches))
       .filter((market) => market?.result === 'hit' || market?.result === 'miss');
@@ -2181,13 +2218,20 @@ function summarizeResultsByMarket(matches, allMatches = matches) {
       oddsMiss,
       net: oddsHit - oddsMiss,
     };
-  });
+  })];
 }
 
 function trackedFinishedMatches(matches) {
   return matches
     .filter((match) => match.status === 'FT' && String(match.date || '') >= PREDICTION_TRACKING_START_DATE)
     .sort((a, b) => matchSortKey(b).localeCompare(matchSortKey(a)));
+}
+
+function matchHasReviewFilter(match, reviewFilter, allMatches) {
+  if (!reviewFilter || reviewFilter === 'all') return true;
+  if (reviewFilter === 'suggested') return Boolean(suggestedPickForMatch(match, allMatches)?.market);
+  const config = MARKET_CONFIG.find((item) => item.key === reviewFilter);
+  return config ? Boolean(marketForConfig(config, match, allMatches)) : true;
 }
 
 function getNumericLine(label) {
@@ -2276,11 +2320,10 @@ function Stat({ icon: Icon, label, value, tone = 'text-ink' }) {
 }
 
 function MarketPill({ label, market, edgeBadge, modelProbability }) {
-  if (!market) return null;
-  const detail = formatMarketDetail(market);
+  const detail = market ? formatMarketDetail(market) : 'No pick';
   const modelPercent = fmtPct(modelProbability);
   return (
-    <div className={`flex min-h-11 items-center gap-2 rounded-md border px-2.5 py-2 sm:px-3 ${marketPillClass(market.result)}`}>
+    <div className={`flex min-h-11 items-center gap-2 rounded-md border px-2.5 py-2 sm:px-3 ${market ? marketPillClass(market.result) : 'border-slate-200 bg-slate-50 text-slate-400'}`}>
       <span className="shrink-0 text-xs font-medium text-slate-500">{label}</span>
       <span className="flex min-w-0 flex-1 items-center justify-end gap-1.5">
         {modelPercent && <span className="hidden rounded-md bg-white/70 px-1.5 py-0.5 text-[11px] font-semibold leading-none text-slate-700 sm:inline-flex">Model {modelPercent}</span>}
@@ -2290,8 +2333,8 @@ function MarketPill({ label, market, edgeBadge, modelProbability }) {
             <span>{edgeBadge}</span>
           </span>
         )}
-        <span className={`flex min-w-0 items-center justify-end gap-1 text-right text-sm font-semibold leading-5 ${marketValueClass(market.result)}`}>
-          {resultIcon(market.result)}
+        <span className={`flex min-w-0 items-center justify-end gap-1 text-right text-sm font-semibold leading-5 ${market ? marketValueClass(market.result) : 'text-slate-400'}`}>
+          {market && resultIcon(market.result)}
           <span className="min-w-0 truncate">{detail || '-'}</span>
         </span>
       </span>
@@ -2381,23 +2424,6 @@ function BookmakerLink({ bookmakerId, href, label }) {
         <span>{label}</span>
       )}
     </a>
-  );
-}
-
-function BookmakerStatusChip({ bookmaker }) {
-  if (!bookmaker) return null;
-  const chipClass = `${bookmaker.buttonClass} text-white shadow-sm`;
-  return (
-    <span className={`inline-flex h-7 items-center justify-center rounded-full border px-2.5 text-xs font-semibold ${chipClass}`}>
-      {bookmaker.logoSrc ? (
-        <>
-          <img src={bookmaker.logoSrc} alt="" className="h-5 w-auto max-w-20" aria-hidden="true" />
-          <span className="sr-only">{bookmaker.name}</span>
-        </>
-      ) : (
-        <span>{bookmaker.name}</span>
-      )}
-    </span>
   );
 }
 
@@ -2496,7 +2522,7 @@ function ResponsibleGamblingNotice({ compact = false }) {
     <div className={`rounded-lg border border-amber-200 bg-amber-50 text-amber-950 shadow-panel ${compact ? 'px-3 py-2 text-xs leading-5' : 'p-4 text-sm leading-6'}`}>
       <div className="font-semibold">Prediction information only. 18+</div>
       <p className={compact ? 'mt-1' : 'mt-2'}>
-        This dashboard does not take bets, process payments for wagering, or have bookmaker affiliation. Bookmaker links are external handoffs only. Gamble responsibly.
+        This dashboard is a predictor and guide only. It does not take bets, process wagering payments, or have bookmaker affiliation. Bookmaker links are external handoffs only. You are responsible for your own decisions and outcomes. Be sensible and gamble responsibly.
       </p>
       <div className={`flex flex-wrap gap-x-3 gap-y-1 ${compact ? 'mt-1' : 'mt-2'}`}>
         <a href={GAMBLING_HELP_URL} target="_blank" rel="noreferrer" className="font-semibold underline underline-offset-2">
@@ -3181,7 +3207,7 @@ function StreakList({ title, streaks, match }) {
   );
 }
 
-function ResultsReview({ matches }) {
+function ResultsReview({ matches, activeReviewFilter = 'all', onReviewFilterChange }) {
   const [reviewScope, setReviewScope] = useState('all');
   const today = useMemo(() => localTodayDate(), []);
   const weekStart = useMemo(() => addDaysToIsoDate(today, -6), [today]);
@@ -3241,20 +3267,31 @@ function ResultsReview({ matches }) {
       )}
       {rows.length ? (
         <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {rows.map((row) => (
-          <div key={row.key} className="rounded-md border border-slate-300 bg-field px-2.5 py-2 sm:px-3">
-            <div className="flex items-center justify-between gap-1.5">
-              <span className="text-xs font-semibold uppercase text-slate-500">{row.label}</span>
-              <span className={`rounded px-1.5 py-0.5 text-xs font-semibold ${row.hitRate >= 55 ? 'bg-emerald-100 text-emerald-700' : row.hitRate < 45 ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600'}`}>
-                {row.hitRate}%
-              </span>
-            </div>
-            <div className="mt-2 text-sm font-semibold leading-5 text-ink">{row.hits} hit / {row.misses} loss</div>
-            <div className="mt-1 text-xs text-slate-500">
-              Odds {formatOddsTotal(row.oddsHit)} v {formatOddsTotal(row.oddsMiss)}
-            </div>
-          </div>
-          ))}
+          {rows.map((row) => {
+            const active = activeReviewFilter === row.key;
+            return (
+              <button
+                key={row.key}
+                type="button"
+                onClick={() => onReviewFilterChange?.(active ? 'all' : row.key)}
+                aria-pressed={active}
+                className={`rounded-md border px-2.5 py-2 text-left transition sm:px-3 ${
+                  active ? 'border-ink bg-white ring-2 ring-ink/15' : 'border-slate-300 bg-field hover:border-slate-400 hover:bg-white'
+                }`}
+              >
+                <div className="flex items-center justify-between gap-1.5">
+                  <span className="text-xs font-semibold uppercase text-slate-500">{row.label}</span>
+                  <span className={`rounded px-1.5 py-0.5 text-xs font-semibold ${row.hitRate >= 55 ? 'bg-emerald-100 text-emerald-700' : row.hitRate < 45 ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600'}`}>
+                    {row.hitRate}%
+                  </span>
+                </div>
+                <div className="mt-2 text-sm font-semibold leading-5 text-ink">{row.hits} hit / {row.misses} loss</div>
+                <div className="mt-1 text-xs text-slate-500">
+                  Odds {formatOddsTotal(row.oddsHit)} v {formatOddsTotal(row.oddsMiss)}
+                </div>
+              </button>
+            );
+          })}
         </div>
       ) : (
         <div className="mt-3 rounded-md border border-slate-300 bg-field px-3 py-3 text-sm text-slate-500">
@@ -3561,7 +3598,6 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
   const predictions = match.predictions || {};
   const odds = displayThreeWayOdds(match);
   const actuals = match.actuals || {};
-  const selectedBookmaker = BOOKMAKERS[bookmakerId] || BOOKMAKERS.sportsbet;
   const precomputed = match.display_markets || {};
   const displayWinner = precomputed.winner?.market || winnerMarketWithGuidance(match, allMatches);
   const displayBtts = precomputed.btts?.market || displayBttsMarket(predictions.btts, match);
@@ -3576,12 +3612,7 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
   const edgeBadgeFor = (comparison) =>
     comparison?.badge?.tone === 'positive' && comparison.edgePoints > 0 ? comparison.badge.label : null;
   const isFinished = match.status === 'FT';
-  const compactPick = suggestedMarketPick([
-    { label: 'BTTS', market: displayBtts, comparison: bttsComparison, modelProbability: precomputed.btts?.modelProbability },
-    { label: 'Goals', market: predictions.ou_goals, comparison: goalsComparison, modelProbability: precomputed.goals?.modelProbability },
-    { label: 'Cards', market: displayCards, comparison: cardsComparison, modelProbability: precomputed.cards?.modelProbability },
-    { label: 'Corners', market: cornerMarket, comparison: cornersComparison, modelProbability: precomputed.corners?.modelProbability },
-  ], isFinished);
+  const compactPick = suggestedPickForMatch(match, allMatches);
   const openMatch = () => onSelect(match);
   const handleCardKeyDown = (event) => {
     if (event.key !== 'Enter' && event.key !== ' ') return;
@@ -3679,18 +3710,17 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
           </div>
         </div>
 
-        {compactPick && (
-          <div className={`mt-3 rounded-md border px-3 py-2 sm:hidden ${marketPillClass(compactPick.market?.result)}`}>
+        <div className={`mt-3 rounded-md border px-3 py-2 ${compactPick ? marketPillClass(compactPick.market?.result) : 'border-slate-200 bg-slate-50 text-slate-400'}`}>
             <div className="flex items-center justify-between gap-3">
               <span className="text-xs font-semibold uppercase text-slate-500">Suggested pick</span>
               <span className="flex shrink-0 items-center gap-1.5">
-                {compactPick.market?.result && (
+                {compactPick?.market?.result && (
                   <span className={`inline-flex items-center gap-1 rounded-md py-0.5 text-[11px] font-semibold leading-none ${visibleResultLabel(compactPick.market.result) ? 'px-1.5' : 'px-1'} ${resultBadgeClass(compactPick.market.result)}`}>
                     {resultIcon(compactPick.market.result)}
                     {visibleResultLabel(compactPick.market.result) && <span>{visibleResultLabel(compactPick.market.result)}</span>}
                   </span>
                 )}
-                {edgeBadgeFor(compactPick.comparison) && (
+                {compactPick && edgeBadgeFor(compactPick.comparison) && (
                   <span className="inline-flex items-center gap-1 rounded-md border border-amber-300 bg-amber-50 px-1.5 py-0.5 text-[11px] font-semibold leading-none text-amber-700">
                     <Star className="h-3 w-3 fill-amber-400 text-amber-500" aria-hidden="true" />
                     {edgeBadgeFor(compactPick.comparison)}
@@ -3699,11 +3729,10 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
               </span>
             </div>
             <div className="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-              <span className="text-base font-semibold leading-6 text-ink">{compactPick.label} {formatMarketDetail(compactPick.market)}</span>
-              {fmtPct(compactPick.modelProbability) && <span className="text-xs font-semibold text-slate-600">Model {fmtPct(compactPick.modelProbability)}</span>}
+              <span className={`text-base font-semibold leading-6 ${compactPick ? 'text-ink' : 'text-slate-400'}`}>{compactPick ? `${compactPick.label} ${formatMarketDetail(compactPick.market)}` : 'No suggested pick'}</span>
+              {compactPick && fmtPct(compactPick.modelProbability) && <span className="text-xs font-semibold text-slate-600">Model {fmtPct(compactPick.modelProbability)}</span>}
             </div>
           </div>
-        )}
 
         <div className="mt-4 grid grid-cols-2 gap-2">
           <MarketPill label="BTTS" market={displayBtts} edgeBadge={edgeBadgeFor(bttsComparison)} />
@@ -3730,7 +3759,6 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
         <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
           <ConfidenceBadge confidence={confidence} />
           <QualityBadges quality={confidence.quality} compact />
-          <BookmakerStatusChip bookmaker={selectedBookmaker} />
         </div>
 
         {match.status === 'FT' && (
@@ -3814,6 +3842,7 @@ function HomeInner() {
   const [status, setStatus] = useState('all');
   const [selectedDate, setSelectedDate] = useState('');
   const [query, setQuery] = useState('');
+  const [reviewFilter, setReviewFilter] = useState('all');
   const [bookmakerId, setBookmakerId] = useState('sportsbet');
   const [favoriteLeagues, setFavoriteLeagues] = useState([]);
   const [favoriteTeams, setFavoriteTeams] = useState([]);
@@ -4062,6 +4091,16 @@ function HomeInner() {
     [dateOptions, selectedDateIndex],
   );
 
+  const handleReviewFilterChange = useCallback((nextFilter) => {
+    const safeFilter = nextFilter || 'all';
+    setReviewFilter(safeFilter);
+    if (safeFilter !== 'all') {
+      setStatus('FT');
+      setSlideDir(0);
+      setSelectedDate('all');
+    }
+  }, []);
+
   const filtered = useMemo(() => {
     const normalized = query.trim().toLowerCase();
     return matches
@@ -4072,12 +4111,13 @@ function HomeInner() {
         if (status === 'FT') return match.status === 'FT';
         return match.status !== 'FT';
       })
+      .filter((match) => matchHasReviewFilter(match, reviewFilter, matches))
       .filter((match) => {
         if (!normalized) return true;
         return `${match.home?.name || ''} ${match.away?.name || ''} ${match.league}`.toLowerCase().includes(normalized);
       })
       .sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`));
-  }, [league, matches, query, selectedDate, status]);
+  }, [league, matches, query, reviewFilter, selectedDate, status]);
   const groupedMatches = useMemo(() => groupMatchesForDisplay(filtered, favoriteLeagues, favoriteTeams), [favoriteLeagues, favoriteTeams, filtered]);
 
   // Look up the selected match across the entire dataset so detail view works
@@ -4321,7 +4361,11 @@ function HomeInner() {
           </div>
         </div>
 
-        <ResultsReview matches={matches} />
+        <ResultsReview
+          matches={matches}
+          activeReviewFilter={reviewFilter}
+          onReviewFilterChange={handleReviewFilterChange}
+        />
 
         <div className="mt-3 rounded-lg border border-line bg-white p-3 sm:hidden">
           <div className="flex items-center justify-between gap-2">
