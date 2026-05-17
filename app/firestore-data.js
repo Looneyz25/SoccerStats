@@ -13,6 +13,33 @@ export async function loadMatchDataFromFirestore() {
   }
 
   const meta = metaSnap.data();
+
+  if (meta.format === 'league_docs_v1') {
+    const leaguesRef = collection(db, 'dashboardData', DASHBOARD_DOC, 'leagues');
+    const leaguesSnap = await getDocs(query(leaguesRef, orderBy('index', 'asc')));
+    const leagues = leaguesSnap.docs.map((leagueDoc) => {
+      const league = leagueDoc.data();
+      return {
+        id: league.id,
+        name: league.name,
+        season: league.season || null,
+        round: league.round ?? null,
+        logo: league.logo || null,
+        matches: Array.isArray(league.matches) ? league.matches : [],
+      };
+    });
+
+    if (!leagues.length || leagues.length !== meta.leagueCount) {
+      throw new Error('Firestore league match data is incomplete');
+    }
+
+    return {
+      captured_at: meta.capturedAt || null,
+      source: meta.source || null,
+      leagues,
+    };
+  }
+
   const chunksRef = collection(db, 'dashboardData', DASHBOARD_DOC, 'chunks');
   const chunksSnap = await getDocs(query(chunksRef, orderBy('index', 'asc')));
   const chunks = chunksSnap.docs.map((chunkDoc) => chunkDoc.data()?.text || '');
@@ -46,6 +73,7 @@ export async function createUserProfile(user) {
   const newProfile = {
     email: user.email,
     displayName: user.displayName || '',
+    nickname: '',
     isPlatformOwner: isPlatformOwner,
     manualAccess: false,
     inheritStripeStatus: true,
@@ -56,6 +84,21 @@ export async function createUserProfile(user) {
   };
   await setDoc(userRef, newProfile);
   return newProfile;
+}
+
+export async function updateUserProfile(uid, profile) {
+  const db = getFirebaseDb();
+  const userRef = doc(db, 'users', uid);
+  const displayName = String(profile?.displayName || '').trim().slice(0, 80);
+  const nickname = String(profile?.nickname || '').trim().slice(0, 40);
+
+  await setDoc(userRef, {
+    displayName,
+    nickname,
+    profileUpdatedAt: new Date().toISOString()
+  }, { merge: true });
+
+  return { displayName, nickname };
 }
 
 export async function getAllUsers() {

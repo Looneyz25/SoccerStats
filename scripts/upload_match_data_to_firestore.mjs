@@ -9,8 +9,15 @@ import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PROJECT_ID = 'sports-predictions-f91fd';
 const DOC_ID = 'match_data';
-const CHUNK_SIZE = 700_000;
 const DEFAULT_SERVICE_ACCOUNT_PATH = path.join(ROOT, '.secrets', 'firebase-service-account.json');
+
+function slugify(value, fallback) {
+  const slug = String(value || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return slug || fallback;
+}
 
 function applyLocalEnvFile(filePath) {
   if (!existsSync(filePath)) return;
@@ -68,11 +75,7 @@ async function main() {
   const dataPath = path.join(ROOT, 'match_data.json');
   const raw = await readFile(dataPath, 'utf8');
   const parsed = JSON.parse(raw);
-  const chunks = [];
-
-  for (let index = 0; index < raw.length; index += CHUNK_SIZE) {
-    chunks.push(raw.slice(index, index + CHUNK_SIZE));
-  }
+  const leagues = Array.isArray(parsed.leagues) ? parsed.leagues : [];
 
   if (!getApps().length) {
     initializeApp(credentialOptions());
@@ -81,32 +84,46 @@ async function main() {
   const db = getFirestore();
   const metaRef = db.collection('dashboardData').doc(DOC_ID);
   const chunksRef = metaRef.collection('chunks');
-  const existing = await chunksRef.listDocuments();
+  const leaguesRef = metaRef.collection('leagues');
+  const existingChunks = await chunksRef.listDocuments();
+  const existingLeagues = await leaguesRef.listDocuments();
   const writer = db.bulkWriter();
 
-  for (const ref of existing) {
+  for (const ref of existingChunks) {
     writer.delete(ref);
   }
 
-  chunks.forEach((text, index) => {
-    writer.set(chunksRef.doc(String(index).padStart(4, '0')), {
+  for (const ref of existingLeagues) {
+    writer.delete(ref);
+  }
+
+  leagues.forEach((league, index) => {
+    const id = slugify(league.id || league.name, String(index).padStart(2, '0'));
+    writer.set(leaguesRef.doc(id), {
       index,
-      text,
+      id: league.id ?? id,
+      name: league.name || id,
+      season: league.season || null,
+      round: league.round ?? null,
+      logo: league.logo || null,
+      matchCount: Array.isArray(league.matches) ? league.matches.length : 0,
+      matches: Array.isArray(league.matches) ? league.matches : [],
       updatedAt: FieldValue.serverTimestamp(),
     });
   });
 
   writer.set(metaRef, {
+    format: 'league_docs_v1',
     capturedAt: parsed.captured_at || null,
     source: parsed.source || null,
-    leagueCount: Array.isArray(parsed.leagues) ? parsed.leagues.length : 0,
-    chunkCount: chunks.length,
+    leagueCount: leagues.length,
+    matchCount: leagues.reduce((sum, league) => sum + (Array.isArray(league.matches) ? league.matches.length : 0), 0),
     byteLength: Buffer.byteLength(raw),
     updatedAt: FieldValue.serverTimestamp(),
   });
 
   await writer.close();
-  console.log(`Uploaded ${dataPath} to Firestore dashboardData/${DOC_ID} in ${chunks.length} chunks.`);
+  console.log(`Uploaded ${dataPath} to Firestore dashboardData/${DOC_ID} as ${leagues.length} league docs.`);
 }
 
 main().catch((error) => {

@@ -35,7 +35,8 @@ const SUPPORT_EMAIL = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'lvrstats.com@gma
 const FAVORITE_LEAGUES_STORAGE_KEY = 'favoriteLeagues';
 
 async function loadMatchData() {
-  return loadStaticMatchData();
+  const firestoreData = await loadFreshMatchData();
+  return firestoreData || loadStaticMatchData();
 }
 
 async function loadStaticMatchData() {
@@ -253,6 +254,9 @@ function leagueLogo(value) {
 
 function TeamBadge({ src, name }) {
   const [failed, setFailed] = useState(false);
+  useEffect(() => {
+    setFailed(false);
+  }, [src]);
   const initials = String(name || '?')
     .split(/\s+/)
     .filter(Boolean)
@@ -263,7 +267,7 @@ function TeamBadge({ src, name }) {
   return (
     <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-line bg-white text-xs font-bold text-slate-500">
       {src && !failed ? (
-        <img src={src} alt="" className="h-full w-full object-contain p-1" aria-hidden="true" onError={() => setFailed(true)} />
+        <img src={src} alt="" className="h-full w-full object-contain p-1" aria-hidden="true" referrerPolicy="no-referrer" onError={() => setFailed(true)} />
       ) : (
         initials
       )}
@@ -860,11 +864,11 @@ function modelVsBookmakerComparison(match, marketKey, market) {
 
   if (marketKey === 'winner') {
     if (!market.type || market.type === 'draw' || !probs) return null;
-    const odds = match.sportsbet_odds || match.odds || {};
+    const odds = winnerGuidanceOdds(match);
     const comparison = withWinnerRiskCaution(comparisonFromPrices({
       title: 'Winner',
       modelProb: probs[market.type],
-      marketOdds: Number(market.odds ?? odds[market.type]),
+      marketOdds: Number(odds[market.type] ?? market.odds),
     }), match, market);
     return comparison ? { ...comparison, marketType: market.type } : null;
   }
@@ -913,7 +917,7 @@ function winnerProbabilityBreakdown(match) {
   );
   if (!probs) return null;
 
-  const odds = match.sportsbet_odds || match.odds || {};
+  const odds = winnerGuidanceOdds(match);
   return [
     { key: 'home', label: match.home?.short || match.home?.name || 'Home', model: probs.home, bookmaker: impliedProbability(odds.home) },
     { key: 'draw', label: 'Draw', model: probs.draw, bookmaker: impliedProbability(odds.draw) },
@@ -975,9 +979,7 @@ function winnerResultFromActual(match, type) {
 }
 
 function winnerGuidanceOdds(match) {
-  return match.status === 'FT'
-    ? (match.odds || match.sportsbet_odds || {})
-    : (match.sportsbet_odds || match.odds || {});
+  return match.sportsbet_odds || match.odds || {};
 }
 
 function strongestBookmakerSide(odds) {
@@ -1025,10 +1027,15 @@ function winnerMarketWithGuidance(match, allMatches = []) {
     : 0;
   const noExactH2h = Number(match.predictions?.factors?.h2h_n || 0) === 0;
   const strongMarketDisagreement = bookProbabilityGap >= 0.18 || oddsRatio >= 2;
+  const majorMarketDisagreement = bookProbabilityGap >= 0.25 || oddsRatio >= 3;
   const modelIsNotClear = !Number.isFinite(selectedModel) || selectedModel < 0.5 || modelLead <= 0.1;
+  const modelCanOverrideBookmaker = Number.isFinite(selectedModel) && selectedModel >= 0.6 && modelLead >= 0.18;
   const contextSupportsBookmaker = pickedNoWins || bookmakerFormEdge >= 0.35 || noExactH2h;
 
-  if (!strongMarketDisagreement || !modelIsNotClear || !contextSupportsBookmaker) return market;
+  const shouldGuideToBookmaker =
+    !modelCanOverrideBookmaker &&
+    (majorMarketDisagreement || (strongMarketDisagreement && modelIsNotClear && contextSupportsBookmaker));
+  if (!shouldGuideToBookmaker) return market;
 
   const guided = {
     ...market,
@@ -1043,7 +1050,9 @@ function winnerMarketWithGuidance(match, allMatches = []) {
       type: 'bookmaker_guard',
       originalPick: market.pick,
       originalType: market.type,
-      reason: 'Bookmaker and context overrode a low-conviction model lean.',
+      reason: majorMarketDisagreement
+        ? 'Direct bookmaker market strongly overrode a model lean.'
+        : 'Bookmaker and context overrode a low-conviction model lean.',
     },
   };
   return guided;
@@ -2220,18 +2229,35 @@ function BookmakerLink({ bookmakerId, href, label }) {
       href={href}
       target="_blank"
       rel="noreferrer"
-      className={`inline-flex h-11 w-full items-center justify-center gap-2 rounded-md border px-5 text-sm font-semibold shadow-panel transition sm:w-52 ${bookmaker.buttonClass}`}
+      className={`inline-flex h-11 w-full items-center justify-center gap-1.5 rounded-md border px-3 text-sm font-semibold shadow-panel transition sm:w-52 sm:gap-2 sm:px-5 ${bookmaker.buttonClass}`}
       aria-label={`Open this market on ${bookmaker.name}`}
     >
       {bookmaker.logoSrc ? (
         <>
-          <img src={bookmaker.logoSrc} alt="" className="h-9 w-auto max-w-44" aria-hidden="true" />
+          <img src={bookmaker.logoSrc} alt="" className="h-8 w-auto max-w-36 sm:h-9 sm:max-w-44" aria-hidden="true" />
           <span className="sr-only">{label}</span>
         </>
       ) : (
         <span>{label}</span>
       )}
     </a>
+  );
+}
+
+function BookmakerStatusChip({ bookmaker, hasDirectLink }) {
+  if (!bookmaker) return null;
+  return (
+    <span className={`inline-flex h-7 items-center justify-center gap-1.5 rounded-full px-2.5 text-xs font-semibold ${hasDirectLink ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600'}`}>
+      {hasDirectLink && <CheckCircle2 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />}
+      {bookmaker.logoSrc ? (
+        <>
+          <img src={bookmaker.logoSrc} alt="" className="h-5 w-auto max-w-20" aria-hidden="true" />
+          <span className="sr-only">{bookmaker.name}</span>
+        </>
+      ) : (
+        <span>{bookmaker.name}</span>
+      )}
+    </span>
   );
 }
 
@@ -2282,6 +2308,10 @@ function SettingsView({ bookmakerId, onBookmakerChange, onBack }) {
   const [billingBusy, setBillingBusy] = useState(false);
   const [billingMessage, setBillingMessage] = useState('');
   const [billingError, setBillingError] = useState('');
+  const [profileForm, setProfileForm] = useState({ displayName: '', nickname: '' });
+  const [profileBusy, setProfileBusy] = useState(false);
+  const [profileMessage, setProfileMessage] = useState('');
+  const [profileError, setProfileError] = useState('');
 
   useEffect(() => {
     let active = true;
@@ -2295,6 +2325,10 @@ function SettingsView({ bookmakerId, onBookmakerChange, onBack }) {
         const nextProfile = await getUserProfile(user.uid);
         if (active) {
           setProfile(nextProfile);
+          setProfileForm({
+            displayName: nextProfile?.displayName || user.displayName || '',
+            nickname: nextProfile?.nickname || '',
+          });
           setIsPlatformOwner(Boolean(nextProfile?.isPlatformOwner));
         }
       } catch (error) {
@@ -2308,6 +2342,38 @@ function SettingsView({ bookmakerId, onBookmakerChange, onBack }) {
     loadProfile();
     return () => { active = false; };
   }, []);
+
+  function handleProfileField(field, value) {
+    setProfileForm((current) => ({ ...current, [field]: value }));
+    setProfileMessage('');
+    setProfileError('');
+  }
+
+  async function saveProfile() {
+    setProfileBusy(true);
+    setProfileMessage('');
+    setProfileError('');
+    try {
+      const { updateProfile } = await import('firebase/auth');
+      const { getFirebaseAuth } = await import('../firebase');
+      const { updateUserProfile } = await import('../firestore-data');
+      const auth = getFirebaseAuth();
+      const user = auth.currentUser;
+      if (!user) throw new Error('Sign in again before updating your profile.');
+
+      const displayName = profileForm.displayName.trim().slice(0, 80);
+      const nickname = profileForm.nickname.trim().slice(0, 40);
+      await updateProfile(user, { displayName });
+      const savedProfile = await updateUserProfile(user.uid, { displayName, nickname });
+      setProfile((current) => ({ ...(current || {}), ...savedProfile, profileUpdatedAt: new Date().toISOString() }));
+      setProfileForm(savedProfile);
+      setProfileMessage('Profile updated.');
+    } catch (error) {
+      setProfileError(error.message || 'Profile could not be updated.');
+    } finally {
+      setProfileBusy(false);
+    }
+  }
 
   async function openBillingPortal() {
     setBillingBusy(true);
@@ -2433,6 +2499,64 @@ function SettingsView({ bookmakerId, onBookmakerChange, onBack }) {
               <Mail className="h-4 w-4" aria-hidden="true" />
               Email support
             </a>
+          </div>
+        </div>
+
+        <div className="mt-4 rounded-lg border border-slate-300 bg-white p-4 shadow-panel">
+          <div className="flex flex-col gap-4">
+            <div>
+              <h2 className="flex items-center gap-2 text-base font-semibold text-ink">
+                <UserRound className="h-4 w-4 text-signal" aria-hidden="true" />
+                Profile
+              </h2>
+              <p className="mt-1 text-sm text-slate-500">Update the name admins see on your account.</p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <label className="block">
+                <span className="text-xs font-semibold uppercase text-slate-500">Name</span>
+                <input
+                  value={profileForm.displayName}
+                  onChange={(event) => handleProfileField('displayName', event.target.value)}
+                  maxLength={80}
+                  className="mt-1 h-10 w-full rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink outline-none focus:border-slate-400"
+                  placeholder="Your name"
+                />
+              </label>
+              <label className="block">
+                <span className="text-xs font-semibold uppercase text-slate-500">Nickname</span>
+                <input
+                  value={profileForm.nickname}
+                  onChange={(event) => handleProfileField('nickname', event.target.value)}
+                  maxLength={40}
+                  className="mt-1 h-10 w-full rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink outline-none focus:border-slate-400"
+                  placeholder="Optional nickname"
+                />
+              </label>
+            </div>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="text-sm text-slate-500">
+                Signed in as <span className="font-semibold text-ink">{profile?.email || '-'}</span>
+              </div>
+              <button
+                type="button"
+                onClick={saveProfile}
+                disabled={profileBusy}
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink shadow-panel hover:bg-field disabled:cursor-wait disabled:opacity-70"
+              >
+                {profileBusy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <UserRound className="h-4 w-4" aria-hidden="true" />}
+                Save profile
+              </button>
+            </div>
+            {profileMessage && (
+              <div className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-medium text-signal">
+                {profileMessage}
+              </div>
+            )}
+            {profileError && (
+              <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-miss">
+                {profileError}
+              </div>
+            )}
           </div>
         </div>
 
@@ -2764,10 +2888,10 @@ function H2HContextPanel({ match, allMatches }) {
 }
 
 function PredictionSummaryCard({ match, allMatches }) {
+  const [showPredictionCards, setShowPredictionCards] = useState(false);
   const matchWithContext = { ...match, __allMatches: allMatches };
   const predictions = match.predictions || {};
   const confidence = confidenceForMatch(match, allMatches);
-  const quality = confidence.quality;
   const winner = winnerMarketWithGuidance(match, allMatches);
   const winnerComparison = modelVsBookmakerComparison(matchWithContext, 'winner', winner);
   const displayBtts = displayBttsMarket(predictions.btts, match);
@@ -2778,26 +2902,6 @@ function PredictionSummaryCard({ match, allMatches }) {
   const cornerMarket = cornerMarketFromStreaks(match, allMatches);
   const cornersComparison = modelVsBookmakerComparison(match, 'ou_corners', cornerMarket);
 
-  // Headline = one-line summary of every pick, so it doesn't duplicate the per-market bullets below.
-  const headlineParts = [];
-  if (winner?.pick) headlineParts.push(`${winner.pick} to win`);
-  if (predictions.ou_goals?.pick) {
-    const line = predictions.ou_goals.line ?? 2.5;
-    headlineParts.push(`${predictions.ou_goals.pick} ${line} goals`);
-  }
-  if (displayBtts?.pick) {
-    headlineParts.push(displayBtts.pick === 'Yes' ? 'both teams to score' : 'one team blanks');
-  }
-  if (displayCards?.pick) {
-    const line = displayCards.line ?? 4.5;
-    headlineParts.push(`${displayCards.pick} ${line} cards`);
-  }
-  if (cornerMarket?.pick) {
-    const line = cornerMarket.line ?? 10.5;
-    headlineParts.push(`${cornerMarket.pick} ${line} corners`);
-  }
-  const headline = headlineParts.length ? `Picks: ${headlineParts.join(' / ')}.` : null;
-
   const lines = [
     { label: 'Winner', pick: winner ? formatMarketDetail(winner) : null, text: winnerRationale(match, allMatches, winner), comparison: winnerComparison, result: winner?.result },
     { label: 'BTTS', pick: displayBtts ? formatMarketDetail(displayBtts) : null, text: bttsRationale(match), comparison: bttsComparison, result: displayBtts?.result },
@@ -2806,35 +2910,24 @@ function PredictionSummaryCard({ match, allMatches }) {
     { label: 'Corners', pick: cornerMarket ? formatMarketDetail(cornerMarket) : null, text: cornersRationale(match, allMatches, cornerMarket), comparison: cornersComparison, result: cornerMarket?.result },
   ].filter((row) => row.pick && (row.text || row.comparison));
 
-  if (!headlineParts.length && !lines.length) return null;
+  if (!lines.length) return null;
 
   return (
-    <div className="rounded-lg border border-slate-300 bg-white p-4 shadow-panel ring-1 ring-signal/20 sm:p-5">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-base font-semibold leading-6 text-ink">Prediction summary</h3>
-            <ConfidenceBadge confidence={confidence} />
-          </div>
+    <div className="rounded-lg border border-slate-300 bg-white p-3 shadow-panel sm:p-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
+          <h3 className="text-base font-semibold leading-6 text-ink">Prediction summary</h3>
           <p className="mt-1 text-xs text-slate-500">{confidence.reason}</p>
         </div>
-        <div className="flex flex-col gap-2 sm:items-end">
-          <QualityBadges quality={quality} />
-          {headlineParts.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 sm:justify-end">
-            {headlineParts.map((part) => (
-              <span
-                key={part}
-                className="rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-medium leading-none text-slate-700"
-              >
-                {part}
-              </span>
-            ))}
-            </div>
-          )}
-        </div>
+        <button
+          type="button"
+          onClick={() => setShowPredictionCards((value) => !value)}
+          className="inline-flex h-9 shrink-0 items-center justify-center rounded-md border border-line bg-field px-3 text-sm font-semibold text-ink shadow-panel hover:bg-white"
+        >
+          {showPredictionCards ? 'Hide prediction cards' : 'View prediction cards'}
+        </button>
       </div>
-      {lines.length > 0 && (
+      {showPredictionCards && (
         <ul className="mt-4 space-y-3 text-sm">
           {lines.map((row) => (
             <li key={row.label} className={`grid gap-3 rounded-md px-3 py-3 sm:grid-cols-[24rem_minmax(0,1fr)] sm:items-start ${summaryRowClass(row.result)}`}>
@@ -3149,9 +3242,7 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches }) {
         <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
           <ConfidenceBadge confidence={confidence} />
           <QualityBadges quality={confidence.quality} compact />
-          <span className={`rounded-full px-3 py-1 text-xs font-semibold ${hasDirectBookmakerLink ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600'}`}>
-            {selectedBookmaker.name}
-          </span>
+          <BookmakerStatusChip bookmaker={selectedBookmaker} hasDirectLink={hasDirectBookmakerLink} />
         </div>
 
         {match.status === 'FT' && (
@@ -3236,13 +3327,6 @@ function HomeInner() {
       })
       .catch((err) => {
         if (!cancelled) setError(`Could not load ${DATA_URLS.join(' or ')}`);
-      });
-
-    loadFreshMatchData()
-      .then((freshData) => {
-        if (cancelled || !freshData) return;
-        setData(freshData);
-        setError('');
       });
 
     return () => {

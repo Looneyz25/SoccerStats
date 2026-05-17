@@ -12,11 +12,22 @@ service cloud.firestore {
              get(/databases/$(database)/documents/users/$(request.auth.uid)).data.hasAccess == true;
     }
 
+    function isOwnProfileUpdate(userId) {
+      let changedKeys = request.resource.data.diff(resource.data).changedKeys();
+      return request.auth.uid == userId
+             && changedKeys.hasOnly(['displayName', 'nickname', 'profileUpdatedAt'])
+             && request.resource.data.displayName is string
+             && request.resource.data.displayName.size() <= 80
+             && request.resource.data.nickname is string
+             && request.resource.data.nickname.size() <= 40;
+    }
+
     match /users/{userId} {
       allow read: if request.auth != null && (request.auth.uid == userId || isPlatformOwner());
       allow create: if request.auth != null && request.auth.uid == userId
                     && (request.auth.token.email == 'l.vorabouth@gmail.com' || (request.resource.data.isPlatformOwner == false && request.resource.data.hasAccess == false));
-      allow update, delete: if request.auth != null && isPlatformOwner();
+      allow update: if request.auth != null && (isPlatformOwner() || isOwnProfileUpdate(userId));
+      allow delete: if request.auth != null && isPlatformOwner();
     }
 
     match /dashboardData/{docId} {
@@ -24,6 +35,11 @@ service cloud.firestore {
       allow write: if false;
 
       match /chunks/{chunkId} {
+        allow read: if request.auth != null && (hasAccess() || isPlatformOwner() || request.auth.token.email == 'l.vorabouth@gmail.com');
+        allow write: if false;
+      }
+
+      match /leagues/{leagueId} {
         allow read: if request.auth != null && (hasAccess() || isPlatformOwner() || request.auth.token.email == 'l.vorabouth@gmail.com');
         allow write: if false;
       }
