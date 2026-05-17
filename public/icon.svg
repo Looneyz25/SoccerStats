@@ -1,1 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">⚽</text></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="LVRstats soccer ball app icon">
+  <rect width="1024" height="1024" fill="#0f172a"/>
+  <circle cx="512" cy="512" r="316" fill="#f8fafc"/>
+  <circle cx="512" cy="512" r="316" fill="none" stroke="#0f766e" stroke-width="30"/>
+  <path fill="#0f172a" d="m512 298 124 90-47 146H435l-47-146 124-90Z"/>
+  <path fill="none" stroke="#0f172a" stroke-linecap="round" stroke-linejoin="round" stroke-width="28" d="m388 388-126-36m374 36 126-36M435 534l-86 120m240-120 86 120M512 298V174M349 654l-72 101m398-101 72 101"/>
+  <path fill="#0f172a" d="M261 352c26-60 72-110 130-142l-3 178-127-36Zm502 0c-26-60-72-110-130-142l3 178 127-36ZM349 654l-72 101c58 48 132 77 213 79l-141-180Zm326 0-141 180c81-2 155-31 213-79l-72-101Z"/>
+  <circle cx="512" cy="512" r="316" fill="none" stroke="#e2e8f0" stroke-width="10"/>
+</svg>
