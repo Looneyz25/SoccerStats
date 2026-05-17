@@ -2,9 +2,24 @@ import { collection, doc, getDoc, getDocs, orderBy, query, setDoc, updateDoc } f
 import { getFirebaseDb } from './firebase';
 
 const DASHBOARD_DOC = 'match_data';
+const FAST_DASHBOARD_DOC = 'match_data_fast';
 
 export async function loadMatchDataFromFirestore() {
   const db = getFirebaseDb();
+  const fastRef = doc(db, 'dashboardData', FAST_DASHBOARD_DOC);
+  const fastSnap = await getDoc(fastRef);
+
+  if (fastSnap.exists()) {
+    const fast = fastSnap.data();
+    if (fast.format === 'single_doc_v1' && Array.isArray(fast.leagues)) {
+      return {
+        captured_at: fast.capturedAt || null,
+        source: fast.source || null,
+        leagues: fast.leagues,
+      };
+    }
+  }
+
   const metaRef = doc(db, 'dashboardData', DASHBOARD_DOC);
   const metaSnap = await getDoc(metaRef);
 

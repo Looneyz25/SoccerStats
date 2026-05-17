@@ -9,6 +9,7 @@ import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PROJECT_ID = 'sports-predictions-f91fd';
 const DOC_ID = 'match_data';
+const FAST_DOC_ID = 'match_data_fast';
 const DEFAULT_SERVICE_ACCOUNT_PATH = path.join(ROOT, '.secrets', 'firebase-service-account.json');
 
 function slugify(value, fallback) {
@@ -43,6 +44,46 @@ function loadLocalCredentials() {
   if (!process.env.FIREBASE_SERVICE_ACCOUNT_JSON && !process.env.GOOGLE_APPLICATION_CREDENTIALS && existsSync(DEFAULT_SERVICE_ACCOUNT_PATH)) {
     process.env.GOOGLE_APPLICATION_CREDENTIALS = DEFAULT_SERVICE_ACCOUNT_PATH;
   }
+}
+
+function slimMatch(match) {
+  const keep = [
+    'id',
+    'date',
+    'time',
+    'status',
+    'home',
+    'away',
+    'predictions',
+    'odds',
+    'h2h_streaks',
+    'team_streaks',
+    'sportsbet_odds',
+    'bookmaker_links',
+    'actuals',
+    'corner_odds',
+    'h2h_history',
+    'h2h_duel',
+    'venue',
+    'referee',
+  ];
+  return Object.fromEntries(
+    keep
+      .filter((key) => match[key] !== undefined && match[key] !== null)
+      .map((key) => [key, match[key]]),
+  );
+}
+
+function slimLeague(league, index) {
+  const id = slugify(league.id || league.name, String(index).padStart(2, '0'));
+  return {
+    id: league.id ?? id,
+    name: league.name || id,
+    season: league.season || null,
+    round: league.round ?? null,
+    logo: league.logo || null,
+    matches: Array.isArray(league.matches) ? league.matches.map(slimMatch) : [],
+  };
 }
 
 function credentialOptions() {
@@ -83,6 +124,7 @@ async function main() {
 
   const db = getFirestore();
   const metaRef = db.collection('dashboardData').doc(DOC_ID);
+  const fastRef = db.collection('dashboardData').doc(FAST_DOC_ID);
   const chunksRef = metaRef.collection('chunks');
   const leaguesRef = metaRef.collection('leagues');
   const existingChunks = await chunksRef.listDocuments();
@@ -122,8 +164,21 @@ async function main() {
     updatedAt: FieldValue.serverTimestamp(),
   });
 
+  const fastLeagues = leagues.map(slimLeague);
+  writer.set(fastRef, {
+    format: 'single_doc_v1',
+    capturedAt: parsed.captured_at || null,
+    source: parsed.source || null,
+    leagueCount: fastLeagues.length,
+    matchCount: fastLeagues.reduce((sum, league) => sum + league.matches.length, 0),
+    byteLength: Buffer.byteLength(JSON.stringify({ leagues: fastLeagues })),
+    leagues: fastLeagues,
+    updatedAt: FieldValue.serverTimestamp(),
+  });
+
   await writer.close();
   console.log(`Uploaded ${dataPath} to Firestore dashboardData/${DOC_ID} as ${leagues.length} league docs.`);
+  console.log(`Uploaded fast dashboard doc dashboardData/${FAST_DOC_ID}.`);
 }
 
 main().catch((error) => {

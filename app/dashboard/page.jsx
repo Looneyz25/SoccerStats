@@ -2954,18 +2954,12 @@ function ResultsReview({ matches }) {
   if (!allResulted.length) return null;
   const best = [...rows].sort((a, b) => b.hitRate - a.hitRate)[0];
   const worst = [...rows].sort((a, b) => a.hitRate - b.hitRate)[0];
-  const scopeLabel = reviewScope === 'week'
-    ? `this week (${formatDateDMY(today)}-${formatDateDMY(weekEnd)})`
-    : reviewScope === 'today'
-      ? `today (${formatDateDMY(today)})`
-      : 'all resulted matches';
 
   return (
     <section className="mt-3 rounded-lg border border-slate-300 bg-white p-3 shadow-panel sm:mt-5 sm:p-4">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-base font-semibold text-ink">Results review</h2>
-          <p className="mt-1 text-xs text-slate-500">Since {PREDICTION_TRACKING_START_DATE}: {resulted.length} resulted matches for {scopeLabel}.</p>
         </div>
         <div className="flex flex-wrap items-center gap-1.5 text-xs font-semibold">
           <button
@@ -3947,7 +3941,7 @@ function HomeInner() {
 
         <ResultsReview matches={matches} />
 
-        <div className="mt-3 grid gap-2 rounded-lg border border-line bg-white p-3 sm:mt-5 sm:grid-cols-[12rem_10rem_auto_16rem_minmax(0,1fr)] sm:items-center sm:gap-3">
+        <div className="mt-3 grid gap-2 rounded-lg border border-line bg-white p-3 sm:mt-5 sm:grid-cols-[12rem_10rem_minmax(18rem,1fr)_minmax(16rem,1fr)] sm:items-center sm:gap-3">
           <select
             value={league}
             onChange={(event) => setLeague(event.target.value)}
@@ -3971,21 +3965,12 @@ function HomeInner() {
             <option value="FT">Finished</option>
             <option value="all">All statuses</option>
           </select>
-          <div className="flex min-w-0 items-center gap-2">
-            <button
-              type="button"
-              onClick={selectAllResulted}
-              disabled={status === 'FT' && selectedDate === 'all'}
-              className="inline-flex h-11 shrink-0 items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-slate-700 hover:bg-field disabled:cursor-not-allowed disabled:opacity-40 sm:h-10"
-              aria-label="Show all resulted matches"
-            >
-              All resulted
-            </button>
+          <div className="flex min-w-0 flex-nowrap items-center gap-1.5 rounded-md border border-line bg-field p-1">
             <button
               type="button"
               onClick={selectToday}
               disabled={selectedDate === todayDate}
-              className="inline-flex h-11 shrink-0 items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-slate-700 hover:bg-field disabled:cursor-not-allowed disabled:opacity-40 sm:h-10"
+              className="inline-flex h-9 shrink-0 items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-slate-700 hover:bg-white/80 disabled:cursor-not-allowed disabled:opacity-40"
               aria-label="Show today's matches"
             >
               Today
@@ -3994,7 +3979,7 @@ function HomeInner() {
               type="button"
               onClick={() => moveDate(-1)}
               disabled={!dateOptions.length || selectedDateIndex === 0}
-              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-line bg-white text-slate-600 hover:bg-field disabled:cursor-not-allowed disabled:opacity-40 sm:h-10 sm:w-10"
+              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-line bg-white text-slate-600 hover:bg-white/80 disabled:cursor-not-allowed disabled:opacity-40"
               aria-label="Previous match date"
             >
               <ChevronLeft className="h-4 w-4" aria-hidden="true" />
@@ -4002,7 +3987,7 @@ function HomeInner() {
             <select
               value={selectedDate || 'all'}
               onChange={(event) => { setSlideDir(0); setSelectedDate(event.target.value); }}
-              className="h-11 min-w-0 flex-1 rounded-md border border-line bg-white px-3 text-sm sm:h-10"
+              className="h-9 min-w-0 flex-1 rounded-md border border-line bg-white px-2 text-sm"
               aria-label="Match date"
             >
               <option value="all">All dates</option>
@@ -4016,18 +4001,29 @@ function HomeInner() {
               type="button"
               onClick={() => moveDate(1)}
               disabled={!dateOptions.length || selectedDateIndex === dateOptions.length - 1}
-              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-line bg-white text-slate-600 hover:bg-field disabled:cursor-not-allowed disabled:opacity-40 sm:h-10 sm:w-10"
+              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-line bg-white text-slate-600 hover:bg-white/80 disabled:cursor-not-allowed disabled:opacity-40"
               aria-label="Next match date"
             >
               <ChevronRight className="h-4 w-4" aria-hidden="true" />
             </button>
           </div>
-          <input
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search teams or league"
-            className="h-11 min-w-0 rounded-md border border-line bg-white px-3 text-sm sm:h-10"
-          />
+          <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] gap-2">
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search teams or league"
+              className="h-11 min-w-0 rounded-md border border-line bg-white px-3 text-sm sm:h-10"
+            />
+            <button
+              type="button"
+              onClick={selectAllResulted}
+              disabled={status === 'FT' && selectedDate === 'all'}
+              className="inline-flex h-11 shrink-0 items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-slate-700 hover:bg-field disabled:cursor-not-allowed disabled:opacity-40 sm:h-10"
+              aria-label="Show all resulted matches"
+            >
+              All resulted
+            </button>
+          </div>
         </div>
 
         {error && (
