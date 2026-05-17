@@ -635,12 +635,30 @@ def fetch_form(team_id, exclude_event_id=None, xg_index=None):
     return sum(att)/len(att), sum(df)/len(df)
 
 
-def fetch_h2h(home_id, away_id, exclude_event_id=None, max_n=10):
+def h2h_xg_for_event(event_id, current_home_id, current_away_id, xg_index=None):
+    """Return xG for a H2H event from the current fixture perspective, if known."""
+    if xg_index is None:
+        xg_index = _XG_INDEX
+    if not event_id or not current_home_id or not current_away_id:
+        return None
+    home_rows = {row.get("event_id"): row for row in (xg_index.get(current_home_id) or [])}
+    row = home_rows.get(event_id)
+    if row is None:
+        return None
+    return {
+        "current_home": round(float(row["for"]), 2),
+        "current_away": round(float(row["against"]), 2),
+    }
+
+
+def fetch_h2h(home_id, away_id, exclude_event_id=None, max_n=10, xg_index=None):
     """Past meetings between two specific teams. Returns rows from the current
     home-team's perspective. Empty if data unavailable.
     """
     if not home_id or not away_id:
         return []
+    if xg_index is None:
+        xg_index = _XG_INDEX
     # SofaScore exposes h2h on a known event between the two teams; we'll just walk
     # the home team's last 30 and filter to ones vs away_id.
     d = fetch(f"/api/v1/team/{home_id}/events/last/0?page=0"); time.sleep(0.6)
@@ -651,8 +669,10 @@ def fetch_h2h(home_id, away_id, exclude_event_id=None, max_n=10):
         if e.get("id") == exclude_event_id: continue
         h_team = (e.get("homeTeam") or {}).get("id")
         a_team = (e.get("awayTeam") or {}).get("id")
+        eid = e.get("id")
+        xg = h2h_xg_for_event(eid, home_id, away_id, xg_index)
         if h_team == home_id and a_team == away_id:
-            out.append({"event_id": e.get("id"),
+            row = {"event_id": eid,
                         "date": adl_date(e.get("startTimestamp")) if e.get("startTimestamp") else None,
                         "home_name": (e.get("homeTeam") or {}).get("name"),
                         "away_name": (e.get("awayTeam") or {}).get("name"),
@@ -661,9 +681,17 @@ def fetch_h2h(home_id, away_id, exclude_event_id=None, max_n=10):
                         "current_home_scored": (e.get("homeScore") or {}).get("current", 0),
                         "current_away_scored": (e.get("awayScore") or {}).get("current", 0),
                         "h_scored": (e.get("homeScore") or {}).get("current", 0),
-                        "a_scored": (e.get("awayScore") or {}).get("current", 0)})
+                        "a_scored": (e.get("awayScore") or {}).get("current", 0)}
+            if xg:
+                row["xg"] = {
+                    "home": xg["current_home"],
+                    "away": xg["current_away"],
+                    "current_home": xg["current_home"],
+                    "current_away": xg["current_away"],
+                }
+            out.append(row)
         elif a_team == home_id and h_team == away_id:
-            out.append({"event_id": e.get("id"),
+            row = {"event_id": eid,
                         "date": adl_date(e.get("startTimestamp")) if e.get("startTimestamp") else None,
                         "home_name": (e.get("homeTeam") or {}).get("name"),
                         "away_name": (e.get("awayTeam") or {}).get("name"),
@@ -672,7 +700,15 @@ def fetch_h2h(home_id, away_id, exclude_event_id=None, max_n=10):
                         "current_home_scored": (e.get("awayScore") or {}).get("current", 0),
                         "current_away_scored": (e.get("homeScore") or {}).get("current", 0),
                         "h_scored": (e.get("awayScore") or {}).get("current", 0),
-                        "a_scored": (e.get("homeScore") or {}).get("current", 0)})
+                        "a_scored": (e.get("homeScore") or {}).get("current", 0)}
+            if xg:
+                row["xg"] = {
+                    "home": xg["current_away"],
+                    "away": xg["current_home"],
+                    "current_home": xg["current_home"],
+                    "current_away": xg["current_away"],
+                }
+            out.append(row)
     return out[:max_n]
 
 
@@ -1002,7 +1038,7 @@ def phase_b_forecast(store, seen_ids):
                 h_att, h_def = fetch_form(h.get("id"))
                 a_att, a_def = fetch_form(a.get("id"))
                 # NEW: H2H + standings inputs for the enhanced predictor
-                h2h_history = fetch_h2h(h.get("id"), a.get("id"), exclude_event_id=eid)
+                h2h_history = fetch_h2h(h.get("id"), a.get("id"), exclude_event_id=eid, xg_index=_XG_INDEX)
                 h2h_duel = fetch_event_h2h_duel(eid)
                 ut = (ev.get("tournament") or {}).get("uniqueTournament") or {}
                 season = ev.get("season") or {}

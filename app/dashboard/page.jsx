@@ -746,7 +746,7 @@ function comparisonFromPrices({ title, modelProb, marketOdds, fallbackLabel = nu
       model: { odds: fallbackLabel || 'Trend pick', probability: '-' },
       edgePoints: 0,
       modelEdge: 0,
-      note: 'Streak-led pick; use the bookmaker price as context, not a fair-odds edge.',
+      note: 'This pick comes from recent trends, so treat the bookmaker odds as a guide only.',
     };
   }
 
@@ -765,8 +765,8 @@ function comparisonFromPrices({ title, modelProb, marketOdds, fallbackLabel = nu
       edgePoints: 0,
       modelEdge: 0,
       note: isModelSuggestion
-        ? 'Model suggests this from recent totals; bookmaker price is not available.'
-        : 'Model fair odds from recent totals; bookmaker price is not available.',
+        ? 'Our model likes this from recent totals, but bookmaker odds are not available.'
+        : 'Our model has a price from recent totals, but bookmaker odds are not available.',
     };
   }
 
@@ -777,15 +777,15 @@ function comparisonFromPrices({ title, modelProb, marketOdds, fallbackLabel = nu
   const tone = isClose ? 'neutral' : diff > 0 ? 'positive' : 'warning';
   const note = isClose
     ? marketOddsEstimated
-      ? 'Estimated opposite-side price; check bookmaker before using.'
-      : 'No clear edge; only bet if other markets agree.'
+      ? 'No clear edge; this uses an estimated opposite-side price, so check the bookmaker first.'
+      : 'No clear edge; bookmaker odds are about where we would expect.'
     : diff > 0
       ? marketOddsEstimated
-        ? 'Model sees value versus the estimated opposite-side price; check bookmaker before using.'
-        : 'Model sees value; price is better than our fair odds.'
+        ? 'Our model rates this better than the estimated odds suggest, but check the bookmaker first.'
+        : 'Our model predicts this has a better chance of hitting than the bookmaker odds suggest.'
       : marketOddsEstimated
-        ? 'Estimated opposite-side price still looks short; check bookmaker before using.'
-        : 'No model edge; bookmaker price looks short.';
+        ? 'The estimated odds look too low for the risk, so check the bookmaker first.'
+        : 'No clear edge; the bookmaker odds look too low for the risk.';
   return {
     title,
     badge: { label, tone },
@@ -827,10 +827,23 @@ function withWinnerRiskCaution(comparison, match, market) {
   if (priceSourceMismatch) reasons.push('bookmaker sources are not aligned');
   if (noH2hAndMarketDisagrees) reasons.push('there is no exact H2H base for this market disagreement');
 
+  const winnerRows = winnerProbabilityBreakdown(match) || [];
+  const bookmakerFavourite = winnerRows
+    .filter((row) => row.key === 'home' || row.key === 'away')
+    .filter((row) => Number.isFinite(row.bookmaker))
+    .sort((a, b) => b.bookmaker - a.bookmaker)[0];
+  const bookmakerFavouriteText = bookmakerFavourite
+    ? `${bookmakerFavourite.key === 'home' ? 'home' : 'away'} team (${teamNameForSide(bookmakerFavourite.key, match)})`
+    : null;
+  const contextReasons = reasons.filter((reason) => reason !== 'bookmaker market strongly disagrees');
+  const note = extremeMarketDisagreement && bookmakerFavouriteText
+    ? `Bookmakers favour the ${bookmakerFavouriteText}, but our model makes this a much closer game.${contextReasons.length ? ` Also check that ${contextReasons.join(' and ')}.` : ''}`
+    : `Before taking this winner, check that ${reasons.join(' and ')}.`;
+
   return {
     ...comparison,
     badge: { label: 'Verify pick', tone: 'warning' },
-    note: `Caution before taking this winner: ${reasons.join(' and ')}.`,
+    note,
   };
 }
 
@@ -1163,7 +1176,7 @@ function confidenceForMatch(match, allMatches) {
   const quality = dataQualityForMatch(match);
 
   if (!edges.length) {
-    return { label: 'Avoid', tone: 'warning', reason: 'No model edge over the market', edge: 0, quality };
+    return { label: 'Avoid', tone: 'warning', reason: 'Our model does not see better odds than the bookmaker', edge: 0, quality };
   }
   if (bestEdge >= 0.05 && quality.score >= 3) {
     return { label: 'Strong edge', tone: 'positive', reason: `${edges[0].label} ${edges[0].comparison.badge.label}`, edge: bestEdge, quality };
@@ -1350,6 +1363,7 @@ function recentH2hMeetings(allMatches, match, maxN = 6) {
           currentAwayGoals > currentHomeGoals ? 'away' :
             'draw';
       const totalGoals = actualHomeGoals + actualAwayGoals;
+      const xg = h2hMeetingXg(meeting);
       return {
         id: meeting.event_id || `${match.id}-h2h-${index}`,
         date: meeting.date,
@@ -1362,6 +1376,7 @@ function recentH2hMeetings(allMatches, match, maxN = 6) {
         btts: actualHomeGoals > 0 && actualAwayGoals > 0,
         cards: meeting.cards,
         corners: meeting.corners,
+        xg,
       };
     });
   }
@@ -1386,6 +1401,14 @@ function recentH2hMeetings(allMatches, match, maxN = 6) {
             'draw';
       const totalGoals = currentHomeGoals + currentAwayGoals;
       const btts = currentHomeGoals > 0 && currentAwayGoals > 0;
+      const homeXg = Number(m.xg?.home);
+      const awayXg = Number(m.xg?.away);
+      const xg = Number.isFinite(homeXg) && Number.isFinite(awayXg)
+        ? {
+            home: currentHomeWasHome ? homeXg : awayXg,
+            away: currentHomeWasHome ? awayXg : homeXg,
+          }
+        : null;
       return {
         id: m.id,
         date: m.date,
@@ -1398,8 +1421,31 @@ function recentH2hMeetings(allMatches, match, maxN = 6) {
         btts,
         cards: m.predictions?.ou_cards?.actual,
         corners: m.actuals?.corners_total,
+        xg,
       };
     });
+}
+
+function h2hMeetingXg(meeting) {
+  const source = meeting?.xg || meeting?.expected_goals;
+  const home = Number(source?.home ?? meeting?.home_xg ?? meeting?.xg_home);
+  const away = Number(source?.away ?? meeting?.away_xg ?? meeting?.xg_away);
+  if (Number.isFinite(home) && Number.isFinite(away)) return { home, away };
+
+  const currentHome = Number(source?.current_home ?? meeting?.current_home_xg);
+  const currentAway = Number(source?.current_away ?? meeting?.current_away_xg);
+  if (Number.isFinite(currentHome) && Number.isFinite(currentAway)) {
+    return { home: currentHome, away: currentAway };
+  }
+  return null;
+}
+
+function formatH2hXg(xg) {
+  if (!xg) return '-';
+  const home = Number(xg.home);
+  const away = Number(xg.away);
+  if (!Number.isFinite(home) || !Number.isFinite(away)) return '-';
+  return `${home.toFixed(1)}-${away.toFixed(1)}`;
 }
 
 function h2hContextForMatch(allMatches, match) {
@@ -3157,6 +3203,8 @@ function H2HContextPanel({ match, allMatches }) {
   const h2hStreaks = match.h2h_streaks || [];
   if (!summary?.count && !meetings.length && !h2hStreaks.length) return null;
   const hasMeetingStats = meetings.length > 0;
+  const displayedMeetings = meetings.slice(0, 5);
+  const h2hXgCount = displayedMeetings.filter((meeting) => meeting.xg).length;
 
   return (
     <div className="rounded-lg border border-slate-300 bg-white p-4 shadow-panel">
@@ -3176,6 +3224,7 @@ function H2HContextPanel({ match, allMatches }) {
           <div className="flex flex-wrap gap-1.5 text-xs font-semibold">
             <span className="rounded-md border border-slate-300 bg-slate-50 px-2 py-1 text-slate-700">{context.bttsText}</span>
             <span className="rounded-md border border-slate-300 bg-slate-50 px-2 py-1 text-slate-700">{context.goalsText}</span>
+            <span className="rounded-md border border-slate-300 bg-slate-50 px-2 py-1 text-slate-700">{h2hXgCount ? `${h2hXgCount}/${displayedMeetings.length} with xG` : 'xG not available'}</span>
           </div>
         )}
       </div>
@@ -3217,20 +3266,22 @@ function H2HContextPanel({ match, allMatches }) {
         </div>
       )}
 
-      {meetings.length > 0 && (
+      {displayedMeetings.length > 0 && (
         <div className="mt-3 overflow-hidden rounded-md border border-slate-300">
-          <div className="grid grid-cols-[4.75rem_minmax(0,1fr)_3.25rem] gap-2 border-b border-slate-300 bg-slate-50 px-3 py-2 text-xs font-semibold uppercase text-slate-500 sm:grid-cols-[5.5rem_minmax(0,1fr)_4rem_5rem_5rem]">
+          <div className="grid grid-cols-[4.75rem_minmax(0,1fr)_3.25rem_3.25rem] gap-2 border-b border-slate-300 bg-slate-50 px-3 py-2 text-xs font-semibold uppercase text-slate-500 sm:grid-cols-[5.5rem_minmax(0,1fr)_4rem_4rem_5rem_5rem]">
             <span>Date</span>
             <span>Versus</span>
             <span>Score</span>
+            <span>xG</span>
             <span className="hidden sm:block">BTTS</span>
             <span className="hidden sm:block">Cards</span>
           </div>
-          {meetings.map((meeting) => (
-            <div key={meeting.id} className="grid grid-cols-[4.75rem_minmax(0,1fr)_3.25rem] gap-2 border-b border-slate-200 bg-white px-3 py-2 text-xs last:border-b-0 sm:grid-cols-[5.5rem_minmax(0,1fr)_4rem_5rem_5rem]">
+          {displayedMeetings.map((meeting) => (
+            <div key={meeting.id} className="grid grid-cols-[4.75rem_minmax(0,1fr)_3.25rem_3.25rem] gap-2 border-b border-slate-200 bg-white px-3 py-2 text-xs last:border-b-0 sm:grid-cols-[5.5rem_minmax(0,1fr)_4rem_4rem_5rem_5rem]">
               <span className="font-semibold text-slate-500">{formatDateDMY(meeting.date)}</span>
               <span className="min-w-0 truncate text-slate-700">{teamNameForCopy(meeting.homeName)} v {teamNameForCopy(meeting.awayName)}</span>
               <span className="font-semibold text-ink">{meeting.score}</span>
+              <span className="font-semibold text-slate-700">{formatH2hXg(meeting.xg)}</span>
               <span className="hidden text-slate-500 sm:block">{meeting.btts ? 'BTTS' : 'No BTTS'}</span>
               <span className="hidden text-slate-500 sm:block">{meeting.cards ?? '-'} cards</span>
             </div>

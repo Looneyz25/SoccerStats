@@ -43,7 +43,7 @@ export const metadata = {
   category: 'sports',
   manifest: '/manifest.webmanifest',
   icons: {
-    icon: '/icon.svg',
+    icon: '/lvr-icon.svg',
     apple: '/icon-192.png',
   },
   openGraph: {
