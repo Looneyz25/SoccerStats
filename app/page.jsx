@@ -51,9 +51,9 @@ function ProductPreview() {
   ];
 
   return (
-    <div className="relative mt-8 h-[20rem] overflow-hidden sm:h-[24rem] lg:pointer-events-none lg:absolute lg:inset-y-16 lg:left-auto lg:right-0 lg:mt-0 lg:h-auto lg:w-[58%]">
+    <div className="relative mt-8 h-[20rem] overflow-hidden sm:h-[24rem] xl:pointer-events-none xl:absolute xl:inset-y-16 xl:left-auto xl:right-0 xl:mt-0 xl:h-auto xl:w-[58%]">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_65%_35%,rgba(15,118,110,0.14),transparent_32%)]" />
-      <div className="absolute bottom-[-2.5rem] left-3 right-3 rotate-[-2deg] rounded-lg border border-line bg-white/95 shadow-panel sm:left-auto sm:right-[-2rem] sm:w-[36rem] lg:bottom-[-5rem] lg:right-[-5rem] lg:w-[44rem] lg:max-w-[115vw] lg:rotate-[-3deg]">
+      <div className="absolute bottom-[-2.5rem] left-3 right-3 rotate-[-2deg] rounded-lg border border-line bg-white/95 shadow-panel sm:left-auto sm:right-[-2rem] sm:w-[36rem] xl:bottom-[-5rem] xl:right-[-5rem] xl:w-[44rem] xl:max-w-[115vw] xl:rotate-[-3deg]">
         <div className="border-b border-line px-4 py-4">
           <div className="flex items-center justify-between gap-3">
             <div>
@@ -90,7 +90,7 @@ function ProductPreview() {
 export default function LandingPage() {
   return (
     <main className="min-h-screen bg-field text-ink">
-      <section className="relative overflow-hidden border-b border-line bg-white lg:min-h-[92vh]">
+      <section className="relative overflow-hidden border-b border-line bg-white xl:min-h-[92vh]">
         <header className="relative z-10 mx-auto flex max-w-7xl items-center justify-end px-4 py-5 lg:px-8">
           <Link
             href="/dashboard/"
@@ -101,11 +101,11 @@ export default function LandingPage() {
           </Link>
         </header>
 
-        <div className="relative z-10 mx-auto flex max-w-7xl flex-col px-4 pb-10 pt-8 sm:pt-16 lg:block lg:px-8 lg:pb-24 lg:pt-24">
-          <div className="max-w-2xl lg:pb-24">
-            <div className="inline-flex items-center gap-2 rounded-md border border-line bg-field px-3 py-2 text-sm font-semibold text-signal">
-              <Activity className="h-4 w-4" />
-              Stats-led football picks across Europe&apos;s top leagues
+        <div className="relative z-10 mx-auto flex max-w-7xl flex-col px-4 pb-10 pt-8 sm:pt-16 lg:px-8 lg:pb-16 lg:pt-20 xl:block xl:pb-24 xl:pt-24">
+          <div className="max-w-2xl xl:pb-24">
+            <div className="inline-flex max-w-full flex-wrap items-center gap-2 rounded-md border border-line bg-field px-3 py-2 text-sm font-semibold leading-5 text-signal">
+              <Activity className="h-4 w-4 shrink-0" />
+              <span className="min-w-0">Stats-led football picks across Europe&apos;s top leagues</span>
             </div>
             <h1 className="sr-only">Lonny&apos;s Predictions</h1>
             <img
