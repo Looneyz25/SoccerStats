@@ -2299,6 +2299,30 @@ function MarketPill({ label, market, edgeBadge, modelProbability }) {
   );
 }
 
+function suggestedMarketPick(candidates, isFinished = false) {
+  const available = candidates.filter((item) => item?.market);
+  if (!available.length) return null;
+  return available
+    .map((item, index) => ({
+      ...item,
+      index,
+      modelEdge: Number(item.comparison?.modelEdge || 0),
+      modelProbability: Number(item.modelProbability ?? modelProbabilityForMarket(item.market)),
+    }))
+    .sort((a, b) => {
+      if (isFinished) {
+        const resultRank = (item) => item.market?.result === 'hit' ? 2 : item.market?.result === 'miss' ? 0 : 1;
+        const resultDiff = resultRank(b) - resultRank(a);
+        if (resultDiff) return resultDiff;
+      }
+      const edgeDiff = b.modelEdge - a.modelEdge;
+      if (edgeDiff) return edgeDiff;
+      const probDiff = (Number.isFinite(b.modelProbability) ? b.modelProbability : 0) - (Number.isFinite(a.modelProbability) ? a.modelProbability : 0);
+      if (probDiff) return probDiff;
+      return a.index - b.index;
+    })[0];
+}
+
 function DetailStat({ label, value }) {
   return (
     <div className="rounded-md border border-slate-300 bg-white px-3 py-2 shadow-panel">
@@ -3552,12 +3576,12 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
   const edgeBadgeFor = (comparison) =>
     comparison?.badge?.tone === 'positive' && comparison.edgePoints > 0 ? comparison.badge.label : null;
   const isFinished = match.status === 'FT';
-  const compactPick =
-    predictions.ou_goals ? { label: 'Goals', value: formatMarketDetail(predictions.ou_goals), result: predictions.ou_goals.result, edge: edgeBadgeFor(goalsComparison) } :
-      displayBtts ? { label: 'BTTS', value: formatMarketDetail(displayBtts), result: displayBtts.result, edge: edgeBadgeFor(bttsComparison) } :
-        displayCards ? { label: 'Cards', value: formatMarketDetail(displayCards), result: displayCards.result, edge: edgeBadgeFor(cardsComparison) } :
-          cornerMarket ? { label: 'Corners', value: formatMarketDetail(cornerMarket), result: cornerMarket.result, edge: edgeBadgeFor(cornersComparison) } :
-            null;
+  const compactPick = suggestedMarketPick([
+    { label: 'BTTS', market: displayBtts, comparison: bttsComparison, modelProbability: precomputed.btts?.modelProbability },
+    { label: 'Goals', market: predictions.ou_goals, comparison: goalsComparison, modelProbability: precomputed.goals?.modelProbability },
+    { label: 'Cards', market: displayCards, comparison: cardsComparison, modelProbability: precomputed.cards?.modelProbability },
+    { label: 'Corners', market: cornerMarket, comparison: cornersComparison, modelProbability: precomputed.corners?.modelProbability },
+  ], isFinished);
   const openMatch = () => onSelect(match);
   const handleCardKeyDown = (event) => {
     if (event.key !== 'Enter' && event.key !== ' ') return;
@@ -3656,26 +3680,26 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
         </div>
 
         {compactPick && (
-          <div className={`mt-3 rounded-md border px-3 py-2 sm:hidden ${marketPillClass(compactPick.result)}`}>
+          <div className={`mt-3 rounded-md border px-3 py-2 sm:hidden ${marketPillClass(compactPick.market?.result)}`}>
             <div className="flex items-center justify-between gap-3">
-              <span className="text-xs font-semibold uppercase text-slate-500">{compactPick.label}</span>
+              <span className="text-xs font-semibold uppercase text-slate-500">Suggested pick</span>
               <span className="flex shrink-0 items-center gap-1.5">
-                {compactPick.result && (
-                  <span className={`inline-flex items-center gap-1 rounded-md py-0.5 text-[11px] font-semibold leading-none ${visibleResultLabel(compactPick.result) ? 'px-1.5' : 'px-1'} ${resultBadgeClass(compactPick.result)}`}>
-                    {resultIcon(compactPick.result)}
-                    {visibleResultLabel(compactPick.result) && <span>{visibleResultLabel(compactPick.result)}</span>}
+                {compactPick.market?.result && (
+                  <span className={`inline-flex items-center gap-1 rounded-md py-0.5 text-[11px] font-semibold leading-none ${visibleResultLabel(compactPick.market.result) ? 'px-1.5' : 'px-1'} ${resultBadgeClass(compactPick.market.result)}`}>
+                    {resultIcon(compactPick.market.result)}
+                    {visibleResultLabel(compactPick.market.result) && <span>{visibleResultLabel(compactPick.market.result)}</span>}
                   </span>
                 )}
-                {compactPick.edge && (
+                {edgeBadgeFor(compactPick.comparison) && (
                   <span className="inline-flex items-center gap-1 rounded-md border border-amber-300 bg-amber-50 px-1.5 py-0.5 text-[11px] font-semibold leading-none text-amber-700">
                     <Star className="h-3 w-3 fill-amber-400 text-amber-500" aria-hidden="true" />
-                    {compactPick.edge}
+                    {edgeBadgeFor(compactPick.comparison)}
                   </span>
                 )}
               </span>
             </div>
             <div className="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-              <span className="text-base font-semibold leading-6 text-ink">{compactPick.value}</span>
+              <span className="text-base font-semibold leading-6 text-ink">{compactPick.label} {formatMarketDetail(compactPick.market)}</span>
               {fmtPct(compactPick.modelProbability) && <span className="text-xs font-semibold text-slate-600">Model {fmtPct(compactPick.modelProbability)}</span>}
             </div>
           </div>

@@ -555,6 +555,30 @@ function marketEntry(match, allMatches, key, title, market) {
   };
 }
 
+function suggestedMarketPick(candidates, isFinished = false) {
+  const available = candidates.filter((item) => item?.market);
+  if (!available.length) return null;
+  return available
+    .map((item, index) => ({
+      ...item,
+      index,
+      modelEdge: Number(item.comparison?.modelEdge || 0),
+      modelProbability: Number(item.modelProbability ?? modelProbabilityForMarket(item.market)),
+    }))
+    .sort((a, b) => {
+      if (isFinished) {
+        const resultRank = (item) => item.market?.result === 'hit' ? 2 : item.market?.result === 'miss' ? 0 : 1;
+        const resultDiff = resultRank(b) - resultRank(a);
+        if (resultDiff) return resultDiff;
+      }
+      const edgeDiff = b.modelEdge - a.modelEdge;
+      if (edgeDiff) return edgeDiff;
+      const probDiff = (Number.isFinite(b.modelProbability) ? b.modelProbability : 0) - (Number.isFinite(a.modelProbability) ? a.modelProbability : 0);
+      if (probDiff) return probDiff;
+      return a.index - b.index;
+    })[0];
+}
+
 function dataQualityForMatch(match) {
   const f = match.predictions?.factors || {};
   const odds = displayThreeWayOdds(match);
@@ -625,6 +649,12 @@ function precomputeMatch(match, allMatches) {
     cards: marketEntry(match, allMatches, 'ou_cards', 'Cards', cards),
     corners: marketEntry(match, allMatches, 'ou_corners', 'Corners', corners),
   };
+  const compactMarket = suggestedMarketPick([
+    displayMarkets.btts,
+    displayMarkets.goals,
+    displayMarkets.cards,
+    displayMarkets.corners,
+  ], match.status === 'FT');
   const odds = displayThreeWayOdds(match);
   const headline = headlineMarkets(match, displayMarkets);
   return {
@@ -639,7 +669,7 @@ function precomputeMatch(match, allMatches) {
       },
       winnerBreakdown: winnerProbabilityBreakdown(match),
       confidence: confidenceForMatch(match, displayMarkets),
-      compactMarket: [goals, btts, cards, corners].find(Boolean) || null,
+      compactMarket,
       headlineMarkets: headline,
       headlineSummary: summarizeHeadline(headline),
       detailRows: Object.entries(displayMarkets)
