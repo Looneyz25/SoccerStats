@@ -5,6 +5,7 @@ import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 import { cert, getApps, initializeApp, applicationDefault } from 'firebase-admin/app';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
+import { precomputeDisplayData } from './precompute_display_markets.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PROJECT_ID = 'sports-predictions-f91fd';
@@ -56,14 +57,10 @@ function slimMatch(match) {
     'away',
     'predictions',
     'odds',
-    'h2h_streaks',
-    'team_streaks',
     'sportsbet_odds',
     'bookmaker_links',
     'actuals',
     'corner_odds',
-    'h2h_history',
-    'h2h_duel',
     'venue',
     'referee',
   ];
@@ -115,7 +112,7 @@ async function main() {
 
   const dataPath = path.join(ROOT, 'match_data.json');
   const raw = await readFile(dataPath, 'utf8');
-  const parsed = JSON.parse(raw);
+  const parsed = precomputeDisplayData(JSON.parse(raw));
   const leagues = Array.isArray(parsed.leagues) ? parsed.leagues : [];
 
   if (!getApps().length) {
@@ -127,8 +124,10 @@ async function main() {
   const fastRef = db.collection('dashboardData').doc(FAST_DOC_ID);
   const chunksRef = metaRef.collection('chunks');
   const leaguesRef = metaRef.collection('leagues');
+  const datesRef = metaRef.collection('dates');
   const existingChunks = await chunksRef.listDocuments();
   const existingLeagues = await leaguesRef.listDocuments();
+  const existingDates = await datesRef.listDocuments();
   const writer = db.bulkWriter();
 
   for (const ref of existingChunks) {
@@ -136,6 +135,10 @@ async function main() {
   }
 
   for (const ref of existingLeagues) {
+    writer.delete(ref);
+  }
+
+  for (const ref of existingDates) {
     writer.delete(ref);
   }
 
@@ -154,12 +157,51 @@ async function main() {
     });
   });
 
+  const dateBuckets = new Map();
+  leagues.forEach((league, index) => {
+    const leagueId = league.id ?? slugify(league.name, String(index).padStart(2, '0'));
+    (Array.isArray(league.matches) ? league.matches : []).forEach((match) => {
+      const date = match.date || 'unknown';
+      if (!dateBuckets.has(date)) dateBuckets.set(date, new Map());
+      const leaguesByDate = dateBuckets.get(date);
+      if (!leaguesByDate.has(leagueId)) {
+        leaguesByDate.set(leagueId, {
+          id: leagueId,
+          name: league.name || leagueId,
+          season: league.season || null,
+          round: league.round ?? null,
+          logo: league.logo || null,
+          matches: [],
+        });
+      }
+      leaguesByDate.get(leagueId).matches.push(match);
+    });
+  });
+
+  const availableDates = [...dateBuckets.keys()].filter((date) => date !== 'unknown').sort();
+  for (const [date, leaguesByDate] of dateBuckets.entries()) {
+    const dateLeagues = [...leaguesByDate.values()];
+    writer.set(datesRef.doc(slugify(date, 'unknown')), {
+      format: 'date_doc_v1',
+      date,
+      capturedAt: parsed.captured_at || null,
+      source: parsed.source || null,
+      availableDates,
+      leagueCount: dateLeagues.length,
+      matchCount: dateLeagues.reduce((sum, league) => sum + league.matches.length, 0),
+      leagues: dateLeagues,
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+  }
+
   writer.set(metaRef, {
     format: 'league_docs_v1',
     capturedAt: parsed.captured_at || null,
     source: parsed.source || null,
     leagueCount: leagues.length,
     matchCount: leagues.reduce((sum, league) => sum + (Array.isArray(league.matches) ? league.matches.length : 0), 0),
+    availableDates,
+    dateDocCount: dateBuckets.size,
     byteLength: Buffer.byteLength(raw),
     updatedAt: FieldValue.serverTimestamp(),
   });
@@ -169,6 +211,7 @@ async function main() {
     format: 'single_doc_v1',
     capturedAt: parsed.captured_at || null,
     source: parsed.source || null,
+    availableDates,
     leagueCount: fastLeagues.length,
     matchCount: fastLeagues.reduce((sum, league) => sum + league.matches.length, 0),
     byteLength: Buffer.byteLength(JSON.stringify({ leagues: fastLeagues })),
@@ -177,7 +220,7 @@ async function main() {
   });
 
   await writer.close();
-  console.log(`Uploaded ${dataPath} to Firestore dashboardData/${DOC_ID} as ${leagues.length} league docs.`);
+  console.log(`Uploaded ${dataPath} to Firestore dashboardData/${DOC_ID} as ${leagues.length} league docs and ${dateBuckets.size} date docs.`);
   console.log(`Uploaded fast dashboard doc dashboardData/${FAST_DOC_ID}.`);
 }
 

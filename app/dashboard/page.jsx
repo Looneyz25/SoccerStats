@@ -38,8 +38,8 @@ const FAVORITE_TEAMS_STORAGE_KEY = 'favoriteTeams';
 const PREDICTION_TRACKING_START_DATE = '2026-04-22';
 const WINNER_CONFIDENCE_THRESHOLD = 0.40;
 
-async function loadMatchData() {
-  return loadMatchDataFromFirestore();
+async function loadMatchData(date = '') {
+  return loadMatchDataFromFirestore(date);
 }
 
 const SPORTSBET_LEAGUE_SLUGS = {
@@ -658,6 +658,7 @@ function hasThreeWayOdds(odds) {
 }
 
 function displayThreeWayOdds(match) {
+  if (match?.display_summary?.oddsStrip) return match.display_summary.oddsStrip;
   const originalOdds = match?.odds || {};
   const bookmakerOdds = match?.sportsbet_odds || {};
   if (match?.status === 'FT' && hasThreeWayOdds(originalOdds)) return originalOdds;
@@ -930,7 +931,7 @@ function winnerProbabilityBreakdown(match) {
 }
 
 function WinnerProbabilityBreakdown({ match, comparison }) {
-  const rows = winnerProbabilityBreakdown(match);
+  const rows = match.display_summary?.winnerBreakdown || winnerProbabilityBreakdown(match);
   const pickType = comparison?.marketType || match.predictions?.winner?.type;
   const verifyPick = comparison?.badge?.label === 'Verify pick';
   if (!rows) return null;
@@ -1142,11 +1143,14 @@ const MARKET_CONFIG = [
 const HEADLINE_STATS_MARKETS = ['winner', 'btts', 'ou_goals', 'ou_cards', 'ou_corners'];
 
 function marketForConfig(config, match, allMatches) {
+  const precomputed = match.display_markets?.[config.key === 'ou_goals' ? 'goals' : config.key === 'ou_cards' ? 'cards' : config.key === 'ou_corners' ? 'corners' : config.key]?.market;
+  if (precomputed) return precomputed;
   if (config.getMarket) return config.getMarket(match, allMatches || match.__allMatches);
   return match.predictions?.[config.key];
 }
 
 function headlineStatsMarkets(match) {
+  if (Array.isArray(match.display_summary?.headlineMarkets)) return match.display_summary.headlineMarkets;
   if (match.status !== 'FT' || String(match.date || '') < PREDICTION_TRACKING_START_DATE) return [];
   return HEADLINE_STATS_MARKETS
     .map((key) => match.predictions?.[key])
@@ -1156,10 +1160,11 @@ function headlineStatsMarkets(match) {
 function marketRowsForMatch(match, allMatches) {
   return MARKET_CONFIG.map((config) => {
     const market = marketForConfig(config, match, allMatches);
+    const precomputedKey = config.key === 'ou_goals' ? 'goals' : config.key === 'ou_cards' ? 'cards' : config.key === 'ou_corners' ? 'corners' : config.key;
     return {
       ...config,
       market,
-      comparison: modelVsBookmakerComparison(match, config.key, market),
+      comparison: match.display_markets?.[precomputedKey]?.comparison || modelVsBookmakerComparison(match, config.key, market),
     };
   }).filter((row) => row.market);
 }
@@ -3328,17 +3333,18 @@ function H2HContextPanel({ match, allMatches }) {
 function PredictionSummaryCard({ match, allMatches }) {
   const matchWithContext = { ...match, __allMatches: allMatches };
   const predictions = match.predictions || {};
-  const confidence = confidenceForMatch(match, allMatches);
-  const winner = winnerMarketWithGuidance(match, allMatches);
+  const precomputed = match.display_markets || {};
+  const confidence = match.display_summary?.confidence || confidenceForMatch(match, allMatches);
+  const winner = precomputed.winner?.market || winnerMarketWithGuidance(match, allMatches);
   const winnerLowConfidence = Boolean(winner?.lowConfidence);
-  const winnerComparison = winnerLowConfidence ? null : modelVsBookmakerComparison(matchWithContext, 'winner', winner);
-  const displayBtts = displayBttsMarket(predictions.btts, match);
-  const bttsComparison = modelVsBookmakerComparison(match, 'btts', displayBtts);
-  const goalsComparison = modelVsBookmakerComparison(match, 'ou_goals', predictions.ou_goals);
-  const displayCards = cardsMarketWithModelProbability(match, allMatches);
-  const cardsComparison = modelVsBookmakerComparison(match, 'ou_cards', displayCards);
-  const cornerMarket = cornerMarketFromStreaks(match, allMatches);
-  const cornersComparison = modelVsBookmakerComparison(match, 'ou_corners', cornerMarket);
+  const winnerComparison = winnerLowConfidence ? null : precomputed.winner?.comparison || modelVsBookmakerComparison(matchWithContext, 'winner', winner);
+  const displayBtts = precomputed.btts?.market || displayBttsMarket(predictions.btts, match);
+  const bttsComparison = precomputed.btts?.comparison || modelVsBookmakerComparison(match, 'btts', displayBtts);
+  const goalsComparison = precomputed.goals?.comparison || modelVsBookmakerComparison(match, 'ou_goals', predictions.ou_goals);
+  const displayCards = precomputed.cards?.market || cardsMarketWithModelProbability(match, allMatches);
+  const cardsComparison = precomputed.cards?.comparison || modelVsBookmakerComparison(match, 'ou_cards', displayCards);
+  const cornerMarket = precomputed.corners?.market || cornerMarketFromStreaks(match, allMatches);
+  const cornersComparison = precomputed.corners?.comparison || modelVsBookmakerComparison(match, 'ou_corners', cornerMarket);
 
   const winnerPick = winnerLowConfidence ? 'Low confidence — no Winner pick' : (winner ? formatMarketDetail(winner) : null);
   const winnerText = winnerLowConfidence
@@ -3524,16 +3530,17 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
   const odds = displayThreeWayOdds(match);
   const actuals = match.actuals || {};
   const selectedBookmaker = BOOKMAKERS[bookmakerId] || BOOKMAKERS.sportsbet;
-  const displayWinner = winnerMarketWithGuidance(match, allMatches);
-  const displayBtts = displayBttsMarket(predictions.btts, match);
-  const bttsComparison = modelVsBookmakerComparison(match, 'btts', displayBtts);
-  const goalsComparison = modelVsBookmakerComparison(match, 'ou_goals', predictions.ou_goals);
-  const displayCards = cardsMarketWithModelProbability(match, allMatches);
-  const cardsComparison = modelVsBookmakerComparison(match, 'ou_cards', displayCards);
-  const cornerMarket = cornerMarketFromStreaks(match, allMatches);
-  const cornersComparison = modelVsBookmakerComparison(match, 'ou_corners', cornerMarket);
-  const confidence = confidenceForMatch(match, allMatches);
-  const winnerModelPct = winnerModelProbability(match, displayWinner);
+  const precomputed = match.display_markets || {};
+  const displayWinner = precomputed.winner?.market || winnerMarketWithGuidance(match, allMatches);
+  const displayBtts = precomputed.btts?.market || displayBttsMarket(predictions.btts, match);
+  const bttsComparison = precomputed.btts?.comparison || modelVsBookmakerComparison(match, 'btts', displayBtts);
+  const goalsComparison = precomputed.goals?.comparison || modelVsBookmakerComparison(match, 'ou_goals', predictions.ou_goals);
+  const displayCards = precomputed.cards?.market || cardsMarketWithModelProbability(match, allMatches);
+  const cardsComparison = precomputed.cards?.comparison || modelVsBookmakerComparison(match, 'ou_cards', displayCards);
+  const cornerMarket = precomputed.corners?.market || cornerMarketFromStreaks(match, allMatches);
+  const cornersComparison = precomputed.corners?.comparison || modelVsBookmakerComparison(match, 'ou_corners', cornerMarket);
+  const confidence = match.display_summary?.confidence || confidenceForMatch(match, allMatches);
+  const winnerModelPct = precomputed.winner?.modelProbability ?? winnerModelProbability(match, displayWinner);
   const edgeBadgeFor = (comparison) =>
     comparison?.badge?.tone === 'positive' && comparison.edgePoints > 0 ? comparison.badge.label : null;
   const isFinished = match.status === 'FT';
@@ -3789,15 +3796,17 @@ function HomeInner() {
 
   useEffect(() => {
     let cancelled = false;
+    const initialDate = localTodayDate();
 
-    const cached = readMatchDataCache();
+    setSelectedDate((current) => current || initialDate);
+    const cached = readMatchDataCache(initialDate) || readMatchDataCache();
     const hasCache = Boolean(cached && Array.isArray(cached.leagues) && cached.leagues.length);
     if (hasCache) {
       setData(cached);
       setError('');
     }
 
-    loadMatchData()
+    loadMatchData(initialDate)
       .then((nextData) => {
         if (cancelled) return;
         setData(nextData);
@@ -3877,8 +3886,8 @@ function HomeInner() {
   const teamOptions = useMemo(() => teamOptionsFromMatches(matches), [matches]);
   const favoriteLeagueSet = useMemo(() => new Set(favoriteLeagues), [favoriteLeagues]);
   const dates = useMemo(
-    () => [...new Set(matches.map((match) => match.date).filter(Boolean))].sort((a, b) => a.localeCompare(b)),
-    [matches],
+    () => [...new Set((data?.availableDates?.length ? data.availableDates : matches.map((match) => match.date)).filter(Boolean))].sort((a, b) => a.localeCompare(b)),
+    [data?.availableDates, matches],
   );
   const stats = useMemo(() => summarize(matches), [matches]);
   const todayDate = useMemo(() => localTodayDate(), []);
@@ -3893,6 +3902,31 @@ function HomeInner() {
     if (selectedDate || !dates.length) return;
     setSelectedDate(defaultMatchDate(dates, data?.captured_at));
   }, [data?.captured_at, dates, selectedDate]);
+
+  useEffect(() => {
+    if (!selectedDate || data?.date === selectedDate) return;
+    let cancelled = false;
+    const cacheDate = selectedDate === 'all' ? '' : selectedDate;
+    const cached = readMatchDataCache(cacheDate);
+    if (cached && Array.isArray(cached.leagues) && cached.leagues.length) {
+      setData(cached);
+      setError('');
+    }
+    loadMatchData(cacheDate)
+      .then((nextData) => {
+        if (cancelled) return;
+        setData(nextData);
+        setError('');
+      })
+      .catch(() => {
+        if (!cancelled && !(cached && Array.isArray(cached.leagues) && cached.leagues.length)) {
+          setError('Could not load Firestore match data. Try refreshing in a moment.');
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [data?.date, selectedDate]);
 
   useEffect(() => {
     if (!leagues.length || !favoriteLeagues.length) return;

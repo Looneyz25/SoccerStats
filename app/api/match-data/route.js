@@ -7,6 +7,7 @@ export const dynamic = 'force-dynamic';
 
 const PROJECT_ID = 'sports-predictions-f91fd';
 const FAST_DOC_PATH = ['dashboardData', 'match_data_fast'];
+const META_DOC_PATH = ['dashboardData', 'match_data'];
 const ACCESS_CACHE_TTL_MS = 60 * 1000;
 const DATA_CACHE_TTL_MS = 5 * 60 * 1000;
 
@@ -14,6 +15,8 @@ let adminApp = null;
 let cachedData = null;
 let cachedDataAt = 0;
 let inflightData = null;
+const cachedDateData = new Map();
+const inflightDateData = new Map();
 const accessCache = new Map();
 
 function getAdminApp() {
@@ -66,6 +69,7 @@ async function loadFastDoc() {
     const payload = {
       captured_at: fast.capturedAt || null,
       source: fast.source || null,
+      availableDates: Array.isArray(fast.availableDates) ? fast.availableDates : [],
       leagues: fast.leagues,
     };
     cachedData = payload;
@@ -76,6 +80,44 @@ async function loadFastDoc() {
   });
 
   return inflightData;
+}
+
+async function loadDateDoc(date) {
+  const safeDate = String(date || '').trim();
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(safeDate)) return null;
+  const now = Date.now();
+  const cached = cachedDateData.get(safeDate);
+  if (cached && now - cached.at < DATA_CACHE_TTL_MS) return cached.payload;
+  if (inflightDateData.has(safeDate)) return inflightDateData.get(safeDate);
+
+  const pending = (async () => {
+    const db = getFirestore(getAdminApp());
+    const snap = await db
+      .collection(META_DOC_PATH[0])
+      .doc(META_DOC_PATH[1])
+      .collection('dates')
+      .doc(safeDate)
+      .get();
+    if (!snap.exists) return null;
+    const data = snap.data() || {};
+    if (data.format !== 'date_doc_v1' || !Array.isArray(data.leagues)) {
+      throw new Error('date doc format unexpected');
+    }
+    const payload = {
+      captured_at: data.capturedAt || null,
+      source: data.source || null,
+      date: data.date || safeDate,
+      availableDates: Array.isArray(data.availableDates) ? data.availableDates : [],
+      leagues: data.leagues,
+    };
+    cachedDateData.set(safeDate, { payload, at: Date.now() });
+    return payload;
+  })().finally(() => {
+    inflightDateData.delete(safeDate);
+  });
+
+  inflightDateData.set(safeDate, pending);
+  return pending;
 }
 
 export async function GET(request) {
@@ -106,7 +148,9 @@ export async function GET(request) {
 
   let payload;
   try {
-    payload = await loadFastDoc();
+    const requestedDate = request.nextUrl.searchParams.get('date');
+    payload = requestedDate ? await loadDateDoc(requestedDate) : null;
+    if (!payload) payload = await loadFastDoc();
   } catch (err) {
     return new Response(JSON.stringify({ error: 'data-unavailable', detail: err.message }), {
       status: 503,
