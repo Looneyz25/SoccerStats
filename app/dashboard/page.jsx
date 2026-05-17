@@ -3162,44 +3162,51 @@ function ResultsReview({ matches }) {
   const today = useMemo(() => localTodayDate(), []);
   const weekStart = useMemo(() => addDaysToIsoDate(today, -6), [today]);
   const allResulted = trackedFinishedMatches(matches);
-  const resulted = allResulted.filter((match) => {
+  const matchesForScope = (scope) => allResulted.filter((match) => {
     const matchDate = String(match.date || '');
-    if (reviewScope === 'today') return matchDate === today;
-    if (reviewScope === 'week') return matchDate >= weekStart && matchDate <= today;
+    if (scope === 'today') return matchDate === today;
+    if (scope === 'week') return matchDate >= weekStart && matchDate <= today;
     return true;
   });
-  const rows = summarizeResultsByMarket(resulted, matches).filter((row) => row.total > 0);
+  const scopeRows = {
+    today: summarizeResultsByMarket(matchesForScope('today'), matches).filter((row) => row.total > 0),
+    week: summarizeResultsByMarket(matchesForScope('week'), matches).filter((row) => row.total > 0),
+    all: summarizeResultsByMarket(matchesForScope('all'), matches).filter((row) => row.total > 0),
+  };
+  const effectiveScope = scopeRows[reviewScope]?.length ? reviewScope : scopeRows.week.length ? 'week' : 'all';
+  const rows = scopeRows[effectiveScope] || [];
   if (!allResulted.length) return null;
   const best = [...rows].sort((a, b) => b.hitRate - a.hitRate)[0];
   const worst = [...rows].sort((a, b) => a.hitRate - b.hitRate)[0];
+  const scopeOptions = [
+    { key: 'today', label: 'Today', shortLabel: 'Today' },
+    { key: 'week', label: 'This week', shortLabel: 'Week' },
+    { key: 'all', label: 'All', shortLabel: 'All' },
+  ];
 
   return (
     <section className="mt-3 rounded-lg border border-slate-300 bg-white p-3 shadow-panel sm:mt-5 sm:p-4">
       <div className="flex items-center justify-between gap-2">
         <h2 className="shrink-0 text-base font-semibold text-ink">Results review</h2>
         <div className="grid shrink-0 grid-cols-3 gap-1 text-xs font-semibold">
-          <button
-            type="button"
-            onClick={() => setReviewScope('today')}
-            className={`rounded-md border px-2 py-1 ${reviewScope === 'today' ? 'border-ink bg-ink text-white' : 'border-slate-300 bg-white text-slate-700 hover:bg-field'}`}
-          >
-            Today
-          </button>
-          <button
-            type="button"
-            onClick={() => setReviewScope('week')}
-            className={`rounded-md border px-2 py-1 ${reviewScope === 'week' ? 'border-ink bg-ink text-white' : 'border-slate-300 bg-white text-slate-700 hover:bg-field'}`}
-          >
-            <span className="sm:hidden">Week</span>
-            <span className="hidden sm:inline">This week</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setReviewScope('all')}
-            className={`rounded-md border px-2 py-1 ${reviewScope === 'all' ? 'border-ink bg-ink text-white' : 'border-slate-300 bg-white text-slate-700 hover:bg-field'}`}
-          >
-            All
-          </button>
+          {scopeOptions.map((option) => {
+            const disabled = !scopeRows[option.key]?.length;
+            const active = effectiveScope === option.key;
+            return (
+              <button
+                key={option.key}
+                type="button"
+                onClick={() => setReviewScope(option.key)}
+                disabled={disabled}
+                className={`rounded-md border px-2 py-1 ${
+                  active ? 'border-ink bg-ink text-white' : 'border-slate-300 bg-white text-slate-700 hover:bg-field'
+                } disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-400`}
+              >
+                <span className="sm:hidden">{option.shortLabel}</span>
+                <span className="hidden sm:inline">{option.label}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
       {(best || worst) && (
