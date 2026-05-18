@@ -2,24 +2,29 @@ const admin = require('firebase-admin');
 const { onRequest } = require('firebase-functions/v2/https');
 const Stripe = require('stripe');
 
-const PRO_PRICE_ID = process.env.STRIPE_PRO_PRICE_ID;
+function cleanEnv(value) {
+  return String(value || '').trim();
+}
+
+const PRO_PRICE_ID = cleanEnv(process.env.STRIPE_PRO_PRICE_ID);
 const PRO_PLAN_NAME = 'Soccer Stats Pro';
 const PRO_TRIAL_DAYS = 7;
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || 'https://lvrstats.com';
+const APP_URL = cleanEnv(process.env.NEXT_PUBLIC_APP_URL) || cleanEnv(process.env.APP_URL) || 'https://lvrstats.com';
 
 admin.initializeApp();
 
 let stripeClient;
 
 function stripe() {
-  if (!process.env.STRIPE_SECRET_KEY) {
+  const secretKey = cleanEnv(process.env.STRIPE_SECRET_KEY);
+  if (!secretKey) {
     throw new Error('STRIPE_SECRET_KEY is not configured.');
   }
   if (!PRO_PRICE_ID) {
     throw new Error('STRIPE_PRO_PRICE_ID is not configured.');
   }
   if (!stripeClient) {
-    stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY, {
+    stripeClient = new Stripe(secretKey, {
       apiVersion: '2026-02-25.clover',
     });
   }
@@ -386,13 +391,14 @@ async function syncUserSubscription(req, res) {
 }
 
 async function webhook(req, res) {
-  if (!process.env.STRIPE_WEBHOOK_SECRET) {
+  const webhookSecret = cleanEnv(process.env.STRIPE_WEBHOOK_SECRET);
+  if (!webhookSecret) {
     return sendJson(res, 500, { error: 'STRIPE_WEBHOOK_SECRET is not configured.' });
   }
 
   let event;
   try {
-    event = stripe().webhooks.constructEvent(req.rawBody, req.get('stripe-signature'), process.env.STRIPE_WEBHOOK_SECRET);
+    event = stripe().webhooks.constructEvent(req.rawBody, req.get('stripe-signature'), webhookSecret);
   } catch (error) {
     console.error('Stripe webhook signature verification failed:', error.message);
     return sendJson(res, 400, { error: 'Invalid webhook signature.' });
