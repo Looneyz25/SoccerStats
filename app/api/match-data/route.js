@@ -21,6 +21,9 @@ const accessCache = new Map();
 let cachedAllTimeSummary = null;
 let cachedAllTimeSummaryAt = 0;
 let inflightAllTimeSummary = null;
+let cachedTeamOptions = null;
+let cachedTeamOptionsAt = 0;
+let inflightTeamOptions = null;
 
 function summarizeAllTime(leagues) {
   const matches = (Array.isArray(leagues) ? leagues : []).flatMap((league) => Array.isArray(league.matches) ? league.matches : []);
@@ -135,6 +138,39 @@ async function loadLeagueDocs() {
   });
 }
 
+function teamKey(name) {
+  return String(name || '').trim().toLowerCase().replace(/\s+/g, ' ');
+}
+
+async function loadTeamOptions() {
+  const now = Date.now();
+  if (cachedTeamOptions && now - cachedTeamOptionsAt < DATA_CACHE_TTL_MS) {
+    return cachedTeamOptions;
+  }
+  if (inflightTeamOptions) return inflightTeamOptions;
+
+  inflightTeamOptions = (async () => {
+    const teams = new Map();
+    const leagues = await loadLeagueDocs();
+    leagues.forEach((league) => {
+      (Array.isArray(league.matches) ? league.matches : []).forEach((match) => {
+        [match.home?.name, match.away?.name].forEach((name) => {
+          const key = teamKey(name);
+          if (key && !teams.has(key)) teams.set(key, String(name).trim());
+        });
+      });
+    });
+    const options = [...teams.values()].sort((a, b) => a.localeCompare(b));
+    cachedTeamOptions = options;
+    cachedTeamOptionsAt = Date.now();
+    return options;
+  })().finally(() => {
+    inflightTeamOptions = null;
+  });
+
+  return inflightTeamOptions;
+}
+
 async function loadAllTimeSummary() {
   const now = Date.now();
   if (cachedAllTimeSummary && now - cachedAllTimeSummaryAt < DATA_CACHE_TTL_MS) {
@@ -226,6 +262,17 @@ export async function GET(request) {
 
   let payload;
   try {
+    if (request.nextUrl.searchParams.get('teamOptions') === '1') {
+      payload = { teamOptions: await loadTeamOptions() };
+      return new Response(JSON.stringify(payload), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'private, max-age=300, stale-while-revalidate=600',
+        },
+      });
+    }
+
     const requestedDate = request.nextUrl.searchParams.get('date');
     payload = requestedDate ? await loadDateDoc(requestedDate) : null;
     if (!payload) payload = await loadFastDoc();

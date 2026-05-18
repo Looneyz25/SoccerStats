@@ -15,11 +15,13 @@ service cloud.firestore {
     function isOwnProfileUpdate(userId) {
       let changedKeys = request.resource.data.diff(resource.data).changedKeys();
       return request.auth.uid == userId
-             && changedKeys.hasOnly(['displayName', 'nickname', 'profileUpdatedAt'])
+             && changedKeys.hasOnly(['displayName', 'nickname', 'favoriteTeams', 'profileUpdatedAt'])
              && request.resource.data.displayName is string
              && request.resource.data.displayName.size() <= 80
              && request.resource.data.nickname is string
-             && request.resource.data.nickname.size() <= 40;
+             && request.resource.data.nickname.size() <= 40
+             && request.resource.data.favoriteTeams is list
+             && request.resource.data.favoriteTeams.size() <= 100;
     }
 
     match /users/{userId} {

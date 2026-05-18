@@ -3,6 +3,7 @@ import { getFirebaseAuth, getFirebaseDb } from './firebase';
 
 const DASHBOARD_DOC = 'match_data';
 const FAST_DASHBOARD_DOC = 'match_data_fast';
+const MAX_FAVORITE_TEAMS = 100;
 
 export function readMatchDataCache(date = '') {
   return null;
@@ -20,6 +21,16 @@ export function loadMatchDataFromFirestore(date = '') {
   return inflightMatchDataPromises.get(key);
 }
 
+export async function loadTeamOptionsFromFirestore() {
+  try {
+    const apiResult = await fetchTeamOptionsFromApi();
+    if (apiResult.length) return apiResult;
+  } catch {
+    // fall through to direct Firestore SDK read
+  }
+  return fetchTeamOptionsFromFirestoreSdk();
+}
+
 async function fetchMatchData(date = '') {
   try {
     const apiResult = await fetchMatchDataFromApi(date);
@@ -28,6 +39,39 @@ async function fetchMatchData(date = '') {
     // fall through to direct Firestore SDK read
   }
   return fetchMatchDataFromFirestoreSdk(date);
+}
+
+async function fetchTeamOptionsFromApi() {
+  if (typeof window === 'undefined' || typeof fetch !== 'function') return [];
+  const auth = getFirebaseAuth();
+  const user = auth.currentUser;
+  if (!user) return [];
+  const token = await user.getIdToken();
+  const response = await fetch('/api/match-data?teamOptions=1', {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: 'no-store',
+  });
+  if (!response.ok) return [];
+  const payload = await response.json();
+  return Array.isArray(payload?.teamOptions) ? payload.teamOptions : [];
+}
+
+async function fetchTeamOptionsFromFirestoreSdk() {
+  const db = getFirebaseDb();
+  const leaguesRef = collection(db, 'dashboardData', DASHBOARD_DOC, 'leagues');
+  const leaguesSnap = await getDocs(query(leaguesRef, orderBy('index', 'asc')));
+  const teams = new Map();
+  leaguesSnap.docs.forEach((leagueDoc) => {
+    const league = leagueDoc.data();
+    (Array.isArray(league.matches) ? league.matches : []).forEach((match) => {
+      [match.home?.name, match.away?.name].forEach((name) => {
+        const cleanName = String(name || '').trim();
+        const key = cleanName.toLowerCase().replace(/\s+/g, ' ');
+        if (key && !teams.has(key)) teams.set(key, cleanName);
+      });
+    });
+  });
+  return [...teams.values()].sort((a, b) => a.localeCompare(b));
 }
 
 async function fetchMatchDataFromApi(date = '') {
@@ -187,7 +231,7 @@ export async function updateUserProfile(uid, profile) {
   const displayName = String(profile?.displayName || '').trim().slice(0, 80);
   const nickname = String(profile?.nickname || '').trim().slice(0, 40);
   const favoriteTeams = Array.isArray(profile?.favoriteTeams)
-    ? [...new Set(profile.favoriteTeams.map((team) => String(team || '').trim()).filter(Boolean))].slice(0, 20)
+    ? [...new Set(profile.favoriteTeams.map((team) => String(team || '').trim()).filter(Boolean))].slice(0, MAX_FAVORITE_TEAMS)
     : [];
 
   await setDoc(userRef, {
@@ -204,7 +248,7 @@ export async function updateUserFavoriteTeams(uid, favoriteTeams) {
   const db = getFirebaseDb();
   const userRef = doc(db, 'users', uid);
   const cleanFavoriteTeams = Array.isArray(favoriteTeams)
-    ? [...new Set(favoriteTeams.map((team) => String(team || '').trim()).filter(Boolean))].slice(0, 20)
+    ? [...new Set(favoriteTeams.map((team) => String(team || '').trim()).filter(Boolean))].slice(0, MAX_FAVORITE_TEAMS)
     : [];
 
   await setDoc(userRef, {

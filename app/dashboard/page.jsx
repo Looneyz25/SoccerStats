@@ -35,6 +35,7 @@ const BETSTOP_URL = 'https://www.betstop.gov.au/';
 const SUPPORT_EMAIL = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'lvrstats.com@gmail.com';
 const FAVORITE_LEAGUES_STORAGE_KEY = 'favoriteLeagues';
 const FAVORITE_TEAMS_STORAGE_KEY = 'favoriteTeams';
+const MAX_FAVORITE_TEAMS = 100;
 const PREDICTION_TRACKING_START_DATE = '2026-04-22';
 const WINNER_CONFIDENCE_THRESHOLD = 0.40;
 
@@ -2692,7 +2693,7 @@ function SettingsView({
     setProfileForm((current) => {
       const existing = favoriteTeamSet(current.favoriteTeams);
       if (existing.has(teamPreferenceKey(nextTeam))) return current;
-      const next = [...(current.favoriteTeams || []), nextTeam].slice(0, 20);
+      const next = [...(current.favoriteTeams || []), nextTeam].slice(0, MAX_FAVORITE_TEAMS);
       onFavoriteTeamsChange?.(next);
       return { ...current, favoriteTeams: next };
     });
@@ -2726,7 +2727,7 @@ function SettingsView({
 
       const displayName = profileForm.displayName.trim().slice(0, 80);
       const nickname = profileForm.nickname.trim().slice(0, 40);
-      const favoriteTeams = [...new Set((profileForm.favoriteTeams || []).map((team) => String(team || '').trim()).filter(Boolean))].slice(0, 20);
+      const favoriteTeams = [...new Set((profileForm.favoriteTeams || []).map((team) => String(team || '').trim()).filter(Boolean))].slice(0, MAX_FAVORITE_TEAMS);
       await updateProfile(user, { displayName });
       const savedProfile = await updateUserProfile(user.uid, { displayName, nickname, favoriteTeams });
       setProfile((current) => ({ ...(current || {}), ...savedProfile, profileUpdatedAt: new Date().toISOString() }));
@@ -3896,6 +3897,7 @@ function HomeInner() {
   const [bookmakerId, setBookmakerId] = useState('sportsbet');
   const [favoriteLeagues, setFavoriteLeagues] = useState([]);
   const [favoriteTeams, setFavoriteTeams] = useState([]);
+  const [allTeamOptions, setAllTeamOptions] = useState([]);
 
   const scrollPositionRef = useRef(0);
   const swipeStartRef = useRef(null);
@@ -3986,6 +3988,25 @@ function HomeInner() {
     return () => { active = false; };
   }, []);
 
+  useEffect(() => {
+    let active = true;
+
+    async function loadAllTeamOptions() {
+      try {
+        const { loadTeamOptionsFromFirestore } = await import('../firestore-data');
+        const nextOptions = await loadTeamOptionsFromFirestore();
+        if (active && Array.isArray(nextOptions) && nextOptions.length) {
+          setAllTeamOptions(nextOptions);
+        }
+      } catch {
+        // The currently loaded slate still provides a smaller fallback list.
+      }
+    }
+
+    loadAllTeamOptions();
+    return () => { active = false; };
+  }, []);
+
   const handleBookmakerChange = useCallback((nextBookmakerId) => {
     const safeBookmakerId = DIRECT_MATCH_BOOKMAKERS.has(nextBookmakerId) ? nextBookmakerId : 'sportsbet';
     setBookmakerId(safeBookmakerId);
@@ -3994,7 +4015,8 @@ function HomeInner() {
 
   const matches = useMemo(() => flattenMatches(data), [data]);
   const leagues = useMemo(() => [...new Set(matches.map((match) => match.league))].sort(compareLeagues), [matches]);
-  const teamOptions = useMemo(() => teamOptionsFromMatches(matches), [matches]);
+  const visibleTeamOptions = useMemo(() => teamOptionsFromMatches(matches), [matches]);
+  const teamOptions = allTeamOptions.length ? allTeamOptions : visibleTeamOptions;
   const favoriteLeagueSet = useMemo(() => new Set(favoriteLeagues), [favoriteLeagues]);
   const dates = useMemo(
     () => [...new Set((data?.availableDates?.length ? data.availableDates : matches.map((match) => match.date)).filter(Boolean))].sort((a, b) => a.localeCompare(b)),
@@ -4051,17 +4073,17 @@ function HomeInner() {
   }, [favoriteLeagues, leagues]);
 
   useEffect(() => {
-    if (!teamOptions.length || !favoriteTeams.length) return;
-    const available = favoriteTeamSet(teamOptions);
+    if (!allTeamOptions.length || !favoriteTeams.length) return;
+    const available = favoriteTeamSet(allTeamOptions);
     const nextFavorites = favoriteTeams.filter((item) => available.has(teamPreferenceKey(item)));
     if (nextFavorites.length !== favoriteTeams.length) {
       setFavoriteTeams(nextFavorites);
       window.localStorage.setItem(FAVORITE_TEAMS_STORAGE_KEY, JSON.stringify(nextFavorites));
     }
-  }, [favoriteTeams, teamOptions]);
+  }, [allTeamOptions, favoriteTeams]);
 
   const handleFavoriteTeamsChange = useCallback((nextTeams) => {
-    const cleanTeams = [...new Set((nextTeams || []).map((team) => String(team || '').trim()).filter(Boolean))].slice(0, 20);
+    const cleanTeams = [...new Set((nextTeams || []).map((team) => String(team || '').trim()).filter(Boolean))].slice(0, MAX_FAVORITE_TEAMS);
     setFavoriteTeams(cleanTeams);
     window.localStorage.setItem(FAVORITE_TEAMS_STORAGE_KEY, JSON.stringify(cleanTeams));
   }, []);
@@ -4100,7 +4122,7 @@ function HomeInner() {
       const currentSet = favoriteTeamSet(current);
       const next = currentSet.has(cleanKey)
         ? current.filter((item) => teamPreferenceKey(item) !== cleanKey)
-        : [...current, cleanTeam].slice(0, 20);
+        : [...current, cleanTeam].slice(0, MAX_FAVORITE_TEAMS);
       window.localStorage.setItem(FAVORITE_TEAMS_STORAGE_KEY, JSON.stringify(next));
       saveFavoriteTeamsToProfile(next);
       return next;
