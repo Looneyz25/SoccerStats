@@ -6993,8 +6993,8 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 1.07,
-            "draw": 13.0,
+            "home": 1.08,
+            "draw": 12.0,
             "away": 26.0,
             "event_id": 10446230,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/arsenal-v-burnley-10446230"
@@ -7255,9 +7255,9 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 4.2,
+            "home": 4.5,
             "draw": 4.2,
-            "away": 1.7,
+            "away": 1.67,
             "event_id": 10485206,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/bournemouth-v-man-city-10485206"
           },
@@ -7452,7 +7452,7 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 2.05,
+            "home": 2.0,
             "draw": 3.5,
             "away": 3.5,
             "event_id": 10477114,
@@ -7664,14 +7664,30 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 2.1,
+            "home": 2.05,
             "draw": 3.9,
-            "away": 3.1,
+            "away": 3.2,
             "event_id": 10495949,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/brighton-v-man-utd-10495949"
           },
           "bookmaker_links": {
-            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/brighton-v-man-utd-10495949"
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/brighton-v-man-utd-10495949",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/uk-and-ireland/premier-league/brighton-and-hove-albion-vs-manchester-united/3e5a0a91-7b95-401a-844a-42481796afac",
+            "neds": "https://www.neds.com.au/sports/soccer/uk-and-ireland/premier-league/brighton-and-hove-albion-vs-manchester-united/3e5a0a91-7b95-401a-844a-42481796afac"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "3e5a0a91-7b95-401a-844a-42481796afac",
+              "event_name": "Brighton & Hove Albion vs Manchester United"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "3e5a0a91-7b95-401a-844a-42481796afac",
+              "event_name": "Brighton & Hove Albion vs Manchester United"
+            }
           }
         },
         {
@@ -7829,9 +7845,9 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 2.38,
-            "draw": 3.6,
-            "away": 2.8,
+            "home": 2.45,
+            "draw": 3.7,
+            "away": 2.62,
             "event_id": 10495997,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/burnley-v-wolves-10495997"
           },
@@ -8034,7 +8050,17 @@
               "label": "Less than 2.5 goals",
               "value": "4/5"
             }
-          ]
+          ],
+          "sportsbet_odds": {
+            "home": 7.0,
+            "draw": 4.5,
+            "away": 1.44,
+            "event_id": 10498401,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/crystal-palace-v-arsenal-10498401"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/crystal-palace-v-arsenal-10498401"
+          }
         },
         {
           "id": 14023965,
@@ -8216,9 +8242,9 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 2.5,
-            "draw": 3.8,
-            "away": 2.5,
+            "home": 2.62,
+            "draw": 3.75,
+            "away": 2.4,
             "event_id": 10496883,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/fulham-v-newcastle-10496883"
           },
@@ -8380,7 +8406,17 @@
               "label": "More than 2.5 goals",
               "value": "5/6"
             }
-          ]
+          ],
+          "sportsbet_odds": {
+            "home": 1.7,
+            "draw": 4.2,
+            "away": 4.33,
+            "event_id": 10498403,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/liverpool-v-brentford-10498403"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/liverpool-v-brentford-10498403"
+          }
         },
         {
           "id": 14023961,
@@ -8536,9 +8572,9 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 1.36,
-            "draw": 5.0,
-            "away": 7.0,
+            "home": 1.3,
+            "draw": 5.5,
+            "away": 8.5,
             "event_id": 10496350,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/man-city-v-aston-villa-10496350"
           },
@@ -8587,7 +8623,8 @@
                 "home": 0.3699,
                 "draw": 0.2466,
                 "away": 0.3835
-              }
+              },
+              "odds": 2.4
             },
             "btts": {
               "pick": "Yes",
@@ -8639,7 +8676,8 @@
             {
               "team": "away",
               "label": "No losses",
-              "value": "11"
+              "value": "11",
+              "odds": 1.39
             },
             {
               "team": "home",
@@ -8667,7 +8705,8 @@
               "team": "home",
               "source": "computed",
               "label": "No Wins",
-              "value": "3"
+              "value": "3",
+              "odds": 1.39
             },
             {
               "team": "home",
@@ -8679,7 +8718,8 @@
               "team": "away",
               "source": "computed",
               "label": "No Losses",
-              "value": "10"
+              "value": "10",
+              "odds": 1.39
             },
             {
               "team": "away",
@@ -8687,7 +8727,33 @@
               "label": "More than 2.5 goals",
               "value": "5/6"
             }
-          ]
+          ],
+          "sportsbet_odds": {
+            "home": 2.62,
+            "draw": 3.8,
+            "away": 2.4,
+            "event_id": 10498405,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/nottm-forest-v-bournemouth-10498405"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/nottm-forest-v-bournemouth-10498405",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/uk-and-ireland/premier-league/nottingham-forest-vs-afc-bournemouth/6130d111-fb72-43e4-aed6-f9d435ef64ae",
+            "neds": "https://www.neds.com.au/sports/soccer/uk-and-ireland/premier-league/nottingham-forest-vs-afc-bournemouth/6130d111-fb72-43e4-aed6-f9d435ef64ae"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "6130d111-fb72-43e4-aed6-f9d435ef64ae",
+              "event_name": "Nottingham Forest vs AFC Bournemouth"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "6130d111-fb72-43e4-aed6-f9d435ef64ae",
+              "event_name": "Nottingham Forest vs AFC Bournemouth"
+            }
+          }
         },
         {
           "id": 14023966,
@@ -8846,7 +8912,23 @@
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/sunderland-v-chelsea-10496918"
           },
           "bookmaker_links": {
-            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/sunderland-v-chelsea-10496918"
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/sunderland-v-chelsea-10496918",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/uk-and-ireland/premier-league/sunderland-afc-vs-chelsea/62142ee8-b2e1-4f92-a8f0-b9accea51a76",
+            "neds": "https://www.neds.com.au/sports/soccer/uk-and-ireland/premier-league/sunderland-afc-vs-chelsea/62142ee8-b2e1-4f92-a8f0-b9accea51a76"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "62142ee8-b2e1-4f92-a8f0-b9accea51a76",
+              "event_name": "Sunderland AFC vs Chelsea"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "62142ee8-b2e1-4f92-a8f0-b9accea51a76",
+              "event_name": "Sunderland AFC vs Chelsea"
+            }
           }
         },
         {
@@ -18724,7 +18806,17 @@
               "value": "3",
               "odds": 1.01
             }
-          ]
+          ],
+          "sportsbet_odds": {
+            "home": 1.95,
+            "draw": 3.5,
+            "away": 3.8,
+            "event_id": 10498389,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/celta-vigo-v-sevilla-10498389"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/celta-vigo-v-sevilla-10498389"
+          }
         },
         {
           "id": 14083706,
@@ -18775,7 +18867,8 @@
                 "home": 0.4399,
                 "draw": 0.2761,
                 "away": 0.284
-              }
+              },
+              "odds": 2.45
             },
             "btts": {
               "pick": "Yes",
@@ -18875,7 +18968,8 @@
               "team": "away",
               "source": "computed",
               "label": "No Losses",
-              "value": "7"
+              "value": "7",
+              "odds": 1.45
             },
             {
               "team": "away",
@@ -18883,7 +18977,33 @@
               "label": "Less than 2.5 goals",
               "value": "6/7"
             }
-          ]
+          ],
+          "sportsbet_odds": {
+            "home": 2.45,
+            "draw": 3.3,
+            "away": 2.88,
+            "event_id": 10498398,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/alaves-v-rayo-vallecano-10498398"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/alaves-v-rayo-vallecano-10498398",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/spain/spanish-la-liga/deportivo-alaves-vs-rayo-vallecano/58541bdc-1258-4b14-afc6-1ce0f3fcd8d6",
+            "neds": "https://www.neds.com.au/sports/soccer/spain/spanish-la-liga/deportivo-alaves-vs-rayo-vallecano/58541bdc-1258-4b14-afc6-1ce0f3fcd8d6"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "58541bdc-1258-4b14-afc6-1ce0f3fcd8d6",
+              "event_name": "Deportivo Alaves vs Rayo Vallecano"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "58541bdc-1258-4b14-afc6-1ce0f3fcd8d6",
+              "event_name": "Deportivo Alaves vs Rayo Vallecano"
+            }
+          }
         },
         {
           "id": 14083719,
@@ -19056,7 +19176,33 @@
               "label": "Without Clean Sheet",
               "value": "7"
             }
-          ]
+          ],
+          "sportsbet_odds": {
+            "home": 2.2,
+            "draw": 3.5,
+            "away": 3.2,
+            "event_id": 10498390,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/espanyol-v-real-sociedad-10498390"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/espanyol-v-real-sociedad-10498390",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/spain/spanish-la-liga/espanyol-barcelona-vs-real-sociedad/adcc0d53-5243-4ea2-8aa1-40f09f32d0a6",
+            "neds": "https://www.neds.com.au/sports/soccer/spain/spanish-la-liga/espanyol-barcelona-vs-real-sociedad/adcc0d53-5243-4ea2-8aa1-40f09f32d0a6"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "adcc0d53-5243-4ea2-8aa1-40f09f32d0a6",
+              "event_name": "Espanyol Barcelona vs Real Sociedad"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "adcc0d53-5243-4ea2-8aa1-40f09f32d0a6",
+              "event_name": "Espanyol Barcelona vs Real Sociedad"
+            }
+          }
         },
         {
           "id": 14083723,
@@ -19107,7 +19253,8 @@
                 "home": 0.4333,
                 "draw": 0.2999,
                 "away": 0.2669
-              }
+              },
+              "odds": 2.4
             },
             "btts": {
               "pick": "No",
@@ -19208,13 +19355,15 @@
               "team": "away",
               "source": "computed",
               "label": "Losses",
-              "value": "3"
+              "value": "3",
+              "odds": 2.4
             },
             {
               "team": "away",
               "source": "computed",
               "label": "No Wins",
-              "value": "3"
+              "value": "3",
+              "odds": 1.23
             },
             {
               "team": "away",
@@ -19228,7 +19377,33 @@
               "label": "Both teams scoring",
               "value": "8/10"
             }
-          ]
+          ],
+          "sportsbet_odds": {
+            "home": 2.4,
+            "draw": 2.88,
+            "away": 3.4,
+            "event_id": 10498409,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/getafe-v-osasuna-10498409"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/getafe-v-osasuna-10498409",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/spain/spanish-la-liga/getafe-cf-vs-ca-osasuna/f8b957eb-0d6a-48db-ae7a-2ba823371aa0",
+            "neds": "https://www.neds.com.au/sports/soccer/spain/spanish-la-liga/getafe-cf-vs-ca-osasuna/f8b957eb-0d6a-48db-ae7a-2ba823371aa0"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "f8b957eb-0d6a-48db-ae7a-2ba823371aa0",
+              "event_name": "Getafe CF vs CA Osasuna"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "f8b957eb-0d6a-48db-ae7a-2ba823371aa0",
+              "event_name": "Getafe CF vs CA Osasuna"
+            }
+          }
         },
         {
           "id": 14083743,
@@ -19279,7 +19454,8 @@
                 "home": 0.2351,
                 "draw": 0.2598,
                 "away": 0.5051
-              }
+              },
+              "odds": 3.8
             },
             "btts": {
               "pick": "Yes",
@@ -19368,7 +19544,8 @@
               "team": "home",
               "source": "computed",
               "label": "No Wins",
-              "value": "6"
+              "value": "6",
+              "odds": 1.79
             },
             {
               "team": "home",
@@ -19386,7 +19563,8 @@
               "team": "away",
               "source": "computed",
               "label": "No Wins",
-              "value": "3"
+              "value": "3",
+              "odds": 1.18
             },
             {
               "team": "away",
@@ -19400,7 +19578,17 @@
               "label": "Both teams scoring",
               "value": "8/10"
             }
-          ]
+          ],
+          "sportsbet_odds": {
+            "home": 1.87,
+            "draw": 3.8,
+            "away": 3.8,
+            "event_id": 10498396,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/girona-v-elche-10498396"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/girona-v-elche-10498396"
+          }
         },
         {
           "id": 14083727,
@@ -19451,7 +19639,8 @@
                 "home": 0.4908,
                 "draw": 0.3204,
                 "away": 0.1888
-              }
+              },
+              "odds": 1.47
             },
             "btts": {
               "pick": "No",
@@ -19508,12 +19697,14 @@
             {
               "team": "home",
               "label": "No losses",
-              "value": "6"
+              "value": "6",
+              "odds": 1.02
             },
             {
               "team": "away",
               "label": "No losses",
-              "value": "3"
+              "value": "3",
+              "odds": 2.37
             },
             {
               "team": "both",
@@ -19556,7 +19747,8 @@
               "team": "away",
               "source": "computed",
               "label": "No Wins",
-              "value": "5"
+              "value": "5",
+              "odds": 1.02
             },
             {
               "team": "away",
@@ -19564,7 +19756,33 @@
               "label": "No Goals Scored",
               "value": "3"
             }
-          ]
+          ],
+          "sportsbet_odds": {
+            "home": 1.47,
+            "draw": 4.1,
+            "away": 6.5,
+            "event_id": 10498406,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/mallorca-v-oviedo-10498406"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/mallorca-v-oviedo-10498406",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/spain/spanish-la-liga/rcd-mallorca-vs-real-oviedo/85141557-1870-4018-a81e-e2cd02faeb38",
+            "neds": "https://www.neds.com.au/sports/soccer/spain/spanish-la-liga/rcd-mallorca-vs-real-oviedo/85141557-1870-4018-a81e-e2cd02faeb38"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "85141557-1870-4018-a81e-e2cd02faeb38",
+              "event_name": "RCD Mallorca vs Real Oviedo"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "85141557-1870-4018-a81e-e2cd02faeb38",
+              "event_name": "RCD Mallorca vs Real Oviedo"
+            }
+          }
         },
         {
           "id": 14083710,
@@ -19615,7 +19833,8 @@
                 "home": 0.4557,
                 "draw": 0.2425,
                 "away": 0.3018
-              }
+              },
+              "odds": 2.05
             },
             "btts": {
               "pick": "Yes",
@@ -19672,7 +19891,8 @@
             {
               "team": "home",
               "label": "No losses",
-              "value": "4"
+              "value": "4",
+              "odds": 1.27
             },
             {
               "team": "home",
@@ -19710,7 +19930,8 @@
               "team": "home",
               "source": "computed",
               "label": "No Losses",
-              "value": "5"
+              "value": "5",
+              "odds": 1.27
             },
             {
               "team": "home",
@@ -19724,7 +19945,33 @@
               "label": "Without Clean Sheet",
               "value": "3"
             }
-          ]
+          ],
+          "sportsbet_odds": {
+            "home": 2.05,
+            "draw": 3.9,
+            "away": 3.2,
+            "event_id": 10498404,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/betis-v-levante-10498404"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/betis-v-levante-10498404",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/spain/spanish-la-liga/real-betis-vs-levante-ud/711bd128-be08-463d-99bf-d3b63e073c96",
+            "neds": "https://www.neds.com.au/sports/soccer/spain/spanish-la-liga/real-betis-vs-levante-ud/711bd128-be08-463d-99bf-d3b63e073c96"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "711bd128-be08-463d-99bf-d3b63e073c96",
+              "event_name": "Real Betis vs Levante UD"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "711bd128-be08-463d-99bf-d3b63e073c96",
+              "event_name": "Real Betis vs Levante UD"
+            }
+          }
         },
         {
           "id": 14083731,
@@ -19879,7 +20126,17 @@
               "label": "Without Clean Sheet",
               "value": "4"
             }
-          ]
+          ],
+          "sportsbet_odds": {
+            "home": 1.44,
+            "draw": 4.75,
+            "away": 6.5,
+            "event_id": 10498395,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/real-madrid-v-athletic-bilbao-10498395"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/real-madrid-v-athletic-bilbao-10498395"
+          }
         },
         {
           "id": 14083739,
@@ -19930,7 +20187,8 @@
                 "home": 0.2473,
                 "draw": 0.3217,
                 "away": 0.4311
-              }
+              },
+              "odds": 1.8
             },
             "btts": {
               "pick": "No",
@@ -19987,12 +20245,14 @@
             {
               "team": "away",
               "label": "Wins",
-              "value": "5"
+              "value": "5",
+              "odds": 1.8
             },
             {
               "team": "away",
               "label": "No losses",
-              "value": "12"
+              "value": "12",
+              "odds": 1.19
             },
             {
               "team": "home",
@@ -20033,7 +20293,33 @@
               "label": "Less than 2.5 goals",
               "value": "4/5"
             }
-          ]
+          ],
+          "sportsbet_odds": {
+            "home": 3.7,
+            "draw": 4.2,
+            "away": 1.8,
+            "event_id": 10498397,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/valencia-v-barcelona-10498397"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/valencia-v-barcelona-10498397",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/spain/spanish-la-liga/valencia-cf-vs-fc-barcelona/032c6cf8-cb99-4987-82e2-4237851d5fc6",
+            "neds": "https://www.neds.com.au/sports/soccer/spain/spanish-la-liga/valencia-cf-vs-fc-barcelona/032c6cf8-cb99-4987-82e2-4237851d5fc6"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "032c6cf8-cb99-4987-82e2-4237851d5fc6",
+              "event_name": "Valencia CF vs FC Barcelona"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "032c6cf8-cb99-4987-82e2-4237851d5fc6",
+              "event_name": "Valencia CF vs FC Barcelona"
+            }
+          }
         },
         {
           "id": 14083735,
@@ -20188,7 +20474,33 @@
               "label": "Less than 2.5 goals",
               "value": "4/5"
             }
-          ]
+          ],
+          "sportsbet_odds": {
+            "home": 2.5,
+            "draw": 3.9,
+            "away": 2.45,
+            "event_id": 10498408,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/villarreal-v-atletico-madrid-10498408"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/villarreal-v-atletico-madrid-10498408",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/spain/spanish-la-liga/villarreal-cf-vs-atletico-madrid/e8e0c63a-fbb9-424a-9066-4b8ca8016722",
+            "neds": "https://www.neds.com.au/sports/soccer/spain/spanish-la-liga/villarreal-cf-vs-atletico-madrid/e8e0c63a-fbb9-424a-9066-4b8ca8016722"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "e8e0c63a-fbb9-424a-9066-4b8ca8016722",
+              "event_name": "Villarreal CF vs Atletico Madrid"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "e8e0c63a-fbb9-424a-9066-4b8ca8016722",
+              "event_name": "Villarreal CF vs Atletico Madrid"
+            }
+          }
         }
       ],
       "logo": "https://api.sofascore.app/api/v1/unique-tournament/8/image"
@@ -38051,7 +38363,8 @@
                 "home": 0.1748,
                 "draw": 0.222,
                 "away": 0.6032
-              }
+              },
+              "odds": 1.67
             },
             "btts": {
               "pick": "Yes",
@@ -38135,9 +38448,20 @@
               "team": "away",
               "source": "computed",
               "label": "No Losses",
-              "value": "10"
+              "value": "10",
+              "odds": 1.12
             }
-          ]
+          ],
+          "sportsbet_odds": {
+            "home": 4.5,
+            "draw": 4.1,
+            "away": 1.67,
+            "event_id": 10498411,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/italy/italian-serie-a/bologna-v-inter-10498411"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/italy/italian-serie-a/bologna-v-inter-10498411"
+          }
         },
         {
           "id": 13980070,
@@ -38302,7 +38626,17 @@
               "label": "Less than 2.5 goals",
               "value": "4/5"
             }
-          ]
+          ],
+          "sportsbet_odds": {
+            "home": 5.0,
+            "draw": 4.2,
+            "away": 1.57,
+            "event_id": 10498427,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/italy/italian-serie-a/us-cremonese-v-como-10498427"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/italy/italian-serie-a/us-cremonese-v-como-10498427"
+          }
         },
         {
           "id": 13980080,
@@ -38345,7 +38679,8 @@
                 "home": 0.4487,
                 "draw": 0.2849,
                 "away": 0.2664
-              }
+              },
+              "odds": 2.88
             },
             "btts": {
               "pick": "No",
@@ -38418,7 +38753,17 @@
               "label": "Both teams scoring",
               "value": "4/5"
             }
-          ]
+          ],
+          "sportsbet_odds": {
+            "home": 2.88,
+            "draw": 3.6,
+            "away": 2.3,
+            "event_id": 10498423,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/italy/italian-serie-a/fiorentina-v-atalanta-10498423"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/italy/italian-serie-a/fiorentina-v-atalanta-10498423"
+          }
         },
         {
           "id": 13980064,
@@ -38566,7 +38911,17 @@
               "value": "6",
               "odds": 1.01
             }
-          ]
+          ],
+          "sportsbet_odds": {
+            "home": 8.5,
+            "draw": 4.75,
+            "away": 1.36,
+            "event_id": 10498414,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/italy/italian-serie-a/verona-v-roma-10498414"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/italy/italian-serie-a/verona-v-roma-10498414"
+          }
         },
         {
           "id": 13980072,
@@ -38609,7 +38964,8 @@
                 "home": 0.5577,
                 "draw": 0.2326,
                 "away": 0.2097
-              }
+              },
+              "odds": 1.47
             },
             "btts": {
               "pick": "Yes",
@@ -38661,7 +39017,8 @@
             {
               "team": "home",
               "label": "No losses",
-              "value": "6"
+              "value": "6",
+              "odds": 1.04
             },
             {
               "team": "home",
@@ -38689,13 +39046,15 @@
               "team": "home",
               "source": "computed",
               "label": "Losses",
-              "value": "3"
+              "value": "3",
+              "odds": 6.5
             },
             {
               "team": "home",
               "source": "computed",
               "label": "No Wins",
-              "value": "3"
+              "value": "3",
+              "odds": 2.45
             },
             {
               "team": "home",
@@ -38713,13 +39072,15 @@
               "team": "away",
               "source": "computed",
               "label": "Losses",
-              "value": "8"
+              "value": "8",
+              "odds": 1.47
             },
             {
               "team": "away",
               "source": "computed",
               "label": "No Wins",
-              "value": "8"
+              "value": "8",
+              "odds": 1.04
             },
             {
               "team": "away",
@@ -38733,7 +39094,17 @@
               "label": "More than 2.5 goals",
               "value": "8/10"
             }
-          ]
+          ],
+          "sportsbet_odds": {
+            "home": 1.47,
+            "draw": 4.33,
+            "away": 6.5,
+            "event_id": 10498420,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/italy/italian-serie-a/lazio-v-pisa-10498420"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/italy/italian-serie-a/lazio-v-pisa-10498420"
+          }
         },
         {
           "id": 13980066,
@@ -38776,7 +39147,8 @@
                 "home": 0.3245,
                 "draw": 0.3371,
                 "away": 0.3383
-              }
+              },
+              "odds": 3.5
             },
             "btts": {
               "pick": "No",
@@ -38828,7 +39200,8 @@
             {
               "team": "away",
               "label": "No losses",
-              "value": "4"
+              "value": "4",
+              "odds": 1.94
             }
           ],
           "h2h_duel": {
@@ -38847,9 +39220,20 @@
               "team": "away",
               "source": "computed",
               "label": "No Wins",
-              "value": "4"
+              "value": "4",
+              "odds": 1.1
             }
-          ]
+          ],
+          "sportsbet_odds": {
+            "home": 1.75,
+            "draw": 3.5,
+            "away": 5.0,
+            "event_id": 10498419,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/italy/italian-serie-a/lecce-v-genoa-10498419"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/italy/italian-serie-a/lecce-v-genoa-10498419"
+          }
         },
         {
           "id": 13980071,
@@ -39005,7 +39389,17 @@
               "label": "Without Clean Sheet",
               "value": "3"
             }
-          ]
+          ],
+          "sportsbet_odds": {
+            "home": 1.36,
+            "draw": 4.75,
+            "away": 8.5,
+            "event_id": 10498428,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/italy/italian-serie-a/ac-milan-v-cagliari-10498428"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/italy/italian-serie-a/ac-milan-v-cagliari-10498428"
+          }
         },
         {
           "id": 13980074,
@@ -39048,7 +39442,8 @@
                 "home": 0.3333,
                 "draw": 0.3122,
                 "away": 0.3545
-              }
+              },
+              "odds": 3.5
             },
             "btts": {
               "pick": "No",
@@ -39132,13 +39527,15 @@
               "team": "home",
               "source": "computed",
               "label": "Losses",
-              "value": "3"
+              "value": "3",
+              "odds": 2.45
             },
             {
               "team": "home",
               "source": "computed",
               "label": "No Wins",
-              "value": "3"
+              "value": "3",
+              "odds": 1.36
             },
             {
               "team": "home",
@@ -39152,7 +39549,17 @@
               "label": "Less than 2.5 goals",
               "value": "8/10"
             }
-          ]
+          ],
+          "sportsbet_odds": {
+            "home": 2.75,
+            "draw": 3.5,
+            "away": 2.45,
+            "event_id": 10498421,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/italy/italian-serie-a/parma-v-sassuolo-10498421"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/italy/italian-serie-a/parma-v-sassuolo-10498421"
+          }
         },
         {
           "id": 13980061,
@@ -39195,7 +39602,8 @@
                 "home": 0.3272,
                 "draw": 0.312,
                 "away": 0.3608
-              }
+              },
+              "odds": 4.2
             },
             "btts": {
               "pick": "No",
@@ -39289,9 +39697,20 @@
               "team": "away",
               "source": "computed",
               "label": "No Losses",
-              "value": "3"
+              "value": "3",
+              "odds": 2.41
             }
-          ]
+          ],
+          "sportsbet_odds": {
+            "home": 1.47,
+            "draw": 4.2,
+            "away": 6.5,
+            "event_id": 10498413,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/italy/italian-serie-a/napoli-v-udinese-10498413"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/italy/italian-serie-a/napoli-v-udinese-10498413"
+          }
         },
         {
           "id": 13980077,
@@ -39443,7 +39862,17 @@
               "label": "Less than 2.5 goals",
               "value": "9/10"
             }
-          ]
+          ],
+          "sportsbet_odds": {
+            "home": 6.5,
+            "draw": 4.5,
+            "away": 1.44,
+            "event_id": 10498422,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/italy/italian-serie-a/torino-v-juventus-10498422"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/italy/italian-serie-a/torino-v-juventus-10498422"
+          }
         }
       ]
     },
@@ -66475,8 +66904,8 @@
           ],
           "sportsbet_odds": {
             "home": 1.44,
-            "draw": 4.5,
-            "away": 6.5,
+            "draw": 4.6,
+            "away": 6.0,
             "event_id": 10495169,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/columbus-v-atlanta-utd-10495169"
           },
@@ -71652,7 +72081,25 @@
               "value": "9/10",
               "odds": 2.1
             }
-          ]
+          ],
+          "bookmaker_links": {
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/japan/japanese-j1-league/kashima-antlers-vs-fc-tokyo/07868d2f-b643-4c7f-ba29-479e5ba1bde8",
+            "neds": "https://www.neds.com.au/sports/soccer/japan/japanese-j1-league/kashima-antlers-vs-fc-tokyo/07868d2f-b643-4c7f-ba29-479e5ba1bde8"
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "07868d2f-b643-4c7f-ba29-479e5ba1bde8",
+              "event_name": "Kashima Antlers vs FC Tokyo"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "07868d2f-b643-4c7f-ba29-479e5ba1bde8",
+              "event_name": "Kashima Antlers vs FC Tokyo"
+            }
+          }
         },
         {
           "id": 15345959,

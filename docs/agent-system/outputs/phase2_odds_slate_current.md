@@ -7,7 +7,7 @@ Source: Sportsbet AU (Win-Draw-Win, 90-min regular time)
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-18 13:53:53 ACST |
+| run_timestamp | 2026-05-18 17:53:54 ACST |
 | timezone | Australia/Adelaide |
 | source | Sportsbet AU |
 | phase1_input_rows | 3 |
@@ -26,8 +26,8 @@ Source: Sportsbet AU (Win-Draw-Win, 90-min regular time)
 
 | League | Endpoint | HTTP | Events | WDW Markets | Health | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
-| MLS | /betting/soccer/north-america/usa-major-league-soccer | 200 | 175 | 175 | healthy |  |
-| Premier League | /betting/soccer/united-kingdom/english-premier-league | 200 | 8 | 8 | healthy |  |
+| MLS | /betting/soccer/north-america/usa-major-league-soccer | 200 | 198 | 198 | healthy |  |
+| Premier League | /betting/soccer/united-kingdom/english-premier-league | 200 | 11 | 11 | healthy |  |
 
 ## Odds
 
@@ -35,4 +35,4 @@ Source: Sportsbet AU (Win-Draw-Win, 90-min regular time)
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 2026-05-18 | FT | MLS | Inter Miami | Portland Timbers |  |  |  |  | none:0.0 | unmatched_market |
 | 2026-05-18 | FT | MLS | Nashville SC | Los Angeles FC |  |  |  |  | none:0.0 | unmatched_market |
-| 2026-05-19 | 04:30 | Premier League | Arsenal | Burnley | 1.1 | 10.5 | 20.0 | 1.0543 | exact:1.0 | ready_for_phase_3 |
+| 2026-05-19 | 04:30 | Premier League | Arsenal | Burnley | 1.08 | 12.0 | 26.0 | 1.0477 | exact:1.0 | ready_for_phase_3 |

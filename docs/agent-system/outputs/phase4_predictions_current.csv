@@ -1,4 +1,4 @@
 run_timestamp,league,event_id,date,time,home,away,home_form_n,away_form_n,lambda_home,lambda_away,p_home,p_draw,p_away,p_btts,p_over25,model_pick,fair_home,fair_draw,fair_away,market_home,market_draw,market_away,market_implied_home,market_implied_draw,market_implied_away,edge_home,edge_draw,edge_away,phase4_status,phase4_notes
-2026-05-18 13:54:26 ACST,MLS,flashscore:rZdvkkLE,2026-05-18,FT,Inter Miami,Portland Timbers,,,,,,,,,,,,,,,,,,,,,,,upstream_blocked,Phase 3 status was upstream_blocked.
-2026-05-18 13:54:26 ACST,MLS,flashscore:lnSvmTkR,2026-05-18,FT,Nashville SC,Los Angeles FC,,,,,,,,,,,,,,,,,,,,,,,upstream_blocked,Phase 3 status was upstream_blocked.
-2026-05-18 13:54:26 ACST,Premier League,flashscore:Gxt6zm15,2026-05-19,04:30,Arsenal,Burnley,,,,,,,,,,,,,,,,,,,,,,,upstream_blocked,Phase 3 status was team_unresolved.
+2026-05-18 17:54:32 ACST,MLS,flashscore:rZdvkkLE,2026-05-18,FT,Inter Miami,Portland Timbers,,,,,,,,,,,,,,,,,,,,,,,upstream_blocked,Phase 3 status was upstream_blocked.
+2026-05-18 17:54:32 ACST,MLS,flashscore:lnSvmTkR,2026-05-18,FT,Nashville SC,Los Angeles FC,,,,,,,,,,,,,,,,,,,,,,,upstream_blocked,Phase 3 status was upstream_blocked.
+2026-05-18 17:54:32 ACST,Premier League,flashscore:Gxt6zm15,2026-05-19,04:30,Arsenal,Burnley,,,,,,,,,,,,,,,,,,,,,,,upstream_blocked,Phase 3 status was team_unresolved.

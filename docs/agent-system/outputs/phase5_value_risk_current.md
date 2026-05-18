@@ -6,11 +6,11 @@ Timezone: Australia/Adelaide
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-18 13:54:26 ACST |
+| run_timestamp | 2026-05-18 17:54:32 ACST |
 | bankroll | 1000.0 |
 | kelly_fraction | 0.25 |
 | min_edge | 0.05 |
-| model_calibration | 2026-05-18 12:12:56 ACST |
+| model_calibration | 2026-05-18 13:54:28 ACST |
 | min_price | 1.3 |
 | max_stake_pct | 0.02 |
 | max_exposure_pct | 0.1 |
