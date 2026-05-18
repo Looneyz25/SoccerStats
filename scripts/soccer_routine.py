@@ -575,6 +575,7 @@ TEAM_ALIASES = {
     "westham": "westhamunited",
     "wolves": "wolverhampton",
     "forest": "nottinghamforest",
+    "rennais": "rennes",
 }
 
 
