@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-18 06:26:16 ACST",
+  "generated_at": "2026-05-18 10:30:26 ACST",
   "source": "docs\\agent-system\\outputs\\model_result_review_summary.json",
   "mode": "conservative_auto_learning",
   "rules": {
@@ -13,35 +13,35 @@
   "market_adjustments": {
     "btts": {
       "market": "BTTS",
-      "settled": 396,
-      "hit_rate": 0.5404,
-      "trust_factor": 0.9464,
-      "min_edge_delta": 0.0209,
-      "reason": "BTTS below 60% target over 396 settled markets."
+      "settled": 404,
+      "hit_rate": 0.5421,
+      "trust_factor": 0.9479,
+      "min_edge_delta": 0.0203,
+      "reason": "BTTS below 60% target over 404 settled markets."
     },
     "ou_cards": {
       "market": "Cards",
-      "settled": 370,
-      "hit_rate": 0.5892,
-      "trust_factor": 0.9903,
-      "min_edge_delta": 0.0038,
-      "reason": "Cards below 60% target over 370 settled markets."
+      "settled": 378,
+      "hit_rate": 0.5979,
+      "trust_factor": 0.9981,
+      "min_edge_delta": 0.0007,
+      "reason": "Cards below 60% target over 378 settled markets."
     },
     "ou_goals": {
       "market": "Goals",
-      "settled": 396,
-      "hit_rate": 0.5556,
-      "trust_factor": 0.96,
-      "min_edge_delta": 0.0155,
-      "reason": "Goals below 60% target over 396 settled markets."
+      "settled": 404,
+      "hit_rate": 0.5569,
+      "trust_factor": 0.9612,
+      "min_edge_delta": 0.0151,
+      "reason": "Goals below 60% target over 404 settled markets."
     },
     "winner": {
       "market": "Winner",
-      "settled": 396,
-      "hit_rate": 0.4899,
-      "trust_factor": 0.9009,
-      "min_edge_delta": 0.0385,
-      "reason": "Winner below 60% target over 396 settled markets."
+      "settled": 404,
+      "hit_rate": 0.495,
+      "trust_factor": 0.9055,
+      "min_edge_delta": 0.0367,
+      "reason": "Winner below 60% target over 404 settled markets."
     }
   },
   "league_market_adjustments": {
@@ -71,22 +71,22 @@
       "league": "MLS",
       "market": "Winner",
       "market_key": "winner",
-      "settled": 72,
-      "hit_rate": 0.3889,
-      "odds_net": -18.37,
-      "trust_factor": 0.8632,
-      "min_edge_delta": 0.0532,
+      "settled": 73,
+      "hit_rate": 0.3973,
+      "odds_net": -17.07,
+      "trust_factor": 0.8668,
+      "min_edge_delta": 0.0518,
       "reason": "MLS Winner weak spot from result review."
     },
     "LaLiga|winner": {
       "league": "LaLiga",
       "market": "Winner",
       "market_key": "winner",
-      "settled": 46,
-      "hit_rate": 0.3913,
-      "odds_net": -29.96,
-      "trust_factor": 0.9136,
-      "min_edge_delta": 0.0336,
+      "settled": 50,
+      "hit_rate": 0.42,
+      "odds_net": -28.66,
+      "trust_factor": 0.919,
+      "min_edge_delta": 0.0315,
       "reason": "LaLiga Winner weak spot from result review."
     },
     "Bundesliga|ou_cards": {
@@ -100,27 +100,27 @@
       "min_edge_delta": 0.021,
       "reason": "Bundesliga Cards weak spot from result review."
     },
-    "LaLiga|ou_goals": {
-      "league": "LaLiga",
-      "market": "Goals",
-      "market_key": "ou_goals",
-      "settled": 46,
-      "hit_rate": 0.4783,
-      "odds_net": -5.92,
-      "trust_factor": 0.9496,
-      "min_edge_delta": 0.0196,
-      "reason": "LaLiga Goals weak spot from result review."
-    },
     "Ligue 1|ou_goals": {
       "league": "Ligue 1",
       "market": "Goals",
       "market_key": "ou_goals",
-      "settled": 36,
-      "hit_rate": 0.5,
-      "odds_net": -8.93,
-      "trust_factor": 0.9676,
-      "min_edge_delta": 0.0126,
+      "settled": 39,
+      "hit_rate": 0.5128,
+      "odds_net": -7.83,
+      "trust_factor": 0.9694,
+      "min_edge_delta": 0.0119,
       "reason": "Ligue 1 Goals weak spot from result review."
+    },
+    "Premier League|winner": {
+      "league": "Premier League",
+      "market": "Winner",
+      "market_key": "winner",
+      "settled": 37,
+      "hit_rate": 0.5135,
+      "odds_net": -8.69,
+      "trust_factor": 0.9712,
+      "min_edge_delta": 0.0112,
+      "reason": "Premier League Winner weak spot from result review."
     }
   },
   "notes": [

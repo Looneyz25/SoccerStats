@@ -88,12 +88,14 @@ npm run build && npx firebase-tools deploy --only hosting --project sports-predi
 |---|---|---|
 | `STRIPE_SECRET_KEY` | Firebase Secret Manager | `secrets[]` in `onRequest` config |
 | `STRIPE_WEBHOOK_SECRET` | Firebase Secret Manager | `secrets[]` in `onRequest` config |
+| `STRIPE_PRO_PRICE_ID` | Firebase Secret Manager | `secrets[]` in `onRequest` config |
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | `apphosting.yaml` | Build/runtime env var |
 | `NEXT_PUBLIC_APP_URL` | `apphosting.yaml` | Build/runtime env var |
 
 - Cloud Function URL: `https://australia-southeast1-sports-predictions-f91fd.cloudfunctions.net/stripeApi`
 - Stripe Product ID: `STRIPE_PRO_PRODUCT_ID` in `.env` (Soccer Stats Pro, A$19.99/month)
-- Stripe Price ID: `STRIPE_PRO_PRICE_ID` in `.env` for Checkout.
+- Stripe Price ID: `STRIPE_PRO_PRICE_ID` is used by the Firebase Cloud Function for Checkout line items. Do not put it in `apphosting.yaml`, do not add it as an App Hosting console override, and do not expose it to the browser. The frontend must call the API/Cloud Function and redirect to the returned Stripe Checkout URL.
+- App Hosting environment name should stay simple and stable, normally `prod`. Keep public frontend values in `apphosting.yaml`; use manual App Hosting console environment variable overrides only for a temporary emergency override that will be copied back into source afterward.
 - Checkout starts new subscriptions with a 7-day free trial and no upfront payment requirement.
 - The free trial is one-time per Firebase user / Stripe customer; if `stripeTrialUsed` or prior Stripe trial history exists, Checkout does not attach another trial.
 - Stripe webhooks and `/api/stripe/sync-subscription` both sync trialing/active/cancelled subscription status into Firestore.

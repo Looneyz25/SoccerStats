@@ -3,37 +3,9 @@ import { getFirebaseAuth, getFirebaseDb } from './firebase';
 
 const DASHBOARD_DOC = 'match_data';
 const FAST_DASHBOARD_DOC = 'match_data_fast';
-const MATCH_DATA_CACHE_KEY = 'matchDataCache_v1';
-
-function matchDataCacheKey(date) {
-  return date ? `${MATCH_DATA_CACHE_KEY}:${date}` : MATCH_DATA_CACHE_KEY;
-}
 
 export function readMatchDataCache(date = '') {
-  if (typeof window === 'undefined') return null;
-  try {
-    const raw = window.localStorage.getItem(matchDataCacheKey(date));
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    if (!parsed || !parsed.data || !Array.isArray(parsed.data.leagues)) return null;
-    return parsed.data;
-  } catch {
-    return null;
-  }
-}
-
-function writeMatchDataCache(data, date = '') {
-  if (typeof window === 'undefined') return;
-  try {
-    window.localStorage.setItem(
-      matchDataCacheKey(date),
-      JSON.stringify({ data, cachedAt: Date.now() }),
-    );
-  } catch {
-    try {
-      window.localStorage.removeItem(MATCH_DATA_CACHE_KEY);
-    } catch {}
-  }
+  return null;
 }
 
 const inflightMatchDataPromises = new Map();
@@ -72,7 +44,6 @@ async function fetchMatchDataFromApi(date = '') {
   if (!response.ok) return null;
   const payload = await response.json();
   if (!payload || !Array.isArray(payload.leagues)) return null;
-  writeMatchDataCache(payload, date);
   return payload;
 }
 
@@ -102,7 +73,6 @@ async function fetchMatchDataFromFirestoreSdk(date = '') {
           allTimeSummary: data.allTimeSummary || await loadMetaSummary(),
           leagues: data.leagues,
         };
-        writeMatchDataCache(result, date);
         return result;
       }
     }
@@ -121,7 +91,6 @@ async function fetchMatchDataFromFirestoreSdk(date = '') {
         allTimeSummary: fast.allTimeSummary || null,
         leagues: fast.leagues,
       };
-      writeMatchDataCache(result, date);
       return result;
     }
   }
@@ -161,7 +130,6 @@ async function fetchMatchDataFromFirestoreSdk(date = '') {
       allTimeSummary: meta.allTimeSummary || null,
       leagues,
     };
-    writeMatchDataCache(result, date);
     return result;
   }
 
@@ -174,7 +142,6 @@ async function fetchMatchDataFromFirestoreSdk(date = '') {
   }
 
   const parsed = JSON.parse(chunks.join(''));
-  if (parsed && Array.isArray(parsed.leagues)) writeMatchDataCache(parsed, date);
   return parsed;
 }
 

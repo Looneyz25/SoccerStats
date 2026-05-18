@@ -1,40 +1,40 @@
 # Get Data Run Log
 
-Run ID: 20260517T205612Z
+Run ID: 20260518T010018Z
 Mode: results-only
-Started: 2026-05-17T20:56:12.152Z
-Completed: 2026-05-17T21:07:00.568Z
+Started: 2026-05-18T01:00:18.774Z
+Completed: 2026-05-18T01:11:10.156Z
 Status: ok
 
 ## Firestore
 
 - Upload status: ok
-- Last line: Uploaded fast dashboard doc dashboardData/match_data_fast (14-day window from 2026-05-04, 431.3 KB).
+- Last line: Uploaded fast dashboard doc dashboardData/match_data_fast (14-day window from 2026-05-04, 434.3 KB).
 - Firestore format: league_docs_v1
 - Captured at: 2026-05-18
 - Source: sofascore.com
 - Leagues: 15
 - Matches: 470
-- Largest league doc: 244202 bytes
+- Largest league doc: 244226 bytes
 - Date window: 2026-04-22 to 2026-05-25
-- Status counts: FT=396, upcoming=74
-- Result due now: 7
-- Result remaining tracked: 9
+- Status counts: FT=404, upcoming=66
+- Result due now: 0
+- Result remaining tracked: 1
 - Result schedule: `docs\agent-system\outputs\result_check_schedule_latest.md`
 
 ## Steps
 
 | Step | Status | Exit | Duration | Last line |
 | --- | --- | --- | --- | --- |
-| Settle due results | ok | 0 | 4.07s | === TOTAL: 470  FT: 396  upcoming: 74  / winner hit: 194  miss: 202  pending: 74 === |
-| Run result review | ok | 0 | 0.15s | settled_market_rows=1558 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the review agent can compare confidence bands to  |
+| Settle due results | ok | 0 | 7.51s | === TOTAL: 470  FT: 404  upcoming: 66  / winner hit: 200  miss: 204  pending: 66 === |
+| Run result review | ok | 0 | 0.15s | settled_market_rows=1590 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the review agent can compare confidence bands to  |
 | Run model calibration | ok | 0 | 0.12s | market_adjustments=4 league_market_adjustments=7 |
-| Upload league docs to Firestore | ok | 0 | 644.08s | Uploaded fast dashboard doc dashboardData/match_data_fast (14-day window from 2026-05-04, 431.3 KB). |
+| Upload league docs to Firestore | ok | 0 | 643.59s | Uploaded fast dashboard doc dashboardData/match_data_fast (14-day window from 2026-05-04, 434.3 KB). |
 
 ## Output Files
 
 - JSON log: `docs\agent-system\outputs\get_data_latest.json`
-- Transcript: `docs\agent-system\outputs\get_data_20260517T205612Z.log`
+- Transcript: `docs\agent-system\outputs\get_data_20260518T010018Z.log`
 - Phase run log: `docs\agent-system\outputs\Phase7_Run_Log.json`
 - Phase daily summary: `docs\agent-system\outputs\Phase7_Daily_Summary.md`
 

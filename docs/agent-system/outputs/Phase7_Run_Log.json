@@ -3,7 +3,7 @@
     "label": "1 Fixtures",
     "status": "ok",
     "exit": 0,
-    "duration_s": 3.2,
+    "duration_s": 1.08,
     "last_line": "NOTE: Missing API_FOOTBALL_KEY/APISPORTS_KEY; used keyless Flashscore feed.",
     "stderr_tail": ""
   },
@@ -11,39 +11,39 @@
     "label": "2 Odds",
     "status": "ok",
     "exit": 0,
-    "duration_s": 19.16,
-    "last_line": "total=23 ready_for_phase_3=10 unmatched=13 blocked=0",
+    "duration_s": 14.14,
+    "last_line": "total=3 ready_for_phase_3=2 unmatched=1 blocked=0",
     "stderr_tail": ""
   },
   {
     "label": "3 Team Context",
     "status": "ok",
     "exit": 0,
-    "duration_s": 199.91,
-    "last_line": "total=23 ready_for_phase_4=0 unresolved=10 upstream_blocked=13",
+    "duration_s": 41.22,
+    "last_line": "total=3 ready_for_phase_4=0 unresolved=2 upstream_blocked=1",
     "stderr_tail": ""
   },
   {
     "label": "4 Predictions",
     "status": "ok",
     "exit": 0,
-    "duration_s": 0.14,
-    "last_line": "total=23 ready_for_phase_5=0 model_only=0 upstream_blocked=23",
+    "duration_s": 0.09,
+    "last_line": "total=3 ready_for_phase_5=0 model_only=0 upstream_blocked=3",
     "stderr_tail": ""
   },
   {
     "label": "5 Value & Risk",
     "status": "ok",
     "exit": 0,
-    "duration_s": 0.11,
-    "last_line": "total=23 bets=0 leans=0 no_value=0 upstream_blocked=23 scale=1.0",
+    "duration_s": 0.09,
+    "last_line": "total=3 bets=0 leans=0 no_value=0 upstream_blocked=3 scale=1.0",
     "stderr_tail": ""
   },
   {
     "label": "6 Settlement",
     "status": "ok",
     "exit": 0,
-    "duration_s": 1.88,
+    "duration_s": 2.48,
     "last_line": "settled_this_run=0 won=0 lost=0 pending=0 history_hit_rate=0.0 history_roi=-1.0",
     "stderr_tail": ""
   },
@@ -51,8 +51,8 @@
     "label": "Result Review",
     "status": "ok",
     "exit": 0,
-    "duration_s": 0.12,
-    "last_line": "settled_market_rows=1490 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the review agent can compare confidence bands to actual hit rate.",
+    "duration_s": 0.09,
+    "last_line": "settled_market_rows=1586 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the review agent can compare confidence bands to actual hit rate.",
     "stderr_tail": ""
   },
   {
@@ -60,7 +60,7 @@
     "status": "ok",
     "exit": 0,
     "duration_s": 0.08,
-    "last_line": "market_adjustments=4 league_market_adjustments=8",
+    "last_line": "market_adjustments=4 league_market_adjustments=7",
     "stderr_tail": ""
   }
 ]

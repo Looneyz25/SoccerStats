@@ -1,24 +1,4 @@
 run_timestamp,league,event_id,date,time,home,away,home_p,home_market,home_edge,home_ev,home_kelly,home_stake,home_decision,draw_p,draw_market,draw_edge,draw_ev,draw_kelly,draw_stake,draw_decision,away_p,away_market,away_edge,away_ev,away_kelly,away_stake,away_decision,top_side,top_decision,top_market_odds,top_p,top_edge,top_stake,risk_scale_factor,phase5_status,phase5_notes
-2026-05-18 05:57:50 ACST,Serie A,flashscore:YH84GNJi,2026-05-18,04:15,Cagliari,Torino,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-18 05:57:50 ACST,Serie A,flashscore:nmmS8WHr,2026-05-18,04:15,Sassuolo,Lecce,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-18 05:57:50 ACST,Serie A,flashscore:h0IS6Ane,2026-05-18,04:15,Udinese,Cremonese,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-18 05:57:50 ACST,Ligue 1,flashscore:prPnPy9r,2026-05-18,04:30,Brest,Angers,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-18 05:57:50 ACST,Ligue 1,flashscore:IXv8WJG8,2026-05-18,04:30,Lille,Auxerre,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-18 05:57:50 ACST,Ligue 1,flashscore:r1cGQTSk,2026-05-18,04:30,Lorient,Le Havre,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-18 05:57:50 ACST,Ligue 1,flashscore:OhrGQlpm,2026-05-18,04:30,Lyon,Lens,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-18 05:57:50 ACST,Ligue 1,flashscore:xbwdLg87,2026-05-18,04:30,Marseille,Rennes,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-18 05:57:50 ACST,Ligue 1,flashscore:QcrGUcoL,2026-05-18,04:30,Nice,Metz,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-18 05:57:50 ACST,Ligue 1,flashscore:IeNfNFwe,2026-05-18,04:30,Paris FC,PSG,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-18 05:57:50 ACST,Ligue 1,flashscore:44Vsqc0E,2026-05-18,04:30,Strasbourg,Monaco,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-18 05:57:50 ACST,LaLiga,flashscore:SduXBE3E,2026-05-18,04:45,Barcelona,Betis,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-18 05:57:50 ACST,LaLiga,flashscore:vyaxjXte,2026-05-18,FT,Ath. Bilbao,Celta Vigo,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-18 05:57:50 ACST,LaLiga,flashscore:n12plBB7,2026-05-18,FT,Atl. Madrid,Girona,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-18 05:57:50 ACST,LaLiga,flashscore:0OhvAhYQ,2026-05-18,FT,Elche,Getafe,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-18 05:57:50 ACST,LaLiga,flashscore:K8ZA4Wel,2026-05-18,FT,Levante,Mallorca,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-18 05:57:50 ACST,LaLiga,flashscore:YFVo6qXh,2026-05-18,FT,Osasuna,Espanyol,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-18 05:57:50 ACST,LaLiga,flashscore:C0sw852t,2026-05-18,FT,Oviedo,Alaves,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-18 05:57:50 ACST,LaLiga,flashscore:llRR0leD,2026-05-18,FT,Real Sociedad,Valencia,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-18 05:57:50 ACST,LaLiga,flashscore:ttZg4N15,2026-05-18,FT,Sevilla,Real Madrid,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-18 05:57:50 ACST,LaLiga,flashscore:hMXI2AQ0,2026-05-18,FT,Vallecano,Villarreal,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-18 05:57:50 ACST,Ligue 1,flashscore:z9FNO7c2,2026-05-18,FT,Nantes,Toulouse,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-18 05:57:50 ACST,Serie A,flashscore:I9QHhKRp,2026-05-18,FT,Atalanta,Bologna,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-18 09:54:49 ACST,MLS,flashscore:lnSvmTkR,2026-05-18,09:30,Nashville SC,Los Angeles FC,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-18 09:54:49 ACST,MLS,flashscore:rZdvkkLE,2026-05-18,FT,Inter Miami,Portland Timbers,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-18 09:54:49 ACST,Premier League,flashscore:Gxt6zm15,2026-05-19,04:30,Arsenal,Burnley,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.

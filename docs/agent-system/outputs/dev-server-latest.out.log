@@ -1,0 +1,17 @@
+
+> soccer-stats@1.0.0 dev:next
+> next dev -p 3001
+
+   ▲ Next.js 15.5.18
+   - Local:        http://localhost:3001
+   - Network:      http://192.168.0.8:3001
+   - Environments: .env
+   - Experiments (use with caution):
+     ⨯ devtoolSegmentExplorer
+
+ ✓ Starting...
+ ✓ Ready in 963ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 2.9s (843 modules)
+ GET /dashboard 200 in 3252ms
+ ✓ Compiled in 80ms (292 modules)
