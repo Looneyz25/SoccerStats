@@ -7664,9 +7664,9 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 2.15,
+            "home": 2.1,
             "draw": 3.9,
-            "away": 3.0,
+            "away": 3.1,
             "event_id": 10495949,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/brighton-v-man-utd-10495949"
           },
@@ -63381,15 +63381,16 @@
         {
           "id": 15171570,
           "date": "2026-05-18",
-          "time": "09:30",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Nashville SC",
             "short": "Nashville",
             "team_id": 337612,
             "rank": 1,
             "pts": 27,
-            "logo": "https://api.sofascore.app/api/v1/team/337612/image"
+            "logo": "https://api.sofascore.app/api/v1/team/337612/image",
+            "goals": 3
           },
           "away": {
             "name": "Los Angeles FC",
@@ -63397,22 +63398,28 @@
             "team_id": 274650,
             "rank": 7,
             "pts": 21,
-            "logo": "https://api.sofascore.app/api/v1/team/274650/image"
+            "logo": "https://api.sofascore.app/api/v1/team/274650/image",
+            "goals": 2
           },
           "predictions": {
             "winner": {
               "pick": "Nashville SC",
               "type": "home",
-              "odds": 2.05
+              "odds": 2.05,
+              "result": "hit"
             },
             "btts": {
               "pick": "Yes",
-              "odds": 1.7
+              "odds": 1.7,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
-              "odds": 1.8
+              "odds": 1.8,
+              "actual": 5,
+              "result": "hit"
             },
             "ou_cards": {
               "pick": "Under",
@@ -63421,7 +63428,9 @@
               "raw_over_probability": 0.5,
               "over_threshold": 0.68,
               "probability": 0.5,
-              "odds": 1.67
+              "odds": 1.67,
+              "actual": 5,
+              "result": "miss"
             },
             "factors": {
               "lambda_home": 2.104,
@@ -63538,6 +63547,36 @@
               "Over": 1.83,
               "Under": 1.83
             }
+          },
+          "settled_at": "2026-05-18",
+          "prediction_locked": true,
+          "prediction_locked_at": "2026-05-18T12:12:49.426712+09:30",
+          "flashscore_score": {
+            "home": 3,
+            "away": 2,
+            "status": "FT",
+            "source_match_id": "lnSvmTkR",
+            "fetched_at": "2026-05-18"
+          },
+          "settled_source": "Flashscore",
+          "actuals": {
+            "source": "LiveScore",
+            "home_corners": 3,
+            "away_corners": 11,
+            "corners_total": 14,
+            "home_fouls": 11,
+            "away_fouls": 10,
+            "fouls_total": 21,
+            "home_sot": 4,
+            "away_sot": 9,
+            "home_cards": 3,
+            "away_cards": 2,
+            "cards_total": 5,
+            "first_to_score": "home",
+            "first_scorer": "Hany Mukhtar",
+            "ht_home": 2,
+            "ht_away": 1,
+            "ht_winner": "home"
           }
         },
         {
@@ -65631,9 +65670,9 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 2.2,
-            "draw": 3.8,
-            "away": 2.88,
+            "home": 2.3,
+            "draw": 3.75,
+            "away": 2.8,
             "event_id": 10494514,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/colorado-v-fc-dallas-10494514"
           },
@@ -65830,9 +65869,9 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 2.05,
-            "draw": 4.1,
-            "away": 3.0,
+            "home": 2.38,
+            "draw": 4.0,
+            "away": 2.62,
             "event_id": 10495160,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/portland-timbers-v-san-jose-earthquakes-10495160"
           },
@@ -66436,8 +66475,8 @@
           ],
           "sportsbet_odds": {
             "home": 1.44,
-            "draw": 4.6,
-            "away": 6.0,
+            "draw": 4.5,
+            "away": 6.5,
             "event_id": 10495169,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/columbus-v-atlanta-utd-10495169"
           },
@@ -66635,7 +66674,7 @@
           "sportsbet_odds": {
             "home": 1.36,
             "draw": 5.0,
-            "away": 7.0,
+            "away": 6.5,
             "event_id": 10495212,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/inter-miami-cf-v-philadelphia-10495212"
           },

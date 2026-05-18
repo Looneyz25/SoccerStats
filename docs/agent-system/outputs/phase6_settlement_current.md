@@ -6,7 +6,7 @@ Timezone: Australia/Adelaide
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-18 09:54:49 ACST |
+| run_timestamp | 2026-05-18 13:54:27 ACST |
 | sofa_health | healthy |
 | flashscore_health | healthy |
 | flashscore_note |  |
@@ -36,6 +36,6 @@ Timezone: Australia/Adelaide
 
 | Date | Match | Pick | Odds | Stake | Actual | Outcome | Status | Return |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-18 | Nashville SC vs Los Angeles FC |  |  |  |  |  | skipped | 0.0 |
 | 2026-05-18 | Inter Miami vs Portland Timbers |  |  |  |  |  | skipped | 0.0 |
+| 2026-05-18 | Nashville SC vs Los Angeles FC |  |  |  |  |  | skipped | 0.0 |
 | 2026-05-19 | Arsenal vs Burnley |  |  |  |  |  | skipped | 0.0 |

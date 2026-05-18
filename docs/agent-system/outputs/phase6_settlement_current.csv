@@ -1,4 +1,4 @@
 run_timestamp,event_id,league,date,time,home,away,top_side,top_market_odds,top_p,top_edge,top_stake,phase5_status,actual_status,actual_home_score,actual_away_score,actual_outcome,phase6_status,realized_return,phase6_notes
-2026-05-18 09:54:49 ACST,flashscore:lnSvmTkR,MLS,2026-05-18,09:30,Nashville SC,Los Angeles FC,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-18 09:54:49 ACST,flashscore:rZdvkkLE,MLS,2026-05-18,FT,Inter Miami,Portland Timbers,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-18 09:54:49 ACST,flashscore:Gxt6zm15,Premier League,2026-05-19,04:30,Arsenal,Burnley,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-18 13:54:27 ACST,flashscore:rZdvkkLE,MLS,2026-05-18,FT,Inter Miami,Portland Timbers,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-18 13:54:27 ACST,flashscore:lnSvmTkR,MLS,2026-05-18,FT,Nashville SC,Los Angeles FC,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-18 13:54:27 ACST,flashscore:Gxt6zm15,Premier League,2026-05-19,04:30,Arsenal,Burnley,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).

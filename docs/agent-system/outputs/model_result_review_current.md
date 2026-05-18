@@ -1,17 +1,17 @@
 # Model Result Review
 
-Generated: 2026-05-18 10:30:26 ACST
+Generated: 2026-05-18 13:54:28 ACST
 Prediction tracking start: 2026-04-22
-Settled market rows: 1590
+Settled market rows: 1594
 
 ## Market Summary
 
 | Market | Settled | Hits | Misses | Hit Rate | Odds Hit | Odds Loss | Odds Net |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| BTTS | 404 | 219 | 185 | 54.2% | 160.22 | 124.65 | 35.57 |
-| Cards | 378 | 226 | 152 | 59.8% | 143.06 | 120.28 | 22.78 |
-| Goals | 404 | 225 | 179 | 55.7% | 160.84 | 135.74 | 25.1 |
-| Winner | 404 | 200 | 204 | 49.5% | 159.16 | 224.64 | -65.48 |
+| BTTS | 405 | 220 | 185 | 54.3% | 161.92 | 124.65 | 37.27 |
+| Cards | 379 | 226 | 153 | 59.6% | 143.06 | 121.95 | 21.11 |
+| Goals | 405 | 226 | 179 | 55.8% | 162.64 | 135.74 | 26.9 |
+| Winner | 405 | 201 | 204 | 49.6% | 161.21 | 224.64 | -63.43 |
 
 ## League Summary
 
@@ -26,7 +26,7 @@ Settled market rows: 1590
 | League One | 121 | 69 | 52 | 57.0% | 0 |
 | League Two | 107 | 61 | 46 | 57.0% | -9.11 |
 | Ligue 1 | 155 | 80 | 75 | 51.6% | -0.92 |
-| MLS | 292 | 152 | 140 | 52.0% | 31.23 |
+| MLS | 296 | 155 | 141 | 52.4% | 35.11 |
 | Premier League | 148 | 85 | 63 | 57.4% | 22.41 |
 | Primeira Liga | 35 | 20 | 15 | 57.1% | 0 |
 | Scottish Premiership | 26 | 18 | 8 | 69.2% | 12.46 |
@@ -41,8 +41,8 @@ Settled market rows: 1590
 | League One | BTTS | 31 | 35.5% | 0 | review_weighting |
 | Bundesliga | Winner | 36 | 36.1% | -7.47 | review_weighting |
 | Primeira Liga | Cards | 8 | 37.5% | 0 | review_weighting |
-| MLS | Winner | 73 | 39.7% | -17.07 | review_weighting |
 | Serie A | BTTS | 10 | 40.0% | -3.96 | review_weighting |
+| MLS | Winner | 74 | 40.5% | -15.02 | review_weighting |
 | LaLiga | Winner | 50 | 42.0% | -28.66 | review_weighting |
 | Bundesliga | Cards | 35 | 42.9% | -20.89 | review_weighting |
 | J1 League | BTTS | 9 | 44.4% | -0.38 | review_weighting |
@@ -60,8 +60,8 @@ Settled market rows: 1590
 
 | Flag | Count |
 | --- | ---: |
-| none | 906 |
-| missing_model_probability | 635 |
+| none | 907 |
+| missing_model_probability | 638 |
 | low_edge_hit | 18 |
 | high_edge_miss | 17 |
 | draw_pick | 14 |

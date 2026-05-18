@@ -1,47 +1,47 @@
 {
-  "generated_at": "2026-05-18 10:30:26 ACST",
+  "generated_at": "2026-05-18 13:54:28 ACST",
   "prediction_tracking_start_date": "2026-04-22",
-  "settled_market_rows": 1590,
+  "settled_market_rows": 1594,
   "market_summary": [
     {
       "market": "BTTS",
-      "settled": 404,
-      "hits": 219,
+      "settled": 405,
+      "hits": 220,
       "misses": 185,
-      "hit_rate": 0.5421,
-      "odds_hit": 160.22,
+      "hit_rate": 0.5432,
+      "odds_hit": 161.92,
       "odds_loss": 124.65,
-      "odds_net": 35.57
+      "odds_net": 37.27
     },
     {
       "market": "Cards",
-      "settled": 378,
+      "settled": 379,
       "hits": 226,
-      "misses": 152,
-      "hit_rate": 0.5979,
+      "misses": 153,
+      "hit_rate": 0.5963,
       "odds_hit": 143.06,
-      "odds_loss": 120.28,
-      "odds_net": 22.78
+      "odds_loss": 121.95,
+      "odds_net": 21.11
     },
     {
       "market": "Goals",
-      "settled": 404,
-      "hits": 225,
+      "settled": 405,
+      "hits": 226,
       "misses": 179,
-      "hit_rate": 0.5569,
-      "odds_hit": 160.84,
+      "hit_rate": 0.558,
+      "odds_hit": 162.64,
       "odds_loss": 135.74,
-      "odds_net": 25.1
+      "odds_net": 26.9
     },
     {
       "market": "Winner",
-      "settled": 404,
-      "hits": 200,
+      "settled": 405,
+      "hits": 201,
       "misses": 204,
-      "hit_rate": 0.495,
-      "odds_hit": 159.16,
+      "hit_rate": 0.4963,
+      "odds_hit": 161.21,
       "odds_loss": 224.64,
-      "odds_net": -65.48
+      "odds_net": -63.43
     }
   ],
   "league_summary": [
@@ -137,13 +137,13 @@
     },
     {
       "league": "MLS",
-      "settled": 292,
-      "hits": 152,
-      "misses": 140,
-      "hit_rate": 0.5205,
-      "odds_hit": 153.12,
-      "odds_loss": 121.89,
-      "odds_net": 31.23
+      "settled": 296,
+      "hits": 155,
+      "misses": 141,
+      "hit_rate": 0.5236,
+      "odds_hit": 158.67,
+      "odds_loss": 123.56,
+      "odds_net": 35.11
     },
     {
       "league": "Premier League",
@@ -230,19 +230,19 @@
       "action": "review_weighting"
     },
     {
-      "league": "MLS",
-      "market": "Winner",
-      "settled": 73,
-      "hit_rate": 0.3973,
-      "odds_net": -17.07,
-      "action": "review_weighting"
-    },
-    {
       "league": "Serie A",
       "market": "BTTS",
       "settled": 10,
       "hit_rate": 0.4,
       "odds_net": -3.96,
+      "action": "review_weighting"
+    },
+    {
+      "league": "MLS",
+      "market": "Winner",
+      "settled": 74,
+      "hit_rate": 0.4054,
+      "odds_net": -15.02,
       "action": "review_weighting"
     },
     {

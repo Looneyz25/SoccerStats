@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-18 10:30:26 ACST",
+  "generated_at": "2026-05-18 13:54:28 ACST",
   "source": "docs\\agent-system\\outputs\\model_result_review_summary.json",
   "mode": "conservative_auto_learning",
   "rules": {
@@ -13,35 +13,35 @@
   "market_adjustments": {
     "btts": {
       "market": "BTTS",
-      "settled": 404,
-      "hit_rate": 0.5421,
-      "trust_factor": 0.9479,
-      "min_edge_delta": 0.0203,
-      "reason": "BTTS below 60% target over 404 settled markets."
+      "settled": 405,
+      "hit_rate": 0.5432,
+      "trust_factor": 0.9489,
+      "min_edge_delta": 0.0199,
+      "reason": "BTTS below 60% target over 405 settled markets."
     },
     "ou_cards": {
       "market": "Cards",
-      "settled": 378,
-      "hit_rate": 0.5979,
-      "trust_factor": 0.9981,
-      "min_edge_delta": 0.0007,
-      "reason": "Cards below 60% target over 378 settled markets."
+      "settled": 379,
+      "hit_rate": 0.5963,
+      "trust_factor": 0.9967,
+      "min_edge_delta": 0.0013,
+      "reason": "Cards below 60% target over 379 settled markets."
     },
     "ou_goals": {
       "market": "Goals",
-      "settled": 404,
-      "hit_rate": 0.5569,
-      "trust_factor": 0.9612,
-      "min_edge_delta": 0.0151,
-      "reason": "Goals below 60% target over 404 settled markets."
+      "settled": 405,
+      "hit_rate": 0.558,
+      "trust_factor": 0.9622,
+      "min_edge_delta": 0.0147,
+      "reason": "Goals below 60% target over 405 settled markets."
     },
     "winner": {
       "market": "Winner",
-      "settled": 404,
-      "hit_rate": 0.495,
-      "trust_factor": 0.9055,
-      "min_edge_delta": 0.0367,
-      "reason": "Winner below 60% target over 404 settled markets."
+      "settled": 405,
+      "hit_rate": 0.4963,
+      "trust_factor": 0.9067,
+      "min_edge_delta": 0.0363,
+      "reason": "Winner below 60% target over 405 settled markets."
     }
   },
   "league_market_adjustments": {
@@ -71,11 +71,11 @@
       "league": "MLS",
       "market": "Winner",
       "market_key": "winner",
-      "settled": 73,
-      "hit_rate": 0.3973,
-      "odds_net": -17.07,
-      "trust_factor": 0.8668,
-      "min_edge_delta": 0.0518,
+      "settled": 74,
+      "hit_rate": 0.4054,
+      "odds_net": -15.02,
+      "trust_factor": 0.8704,
+      "min_edge_delta": 0.0504,
       "reason": "MLS Winner weak spot from result review."
     },
     "LaLiga|winner": {
