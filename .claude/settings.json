@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node scripts/run-python.js -c \"import scripts.soccer_fetch_sportsbet, scripts.soccer_fetch_pred_odds, scripts.soccer_routine; print\\('ok'\\)\")",
+      "Bash(.venv-local/Scripts/python.exe -c \"import scripts.soccer_fetch_sportsbet, scripts.soccer_fetch_pred_odds, scripts.soccer_routine; print\\('ok'\\)\")"
+    ]
+  }
+}

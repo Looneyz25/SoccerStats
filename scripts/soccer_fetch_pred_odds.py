@@ -53,16 +53,17 @@ def fetch_all_odds(eid):
     return out
 
 def seed_match_odds(m):
-    """Use already-attached 1X2 odds as a no-network fallback.
+    """Build a market dict from already-attached odds as a no-network fallback.
 
-    The main routine often has `odds` from SofaScore before this helper runs.
-    Reusing it prevents visible Winner cards from showing "Odds -" when a
-    later market fetch is slow or blocked.
+    Preferred order: deep Sportsbet markets (`sportsbet_markets`) > Sportsbet 1X2 >
+    SofaScore 1X2 stored on `odds`. SofaScore upstream sometimes writes the
+    sentinel `{home:1, draw:1, away:1}` when a market isn't posted yet, so we
+    require each price to be a real one before seeding it.
     """
+    out = dict(m.get("sportsbet_markets") or {})
     odds = m.get("sportsbet_odds") or m.get("odds") or {}
-    out = {}
-    if all(odds.get(k) is not None for k in ("home", "draw", "away")):
-        out["Full time"] = {"1": odds["home"], "X": odds["draw"], "2": odds["away"]}
+    if all(is_price(odds.get(k)) for k in ("home", "draw", "away")):
+        out.setdefault("Full time", {"1": odds["home"], "X": odds["draw"], "2": odds["away"]})
     return out
 
 def any_line(market_odds, prefix, choice):
@@ -170,21 +171,24 @@ def attach_corner_odds(m, market):
 def attach_pred_odds(m, market):
     p = m.get("predictions") or {}
 
-    # Winner — sportsbet first, fallback SofaScore Full time (90-min only)
+    # Winner — sportsbet first, fallback SofaScore Full time (90-min only).
+    # Gate on `not is_price(...)` rather than `is None` so the sentinel 1.0
+    # placeholder (SofaScore "0/1" fractional → 1.0) gets overwritten.
     w = p.get("winner") or {}
-    if w.get("type") and w.get("odds") is None:
+    if w.get("type") and not is_price(w.get("odds")):
         wt = w["type"]
-        sb = m.get("sportsbet_odds") or m.get("odds") or {}
-        if sb.get(wt) is not None:
+        sb = m.get("sportsbet_odds") or {}
+        if is_price(sb.get(wt)):
             w["odds"] = sb[wt]
         else:
             full = market.get("Full time", {})
             key = "1" if wt == "home" else ("X" if wt == "draw" else "2")
-            if key in full: w["odds"] = full[key]
+            if is_price(full.get(key)):
+                w["odds"] = full[key]
 
     # Goals
     og = p.get("ou_goals") or {}
-    if og.get("pick") and og.get("odds") is None:
+    if og.get("pick") and not is_price(og.get("odds")):
         line = str(og.get("line", 2.5))
         v = (market.get(f"Match goals {line}") or {}).get(og["pick"])
         if v is None:
@@ -193,7 +197,7 @@ def attach_pred_odds(m, market):
 
     # BTTS
     b = p.get("btts") or {}
-    if b.get("pick") and b.get("odds") is None:
+    if b.get("pick") and not is_price(b.get("odds")):
         v = (market.get("Both teams to score") or {}).get(b["pick"])
         if v is None:
             v = streak_price(m, "scoring", None, b["pick"]) or streak_price(m, "clean sheet", None, b["pick"])
@@ -201,7 +205,7 @@ def attach_pred_odds(m, market):
 
     # Cards
     oc = p.get("ou_cards") or {}
-    if oc.get("pick") and oc.get("odds") is None:
+    if oc.get("pick") and not is_price(oc.get("odds")):
         line = str(oc.get("line", 4.5))
         v = (market.get(f"Cards in match {line}") or {}).get(oc["pick"]) \
             or any_line(market, "Cards in match", oc["pick"])

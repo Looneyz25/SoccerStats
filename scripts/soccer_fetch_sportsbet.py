@@ -3,11 +3,16 @@
 into match_data.json as `sportsbet_odds`. Australian "Win" prices are decimal-minus-1
 (profit per unit), so we add 1 to display as standard decimal odds.
 
+Also pulls the deeper market book from each matched event's page and stores it as
+`sportsbet_markets` in SofaScore-compatible keys ("Full time", "Both teams to score",
+"Match goals 2.5", "Cards in match 4.5", "Corners 2-Way 9.5", etc.) so the
+prediction-odds attacher can consume it without changes to its keying scheme.
+
 NOTE: Markets matched are "Win-Draw-Win" / "Match Result" / "1X2" — these are 90-minute
 regular time only. Extra-time markets ("Match Result Including Overtime", etc.) are
 explicitly excluded.
 """
-import json, re, time, pathlib, unicodedata
+import json, os, re, time, pathlib, unicodedata
 import random
 from curl_cffi import requests
 
@@ -105,6 +110,113 @@ def to_decimal(num, den):
     """Sportsbet AU price = profit/stake. Decimal odds = profit + 1."""
     return round(num / den + 1.0, 2)
 
+
+_GOALS_MARKET_RE = re.compile(r"^Over/Under\s+(\d+(?:\.\d+)?)\s+Goals$", re.I)
+_CARDS_MARKET_RE = re.compile(r"^Over/Under\s+(\d+(?:\.\d+)?)\s+Cards$", re.I)
+_CORNERS_MARKET_RE = re.compile(r"^Total\s+Corners\s+(\d+(?:\.\d+)?)$", re.I)
+_OVER_UNDER_OUTCOME_RE = re.compile(r"^(Over|Under)\b", re.I)
+
+
+def _outcome_price(oc):
+    wp = oc.get("winPrice") or {}
+    try:
+        return to_decimal(wp["num"], wp["den"])
+    except Exception:
+        return None
+
+
+def extract_event_markets(ev, markets, outcomes):
+    """Normalize Sportsbet markets into SofaScore-shaped keys.
+
+    Returns {market_key: {choice: decimal_price}} with keys:
+        "Full time"          -> {"1","X","2"}
+        "Both teams to score"-> {"Yes","No"}
+        "Match goals 2.5"    -> {"Over","Under"}
+        "Cards in match 4.5" -> {"Over","Under"}
+        "Corners 2-Way 9.5"  -> {"Over","Under"}
+    """
+    out = {}
+    for mid in ev.get("marketIds", []):
+        mk = markets.get(str(mid)) or markets.get(mid)
+        if not mk:
+            continue
+        name = (mk.get("name") or "").strip()
+        choices = {}
+        for oid in mk.get("outcomeIds", []):
+            oc = outcomes.get(str(oid)) or outcomes.get(oid)
+            if not oc:
+                continue
+            price = _outcome_price(oc)
+            if price is None or price <= 1.01:
+                continue
+            label = (oc.get("name") or "").strip()
+            rt = oc.get("resultType") or ""
+            if name in ("Win-Draw-Win", "Match Result", "1X2"):
+                if rt == "H":
+                    choices["1"] = price
+                elif rt == "D":
+                    choices["X"] = price
+                elif rt == "A":
+                    choices["2"] = price
+                continue
+            ou = _OVER_UNDER_OUTCOME_RE.match(label)
+            if ou:
+                choices[ou.group(1).capitalize()] = price
+                continue
+            if label in ("Yes", "No"):
+                choices[label] = price
+        if not choices:
+            continue
+        if name in ("Win-Draw-Win", "Match Result", "1X2"):
+            if all(k in choices for k in ("1", "X", "2")):
+                out["Full time"] = choices
+            continue
+        if name == "Both Teams To Score":
+            out["Both teams to score"] = choices
+            continue
+        m_goals = _GOALS_MARKET_RE.match(name)
+        if m_goals:
+            out[f"Match goals {m_goals.group(1)}"] = choices
+            continue
+        m_cards = _CARDS_MARKET_RE.match(name)
+        if m_cards:
+            out[f"Cards in match {m_cards.group(1)}"] = choices
+            continue
+        m_corners = _CORNERS_MARKET_RE.match(name)
+        if m_corners:
+            out[f"Corners 2-Way {m_corners.group(1)}"] = choices
+            continue
+    return out
+
+
+def fetch_event_markets(event_url):
+    """Fetch a single event page and return its normalized market dict."""
+    try:
+        r = requests.get(event_url, impersonate=_profile(), timeout=20)
+        if r.status_code != 200:
+            return {}
+        html = r.text
+        start = html.find('window.__PRELOADED_STATE__ = ')
+        if start == -1:
+            return {}
+        start += len('window.__PRELOADED_STATE__ = ')
+        end = html.find('window.__APOLLO_STATE__', start)
+        data = json.loads(html[start:end].rstrip().rstrip(';').rstrip())
+    except Exception:
+        return {}
+    sb = (data.get("entities") or {}).get("sportsbook") or {}
+    events = sb.get("events", {})
+    markets = sb.get("markets", {})
+    outcomes = sb.get("outcomes", {})
+    best = {}
+    for ev in events.values():
+        if not ev.get("marketIds"):
+            continue
+        markets_for_ev = extract_event_markets(ev, markets, outcomes)
+        if len(markets_for_ev) > len(best):
+            best = markets_for_ev
+    return best
+
 def extract_odds(data, league_slug=None):
     """Extract Win-Draw-Win (90-min regular time) prices for every event on the league page."""
     out = {}
@@ -164,6 +276,9 @@ def main():
     matched = 0
     no_match = []
     cache = {}
+    deep_budget = float(os.environ.get("SOCCER_SPORTSBET_DEEP_BUDGET", "180"))
+    deep_start = time.time()
+    deep_targets = []
     for L in store["leagues"]:
         slug = LEAGUE_PAGES.get(L["name"])
         if not slug:
@@ -184,10 +299,29 @@ def main():
                                        "away": hit["away"], "event_id": hit["event_id"],
                                        "event_url": hit.get("event_url")}
                 matched += 1
+                if hit.get("event_url"):
+                    deep_targets.append(m)
             else:
                 no_match.append((L["name"], m["home"]["name"], m["away"]["name"]))
+
+    deep_targets.sort(key=lambda x: (x.get("date", ""), x.get("time", "")))
+    deep_hits = 0
+    for m in deep_targets:
+        if time.time() - deep_start > deep_budget:
+            print(f"[deep] budget {deep_budget:.0f}s reached; stopped after {deep_hits} events")
+            break
+        url = (m.get("sportsbet_odds") or {}).get("event_url")
+        if not url:
+            continue
+        markets_dict = fetch_event_markets(url)
+        time.sleep(0.8)
+        if not markets_dict:
+            continue
+        m["sportsbet_markets"] = markets_dict
+        deep_hits += 1
+
     STORE_PATH.write_text(json.dumps(store, indent=2, ensure_ascii=False), encoding="utf-8")
-    print(f"=== matched: {matched} | unmatched: {len(no_match)}")
+    print(f"=== matched: {matched} | deep_markets: {deep_hits} | unmatched: {len(no_match)}")
     for nm in no_match[:15]: print("  -", nm)
 
 if __name__ == "__main__":

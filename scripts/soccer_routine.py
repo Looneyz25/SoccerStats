@@ -841,6 +841,9 @@ def parse_full_time_odds(payload):
                     else:
                         v = float(v)
                 except: continue
+                # Sentinel: SofaScore returns "0/1" (→ 1.0) when a market is not
+                # yet posted. Reject anything that isn't a real bookmaker price.
+                if v <= 1.01: continue
                 k = ch.get("name", "")
                 if k == "1": out["home"] = round(v, 2)
                 elif k == "X": out["draw"] = round(v, 2)
