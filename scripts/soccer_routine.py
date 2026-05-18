@@ -20,6 +20,7 @@ Usage:
     python3 scripts/soccer_routine.py --results-only
 """
 import argparse
+import difflib
 import json, math, random, re, subprocess, sys, time, unicodedata
 import os
 from datetime import date, datetime, timedelta, timezone
@@ -578,11 +579,51 @@ TEAM_ALIASES = {
     "rennais": "rennes",
 }
 
+TEAM_NAME_STOPWORDS = {
+    "afc",
+    "cf",
+    "club",
+    "de",
+    "del",
+    "fc",
+    "fk",
+    "sc",
+    "stade",
+    "the",
+}
+
+TEAM_WORD_ALIASES = {
+    "rennais": "rennes",
+    "utd": "united",
+}
+
 
 def team_norm(value):
     plain = unicodedata.normalize("NFKD", value or "").encode("ascii", "ignore").decode("ascii")
     text = re.sub(r"[^a-z0-9]", "", plain.lower())
     return text.replace("fc", "").replace("utd", "united")
+
+
+def team_words(value):
+    plain = unicodedata.normalize("NFKD", value or "").encode("ascii", "ignore").decode("ascii")
+    words = []
+    for word in re.findall(r"[a-z0-9]+", plain.lower()):
+        word = TEAM_WORD_ALIASES.get(word, word)
+        if word and word not in TEAM_NAME_STOPWORDS:
+            words.append(word)
+    return words
+
+
+def team_word_similarity(a, b):
+    a_words = team_words(a)
+    b_words = team_words(b)
+    if not a_words or not b_words:
+        return 0.0
+    shorter, longer = (a_words, b_words) if len(a_words) <= len(b_words) else (b_words, a_words)
+    scores = []
+    for word in shorter:
+        scores.append(max(difflib.SequenceMatcher(None, word, other).ratio() for other in longer))
+    return sum(scores) / len(scores)
 
 
 def team_names_match(a, b):
@@ -597,6 +638,8 @@ def team_names_match(a, b):
             return True
         if token in b_norm and expanded in a_norm:
             return True
+    if team_word_similarity(a, b) >= 0.82:
+        return True
     return False
 
 
