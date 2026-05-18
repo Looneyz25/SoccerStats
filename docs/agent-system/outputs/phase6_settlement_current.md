@@ -6,18 +6,18 @@ Timezone: Australia/Adelaide
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-18 17:54:32 ACST |
+| run_timestamp | 2026-05-19 01:54:17 ACST |
 | sofa_health | healthy |
 | flashscore_health | healthy |
 | flashscore_note |  |
-| phase5_input_rows | 3 |
+| phase5_input_rows | 1 |
 | rows_settled_this_run | 0 |
 | won_this_run | 0 |
 | lost_this_run | 0 |
 | pending | 0 |
 | void | 0 |
 | not_found | 0 |
-| skipped | 3 |
+| skipped | 1 |
 
 ## History Summary
 
@@ -36,6 +36,4 @@ Timezone: Australia/Adelaide
 
 | Date | Match | Pick | Odds | Stake | Actual | Outcome | Status | Return |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-18 | Inter Miami vs Portland Timbers |  |  |  |  |  | skipped | 0.0 |
-| 2026-05-18 | Nashville SC vs Los Angeles FC |  |  |  |  |  | skipped | 0.0 |
 | 2026-05-19 | Arsenal vs Burnley |  |  |  |  |  | skipped | 0.0 |

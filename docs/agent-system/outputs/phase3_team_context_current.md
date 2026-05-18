@@ -7,17 +7,17 @@ Source: SofaScore (smart-mimic session)
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-18 17:54:10 ACST |
+| run_timestamp | 2026-05-19 01:53:55 ACST |
 | timezone | Australia/Adelaide |
 | source | SofaScore (smart-mimic session) |
-| phase2_input_rows | 3 |
+| phase2_input_rows | 1 |
 | phase2_ready_rows | 1 |
-| phase3_total_rows | 3 |
+| phase3_total_rows | 1 |
 | ready_for_phase_4 | 0 |
 | team_unresolved | 1 |
 | partial_form | 0 |
 | source_blocked | 0 |
-| upstream_blocked | 2 |
+| upstream_blocked | 0 |
 | next_action | SofaScore endpoints failed. Check session warmup, IP, or rerun later. |
 
 ## Source Health
@@ -30,6 +30,4 @@ Source: SofaScore (smart-mimic session)
 
 | Date | League | Home | Away | H last5 (W-D-L GF-GA) | A last5 (W-D-L GF-GA) | H Streaks | A Streaks | H2H | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-18 | MLS | Inter Miami | Portland Timbers | -- - | -- - |  |  |  (H/A/D) | upstream_blocked |
-| 2026-05-18 | MLS | Nashville SC | Los Angeles FC | -- - | -- - |  |  |  (H/A/D) | upstream_blocked |
 | 2026-05-19 | Premier League | Arsenal | Burnley | -- - | -- - |  |  |  (H/A/D) | team_unresolved |
