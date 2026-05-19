@@ -2459,14 +2459,14 @@ function BookmakerLink({ bookmakerId, href, label }) {
       href={href}
       target="_blank"
       rel="noreferrer"
-      className={`inline-flex h-11 w-full items-center justify-center gap-1.5 rounded-md border px-3 text-sm font-semibold shadow-panel transition sm:w-52 sm:gap-2 sm:px-5 ${bookmaker.buttonClass}`}
+      className={`inline-flex h-11 w-full items-center justify-center rounded-md border px-3 text-sm font-semibold shadow-panel transition sm:w-52 sm:px-5 ${bookmaker.buttonClass}`}
       aria-label={`Open this market on ${bookmaker.name}`}
     >
       {bookmaker.logoSrc ? (
-        <>
-          <img src={bookmaker.logoSrc} alt="" className="h-8 w-auto max-w-36 sm:h-9 sm:max-w-44" aria-hidden="true" />
+        <span className="inline-flex items-center justify-center">
+          <img src={bookmaker.logoSrc} alt="" className="h-8 w-auto max-w-36 sm:h-9 sm:max-w-40" aria-hidden="true" />
           <span className="sr-only">{label}</span>
-        </>
+        </span>
       ) : (
         <span>{label}</span>
       )}
