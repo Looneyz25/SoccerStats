@@ -26,5 +26,5 @@ Timezone: Australia/Adelaide
 
 | Date | Time | League | Home | Away | Event ID | Status | Phase 1 Status | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-20 | 04:00 | Premier League | Bournemouth | Manchester City | flashscore:rkXMW40U | live | ready_for_phase_2 | Keyless Flashscore fixture feed. |
 | 2026-05-20 | 04:45 | Premier League | Chelsea | Tottenham | flashscore:Uu6uknGb | live | ready_for_phase_2 | Keyless Flashscore fixture feed. |
+| 2026-05-20 | FT | Premier League | Bournemouth | Manchester City | flashscore:rkXMW40U | FT | ready_for_phase_2 | Keyless Flashscore fixture feed. |

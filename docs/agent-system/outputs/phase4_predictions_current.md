@@ -7,9 +7,9 @@ Model: capped Poisson grid, last-5 form, +0.20 home advantage
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-20 01:56:56 ACST |
+| run_timestamp | 2026-05-20 05:56:08 ACST |
 | model | capped Poisson 7x7, last-5 form, home advantage +0.20 |
-| model_calibration | 2026-05-19 19:01:17 ACST |
+| model_calibration | 2026-05-20 05:34:41 ACST |
 | phase3_input_rows | 2 |
 | phase4_total_rows | 2 |
 | ready_for_phase_5 | 0 |
@@ -21,5 +21,5 @@ Model: capped Poisson grid, last-5 form, +0.20 home advantage
 
 | Date | League | Match | λH | λA | pH | pD | pA | pick | fH/mH | fD/mD | fA/mA | edgeH | edgeD | edgeA | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-20 | Premier League | Bournemouth vs Manchester City |  |  |  |  |  |  | / | / | / |  |  |  | upstream_blocked |
 | 2026-05-20 | Premier League | Chelsea vs Tottenham |  |  |  |  |  |  | / | / | / |  |  |  | upstream_blocked |
+| 2026-05-20 | Premier League | Bournemouth vs Manchester City |  |  |  |  |  |  | / | / | / |  |  |  | upstream_blocked |

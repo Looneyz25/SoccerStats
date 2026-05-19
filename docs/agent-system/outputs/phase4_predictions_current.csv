@@ -1,3 +1,3 @@
 run_timestamp,league,event_id,date,time,home,away,home_form_n,away_form_n,lambda_home,lambda_away,p_home,p_draw,p_away,p_btts,p_over25,model_pick,fair_home,fair_draw,fair_away,market_home,market_draw,market_away,market_implied_home,market_implied_draw,market_implied_away,edge_home,edge_draw,edge_away,phase4_status,phase4_notes
-2026-05-20 01:56:56 ACST,Premier League,flashscore:rkXMW40U,2026-05-20,04:00,Bournemouth,Manchester City,,,,,,,,,,,,,,,,,,,,,,,upstream_blocked,Phase 3 status was team_unresolved.
-2026-05-20 01:56:56 ACST,Premier League,flashscore:Uu6uknGb,2026-05-20,04:45,Chelsea,Tottenham,,,,,,,,,,,,,,,,,,,,,,,upstream_blocked,Phase 3 status was team_unresolved.
+2026-05-20 05:56:08 ACST,Premier League,flashscore:Uu6uknGb,2026-05-20,04:45,Chelsea,Tottenham,,,,,,,,,,,,,,,,,,,,,,,upstream_blocked,Phase 3 status was team_unresolved.
+2026-05-20 05:56:08 ACST,Premier League,flashscore:rkXMW40U,2026-05-20,FT,Bournemouth,Manchester City,,,,,,,,,,,,,,,,,,,,,,,upstream_blocked,Phase 3 status was upstream_blocked.

@@ -6,7 +6,7 @@ Timezone: Australia/Adelaide
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-20 01:56:56 ACST |
+| run_timestamp | 2026-05-20 05:56:09 ACST |
 | sofa_health | healthy |
 | flashscore_health | healthy |
 | flashscore_note |  |
@@ -36,5 +36,5 @@ Timezone: Australia/Adelaide
 
 | Date | Match | Pick | Odds | Stake | Actual | Outcome | Status | Return |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-20 | Bournemouth vs Manchester City |  |  |  |  |  | skipped | 0.0 |
 | 2026-05-20 | Chelsea vs Tottenham |  |  |  |  |  | skipped | 0.0 |
+| 2026-05-20 | Bournemouth vs Manchester City |  |  |  |  |  | skipped | 0.0 |

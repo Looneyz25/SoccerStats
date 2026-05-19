@@ -1,19 +1,19 @@
 # Soccer Stats Daily Summary
 
-Generated: 2026-05-20 01:56 ACST
+Generated: 2026-05-20 05:56 ACST
 Date window: 2026-05-20 to 2026-05-20
 
 ## Phase Run Status
 
 | Phase | Status | Exit | Duration | Last line |
 | --- | --- | --- | --- | --- |
-| 1 Fixtures | ok | 0 | 1.19s | NOTE: Missing API_FOOTBALL_KEY/APISPORTS_KEY; used keyless Flashscore feed. |
-| 2 Odds | ok | 0 | 9.77s | total=2 ready_for_phase_3=2 unmatched=0 blocked=0 |
-| 3 Team Context | ok | 0 | 41.02s | total=2 ready_for_phase_4=0 unresolved=2 upstream_blocked=0 |
-| 4 Predictions | ok | 0 | 0.12s | total=2 ready_for_phase_5=0 model_only=0 upstream_blocked=2 |
-| 5 Value & Risk | ok | 0 | 0.11s | total=2 bets=0 leans=0 no_value=0 upstream_blocked=2 scale=1.0 |
-| 6 Settlement | ok | 0 | 2.14s | settled_this_run=0 won=0 lost=0 pending=0 history_hit_rate=0.0 history_roi=-1.0 |
-| Result Review | ok | 0 | 0.12s | settled_market_rows=1598 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the revie |
+| 1 Fixtures | ok | 0 | 1.0s | NOTE: Missing API_FOOTBALL_KEY/APISPORTS_KEY; used keyless Flashscore feed. |
+| 2 Odds | ok | 0 | 8.97s | total=2 ready_for_phase_3=1 unmatched=1 blocked=0 |
+| 3 Team Context | ok | 0 | 23.5s | total=2 ready_for_phase_4=0 unresolved=1 upstream_blocked=1 |
+| 4 Predictions | ok | 0 | 0.11s | total=2 ready_for_phase_5=0 model_only=0 upstream_blocked=2 |
+| 5 Value & Risk | ok | 0 | 0.09s | total=2 bets=0 leans=0 no_value=0 upstream_blocked=2 scale=1.0 |
+| 6 Settlement | ok | 0 | 1.75s | settled_this_run=0 won=0 lost=0 pending=0 history_hit_rate=0.0 history_roi=-1.0 |
+| Result Review | ok | 0 | 0.11s | settled_market_rows=1598 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the revie |
 | Model Calibration | ok | 0 | 0.08s | market_adjustments=4 league_market_adjustments=7 |
 
 ## Phase Health
@@ -21,7 +21,7 @@ Date window: 2026-05-20 to 2026-05-20
 | Phase | Ready | Blocked | Source |
 | --- | --- | --- | --- |
 | 1 Fixtures | 2 | 0 | Flashscore |
-| 2 Odds | 2 | 0 | Sportsbet (mimic) |
+| 2 Odds | 1 | 1 | Sportsbet (mimic) |
 | 3 Team Context | 0 | 2 | SofaScore (mimic) |
 | 4 Predictions | 0 | 2 | model |
 | 5 Value & Risk | 0 bets / 0 leans | 2 | model |
