@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3001",
+    "dev": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/restart-next-dev.ps1",
     "dev:next": "next dev -p 3001",
     "dev:fresh": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/restart-next-dev.ps1",
     "dev:clean": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/restart-next-dev.ps1 -NoStart",
