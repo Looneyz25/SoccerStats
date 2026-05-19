@@ -11,39 +11,39 @@
     "label": "2 Odds",
     "status": "ok",
     "exit": 0,
-    "duration_s": 11.22,
-    "last_line": "total=1 ready_for_phase_3=1 unmatched=0 blocked=0",
+    "duration_s": 11.26,
+    "last_line": "total=2 ready_for_phase_3=2 unmatched=0 blocked=0",
     "stderr_tail": ""
   },
   {
     "label": "3 Team Context",
     "status": "ok",
     "exit": 0,
-    "duration_s": 22.02,
-    "last_line": "total=1 ready_for_phase_4=0 unresolved=1 upstream_blocked=0",
+    "duration_s": 40.17,
+    "last_line": "total=2 ready_for_phase_4=0 unresolved=2 upstream_blocked=0",
     "stderr_tail": ""
   },
   {
     "label": "4 Predictions",
     "status": "ok",
     "exit": 0,
-    "duration_s": 0.11,
-    "last_line": "total=1 ready_for_phase_5=0 model_only=0 upstream_blocked=1",
+    "duration_s": 0.09,
+    "last_line": "total=2 ready_for_phase_5=0 model_only=0 upstream_blocked=2",
     "stderr_tail": ""
   },
   {
     "label": "5 Value & Risk",
     "status": "ok",
     "exit": 0,
-    "duration_s": 0.12,
-    "last_line": "total=1 bets=0 leans=0 no_value=0 upstream_blocked=1 scale=1.0",
+    "duration_s": 0.09,
+    "last_line": "total=2 bets=0 leans=0 no_value=0 upstream_blocked=2 scale=1.0",
     "stderr_tail": ""
   },
   {
     "label": "6 Settlement",
     "status": "ok",
     "exit": 0,
-    "duration_s": 2.48,
+    "duration_s": 1.42,
     "last_line": "settled_this_run=0 won=0 lost=0 pending=0 history_hit_rate=0.0 history_roi=-1.0",
     "stderr_tail": ""
   },
@@ -51,8 +51,8 @@
     "label": "Result Review",
     "status": "ok",
     "exit": 0,
-    "duration_s": 0.12,
-    "last_line": "settled_market_rows=1594 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the review agent can compare confidence bands to actual hit rate.",
+    "duration_s": 0.11,
+    "last_line": "settled_market_rows=1598 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the review agent can compare confidence bands to actual hit rate.",
     "stderr_tail": ""
   },
   {

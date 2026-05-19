@@ -10,17 +10,46 @@
      ⨯ devtoolSegmentExplorer
 
  ✓ Starting...
- ✓ Ready in 963ms
+ ✓ Ready in 1186ms
  ○ Compiling /dashboard ...
- ✓ Compiled /dashboard in 2.9s (843 modules)
- GET /dashboard 200 in 3252ms
- ✓ Compiled in 80ms (292 modules)
- ✓ Compiled in 733ms (292 modules)
- ✓ Compiled /dashboard in 209ms (542 modules)
- GET /dashboard 200 in 544ms
- ✓ Compiled in 123ms (292 modules)
- ✓ Compiled in 119ms (292 modules)
- ✓ Compiled in 195ms (292 modules)
- ✓ Compiled in 176ms (292 modules)
- ✓ Compiled /dashboard in 162ms (542 modules)
- GET /dashboard 200 in 349ms
+ ✓ Compiled /dashboard in 2.8s (843 modules)
+ GET /dashboard?match=14023950 200 in 3193ms
+ ✓ Compiled in 107ms (292 modules)
+ GET /dashboard 200 in 32ms
+ GET /dashboard?match=14023950 200 in 33ms
+ ✓ Compiled /api/match-data in 205ms (832 modules)
+ GET /api/match-data?date=2026-05-19 200 in 2644ms
+ GET /api/match-data 200 in 3306ms
+ GET /api/match-data?teamOptions=1 200 in 6557ms
+ GET /api/match-data?teamOptions=1 200 in 6557ms
+ ✓ Compiled in 473ms (834 modules)
+ GET /dashboard?match=14023950 200 in 91ms
+ GET /dashboard 200 in 140ms
+ GET /dashboard 200 in 34ms
+ ✓ Compiled in 386ms (834 modules)
+ GET /dashboard?match=14023950 200 in 94ms
+ ✓ Compiled in 101ms (292 modules)
+ GET /dashboard?match=14023950 200 in 14ms
+ GET /dashboard?match=14023950 200 in 188ms
+ ✓ Compiled /api/match-data in 64ms (554 modules)
+ GET /dashboard 200 in 211ms
+ GET /api/match-data?date=2026-05-19 200 in 2048ms
+ GET /api/match-data 200 in 2908ms
+ GET /api/match-data?teamOptions=1 200 in 5439ms
+ GET /api/match-data?teamOptions=1 200 in 5440ms
+ ✓ Compiled in 418ms (834 modules)
+ GET /dashboard?match=14023950 200 in 84ms
+ ✓ Compiled /api/match-data in 51ms (554 modules)
+ GET /api/match-data?date=2026-05-19 200 in 2112ms
+ GET /api/match-data?teamOptions=1 200 in 5526ms
+ ✓ Compiled in 441ms (846 modules)
+ GET /dashboard?match=14023950 200 in 64ms
+ GET /api/match-data?date=2026-05-19 200 in 1747ms
+ GET /api/match-data?teamOptions=1 200 in 5918ms
+ GET /dashboard 200 in 236ms
+ GET /dashboard 200 in 27ms
+ GET /dashboard?match=14023950 200 in 31ms
+ GET /api/match-data?date=2026-05-19 200 in 8ms
+ GET /api/match-data?teamOptions=1 200 in 16ms
+ GET /api/match-data?teamOptions=1 200 in 16ms
+ GET /api/match-data 200 in 1919ms

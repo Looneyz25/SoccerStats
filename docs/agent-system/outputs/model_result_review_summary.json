@@ -1,47 +1,47 @@
 {
-  "generated_at": "2026-05-19 01:54:19 ACST",
+  "generated_at": "2026-05-19 17:59:57 ACST",
   "prediction_tracking_start_date": "2026-04-22",
-  "settled_market_rows": 1594,
+  "settled_market_rows": 1598,
   "market_summary": [
     {
       "market": "BTTS",
-      "settled": 405,
-      "hits": 220,
+      "settled": 406,
+      "hits": 221,
       "misses": 185,
-      "hit_rate": 0.5432,
-      "odds_hit": 161.92,
+      "hit_rate": 0.5443,
+      "odds_hit": 163.45,
       "odds_loss": 124.65,
-      "odds_net": 37.27
+      "odds_net": 38.8
     },
     {
       "market": "Cards",
-      "settled": 379,
-      "hits": 226,
+      "settled": 380,
+      "hits": 227,
       "misses": 153,
-      "hit_rate": 0.5963,
-      "odds_hit": 143.06,
+      "hit_rate": 0.5974,
+      "odds_hit": 144.97,
       "odds_loss": 121.95,
-      "odds_net": 21.11
+      "odds_net": 23.02
     },
     {
       "market": "Goals",
-      "settled": 405,
-      "hits": 226,
+      "settled": 406,
+      "hits": 227,
       "misses": 179,
-      "hit_rate": 0.558,
-      "odds_hit": 162.64,
+      "hit_rate": 0.5591,
+      "odds_hit": 166.04,
       "odds_loss": 135.74,
-      "odds_net": 26.9
+      "odds_net": 30.3
     },
     {
       "market": "Winner",
-      "settled": 405,
-      "hits": 201,
+      "settled": 406,
+      "hits": 202,
       "misses": 204,
-      "hit_rate": 0.4963,
-      "odds_hit": 161.21,
+      "hit_rate": 0.4975,
+      "odds_hit": 162.29,
       "odds_loss": 224.64,
-      "odds_net": -63.43
+      "odds_net": -62.35
     }
   ],
   "league_summary": [
@@ -147,13 +147,13 @@
     },
     {
       "league": "Premier League",
-      "settled": 148,
-      "hits": 85,
+      "settled": 152,
+      "hits": 89,
       "misses": 63,
-      "hit_rate": 0.5743,
-      "odds_hit": 79.69,
+      "hit_rate": 0.5855,
+      "odds_hit": 87.61,
       "odds_loss": 57.28,
-      "odds_net": 22.41
+      "odds_net": 30.33
     },
     {
       "league": "Primeira Liga",
@@ -288,9 +288,9 @@
     {
       "league": "Premier League",
       "market": "Winner",
-      "settled": 37,
-      "hit_rate": 0.5135,
-      "odds_net": -8.69,
+      "settled": 38,
+      "hit_rate": 0.5263,
+      "odds_net": -7.61,
       "action": "review_weighting"
     }
   ],

@@ -6,18 +6,18 @@ Timezone: Australia/Adelaide
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-19 01:54:17 ACST |
+| run_timestamp | 2026-05-19 17:59:56 ACST |
 | sofa_health | healthy |
 | flashscore_health | healthy |
 | flashscore_note |  |
-| phase5_input_rows | 1 |
+| phase5_input_rows | 2 |
 | rows_settled_this_run | 0 |
 | won_this_run | 0 |
 | lost_this_run | 0 |
 | pending | 0 |
 | void | 0 |
 | not_found | 0 |
-| skipped | 1 |
+| skipped | 2 |
 
 ## History Summary
 
@@ -36,4 +36,5 @@ Timezone: Australia/Adelaide
 
 | Date | Match | Pick | Odds | Stake | Actual | Outcome | Status | Return |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-19 | Arsenal vs Burnley |  |  |  |  |  | skipped | 0.0 |
+| 2026-05-20 | Bournemouth vs Manchester City |  |  |  |  |  | skipped | 0.0 |
+| 2026-05-20 | Chelsea vs Tottenham |  |  |  |  |  | skipped | 0.0 |

@@ -7,13 +7,13 @@ Source: Sportsbet AU (Win-Draw-Win, 90-min regular time)
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-19 01:53:43 ACST |
+| run_timestamp | 2026-05-19 17:59:04 ACST |
 | timezone | Australia/Adelaide |
 | source | Sportsbet AU |
-| phase1_input_rows | 1 |
-| phase1_ready_rows | 1 |
-| phase2_total_rows | 1 |
-| ready_for_phase_3 | 1 |
+| phase1_input_rows | 2 |
+| phase1_ready_rows | 2 |
+| phase2_total_rows | 2 |
+| ready_for_phase_3 | 2 |
 | unmatched_market | 0 |
 | partial_market | 0 |
 | implausible_overround | 0 |
@@ -26,10 +26,11 @@ Source: Sportsbet AU (Win-Draw-Win, 90-min regular time)
 
 | League | Endpoint | HTTP | Events | WDW Markets | Health | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
-| Premier League | /betting/soccer/united-kingdom/english-premier-league | 200 | 13 | 13 | healthy |  |
+| Premier League | /betting/soccer/united-kingdom/english-premier-league | 200 | 12 | 12 | healthy |  |
 
 ## Odds
 
 | Date | Time | League | Home | Away | H | D | A | Overround | Match | Phase 2 Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-19 | 04:30 | Premier League | Arsenal | Burnley | 1.08 | 11.0 | 23.0 | 1.0603 | exact:1.0 | ready_for_phase_3 |
+| 2026-05-20 | 04:00 | Premier League | Bournemouth | Manchester City | 4.6 | 4.33 | 1.65 | 1.0544 | alias:0.9 | ready_for_phase_3 |
+| 2026-05-20 | 04:45 | Premier League | Chelsea | Tottenham | 1.9 | 3.7 | 4.0 | 1.0466 | exact:1.0 | ready_for_phase_3 |
