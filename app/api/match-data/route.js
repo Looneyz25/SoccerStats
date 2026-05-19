@@ -1,3 +1,6 @@
+import { existsSync } from 'node:fs';
+import path from 'node:path';
+import process from 'node:process';
 import { cert, getApps, initializeApp, applicationDefault } from 'firebase-admin/app';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
@@ -10,6 +13,7 @@ const FAST_DOC_PATH = ['dashboardData', 'match_data_fast'];
 const META_DOC_PATH = ['dashboardData', 'match_data'];
 const ACCESS_CACHE_TTL_MS = 60 * 1000;
 const DATA_CACHE_TTL_MS = 5 * 60 * 1000;
+const DEFAULT_SERVICE_ACCOUNT_PATH = path.join(process.cwd(), '.secrets', 'firebase-service-account.json');
 
 let adminApp = null;
 let cachedData = null;
@@ -58,7 +62,10 @@ function getAdminApp() {
     adminApp = getApps()[0];
     return adminApp;
   }
-  const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
+  const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT_JSON?.trim();
+  if (!serviceAccountJson && !process.env.GOOGLE_APPLICATION_CREDENTIALS && existsSync(DEFAULT_SERVICE_ACCOUNT_PATH)) {
+    process.env.GOOGLE_APPLICATION_CREDENTIALS = DEFAULT_SERVICE_ACCOUNT_PATH;
+  }
   const credential = serviceAccountJson ? cert(JSON.parse(serviceAccountJson)) : applicationDefault();
   adminApp = initializeApp({ projectId: PROJECT_ID, credential });
   return adminApp;
