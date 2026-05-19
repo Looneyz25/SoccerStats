@@ -79,6 +79,40 @@ const LEAGUE_LOGOS = {
   'J1 League': 'https://media.api-sports.io/football/leagues/98.png',
 };
 
+const TEAM_LOGOS = {
+  arsenal: 'https://media.api-sports.io/football/teams/42.png',
+  'aston villa': 'https://media.api-sports.io/football/teams/66.png',
+  bournemouth: 'https://media.api-sports.io/football/teams/35.png',
+  'afc bournemouth': 'https://media.api-sports.io/football/teams/35.png',
+  brentford: 'https://media.api-sports.io/football/teams/55.png',
+  brighton: 'https://media.api-sports.io/football/teams/51.png',
+  'brighton & hove albion': 'https://media.api-sports.io/football/teams/51.png',
+  burnley: 'https://media.api-sports.io/football/teams/44.png',
+  chelsea: 'https://media.api-sports.io/football/teams/49.png',
+  'crystal palace': 'https://media.api-sports.io/football/teams/52.png',
+  everton: 'https://media.api-sports.io/football/teams/45.png',
+  fulham: 'https://media.api-sports.io/football/teams/36.png',
+  leeds: 'https://media.api-sports.io/football/teams/63.png',
+  'leeds united': 'https://media.api-sports.io/football/teams/63.png',
+  liverpool: 'https://media.api-sports.io/football/teams/40.png',
+  'liverpool fc': 'https://media.api-sports.io/football/teams/40.png',
+  'manchester city': 'https://media.api-sports.io/football/teams/50.png',
+  'man city': 'https://media.api-sports.io/football/teams/50.png',
+  'manchester united': 'https://media.api-sports.io/football/teams/33.png',
+  'man united': 'https://media.api-sports.io/football/teams/33.png',
+  newcastle: 'https://media.api-sports.io/football/teams/34.png',
+  'newcastle united': 'https://media.api-sports.io/football/teams/34.png',
+  'nottingham forest': 'https://media.api-sports.io/football/teams/65.png',
+  sunderland: 'https://media.api-sports.io/football/teams/746.png',
+  tottenham: 'https://media.api-sports.io/football/teams/47.png',
+  'tottenham hotspur': 'https://media.api-sports.io/football/teams/47.png',
+  'west ham': 'https://media.api-sports.io/football/teams/48.png',
+  'west ham united': 'https://media.api-sports.io/football/teams/48.png',
+  wolves: 'https://media.api-sports.io/football/teams/39.png',
+  wolverhampton: 'https://media.api-sports.io/football/teams/39.png',
+  'wolverhampton wanderers': 'https://media.api-sports.io/football/teams/39.png',
+};
+
 const BOOKMAKERS = {
   sportsbet: {
     id: 'sportsbet',
@@ -188,9 +222,15 @@ function imageValue(...values) {
   return values.find((value) => typeof value === 'string' && value.trim()) || '';
 }
 
+function teamLogoFallback(team) {
+  const names = [team?.name, team?.short].map((value) => String(value || '').trim().toLowerCase()).filter(Boolean);
+  return names.map((name) => TEAM_LOGOS[name]).find(Boolean) || '';
+}
+
 function teamLogo(match, side) {
   const team = match?.[side] || {};
   return imageValue(
+    teamLogoFallback(team),
     team.logo,
     team.logo_url,
     team.crest,
@@ -4353,6 +4393,7 @@ function HomeInner() {
 
   const onPointerDown = useCallback((event) => {
     if (event.pointerType !== 'mouse' || event.button !== 0) return;
+    if (typeof window !== 'undefined' && window.matchMedia('(min-width: 640px)').matches) return;
     pointerSwipeRef.current = {
       x: event.clientX,
       y: event.clientY,
