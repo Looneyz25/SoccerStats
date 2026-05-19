@@ -3902,6 +3902,8 @@ function HomeInner() {
   const scrollPositionRef = useRef(0);
   const swipeStartRef = useRef(null);
   const longPressTimerRef = useRef(null);
+  const pointerSwipeRef = useRef(null);
+  const suppressClickRef = useRef(false);
   const dragStateRef = useRef({ active: false, committed: false });
   const [dragOffset, setDragOffset] = useState(0);
   const [dragActive, setDragActive] = useState(false);
@@ -4349,6 +4351,87 @@ function HomeInner() {
     }
   }, [clearLongPressTimer]);
 
+  const onPointerDown = useCallback((event) => {
+    if (event.pointerType !== 'mouse' || event.button !== 0) return;
+    pointerSwipeRef.current = {
+      x: event.clientX,
+      y: event.clientY,
+      time: Date.now(),
+      active: false,
+      pointerId: event.pointerId,
+    };
+    setSnapBack(false);
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+  }, []);
+
+  const onPointerMove = useCallback((event) => {
+    const start = pointerSwipeRef.current;
+    if (!start || start.pointerId !== event.pointerId) return;
+    const dx = event.clientX - start.x;
+    const dy = event.clientY - start.y;
+
+    if (!start.active) {
+      if (Math.abs(dx) < 12 || Math.abs(dx) < Math.abs(dy) * 1.2) return;
+      start.active = true;
+      setDragActive(true);
+    }
+
+    event.preventDefault();
+    const w = typeof window !== 'undefined' ? window.innerWidth || 360 : 360;
+    const max = w * 0.4;
+    const damped = Math.abs(dx) <= max ? dx : Math.sign(dx) * (max + (Math.abs(dx) - max) * 0.35);
+    setDragOffset(damped);
+  }, []);
+
+  const onPointerEnd = useCallback(
+    (event) => {
+      const start = pointerSwipeRef.current;
+      if (!start || start.pointerId !== event.pointerId) return;
+      pointerSwipeRef.current = null;
+      event.currentTarget.releasePointerCapture?.(event.pointerId);
+
+      if (!start.active) return;
+      suppressClickRef.current = true;
+      setTimeout(() => { suppressClickRef.current = false; }, 0);
+      const dx = event.clientX - start.x;
+      const dy = event.clientY - start.y;
+      const w = typeof window !== 'undefined' ? window.innerWidth || 360 : 360;
+      const commitThreshold = Math.min(120, w * 0.22);
+
+      if (Math.abs(dx) >= commitThreshold && Math.abs(dx) > Math.abs(dy) * 1.15) {
+        setDragActive(false);
+        setDragOffset(0);
+        moveDate(dx < 0 ? 1 : -1);
+        return;
+      }
+
+      setSnapBack(true);
+      setDragOffset(0);
+      setDragActive(false);
+      setTimeout(() => setSnapBack(false), 220);
+    },
+    [moveDate],
+  );
+
+  const onPointerCancel = useCallback((event) => {
+    const start = pointerSwipeRef.current;
+    if (!start || start.pointerId !== event.pointerId) return;
+    pointerSwipeRef.current = null;
+    event.currentTarget.releasePointerCapture?.(event.pointerId);
+    if (!start.active) return;
+    setSnapBack(true);
+    setDragOffset(0);
+    setDragActive(false);
+    setTimeout(() => setSnapBack(false), 220);
+  }, []);
+
+  const onDateFrameClickCapture = useCallback((event) => {
+    if (!suppressClickRef.current) return;
+    event.preventDefault();
+    event.stopPropagation();
+    suppressClickRef.current = false;
+  }, []);
+
   if (selectedMatch) {
     return (
       <MatchDetailView
@@ -4582,6 +4665,11 @@ function HomeInner() {
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
           onTouchCancel={onTouchCancel}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerEnd}
+          onPointerCancel={onPointerCancel}
+          onClickCapture={onDateFrameClickCapture}
         >
           <div
             key={`${selectedDate || 'all'}-${slideDir}`}
