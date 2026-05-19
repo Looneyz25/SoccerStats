@@ -1,3 +1,3 @@
 run_timestamp,event_id,league,date,time,home,away,top_side,top_market_odds,top_p,top_edge,top_stake,phase5_status,actual_status,actual_home_score,actual_away_score,actual_outcome,phase6_status,realized_return,phase6_notes
-2026-05-19 17:59:56 ACST,flashscore:rkXMW40U,Premier League,2026-05-20,04:00,Bournemouth,Manchester City,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-19 17:59:56 ACST,flashscore:Uu6uknGb,Premier League,2026-05-20,04:45,Chelsea,Tottenham,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-20 01:56:56 ACST,flashscore:rkXMW40U,Premier League,2026-05-20,04:00,Bournemouth,Manchester City,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-20 01:56:56 ACST,flashscore:Uu6uknGb,Premier League,2026-05-20,04:45,Chelsea,Tottenham,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).

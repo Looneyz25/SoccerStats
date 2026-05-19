@@ -7,7 +7,7 @@ Source: Sportsbet AU (Win-Draw-Win, 90-min regular time)
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-19 17:59:04 ACST |
+| run_timestamp | 2026-05-20 01:56:05 ACST |
 | timezone | Australia/Adelaide |
 | source | Sportsbet AU |
 | phase1_input_rows | 2 |
@@ -32,5 +32,5 @@ Source: Sportsbet AU (Win-Draw-Win, 90-min regular time)
 
 | Date | Time | League | Home | Away | H | D | A | Overround | Match | Phase 2 Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-20 | 04:00 | Premier League | Bournemouth | Manchester City | 4.6 | 4.33 | 1.65 | 1.0544 | alias:0.9 | ready_for_phase_3 |
-| 2026-05-20 | 04:45 | Premier League | Chelsea | Tottenham | 1.9 | 3.7 | 4.0 | 1.0466 | exact:1.0 | ready_for_phase_3 |
+| 2026-05-20 | 04:00 | Premier League | Bournemouth | Manchester City | 5.0 | 4.5 | 1.57 | 1.0591 | alias:0.9 | ready_for_phase_3 |
+| 2026-05-20 | 04:45 | Premier League | Chelsea | Tottenham | 2.05 | 3.4 | 3.5 | 1.0676 | exact:1.0 | ready_for_phase_3 |

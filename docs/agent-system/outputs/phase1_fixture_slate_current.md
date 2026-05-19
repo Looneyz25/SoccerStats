@@ -6,7 +6,7 @@ Timezone: Australia/Adelaide
 
 | Item | Value |
 | --- | --- |
-| date_window | 2026-05-19 to 2026-05-25 |
+| date_window | 2026-05-20 to 2026-05-26 |
 | timezone | Australia/Adelaide |
 | source_mode | Flashscore |
 | total_fixtures | 2 |
@@ -20,7 +20,7 @@ Timezone: Australia/Adelaide
 
 | Source | Endpoint | Date | League | Health | Records | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
-| Flashscore | https://www.flashscore.com.au/x/feed/f_1_0_3_en-au_1 | 2026-05-19 to 2026-05-25 | listed leagues | healthy | 2 | events=153 league_hit=2 skipped_women=0 out_of_window=0 matched=2 by_league={&#x27;Premier League&#x27;: 2} sample_leagues=[&#x27;Africa|AFRICA: Africa Cup of Nations U17&#x27;, &# |
+| Flashscore | https://www.flashscore.com.au/x/feed/f_1_0_3_en-au_1 | 2026-05-20 to 2026-05-26 | listed leagues | healthy | 2 | events=151 league_hit=2 skipped_women=0 out_of_window=0 matched=2 by_league={&#x27;Premier League&#x27;: 2} sample_leagues=[&#x27;Africa|AFRICA: Africa Cup of Nations U17&#x27;, &# |
 
 ## Fixtures
 
