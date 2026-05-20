@@ -6,11 +6,11 @@ Timezone: Australia/Adelaide
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-20 05:56:08 ACST |
+| run_timestamp | 2026-05-20 09:58:04 ACST |
 | bankroll | 1000.0 |
 | kelly_fraction | 0.25 |
 | min_edge | 0.05 |
-| model_calibration | 2026-05-20 05:34:41 ACST |
+| model_calibration | 2026-05-20 09:41:56 ACST |
 | min_price | 1.3 |
 | max_stake_pct | 0.02 |
 | max_exposure_pct | 0.1 |
@@ -20,12 +20,16 @@ Timezone: Australia/Adelaide
 | bets | 0 |
 | leans | 0 |
 | no_value | 0 |
-| upstream_blocked | 2 |
+| upstream_blocked | 6 |
 | next_action | No bets today; revisit on next data refresh. |
 
 ## Picks
 
 | Date | League | Match | Pick | Side | Market | Model p | Edge | Stake | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-20 | Premier League | Chelsea vs Tottenham |  |  |  |  |  |  | upstream_blocked |
-| 2026-05-20 | Premier League | Bournemouth vs Manchester City |  |  |  |  |  |  | upstream_blocked |
+| 2026-05-22 | Eredivisie | Ajax vs Groningen |  |  |  |  |  |  | upstream_blocked |
+| 2026-05-22 | Eredivisie | Utrecht vs Heerenveen |  |  |  |  |  |  | upstream_blocked |
+| 2026-05-23 | Serie A | Fiorentina vs Atalanta |  |  |  |  |  |  | upstream_blocked |
+| 2026-05-24 | LaLiga | Celta Vigo vs Sevilla |  |  |  |  |  |  | upstream_blocked |
+| 2026-05-24 | LaLiga | Deportivo Alavés vs Rayo Vallecano |  |  |  |  |  |  | upstream_blocked |
+| 2026-05-24 | LaLiga | Real Betis vs Levante |  |  |  |  |  |  | upstream_blocked |

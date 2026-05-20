@@ -6,18 +6,18 @@ Timezone: Australia/Adelaide
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-20 05:56:09 ACST |
+| run_timestamp | 2026-05-20 09:58:04 ACST |
 | sofa_health | healthy |
 | flashscore_health | healthy |
 | flashscore_note |  |
-| phase5_input_rows | 2 |
+| phase5_input_rows | 6 |
 | rows_settled_this_run | 0 |
 | won_this_run | 0 |
 | lost_this_run | 0 |
 | pending | 0 |
 | void | 0 |
 | not_found | 0 |
-| skipped | 2 |
+| skipped | 6 |
 
 ## History Summary
 
@@ -36,5 +36,9 @@ Timezone: Australia/Adelaide
 
 | Date | Match | Pick | Odds | Stake | Actual | Outcome | Status | Return |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-20 | Chelsea vs Tottenham |  |  |  |  |  | skipped | 0.0 |
-| 2026-05-20 | Bournemouth vs Manchester City |  |  |  |  |  | skipped | 0.0 |
+| 2026-05-22 | Ajax vs Groningen |  |  |  |  |  | skipped | 0.0 |
+| 2026-05-22 | Utrecht vs Heerenveen |  |  |  |  |  | skipped | 0.0 |
+| 2026-05-23 | Fiorentina vs Atalanta |  |  |  |  |  | skipped | 0.0 |
+| 2026-05-24 | Celta Vigo vs Sevilla |  |  |  |  |  | skipped | 0.0 |
+| 2026-05-24 | Deportivo Alavés vs Rayo Vallecano |  |  |  |  |  | skipped | 0.0 |
+| 2026-05-24 | Real Betis vs Levante |  |  |  |  |  | skipped | 0.0 |

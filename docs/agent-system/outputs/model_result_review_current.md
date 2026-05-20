@@ -1,17 +1,17 @@
 # Model Result Review
 
-Generated: 2026-05-20 05:56:10 ACST
+Generated: 2026-05-20 09:58:06 ACST
 Prediction tracking start: 2026-04-22
-Settled market rows: 1598
+Settled market rows: 1606
 
 ## Market Summary
 
 | Market | Settled | Hits | Misses | Hit Rate | Odds Hit | Odds Loss | Odds Net |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| BTTS | 406 | 221 | 185 | 54.4% | 163.45 | 124.65 | 38.8 |
-| Cards | 380 | 227 | 153 | 59.7% | 144.97 | 121.95 | 23.02 |
-| Goals | 406 | 227 | 179 | 55.9% | 166.04 | 135.74 | 30.3 |
-| Winner | 406 | 202 | 204 | 49.8% | 162.29 | 224.64 | -62.35 |
+| BTTS | 408 | 222 | 186 | 54.4% | 164.95 | 127.03 | 37.92 |
+| Cards | 382 | 227 | 155 | 59.4% | 144.97 | 125.45 | 19.52 |
+| Goals | 408 | 227 | 181 | 55.6% | 166.04 | 139.54 | 26.5 |
+| Winner | 408 | 202 | 206 | 49.5% | 162.29 | 229.87 | -67.58 |
 
 ## League Summary
 
@@ -27,7 +27,7 @@ Settled market rows: 1598
 | League Two | 107 | 61 | 46 | 57.0% | -9.11 |
 | Ligue 1 | 155 | 80 | 75 | 51.6% | -0.92 |
 | MLS | 296 | 155 | 141 | 52.4% | 35.11 |
-| Premier League | 152 | 89 | 63 | 58.6% | 30.33 |
+| Premier League | 160 | 90 | 70 | 56.2% | 16.92 |
 | Primeira Liga | 35 | 20 | 15 | 57.1% | 0 |
 | Scottish Premiership | 26 | 18 | 8 | 69.2% | 12.46 |
 | Serie A | 40 | 18 | 22 | 45.0% | -11.17 |
@@ -47,8 +47,8 @@ Settled market rows: 1598
 | Bundesliga | Cards | 35 | 42.9% | -20.89 | review_weighting |
 | J1 League | BTTS | 9 | 44.4% | -0.38 | review_weighting |
 | Primeira Liga | BTTS | 9 | 44.4% | 0 | review_weighting |
+| Premier League | Winner | 40 | 50.0% | -12.84 | review_weighting |
 | Ligue 1 | Goals | 39 | 51.3% | -7.83 | review_weighting |
-| Premier League | Winner | 38 | 52.6% | -7.61 | review_weighting |
 
 ## Recommendations
 
@@ -60,8 +60,8 @@ Settled market rows: 1598
 
 | Flag | Count |
 | --- | ---: |
-| none | 908 |
+| none | 913 |
 | missing_model_probability | 641 |
+| high_edge_miss | 19 |
 | low_edge_hit | 18 |
-| high_edge_miss | 17 |
-| draw_pick | 14 |
+| draw_pick | 15 |

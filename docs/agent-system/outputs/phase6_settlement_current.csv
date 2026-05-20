@@ -1,3 +1,7 @@
 run_timestamp,event_id,league,date,time,home,away,top_side,top_market_odds,top_p,top_edge,top_stake,phase5_status,actual_status,actual_home_score,actual_away_score,actual_outcome,phase6_status,realized_return,phase6_notes
-2026-05-20 05:56:09 ACST,flashscore:Uu6uknGb,Premier League,2026-05-20,04:45,Chelsea,Tottenham,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-20 05:56:09 ACST,flashscore:rkXMW40U,Premier League,2026-05-20,FT,Bournemouth,Manchester City,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-20 09:58:04 ACST,thesportsdb:2475105,Eredivisie,2026-05-22,02:15,Ajax,Groningen,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-20 09:58:04 ACST,thesportsdb:2475106,Eredivisie,2026-05-22,04:30,Utrecht,Heerenveen,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-20 09:58:04 ACST,thesportsdb:2265408,Serie A,2026-05-23,04:15,Fiorentina,Atalanta,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-20 09:58:04 ACST,thesportsdb:2279766,LaLiga,2026-05-24,04:30,Celta Vigo,Sevilla,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-20 09:58:04 ACST,thesportsdb:2279764,LaLiga,2026-05-24,04:30,Deportivo Alavés,Rayo Vallecano,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-20 09:58:04 ACST,thesportsdb:2279765,LaLiga,2026-05-24,04:30,Real Betis,Levante,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).

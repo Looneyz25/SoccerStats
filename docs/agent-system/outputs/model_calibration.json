@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-20 05:56:10 ACST",
+  "generated_at": "2026-05-20 09:58:06 ACST",
   "source": "docs\\agent-system\\outputs\\model_result_review_summary.json",
   "mode": "conservative_auto_learning",
   "rules": {
@@ -13,35 +13,35 @@
   "market_adjustments": {
     "btts": {
       "market": "BTTS",
-      "settled": 406,
-      "hit_rate": 0.5443,
-      "trust_factor": 0.9499,
-      "min_edge_delta": 0.0195,
-      "reason": "BTTS below 60% target over 406 settled markets."
+      "settled": 408,
+      "hit_rate": 0.5441,
+      "trust_factor": 0.9497,
+      "min_edge_delta": 0.0196,
+      "reason": "BTTS below 60% target over 408 settled markets."
     },
     "ou_cards": {
       "market": "Cards",
-      "settled": 380,
-      "hit_rate": 0.5974,
-      "trust_factor": 0.9977,
-      "min_edge_delta": 0.0009,
-      "reason": "Cards below 60% target over 380 settled markets."
+      "settled": 382,
+      "hit_rate": 0.5942,
+      "trust_factor": 0.9948,
+      "min_edge_delta": 0.002,
+      "reason": "Cards below 60% target over 382 settled markets."
     },
     "ou_goals": {
       "market": "Goals",
-      "settled": 406,
-      "hit_rate": 0.5591,
-      "trust_factor": 0.9632,
-      "min_edge_delta": 0.0143,
-      "reason": "Goals below 60% target over 406 settled markets."
+      "settled": 408,
+      "hit_rate": 0.5564,
+      "trust_factor": 0.9608,
+      "min_edge_delta": 0.0153,
+      "reason": "Goals below 60% target over 408 settled markets."
     },
     "winner": {
       "market": "Winner",
-      "settled": 406,
-      "hit_rate": 0.4975,
-      "trust_factor": 0.9078,
-      "min_edge_delta": 0.0359,
-      "reason": "Winner below 60% target over 406 settled markets."
+      "settled": 408,
+      "hit_rate": 0.4951,
+      "trust_factor": 0.9056,
+      "min_edge_delta": 0.0367,
+      "reason": "Winner below 60% target over 408 settled markets."
     }
   },
   "league_market_adjustments": {
@@ -100,6 +100,17 @@
       "min_edge_delta": 0.021,
       "reason": "Bundesliga Cards weak spot from result review."
     },
+    "Premier League|winner": {
+      "league": "Premier League",
+      "market": "Winner",
+      "market_key": "winner",
+      "settled": 40,
+      "hit_rate": 0.5,
+      "odds_net": -12.84,
+      "trust_factor": 0.964,
+      "min_edge_delta": 0.014,
+      "reason": "Premier League Winner weak spot from result review."
+    },
     "Ligue 1|ou_goals": {
       "league": "Ligue 1",
       "market": "Goals",
@@ -110,17 +121,6 @@
       "trust_factor": 0.9694,
       "min_edge_delta": 0.0119,
       "reason": "Ligue 1 Goals weak spot from result review."
-    },
-    "Premier League|winner": {
-      "league": "Premier League",
-      "market": "Winner",
-      "market_key": "winner",
-      "settled": 38,
-      "hit_rate": 0.5263,
-      "odds_net": -7.61,
-      "trust_factor": 0.9748,
-      "min_edge_delta": 0.0098,
-      "reason": "Premier League Winner weak spot from result review."
     }
   },
   "notes": [

@@ -7176,17 +7176,294 @@
           }
         },
         {
+          "id": 16087727,
+          "date": "2026-05-20",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Chelsea",
+            "short": "Chelsea",
+            "team_id": 38,
+            "logo": "https://api.sofascore.app/api/v1/team/38/image",
+            "rank": 10,
+            "pts": 49,
+            "goals": 2
+          },
+          "away": {
+            "name": "Tottenham Hotspur",
+            "short": "Tottenham",
+            "team_id": 33,
+            "logo": "https://api.sofascore.app/api/v1/team/33/image",
+            "rank": 17,
+            "pts": 38,
+            "goals": 1
+          },
+          "predictions": {
+            "winner": {
+              "pick": "Draw",
+              "type": "draw",
+              "probability": 0.2885,
+              "raw_probability": 0.4143,
+              "probabilities": {
+                "home": 0.3579,
+                "draw": 0.2885,
+                "away": 0.3536
+              },
+              "raw_probabilities": {
+                "home": 0.2804,
+                "draw": 0.3053,
+                "away": 0.4143
+              },
+              "calibration": {
+                "trust_factor": 0.9511,
+                "min_edge_delta": 0.019,
+                "sources": [
+                  "Winner below 50% target over 350 settled markets."
+                ]
+              },
+              "odds": 3.5,
+              "bookmaker_probabilities": {
+                "home": 0.4701,
+                "draw": 0.2612,
+                "away": 0.2687
+              },
+              "bookmaker_blend_weight": 0.4,
+              "model_probabilities": {
+                "home": 0.283,
+                "draw": 0.3067,
+                "away": 0.4103
+              },
+              "result": "miss"
+            },
+            "btts": {
+              "pick": "No",
+              "probability": 0.5223,
+              "raw_probability": 0.5223,
+              "odds": 2.38,
+              "actual_btts": true,
+              "result": "miss"
+            },
+            "ou_goals": {
+              "pick": "Under",
+              "line": 2.5,
+              "probability": 0.5919,
+              "raw_probability": 0.5919,
+              "odds": 2.3,
+              "actual": 3,
+              "result": "miss"
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "probability": 0.5,
+              "raw_probability": 0.5,
+              "calibration": {
+                "trust_factor": 0.9061,
+                "min_edge_delta": 0.0365,
+                "sources": [
+                  "Cards below 50% target over 326 settled markets."
+                ]
+              },
+              "odds": 1.83,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "actual": 7,
+              "result": "miss"
+            },
+            "factors": {
+              "lambda_home": 1.022,
+              "lambda_away": 1.295,
+              "h2h_n": 0,
+              "h2h_home_wins": 0,
+              "h2h_away_wins": 0,
+              "h2h_draws": 0,
+              "h2h_home_goals": 0,
+              "h2h_away_goals": 0,
+              "h_rank": 9,
+              "a_rank": 17,
+              "home_elo": 1482.5,
+              "away_elo": 1520.5,
+              "dixon_coles_rho": -0.1,
+              "model_calibration": "2026-05-17 15:13:36 ACST",
+              "winner_bookmaker_blend": 0.4,
+              "draw_rule": {
+                "min_probability": 0.28,
+                "max_home_away_gap": 0.15,
+                "max_favourite_gap": 0.15
+              },
+              "cards_over_threshold": 0.68
+            }
+          },
+          "odds": {
+            "home": 2.1,
+            "draw": 3.6,
+            "away": 3.2
+          },
+          "h2h_streaks": [
+            {
+              "team": "home",
+              "label": "Wins",
+              "value": "5",
+              "odds": 2.1
+            },
+            {
+              "team": "away",
+              "label": "Without clean sheet",
+              "value": "5",
+              "odds": 1.53
+            },
+            {
+              "team": "both",
+              "label": "More than 4.5 cards",
+              "value": "6/7",
+              "odds": 1.83
+            }
+          ],
+          "h2h_duel": {
+            "home_wins": 8,
+            "away_wins": 1,
+            "draws": 1
+          },
+          "team_streaks": [
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "No Wins",
+              "value": "3",
+              "odds": 1.83
+            },
+            {
+              "team": "home",
+              "source": "computed",
+              "label": "Without Clean Sheet",
+              "value": "3",
+              "odds": 1.62
+            },
+            {
+              "team": "away",
+              "source": "computed",
+              "label": "No Losses",
+              "value": "4",
+              "odds": 1.83
+            }
+          ],
+          "sportsbet_odds": {
+            "home": 1.08,
+            "draw": 7.5,
+            "away": 81.0,
+            "event_id": 10477114,
+            "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/chelsea-v-tottenham-10477114"
+          },
+          "bookmaker_links": {
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/chelsea-v-tottenham-10477114"
+          },
+          "corner_odds": {
+            "10.5": {
+              "Over": 1.83,
+              "Under": 1.83
+            }
+          },
+          "sportsbet_markets": {
+            "Full time": {
+              "1": 1.11,
+              "X": 6.5,
+              "2": 61.0
+            },
+            "Match goals 3.5": {
+              "Over": 3.5,
+              "Under": 1.25
+            },
+            "Match goals 4.5": {
+              "Over": 14.0
+            },
+            "Match goals 6.5": {
+              "Over": 101.0
+            },
+            "Match goals 5.5": {
+              "Over": 101.0
+            },
+            "Match goals 7.5": {
+              "Over": 101.0
+            },
+            "Corners 2-Way 7.5": {
+              "Over": 1.62,
+              "Under": 2.05
+            },
+            "Corners 2-Way 8.5": {
+              "Over": 4.15,
+              "Under": 1.15
+            },
+            "Corners 2-Way 9.5": {
+              "Over": 12.25
+            },
+            "Corners 2-Way 10.5": {
+              "Over": 41.0
+            },
+            "Corners 2-Way 11.5": {
+              "Over": 51.0
+            },
+            "Corners 2-Way 12.5": {
+              "Over": 51.0
+            },
+            "Corners 2-Way 13.5": {
+              "Over": 51.0
+            },
+            "Corners 2-Way 14.5": {
+              "Over": 51.0
+            },
+            "Corners 2-Way 15.5": {
+              "Over": 51.0
+            },
+            "Cards in match 6.5": {
+              "Over": 1.64,
+              "Under": 2.11
+            }
+          },
+          "settled_at": "2026-05-20",
+          "prediction_locked": true,
+          "prediction_locked_at": "2026-05-20T07:29:46.762412+09:30",
+          "livescore_score": {
+            "home": 2,
+            "away": 1,
+            "status": "FT",
+            "source_match_id": "1529184",
+            "fetched_at": "2026-05-20"
+          },
+          "settled_source": "LiveScore",
+          "actuals": {
+            "source": "LiveScore",
+            "home_corners": 3,
+            "away_corners": 4,
+            "corners_total": 7,
+            "home_fouls": 11,
+            "away_fouls": 18,
+            "fouls_total": 29,
+            "home_sot": 4,
+            "away_sot": 3,
+            "home_cards": 4,
+            "away_cards": 3,
+            "cards_total": 7,
+            "first_to_score": "home",
+            "first_scorer": "Enzo Fernández",
+            "ht_home": 1,
+            "ht_away": 0,
+            "ht_winner": "home"
+          }
+        },
+        {
           "id": 14023936,
           "date": "2026-05-20",
-          "time": "04:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Bournemouth",
             "short": "Bournemouth",
             "team_id": 60,
             "logo": "https://api.sofascore.app/api/v1/team/60/image",
             "rank": 6,
-            "pts": 55
+            "pts": 55,
+            "goals": 1
           },
           "away": {
             "name": "Manchester City",
@@ -7194,7 +7471,8 @@
             "team_id": 17,
             "logo": "https://api.sofascore.app/api/v1/team/17/image",
             "rank": 2,
-            "pts": 77
+            "pts": 77,
+            "goals": 1
           },
           "predictions": {
             "winner": {
@@ -7230,20 +7508,25 @@
                 "home": 0.2907,
                 "draw": 0.2483,
                 "away": 0.461
-              }
+              },
+              "result": "miss"
             },
             "btts": {
               "pick": "Yes",
               "probability": 0.6589,
               "raw_probability": 0.6589,
-              "odds": 1.5
+              "odds": 1.5,
+              "actual_btts": true,
+              "result": "hit"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
               "probability": 0.6466,
               "raw_probability": 0.6466,
-              "odds": 1.5
+              "odds": 1.5,
+              "actual": 2,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Under",
@@ -7260,7 +7543,9 @@
               "over_probability": 0.5,
               "raw_over_probability": 0.5,
               "over_threshold": 0.68,
-              "odds": 1.67
+              "odds": 1.67,
+              "actual": 6,
+              "result": "miss"
             },
             "factors": {
               "lambda_home": 1.452,
@@ -7446,282 +7731,36 @@
             "Match goals 7.5": {
               "Over": 101.0
             }
-          }
-        },
-        {
-          "id": 16087727,
-          "date": "2026-05-20",
-          "time": "04:45",
-          "status": "upcoming",
-          "home": {
-            "name": "Chelsea",
-            "short": "Chelsea",
-            "team_id": 38,
-            "logo": "https://api.sofascore.app/api/v1/team/38/image",
-            "rank": 10,
-            "pts": 49
           },
-          "away": {
-            "name": "Tottenham Hotspur",
-            "short": "Tottenham",
-            "team_id": 33,
-            "logo": "https://api.sofascore.app/api/v1/team/33/image",
-            "rank": 17,
-            "pts": 38
+          "settled_at": "2026-05-20",
+          "prediction_locked": true,
+          "prediction_locked_at": "2026-05-20T06:29:37.845182+09:30",
+          "flashscore_score": {
+            "home": 1,
+            "away": 1,
+            "status": "FT",
+            "source_match_id": "rkXMW40U",
+            "fetched_at": "2026-05-20"
           },
-          "predictions": {
-            "winner": {
-              "pick": "Draw",
-              "type": "draw",
-              "probability": 0.2885,
-              "raw_probability": 0.4143,
-              "probabilities": {
-                "home": 0.3579,
-                "draw": 0.2885,
-                "away": 0.3536
-              },
-              "raw_probabilities": {
-                "home": 0.2804,
-                "draw": 0.3053,
-                "away": 0.4143
-              },
-              "calibration": {
-                "trust_factor": 0.9511,
-                "min_edge_delta": 0.019,
-                "sources": [
-                  "Winner below 50% target over 350 settled markets."
-                ]
-              },
-              "odds": 3.5,
-              "bookmaker_probabilities": {
-                "home": 0.4701,
-                "draw": 0.2612,
-                "away": 0.2687
-              },
-              "bookmaker_blend_weight": 0.4,
-              "model_probabilities": {
-                "home": 0.283,
-                "draw": 0.3067,
-                "away": 0.4103
-              }
-            },
-            "btts": {
-              "pick": "No",
-              "probability": 0.5223,
-              "raw_probability": 0.5223,
-              "odds": 2.38
-            },
-            "ou_goals": {
-              "pick": "Under",
-              "line": 2.5,
-              "probability": 0.5919,
-              "raw_probability": 0.5919,
-              "odds": 2.3
-            },
-            "ou_cards": {
-              "pick": "Under",
-              "line": 4.5,
-              "probability": 0.5,
-              "raw_probability": 0.5,
-              "calibration": {
-                "trust_factor": 0.9061,
-                "min_edge_delta": 0.0365,
-                "sources": [
-                  "Cards below 50% target over 326 settled markets."
-                ]
-              },
-              "odds": 1.83,
-              "over_probability": 0.5,
-              "raw_over_probability": 0.5,
-              "over_threshold": 0.68
-            },
-            "factors": {
-              "lambda_home": 1.022,
-              "lambda_away": 1.295,
-              "h2h_n": 0,
-              "h2h_home_wins": 0,
-              "h2h_away_wins": 0,
-              "h2h_draws": 0,
-              "h2h_home_goals": 0,
-              "h2h_away_goals": 0,
-              "h_rank": 9,
-              "a_rank": 17,
-              "home_elo": 1482.5,
-              "away_elo": 1520.5,
-              "dixon_coles_rho": -0.1,
-              "model_calibration": "2026-05-17 15:13:36 ACST",
-              "winner_bookmaker_blend": 0.4,
-              "draw_rule": {
-                "min_probability": 0.28,
-                "max_home_away_gap": 0.15,
-                "max_favourite_gap": 0.15
-              },
-              "cards_over_threshold": 0.68
-            }
-          },
-          "odds": {
-            "home": 2.1,
-            "draw": 3.6,
-            "away": 3.2
-          },
-          "h2h_streaks": [
-            {
-              "team": "home",
-              "label": "Wins",
-              "value": "5",
-              "odds": 2.1
-            },
-            {
-              "team": "away",
-              "label": "Without clean sheet",
-              "value": "5",
-              "odds": 1.53
-            },
-            {
-              "team": "both",
-              "label": "More than 4.5 cards",
-              "value": "6/7",
-              "odds": 1.83
-            }
-          ],
-          "h2h_duel": {
-            "home_wins": 8,
-            "away_wins": 1,
-            "draws": 1
-          },
-          "team_streaks": [
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "No Wins",
-              "value": "3",
-              "odds": 1.83
-            },
-            {
-              "team": "home",
-              "source": "computed",
-              "label": "Without Clean Sheet",
-              "value": "3",
-              "odds": 1.62
-            },
-            {
-              "team": "away",
-              "source": "computed",
-              "label": "No Losses",
-              "value": "4",
-              "odds": 1.83
-            }
-          ],
-          "sportsbet_odds": {
-            "home": 1.36,
-            "draw": 4.1,
-            "away": 9.0,
-            "event_id": 10477114,
-            "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/chelsea-v-tottenham-10477114"
-          },
-          "bookmaker_links": {
-            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/chelsea-v-tottenham-10477114"
-          },
-          "corner_odds": {
-            "10.5": {
-              "Over": 1.83,
-              "Under": 1.83
-            }
-          },
-          "sportsbet_markets": {
-            "Full time": {
-              "1": 1.33,
-              "X": 4.2,
-              "2": 10.5
-            },
-            "Match goals 2.5": {
-              "Over": 2.47,
-              "Under": 1.5
-            },
-            "Both teams to score": {
-              "Yes": 1.91,
-              "No": 1.8
-            },
-            "Match goals 1.5": {
-              "Over": 1.28,
-              "Under": 3.45
-            },
-            "Match goals 3.5": {
-              "Over": 5.9,
-              "Under": 1.11
-            },
-            "Match goals 4.5": {
-              "Over": 12.0,
-              "Under": 1.02
-            },
-            "Match goals 6.5": {
-              "Over": 101.0
-            },
-            "Match goals 5.5": {
-              "Over": 67.0
-            },
-            "Match goals 7.5": {
-              "Over": 101.0
-            },
-            "Corners 2-Way 5.5": {
-              "Under": 41.0
-            },
-            "Corners 2-Way 6.5": {
-              "Over": 1.02,
-              "Under": 11.3
-            },
-            "Corners 2-Way 7.5": {
-              "Over": 1.1,
-              "Under": 4.9
-            },
-            "Corners 2-Way 8.5": {
-              "Over": 1.38,
-              "Under": 2.63
-            },
-            "Corners 2-Way 9.5": {
-              "Over": 1.85,
-              "Under": 1.78
-            },
-            "Corners 2-Way 10.5": {
-              "Over": 2.75,
-              "Under": 1.34
-            },
-            "Corners 2-Way 11.5": {
-              "Over": 4.45,
-              "Under": 1.13
-            },
-            "Corners 2-Way 12.5": {
-              "Over": 7.2,
-              "Under": 1.05
-            },
-            "Corners 2-Way 13.5": {
-              "Over": 12.0
-            },
-            "Corners 2-Way 14.5": {
-              "Over": 17.5
-            },
-            "Corners 2-Way 15.5": {
-              "Over": 43.0
-            },
-            "Cards in match 2.5": {
-              "Under": 32.0
-            },
-            "Cards in match 3.5": {
-              "Over": 1.06,
-              "Under": 7.6
-            },
-            "Cards in match 4.5": {
-              "Over": 1.26,
-              "Under": 3.38
-            },
-            "Cards in match 5.5": {
-              "Over": 1.76,
-              "Under": 1.95
-            },
-            "Cards in match 6.5": {
-              "Over": 2.83,
-              "Under": 1.37
-            }
+          "settled_source": "Flashscore",
+          "actuals": {
+            "source": "LiveScore",
+            "home_corners": 7,
+            "away_corners": 6,
+            "corners_total": 13,
+            "home_fouls": 16,
+            "away_fouls": 7,
+            "fouls_total": 23,
+            "home_sot": 2,
+            "away_sot": 5,
+            "home_cards": 4,
+            "away_cards": 2,
+            "cards_total": 6,
+            "first_to_score": "home",
+            "first_scorer": "Eli Junior Kroupi",
+            "ht_home": 1,
+            "ht_away": 0,
+            "ht_winner": "home"
           }
         },
         {
@@ -7909,9 +7948,9 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 1.91,
+            "home": 1.95,
             "draw": 3.9,
-            "away": 3.5,
+            "away": 3.4,
             "event_id": 10495949,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/brighton-v-man-utd-10495949"
           },
@@ -7922,13 +7961,13 @@
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 1.91,
+              "1": 1.95,
               "X": 3.9,
-              "2": 3.5
+              "2": 3.4
             },
             "Match goals 2.5": {
-              "Over": 1.43,
-              "Under": 2.68
+              "Over": 1.44,
+              "Under": 2.67
             },
             "Both teams to score": {
               "Yes": 1.4,
@@ -8354,54 +8393,70 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 3.9,
-            "draw": 4.2,
-            "away": 1.8,
+            "home": 3.75,
+            "draw": 4.0,
+            "away": 1.85,
             "event_id": 10498401,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/crystal-palace-v-arsenal-10498401"
           },
           "bookmaker_links": {
-            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/crystal-palace-v-arsenal-10498401"
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/crystal-palace-v-arsenal-10498401",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/uk-and-ireland/premier-league/crystal-palace-vs-arsenal-fc/f687ac9a-033c-4c77-afc4-12f1b3b512f0",
+            "neds": "https://www.neds.com.au/sports/soccer/uk-and-ireland/premier-league/crystal-palace-vs-arsenal-fc/f687ac9a-033c-4c77-afc4-12f1b3b512f0"
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 3.8,
-              "X": 3.7,
-              "2": 1.91
+              "1": 3.75,
+              "X": 4.0,
+              "2": 1.85
             },
             "Match goals 0.5": {
               "Over": 1.02,
-              "Under": 14.75
+              "Under": 15.75
             },
             "Match goals 1.5": {
               "Over": 1.17,
-              "Under": 4.6
+              "Under": 4.65
             },
             "Match goals 2.5": {
-              "Over": 1.63,
-              "Under": 2.19
+              "Over": 1.62,
+              "Under": 2.29
             },
             "Match goals 3.5": {
-              "Over": 2.67,
-              "Under": 1.44
+              "Over": 2.53,
+              "Under": 1.48
             },
             "Both teams to score": {
-              "Yes": 1.57,
-              "No": 2.3
+              "Yes": 1.53,
+              "No": 2.4
             },
             "Match goals 4.5": {
-              "Over": 5.2,
-              "Under": 1.14
+              "Over": 4.6,
+              "Under": 1.17
             },
             "Match goals 5.5": {
-              "Over": 9.5,
-              "Under": 1.04
+              "Over": 8.0,
+              "Under": 1.06
             },
             "Match goals 6.5": {
-              "Over": 14.0
+              "Over": 13.0
             },
             "Match goals 7.5": {
-              "Over": 67.0
+              "Over": 41.0
+            }
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "f687ac9a-033c-4c77-afc4-12f1b3b512f0",
+              "event_name": "Crystal Palace vs Arsenal FC"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "f687ac9a-033c-4c77-afc4-12f1b3b512f0",
+              "event_name": "Crystal Palace vs Arsenal FC"
             }
           }
         },
@@ -8798,20 +8853,22 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 1.73,
+            "home": 1.75,
             "draw": 4.2,
-            "away": 4.2,
+            "away": 3.9,
             "event_id": 10498403,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/liverpool-v-brentford-10498403"
           },
           "bookmaker_links": {
-            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/liverpool-v-brentford-10498403"
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/liverpool-v-brentford-10498403",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/uk-and-ireland/premier-league/liverpool-vs-brentford/5846809a-bf35-4ae5-8d14-a7c02c0068b5",
+            "neds": "https://www.neds.com.au/sports/soccer/uk-and-ireland/premier-league/liverpool-vs-brentford/5846809a-bf35-4ae5-8d14-a7c02c0068b5"
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 1.67,
+              "1": 1.75,
               "X": 4.2,
-              "2": 4.4
+              "2": 3.9
             },
             "Match goals 0.5": {
               "Under": 19.75
@@ -8821,31 +8878,45 @@
               "Under": 5.4
             },
             "Match goals 2.5": {
-              "Over": 1.46,
+              "Over": 1.45,
               "Under": 2.61
             },
             "Match goals 3.5": {
-              "Over": 2.23,
-              "Under": 1.61
+              "Over": 2.19,
+              "Under": 1.63
             },
             "Both teams to score": {
               "Yes": 1.5,
               "No": 2.5
             },
             "Match goals 4.5": {
-              "Over": 4.0,
-              "Under": 1.22
+              "Over": 3.8,
+              "Under": 1.25
             },
             "Match goals 5.5": {
               "Over": 6.5,
               "Under": 1.08
             },
             "Match goals 6.5": {
-              "Over": 12.0,
+              "Over": 11.0,
               "Under": 1.02
             },
             "Match goals 7.5": {
               "Over": 34.0
+            }
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "5846809a-bf35-4ae5-8d14-a7c02c0068b5",
+              "event_name": "Liverpool vs Brentford"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "5846809a-bf35-4ae5-8d14-a7c02c0068b5",
+              "event_name": "Liverpool vs Brentford"
             }
           }
         },
@@ -9010,42 +9081,44 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 1.36,
-            "draw": 5.0,
-            "away": 7.0,
+            "home": 1.47,
+            "draw": 4.75,
+            "away": 5.5,
             "event_id": 10496350,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/man-city-v-aston-villa-10496350"
           },
           "bookmaker_links": {
-            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/man-city-v-aston-villa-10496350"
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/man-city-v-aston-villa-10496350",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/uk-and-ireland/premier-league/manchester-city-vs-aston-villa/38697621-ade6-48b8-9234-f824b97864d1",
+            "neds": "https://www.neds.com.au/sports/soccer/uk-and-ireland/premier-league/manchester-city-vs-aston-villa/38697621-ade6-48b8-9234-f824b97864d1"
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 1.36,
-              "X": 5.0,
-              "2": 7.0
+              "1": 1.47,
+              "X": 4.75,
+              "2": 5.5
             },
             "Match goals 0.5": {
-              "Under": 26.0
+              "Under": 27.0
             },
             "Match goals 1.5": {
               "Over": 1.1,
               "Under": 6.0
             },
             "Match goals 2.5": {
-              "Over": 1.34,
-              "Under": 3.1
+              "Over": 1.33,
+              "Under": 3.14
             },
             "Match goals 3.5": {
-              "Over": 1.91,
-              "Under": 1.82
+              "Over": 1.92,
+              "Under": 1.81
             },
             "Both teams to score": {
               "Yes": 1.5,
-              "No": 2.5
+              "No": 2.63
             },
             "Match goals 4.5": {
-              "Over": 3.14,
+              "Over": 3.2,
               "Under": 1.33
             },
             "Match goals 5.5": {
@@ -9058,6 +9131,20 @@
             },
             "Match goals 7.5": {
               "Over": 14.0
+            }
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "38697621-ade6-48b8-9234-f824b97864d1",
+              "event_name": "Manchester City vs Aston Villa"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "38697621-ade6-48b8-9234-f824b97864d1",
+              "event_name": "Manchester City vs Aston Villa"
             }
           }
         },
@@ -9215,27 +9302,43 @@
           ],
           "sportsbet_odds": {
             "home": 3.3,
-            "draw": 3.8,
+            "draw": 3.9,
             "away": 2.0,
             "event_id": 10498405,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/nottm-forest-v-bournemouth-10498405"
           },
           "bookmaker_links": {
-            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/nottm-forest-v-bournemouth-10498405"
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/nottm-forest-v-bournemouth-10498405",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/uk-and-ireland/premier-league/nottingham-forest-vs-afc-bournemouth/6130d111-fb72-43e4-aed6-f9d435ef64ae",
+            "neds": "https://www.neds.com.au/sports/soccer/uk-and-ireland/premier-league/nottingham-forest-vs-afc-bournemouth/6130d111-fb72-43e4-aed6-f9d435ef64ae"
           },
           "sportsbet_markets": {
             "Full time": {
               "1": 3.3,
-              "X": 3.8,
+              "X": 3.9,
               "2": 2.0
             },
             "Match goals 2.5": {
-              "Over": 1.58,
-              "Under": 2.29
+              "Over": 1.57,
+              "Under": 2.3
             },
             "Both teams to score": {
               "Yes": 1.53,
               "No": 2.5
+            }
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "6130d111-fb72-43e4-aed6-f9d435ef64ae",
+              "event_name": "Nottingham Forest vs AFC Bournemouth"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "6130d111-fb72-43e4-aed6-f9d435ef64ae",
+              "event_name": "Nottingham Forest vs AFC Bournemouth"
             }
           }
         },
@@ -9613,28 +9716,44 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 2.15,
-            "draw": 3.75,
-            "away": 3.1,
+            "home": 1.85,
+            "draw": 3.8,
+            "away": 3.9,
             "event_id": 10498814,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/tottenham-v-everton-10498814"
           },
           "bookmaker_links": {
-            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/tottenham-v-everton-10498814"
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/tottenham-v-everton-10498814",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/uk-and-ireland/premier-league/tottenham-hotspur-vs-everton-fc/dcf54fdf-92c2-4a6f-afaa-cec06c50b6c8",
+            "neds": "https://www.neds.com.au/sports/soccer/uk-and-ireland/premier-league/tottenham-hotspur-vs-everton-fc/dcf54fdf-92c2-4a6f-afaa-cec06c50b6c8"
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 2.15,
-              "X": 3.75,
-              "2": 3.1
+              "1": 1.85,
+              "X": 3.8,
+              "2": 3.9
             },
             "Match goals 2.5": {
-              "Over": 1.59,
-              "Under": 2.25
+              "Over": 1.6,
+              "Under": 2.24
             },
             "Both teams to score": {
-              "Yes": 1.53,
-              "No": 2.4
+              "Yes": 1.57,
+              "No": 2.37
+            }
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "dcf54fdf-92c2-4a6f-afaa-cec06c50b6c8",
+              "event_name": "Tottenham Hotspur vs Everton FC"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "dcf54fdf-92c2-4a6f-afaa-cec06c50b6c8",
+              "event_name": "Tottenham Hotspur vs Everton FC"
             }
           }
         },
@@ -9822,28 +9941,44 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 2.2,
-            "draw": 3.75,
-            "away": 3.0,
+            "home": 1.85,
+            "draw": 3.8,
+            "away": 3.9,
             "event_id": 10498817,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/west-ham-v-leeds-10498817"
           },
           "bookmaker_links": {
-            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/west-ham-v-leeds-10498817"
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/west-ham-v-leeds-10498817",
+            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/uk-and-ireland/premier-league/west-ham-united-vs-leeds-united/82e9a735-791a-4b04-ae51-b0d961206721",
+            "neds": "https://www.neds.com.au/sports/soccer/uk-and-ireland/premier-league/west-ham-united-vs-leeds-united/82e9a735-791a-4b04-ae51-b0d961206721"
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 2.2,
-              "X": 3.75,
-              "2": 3.0
+              "1": 1.85,
+              "X": 3.8,
+              "2": 3.9
             },
             "Match goals 2.5": {
-              "Over": 1.59,
-              "Under": 2.26
+              "Over": 1.63,
+              "Under": 2.19
             },
             "Both teams to score": {
-              "Yes": 1.53,
-              "No": 2.4
+              "Yes": 1.57,
+              "No": 2.3
+            }
+          },
+          "bookmaker_meta": {
+            "ladbrokes": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "82e9a735-791a-4b04-ae51-b0d961206721",
+              "event_name": "West Ham United vs Leeds United"
+            },
+            "neds": {
+              "matched": true,
+              "source": "entain_event_request",
+              "event_id": "82e9a735-791a-4b04-ae51-b0d961206721",
+              "event_name": "West Ham United vs Leeds United"
             }
           }
         }
@@ -19399,8 +19534,8 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 1.73,
-            "draw": 3.8,
+            "home": 1.75,
+            "draw": 3.7,
             "away": 4.75,
             "event_id": 10498389,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/celta-vigo-v-sevilla-10498389"
@@ -19410,28 +19545,28 @@
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 1.73,
-              "X": 3.8,
+              "1": 1.75,
+              "X": 3.7,
               "2": 4.75
             },
             "Match goals 0.5": {
               "Over": 1.03,
-              "Under": 11.5
+              "Under": 11.6
             },
             "Match goals 1.5": {
               "Over": 1.25,
               "Under": 3.7
             },
             "Match goals 2.5": {
-              "Over": 1.86,
-              "Under": 1.87
+              "Over": 1.85,
+              "Under": 1.88
             },
             "Match goals 3.5": {
-              "Over": 3.31,
+              "Over": 3.3,
               "Under": 1.3
             },
             "Both teams to score": {
-              "Yes": 1.83,
+              "Yes": 1.8,
               "No": 1.91
             },
             "Match goals 4.5": {
@@ -20100,8 +20235,8 @@
           ],
           "sportsbet_odds": {
             "home": 2.55,
-            "draw": 2.75,
-            "away": 3.3,
+            "draw": 2.7,
+            "away": 3.4,
             "event_id": 10498409,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/getafe-v-osasuna-10498409"
           },
@@ -20113,20 +20248,20 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 2.55,
-              "X": 2.75,
-              "2": 3.3
+              "X": 2.7,
+              "2": 3.4
             },
             "Match goals 1.5": {
-              "Over": 1.51,
-              "Under": 2.45
+              "Over": 1.5,
+              "Under": 2.46
             },
             "Match goals 2.5": {
-              "Over": 2.71,
-              "Under": 1.43
+              "Over": 2.67,
+              "Under": 1.44
             },
             "Both teams to score": {
-              "Yes": 2.2,
-              "No": 1.62
+              "Yes": 2.1,
+              "No": 1.67
             }
           },
           "corner_odds": {
@@ -20321,7 +20456,7 @@
           "sportsbet_odds": {
             "home": 1.75,
             "draw": 3.9,
-            "away": 4.2,
+            "away": 4.4,
             "event_id": 10498396,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/girona-v-elche-10498396"
           },
@@ -20334,11 +20469,11 @@
             "Full time": {
               "1": 1.75,
               "X": 3.9,
-              "2": 4.2
+              "2": 4.4
             },
             "Match goals 0.5": {
               "Over": 1.02,
-              "Under": 15.0
+              "Under": 14.5
             },
             "Match goals 1.5": {
               "Over": 1.17,
@@ -20349,16 +20484,16 @@
               "Under": 2.17
             },
             "Match goals 3.5": {
-              "Over": 2.67,
-              "Under": 1.44
+              "Over": 2.71,
+              "Under": 1.43
             },
             "Both teams to score": {
               "Yes": 1.62,
-              "No": 2.25
+              "No": 2.2
             },
             "Match goals 4.5": {
-              "Over": 5.0,
-              "Under": 1.15
+              "Over": 5.2,
+              "Under": 1.14
             },
             "Match goals 5.5": {
               "Over": 9.5,
@@ -20368,7 +20503,7 @@
               "Over": 14.0
             },
             "Match goals 7.5": {
-              "Over": 67.0
+              "Over": 51.0
             }
           },
           "corner_odds": {
@@ -20828,9 +20963,9 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 2.2,
-            "draw": 3.6,
-            "away": 3.0,
+            "home": 2.25,
+            "draw": 3.25,
+            "away": 3.3,
             "event_id": 10498404,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/betis-v-levante-10498404"
           },
@@ -20841,21 +20976,21 @@
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 2.2,
-              "X": 3.6,
-              "2": 3.0
+              "1": 2.25,
+              "X": 3.25,
+              "2": 3.3
             },
             "Match goals 1.5": {
-              "Over": 1.14,
-              "Under": 5.2
+              "Over": 1.17,
+              "Under": 4.6
             },
             "Match goals 2.5": {
-              "Over": 1.5,
-              "Under": 2.47
+              "Over": 1.62,
+              "Under": 2.21
             },
             "Both teams to score": {
-              "Yes": 1.45,
-              "No": 2.63
+              "Yes": 1.53,
+              "No": 2.4
             }
           },
           "corner_odds": {
@@ -39671,8 +39806,8 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 2.62,
-            "draw": 3.7,
+            "home": 2.75,
+            "draw": 3.5,
             "away": 2.45,
             "event_id": 10498423,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/italy/italian-serie-a/fiorentina-v-atalanta-10498423"
@@ -39684,28 +39819,28 @@
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 2.62,
-              "X": 3.7,
+              "1": 2.75,
+              "X": 3.5,
               "2": 2.45
             },
             "Match goals 0.5": {
               "Over": 1.02,
-              "Under": 13.75
+              "Under": 14.25
             },
             "Match goals 1.5": {
-              "Over": 1.2,
-              "Under": 4.25
+              "Over": 1.17,
+              "Under": 4.6
             },
             "Match goals 2.5": {
-              "Over": 1.65,
-              "Under": 2.15
+              "Over": 1.64,
+              "Under": 2.16
             },
             "Match goals 3.5": {
-              "Over": 2.72,
-              "Under": 1.42
+              "Over": 2.69,
+              "Under": 1.43
             },
             "Both teams to score": {
-              "Yes": 1.57,
+              "Yes": 1.53,
               "No": 2.4
             },
             "Match goals 4.5": {
@@ -69251,9 +69386,9 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 3.7,
+            "home": 3.5,
             "draw": 4.1,
-            "away": 1.87,
+            "away": 1.91,
             "event_id": 10494522,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/san-diego-fc-v-vancouver-whitecaps-10494522"
           },
@@ -69264,13 +69399,13 @@
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 3.7,
+              "1": 3.5,
               "X": 4.1,
-              "2": 1.87
+              "2": 1.91
             },
             "Match goals 2.5": {
               "Over": 1.4,
-              "Under": 2.79
+              "Under": 2.82
             },
             "Both teams to score": {
               "Yes": 1.4,
