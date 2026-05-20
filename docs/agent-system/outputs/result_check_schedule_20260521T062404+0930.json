@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-21T06:38:03.456478+09:30",
+  "generated_at": "2026-05-21T06:24:04.250810+09:30",
   "result_check_buffer_minutes": 150,
   "result_lookback_days": 3,
   "due_count": 1,
@@ -13,8 +13,8 @@
     "not_due": 86,
     "backfilled": 0,
     "enriched": 5,
-    "calibration_created": 0,
-    "calibration_settled_matches": 0,
+    "calibration_created": 24,
+    "calibration_settled_matches": 4,
     "protected": 413,
     "pruned": []
   },

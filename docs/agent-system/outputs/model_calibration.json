@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-21 05:58:00 ACST",
+  "generated_at": "2026-05-21 06:47:24 ACST",
   "source": "docs\\agent-system\\outputs\\model_result_review_summary.json",
   "mode": "conservative_auto_learning",
   "rules": {
@@ -13,35 +13,35 @@
   "market_adjustments": {
     "btts": {
       "market": "BTTS",
-      "settled": 409,
-      "hit_rate": 0.5428,
-      "trust_factor": 0.9485,
-      "min_edge_delta": 0.02,
-      "reason": "BTTS below 60% target over 409 settled markets."
+      "settled": 413,
+      "hit_rate": 0.5472,
+      "trust_factor": 0.9525,
+      "min_edge_delta": 0.0185,
+      "reason": "BTTS below 60% target over 413 settled markets."
     },
     "ou_cards": {
       "market": "Cards",
-      "settled": 382,
-      "hit_rate": 0.5942,
-      "trust_factor": 0.9948,
-      "min_edge_delta": 0.002,
-      "reason": "Cards below 60% target over 382 settled markets."
+      "settled": 386,
+      "hit_rate": 0.5959,
+      "trust_factor": 0.9963,
+      "min_edge_delta": 0.0014,
+      "reason": "Cards below 60% target over 386 settled markets."
     },
     "ou_goals": {
       "market": "Goals",
-      "settled": 409,
-      "hit_rate": 0.555,
-      "trust_factor": 0.9595,
-      "min_edge_delta": 0.0157,
-      "reason": "Goals below 60% target over 409 settled markets."
+      "settled": 413,
+      "hit_rate": 0.5593,
+      "trust_factor": 0.9634,
+      "min_edge_delta": 0.0142,
+      "reason": "Goals below 60% target over 413 settled markets."
     },
     "winner": {
       "market": "Winner",
-      "settled": 409,
-      "hit_rate": 0.4939,
-      "trust_factor": 0.9045,
-      "min_edge_delta": 0.0371,
-      "reason": "Winner below 60% target over 409 settled markets."
+      "settled": 413,
+      "hit_rate": 0.4891,
+      "trust_factor": 0.9002,
+      "min_edge_delta": 0.0388,
+      "reason": "Winner below 60% target over 413 settled markets."
     }
   },
   "league_market_adjustments": {

@@ -36,6 +36,8 @@ npm.cmd run get:data
 
 This is the full data-only refresh. It runs the routine across the 7-day fixture window, updates generated local artifacts and phase outputs, and uploads `match_data.json` to Firestore as small per-league documents through `scripts/upload_match_data_to_firestore.mjs`.
 
+Full refreshes must attempt stats, 1X2 odds, deep Sportsbet markets, prediction-card odds, pre-match prediction prefill, display precompute, and Firestore upload for every fixture in the published 7-day slate. Use the larger full-refresh odds budgets in `scripts/get-data-with-log.mjs`; keep smaller budgets only for result-only checks.
+
 It must not commit, push, build, or deploy unless the user explicitly asks for those steps. If Firestore credentials are missing, the local data refresh can still complete, but the upload will fail with instructions to restore `.secrets/firebase-service-account.json` or configure `GOOGLE_APPLICATION_CREDENTIALS` / `FIREBASE_SERVICE_ACCOUNT_JSON`.
 
 For scheduled result checks, use:

@@ -1,44 +1,54 @@
 {
-  "generated_at": "2026-05-21 05:58:00 ACST",
+  "generated_at": "2026-05-21 06:47:19 ACST",
   "prediction_tracking_start_date": "2026-04-22",
-  "settled_market_rows": 1609,
+  "settled_market_rows": 1629,
   "market_summary": [
     {
       "market": "BTTS",
-      "settled": 409,
-      "hits": 222,
+      "settled": 413,
+      "hits": 226,
       "misses": 187,
-      "hit_rate": 0.5428,
+      "hit_rate": 0.5472,
       "odds_hit": 164.95,
       "odds_loss": 129.41,
       "odds_net": 35.54
     },
     {
       "market": "Cards",
-      "settled": 382,
-      "hits": 227,
-      "misses": 155,
-      "hit_rate": 0.5942,
+      "settled": 386,
+      "hits": 230,
+      "misses": 156,
+      "hit_rate": 0.5959,
       "odds_hit": 144.97,
       "odds_loss": 125.45,
       "odds_net": 19.52
     },
     {
+      "market": "Corners",
+      "settled": 4,
+      "hits": 2,
+      "misses": 2,
+      "hit_rate": 0.5,
+      "odds_hit": 0,
+      "odds_loss": 0,
+      "odds_net": 0
+    },
+    {
       "market": "Goals",
-      "settled": 409,
-      "hits": 227,
+      "settled": 413,
+      "hits": 231,
       "misses": 182,
-      "hit_rate": 0.555,
+      "hit_rate": 0.5593,
       "odds_hit": 166.04,
       "odds_loss": 141.79,
       "odds_net": 24.25
     },
     {
       "market": "Winner",
-      "settled": 409,
+      "settled": 413,
       "hits": 202,
-      "misses": 207,
-      "hit_rate": 0.4939,
+      "misses": 211,
+      "hit_rate": 0.4891,
       "odds_hit": 162.29,
       "odds_loss": 231.92,
       "odds_net": -69.63
@@ -51,6 +61,16 @@
       "hits": 1,
       "misses": 3,
       "hit_rate": 0.25,
+      "odds_hit": 0,
+      "odds_loss": 0,
+      "odds_net": 0
+    },
+    {
+      "league": "Allsvenskan",
+      "settled": 5,
+      "hits": 4,
+      "misses": 1,
+      "hit_rate": 0.8,
       "odds_hit": 0,
       "odds_loss": 0,
       "odds_net": 0
@@ -74,6 +94,16 @@
       "odds_hit": 0,
       "odds_loss": 12.14,
       "odds_net": -12.14
+    },
+    {
+      "league": "Eliteserien",
+      "settled": 15,
+      "hits": 9,
+      "misses": 6,
+      "hit_rate": 0.6,
+      "odds_hit": 0,
+      "odds_loss": 0,
+      "odds_net": 0
     },
     {
       "league": "Eredivisie",

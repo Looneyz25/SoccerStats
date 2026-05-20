@@ -1616,8 +1616,9 @@ def has_real_three_way_odds(odds):
     return bool(bookmaker_three_way_probabilities(odds))
 
 
-def market_odds_for_match(match):
-    for key in ("sportsbet_odds", "odds"):
+def market_odds_for_match(match, prefer_original=False):
+    keys = ("odds", "sportsbet_odds") if prefer_original else ("sportsbet_odds", "odds")
+    for key in keys:
         odds = match.get(key) or {}
         if has_real_three_way_odds(odds):
             return {side: float(odds[side]) for side in ("home", "draw", "away")}
@@ -1813,6 +1814,7 @@ def populate_today_new_league_calibration_predictions(store):
     created = 0
     settled = 0
     by_league = {}
+    changed = 0
     for league in store.get("leagues", []):
         league_name = league.get("name") or ""
         if league_name not in PHASE_FIXTURE_FALLBACK_LEAGUES:
@@ -1822,8 +1824,9 @@ def populate_today_new_league_calibration_predictions(store):
             if match.get("status") != "FT" or match.get("date") != today_iso:
                 continue
             predictions = match.setdefault("predictions", {})
+            before_payload = json.dumps(predictions, sort_keys=True, ensure_ascii=False)
             before_keys = {key for key, value in predictions.items() if value}
-            odds = market_odds_for_match(match) or {"home": 3.0, "draw": 3.2, "away": 3.0}
+            odds = market_odds_for_match(match, prefer_original=True) or {"home": 3.0, "draw": 3.2, "away": 3.0}
             h_name = (match.get("home") or {}).get("name") or "Home"
             a_name = (match.get("away") or {}).get("name") or "Away"
             h_att, h_def, a_att, a_def = pre_prediction_form_inputs(match, league_matches, odds)
@@ -1848,22 +1851,26 @@ def populate_today_new_league_calibration_predictions(store):
                 "calibration_exception_date": today_iso,
             })
             fallback["factors"] = {**fallback_factors, **(predictions.get("factors") or {})}
+            can_replace_exception = (predictions.get("factors") or {}).get("source") == "today_new_league_calibration_exception"
             for key in ("winner", "btts", "ou_goals", "ou_cards"):
-                if not predictions.get(key) and fallback.get(key):
+                if (can_replace_exception or not predictions.get(key)) and fallback.get(key):
                     predictions[key] = fallback[key]
-            if not predictions.get("ou_corners"):
+            if can_replace_exception or not predictions.get("ou_corners"):
                 predictions["ou_corners"] = pre_corners_prediction(match, league_matches, all_matches)
             predictions["factors"] = fallback["factors"]
             settle_generated_prediction_markets(match)
             after_keys = {key for key, value in predictions.items() if value}
             delta = len(after_keys - before_keys)
+            after_payload = json.dumps(predictions, sort_keys=True, ensure_ascii=False)
+            if after_payload != before_payload:
+                changed += 1
             if delta:
                 created += delta
                 settled += 1
                 by_league[league_name] = by_league.get(league_name, 0) + delta
-    if created:
+    if changed:
         save_store(store)
-    return {"created": created, "settled_matches": settled, "by_league": by_league}
+    return {"created": created, "changed_matches": changed, "settled_matches": settled, "by_league": by_league}
 
 
 def phase_a6_retro(store):
@@ -2549,6 +2556,13 @@ def run_results_only():
     )
     print(f"  added={pa5['added']}  enriched={pa5['enriched']}")
 
+    print("\n[Results B.5] today new-league calibration exception")
+    cal = populate_today_new_league_calibration_predictions(store)
+    print(f"  created={cal['created']}  settled_matches={cal['settled_matches']}")
+    if cal["by_league"]:
+        for league_name, count in sorted(cal["by_league"].items()):
+            print(f"  + {league_name}: {count}")
+
     print("\n[Results C] protect resulted predictions")
     pa6 = phase_a6_retro(store)
     print(f"  protected={pa6.get('protected', 0)}")
@@ -2567,6 +2581,8 @@ def run_results_only():
         "not_due": pa.get("not_due", 0),
         "backfilled": pa5["added"],
         "enriched": pa5["enriched"],
+        "calibration_created": cal["created"],
+        "calibration_settled_matches": cal["settled_matches"],
         "protected": pa6.get("protected", 0),
         "pruned": pruned,
     })

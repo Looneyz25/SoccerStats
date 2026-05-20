@@ -1,25 +1,28 @@
 # Model Result Review
 
-Generated: 2026-05-21 05:58:00 ACST
+Generated: 2026-05-21 06:47:19 ACST
 Prediction tracking start: 2026-04-22
-Settled market rows: 1609
+Settled market rows: 1629
 
 ## Market Summary
 
 | Market | Settled | Hits | Misses | Hit Rate | Odds Hit | Odds Loss | Odds Net |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| BTTS | 409 | 222 | 187 | 54.3% | 164.95 | 129.41 | 35.54 |
-| Cards | 382 | 227 | 155 | 59.4% | 144.97 | 125.45 | 19.52 |
-| Goals | 409 | 227 | 182 | 55.5% | 166.04 | 141.79 | 24.25 |
-| Winner | 409 | 202 | 207 | 49.4% | 162.29 | 231.92 | -69.63 |
+| BTTS | 413 | 226 | 187 | 54.7% | 164.95 | 129.41 | 35.54 |
+| Cards | 386 | 230 | 156 | 59.6% | 144.97 | 125.45 | 19.52 |
+| Corners | 4 | 2 | 2 | 50.0% | 0 | 0 | 0 |
+| Goals | 413 | 231 | 182 | 55.9% | 166.04 | 141.79 | 24.25 |
+| Winner | 413 | 202 | 211 | 48.9% | 162.29 | 231.92 | -69.63 |
 
 ## League Summary
 
 | League | Settled | Hits | Misses | Hit Rate | Odds Net |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | A-League Men | 4 | 1 | 3 | 25.0% | 0 |
+| Allsvenskan | 5 | 4 | 1 | 80.0% | 0 |
 | Bundesliga | 143 | 76 | 67 | 53.1% | -5.25 |
 | Championship | 109 | 68 | 41 | 62.4% | -12.14 |
+| Eliteserien | 15 | 9 | 6 | 60.0% | 0 |
 | Eredivisie | 168 | 92 | 76 | 54.8% | -2.32 |
 | J1 League | 35 | 22 | 13 | 62.9% | 8.15 |
 | LaLiga | 196 | 100 | 96 | 51.0% | -18.03 |
@@ -60,8 +63,8 @@ Settled market rows: 1609
 
 | Flag | Count |
 | --- | ---: |
-| none | 913 |
+| none | 932 |
 | missing_model_probability | 641 |
 | high_edge_miss | 22 |
 | low_edge_hit | 18 |
-| draw_pick | 15 |
+| draw_pick | 16 |

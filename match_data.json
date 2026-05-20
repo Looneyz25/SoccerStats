@@ -97239,7 +97239,131 @@
             "short": "Hammarby",
             "goals": 0
           },
-          "predictions": {},
+          "predictions": {
+            "winner": {
+              "pick": "Draw",
+              "type": "draw",
+              "probability": 0.3038,
+              "raw_probability": 0.3118,
+              "probabilities": {
+                "home": 0.3387,
+                "draw": 0.3038,
+                "away": 0.3575
+              },
+              "model_probabilities": {
+                "home": 0.372,
+                "draw": 0.3139,
+                "away": 0.3141
+              },
+              "raw_probabilities": {
+                "home": 0.3762,
+                "draw": 0.3118,
+                "away": 0.312
+              },
+              "bookmaker_probabilities": {
+                "home": 0.2887,
+                "draw": 0.2887,
+                "away": 0.4225
+              },
+              "bookmaker_blend_weight": 0.4,
+              "calibration": {
+                "trust_factor": 0.9023,
+                "min_edge_delta": 0.038,
+                "sources": [
+                  "Winner below 60% target over 413 settled markets."
+                ]
+              },
+              "result": "miss"
+            },
+            "btts": {
+              "pick": "No",
+              "probability": 0.5263,
+              "raw_probability": 0.5276,
+              "calibration": {
+                "trust_factor": 0.9525,
+                "min_edge_delta": 0.0185,
+                "sources": [
+                  "BTTS below 60% target over 413 settled markets."
+                ]
+              },
+              "actual_btts": false,
+              "result": "hit"
+            },
+            "ou_goals": {
+              "pick": "Under",
+              "line": 2.5,
+              "probability": 0.6003,
+              "raw_probability": 0.6041,
+              "calibration": {
+                "trust_factor": 0.9634,
+                "min_edge_delta": 0.0142,
+                "sources": [
+                  "Goals below 60% target over 413 settled markets."
+                ]
+              },
+              "actual": 2,
+              "result": "hit"
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "probability": 0.5,
+              "raw_probability": 0.5,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "calibration": {
+                "trust_factor": 0.9963,
+                "min_edge_delta": 0.0014,
+                "sources": [
+                  "Cards below 60% target over 386 settled markets."
+                ]
+              },
+              "actual": 3,
+              "result": "hit"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.9015,
+              "model_probability": 0.9015,
+              "model_average_total": 7.0,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "7.0 avg",
+              "team": "both",
+              "actual": 5,
+              "result": "hit"
+            },
+            "factors": {
+              "lambda_home": 1.537,
+              "lambda_away": 0.95,
+              "h2h_n": 0,
+              "h2h_home_wins": 0,
+              "h2h_away_wins": 0,
+              "h2h_draws": 0,
+              "h2h_home_goals": 0,
+              "h2h_away_goals": 0,
+              "h_rank": null,
+              "a_rank": null,
+              "home_elo": 1500.0,
+              "away_elo": 1500.0,
+              "dixon_coles_rho": -0.1,
+              "winner_bookmaker_blend": 0.4,
+              "draw_rule": {
+                "min_probability": 0.28,
+                "max_home_away_gap": 0.15,
+                "max_favourite_gap": 0.15
+              },
+              "cards_over_threshold": 0.68,
+              "cards_over_streaks": 0,
+              "cards_under_streaks": 0,
+              "model_calibration": "2026-05-21 05:58:00 ACST",
+              "source": "today_new_league_calibration_exception",
+              "source_note": "One-day 2026-05-21 calibration exception for newly added leagues.",
+              "data_quality": "Data weak",
+              "calibration_exception_date": "2026-05-21"
+            }
+          },
           "odds": {
             "home": 3.0,
             "draw": 3.0,
@@ -99031,7 +99155,131 @@
             "team_id": "sportsbet:10495000:away",
             "goals": 2
           },
-          "predictions": {},
+          "predictions": {
+            "winner": {
+              "pick": "Lillestrom",
+              "type": "home",
+              "probability": 0.3903,
+              "raw_probability": 0.4333,
+              "probabilities": {
+                "home": 0.3903,
+                "draw": 0.2722,
+                "away": 0.3375
+              },
+              "model_probabilities": {
+                "home": 0.4235,
+                "draw": 0.2409,
+                "away": 0.3356
+              },
+              "raw_probabilities": {
+                "home": 0.4333,
+                "draw": 0.2309,
+                "away": 0.3358
+              },
+              "bookmaker_probabilities": {
+                "home": 0.3404,
+                "draw": 0.3191,
+                "away": 0.3404
+              },
+              "bookmaker_blend_weight": 0.4,
+              "calibration": {
+                "trust_factor": 0.9023,
+                "min_edge_delta": 0.038,
+                "sources": [
+                  "Winner below 60% target over 413 settled markets."
+                ]
+              },
+              "result": "miss"
+            },
+            "btts": {
+              "pick": "Yes",
+              "probability": 0.7113,
+              "raw_probability": 0.7219,
+              "calibration": {
+                "trust_factor": 0.9525,
+                "min_edge_delta": 0.0185,
+                "sources": [
+                  "BTTS below 60% target over 413 settled markets."
+                ]
+              },
+              "actual_btts": true,
+              "result": "hit"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "probability": 0.713,
+              "raw_probability": 0.7211,
+              "calibration": {
+                "trust_factor": 0.9634,
+                "min_edge_delta": 0.0142,
+                "sources": [
+                  "Goals below 60% target over 413 settled markets."
+                ]
+              },
+              "actual": 3,
+              "result": "hit"
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "probability": 0.5,
+              "raw_probability": 0.5,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "calibration": {
+                "trust_factor": 0.9963,
+                "min_edge_delta": 0.0014,
+                "sources": [
+                  "Cards below 60% target over 386 settled markets."
+                ]
+              },
+              "actual": 8,
+              "result": "miss"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6658,
+              "model_probability": 0.6658,
+              "model_average_total": 9.33,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.3 avg",
+              "team": "both",
+              "actual": 11,
+              "result": "miss"
+            },
+            "factors": {
+              "lambda_home": 2.0,
+              "lambda_away": 1.75,
+              "h2h_n": 0,
+              "h2h_home_wins": 0,
+              "h2h_away_wins": 0,
+              "h2h_draws": 0,
+              "h2h_home_goals": 0,
+              "h2h_away_goals": 0,
+              "h_rank": null,
+              "a_rank": null,
+              "home_elo": 1500.0,
+              "away_elo": 1500.0,
+              "dixon_coles_rho": -0.1,
+              "winner_bookmaker_blend": 0.4,
+              "draw_rule": {
+                "min_probability": 0.28,
+                "max_home_away_gap": 0.15,
+                "max_favourite_gap": 0.15
+              },
+              "cards_over_threshold": 0.68,
+              "cards_over_streaks": 0,
+              "cards_under_streaks": 0,
+              "model_calibration": "2026-05-21 05:58:00 ACST",
+              "source": "today_new_league_calibration_exception",
+              "source_note": "One-day 2026-05-21 calibration exception for newly added leagues.",
+              "data_quality": "Data weak",
+              "calibration_exception_date": "2026-05-21"
+            }
+          },
           "sportsbet_odds": {
             "home": 81.0,
             "draw": 8.5,
@@ -99110,7 +99358,131 @@
             "short": "Brann",
             "goals": 1
           },
-          "predictions": {},
+          "predictions": {
+            "winner": {
+              "pick": "Brann",
+              "type": "away",
+              "probability": 0.41,
+              "raw_probability": 0.3724,
+              "probabilities": {
+                "home": 0.3485,
+                "draw": 0.2415,
+                "away": 0.41
+              },
+              "model_probabilities": {
+                "home": 0.3948,
+                "draw": 0.2366,
+                "away": 0.3686
+              },
+              "raw_probabilities": {
+                "home": 0.4015,
+                "draw": 0.2261,
+                "away": 0.3724
+              },
+              "bookmaker_probabilities": {
+                "home": 0.279,
+                "draw": 0.2488,
+                "away": 0.4722
+              },
+              "bookmaker_blend_weight": 0.4,
+              "calibration": {
+                "trust_factor": 0.9023,
+                "min_edge_delta": 0.038,
+                "sources": [
+                  "Winner below 60% target over 413 settled markets."
+                ]
+              },
+              "result": "miss"
+            },
+            "btts": {
+              "pick": "Yes",
+              "probability": 0.7334,
+              "raw_probability": 0.7451,
+              "calibration": {
+                "trust_factor": 0.9525,
+                "min_edge_delta": 0.0185,
+                "sources": [
+                  "BTTS below 60% target over 413 settled markets."
+                ]
+              },
+              "actual_btts": true,
+              "result": "hit"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "probability": 0.7394,
+              "raw_probability": 0.7485,
+              "calibration": {
+                "trust_factor": 0.9634,
+                "min_edge_delta": 0.0142,
+                "sources": [
+                  "Goals below 60% target over 413 settled markets."
+                ]
+              },
+              "actual": 3,
+              "result": "hit"
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "probability": 0.5,
+              "raw_probability": 0.5,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "calibration": {
+                "trust_factor": 0.9963,
+                "min_edge_delta": 0.0014,
+                "sources": [
+                  "Cards below 60% target over 386 settled markets."
+                ]
+              },
+              "actual": 4,
+              "result": "hit"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6658,
+              "model_probability": 0.6658,
+              "model_average_total": 9.33,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.3 avg",
+              "team": "both",
+              "actual": 11,
+              "result": "miss"
+            },
+            "factors": {
+              "lambda_home": 2.0,
+              "lambda_away": 1.766,
+              "h2h_n": 0,
+              "h2h_home_wins": 0,
+              "h2h_away_wins": 0,
+              "h2h_draws": 0,
+              "h2h_home_goals": 0,
+              "h2h_away_goals": 0,
+              "h_rank": null,
+              "a_rank": null,
+              "home_elo": 1500.0,
+              "away_elo": 1500.0,
+              "dixon_coles_rho": -0.1,
+              "winner_bookmaker_blend": 0.4,
+              "draw_rule": {
+                "min_probability": 0.28,
+                "max_home_away_gap": 0.15,
+                "max_favourite_gap": 0.15
+              },
+              "cards_over_threshold": 0.68,
+              "cards_over_streaks": 0,
+              "cards_under_streaks": 0,
+              "model_calibration": "2026-05-21 05:58:00 ACST",
+              "source": "today_new_league_calibration_exception",
+              "source_note": "One-day 2026-05-21 calibration exception for newly added leagues.",
+              "data_quality": "Data weak",
+              "calibration_exception_date": "2026-05-21"
+            }
+          },
           "odds": {
             "home": 3.3,
             "draw": 3.7,
@@ -99203,7 +99575,131 @@
             "short": "Bodo/Glimt",
             "goals": 4
           },
-          "predictions": {},
+          "predictions": {
+            "winner": {
+              "pick": "Start",
+              "type": "home",
+              "probability": 0.3903,
+              "raw_probability": 0.4333,
+              "probabilities": {
+                "home": 0.3903,
+                "draw": 0.2722,
+                "away": 0.3375
+              },
+              "model_probabilities": {
+                "home": 0.4235,
+                "draw": 0.2409,
+                "away": 0.3356
+              },
+              "raw_probabilities": {
+                "home": 0.4333,
+                "draw": 0.2309,
+                "away": 0.3358
+              },
+              "bookmaker_probabilities": {
+                "home": 0.3404,
+                "draw": 0.3191,
+                "away": 0.3404
+              },
+              "bookmaker_blend_weight": 0.4,
+              "calibration": {
+                "trust_factor": 0.9023,
+                "min_edge_delta": 0.038,
+                "sources": [
+                  "Winner below 60% target over 413 settled markets."
+                ]
+              },
+              "result": "miss"
+            },
+            "btts": {
+              "pick": "Yes",
+              "probability": 0.7113,
+              "raw_probability": 0.7219,
+              "calibration": {
+                "trust_factor": 0.9525,
+                "min_edge_delta": 0.0185,
+                "sources": [
+                  "BTTS below 60% target over 413 settled markets."
+                ]
+              },
+              "actual_btts": true,
+              "result": "hit"
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "probability": 0.713,
+              "raw_probability": 0.7211,
+              "calibration": {
+                "trust_factor": 0.9634,
+                "min_edge_delta": 0.0142,
+                "sources": [
+                  "Goals below 60% target over 413 settled markets."
+                ]
+              },
+              "actual": 5,
+              "result": "hit"
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "probability": 0.5,
+              "raw_probability": 0.5,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "calibration": {
+                "trust_factor": 0.9963,
+                "min_edge_delta": 0.0014,
+                "sources": [
+                  "Cards below 60% target over 386 settled markets."
+                ]
+              },
+              "actual": 1,
+              "result": "hit"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6658,
+              "model_probability": 0.6658,
+              "model_average_total": 9.33,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.3 avg",
+              "team": "both",
+              "actual": 6,
+              "result": "hit"
+            },
+            "factors": {
+              "lambda_home": 2.0,
+              "lambda_away": 1.75,
+              "h2h_n": 0,
+              "h2h_home_wins": 0,
+              "h2h_away_wins": 0,
+              "h2h_draws": 0,
+              "h2h_home_goals": 0,
+              "h2h_away_goals": 0,
+              "h_rank": null,
+              "a_rank": null,
+              "home_elo": 1500.0,
+              "away_elo": 1500.0,
+              "dixon_coles_rho": -0.1,
+              "winner_bookmaker_blend": 0.4,
+              "draw_rule": {
+                "min_probability": 0.28,
+                "max_home_away_gap": 0.15,
+                "max_favourite_gap": 0.15
+              },
+              "cards_over_threshold": 0.68,
+              "cards_over_streaks": 0,
+              "cards_under_streaks": 0,
+              "model_calibration": "2026-05-21 05:58:00 ACST",
+              "source": "today_new_league_calibration_exception",
+              "source_note": "One-day 2026-05-21 calibration exception for newly added leagues.",
+              "data_quality": "Data weak",
+              "calibration_exception_date": "2026-05-21"
+            }
+          },
           "settled_at": "2026-05-21",
           "prediction_locked": true,
           "prediction_locked_at": "2026-05-21T03:34:55.872148+09:30",

@@ -37,6 +37,7 @@ The daily `get:data` path also enriches dashboard markets outside the Phase 2 WD
 - If SofaScore omits a direct streak market, streak cards reuse matching prediction odds where safe, for example `Without Clean Sheet` and `Both teams scoring` use BTTS Yes odds.
 - `No Wins`, `No Losses`, and `No Draws` can derive conservative double-chance prices from available 1X2 odds.
 - `scripts/soccer_fetch_pred_odds.py` checks the five visible prediction cards (winner, BTTS, goals, cards, corners), stores match-level `corner_odds` by line so UI-generated corner models can compare against bookmaker prices, and logs any upcoming fixtures still missing visible market odds.
+- Full `npm.cmd run get:data` runs must give Sportsbet deep-market and prediction-odds fetches enough budget to attempt every matched fixture in the 7-day slate. The routine should not stop early because of the default cap; if the log prints `[deep] budget ... reached`, raise `SOCCER_SPORTSBET_DEEP_BUDGET` for that run and rerun before publishing.
 - Derived or fallback prices should be displayed as context, not treated as confirmed bookmaker markets unless the source market exists for the exact line.
 
 ## League Slugs

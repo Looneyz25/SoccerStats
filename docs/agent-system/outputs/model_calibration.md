@@ -1,16 +1,16 @@
 # Model Calibration
 
-Generated: 2026-05-21 05:58:00 ACST
+Generated: 2026-05-21 06:47:24 ACST
 Mode: conservative_auto_learning
 
 ## Market Adjustments
 
 | Market | Settled | Hit Rate | Trust Factor | Min Edge Delta | Reason |
 | --- | ---: | ---: | ---: | ---: | --- |
-| BTTS | 409 | 54.3% | 0.9485 | 0.02 | BTTS below 60% target over 409 settled markets. |
-| Cards | 382 | 59.4% | 0.9948 | 0.002 | Cards below 60% target over 382 settled markets. |
-| Goals | 409 | 55.5% | 0.9595 | 0.0157 | Goals below 60% target over 409 settled markets. |
-| Winner | 409 | 49.4% | 0.9045 | 0.0371 | Winner below 60% target over 409 settled markets. |
+| BTTS | 413 | 54.7% | 0.9525 | 0.0185 | BTTS below 60% target over 413 settled markets. |
+| Cards | 386 | 59.6% | 0.9963 | 0.0014 | Cards below 60% target over 386 settled markets. |
+| Goals | 413 | 55.9% | 0.9634 | 0.0142 | Goals below 60% target over 413 settled markets. |
+| Winner | 413 | 48.9% | 0.9002 | 0.0388 | Winner below 60% target over 413 settled markets. |
 
 ## League Market Adjustments
 
