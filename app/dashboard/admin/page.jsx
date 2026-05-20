@@ -4,7 +4,12 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import AuthGate from '../../auth-gate';
-import { getAllUsers, getUserProfile, updateUserManualAccess, updateUserStripeInheritance } from '../../firestore-data';
+import {
+  getAllUsers,
+  getUserProfile,
+  updateUserManualAccess,
+  updateUserStripeInheritance,
+} from '../../firestore-data';
 import { getFirebaseAuth } from '../../firebase';
 import {
   ArrowLeft,
@@ -86,12 +91,19 @@ function InfoLine({ label, value, valueClassName = 'text-ink' }) {
 }
 
 function AdminDashboard() {
+  const GROUP_STORAGE_KEY = 'soccer_stats_admin_groups_v1';
+  const UNASSIGNED_GROUP_FILTER = '__unassigned__';
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [busyUid, setBusyUid] = useState('');
   const [syncingStripe, setSyncingStripe] = useState(false);
   const [query, setQuery] = useState('');
+  const [selectedUid, setSelectedUid] = useState('');
+  const [groups, setGroups] = useState([]);
+  const [groupAssignments, setGroupAssignments] = useState({});
+  const [groupDraft, setGroupDraft] = useState('');
+  const [groupFilter, setGroupFilter] = useState('all');
   const router = useRouter();
 
   async function syncStripeUser(uid) {
@@ -139,6 +151,9 @@ function AdminDashboard() {
         usersList = await getAllUsers();
       }
       setUsers(usersList);
+      if (!selectedUid && usersList.length) {
+        setSelectedUid(usersList[0].uid);
+      }
     } catch (err) {
       console.error(err);
       setError(err?.message || 'Failed to load users.');
@@ -152,10 +167,27 @@ function AdminDashboard() {
     loadUsers();
   }, []);
 
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(GROUP_STORAGE_KEY);
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      setGroups(Array.isArray(parsed?.groups) ? parsed.groups : []);
+      setGroupAssignments(parsed?.assignments && typeof parsed.assignments === 'object' ? parsed.assignments : {});
+    } catch {
+      // ignore malformed local storage payload
+    }
+  }, []);
+
   const filteredUsers = useMemo(() => {
     const needle = query.trim().toLowerCase();
-    if (!needle) return users;
     return users.filter((user) => {
+      const groupsForUser = groupAssignments[user.uid] || [];
+      const matchesGroup =
+        groupFilter === 'all'
+        || (groupFilter === UNASSIGNED_GROUP_FILTER ? groupsForUser.length === 0 : groupsForUser.includes(groupFilter));
+      if (!matchesGroup) return false;
+      if (!needle) return true;
       return [
         user.displayName,
         user.nickname,
@@ -165,9 +197,82 @@ function AdminDashboard() {
         user.stripeSubscriptionId,
         user.subscriptionStatus,
         user.accessSource,
+        ...groupsForUser,
       ].some((value) => String(value || '').toLowerCase().includes(needle));
     });
-  }, [query, users]);
+  }, [UNASSIGNED_GROUP_FILTER, groupAssignments, groupFilter, query, users]);
+
+  const selectedUser = useMemo(
+    () => filteredUsers.find((user) => user.uid === selectedUid) || filteredUsers[0] || null,
+    [filteredUsers, selectedUid]
+  );
+
+  useEffect(() => {
+    if (!filteredUsers.length) {
+      if (selectedUid) setSelectedUid('');
+      return;
+    }
+    if (!filteredUsers.some((user) => user.uid === selectedUid)) {
+      setSelectedUid(filteredUsers[0].uid);
+    }
+  }, [filteredUsers, selectedUid]);
+
+  async function persistGroups(nextGroups, nextAssignments) {
+    const payload = {
+      groups: nextGroups,
+      assignments: nextAssignments,
+    };
+    window.localStorage.setItem(GROUP_STORAGE_KEY, JSON.stringify(payload));
+  }
+
+  async function handleCreateGroup(event) {
+    event.preventDefault();
+    const cleanName = groupDraft.trim();
+    if (!cleanName) return;
+    if (groups.includes(cleanName)) {
+      setGroupDraft('');
+      return;
+    }
+    const nextGroups = [...groups, cleanName];
+    try {
+      await persistGroups(nextGroups, groupAssignments);
+      setGroups(nextGroups);
+      setGroupDraft('');
+    } catch (err) {
+      console.error(err);
+      setError(err?.message || 'Failed to create group.');
+    }
+  }
+
+  async function handleToggleUserGroup(uid, groupName) {
+    const current = groupAssignments[uid] || [];
+    const hasGroup = current.includes(groupName);
+    const nextUserGroups = hasGroup ? current.filter((name) => name !== groupName) : [...current, groupName];
+    const nextAssignments = { ...groupAssignments, [uid]: nextUserGroups };
+    try {
+      await persistGroups(groups, nextAssignments);
+      setGroupAssignments(nextAssignments);
+    } catch (err) {
+      console.error(err);
+      setError(err?.message || 'Failed to update group assignment.');
+    }
+  }
+
+  async function handleDeleteGroup(groupName) {
+    const nextGroups = groups.filter((name) => name !== groupName);
+    const nextAssignments = Object.fromEntries(
+      Object.entries(groupAssignments).map(([uid, groupList]) => [uid, (groupList || []).filter((name) => name !== groupName)])
+    );
+    try {
+      await persistGroups(nextGroups, nextAssignments);
+      setGroups(nextGroups);
+      setGroupAssignments(nextAssignments);
+      if (groupFilter === groupName) setGroupFilter('all');
+    } catch (err) {
+      console.error(err);
+      setError(err?.message || 'Failed to remove group.');
+    }
+  }
 
   const stats = useMemo(() => {
     return users.reduce((acc, user) => {
@@ -178,6 +283,26 @@ function AdminDashboard() {
       return acc;
     }, { active: 0, manual: 0, stripe: 0, paymentIssues: 0 });
   }, [users]);
+
+  const groupCounts = useMemo(() => {
+    const counts = {};
+    groups.forEach((groupName) => {
+      counts[groupName] = 0;
+    });
+    users.forEach((user) => {
+      const userGroups = groupAssignments[user.uid] || [];
+      userGroups.forEach((groupName) => {
+        if (counts[groupName] == null) counts[groupName] = 0;
+        counts[groupName] += 1;
+      });
+    });
+    return counts;
+  }, [groupAssignments, groups, users]);
+
+  const unassignedCount = useMemo(
+    () => users.filter((user) => (groupAssignments[user.uid] || []).length === 0).length,
+    [groupAssignments, users]
+  );
 
   async function handleManualOverride(user, manualAccess) {
     setBusyUid(user.uid);
@@ -256,7 +381,7 @@ function AdminDashboard() {
   }
 
   return (
-    <main className="min-h-screen bg-field px-4 py-6 lg:px-8">
+    <main className="min-h-screen bg-field px-3 py-4 sm:px-4 sm:py-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
@@ -313,16 +438,92 @@ function AdminDashboard() {
           </div>
         )}
 
-        <div className="overflow-hidden rounded-lg border border-line bg-white shadow-panel">
-          <div className="hidden grid-cols-[minmax(15rem,1.2fr)_minmax(11rem,.8fr)_minmax(15rem,1fr)_minmax(13rem,.9fr)_minmax(13rem,.8fr)] gap-4 border-b border-line bg-field px-4 py-3 text-[11px] font-semibold uppercase text-slate-500 xl:grid">
-            <span>Member</span>
-            <span>Access</span>
-            <span>Stripe</span>
-            <span>Dates</span>
-            <span className="text-right">Controls</span>
-          </div>
-          <div className="divide-y divide-line">
-            {filteredUsers.map((user) => {
+        <div className="grid gap-3 sm:gap-4 lg:grid-cols-[minmax(21rem,0.8fr)_minmax(28rem,1.2fr)]">
+          <section className="rounded-lg border border-line bg-white shadow-panel">
+            <div className="border-b border-line px-4 py-3">
+              <h2 className="text-sm font-semibold text-ink">Users</h2>
+              <p className="text-xs text-slate-500">{filteredUsers.length} shown of {users.length}</p>
+            </div>
+
+            <div className="space-y-3 border-b border-line p-3">
+              <form onSubmit={handleCreateGroup} className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <input
+                  value={groupDraft}
+                  onChange={(event) => setGroupDraft(event.target.value)}
+                  className="h-9 min-w-0 flex-1 rounded-md border border-line px-3 text-sm text-ink outline-none focus:border-slate-400"
+                  placeholder="Create group (e.g. VIP, Trial, Support)"
+                />
+                <button type="submit" className="h-9 rounded-md border border-line bg-field px-3 text-xs font-semibold text-ink hover:bg-slate-100 sm:shrink-0">
+                  Add group
+                </button>
+              </form>
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <select
+                  value={groupFilter}
+                  onChange={(event) => setGroupFilter(event.target.value)}
+                  className="h-9 min-w-0 flex-1 rounded-md border border-line bg-white px-3 text-sm text-ink outline-none focus:border-slate-400"
+                >
+                  <option value="all">All ({users.length})</option>
+                  <option value={UNASSIGNED_GROUP_FILTER}>Not assigned ({unassignedCount})</option>
+                  {groups.map((groupName) => (
+                    <option key={groupName} value={groupName}>
+                      {groupName} ({groupCounts[groupName] || 0})
+                    </option>
+                  ))}
+                </select>
+                {groupFilter !== 'all' && (
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteGroup(groupFilter)}
+                    className="h-9 rounded-md border border-line bg-white px-3 text-xs font-semibold text-red-600 hover:bg-red-50"
+                  >
+                    Delete
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div className="max-h-[44vh] divide-y divide-line overflow-auto sm:max-h-[52vh] lg:max-h-[68vh]">
+              {filteredUsers.map((user) => {
+                const access = accessState(user);
+                const isSelected = selectedUser?.uid === user.uid;
+                const memberName = user.displayName || user.nickname || 'No name';
+                const groupsForUser = groupAssignments[user.uid] || [];
+                return (
+                  <button
+                    type="button"
+                    key={user.uid}
+                    onClick={() => setSelectedUid(user.uid)}
+                    className={`w-full px-4 py-3 text-left transition hover:bg-slate-50 ${isSelected ? 'bg-slate-50/80' : ''}`}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <h3 className="truncate text-sm font-semibold text-ink">{memberName}</h3>
+                        <p className="truncate text-xs text-slate-600">{user.email || '-'}</p>
+                      </div>
+                      <span className={`inline-flex shrink-0 rounded-full px-2 py-0.5 text-[11px] font-semibold ring-1 ${access.tone}`}>
+                        {access.label}
+                      </span>
+                    </div>
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      {groupsForUser.length ? groupsForUser.map((group) => (
+                        <span key={group} className="rounded-full border border-line bg-field px-2 py-0.5 text-[11px] text-slate-600">{group}</span>
+                      )) : <span className="text-[11px] text-slate-400">No groups</span>}
+                    </div>
+                  </button>
+                );
+              })}
+              {filteredUsers.length === 0 && (
+                <div className="px-6 py-10 text-center text-sm text-slate-500">No users match the current search.</div>
+              )}
+            </div>
+          </section>
+
+          <section className="rounded-lg border border-line bg-white p-4 shadow-panel">
+            {!selectedUser ? (
+              <div className="py-20 text-center text-sm text-slate-500">Select a user to view details.</div>
+            ) : (() => {
+              const user = selectedUser;
               const access = accessState(user);
               const hasEffectiveAccess = Boolean(user.hasAccess || user.isPlatformOwner);
               const isBusy = busyUid === user.uid;
@@ -334,43 +535,61 @@ function AdminDashboard() {
               const renewValue = user.subscriptionStatus === 'trialing'
                 ? formatDate(user.subscriptionTrialEnd || user.subscriptionCurrentPeriodEnd)
                 : formatDate(user.subscriptionCurrentPeriodEnd);
+              const userGroups = groupAssignments[user.uid] || [];
 
               return (
-                <article
-                  key={user.uid}
-                  className="grid gap-4 px-4 py-4 transition hover:bg-slate-50/70 xl:grid-cols-[minmax(15rem,1.2fr)_minmax(11rem,.8fr)_minmax(15rem,1fr)_minmax(13rem,.9fr)_minmax(13rem,.8fr)]"
-                >
-                  <section className="min-w-0">
-                    <div className="flex min-w-0 items-start justify-between gap-3">
+                <div className="space-y-4">
+                  <div className="border-b border-line pb-3">
+                    <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <h2 className="truncate text-sm font-semibold text-ink">{memberName}</h2>
-                        {user.nickname && (
-                          <div className="mt-0.5 truncate text-xs font-semibold text-signal">Nickname: {user.nickname}</div>
-                        )}
-                        <div className="mt-1 truncate text-sm text-slate-600">{user.email || '-'}</div>
+                        <h2 className="truncate text-lg font-semibold text-ink">{memberName}</h2>
+                        <div className="break-all text-sm text-slate-600">{user.email || '-'}</div>
                       </div>
-                      {user.isPlatformOwner && (
-                        <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-signal/10 px-2 py-1 text-xs font-semibold text-signal">
-                          <ShieldCheck className="h-3 w-3" /> Owner
-                        </span>
-                      )}
+                      <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ${access.tone}`}>
+                        {hasEffectiveAccess ? <CheckCircle2 className="h-3.5 w-3.5" /> : <XCircle className="h-3.5 w-3.5" />}
+                        {access.label}
+                      </span>
                     </div>
                     <div className="mt-2 truncate rounded bg-slate-50 px-2 py-1 font-mono text-[11px] text-slate-400">{user.uid}</div>
-                  </section>
+                  </div>
 
-                  <section className="min-w-0 space-y-2">
-                    <span className={`inline-flex w-fit items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ${access.tone}`}>
-                      {hasEffectiveAccess ? <CheckCircle2 className="h-3.5 w-3.5" /> : <XCircle className="h-3.5 w-3.5" />}
-                      {access.label}
-                    </span>
-                    <div className="space-y-1">
+                  <div className="space-y-2">
+                    <div className="text-xs font-semibold uppercase text-slate-500">Groups</div>
+                    <div className="flex flex-wrap gap-2">
+                      {groups.map((groupName) => {
+                        const active = userGroups.includes(groupName);
+                        return (
+                          <button
+                            key={groupName}
+                            type="button"
+                            onClick={() => handleToggleUserGroup(user.uid, groupName)}
+                            className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${active ? 'border-signal/40 bg-signal/10 text-signal' : 'border-line bg-white text-slate-600 hover:bg-field'}`}
+                          >
+                            {groupName}
+                          </button>
+                        );
+                      })}
+                      {!groups.length && <span className="text-xs text-slate-400">No groups created yet.</span>}
+                    </div>
+                  </div>
+
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <section className="space-y-2">
+                      <div className="text-xs font-semibold uppercase text-slate-500">Access</div>
                       <InfoLine label="Source" value={user.accessSource || (user.hasAccess ? 'legacy' : 'none')} />
                       <InfoLine label="Manual" value={user.manualAccess ? 'on' : 'off'} />
                       <InfoLine label="Inherit Stripe" value={inheritsStripe ? 'yes' : 'no'} />
-                    </div>
-                  </section>
+                    </section>
+                    <section className="space-y-2">
+                      <div className="text-xs font-semibold uppercase text-slate-500">Dates</div>
+                      <InfoLine label="Joined" value={formatDate(user.createdAt)} />
+                      <InfoLine label={renewLabel} value={renewValue} />
+                      <InfoLine label="Sub update" value={formatDateTime(user.subscriptionUpdatedAt)} />
+                      <InfoLine label="Manual update" value={formatDateTime(user.manualAccessUpdatedAt)} />
+                    </section>
+                  </div>
 
-                  <section className="min-w-0 space-y-2">
+                  <section className="space-y-2">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className={`inline-flex w-fit rounded-full px-2.5 py-1 text-xs font-semibold capitalize ring-1 ${stripeStatusClass(user.subscriptionStatus)}`}>
                         {statusText}
@@ -384,10 +603,8 @@ function AdminDashboard() {
                         <span className="rounded-full border border-orange-200 bg-orange-50 px-2 py-1 text-xs font-semibold text-orange-700">Cancels</span>
                       )}
                     </div>
-                    <div className="space-y-1">
-                      <InfoLine label="Stripe access" value={user.subscriptionHasAccess ? 'yes' : 'no'} />
-                      <InfoLine label="Trial used" value={user.stripeTrialUsed || user.subscriptionTrialStart ? 'yes' : 'no'} />
-                    </div>
+                    <InfoLine label="Stripe access" value={user.subscriptionHasAccess ? 'yes' : 'no'} />
+                    <InfoLine label="Trial used" value={user.stripeTrialUsed || user.subscriptionTrialStart ? 'yes' : 'no'} />
                     {user.stripeCustomerId ? (
                       <div className="space-y-1 rounded-md bg-slate-50 p-2">
                         <div className="truncate font-mono text-xs text-slate-700">{user.stripeCustomerId}</div>
@@ -399,26 +616,16 @@ function AdminDashboard() {
                     )}
                   </section>
 
-                  <section className="min-w-0 space-y-1.5">
-                    <InfoLine label="Joined" value={formatDate(user.createdAt)} />
-                    <InfoLine label={renewLabel} value={renewValue} />
-                    <InfoLine label="Sub update" value={formatDateTime(user.subscriptionUpdatedAt)} />
-                    <InfoLine label="Manual update" value={formatDateTime(user.manualAccessUpdatedAt)} />
-                    {user.subscriptionStatus === 'trialing' && (
-                      <p className="pt-1 text-xs leading-5 text-slate-500">Trial remains active until Stripe ends or converts it.</p>
-                    )}
-                  </section>
-
-                  <section className="flex min-w-0 flex-col gap-2 xl:items-end">
+                  <section className="space-y-2 border-t border-line pt-3">
                     {user.isPlatformOwner ? (
-                      <span className="rounded-md border border-line bg-field px-3 py-2 text-xs font-semibold text-slate-400">Protected</span>
+                      <span className="inline-flex rounded-md border border-line bg-field px-3 py-2 text-xs font-semibold text-slate-400">Protected</span>
                     ) : (
                       <>
                         <button
                           type="button"
                           disabled={isBusy}
                           onClick={() => handleStripeInheritance(user, !inheritsStripe)}
-                          className={`inline-flex h-9 w-full items-center justify-between gap-3 rounded-md border px-3 text-xs font-semibold transition disabled:cursor-wait disabled:opacity-70 xl:max-w-[11.5rem] ${
+                          className={`inline-flex h-9 w-full items-center justify-between gap-3 rounded-md border px-3 text-xs font-semibold transition disabled:cursor-wait disabled:opacity-70 ${
                             inheritsStripe
                               ? 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
                               : 'border-slate-200 bg-white text-slate-600 hover:bg-field'
@@ -429,7 +636,7 @@ function AdminDashboard() {
                             <span className={`block h-4 w-4 rounded-full bg-white transition ${inheritsStripe ? 'translate-x-4' : 'translate-x-0'}`} />
                           </span>
                         </button>
-                        <div className="grid w-full grid-cols-3 rounded-md border border-line bg-white p-1 xl:max-w-[15rem]">
+                        <div className="grid w-full grid-cols-1 gap-1 rounded-md border border-line bg-white p-1 sm:grid-cols-3 sm:gap-0">
                           <button
                             type="button"
                             disabled={isBusy || !user.stripeCustomerId}
@@ -460,15 +667,10 @@ function AdminDashboard() {
                       </>
                     )}
                   </section>
-                </article>
+                </div>
               );
-            })}
-            {filteredUsers.length === 0 && (
-              <div className="px-6 py-10 text-center text-sm text-slate-500">
-                No users match the current search.
-              </div>
-            )}
-          </div>
+            })()}
+          </section>
         </div>
       </div>
     </main>

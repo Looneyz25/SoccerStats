@@ -4,6 +4,7 @@ import { getFirebaseAuth, getFirebaseDb } from './firebase';
 const DASHBOARD_DOC = 'match_data';
 const FAST_DASHBOARD_DOC = 'match_data_fast';
 const MAX_FAVORITE_TEAMS = 100;
+const ADMIN_GROUPS_DOC = 'admin_user_groups';
 
 export function readMatchDataCache(date = '') {
   return null;
@@ -306,4 +307,50 @@ export async function updateUserStripeInheritance(uid, inheritStripeStatus) {
     accessSource: data.manualAccess ? 'manual' : inheritsActiveStripe ? 'stripe' : 'none',
     stripeInheritanceUpdatedAt: new Date().toISOString()
   });
+}
+
+export async function getAdminUserGroupsConfig() {
+  const db = getFirebaseDb();
+  const configRef = doc(db, 'dashboardData', ADMIN_GROUPS_DOC);
+  const snap = await getDoc(configRef);
+  if (!snap.exists()) {
+    return { groups: [], assignments: {} };
+  }
+  const data = snap.data() || {};
+  return {
+    groups: Array.isArray(data.groups) ? data.groups : [],
+    assignments: data.assignments && typeof data.assignments === 'object' ? data.assignments : {},
+  };
+}
+
+export async function saveAdminUserGroupsConfig(config) {
+  const db = getFirebaseDb();
+  const configRef = doc(db, 'dashboardData', ADMIN_GROUPS_DOC);
+
+  const rawGroups = Array.isArray(config?.groups) ? config.groups : [];
+  const groups = [...new Set(
+    rawGroups
+      .map((name) => String(name || '').trim())
+      .filter(Boolean)
+      .slice(0, 60)
+  )];
+
+  const rawAssignments = config?.assignments && typeof config.assignments === 'object' ? config.assignments : {};
+  const assignments = {};
+  Object.entries(rawAssignments).forEach(([uid, groupList]) => {
+    const cleanUid = String(uid || '').trim();
+    if (!cleanUid) return;
+    const cleanGroups = Array.isArray(groupList)
+      ? [...new Set(groupList.map((name) => String(name || '').trim()).filter((name) => groups.includes(name)))]
+      : [];
+    assignments[cleanUid] = cleanGroups;
+  });
+
+  await setDoc(configRef, {
+    groups,
+    assignments,
+    updatedAt: new Date().toISOString(),
+  }, { merge: true });
+
+  return { groups, assignments };
 }

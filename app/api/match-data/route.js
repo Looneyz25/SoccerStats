@@ -12,22 +12,10 @@ const PROJECT_ID = 'sports-predictions-f91fd';
 const FAST_DOC_PATH = ['dashboardData', 'match_data_fast'];
 const META_DOC_PATH = ['dashboardData', 'match_data'];
 const ACCESS_CACHE_TTL_MS = 60 * 1000;
-const DATA_CACHE_TTL_MS = 5 * 60 * 1000;
 const DEFAULT_SERVICE_ACCOUNT_PATH = path.join(process.cwd(), '.secrets', 'firebase-service-account.json');
 
 let adminApp = null;
-let cachedData = null;
-let cachedDataAt = 0;
-let inflightData = null;
-const cachedDateData = new Map();
-const inflightDateData = new Map();
 const accessCache = new Map();
-let cachedAllTimeSummary = null;
-let cachedAllTimeSummaryAt = 0;
-let inflightAllTimeSummary = null;
-let cachedTeamOptions = null;
-let cachedTeamOptionsAt = 0;
-let inflightTeamOptions = null;
 
 function summarizeAllTime(leagues) {
   const matches = (Array.isArray(leagues) ? leagues : []).flatMap((league) => Array.isArray(league.matches) ? league.matches : []);
@@ -92,39 +80,24 @@ async function verifyAccess(idToken) {
 }
 
 async function loadFastDoc() {
-  const now = Date.now();
-  if (cachedData && now - cachedDataAt < DATA_CACHE_TTL_MS) {
-    return cachedData;
+  const db = getFirestore(getAdminApp());
+  const snap = await db.collection(FAST_DOC_PATH[0]).doc(FAST_DOC_PATH[1]).get();
+  if (!snap.exists) throw new Error('match_data_fast missing');
+  const fast = snap.data() || {};
+  if (fast.format !== 'single_doc_v1' || !Array.isArray(fast.leagues)) {
+    throw new Error('match_data_fast format unexpected');
   }
-  if (inflightData) return inflightData;
-
-  inflightData = (async () => {
-    const db = getFirestore(getAdminApp());
-    const snap = await db.collection(FAST_DOC_PATH[0]).doc(FAST_DOC_PATH[1]).get();
-    if (!snap.exists) throw new Error('match_data_fast missing');
-    const fast = snap.data() || {};
-    if (fast.format !== 'single_doc_v1' || !Array.isArray(fast.leagues)) {
-      throw new Error('match_data_fast format unexpected');
-    }
-    let allTimeSummary = fast.allTimeSummary || null;
-    if (!allTimeSummary) {
-      allTimeSummary = await loadAllTimeSummary();
-    }
-    const payload = {
-      captured_at: fast.capturedAt || null,
-      source: fast.source || null,
-      availableDates: Array.isArray(fast.availableDates) ? fast.availableDates : [],
-      allTimeSummary,
-      leagues: fast.leagues,
-    };
-    cachedData = payload;
-    cachedDataAt = Date.now();
-    return payload;
-  })().finally(() => {
-    inflightData = null;
-  });
-
-  return inflightData;
+  let allTimeSummary = fast.allTimeSummary || null;
+  if (!allTimeSummary) {
+    allTimeSummary = await loadAllTimeSummary();
+  }
+  return {
+    captured_at: fast.capturedAt || null,
+    source: fast.source || null,
+    availableDates: Array.isArray(fast.availableDates) ? fast.availableDates : [],
+    allTimeSummary,
+    leagues: fast.leagues,
+  };
 }
 
 async function loadLeagueDocs() {
@@ -150,95 +123,53 @@ function teamKey(name) {
 }
 
 async function loadTeamOptions() {
-  const now = Date.now();
-  if (cachedTeamOptions && now - cachedTeamOptionsAt < DATA_CACHE_TTL_MS) {
-    return cachedTeamOptions;
-  }
-  if (inflightTeamOptions) return inflightTeamOptions;
-
-  inflightTeamOptions = (async () => {
-    const teams = new Map();
-    const leagues = await loadLeagueDocs();
-    leagues.forEach((league) => {
-      (Array.isArray(league.matches) ? league.matches : []).forEach((match) => {
-        [match.home?.name, match.away?.name].forEach((name) => {
-          const key = teamKey(name);
-          if (key && !teams.has(key)) teams.set(key, String(name).trim());
-        });
+  const teams = new Map();
+  const leagues = await loadLeagueDocs();
+  leagues.forEach((league) => {
+    (Array.isArray(league.matches) ? league.matches : []).forEach((match) => {
+      [match.home?.name, match.away?.name].forEach((name) => {
+        const key = teamKey(name);
+        if (key && !teams.has(key)) teams.set(key, String(name).trim());
       });
     });
-    const options = [...teams.values()].sort((a, b) => a.localeCompare(b));
-    cachedTeamOptions = options;
-    cachedTeamOptionsAt = Date.now();
-    return options;
-  })().finally(() => {
-    inflightTeamOptions = null;
   });
-
-  return inflightTeamOptions;
+  return [...teams.values()].sort((a, b) => a.localeCompare(b));
 }
 
 async function loadAllTimeSummary() {
-  const now = Date.now();
-  if (cachedAllTimeSummary && now - cachedAllTimeSummaryAt < DATA_CACHE_TTL_MS) {
-    return cachedAllTimeSummary;
-  }
-  if (inflightAllTimeSummary) return inflightAllTimeSummary;
-  inflightAllTimeSummary = (async () => {
-    const db = getFirestore(getAdminApp());
-    const metaSnap = await db.collection(META_DOC_PATH[0]).doc(META_DOC_PATH[1]).get();
-    const metaSummary = metaSnap.exists ? metaSnap.data()?.allTimeSummary : null;
-    const summary = metaSummary || summarizeAllTime(await loadLeagueDocs());
-    cachedAllTimeSummary = summary;
-    cachedAllTimeSummaryAt = Date.now();
-    return summary;
-  })().finally(() => {
-    inflightAllTimeSummary = null;
-  });
-  return inflightAllTimeSummary;
+  const db = getFirestore(getAdminApp());
+  const metaSnap = await db.collection(META_DOC_PATH[0]).doc(META_DOC_PATH[1]).get();
+  const metaSummary = metaSnap.exists ? metaSnap.data()?.allTimeSummary : null;
+  return metaSummary || summarizeAllTime(await loadLeagueDocs());
 }
 
 async function loadDateDoc(date) {
   const safeDate = String(date || '').trim();
   if (!/^\d{4}-\d{2}-\d{2}$/.test(safeDate)) return null;
-  const now = Date.now();
-  const cached = cachedDateData.get(safeDate);
-  if (cached && now - cached.at < DATA_CACHE_TTL_MS) return cached.payload;
-  if (inflightDateData.has(safeDate)) return inflightDateData.get(safeDate);
-
-  const pending = (async () => {
-    const db = getFirestore(getAdminApp());
-    const snap = await db
-      .collection(META_DOC_PATH[0])
-      .doc(META_DOC_PATH[1])
-      .collection('dates')
-      .doc(safeDate)
-      .get();
-    if (!snap.exists) return null;
-    const data = snap.data() || {};
-    if (data.format !== 'date_doc_v1' || !Array.isArray(data.leagues)) {
-      throw new Error('date doc format unexpected');
-    }
-    let allTimeSummary = data.allTimeSummary || null;
-    if (!allTimeSummary) {
-      allTimeSummary = await loadAllTimeSummary();
-    }
-    const payload = {
-      captured_at: data.capturedAt || null,
-      source: data.source || null,
-      date: data.date || safeDate,
-      availableDates: Array.isArray(data.availableDates) ? data.availableDates : [],
-      allTimeSummary,
-      leagues: data.leagues,
-    };
-    cachedDateData.set(safeDate, { payload, at: Date.now() });
-    return payload;
-  })().finally(() => {
-    inflightDateData.delete(safeDate);
-  });
-
-  inflightDateData.set(safeDate, pending);
-  return pending;
+  const db = getFirestore(getAdminApp());
+  const snap = await db
+    .collection(META_DOC_PATH[0])
+    .doc(META_DOC_PATH[1])
+    .collection('dates')
+    .doc(safeDate)
+    .get();
+  if (!snap.exists) return null;
+  const data = snap.data() || {};
+  if (data.format !== 'date_doc_v1' || !Array.isArray(data.leagues)) {
+    throw new Error('date doc format unexpected');
+  }
+  let allTimeSummary = data.allTimeSummary || null;
+  if (!allTimeSummary) {
+    allTimeSummary = await loadAllTimeSummary();
+  }
+  return {
+    captured_at: data.capturedAt || null,
+    source: data.source || null,
+    date: data.date || safeDate,
+    availableDates: Array.isArray(data.availableDates) ? data.availableDates : [],
+    allTimeSummary,
+    leagues: data.leagues,
+  };
 }
 
 export async function GET(request) {
