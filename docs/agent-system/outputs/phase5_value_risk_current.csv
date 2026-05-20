@@ -1,7 +1,72 @@
 run_timestamp,league,event_id,date,time,home,away,home_p,home_market,home_edge,home_ev,home_kelly,home_stake,home_decision,draw_p,draw_market,draw_edge,draw_ev,draw_kelly,draw_stake,draw_decision,away_p,away_market,away_edge,away_ev,away_kelly,away_stake,away_decision,top_side,top_decision,top_market_odds,top_p,top_edge,top_stake,risk_scale_factor,phase5_status,phase5_notes
-2026-05-20 09:58:04 ACST,Eredivisie,thesportsdb:2475105,2026-05-22,02:15,Ajax,Groningen,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-20 09:58:04 ACST,Eredivisie,thesportsdb:2475106,2026-05-22,04:30,Utrecht,Heerenveen,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-20 09:58:04 ACST,Serie A,thesportsdb:2265408,2026-05-23,04:15,Fiorentina,Atalanta,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-20 09:58:04 ACST,LaLiga,thesportsdb:2279766,2026-05-24,04:30,Celta Vigo,Sevilla,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-20 09:58:04 ACST,LaLiga,thesportsdb:2279764,2026-05-24,04:30,Deportivo Alavés,Rayo Vallecano,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-20 09:58:04 ACST,LaLiga,thesportsdb:2279765,2026-05-24,04:30,Real Betis,Levante,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Eredivisie,16195914,2026-05-21,02:15,Willem II Tilburg,FC Volendam,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Primeira Liga,16197899,2026-05-21,02:30,Torreense,Casa Pia,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Eredivisie,16196423,2026-05-22,02:15,AFC Ajax,FC Groningen,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Bundesliga,16163439,2026-05-22,04:00,VfL Wolfsburg,SC Paderborn 07,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Eredivisie,16196426,2026-05-22,04:30,FC Utrecht,SC Heerenveen,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Scottish Premiership,16189758,2026-05-22,04:30,Partick Thistle,St. Mirren,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,J1 League,15345966,2026-05-22,20:00,Machida Zelvia,Urawa Red Diamonds,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Serie A,13980080,2026-05-23,04:15,Fiorentina,Atalanta,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,J1 League,15345881,2026-05-23,14:30,Avispa Fukuoka,Vissel Kobe,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,J1 League,15345880,2026-05-23,14:30,Sanfrecce Hiroshima,Nagoya Grampus,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,A-League Men,16194271,2026-05-23,17:40,Auckland FC,Sydney FC,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,J1 League,15345963,2026-05-23,18:00,Kashima Antlers,FC Tokyo,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,J1 League,15345959,2026-05-23,18:30,Kashiwa Reysol,JEF United Chiba,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,J1 League,15345871,2026-05-23,19:30,Kyoto Sanga FC,V-Varen Nagasaki,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Championship,16172173,2026-05-24,01:00,Hull City,Southampton,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Championship,16206585,2026-05-24,01:00,Hull City,Middlesbrough,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Serie A,13980079,2026-05-24,01:30,Bologna,Inter,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Eredivisie,16195916,2026-05-24,03:30,FC Volendam,Willem II Tilburg,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,MLS,15171571,2026-05-24,04:15,St.Louis City,Austin FC,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Serie A,13980072,2026-05-24,04:15,Lazio,Pisa,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,LaLiga,14083715,2026-05-24,04:30,Celta Vigo,Sevilla,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,LaLiga,14083706,2026-05-24,04:30,Deportivo Alavés,Rayo Vallecano,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,LaLiga,14083719,2026-05-24,04:30,Espanyol,Real Sociedad,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,LaLiga,14083723,2026-05-24,04:30,Getafe,Osasuna,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,LaLiga,14083743,2026-05-24,04:30,Girona FC,Elche,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,LaLiga,14083727,2026-05-24,04:30,Mallorca,Real Oviedo,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,LaLiga,14083710,2026-05-24,04:30,Real Betis,Levante UD,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,LaLiga,14083731,2026-05-24,04:30,Real Madrid,Athletic Club,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,LaLiga,14083739,2026-05-24,04:30,Valencia,FC Barcelona,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,MLS,15171576,2026-05-24,06:00,Minnesota United,Real Salt Lake,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,MLS,15171569,2026-05-24,09:00,Charlotte FC,New England Revolution,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,MLS,15171572,2026-05-24,09:00,DC United,CF Montréal,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,MLS,15171573,2026-05-24,09:00,FC Cincinnati,Orlando City SC,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,MLS,15171574,2026-05-24,10:00,Chicago Fire,Toronto FC,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,MLS,15171578,2026-05-24,10:00,Nashville SC,New York City FC,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,MLS,15171575,2026-05-24,10:00,Sporting Kansas City,New York Red Bulls,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,MLS,15171577,2026-05-24,11:00,Colorado Rapids,FC Dallas,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,MLS,15171581,2026-05-24,11:00,Portland Timbers,San Jose Earthquakes,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,MLS,15171580,2026-05-24,11:00,San Diego FC,Vancouver Whitecaps,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,MLS,15171579,2026-05-24,12:00,LA Galaxy,Houston Dynamo,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,J1 League,15345869,2026-05-24,13:25,Fagiano Okayama,Cerezo Osaka,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,J1 League,15345955,2026-05-24,14:30,Mito Hollyhock,Kawasaki Frontale,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,J1 League,15345960,2026-05-24,14:30,Tokyo Verdy,Yokohama F. Marinos,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,J1 League,15345868,2026-05-24,17:30,Shimizu S-Pulse,Gamba Osaka,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,League One,16199215,2026-05-24,21:30,Bolton Wanderers,Stockport County,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,League One,16184536,2026-05-24,21:30,Stockport County,Bolton Wanderers,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Serie A,13980074,2026-05-24,22:30,Parma,Sassuolo,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Premier League,14023959,2026-05-25,00:30,Brighton & Hove Albion,Manchester United,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Premier League,14023960,2026-05-25,00:30,Burnley,Wolverhampton,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Premier League,14023963,2026-05-25,00:30,Crystal Palace,Arsenal,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Premier League,14023965,2026-05-25,00:30,Fulham,Newcastle United,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Premier League,14023962,2026-05-25,00:30,Liverpool FC,Brentford,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Premier League,14023961,2026-05-25,00:30,Manchester City,Aston Villa,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Premier League,14023964,2026-05-25,00:30,Nottingham Forest,Bournemouth,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Premier League,14023966,2026-05-25,00:30,Sunderland,Chelsea,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Premier League,14023967,2026-05-25,00:30,Tottenham Hotspur,Everton,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Premier League,14023968,2026-05-25,00:30,West Ham United,Leeds United,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Serie A,13980061,2026-05-25,01:30,SSC Napoli,Udinese,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Serie A,13980070,2026-05-25,04:15,Cremonese,Como,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Serie A,13980064,2026-05-25,04:15,Hellas Verona,AS Roma,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Serie A,13980066,2026-05-25,04:15,Lecce,Genoa,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Serie A,13980071,2026-05-25,04:15,Milan,Cagliari,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Serie A,13980077,2026-05-25,04:15,Torino,Juventus,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,LaLiga,14083735,2026-05-25,04:30,Villarreal,Atlético Madrid,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,MLS,15171588,2026-05-25,06:30,Columbus Crew,Atlanta United,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,MLS,15171584,2026-05-25,08:30,Inter Miami CF,Philadelphia Union,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,MLS,15171582,2026-05-25,10:30,Los Angeles FC,Seattle Sounders FC,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,League Two,16189253,2026-05-25,23:30,Notts County,Salford City,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Bundesliga,16163444,2026-05-26,04:00,SC Paderborn 07,VfL Wolfsburg,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Scottish Premiership,16189849,2026-05-26,04:30,St. Mirren,Partick Thistle,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-20 17:57:54 ACST,Ligue 1,16198895,2026-05-27,04:15,Saint-Étienne,Nice,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.

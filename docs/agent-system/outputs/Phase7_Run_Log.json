@@ -3,24 +3,24 @@
     "label": "1 Fixtures",
     "status": "ok",
     "exit": 0,
-    "duration_s": 24.83,
-    "last_line": "NOTE: Missing API_FOOTBALL_KEY/APISPORTS_KEY and Flashscore returned no fixtures; used TheSportsDB v1 fallback.",
+    "duration_s": 22.83,
+    "last_line": "NOTE: Missing API_FOOTBALL_KEY/APISPORTS_KEY and live fallbacks returned no fixtures; used local match_data.json fallback.",
     "stderr_tail": ""
   },
   {
     "label": "2 Odds",
     "status": "ok",
     "exit": 0,
-    "duration_s": 16.62,
-    "last_line": "total=6 ready_for_phase_3=5 unmatched=1 blocked=0",
+    "duration_s": 7.88,
+    "last_line": "total=71 ready_for_phase_3=0 unmatched=0 blocked=71",
     "stderr_tail": ""
   },
   {
     "label": "3 Team Context",
     "status": "ok",
     "exit": 0,
-    "duration_s": 97.7,
-    "last_line": "total=6 ready_for_phase_4=0 unresolved=5 upstream_blocked=1",
+    "duration_s": 3.2,
+    "last_line": "total=71 ready_for_phase_4=0 unresolved=0 upstream_blocked=71",
     "stderr_tail": ""
   },
   {
@@ -28,7 +28,7 @@
     "status": "ok",
     "exit": 0,
     "duration_s": 0.11,
-    "last_line": "total=6 ready_for_phase_5=0 model_only=0 upstream_blocked=6",
+    "last_line": "total=71 ready_for_phase_5=0 model_only=0 upstream_blocked=71",
     "stderr_tail": ""
   },
   {
@@ -36,14 +36,14 @@
     "status": "ok",
     "exit": 0,
     "duration_s": 0.11,
-    "last_line": "total=6 bets=0 leans=0 no_value=0 upstream_blocked=6 scale=1.0",
+    "last_line": "total=71 bets=0 leans=0 no_value=0 upstream_blocked=71 scale=1.0",
     "stderr_tail": ""
   },
   {
     "label": "6 Settlement",
     "status": "ok",
     "exit": 0,
-    "duration_s": 1.5,
+    "duration_s": 2.38,
     "last_line": "settled_this_run=0 won=0 lost=0 pending=0 history_hit_rate=0.0 history_roi=-1.0",
     "stderr_tail": ""
   },
@@ -51,7 +51,7 @@
     "label": "Result Review",
     "status": "ok",
     "exit": 0,
-    "duration_s": 0.12,
+    "duration_s": 5.11,
     "last_line": "settled_market_rows=1606 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the review agent can compare confidence bands to actual hit rate.",
     "stderr_tail": ""
   },
