@@ -26,7 +26,7 @@ Timezone: Australia/Adelaide
 
 | Date | Time | League | Home | Away | Event ID | Status | Phase 1 Status | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-21 | 01:30 | Eliteserien | Start | Bodo/Glimt | flashscore:v3i3qEfD | live | ready_for_phase_2 | Keyless Flashscore fixture feed. |
 | 2026-05-21 | 02:30 | Allsvenskan | GAIS | Hammarby | flashscore:rJKJ2MZP | live | ready_for_phase_2 | Keyless Flashscore fixture feed. |
 | 2026-05-21 | 02:30 | Eliteserien | Lilleström | Kristiansund | flashscore:YobepuNG | live | ready_for_phase_2 | Keyless Flashscore fixture feed. |
 | 2026-05-21 | 03:30 | Eliteserien | Aalesund | Brann | flashscore:0A1Nl9Wh | live | ready_for_phase_2 | Keyless Flashscore fixture feed. |
+| 2026-05-21 | FT | Eliteserien | Start | Bodo/Glimt | flashscore:v3i3qEfD | FT | ready_for_phase_2 | Keyless Flashscore fixture feed. |

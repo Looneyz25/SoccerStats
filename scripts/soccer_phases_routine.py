@@ -13,6 +13,8 @@ import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+import soccer_routine as dashboard_routine
+
 try:
     from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
     try:
@@ -282,6 +284,19 @@ def main():
         run_results.append(result)
         last = result.get("last_line") or result.get("reason") or ""
         print(f"[{label}] {result['status']}  {last}")
+        if label == "6 Settlement":
+            start = time.monotonic()
+            promoted = dashboard_routine.promote_phase_fixtures_to_store()
+            promotion_result = {
+                "label": "Promote Phase Fixtures",
+                "status": "ok",
+                "exit": 0,
+                "duration_s": round(time.monotonic() - start, 2),
+                "last_line": f"added={promoted['added']} removed_duplicates={promoted.get('removed_duplicates', 0)} to match_data.json",
+                "stderr_tail": "",
+            }
+            run_results.append(promotion_result)
+            print(f"[Promote Phase Fixtures] ok  {promotion_result['last_line']}")
 
     write_summary(run_results)
     RUN_LOG_PATH.write_text(json.dumps(run_results, indent=2, ensure_ascii=False), encoding="utf-8")

@@ -1,19 +1,20 @@
 # Soccer Stats Daily Summary
 
-Generated: 2026-05-21 01:56 ACST
+Generated: 2026-05-21 03:43 ACST
 Date window: 2026-05-21 to 2026-05-21
 
 ## Phase Run Status
 
 | Phase | Status | Exit | Duration | Last line |
 | --- | --- | --- | --- | --- |
-| 1 Fixtures | ok | 0 | 0.84s | NOTE: Missing API_FOOTBALL_KEY/APISPORTS_KEY; used keyless Flashscore feed. |
-| 2 Odds | ok | 0 | 16.95s | total=4 ready_for_phase_3=2 unmatched=2 blocked=0 |
-| 3 Team Context | ok | 0 | 41.73s | total=4 ready_for_phase_4=0 unresolved=2 upstream_blocked=2 |
+| 1 Fixtures | ok | 0 | 1.69s | NOTE: Missing API_FOOTBALL_KEY/APISPORTS_KEY; used keyless Flashscore feed. |
+| 2 Odds | ok | 0 | 15.38s | total=4 ready_for_phase_3=2 unmatched=2 blocked=0 |
+| 3 Team Context | ok | 0 | 42.92s | total=4 ready_for_phase_4=0 unresolved=2 upstream_blocked=2 |
 | 4 Predictions | ok | 0 | 0.12s | total=4 ready_for_phase_5=0 model_only=0 upstream_blocked=4 |
-| 5 Value & Risk | ok | 0 | 0.12s | total=4 bets=0 leans=0 no_value=0 upstream_blocked=4 scale=1.0 |
-| 6 Settlement | ok | 0 | 1.64s | settled_this_run=0 won=0 lost=0 pending=0 history_hit_rate=0.0 history_roi=-1.0 |
-| Result Review | ok | 0 | 0.14s | settled_market_rows=1606 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the revie |
+| 5 Value & Risk | ok | 0 | 0.11s | total=4 bets=0 leans=0 no_value=0 upstream_blocked=4 scale=1.0 |
+| 6 Settlement | ok | 0 | 1.62s | settled_this_run=0 won=0 lost=0 pending=0 history_hit_rate=0.0 history_roi=-1.0 |
+| Promote Phase Fixtures | ok | 0 | 0.42s | added=0 removed_duplicates=0 to match_data.json |
+| Result Review | ok | 0 | 0.12s | settled_market_rows=1606 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the revie |
 | Model Calibration | ok | 0 | 0.08s | market_adjustments=4 league_market_adjustments=7 |
 
 ## Phase Health

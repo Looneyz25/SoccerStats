@@ -7,7 +7,7 @@ Source: Sportsbet AU (Win-Draw-Win, 90-min regular time)
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-21 01:55:46 ACST |
+| run_timestamp | 2026-05-21 03:42:12 ACST |
 | timezone | Australia/Adelaide |
 | source | Sportsbet AU |
 | phase1_input_rows | 4 |
@@ -33,7 +33,7 @@ Source: Sportsbet AU (Win-Draw-Win, 90-min regular time)
 
 | Date | Time | League | Home | Away | H | D | A | Overround | Match | Phase 2 Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-21 | 01:30 | Eliteserien | Start | Bodo/Glimt |  |  |  |  | none:0.0 | unmatched_market |
-| 2026-05-21 | 02:30 | Allsvenskan | GAIS | Hammarby | 3.0 | 3.2 | 2.2 | 1.1003 | exact:1.0 | ready_for_phase_3 |
+| 2026-05-21 | 02:30 | Allsvenskan | GAIS | Hammarby | 1.47 | 3.2 | 6.5 | 1.1466 | exact:1.0 | ready_for_phase_3 |
 | 2026-05-21 | 02:30 | Eliteserien | Lilleström | Kristiansund |  |  |  |  | none:0.0 | unmatched_market |
-| 2026-05-21 | 03:30 | Eliteserien | Aalesund | Brann | 3.4 | 3.7 | 1.91 | 1.088 | substring:0.945 | ready_for_phase_3 |
+| 2026-05-21 | 03:30 | Eliteserien | Aalesund | Brann | 3.0 | 3.4 | 1.91 | 1.151 | substring:0.945 | ready_for_phase_3 |
+| 2026-05-21 | FT | Eliteserien | Start | Bodo/Glimt |  |  |  |  | none:0.0 | unmatched_market |

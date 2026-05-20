@@ -6,7 +6,7 @@ Timezone: Australia/Adelaide
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-21 01:56:45 ACST |
+| run_timestamp | 2026-05-21 03:43:10 ACST |
 | sofa_health | healthy |
 | flashscore_health | healthy |
 | flashscore_note |  |
@@ -36,7 +36,7 @@ Timezone: Australia/Adelaide
 
 | Date | Match | Pick | Odds | Stake | Actual | Outcome | Status | Return |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-21 | Start vs Bodo/Glimt |  |  |  |  |  | skipped | 0.0 |
 | 2026-05-21 | GAIS vs Hammarby |  |  |  |  |  | skipped | 0.0 |
 | 2026-05-21 | Lilleström vs Kristiansund |  |  |  |  |  | skipped | 0.0 |
 | 2026-05-21 | Aalesund vs Brann |  |  |  |  |  | skipped | 0.0 |
+| 2026-05-21 | Start vs Bodo/Glimt |  |  |  |  |  | skipped | 0.0 |

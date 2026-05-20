@@ -7,7 +7,7 @@ Source: SofaScore (smart-mimic session)
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-21 01:56:03 ACST |
+| run_timestamp | 2026-05-21 03:42:27 ACST |
 | timezone | Australia/Adelaide |
 | source | SofaScore (smart-mimic session) |
 | phase2_input_rows | 4 |
@@ -30,7 +30,7 @@ Source: SofaScore (smart-mimic session)
 
 | Date | League | Home | Away | H last5 (W-D-L GF-GA) | A last5 (W-D-L GF-GA) | H Streaks | A Streaks | H2H | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-21 | Eliteserien | Start | Bodo/Glimt | -- - | -- - |  |  |  (H/A/D) | upstream_blocked |
 | 2026-05-21 | Allsvenskan | GAIS | Hammarby | -- - | -- - |  |  |  (H/A/D) | team_unresolved |
 | 2026-05-21 | Eliteserien | Lilleström | Kristiansund | -- - | -- - |  |  |  (H/A/D) | upstream_blocked |
 | 2026-05-21 | Eliteserien | Aalesund | Brann | -- - | -- - |  |  |  (H/A/D) | team_unresolved |
+| 2026-05-21 | Eliteserien | Start | Bodo/Glimt | -- - | -- - |  |  |  (H/A/D) | upstream_blocked |

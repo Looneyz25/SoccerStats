@@ -20,6 +20,7 @@ Usage:
     python3 scripts/soccer_routine.py --results-only
 """
 import argparse
+import csv
 import difflib
 import json, math, random, re, subprocess, sys, time, unicodedata
 import os
@@ -59,6 +60,9 @@ ELO_STORE = ROOT / "team_elo.json"
 SCRIPTS = ROOT / "scripts"
 OUT_DIR = ROOT / "docs" / "agent-system" / "outputs"
 MODEL_CALIBRATION = ROOT / "docs" / "agent-system" / "outputs" / "model_calibration.json"
+PHASE1_FIXTURE_SLATE = OUT_DIR / "phase1_fixture_slate_current.csv"
+PHASE2_ODDS_SLATE = OUT_DIR / "phase2_odds_slate_current.csv"
+PHASE_FIXTURE_FALLBACK_LEAGUES = {"Allsvenskan", "Eliteserien"}
 
 # --- Model tuning constants ---------------------------------------------------
 # Dixon-Coles (1997) low-score correction. Negative rho lifts 0-0 and 1-1
@@ -1749,6 +1753,210 @@ def phase_b3_attach_standings(store):
 
 
 # ----------------------------------------------------------------------------
+def read_phase_csv(path):
+    if not path.exists():
+        return []
+    try:
+        with path.open("r", encoding="utf-8", newline="") as handle:
+            return list(csv.DictReader(handle))
+    except Exception:
+        return []
+
+
+def parse_decimal(value):
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return None
+    return number if math.isfinite(number) and number > 1 else None
+
+
+def phase_fixture_team(name, team_id=None, logo=None):
+    payload = {
+        "name": name or "",
+        "short": name or "",
+    }
+    if team_id:
+        payload["team_id"] = team_id
+    if logo:
+        payload["logo"] = logo
+    return payload
+
+
+def phase_fixture_exists(league, row):
+    event_id = row.get("event_id")
+    row_key = (
+        row.get("date") or "",
+        row.get("time") or "",
+        team_norm(row.get("home") or ""),
+        team_norm(row.get("away") or ""),
+    )
+    for match in league.get("matches", []):
+        if event_id and str(match.get("id")) == str(event_id):
+            return True
+        match_key = (
+            match.get("date") or "",
+            match.get("time") or "",
+            team_norm((match.get("home") or {}).get("name") or ""),
+            team_norm((match.get("away") or {}).get("name") or ""),
+        )
+        if row_key == match_key:
+            return True
+        if (
+            match_key[0] == row_key[0]
+            and match_key[1] == row_key[1]
+            and team_names_match((match.get("home") or {}).get("name") or "", row.get("home") or "")
+            and team_names_match((match.get("away") or {}).get("name") or "", row.get("away") or "")
+        ):
+            return True
+    return False
+
+
+def dedupe_phase_fixture_matches(store):
+    removed = 0
+    for league in store.get("leagues", []):
+        keep = []
+        for match in league.get("matches", []):
+            duplicate = False
+            for existing in keep:
+                if match.get("id") and existing.get("id") and str(match.get("id")) == str(existing.get("id")):
+                    duplicate = True
+                    break
+                if (
+                    match.get("date") == existing.get("date")
+                    and match.get("time") == existing.get("time")
+                    and team_names_match((match.get("home") or {}).get("name") or "", (existing.get("home") or {}).get("name") or "")
+                    and team_names_match((match.get("away") or {}).get("name") or "", (existing.get("away") or {}).get("name") or "")
+                ):
+                    duplicate = True
+                    break
+            if duplicate:
+                removed += 1
+                continue
+            keep.append(match)
+        league["matches"] = keep
+    return removed
+
+
+def phase_fixture_record(row):
+    record = {
+        "id": row.get("event_id"),
+        "date": row.get("date"),
+        "time": row.get("time"),
+        "status": "upcoming",
+        "source": row.get("source") or "Phase pipeline",
+        "source_status": row.get("source_health") or "",
+        "phase_status": row.get("phase2_status") or row.get("phase1_status") or "fixture_only",
+        "phase_notes": row.get("phase2_notes") or row.get("phase1_notes") or "",
+        "home": phase_fixture_team(row.get("home"), row.get("home_team_id"), row.get("home_logo")),
+        "away": phase_fixture_team(row.get("away"), row.get("away_team_id"), row.get("away_logo")),
+        "predictions": {},
+    }
+    odds = {
+        "home": parse_decimal(row.get("home_odds")),
+        "draw": parse_decimal(row.get("draw_odds")),
+        "away": parse_decimal(row.get("away_odds")),
+    }
+    if all(odds.values()):
+        record["odds"] = odds
+        record["sportsbet_odds"] = {
+            "matched": True,
+            "source": row.get("odds_source") or "Sportsbet",
+            "event_id": row.get("sportsbet_event_id") or "",
+            "event_name": f"{row.get('sportsbet_home_name') or row.get('home')} vs {row.get('sportsbet_away_name') or row.get('away')}",
+            **odds,
+        }
+    return record
+
+
+def sportsbet_fixture_rows():
+    try:
+        import soccer_fetch_sportsbet as sportsbet
+    except Exception:
+        return []
+    allowed_dates = set((TODAY + timedelta(days=i)).isoformat() for i in range(FIXTURE_LOOKAHEAD_DAYS))
+    rows = []
+    for league_name in PHASE_FIXTURE_FALLBACK_LEAGUES:
+        slug = sportsbet.LEAGUE_PAGES.get(league_name)
+        if not slug:
+            continue
+        data = sportsbet.fetch_page_data(slug)
+        if not data:
+            continue
+        for event in sportsbet.extract_odds(data, slug).values():
+            ts = event.get("start_ts")
+            if not ts:
+                continue
+            local_date = adl_date(ts)
+            if local_date not in allowed_dates:
+                continue
+            league_id = next(k for k, v in TOURNAMENTS.items() if v == league_name)
+            rows.append({
+                "run_timestamp": datetime.now(ADL).strftime("%Y-%m-%d %H:%M:%S %Z"),
+                "source": "Sportsbet",
+                "source_health": "healthy",
+                "league_id": league_id,
+                "league": league_name,
+                "event_id": f"sportsbet:{event.get('event_id')}",
+                "date": local_date,
+                "time": adl_time(ts),
+                "timezone": "Australia/Adelaide",
+                "home": event.get("home_name") or "",
+                "away": event.get("away_name") or "",
+                "home_team_id": f"sportsbet:{event.get('event_id')}:home",
+                "away_team_id": f"sportsbet:{event.get('event_id')}:away",
+                "phase1_status": "ready_for_phase_2",
+                "phase2_status": "ready_for_phase_3",
+                "phase1_notes": "Sportsbet league page fallback fixture.",
+                "phase2_notes": "Sportsbet fixture and 1X2 odds fallback.",
+                "odds_source": "Sportsbet",
+                "sportsbet_event_id": event.get("event_id") or "",
+                "sportsbet_home_name": event.get("home_name") or "",
+                "sportsbet_away_name": event.get("away_name") or "",
+                "home_odds": event.get("home"),
+                "draw_odds": event.get("draw"),
+                "away_odds": event.get("away"),
+            })
+    return rows
+
+
+def promote_phase_fixtures_to_store(store=None):
+    """Keep real Phase 1/2 fixtures visible even when later model phases block."""
+    store = store or load_store()
+    phase2_rows = read_phase_csv(PHASE2_ODDS_SLATE)
+    phase1_rows = read_phase_csv(PHASE1_FIXTURE_SLATE)
+    odds_by_event = {row.get("event_id"): row for row in phase2_rows if row.get("event_id")}
+    rows = list(phase2_rows or phase1_rows)
+    rows.extend(sportsbet_fixture_rows())
+    by_name = {league.get("name"): league for league in store.get("leagues", [])}
+    added = 0
+    for row in rows:
+        league_name = row.get("league")
+        if league_name not in TOURNAMENTS.values():
+            continue
+        if row.get("phase1_status") and row.get("phase1_status") != "ready_for_phase_2":
+            continue
+        if not (row.get("event_id") and row.get("date") and row.get("time") and row.get("home") and row.get("away")):
+            continue
+        league = by_name.get(league_name)
+        if not league:
+            league_id = next(k for k, v in TOURNAMENTS.items() if v == league_name)
+            league = {"id": league_id, "name": league_name, "season": "2025/26", "round": None, "logo": sofascore_league_logo(league_id), "matches": []}
+            store.setdefault("leagues", []).append(league)
+            by_name[league_name] = league
+        merged = {**row, **(odds_by_event.get(row.get("event_id")) or {})}
+        if phase_fixture_exists(league, merged):
+            continue
+        league.setdefault("matches", []).append(phase_fixture_record(merged))
+        added += 1
+    removed = dedupe_phase_fixture_matches(store)
+    if added or removed:
+        sort_store(store)
+        save_store(store)
+    return {"added": added, "removed_duplicates": removed}
+
+
+# ----------------------------------------------------------------------------
 def run_helper(name):
     """Invoke a helper script. Captures and prints its stdout."""
     p = subprocess.run([sys.executable, str(SCRIPTS / name)], capture_output=True, text=True)
@@ -1851,6 +2059,10 @@ def run_full_refresh():
     pb3 = phase_b3_attach_standings(store)
     print(f"  attached={pb3['attached']}")
 
+    print("\n[Phase B.3a] promote phase fixture cards")
+    pbf = promote_phase_fixtures_to_store(store)
+    print(f"  added={pbf['added']}")
+
     # Sort matches inside each league
     sort_store(store)
 
@@ -1936,6 +2148,10 @@ def run_seed_next_day():
     print("\n[Seed C] attach standings to home/away")
     pb3 = phase_b3_attach_standings(store)
     print(f"  attached={pb3['attached']}")
+
+    print("\n[Seed C.5] promote phase fixture cards")
+    pbf = promote_phase_fixtures_to_store(store)
+    print(f"  added={pbf['added']}")
 
     sort_store(store)
     save_store(store)

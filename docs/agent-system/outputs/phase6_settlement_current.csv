@@ -1,5 +1,5 @@
 run_timestamp,event_id,league,date,time,home,away,top_side,top_market_odds,top_p,top_edge,top_stake,phase5_status,actual_status,actual_home_score,actual_away_score,actual_outcome,phase6_status,realized_return,phase6_notes
-2026-05-21 01:56:45 ACST,flashscore:v3i3qEfD,Eliteserien,2026-05-21,01:30,Start,Bodo/Glimt,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-21 01:56:45 ACST,flashscore:rJKJ2MZP,Allsvenskan,2026-05-21,02:30,GAIS,Hammarby,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-21 01:56:45 ACST,flashscore:YobepuNG,Eliteserien,2026-05-21,02:30,Lilleström,Kristiansund,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-21 01:56:45 ACST,flashscore:0A1Nl9Wh,Eliteserien,2026-05-21,03:30,Aalesund,Brann,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-21 03:43:10 ACST,flashscore:rJKJ2MZP,Allsvenskan,2026-05-21,02:30,GAIS,Hammarby,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-21 03:43:10 ACST,flashscore:YobepuNG,Eliteserien,2026-05-21,02:30,Lilleström,Kristiansund,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-21 03:43:10 ACST,flashscore:0A1Nl9Wh,Eliteserien,2026-05-21,03:30,Aalesund,Brann,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-21 03:43:10 ACST,flashscore:v3i3qEfD,Eliteserien,2026-05-21,FT,Start,Bodo/Glimt,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
