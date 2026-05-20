@@ -107,8 +107,10 @@ npm run build && npx firebase-tools deploy --only hosting --project sports-predi
 | `NEXT_PUBLIC_APP_URL` | `apphosting.yaml` | Build/runtime env var |
 
 - Cloud Function URL: `https://australia-southeast1-sports-predictions-f91fd.cloudfunctions.net/stripeApi`
+- LVRstats billing account: `acct_1TZ4PGEW2qO8xntT`. Keep this separate from the SupplyRobot Stripe account; do not reuse SupplyRobot product, price, secret, webhook, or publishable keys for LVRstats.
 - Stripe Product ID: `STRIPE_PRO_PRODUCT_ID` in `.env` (Soccer Stats Pro, A$19.99/month)
 - Stripe Price ID: `STRIPE_PRO_PRICE_ID` is used by the Firebase Cloud Function for Checkout line items. Do not put it in `apphosting.yaml`, do not add it as an App Hosting console override, and do not expose it to the browser. The frontend must call the API/Cloud Function and redirect to the returned Stripe Checkout URL.
+- Stripe customer IDs from the old shared/SupplyRobot account are legacy IDs. The Cloud Function archives an unusable customer ID to `legacyStripeCustomerId` / `legacyStripeCustomerIds` and creates a fresh customer in the LVRstats account on the next checkout.
 - App Hosting environment name should stay simple and stable, normally `prod`. Keep public frontend values in `apphosting.yaml`; use manual App Hosting console environment variable overrides only for a temporary emergency override that will be copied back into source afterward.
 - Checkout starts new subscriptions with a 7-day free trial and no upfront payment requirement.
 - The free trial is one-time per Firebase user / Stripe customer; if `stripeTrialUsed` or prior Stripe trial history exists, Checkout does not attach another trial.

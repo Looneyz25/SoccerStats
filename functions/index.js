@@ -9,6 +9,8 @@ function cleanEnv(value) {
 const PRO_PRICE_ID = cleanEnv(process.env.STRIPE_PRO_PRICE_ID);
 const PRO_PLAN_NAME = 'Soccer Stats Pro';
 const PRO_TRIAL_DAYS = 7;
+const LVR_STRIPE_ACCOUNT_ID = 'acct_1TZ4PGEW2qO8xntT';
+const LEGACY_STRIPE_ACCOUNT_ID = 'acct_1T5Gp3BbsFy1wAkF';
 const APP_URL = cleanEnv(process.env.NEXT_PUBLIC_APP_URL) || cleanEnv(process.env.APP_URL) || 'https://lvrstats.com';
 
 admin.initializeApp();
@@ -49,31 +51,68 @@ function subscriptionPriceId(subscription) {
   return subscription?.items?.data?.[0]?.price?.id || '';
 }
 
-async function findCurrentProSubscription(customerId) {
+function isMissingStripeResource(error) {
+  return error?.code === 'resource_missing' || /No such customer/i.test(error?.message || '');
+}
+
+async function retrieveStripeCustomer(customerId) {
   if (!customerId) return null;
 
-  const subscriptions = await stripe().subscriptions.list({
-    customer: customerId,
-    status: 'all',
-    limit: 20,
-  });
+  try {
+    const customer = await stripe().customers.retrieve(customerId);
+    return customer?.deleted ? null : customer;
+  } catch (error) {
+    if (isMissingStripeResource(error)) return null;
+    throw error;
+  }
+}
 
-  return subscriptions.data
+async function listCustomerSubscriptions(customerId) {
+  if (!customerId) return [];
+
+  try {
+    const subscriptions = await stripe().subscriptions.list({
+      customer: customerId,
+      status: 'all',
+      limit: 20,
+    });
+    return subscriptions.data || [];
+  } catch (error) {
+    if (isMissingStripeResource(error)) {
+      console.warn('Stripe customer is not available in the configured LVRstats account:', customerId);
+      return [];
+    }
+    throw error;
+  }
+}
+
+async function archiveLegacyStripeCustomer(userRef, customerId) {
+  if (!customerId) return;
+
+  await userRef.set({
+    legacyStripeCustomerId: customerId,
+    legacyStripeCustomerIds: admin.firestore.FieldValue.arrayUnion(customerId),
+    legacyStripeAccountId: LEGACY_STRIPE_ACCOUNT_ID,
+    stripeAccountId: LVR_STRIPE_ACCOUNT_ID,
+    stripeCustomerId: null,
+    stripeAccountMigratedAt: admin.firestore.FieldValue.serverTimestamp(),
+    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+  }, { merge: true });
+}
+
+async function findCurrentProSubscription(customerId) {
+  const subscriptions = await listCustomerSubscriptions(customerId);
+
+  return subscriptions
     .filter((subscription) => subscriptionPriceId(subscription) === PRO_PRICE_ID)
     .filter((subscription) => subscriptionHasAccess(subscription.status))
     .sort((a, b) => (b.created || 0) - (a.created || 0))[0] || null;
 }
 
 async function findLatestProSubscription(customerId) {
-  if (!customerId) return null;
+  const subscriptions = await listCustomerSubscriptions(customerId);
 
-  const subscriptions = await stripe().subscriptions.list({
-    customer: customerId,
-    status: 'all',
-    limit: 20,
-  });
-
-  return subscriptions.data
+  return subscriptions
     .filter((subscription) => subscriptionPriceId(subscription) === PRO_PRICE_ID)
     .sort((a, b) => (b.created || 0) - (a.created || 0))[0] || null;
 }
@@ -82,13 +121,9 @@ async function hasUsedProTrial(customerId, profile = {}) {
   if (profile.stripeTrialUsed || profile.subscriptionTrialStart) return true;
   if (!customerId) return false;
 
-  const subscriptions = await stripe().subscriptions.list({
-    customer: customerId,
-    status: 'all',
-    limit: 20,
-  });
+  const subscriptions = await listCustomerSubscriptions(customerId);
 
-  return subscriptions.data.some((subscription) =>
+  return subscriptions.some((subscription) =>
     subscriptionPriceId(subscription) === PRO_PRICE_ID && Boolean(subscription.trial_start)
   );
 }
@@ -201,18 +236,31 @@ async function getOrCreateCustomer(decoded) {
   const profile = userSnap.exists ? userSnap.data() : {};
   const email = decoded.email || profile.email || undefined;
 
-  let customerId = profile.stripeCustomerId;
+  let customerId = cleanEnv(profile.stripeCustomerId);
+  if (customerId) {
+    const existingCustomer = await retrieveStripeCustomer(customerId);
+    if (!existingCustomer) {
+      await archiveLegacyStripeCustomer(userRef, customerId);
+      customerId = '';
+    }
+  }
+
   if (!customerId) {
     const customer = await stripe().customers.create({
       email,
       name: decoded.name || profile.displayName || undefined,
-      metadata: { firebaseUid: decoded.uid },
+      metadata: {
+        firebaseUid: decoded.uid,
+        product: 'lvrstats',
+        stripeAccountId: LVR_STRIPE_ACCOUNT_ID,
+      },
     });
     customerId = customer.id;
     await userRef.set({
       email: email || '',
       displayName: decoded.name || profile.displayName || '',
       stripeCustomerId: customerId,
+      stripeAccountId: LVR_STRIPE_ACCOUNT_ID,
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     }, { merge: true });
   }
@@ -220,28 +268,8 @@ async function getOrCreateCustomer(decoded) {
   return customerId;
 }
 
-async function createCheckout(req, res) {
-  const decoded = await verifyUser(req);
-  const customerId = await getOrCreateCustomer(decoded);
-  const currentSubscription = await findCurrentProSubscription(customerId);
-  const userSnap = await admin.firestore().collection('users').doc(decoded.uid).get();
-  const profile = userSnap.exists ? userSnap.data() : {};
+async function createProCheckoutSession(decoded, customerId, profile = {}) {
   const trialAlreadyUsed = await hasUsedProTrial(customerId, profile);
-
-  if (currentSubscription) {
-    await syncSubscription(currentSubscription);
-    const portalSession = await stripe().billingPortal.sessions.create({
-      customer: customerId,
-      return_url: `${APP_URL}/dashboard`,
-    });
-    return sendJson(res, 200, {
-      url: portalSession.url,
-      existingSubscription: true,
-      subscriptionStatus: currentSubscription.status,
-      subscriptionId: currentSubscription.id,
-    });
-  }
-
   const sessionOptions = {
     mode: 'subscription',
     customer: customerId,
@@ -251,12 +279,16 @@ async function createCheckout(req, res) {
     customer_update: { name: 'auto' },
     metadata: {
       firebaseUid: decoded.uid,
+      product: 'lvrstats',
+      stripeAccountId: LVR_STRIPE_ACCOUNT_ID,
       plan: PRO_PLAN_NAME,
       trialAlreadyUsed: String(trialAlreadyUsed),
     },
     subscription_data: {
       metadata: {
         firebaseUid: decoded.uid,
+        product: 'lvrstats',
+        stripeAccountId: LVR_STRIPE_ACCOUNT_ID,
         plan: PRO_PLAN_NAME,
         trialAlreadyUsed: String(trialAlreadyUsed),
       },
@@ -276,20 +308,57 @@ async function createCheckout(req, res) {
   }
 
   const session = await stripe().checkout.sessions.create(sessionOptions);
+  return { session, trialApplied: !trialAlreadyUsed };
+}
 
-  return sendJson(res, 200, { url: session.url, trialApplied: !trialAlreadyUsed });
+async function createCheckout(req, res) {
+  const decoded = await verifyUser(req);
+  const customerId = await getOrCreateCustomer(decoded);
+  const currentSubscription = await findCurrentProSubscription(customerId);
+  const userSnap = await admin.firestore().collection('users').doc(decoded.uid).get();
+  const profile = userSnap.exists ? userSnap.data() : {};
+
+  if (currentSubscription) {
+    await syncSubscription(currentSubscription);
+    const portalSession = await stripe().billingPortal.sessions.create({
+      customer: customerId,
+      return_url: `${APP_URL}/dashboard`,
+    });
+    return sendJson(res, 200, {
+      url: portalSession.url,
+      existingSubscription: true,
+      subscriptionStatus: currentSubscription.status,
+      subscriptionId: currentSubscription.id,
+    });
+  }
+
+  const { session, trialApplied } = await createProCheckoutSession(decoded, customerId, profile);
+  return sendJson(res, 200, { url: session.url, trialApplied });
 }
 
 async function createPortal(req, res) {
   const decoded = await verifyUser(req);
   const customerId = await getOrCreateCustomer(decoded);
+  const currentSubscription = await findCurrentProSubscription(customerId);
 
-  const session = await stripe().billingPortal.sessions.create({
-    customer: customerId,
-    return_url: `${APP_URL}/dashboard`,
-  });
+  if (currentSubscription) {
+    await syncSubscription(currentSubscription);
+    const session = await stripe().billingPortal.sessions.create({
+      customer: customerId,
+      return_url: `${APP_URL}/dashboard`,
+    });
+    return sendJson(res, 200, {
+      url: session.url,
+      existingSubscription: true,
+      subscriptionStatus: currentSubscription.status,
+      subscriptionId: currentSubscription.id,
+    });
+  }
 
-  return sendJson(res, 200, { url: session.url });
+  const userSnap = await admin.firestore().collection('users').doc(decoded.uid).get();
+  const profile = userSnap.exists ? userSnap.data() : {};
+  const { session, trialApplied } = await createProCheckoutSession(decoded, customerId, profile);
+  return sendJson(res, 200, { url: session.url, trialApplied, checkoutRequired: true });
 }
 
 async function syncCurrentSubscription(req, res) {
@@ -300,6 +369,25 @@ async function syncCurrentSubscription(req, res) {
 
   if (!profile.stripeCustomerId) {
     return sendJson(res, 200, { synced: false, reason: 'No Stripe customer linked.' });
+  }
+
+  const linkedCustomer = await retrieveStripeCustomer(profile.stripeCustomerId);
+  if (!linkedCustomer) {
+    await archiveLegacyStripeCustomer(userRef, profile.stripeCustomerId);
+    await userRef.set({
+      subscriptionHasAccess: false,
+      hasAccess: Boolean(profile.manualAccess || profile.isPlatformOwner),
+      accessSource: profile.manualAccess ? 'manual' : profile.isPlatformOwner ? 'owner' : 'stripe_inactive',
+      stripeSubscriptionId: null,
+      stripePriceId: null,
+      subscriptionStatus: 'none',
+      subscriptionCurrentPeriodEnd: null,
+      subscriptionTrialStart: null,
+      subscriptionTrialEnd: null,
+      subscriptionCancelAtPeriodEnd: false,
+      subscriptionUpdatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true });
+    return sendJson(res, 200, { synced: false, reason: 'Stripe customer belongs to a legacy account and was archived.' });
   }
 
   const relevant =
@@ -357,6 +445,30 @@ async function syncUserSubscription(req, res) {
       subscriptionUpdatedAt: admin.firestore.FieldValue.serverTimestamp(),
     }, { merge: true });
     return sendJson(res, 200, { synced: false, subscriptionStatus: 'none', reason: 'No Stripe customer linked.' });
+  }
+
+  const linkedCustomer = await retrieveStripeCustomer(profile.stripeCustomerId);
+  if (!linkedCustomer) {
+    await archiveLegacyStripeCustomer(userRef, profile.stripeCustomerId);
+    await userRef.set({
+      subscriptionHasAccess: false,
+      hasAccess: Boolean(profile.manualAccess || profile.isPlatformOwner),
+      accessSource: profile.manualAccess ? 'manual' : profile.isPlatformOwner ? 'owner' : 'stripe_inactive',
+      stripeSubscriptionId: null,
+      stripePriceId: null,
+      subscriptionStatus: 'none',
+      subscriptionCurrentPeriodEnd: null,
+      subscriptionTrialStart: null,
+      subscriptionTrialEnd: null,
+      stripeTrialUsed: Boolean(profile.stripeTrialUsed),
+      subscriptionCancelAtPeriodEnd: false,
+      subscriptionUpdatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    }, { merge: true });
+    return sendJson(res, 200, {
+      synced: false,
+      subscriptionStatus: 'none',
+      reason: 'Stripe customer belongs to a legacy account and was archived.',
+    });
   }
 
   const relevant =

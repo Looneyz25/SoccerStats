@@ -79,8 +79,10 @@ npm run build && npx firebase-tools deploy --only hosting --project sports-predi
 | `NEXT_PUBLIC_APP_URL` | `apphosting.yaml` | Build/runtime env var |
 
 - Cloud Function URL: `https://australia-southeast1-sports-predictions-f91fd.cloudfunctions.net/stripeApi`
+- LVRstats billing account: `acct_1TZ4PGEW2qO8xntT`. Keep this separate from the SupplyRobot Stripe account; do not reuse SupplyRobot product, price, secret, webhook, or publishable keys for LVRstats.
 - Stripe Product ID: `STRIPE_PRO_PRODUCT_ID` in `.env` (Soccer Stats Pro, A$19.99/month)
 - Stripe Price ID: `STRIPE_PRO_PRICE_ID` in `.env` for Checkout.
+- Stripe customer IDs from the old shared/SupplyRobot account are legacy IDs. The Cloud Function archives an unusable customer ID to `legacyStripeCustomerId` / `legacyStripeCustomerIds` and creates a fresh customer in the LVRstats account on the next checkout.
 - Checkout starts new subscriptions with a 7-day free trial and no upfront payment requirement.
 - The free trial is one-time per Firebase user / Stripe customer; if `stripeTrialUsed` or prior Stripe trial history exists, Checkout does not attach another trial.
 - Stripe webhooks and `/api/stripe/sync-subscription` both sync trialing/active/cancelled subscription status into Firestore.
