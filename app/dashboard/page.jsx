@@ -43,6 +43,22 @@ async function loadMatchData(date = '') {
   return loadMatchDataFromFirestore(date);
 }
 
+function wait(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+async function loadMatchDataWithRetry(date = '', retries = 1, retryDelayMs = 1200) {
+  try {
+    return await loadMatchData(date);
+  } catch (error) {
+    if (retries <= 0) throw error;
+    await wait(retryDelayMs);
+    return loadMatchDataWithRetry(date, retries - 1, retryDelayMs);
+  }
+}
+
 const SPORTSBET_LEAGUE_SLUGS = {
   'Premier League': 'united-kingdom/english-premier-league',
   Championship: 'united-kingdom/english-championship',
@@ -59,6 +75,8 @@ const SPORTSBET_LEAGUE_SLUGS = {
   'A-League Men': 'australia/australian-a-league-men',
   'Scottish Premiership': 'united-kingdom/scottish-premiership',
   'J1 League': 'asia/japanese-j1-league',
+  Allsvenskan: 'rest-of-europe/swedish-allsvenskan',
+  Eliteserien: 'rest-of-europe/norwegian-eliteserien',
 };
 
 const LEAGUE_LOGOS = {
@@ -77,6 +95,8 @@ const LEAGUE_LOGOS = {
   'A-League Men': 'https://media.api-sports.io/football/leagues/188.png',
   'Scottish Premiership': 'https://media.api-sports.io/football/leagues/179.png',
   'J1 League': 'https://media.api-sports.io/football/leagues/98.png',
+  Allsvenskan: 'https://media.api-sports.io/football/leagues/113.png',
+  Eliteserien: 'https://media.api-sports.io/football/leagues/103.png',
 };
 
 const TEAM_LOGOS = {
@@ -2781,16 +2801,16 @@ function SettingsView({
     }
   }
 
-  async function openBillingPortal() {
+  async function openBillingSession() {
     setBillingBusy(true);
     setBillingError('');
-    setBillingMessage('Opening billing portal...');
+    setBillingMessage(hasStripeSubscription ? 'Opening billing portal...' : 'Opening secure checkout...');
     try {
       const { getFirebaseAuth } = await import('../firebase');
       const user = getFirebaseAuth().currentUser;
       if (!user) throw new Error('Sign in again before managing billing.');
       const token = await user.getIdToken();
-      const response = await fetch('/api/stripe/create-portal', {
+      const response = await fetch(hasStripeSubscription ? '/api/stripe/create-portal' : '/api/stripe/create-checkout', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -2800,11 +2820,11 @@ function SettingsView({
       });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok || !payload.url) {
-        throw new Error(payload.error || 'Billing portal could not be opened.');
+        throw new Error(payload.error || 'Stripe session could not be opened.');
       }
       window.location.assign(payload.url);
     } catch (error) {
-      setBillingError(error.message || 'Billing portal could not be opened.');
+      setBillingError(error.message || 'Stripe session could not be opened.');
       setBillingMessage('');
       setBillingBusy(false);
     }
@@ -2825,7 +2845,12 @@ function SettingsView({
     ? new Date(profile.subscriptionTrialEnd).toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' })
     : null;
   const isTrialing = profile?.subscriptionStatus === 'trialing';
-  const canManageBilling = Boolean(profile?.stripeCustomerId);
+  const hasStripeSubscription = Boolean(
+    profile?.subscriptionHasAccess ||
+      profile?.subscriptionStatus === 'active' ||
+      profile?.subscriptionStatus === 'trialing'
+  );
+  const billingActionLabel = hasStripeSubscription ? 'Manage subscription' : 'Start subscription';
 
   return (
     <main className="min-h-screen bg-field">
@@ -3126,20 +3151,20 @@ function SettingsView({
                   Trial access stays active until the trial ends. Stripe will charge the saved payment method after the trial; without a payment method, the subscription cancels and dashboard access is removed.
                 </p>
               )}
-              {profile?.manualAccess && !profile?.stripeCustomerId && (
+              {profile?.manualAccess && !hasStripeSubscription && (
                 <p className="mt-2 text-xs font-medium text-slate-500">
-                  Your access is currently managed by an administrator.
+                  Your access is currently managed by an administrator. You can still start your own subscription.
                 </p>
               )}
             </div>
             <button
               type="button"
-              onClick={openBillingPortal}
-              disabled={billingBusy || !canManageBilling}
+              onClick={openBillingSession}
+              disabled={billingBusy}
               className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink shadow-panel hover:bg-field disabled:cursor-not-allowed disabled:opacity-60"
             >
               {billingBusy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <CreditCard className="h-4 w-4" aria-hidden="true" />}
-              Manage subscription
+              {billingActionLabel}
             </button>
           </div>
           {billingMessage && (
@@ -3150,11 +3175,6 @@ function SettingsView({
           {billingError && (
             <div className="mt-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-miss">
               {billingError}
-            </div>
-          )}
-          {!canManageBilling && (
-            <div className="mt-3 rounded-md border border-line bg-field px-3 py-2 text-sm text-slate-600">
-              Billing portal appears after the first Stripe checkout is created for this account.
             </div>
           )}
         </div>
@@ -3961,7 +3981,7 @@ function HomeInner() {
       setError('');
     }
 
-    loadMatchData(initialDate)
+    loadMatchDataWithRetry(initialDate)
       .then((nextData) => {
         if (cancelled) return;
         setData(nextData);
@@ -4088,7 +4108,7 @@ function HomeInner() {
       setError('');
     }
     const hasUsableData = Boolean(data && Array.isArray(data.leagues) && data.leagues.length);
-    loadMatchData(cacheDate)
+    loadMatchDataWithRetry(cacheDate)
       .then((nextData) => {
         if (cancelled) return;
         setData(nextData);

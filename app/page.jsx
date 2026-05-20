@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import LandingAuthRedirect from './landing-auth-redirect';
 
 const featureRows = [
   ['Model picks', 'Winner, BTTS, goals, cards, and corners in one scan.'],
@@ -20,6 +21,7 @@ export const metadata = {
 export default function HomePage() {
   return (
     <main className="min-h-screen bg-[#f7f9fb] text-slate-950">
+      <LandingAuthRedirect />
       <section className="relative min-h-[92vh] overflow-hidden bg-white">
         <div className="absolute inset-x-0 top-0 h-1 bg-emerald-600" aria-hidden="true" />
         <div className="relative mx-auto flex min-h-[92vh] w-full max-w-6xl flex-col px-5 py-5 sm:px-8 lg:px-10">
@@ -35,7 +37,6 @@ export default function HomePage() {
 
           <div className="grid flex-1 items-center gap-8 py-10 lg:grid-cols-[minmax(0,0.95fr)_minmax(360px,0.75fr)]">
             <div className="max-w-3xl">
-              <img src="/LVR-LOGO.png" alt="" className="mb-8 hidden h-20 w-auto max-w-sm object-contain opacity-95 sm:block" aria-hidden="true" />
               <p className="text-sm font-semibold uppercase tracking-[0.16em] text-emerald-700">Football predictions with market context</p>
               <h1 className="mt-4 max-w-3xl text-4xl font-black leading-[1.02] tracking-normal text-slate-950 sm:text-6xl lg:text-7xl">
                 Know the pick before you open the bookmaker.

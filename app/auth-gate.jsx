@@ -48,9 +48,15 @@ function checkoutSucceeded() {
   return new URLSearchParams(window.location.search).get('checkout') === 'success';
 }
 
+function checkoutCancelled() {
+  if (typeof window === 'undefined') return false;
+  return new URLSearchParams(window.location.search).get('checkout') === 'cancelled';
+}
+
 function clearCheckoutStatus() {
-  if (typeof window === 'undefined' || !checkoutSucceeded()) return;
+  if (typeof window === 'undefined') return;
   const url = new URL(window.location.href);
+  if (!url.searchParams.has('checkout')) return;
   url.searchParams.delete('checkout');
   window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
 }
@@ -178,6 +184,7 @@ export default function AuthGate({ children }) {
 
     async function loadProfile() {
       setCheckingAccess(true);
+      const wasCheckoutCancelled = checkoutCancelled();
       try {
         if (user.email === PLATFORM_OWNER_EMAIL && !checkoutSucceeded()) {
           setProfile({
@@ -200,6 +207,11 @@ export default function AuthGate({ children }) {
         if (active) {
           setCheckingAccess(false);
           setReady(true);
+          setBusy(null);
+          if (wasCheckoutCancelled) {
+            setError('');
+            setMessage('Checkout cancelled. You can subscribe whenever you are ready.');
+          }
           clearCheckoutStatus();
           restoreReturnPath();
         }
