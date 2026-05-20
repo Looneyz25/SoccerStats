@@ -1,17 +1,17 @@
 # Model Result Review
 
-Generated: 2026-05-21 03:43:12 ACST
+Generated: 2026-05-21 05:58:00 ACST
 Prediction tracking start: 2026-04-22
-Settled market rows: 1606
+Settled market rows: 1609
 
 ## Market Summary
 
 | Market | Settled | Hits | Misses | Hit Rate | Odds Hit | Odds Loss | Odds Net |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| BTTS | 408 | 222 | 186 | 54.4% | 164.95 | 127.03 | 37.92 |
+| BTTS | 409 | 222 | 187 | 54.3% | 164.95 | 129.41 | 35.54 |
 | Cards | 382 | 227 | 155 | 59.4% | 144.97 | 125.45 | 19.52 |
-| Goals | 408 | 227 | 181 | 55.6% | 166.04 | 139.54 | 26.5 |
-| Winner | 408 | 202 | 206 | 49.5% | 162.29 | 229.87 | -67.58 |
+| Goals | 409 | 227 | 182 | 55.5% | 166.04 | 141.79 | 24.25 |
+| Winner | 409 | 202 | 207 | 49.4% | 162.29 | 231.92 | -69.63 |
 
 ## League Summary
 
@@ -20,7 +20,7 @@ Settled market rows: 1606
 | A-League Men | 4 | 1 | 3 | 25.0% | 0 |
 | Bundesliga | 143 | 76 | 67 | 53.1% | -5.25 |
 | Championship | 109 | 68 | 41 | 62.4% | -12.14 |
-| Eredivisie | 165 | 92 | 73 | 55.8% | 4.36 |
+| Eredivisie | 168 | 92 | 76 | 54.8% | -2.32 |
 | J1 League | 35 | 22 | 13 | 62.9% | 8.15 |
 | LaLiga | 196 | 100 | 96 | 51.0% | -18.03 |
 | League One | 121 | 69 | 52 | 57.0% | 0 |
@@ -47,8 +47,8 @@ Settled market rows: 1606
 | Bundesliga | Cards | 35 | 42.9% | -20.89 | review_weighting |
 | J1 League | BTTS | 9 | 44.4% | -0.38 | review_weighting |
 | Primeira Liga | BTTS | 9 | 44.4% | 0 | review_weighting |
+| Eredivisie | Goals | 44 | 47.7% | -6.03 | review_weighting |
 | Premier League | Winner | 40 | 50.0% | -12.84 | review_weighting |
-| Ligue 1 | Goals | 39 | 51.3% | -7.83 | review_weighting |
 
 ## Recommendations
 
@@ -62,6 +62,6 @@ Settled market rows: 1606
 | --- | ---: |
 | none | 913 |
 | missing_model_probability | 641 |
-| high_edge_miss | 19 |
+| high_edge_miss | 22 |
 | low_edge_hit | 18 |
 | draw_pick | 15 |

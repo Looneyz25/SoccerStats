@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-21 03:43:13 ACST",
+  "generated_at": "2026-05-21 05:58:00 ACST",
   "source": "docs\\agent-system\\outputs\\model_result_review_summary.json",
   "mode": "conservative_auto_learning",
   "rules": {
@@ -13,11 +13,11 @@
   "market_adjustments": {
     "btts": {
       "market": "BTTS",
-      "settled": 408,
-      "hit_rate": 0.5441,
-      "trust_factor": 0.9497,
-      "min_edge_delta": 0.0196,
-      "reason": "BTTS below 60% target over 408 settled markets."
+      "settled": 409,
+      "hit_rate": 0.5428,
+      "trust_factor": 0.9485,
+      "min_edge_delta": 0.02,
+      "reason": "BTTS below 60% target over 409 settled markets."
     },
     "ou_cards": {
       "market": "Cards",
@@ -29,19 +29,19 @@
     },
     "ou_goals": {
       "market": "Goals",
-      "settled": 408,
-      "hit_rate": 0.5564,
-      "trust_factor": 0.9608,
-      "min_edge_delta": 0.0153,
-      "reason": "Goals below 60% target over 408 settled markets."
+      "settled": 409,
+      "hit_rate": 0.555,
+      "trust_factor": 0.9595,
+      "min_edge_delta": 0.0157,
+      "reason": "Goals below 60% target over 409 settled markets."
     },
     "winner": {
       "market": "Winner",
-      "settled": 408,
-      "hit_rate": 0.4951,
-      "trust_factor": 0.9056,
-      "min_edge_delta": 0.0367,
-      "reason": "Winner below 60% target over 408 settled markets."
+      "settled": 409,
+      "hit_rate": 0.4939,
+      "trust_factor": 0.9045,
+      "min_edge_delta": 0.0371,
+      "reason": "Winner below 60% target over 409 settled markets."
     }
   },
   "league_market_adjustments": {
@@ -100,6 +100,17 @@
       "min_edge_delta": 0.021,
       "reason": "Bundesliga Cards weak spot from result review."
     },
+    "Eredivisie|ou_goals": {
+      "league": "Eredivisie",
+      "market": "Goals",
+      "market_key": "ou_goals",
+      "settled": 44,
+      "hit_rate": 0.4773,
+      "odds_net": -6.03,
+      "trust_factor": 0.9514,
+      "min_edge_delta": 0.0189,
+      "reason": "Eredivisie Goals weak spot from result review."
+    },
     "Premier League|winner": {
       "league": "Premier League",
       "market": "Winner",
@@ -110,17 +121,6 @@
       "trust_factor": 0.964,
       "min_edge_delta": 0.014,
       "reason": "Premier League Winner weak spot from result review."
-    },
-    "Ligue 1|ou_goals": {
-      "league": "Ligue 1",
-      "market": "Goals",
-      "market_key": "ou_goals",
-      "settled": 39,
-      "hit_rate": 0.5128,
-      "odds_net": -7.83,
-      "trust_factor": 0.9694,
-      "min_edge_delta": 0.0119,
-      "reason": "Ligue 1 Goals weak spot from result review."
     }
   },
   "notes": [

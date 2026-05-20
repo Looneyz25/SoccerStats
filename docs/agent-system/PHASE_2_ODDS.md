@@ -41,6 +41,8 @@ The daily `get:data` path also enriches dashboard markets outside the Phase 2 WD
 
 ## League Slugs
 
+Every listed league must have a Sportsbet slug or an explicit documented source blocker. When a new league is added, add its slug/mapping at the same time and run the normal Phase 2 match flow. If Sportsbet has only partial coverage, carry available 1X2 odds forward and mark the missing markets; do not let missing league-specific notes prevent later generic prediction work.
+
 | Listed League | Sportsbet Slug |
 | --- | --- |
 | Premier League | `united-kingdom/english-premier-league` |
@@ -155,6 +157,7 @@ Optional dated CSV/Markdown snapshots may be created for audit history; the curr
 - Unmatched fixtures are visible with the candidate team names listed by Sportsbet for that league.
 - Source failures are visible in Source Health with HTTP status or exception text.
 - No fixture is sent to Phase 3 without three valid WDW prices.
+- For newly added leagues, unmatched or missing odds must name the missing slug, alias, source, or market issue. Valid matched 1X2 odds should continue to Phase 3/4 so the dashboard does not show a league full of `No pick` cards purely because it is new.
 
 ## Phase 2 Output Template
 

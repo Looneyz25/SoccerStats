@@ -12,6 +12,8 @@ Phase 1 is a `run_daily` foundation phase. It does not form streaks, predictions
 
 ## Listed Leagues
 
+The table below is the active fixture allow-list. When a new league is added here or in the script config, it becomes a first-class league for the whole pipeline, not a fixture-only display league. Later phases must attempt odds, team context, predictions, value/risk, settlement, display precompute, and Firestore upload for it using the same rules as the existing leagues.
+
 | Legacy League ID | League |
 | --- | --- |
 | 17 | Premier League |
@@ -189,6 +191,7 @@ Optional dated CSV or Markdown snapshots may be created for audit history, but t
 - Only `ready_for_phase_2` fixtures are passed to later agents.
 - The Excel workbook is updated.
 - Later agents receive a fixture slate, not raw endpoint payloads.
+- Any newly added league has enough identity fields for downstream odds/context/prediction phases to attempt the standard routine; if it cannot, the blocker is recorded explicitly rather than silently producing dashboard `No pick` cards.
 
 ## Phase 1 Output Template
 

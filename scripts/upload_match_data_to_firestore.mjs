@@ -61,6 +61,8 @@ function slimMatch(match) {
     'bookmaker_links',
     'actuals',
     'corner_odds',
+    'display_markets',
+    'display_summary',
     'venue',
     'referee',
   ];

@@ -7853,6 +7853,16 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 1,
               "model_calibration": "2026-05-17 16:47:23 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5705,
+              "model_probability": 0.5705,
+              "model_average_total": 10.1,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.1 avg",
+              "team": "both"
             }
           },
           "odds": {
@@ -8109,6 +8119,16 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 1,
               "model_calibration": "2026-05-17 16:47:23 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5705,
+              "model_probability": 0.5705,
+              "model_average_total": 10.1,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.1 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -8212,6 +8232,12 @@
               "Under": 1.83
             }
           },
+          "odds": {
+            "home": 2.45,
+            "draw": 3.5,
+            "away": 2.7
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_meta": {
             "ladbrokes": {
               "matched": true,
@@ -8317,6 +8343,16 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 1,
               "model_calibration": "2026-05-17 16:47:23 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5705,
+              "model_probability": 0.5705,
+              "model_average_total": 10.1,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.1 avg",
+              "team": "both"
             }
           },
           "odds": {
@@ -8433,27 +8469,27 @@
             },
             "Match goals 0.5": {
               "Over": 1.02,
-              "Under": 14.75
+              "Under": 14.5
             },
             "Match goals 1.5": {
               "Over": 1.17,
               "Under": 4.6
             },
             "Match goals 2.5": {
-              "Over": 1.63,
-              "Under": 2.19
+              "Over": 1.64,
+              "Under": 2.16
             },
             "Match goals 3.5": {
-              "Over": 2.68,
-              "Under": 1.44
+              "Over": 2.7,
+              "Under": 1.43
             },
             "Both teams to score": {
               "Yes": 1.62,
               "No": 2.25
             },
             "Match goals 4.5": {
-              "Over": 5.0,
-              "Under": 1.15
+              "Over": 5.2,
+              "Under": 1.14
             },
             "Match goals 5.5": {
               "Over": 9.5,
@@ -8571,6 +8607,17 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 1,
               "model_calibration": "2026-05-17 16:47:23 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5705,
+              "model_probability": 0.5705,
+              "model_average_total": 10.1,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.1 avg",
+              "team": "both",
+              "odds": 1.8
             }
           },
           "h2h_streaks": [
@@ -8676,9 +8723,9 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 2.9,
-            "draw": 3.7,
-            "away": 2.25,
+            "home": 2.8,
+            "draw": 3.75,
+            "away": 2.3,
             "event_id": 10496883,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/fulham-v-newcastle-10496883"
           },
@@ -8689,13 +8736,13 @@
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 2.9,
-              "X": 3.7,
-              "2": 2.25
+              "1": 2.8,
+              "X": 3.75,
+              "2": 2.3
             },
             "Match goals 2.5": {
-              "Over": 1.56,
-              "Under": 2.33
+              "Over": 1.57,
+              "Under": 2.3
             },
             "Both teams to score": {
               "Yes": 1.5,
@@ -8708,6 +8755,12 @@
               "Under": 1.8
             }
           },
+          "odds": {
+            "home": 2.8,
+            "draw": 3.6,
+            "away": 2.3
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_meta": {
             "ladbrokes": {
               "matched": true,
@@ -8813,6 +8866,16 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 1,
               "model_calibration": "2026-05-17 16:47:23 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5705,
+              "model_probability": 0.5705,
+              "model_average_total": 10.1,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.1 avg",
+              "team": "both"
             }
           },
           "odds": {
@@ -9026,6 +9089,16 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 1,
               "model_calibration": "2026-05-17 16:47:23 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5705,
+              "model_probability": 0.5705,
+              "model_average_total": 10.1,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.1 avg",
+              "team": "both"
             }
           },
           "odds": {
@@ -9075,9 +9148,9 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 1.4,
-            "draw": 5.0,
-            "away": 6.5,
+            "home": 1.36,
+            "draw": 5.5,
+            "away": 7.0,
             "event_id": 10496350,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/man-city-v-aston-villa-10496350"
           },
@@ -9088,9 +9161,9 @@
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 1.4,
-              "X": 5.0,
-              "2": 6.5
+              "1": 1.36,
+              "X": 5.5,
+              "2": 7.0
             },
             "Match goals 0.5": {
               "Under": 27.0
@@ -9101,18 +9174,18 @@
             },
             "Match goals 2.5": {
               "Over": 1.33,
-              "Under": 3.13
+              "Under": 3.12
             },
             "Match goals 3.5": {
               "Over": 1.91,
               "Under": 1.82
             },
             "Both teams to score": {
-              "Yes": 1.5,
-              "No": 2.5
+              "Yes": 1.53,
+              "No": 2.4
             },
             "Match goals 4.5": {
-              "Over": 3.14,
+              "Over": 3.12,
               "Under": 1.33
             },
             "Match goals 5.5": {
@@ -9232,6 +9305,16 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 1,
               "model_calibration": "2026-05-17 16:47:23 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5705,
+              "model_probability": 0.5705,
+              "model_average_total": 10.1,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.1 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -9288,9 +9371,9 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 3.25,
+            "home": 3.3,
             "draw": 3.8,
-            "away": 2.05,
+            "away": 2.0,
             "event_id": 10498405,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/nottm-forest-v-bournemouth-10498405"
           },
@@ -9301,19 +9384,25 @@
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 3.25,
+              "1": 3.3,
               "X": 3.8,
-              "2": 2.05
+              "2": 2.0
             },
             "Match goals 2.5": {
-              "Over": 1.57,
-              "Under": 2.31
+              "Over": 1.58,
+              "Under": 2.29
             },
             "Both teams to score": {
-              "Yes": 1.5,
+              "Yes": 1.53,
               "No": 2.5
             }
           },
+          "odds": {
+            "home": 3.15,
+            "draw": 3.7,
+            "away": 2.1
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_meta": {
             "ladbrokes": {
               "matched": true,
@@ -9419,6 +9508,16 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 1,
               "model_calibration": "2026-05-17 16:47:23 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5705,
+              "model_probability": 0.5705,
+              "model_average_total": 10.1,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.1 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -9537,6 +9636,12 @@
               "Under": 1.83
             }
           },
+          "odds": {
+            "home": 3.45,
+            "draw": 3.6,
+            "away": 2.0
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_meta": {
             "ladbrokes": {
               "matched": true,
@@ -9642,6 +9747,16 @@
               "cards_over_streaks": 1,
               "cards_under_streaks": 1,
               "model_calibration": "2026-05-17 16:47:23 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5705,
+              "model_probability": 0.5705,
+              "model_average_total": 10.1,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.1 avg",
+              "team": "both"
             }
           },
           "odds": {
@@ -9858,6 +9973,16 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 1,
               "model_calibration": "2026-05-17 16:47:23 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5705,
+              "model_probability": 0.5705,
+              "model_average_total": 10.1,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.1 avg",
+              "team": "both"
             }
           },
           "odds": {
@@ -9969,13 +10094,39 @@
               "X": 4.0,
               "2": 4.0
             },
+            "Match goals 0.5": {
+              "Over": 1.02,
+              "Under": 15.0
+            },
+            "Match goals 1.5": {
+              "Over": 1.17,
+              "Under": 4.6
+            },
             "Match goals 2.5": {
               "Over": 1.64,
               "Under": 2.17
             },
+            "Match goals 3.5": {
+              "Over": 2.67,
+              "Under": 1.44
+            },
             "Both teams to score": {
               "Yes": 1.62,
               "No": 2.3
+            },
+            "Match goals 4.5": {
+              "Over": 4.65,
+              "Under": 1.17
+            },
+            "Match goals 5.5": {
+              "Over": 8.5,
+              "Under": 1.05
+            },
+            "Match goals 6.5": {
+              "Over": 14.0
+            },
+            "Match goals 7.5": {
+              "Over": 51.0
             }
           },
           "bookmaker_meta": {
@@ -19483,6 +19634,16 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6404,
+              "model_probability": 0.6404,
+              "model_average_total": 9.54,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.5 avg",
+              "team": "both"
             }
           },
           "odds": {
@@ -19544,8 +19705,8 @@
           ],
           "sportsbet_odds": {
             "home": 1.75,
-            "draw": 3.6,
-            "away": 4.75,
+            "draw": 3.7,
+            "away": 4.5,
             "event_id": 10498389,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/celta-vigo-v-sevilla-10498389"
           },
@@ -19555,8 +19716,8 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 1.75,
-              "X": 3.6,
-              "2": 4.75
+              "X": 3.7,
+              "2": 4.5
             },
             "Match goals 0.5": {
               "Over": 1.03,
@@ -19703,6 +19864,17 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6404,
+              "model_probability": 0.6404,
+              "model_average_total": 9.54,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.5 avg",
+              "team": "both",
+              "odds": 1.67
             }
           },
           "h2h_streaks": [
@@ -19790,6 +19962,10 @@
               "X": 3.3,
               "2": 2.88
             },
+            "Match goals 0.5": {
+              "Over": 1.03,
+              "Under": 10.7
+            },
             "Match goals 1.5": {
               "Over": 1.28,
               "Under": 3.45
@@ -19798,9 +19974,27 @@
               "Over": 1.92,
               "Under": 1.81
             },
+            "Match goals 3.5": {
+              "Over": 3.4,
+              "Under": 1.28
+            },
             "Both teams to score": {
               "Yes": 1.72,
               "No": 2.0
+            },
+            "Match goals 4.5": {
+              "Over": 6.0,
+              "Under": 1.1
+            },
+            "Match goals 5.5": {
+              "Over": 12.0,
+              "Under": 1.02
+            },
+            "Match goals 6.5": {
+              "Over": 34.0
+            },
+            "Match goals 7.5": {
+              "Over": 101.0
             }
           },
           "corner_odds": {
@@ -19809,6 +20003,12 @@
               "Under": 1.67
             }
           },
+          "odds": {
+            "home": 2.4,
+            "draw": 3.4,
+            "away": 2.8
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_meta": {
             "ladbrokes": {
               "matched": true,
@@ -19927,6 +20127,16 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6404,
+              "model_probability": 0.6404,
+              "model_average_total": 9.54,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.5 avg",
+              "team": "both"
             }
           },
           "odds": {
@@ -20006,9 +20216,9 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 2.3,
+            "home": 2.4,
             "draw": 3.4,
-            "away": 3.0,
+            "away": 2.88,
             "event_id": 10498390,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/espanyol-v-real-sociedad-10498390"
           },
@@ -20019,21 +20229,43 @@
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 2.3,
+              "1": 2.4,
               "X": 3.4,
-              "2": 3.0
+              "2": 2.88
+            },
+            "Match goals 0.5": {
+              "Over": 1.03,
+              "Under": 12.0
             },
             "Match goals 1.5": {
               "Over": 1.22,
-              "Under": 4.0
+              "Under": 3.96
             },
             "Match goals 2.5": {
               "Over": 1.8,
-              "Under": 1.93
+              "Under": 1.94
+            },
+            "Match goals 3.5": {
+              "Over": 3.14,
+              "Under": 1.33
             },
             "Both teams to score": {
               "Yes": 1.62,
               "No": 2.2
+            },
+            "Match goals 4.5": {
+              "Over": 5.9,
+              "Under": 1.11
+            },
+            "Match goals 5.5": {
+              "Over": 10.0,
+              "Under": 1.03
+            },
+            "Match goals 6.5": {
+              "Over": 21.0
+            },
+            "Match goals 7.5": {
+              "Over": 81.0
             }
           },
           "corner_odds": {
@@ -20160,6 +20392,16 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6404,
+              "model_probability": 0.6404,
+              "model_average_total": 9.54,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.5 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -20239,9 +20481,9 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 2.45,
-            "draw": 2.7,
-            "away": 3.6,
+            "home": 2.38,
+            "draw": 2.62,
+            "away": 3.8,
             "event_id": 10498409,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/getafe-v-osasuna-10498409"
           },
@@ -20252,21 +20494,42 @@
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 2.45,
-              "X": 2.7,
-              "2": 3.6
+              "1": 2.38,
+              "X": 2.62,
+              "2": 3.8
+            },
+            "Match goals 0.5": {
+              "Over": 1.07,
+              "Under": 6.85
             },
             "Match goals 1.5": {
               "Over": 1.5,
               "Under": 2.47
             },
             "Match goals 2.5": {
-              "Over": 2.7,
-              "Under": 1.43
+              "Over": 2.67,
+              "Under": 1.44
+            },
+            "Match goals 3.5": {
+              "Over": 5.2,
+              "Under": 1.14
             },
             "Both teams to score": {
               "Yes": 2.2,
-              "No": 1.62
+              "No": 1.67
+            },
+            "Match goals 4.5": {
+              "Over": 10.0,
+              "Under": 1.03
+            },
+            "Match goals 5.5": {
+              "Over": 34.0
+            },
+            "Match goals 6.5": {
+              "Over": 81.0
+            },
+            "Match goals 7.5": {
+              "Over": 101.0
             }
           },
           "corner_odds": {
@@ -20275,6 +20538,12 @@
               "Under": 2.0
             }
           },
+          "odds": {
+            "home": 2.4,
+            "draw": 2.8,
+            "away": 3.4
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_meta": {
             "ladbrokes": {
               "matched": true,
@@ -20393,6 +20662,16 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6404,
+              "model_probability": 0.6404,
+              "model_average_total": 9.54,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.5 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -20520,6 +20799,12 @@
               "Under": 1.67
             }
           },
+          "odds": {
+            "home": 1.8,
+            "draw": 3.9,
+            "away": 4.0
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_meta": {
             "ladbrokes": {
               "matched": true,
@@ -20638,6 +20923,16 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6404,
+              "model_probability": 0.6404,
+              "model_average_total": 9.54,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.5 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -20714,9 +21009,9 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 1.44,
-            "draw": 4.33,
-            "away": 7.0,
+            "home": 1.47,
+            "draw": 4.4,
+            "away": 6.5,
             "event_id": 10498406,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/mallorca-v-oviedo-10498406"
           },
@@ -20727,9 +21022,9 @@
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 1.44,
-              "X": 4.33,
-              "2": 7.0
+              "1": 1.47,
+              "X": 4.4,
+              "2": 6.5
             },
             "Match goals 0.5": {
               "Over": 1.03,
@@ -20744,12 +21039,12 @@
               "Under": 1.9
             },
             "Match goals 3.5": {
-              "Over": 3.24,
-              "Under": 1.31
+              "Over": 3.18,
+              "Under": 1.33
             },
             "Both teams to score": {
               "Yes": 2.0,
-              "No": 1.72
+              "No": 1.8
             },
             "Match goals 4.5": {
               "Over": 6.0,
@@ -20772,6 +21067,12 @@
               "Under": 1.83
             }
           },
+          "odds": {
+            "home": 1.48,
+            "draw": 4.25,
+            "away": 6.25
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_meta": {
             "ladbrokes": {
               "matched": true,
@@ -20890,6 +21191,16 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6404,
+              "model_probability": 0.6404,
+              "model_average_total": 9.54,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.5 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -20983,6 +21294,10 @@
               "X": 3.3,
               "2": 3.4
             },
+            "Match goals 0.5": {
+              "Over": 1.02,
+              "Under": 15.0
+            },
             "Match goals 1.5": {
               "Over": 1.17,
               "Under": 4.6
@@ -20991,9 +21306,27 @@
               "Over": 1.62,
               "Under": 2.21
             },
+            "Match goals 3.5": {
+              "Over": 2.66,
+              "Under": 1.44
+            },
             "Both teams to score": {
               "Yes": 1.53,
               "No": 2.4
+            },
+            "Match goals 4.5": {
+              "Over": 4.8,
+              "Under": 1.15
+            },
+            "Match goals 5.5": {
+              "Over": 8.5,
+              "Under": 1.05
+            },
+            "Match goals 6.5": {
+              "Over": 14.0
+            },
+            "Match goals 7.5": {
+              "Over": 51.0
             }
           },
           "corner_odds": {
@@ -21002,6 +21335,12 @@
               "Under": 1.8
             }
           },
+          "odds": {
+            "home": 2.2,
+            "draw": 3.15,
+            "away": 3.35
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_meta": {
             "ladbrokes": {
               "matched": true,
@@ -21120,6 +21459,16 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6404,
+              "model_probability": 0.6404,
+              "model_average_total": 9.54,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.5 avg",
+              "team": "both"
             }
           },
           "odds": {
@@ -21362,6 +21711,16 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6404,
+              "model_probability": 0.6404,
+              "model_average_total": 9.54,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.5 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -21474,6 +21833,12 @@
               "Under": 2.0
             }
           },
+          "odds": {
+            "home": 3.45,
+            "draw": 3.9,
+            "away": 1.9
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_meta": {
             "ladbrokes": {
               "matched": true,
@@ -21579,6 +21944,16 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 1,
               "model_calibration": "2026-05-17 16:47:23 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6404,
+              "model_probability": 0.6404,
+              "model_average_total": 9.54,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.5 avg",
+              "team": "both"
             }
           },
           "odds": {
@@ -29006,6 +29381,16 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 0,
               "model_calibration": "2026-05-17 16:47:23 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5311,
+              "model_probability": 0.5311,
+              "model_average_total": 10.42,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.4 avg",
+              "team": "both"
             }
           },
           "team_streaks": [
@@ -29013,15 +29398,23 @@
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "3"
+              "value": "3",
+              "odds": 1.75
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "8/10"
+              "value": "8/10",
+              "odds": 1.75
             }
           ],
+          "odds": {
+            "home": 1.73,
+            "draw": 3.8,
+            "away": 4.4
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_links": {
             "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/germany/german-bundesliga/vfl-wolfsburg-vs-sc-paderborn-07/384833dc-2464-4753-9569-6a711cfd6860",
             "neds": "https://www.neds.com.au/sports/soccer/germany/german-bundesliga/vfl-wolfsburg-vs-sc-paderborn-07/384833dc-2464-4753-9569-6a711cfd6860"
@@ -29156,6 +29549,16 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 1,
               "model_calibration": "2026-05-19 03:39:48 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5311,
+              "model_probability": 0.5311,
+              "model_average_total": 10.42,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.4 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -36682,7 +37085,8 @@
                 "sources": [
                   "Winner below 60% target over 408 settled markets."
                 ]
-              }
+              },
+              "odds": 2.3
             },
             "btts": {
               "pick": "Yes",
@@ -36750,13 +37154,24 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 1,
               "model_calibration": "2026-05-20 16:57:59 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.4908,
+              "model_probability": 0.4908,
+              "model_average_total": 10.74,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.7 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
             {
               "team": "away",
               "label": "Wins",
-              "value": "5"
+              "value": "5",
+              "odds": 2.9
             },
             {
               "team": "home",
@@ -36814,7 +37229,8 @@
               "team": "away",
               "source": "computed",
               "label": "No Wins",
-              "value": "4"
+              "value": "4",
+              "odds": 1.29
             },
             {
               "team": "away",
@@ -36823,6 +37239,12 @@
               "value": "6/7"
             }
           ],
+          "odds": {
+            "home": 2.3,
+            "draw": 3.4,
+            "away": 2.9
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_links": {
             "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/france/french-ligue-1/as-saint-etienne-vs-ogc-nice/da9212b0-b436-4d29-9cd6-46cfa010b680",
             "neds": "https://www.neds.com.au/sports/soccer/france/french-ligue-1/as-saint-etienne-vs-ogc-nice/da9212b0-b436-4d29-9cd6-46cfa010b680"
@@ -39986,6 +40408,17 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 1,
               "model_calibration": "2026-05-17 16:47:23 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6329,
+              "model_probability": 0.6329,
+              "model_average_total": 9.6,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.6 avg",
+              "team": "both",
+              "odds": 1.42
             }
           },
           "h2h_streaks": [
@@ -40135,6 +40568,12 @@
               "Under": 1.11
             }
           },
+          "odds": {
+            "home": 2.7,
+            "draw": 3.5,
+            "away": 2.45
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_meta": {
             "ladbrokes": {
               "matched": true,
@@ -40240,6 +40679,16 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 2,
               "model_calibration": "2026-05-17 16:47:23 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6329,
+              "model_probability": 0.6329,
+              "model_average_total": 9.6,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.6 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -40315,6 +40764,9 @@
               "X": 3.6,
               "2": 2.15
             },
+            "Match goals 0.5": {
+              "Under": 17.5
+            },
             "Match goals 1.5": {
               "Over": 1.14,
               "Under": 5.2
@@ -40323,9 +40775,28 @@
               "Over": 1.5,
               "Under": 2.46
             },
+            "Match goals 3.5": {
+              "Over": 2.34,
+              "Under": 1.55
+            },
             "Both teams to score": {
               "Yes": 1.45,
               "No": 2.63
+            },
+            "Match goals 4.5": {
+              "Over": 4.25,
+              "Under": 1.2
+            },
+            "Match goals 5.5": {
+              "Over": 7.0,
+              "Under": 1.07
+            },
+            "Match goals 6.5": {
+              "Over": 12.0,
+              "Under": 1.02
+            },
+            "Match goals 7.5": {
+              "Over": 34.0
             }
           },
           "corner_odds": {
@@ -40334,6 +40805,12 @@
               "Under": 2.1
             }
           },
+          "odds": {
+            "home": 2.95,
+            "draw": 3.7,
+            "away": 2.2
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_meta": {
             "ladbrokes": {
               "matched": true,
@@ -40439,6 +40916,16 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 2,
               "model_calibration": "2026-05-17 16:47:23 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6329,
+              "model_probability": 0.6329,
+              "model_average_total": 9.6,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.6 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -40528,8 +41015,8 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 1.5,
-            "draw": 4.2,
+            "home": 1.55,
+            "draw": 4.1,
             "away": 6.0,
             "event_id": 10498420,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/italy/italian-serie-a/lazio-v-pisa-10498420"
@@ -40541,8 +41028,8 @@
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 1.5,
-              "X": 4.2,
+              "1": 1.55,
+              "X": 4.1,
               "2": 6.0
             },
             "Match goals 1.5": {
@@ -40550,8 +41037,8 @@
               "Under": 4.0
             },
             "Match goals 2.5": {
-              "Over": 1.73,
-              "Under": 2.03
+              "Over": 1.76,
+              "Under": 1.98
             },
             "Both teams to score": {
               "Yes": 1.83,
@@ -40564,6 +41051,12 @@
               "Under": 2.0
             }
           },
+          "odds": {
+            "home": 1.57,
+            "draw": 4.2,
+            "away": 5.2
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_meta": {
             "ladbrokes": {
               "matched": true,
@@ -40669,6 +41162,16 @@
               "cards_over_streaks": 1,
               "cards_under_streaks": 1,
               "model_calibration": "2026-05-17 16:47:23 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6329,
+              "model_probability": 0.6329,
+              "model_average_total": 9.6,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.6 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -40768,6 +41271,12 @@
               "Under": 2.1
             }
           },
+          "odds": {
+            "home": 2.6,
+            "draw": 3.2,
+            "away": 2.4
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_meta": {
             "ladbrokes": {
               "matched": true,
@@ -40873,6 +41382,16 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 2,
               "model_calibration": "2026-05-17 16:47:23 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6329,
+              "model_probability": 0.6329,
+              "model_average_total": 9.6,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.6 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -40964,6 +41483,12 @@
               "Under": 1.83
             }
           },
+          "odds": {
+            "home": 1.5,
+            "draw": 4.1,
+            "away": 6.4
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_meta": {
             "ladbrokes": {
               "matched": true,
@@ -41069,6 +41594,16 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 2,
               "model_calibration": "2026-05-17 16:47:23 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6329,
+              "model_probability": 0.6329,
+              "model_average_total": 9.6,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.6 avg",
+              "team": "both"
             }
           },
           "odds": {
@@ -41294,6 +41829,16 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 1,
               "model_calibration": "2026-05-17 16:47:23 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6329,
+              "model_probability": 0.6329,
+              "model_average_total": 9.6,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.6 avg",
+              "team": "both"
             }
           },
           "odds": {
@@ -41497,6 +42042,16 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 1,
               "model_calibration": "2026-05-17 16:47:23 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6329,
+              "model_probability": 0.6329,
+              "model_average_total": 9.6,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.6 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -41564,6 +42119,12 @@
               "Under": 1.8
             }
           },
+          "odds": {
+            "home": 1.7,
+            "draw": 3.5,
+            "away": 5.2
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_meta": {
             "ladbrokes": {
               "matched": true,
@@ -41669,6 +42230,16 @@
               "cards_over_streaks": 1,
               "cards_under_streaks": 1,
               "model_calibration": "2026-05-17 16:47:23 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6329,
+              "model_probability": 0.6329,
+              "model_average_total": 9.6,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.6 avg",
+              "team": "both"
             }
           },
           "odds": {
@@ -41882,6 +42453,16 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 0,
               "model_calibration": "2026-05-17 16:47:23 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6329,
+              "model_probability": 0.6329,
+              "model_average_total": 9.6,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.6 avg",
+              "team": "both"
             }
           },
           "odds": {
@@ -50437,13 +51018,14 @@
         {
           "id": 16195914,
           "date": "2026-05-21",
-          "time": "02:15",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Willem II Tilburg",
             "short": "Willem",
             "team_id": 2961,
-            "logo": "https://api.sofascore.app/api/v1/team/2961/image"
+            "logo": "https://api.sofascore.app/api/v1/team/2961/image",
+            "goals": 1
           },
           "away": {
             "name": "FC Volendam",
@@ -50451,7 +51033,8 @@
             "team_id": 2968,
             "logo": "https://api.sofascore.app/api/v1/team/2968/image",
             "rank": 16,
-            "pts": 32
+            "pts": 32,
+            "goals": 2
           },
           "predictions": {
             "winner": {
@@ -50474,20 +51057,25 @@
                 "draw": 0.2387,
                 "away": 0.0796
               },
-              "odds": 2.05
+              "odds": 2.05,
+              "result": "miss"
             },
             "btts": {
               "pick": "No",
               "probability": 0.7024,
               "raw_probability": 0.7024,
-              "odds": 2.38
+              "odds": 2.38,
+              "actual_btts": true,
+              "result": "miss"
             },
             "ou_goals": {
               "pick": "Under",
               "line": 2.5,
               "probability": 0.6374,
               "raw_probability": 0.6374,
-              "odds": 2.25
+              "odds": 2.25,
+              "actual": 3,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Under",
@@ -50554,7 +51142,18 @@
               "label": "Without Clean Sheet",
               "value": "3"
             }
-          ]
+          ],
+          "settled_at": "2026-05-21",
+          "prediction_locked": true,
+          "prediction_locked_at": "2026-05-21T05:09:43.301823+09:30",
+          "livescore_score": {
+            "home": 1,
+            "away": 2,
+            "status": "FT",
+            "source_match_id": "1779006",
+            "fetched_at": "2026-05-21"
+          },
+          "settled_source": "LiveScore"
         },
         {
           "id": 16196423,
@@ -50680,6 +51279,17 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 2,
               "model_calibration": "2026-05-19 03:39:48 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5107,
+              "model_probability": 0.5107,
+              "model_average_total": 10.58,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.6 avg",
+              "team": "both",
+              "odds": 1.6
             }
           },
           "odds": {
@@ -51039,6 +51649,17 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 2,
               "model_calibration": "2026-05-19 03:39:48 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5107,
+              "model_probability": 0.5107,
+              "model_average_total": 10.58,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.6 avg",
+              "team": "both",
+              "odds": 1.58
             }
           },
           "odds": {
@@ -51139,83 +51760,83 @@
             },
             "Match goals 0.5": {
               "Over": 1.02,
-              "Under": 15.75
+              "Under": 14.25
             },
             "Match goals 1.5": {
-              "Over": 1.17,
-              "Under": 4.65
+              "Over": 1.2,
+              "Under": 4.3
             },
             "Match goals 2.5": {
-              "Over": 1.6,
-              "Under": 2.25
+              "Over": 1.67,
+              "Under": 2.12
             },
             "Match goals 3.5": {
-              "Over": 2.57,
-              "Under": 1.47
+              "Over": 2.76,
+              "Under": 1.41
             },
             "Both teams to score": {
-              "Yes": 1.53,
-              "No": 2.4
+              "Yes": 1.57,
+              "No": 2.3
             },
             "Match goals 4.5": {
-              "Over": 4.65,
-              "Under": 1.17
+              "Over": 5.2,
+              "Under": 1.14
             },
             "Match goals 5.5": {
-              "Over": 8.0,
-              "Under": 1.05
+              "Over": 9.5,
+              "Under": 1.04
             },
             "Match goals 6.5": {
-              "Over": 13.0
+              "Over": 14.0
             },
             "Match goals 7.5": {
-              "Over": 41.0
+              "Over": 51.0
             },
             "Corners 2-Way 4.5": {
-              "Under": 21.0
+              "Under": 22.0
             },
             "Corners 2-Way 5.5": {
               "Over": 1.03,
-              "Under": 10.5
+              "Under": 10.8
             },
             "Corners 2-Way 6.5": {
               "Over": 1.09,
-              "Under": 6.0
+              "Under": 6.15
             },
             "Corners 2-Way 7.5": {
               "Over": 1.2,
-              "Under": 3.8
+              "Under": 3.9
             },
             "Corners 2-Way 8.5": {
-              "Over": 1.43,
-              "Under": 2.6
+              "Over": 1.41,
+              "Under": 2.67
             },
             "Corners 2-Way 9.5": {
-              "Over": 1.77,
-              "Under": 1.94
+              "Over": 1.73,
+              "Under": 1.98
             },
             "Corners 2-Way 10.5": {
-              "Over": 2.29,
-              "Under": 1.55
+              "Over": 2.22,
+              "Under": 1.58
             },
             "Corners 2-Way 11.5": {
-              "Over": 3.12,
-              "Under": 1.31
+              "Over": 2.99,
+              "Under": 1.33
             },
             "Corners 2-Way 12.5": {
-              "Over": 4.45,
-              "Under": 1.16
+              "Over": 4.3,
+              "Under": 1.17
             },
             "Corners 2-Way 13.5": {
-              "Over": 6.45,
+              "Over": 6.3,
               "Under": 1.08
             },
             "Corners 2-Way 14.5": {
-              "Over": 9.7,
+              "Over": 9.4,
               "Under": 1.04
             },
             "Corners 2-Way 15.5": {
-              "Over": 15.75,
+              "Over": 14.75,
               "Under": 1.02
             }
           },
@@ -51226,28 +51847,28 @@
           },
           "corner_odds": {
             "9.5": {
-              "Over": 1.77,
-              "Under": 1.94
+              "Over": 1.73,
+              "Under": 1.98
             },
             "7.5": {
               "Over": 1.2,
-              "Under": 3.8
+              "Under": 3.9
             },
             "8.5": {
-              "Over": 1.43,
-              "Under": 2.6
+              "Over": 1.41,
+              "Under": 2.67
             },
             "10.5": {
-              "Over": 2.29,
-              "Under": 1.55
+              "Over": 2.22,
+              "Under": 1.58
             },
             "11.5": {
-              "Over": 3.12,
-              "Under": 1.31
+              "Over": 2.99,
+              "Under": 1.33
             },
             "12.5": {
-              "Over": 4.45,
-              "Under": 1.16
+              "Over": 4.3,
+              "Under": 1.17
             }
           },
           "bookmaker_meta": {
@@ -51350,6 +51971,16 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 0,
               "model_calibration": "2026-05-17 16:47:23 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5107,
+              "model_probability": 0.5107,
+              "model_average_total": 10.58,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.6 avg",
+              "team": "both"
             }
           },
           "h2h_duel": {
@@ -53107,6 +53738,17 @@
               "cards_over_streaks": 1,
               "cards_under_streaks": 0,
               "model_calibration": "2026-05-19 03:39:48 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6385,
+              "model_probability": 0.6385,
+              "model_average_total": 9.56,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.6 avg",
+              "team": "both",
+              "odds": 1.67
             }
           },
           "odds": {
@@ -67308,6 +67950,16 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5191,
+              "model_probability": 0.5191,
+              "model_average_total": 10.51,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.5 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -67430,6 +68082,12 @@
               "Under": 2.0
             }
           },
+          "odds": {
+            "home": 1.62,
+            "draw": 3.8,
+            "away": 4.2
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_meta": {
             "ladbrokes": {
               "matched": true,
@@ -67554,6 +68212,16 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5191,
+              "model_probability": 0.5191,
+              "model_average_total": 10.51,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.5 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -67666,6 +68334,12 @@
               "Under": 2.0
             }
           },
+          "odds": {
+            "home": 2.1,
+            "draw": 3.4,
+            "away": 2.88
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_meta": {
             "ladbrokes": {
               "matched": true,
@@ -67790,6 +68464,16 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5191,
+              "model_probability": 0.5191,
+              "model_average_total": 10.51,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.5 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -67903,6 +68587,12 @@
               "Under": 1.8
             }
           },
+          "odds": {
+            "home": 1.83,
+            "draw": 3.5,
+            "away": 3.5
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_meta": {
             "ladbrokes": {
               "matched": true,
@@ -68027,6 +68717,16 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5191,
+              "model_probability": 0.5191,
+              "model_average_total": 10.51,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.5 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -68135,6 +68835,12 @@
               "Under": 1.83
             }
           },
+          "odds": {
+            "home": 1.85,
+            "draw": 3.5,
+            "away": 3.5
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_meta": {
             "ladbrokes": {
               "matched": true,
@@ -68259,6 +68965,16 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5191,
+              "model_probability": 0.5191,
+              "model_average_total": 10.51,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.5 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -68404,7 +69120,13 @@
               "Over": 1.83,
               "Under": 1.83
             }
-          }
+          },
+          "odds": {
+            "home": 1.57,
+            "draw": 4.33,
+            "away": 4.2
+          },
+          "bookmaker_odds_source": "Ladbrokes"
         },
         {
           "id": 15171574,
@@ -68515,6 +69237,16 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5191,
+              "model_probability": 0.5191,
+              "model_average_total": 10.51,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.5 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -68648,6 +69380,12 @@
               "Under": 1.8
             }
           },
+          "odds": {
+            "home": 1.44,
+            "draw": 4.33,
+            "away": 5.25
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_meta": {
             "ladbrokes": {
               "matched": true,
@@ -68766,6 +69504,16 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5191,
+              "model_probability": 0.5191,
+              "model_average_total": 10.51,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.5 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -68865,6 +69613,12 @@
               "Under": 1.67
             }
           },
+          "odds": {
+            "home": 1.73,
+            "draw": 3.5,
+            "away": 4.0
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_meta": {
             "ladbrokes": {
               "matched": true,
@@ -68989,6 +69743,16 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5191,
+              "model_probability": 0.5191,
+              "model_average_total": 10.51,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.5 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -69096,6 +69860,12 @@
               "Under": 1.83
             }
           },
+          "odds": {
+            "home": 2.8,
+            "draw": 3.8,
+            "away": 2.0
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_meta": {
             "ladbrokes": {
               "matched": true,
@@ -69220,6 +69990,16 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5191,
+              "model_probability": 0.5191,
+              "model_average_total": 10.51,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.5 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -69333,6 +70113,12 @@
               "Under": 2.0
             }
           },
+          "odds": {
+            "home": 2.15,
+            "draw": 3.5,
+            "away": 2.8
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_meta": {
             "ladbrokes": {
               "matched": true,
@@ -69451,6 +70237,17 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5191,
+              "model_probability": 0.5191,
+              "model_average_total": 10.51,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.5 avg",
+              "team": "both",
+              "odds": 1.73
             }
           },
           "h2h_streaks": [
@@ -69554,6 +70351,12 @@
               "Under": 1.73
             }
           },
+          "odds": {
+            "home": 2.3,
+            "draw": 3.7,
+            "away": 2.45
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_meta": {
             "ladbrokes": {
               "matched": true,
@@ -69678,6 +70481,16 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5191,
+              "model_probability": 0.5191,
+              "model_average_total": 10.51,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.5 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -69769,6 +70582,12 @@
               "Under": 1.73
             }
           },
+          "odds": {
+            "home": 3.25,
+            "draw": 3.75,
+            "away": 1.85
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_meta": {
             "ladbrokes": {
               "matched": true,
@@ -69893,6 +70712,16 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5191,
+              "model_probability": 0.5191,
+              "model_average_total": 10.51,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.5 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -70069,6 +70898,16 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 2,
               "model_calibration": "2026-05-17 16:47:23 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5191,
+              "model_probability": 0.5191,
+              "model_average_total": 10.51,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.5 avg",
+              "team": "both"
             }
           },
           "odds": {
@@ -70226,12 +71065,12 @@
               "2": 6.0
             },
             "Match goals 2.5": {
-              "Over": 1.53,
-              "Under": 2.4
+              "Over": 1.49,
+              "Under": 2.49
             },
             "Both teams to score": {
-              "Yes": 1.67,
-              "No": 2.1
+              "Yes": 1.62,
+              "No": 2.25
             }
           },
           "corner_odds": {
@@ -70351,6 +71190,16 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 1,
               "model_calibration": "2026-05-17 16:47:23 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5191,
+              "model_probability": 0.5191,
+              "model_average_total": 10.51,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.5 avg",
+              "team": "both"
             }
           },
           "odds": {
@@ -70571,6 +71420,16 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 0,
               "model_calibration": "2026-05-17 16:47:23 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5191,
+              "model_probability": 0.5191,
+              "model_average_total": 10.51,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.5 avg",
+              "team": "both"
             }
           },
           "odds": {
@@ -70999,6 +71858,17 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Over",
+              "line": 10.5,
+              "probability": 0.7483,
+              "model_probability": 0.7483,
+              "model_average_total": 13.0,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "13.0 avg",
+              "team": "both",
+              "odds": 2.0
             }
           },
           "odds": {
@@ -71075,7 +71945,7 @@
           "sportsbet_odds": {
             "home": 2.05,
             "draw": 3.5,
-            "away": 3.5,
+            "away": 3.6,
             "event_id": 10493284,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/australia/australian-a-league-men/auckland-fc-v-sydney-fc-10493284"
           },
@@ -71088,19 +71958,41 @@
             "Full time": {
               "1": 2.05,
               "X": 3.5,
-              "2": 3.5
+              "2": 3.6
+            },
+            "Match goals 0.5": {
+              "Over": 1.03,
+              "Under": 10.3
             },
             "Match goals 1.5": {
               "Over": 1.28,
-              "Under": 3.5
+              "Under": 3.45
             },
             "Match goals 2.5": {
-              "Over": 1.89,
-              "Under": 1.84
+              "Over": 1.97,
+              "Under": 1.77
+            },
+            "Match goals 3.5": {
+              "Over": 3.45,
+              "Under": 1.28
             },
             "Both teams to score": {
-              "Yes": 1.72,
-              "No": 2.0
+              "Yes": 1.8,
+              "No": 1.91
+            },
+            "Match goals 4.5": {
+              "Over": 6.0,
+              "Under": 1.1
+            },
+            "Match goals 5.5": {
+              "Over": 12.0,
+              "Under": 1.02
+            },
+            "Match goals 6.5": {
+              "Over": 34.0
+            },
+            "Match goals 7.5": {
+              "Over": 101.0
             }
           },
           "corner_odds": {
@@ -72704,6 +73596,16 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.4799,
+              "model_probability": 0.4799,
+              "model_average_total": 10.83,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.8 avg",
+              "team": "both"
             }
           },
           "odds": {
@@ -72915,6 +73817,16 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 2,
               "model_calibration": "2026-05-19 03:39:48 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.4799,
+              "model_probability": 0.4799,
+              "model_average_total": 10.83,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.8 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -75047,6 +75959,16 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6927,
+              "model_probability": 0.6927,
+              "model_average_total": 9.11,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.1 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -75103,6 +76025,12 @@
               "Under": 1.67
             }
           },
+          "odds": {
+            "home": 2.2,
+            "draw": 3.0,
+            "away": 3.0
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_links": {
             "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/japan/japanese-j1-league/machida-zelvia-vs-urawa-red-diamonds/c3153e8a-2736-4a40-8382-99fa9c3fc9c1",
             "neds": "https://www.neds.com.au/sports/soccer/japan/japanese-j1-league/machida-zelvia-vs-urawa-red-diamonds/c3153e8a-2736-4a40-8382-99fa9c3fc9c1"
@@ -75224,6 +76152,16 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6927,
+              "model_probability": 0.6927,
+              "model_average_total": 9.11,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.1 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -75269,7 +76207,8 @@
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "7"
+              "value": "7",
+              "odds": 2.2
             },
             {
               "team": "home",
@@ -75281,7 +76220,8 @@
               "team": "home",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "6/7"
+              "value": "6/7",
+              "odds": 2.2
             },
             {
               "team": "away",
@@ -75296,6 +76236,12 @@
               "Under": 1.83
             }
           },
+          "odds": {
+            "home": 4.33,
+            "draw": 3.2,
+            "away": 1.75
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_links": {
             "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/japan/japanese-j1-league/avispa-fukuoka-vs-vissel-kobe/827e7189-90f1-47b6-9eca-c0c766b065c6",
             "neds": "https://www.neds.com.au/sports/soccer/japan/japanese-j1-league/avispa-fukuoka-vs-vissel-kobe/827e7189-90f1-47b6-9eca-c0c766b065c6"
@@ -75417,6 +76363,16 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6927,
+              "model_probability": 0.6927,
+              "model_average_total": 9.11,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.1 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -75495,6 +76451,12 @@
               "Under": 1.83
             }
           },
+          "odds": {
+            "home": 1.67,
+            "draw": 3.7,
+            "away": 4.2
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_links": {
             "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/japan/japanese-j1-league/sanfrecce-hiroshima-vs-nagoya-grampus/448dd2b6-6d6f-4ab9-920d-76744b82b991",
             "neds": "https://www.neds.com.au/sports/soccer/japan/japanese-j1-league/sanfrecce-hiroshima-vs-nagoya-grampus/448dd2b6-6d6f-4ab9-920d-76744b82b991"
@@ -75616,6 +76578,16 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6927,
+              "model_probability": 0.6927,
+              "model_average_total": 9.11,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.1 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -75661,13 +76633,15 @@
               "team": "home",
               "source": "computed",
               "label": "Wins",
-              "value": "4"
+              "value": "4",
+              "odds": 2.38
             },
             {
               "team": "home",
               "source": "computed",
               "label": "No Losses",
-              "value": "4"
+              "value": "4",
+              "odds": 1.27
             },
             {
               "team": "home",
@@ -75679,7 +76653,8 @@
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "3"
+              "value": "3",
+              "odds": 1.8
             },
             {
               "team": "away",
@@ -75694,6 +76669,12 @@
               "Under": 1.83
             }
           },
+          "odds": {
+            "home": 2.38,
+            "draw": 3.1,
+            "away": 2.7
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_links": {
             "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/japan/japanese-j1-league/kashima-antlers-vs-fc-tokyo/07868d2f-b643-4c7f-ba29-479e5ba1bde8",
             "neds": "https://www.neds.com.au/sports/soccer/japan/japanese-j1-league/kashima-antlers-vs-fc-tokyo/07868d2f-b643-4c7f-ba29-479e5ba1bde8"
@@ -75815,6 +76796,16 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6927,
+              "model_probability": 0.6927,
+              "model_average_total": 9.11,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.1 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -75892,7 +76883,13 @@
               "Over": 1.8,
               "Under": 1.91
             }
-          }
+          },
+          "odds": {
+            "home": 1.5,
+            "draw": 3.8,
+            "away": 5.25
+          },
+          "bookmaker_odds_source": "Ladbrokes"
         },
         {
           "id": 15345871,
@@ -75996,6 +76993,17 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6927,
+              "model_probability": 0.6927,
+              "model_average_total": 9.11,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.1 avg",
+              "team": "both",
+              "odds": 1.73
             }
           },
           "h2h_streaks": [
@@ -76047,19 +77055,22 @@
               "team": "home",
               "source": "computed",
               "label": "Losses",
-              "value": "5"
+              "value": "5",
+              "odds": 3.5
             },
             {
               "team": "home",
               "source": "computed",
               "label": "No Wins",
-              "value": "5"
+              "value": "5",
+              "odds": 1.6
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "10"
+              "value": "10",
+              "odds": 1.8
             },
             {
               "team": "home",
@@ -76077,7 +77088,8 @@
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "9"
+              "value": "9",
+              "odds": 1.8
             },
             {
               "team": "away",
@@ -76089,7 +77101,8 @@
               "team": "away",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "6/7"
+              "value": "6/7",
+              "odds": 1.8
             }
           ],
           "corner_odds": {
@@ -76098,6 +77111,12 @@
               "Under": 1.73
             }
           },
+          "odds": {
+            "home": 1.85,
+            "draw": 3.3,
+            "away": 3.5
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_links": {
             "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/japan/japanese-j1-league/kyoto-sanga-fc-vs-v-varen-nagasaki/ad800864-877f-4bb8-b239-d65d67d97fa2",
             "neds": "https://www.neds.com.au/sports/soccer/japan/japanese-j1-league/kyoto-sanga-fc-vs-v-varen-nagasaki/ad800864-877f-4bb8-b239-d65d67d97fa2"
@@ -76219,6 +77238,17 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6927,
+              "model_probability": 0.6927,
+              "model_average_total": 9.11,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.1 avg",
+              "team": "both",
+              "odds": 1.67
             }
           },
           "h2h_streaks": [
@@ -76294,7 +77324,8 @@
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "6"
+              "value": "6",
+              "odds": 1.75
             },
             {
               "team": "away",
@@ -76309,6 +77340,12 @@
               "Under": 1.67
             }
           },
+          "odds": {
+            "home": 2.6,
+            "draw": 3.2,
+            "away": 2.38
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_links": {
             "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/japan/japanese-j1-league/fagiano-okayama-vs-cerezo-osaka/a30daf64-de63-4117-aee6-1d01d7aa94a1",
             "neds": "https://www.neds.com.au/sports/soccer/japan/japanese-j1-league/fagiano-okayama-vs-cerezo-osaka/a30daf64-de63-4117-aee6-1d01d7aa94a1"
@@ -76430,6 +77467,16 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6927,
+              "model_probability": 0.6927,
+              "model_average_total": 9.11,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.1 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -76470,19 +77517,22 @@
               "team": "home",
               "source": "computed",
               "label": "Losses",
-              "value": "3"
+              "value": "3",
+              "odds": 2.2
             },
             {
               "team": "home",
               "source": "computed",
               "label": "No Wins",
-              "value": "3"
+              "value": "3",
+              "odds": 1.23
             },
             {
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "6"
+              "value": "6",
+              "odds": 1.75
             },
             {
               "team": "home",
@@ -76503,6 +77553,12 @@
               "Under": 1.83
             }
           },
+          "odds": {
+            "home": 2.88,
+            "draw": 3.2,
+            "away": 2.2
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_links": {
             "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/japan/japanese-j1-league/mito-hollyhock-vs-kawasaki-frontale/378569c5-2f30-412f-9026-48676e17dcc8",
             "neds": "https://www.neds.com.au/sports/soccer/japan/japanese-j1-league/mito-hollyhock-vs-kawasaki-frontale/378569c5-2f30-412f-9026-48676e17dcc8"
@@ -76624,6 +77680,16 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6927,
+              "model_probability": 0.6927,
+              "model_average_total": 9.11,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.1 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -76657,19 +77723,22 @@
               "team": "away",
               "source": "computed",
               "label": "Losses",
-              "value": "4"
+              "value": "4",
+              "odds": 2.5
             },
             {
               "team": "away",
               "source": "computed",
               "label": "No Wins",
-              "value": "4"
+              "value": "4",
+              "odds": 1.29
             },
             {
               "team": "away",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "9"
+              "value": "9",
+              "odds": 2.05
             },
             {
               "team": "away",
@@ -76683,7 +77752,13 @@
               "Over": 1.73,
               "Under": 2.0
             }
-          }
+          },
+          "odds": {
+            "home": 2.5,
+            "draw": 3.0,
+            "away": 2.63
+          },
+          "bookmaker_odds_source": "Ladbrokes"
         },
         {
           "id": 15345868,
@@ -76787,6 +77862,16 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6927,
+              "model_probability": 0.6927,
+              "model_average_total": 9.11,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.1 avg",
+              "team": "both"
             }
           },
           "h2h_streaks": [
@@ -76838,7 +77923,8 @@
               "team": "home",
               "source": "computed",
               "label": "Without Clean Sheet",
-              "value": "7"
+              "value": "7",
+              "odds": 1.75
             },
             {
               "team": "home",
@@ -76850,7 +77936,8 @@
               "team": "home",
               "source": "computed",
               "label": "Both teams scoring",
-              "value": "4/5"
+              "value": "4/5",
+              "odds": 1.75
             }
           ],
           "corner_odds": {
@@ -76859,6 +77946,12 @@
               "Under": 1.83
             }
           },
+          "odds": {
+            "home": 2.7,
+            "draw": 3.2,
+            "away": 2.3
+          },
+          "bookmaker_odds_source": "Ladbrokes",
           "bookmaker_links": {
             "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/japan/japanese-j1-league/shimizu-s-pulse-vs-gamba-osaka/5a2fd23a-e886-40f1-a681-282288eca153",
             "neds": "https://www.neds.com.au/sports/soccer/japan/japanese-j1-league/shimizu-s-pulse-vs-gamba-osaka/5a2fd23a-e886-40f1-a681-282288eca153"
@@ -82883,6 +83976,17 @@
                 "max_favourite_gap": 0.15
               },
               "cards_over_threshold": 0.68
+            },
+            "ou_corners": {
+              "pick": "Over",
+              "line": 10.5,
+              "probability": 0.5983,
+              "model_probability": 0.5983,
+              "model_average_total": 11.5,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "11.5 avg",
+              "team": "both",
+              "odds": 2.0
             }
           },
           "odds": {
@@ -83124,6 +84228,16 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 1,
               "model_calibration": "2026-05-20 16:57:59 ACST"
+            },
+            "ou_corners": {
+              "pick": "Over",
+              "line": 10.5,
+              "probability": 0.5983,
+              "model_probability": 0.5983,
+              "model_average_total": 11.5,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "11.5 avg",
+              "team": "both"
             }
           },
           "odds": {
@@ -83189,29 +84303,29 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 4.33,
+            "home": 4.4,
             "draw": 3.6,
-            "away": 1.83,
+            "away": 1.8,
             "event_id": 10506218,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-championship/hull-v-middlesbrough-10506218"
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 4.33,
+              "1": 4.4,
               "X": 3.6,
-              "2": 1.83
+              "2": 1.8
             },
             "Match goals 1.5": {
-              "Over": 1.28,
-              "Under": 3.45
+              "Over": 1.3,
+              "Under": 3.32
             },
             "Match goals 2.5": {
-              "Over": 1.95,
-              "Under": 1.79
+              "Over": 1.98,
+              "Under": 1.77
             },
             "Both teams to score": {
               "Yes": 1.83,
-              "No": 1.91
+              "No": 1.83
             }
           },
           "bookmaker_links": {
@@ -89972,6 +91086,16 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 2,
               "model_calibration": "2026-05-17 16:47:23 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5508,
+              "model_probability": 0.5508,
+              "model_average_total": 10.26,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.3 avg",
+              "team": "both"
             }
           },
           "odds": {
@@ -90177,6 +91301,16 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 2,
               "model_calibration": "2026-05-19 03:39:48 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.5508,
+              "model_probability": 0.5508,
+              "model_average_total": 10.26,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "10.3 avg",
+              "team": "both"
             }
           },
           "odds": {
@@ -95938,6 +97072,16 @@
               "cards_over_streaks": 0,
               "cards_under_streaks": 1,
               "model_calibration": "2026-05-19 03:39:48 ACST"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6247,
+              "model_probability": 0.6247,
+              "model_average_total": 9.67,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.7 avg",
+              "team": "both"
             }
           },
           "odds": {
@@ -96079,19 +97223,21 @@
         {
           "id": "flashscore:rJKJ2MZP",
           "date": "2026-05-21",
-          "time": "02:30",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "source": "Phase pipeline",
           "source_status": "healthy",
           "phase_status": "ready_for_phase_3",
           "phase_notes": "Clean Phase 2 odds.",
           "home": {
             "name": "GAIS",
-            "short": "GAIS"
+            "short": "GAIS",
+            "goals": 2
           },
           "away": {
             "name": "Hammarby",
-            "short": "Hammarby"
+            "short": "Hammarby",
+            "goals": 0
           },
           "predictions": {},
           "odds": {
@@ -96131,6 +97277,36 @@
           },
           "bookmaker_links": {
             "sportsbet": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/swedish-allsvenskan/gais-v-hammarby-10495406"
+          },
+          "settled_at": "2026-05-21",
+          "prediction_locked": true,
+          "prediction_locked_at": "2026-05-21T04:37:47.611202+09:30",
+          "flashscore_score": {
+            "home": 2,
+            "away": 0,
+            "status": "FT",
+            "source_match_id": "rJKJ2MZP",
+            "fetched_at": "2026-05-21"
+          },
+          "settled_source": "Flashscore",
+          "actuals": {
+            "source": "LiveScore",
+            "home_corners": 2,
+            "away_corners": 3,
+            "corners_total": 5,
+            "home_fouls": 15,
+            "away_fouls": 11,
+            "fouls_total": 26,
+            "home_sot": 6,
+            "away_sot": 4,
+            "home_cards": 2,
+            "away_cards": 1,
+            "cards_total": 3,
+            "first_to_score": "home",
+            "first_scorer": "Rasmus Niklasson Petrovic",
+            "ht_home": 1,
+            "ht_away": 0,
+            "ht_winner": "home"
           }
         },
         {
@@ -96152,7 +97328,124 @@
             "short": "Mjallby",
             "team_id": "sportsbet:10495548:away"
           },
-          "predictions": {},
+          "predictions": {
+            "winner": {
+              "pick": "Draw",
+              "type": "draw",
+              "probability": 0.3009,
+              "raw_probability": 0.3153,
+              "probabilities": {
+                "home": 0.3607,
+                "draw": 0.3009,
+                "away": 0.3384
+              },
+              "model_probabilities": {
+                "home": 0.3837,
+                "draw": 0.317,
+                "away": 0.2994
+              },
+              "raw_probabilities": {
+                "home": 0.389,
+                "draw": 0.3153,
+                "away": 0.2958
+              },
+              "bookmaker_probabilities": {
+                "home": 0.3262,
+                "draw": 0.2768,
+                "away": 0.3971
+              },
+              "bookmaker_blend_weight": 0.4,
+              "calibration": {
+                "trust_factor": 0.9045,
+                "min_edge_delta": 0.0371,
+                "sources": [
+                  "Winner below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 3.3
+            },
+            "btts": {
+              "pick": "No",
+              "probability": 0.5394,
+              "raw_probability": 0.5415,
+              "calibration": {
+                "trust_factor": 0.9485,
+                "min_edge_delta": 0.02,
+                "sources": [
+                  "BTTS below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 1.91
+            },
+            "ou_goals": {
+              "pick": "Under",
+              "line": 2.5,
+              "probability": 0.6144,
+              "raw_probability": 0.6192,
+              "calibration": {
+                "trust_factor": 0.9595,
+                "min_edge_delta": 0.0157,
+                "sources": [
+                  "Goals below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 1.73
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "probability": 0.5,
+              "raw_probability": 0.5,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "calibration": {
+                "trust_factor": 0.9948,
+                "min_edge_delta": 0.002,
+                "sources": [
+                  "Cards below 60% target over 382 settled markets."
+                ]
+              }
+            },
+            "factors": {
+              "lambda_home": 1.2,
+              "lambda_away": 1.014,
+              "h2h_n": 0,
+              "h2h_home_wins": 0,
+              "h2h_away_wins": 0,
+              "h2h_draws": 0,
+              "h2h_home_goals": 0,
+              "h2h_away_goals": 0,
+              "h_rank": null,
+              "a_rank": null,
+              "home_elo": 1500.0,
+              "away_elo": 1500.0,
+              "dixon_coles_rho": -0.1,
+              "winner_bookmaker_blend": 0.4,
+              "draw_rule": {
+                "min_probability": 0.28,
+                "max_home_away_gap": 0.15,
+                "max_favourite_gap": 0.15
+              },
+              "cards_over_threshold": 0.68,
+              "cards_over_streaks": 0,
+              "cards_under_streaks": 0,
+              "model_calibration": "2026-05-21 05:17:53 ACST",
+              "source": "pre_match_prefill",
+              "source_note": "Generated before kickoff from available 1X2 odds plus league/global baselines because detailed team context was missing.",
+              "data_quality": "Data weak"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.9015,
+              "model_probability": 0.9015,
+              "model_average_total": 7.0,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "7.0 avg",
+              "team": "both"
+            }
+          },
           "odds": {
             "home": 2.8,
             "draw": 3.3,
@@ -96223,7 +97516,124 @@
             "short": "Brommapojkarna",
             "team_id": "sportsbet:10500468:away"
           },
-          "predictions": {},
+          "predictions": {
+            "winner": {
+              "pick": "Djurgardens",
+              "type": "home",
+              "probability": 0.5547,
+              "raw_probability": 0.4972,
+              "probabilities": {
+                "home": 0.5547,
+                "draw": 0.2504,
+                "away": 0.1949
+              },
+              "model_probabilities": {
+                "home": 0.4816,
+                "draw": 0.2863,
+                "away": 0.2321
+              },
+              "raw_probabilities": {
+                "home": 0.4972,
+                "draw": 0.2813,
+                "away": 0.2215
+              },
+              "bookmaker_probabilities": {
+                "home": 0.6645,
+                "draw": 0.1965,
+                "away": 0.139
+              },
+              "bookmaker_blend_weight": 0.4,
+              "calibration": {
+                "trust_factor": 0.9045,
+                "min_edge_delta": 0.0371,
+                "sources": [
+                  "Winner below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 1.36
+            },
+            "btts": {
+              "pick": "No",
+              "probability": 0.5062,
+              "raw_probability": 0.5065,
+              "calibration": {
+                "trust_factor": 0.9485,
+                "min_edge_delta": 0.02,
+                "sources": [
+                  "BTTS below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 2.0
+            },
+            "ou_goals": {
+              "pick": "Under",
+              "line": 2.5,
+              "probability": 0.5457,
+              "raw_probability": 0.5476,
+              "calibration": {
+                "trust_factor": 0.9595,
+                "min_edge_delta": 0.0157,
+                "sources": [
+                  "Goals below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 2.37
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "probability": 0.5,
+              "raw_probability": 0.5,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "calibration": {
+                "trust_factor": 0.9948,
+                "min_edge_delta": 0.002,
+                "sources": [
+                  "Cards below 60% target over 382 settled markets."
+                ]
+              }
+            },
+            "factors": {
+              "lambda_home": 1.537,
+              "lambda_away": 0.95,
+              "h2h_n": 0,
+              "h2h_home_wins": 0,
+              "h2h_away_wins": 0,
+              "h2h_draws": 0,
+              "h2h_home_goals": 0,
+              "h2h_away_goals": 0,
+              "h_rank": null,
+              "a_rank": null,
+              "home_elo": 1500.0,
+              "away_elo": 1500.0,
+              "dixon_coles_rho": -0.1,
+              "winner_bookmaker_blend": 0.4,
+              "draw_rule": {
+                "min_probability": 0.28,
+                "max_home_away_gap": 0.15,
+                "max_favourite_gap": 0.15
+              },
+              "cards_over_threshold": 0.68,
+              "cards_over_streaks": 0,
+              "cards_under_streaks": 0,
+              "model_calibration": "2026-05-21 05:17:53 ACST",
+              "source": "pre_match_prefill",
+              "source_note": "Generated before kickoff from available 1X2 odds plus league/global baselines because detailed team context was missing.",
+              "data_quality": "Data weak"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.9015,
+              "model_probability": 0.9015,
+              "model_average_total": 7.0,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "7.0 avg",
+              "team": "both"
+            }
+          },
           "odds": {
             "home": 1.36,
             "draw": 4.6,
@@ -96294,7 +97704,124 @@
             "short": "Degerfors",
             "team_id": "sportsbet:10495407:away"
           },
-          "predictions": {},
+          "predictions": {
+            "winner": {
+              "pick": "Kalmar FF",
+              "type": "home",
+              "probability": 0.4475,
+              "raw_probability": 0.4539,
+              "probabilities": {
+                "home": 0.4475,
+                "draw": 0.2954,
+                "away": 0.257
+              },
+              "model_probabilities": {
+                "home": 0.4424,
+                "draw": 0.3027,
+                "away": 0.255
+              },
+              "raw_probabilities": {
+                "home": 0.4539,
+                "draw": 0.2995,
+                "away": 0.2467
+              },
+              "bookmaker_probabilities": {
+                "home": 0.4553,
+                "draw": 0.2846,
+                "away": 0.2602
+              },
+              "bookmaker_blend_weight": 0.4,
+              "calibration": {
+                "trust_factor": 0.9045,
+                "min_edge_delta": 0.0371,
+                "sources": [
+                  "Winner below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 2.0
+            },
+            "btts": {
+              "pick": "No",
+              "probability": 0.5275,
+              "raw_probability": 0.529,
+              "calibration": {
+                "trust_factor": 0.9485,
+                "min_edge_delta": 0.02,
+                "sources": [
+                  "BTTS below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 1.83
+            },
+            "ou_goals": {
+              "pick": "Under",
+              "line": 2.5,
+              "probability": 0.586,
+              "raw_probability": 0.5896,
+              "calibration": {
+                "trust_factor": 0.9595,
+                "min_edge_delta": 0.0157,
+                "sources": [
+                  "Goals below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 1.64
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "probability": 0.5,
+              "raw_probability": 0.5,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "calibration": {
+                "trust_factor": 0.9948,
+                "min_edge_delta": 0.002,
+                "sources": [
+                  "Cards below 60% target over 382 settled markets."
+                ]
+              }
+            },
+            "factors": {
+              "lambda_home": 1.376,
+              "lambda_away": 0.95,
+              "h2h_n": 0,
+              "h2h_home_wins": 0,
+              "h2h_away_wins": 0,
+              "h2h_draws": 0,
+              "h2h_home_goals": 0,
+              "h2h_away_goals": 0,
+              "h_rank": null,
+              "a_rank": null,
+              "home_elo": 1500.0,
+              "away_elo": 1500.0,
+              "dixon_coles_rho": -0.1,
+              "winner_bookmaker_blend": 0.4,
+              "draw_rule": {
+                "min_probability": 0.28,
+                "max_home_away_gap": 0.15,
+                "max_favourite_gap": 0.15
+              },
+              "cards_over_threshold": 0.68,
+              "cards_over_streaks": 0,
+              "cards_under_streaks": 0,
+              "model_calibration": "2026-05-21 05:17:53 ACST",
+              "source": "pre_match_prefill",
+              "source_note": "Generated before kickoff from available 1X2 odds plus league/global baselines because detailed team context was missing.",
+              "data_quality": "Data weak"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.9015,
+              "model_probability": 0.9015,
+              "model_average_total": 7.0,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "7.0 avg",
+              "team": "both"
+            }
+          },
           "odds": {
             "home": 2.0,
             "draw": 3.2,
@@ -96365,7 +97892,124 @@
             "short": "Orgryte",
             "team_id": "sportsbet:10500472:away"
           },
-          "predictions": {},
+          "predictions": {
+            "winner": {
+              "pick": "Halmstads",
+              "type": "home",
+              "probability": 0.4456,
+              "raw_probability": 0.45,
+              "probabilities": {
+                "home": 0.4456,
+                "draw": 0.2897,
+                "away": 0.2647
+              },
+              "model_probabilities": {
+                "home": 0.4388,
+                "draw": 0.3041,
+                "away": 0.257
+              },
+              "raw_probabilities": {
+                "home": 0.45,
+                "draw": 0.301,
+                "away": 0.249
+              },
+              "bookmaker_probabilities": {
+                "home": 0.4557,
+                "draw": 0.2681,
+                "away": 0.2762
+              },
+              "bookmaker_blend_weight": 0.4,
+              "calibration": {
+                "trust_factor": 0.9045,
+                "min_edge_delta": 0.0371,
+                "sources": [
+                  "Winner below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 2.0
+            },
+            "btts": {
+              "pick": "No",
+              "probability": 0.5296,
+              "raw_probability": 0.5312,
+              "calibration": {
+                "trust_factor": 0.9485,
+                "min_edge_delta": 0.02,
+                "sources": [
+                  "BTTS below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 2.1
+            },
+            "ou_goals": {
+              "pick": "Under",
+              "line": 2.5,
+              "probability": 0.5895,
+              "raw_probability": 0.5933,
+              "calibration": {
+                "trust_factor": 0.9595,
+                "min_edge_delta": 0.0157,
+                "sources": [
+                  "Goals below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 1.88
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "probability": 0.5,
+              "raw_probability": 0.5,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "calibration": {
+                "trust_factor": 0.9948,
+                "min_edge_delta": 0.002,
+                "sources": [
+                  "Cards below 60% target over 382 settled markets."
+                ]
+              }
+            },
+            "factors": {
+              "lambda_home": 1.362,
+              "lambda_away": 0.95,
+              "h2h_n": 0,
+              "h2h_home_wins": 0,
+              "h2h_away_wins": 0,
+              "h2h_draws": 0,
+              "h2h_home_goals": 0,
+              "h2h_away_goals": 0,
+              "h_rank": null,
+              "a_rank": null,
+              "home_elo": 1500.0,
+              "away_elo": 1500.0,
+              "dixon_coles_rho": -0.1,
+              "winner_bookmaker_blend": 0.4,
+              "draw_rule": {
+                "min_probability": 0.28,
+                "max_home_away_gap": 0.15,
+                "max_favourite_gap": 0.15
+              },
+              "cards_over_threshold": 0.68,
+              "cards_over_streaks": 0,
+              "cards_under_streaks": 0,
+              "model_calibration": "2026-05-21 05:17:53 ACST",
+              "source": "pre_match_prefill",
+              "source_note": "Generated before kickoff from available 1X2 odds plus league/global baselines because detailed team context was missing.",
+              "data_quality": "Data weak"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.9015,
+              "model_probability": 0.9015,
+              "model_average_total": 7.0,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "7.0 avg",
+              "team": "both"
+            }
+          },
           "odds": {
             "home": 2.0,
             "draw": 3.4,
@@ -96436,32 +98080,149 @@
             "short": "AIK",
             "team_id": "sportsbet:10500477:away"
           },
-          "predictions": {},
+          "predictions": {
+            "winner": {
+              "pick": "Hammarby",
+              "type": "home",
+              "probability": 0.5443,
+              "raw_probability": 0.4972,
+              "probabilities": {
+                "home": 0.5443,
+                "draw": 0.2569,
+                "away": 0.1989
+              },
+              "model_probabilities": {
+                "home": 0.4816,
+                "draw": 0.2863,
+                "away": 0.2321
+              },
+              "raw_probabilities": {
+                "home": 0.4972,
+                "draw": 0.2813,
+                "away": 0.2215
+              },
+              "bookmaker_probabilities": {
+                "home": 0.6383,
+                "draw": 0.2128,
+                "away": 0.1489
+              },
+              "bookmaker_blend_weight": 0.4,
+              "calibration": {
+                "trust_factor": 0.9045,
+                "min_edge_delta": 0.0371,
+                "sources": [
+                  "Winner below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 1.4
+            },
+            "btts": {
+              "pick": "No",
+              "probability": 0.5062,
+              "raw_probability": 0.5065,
+              "calibration": {
+                "trust_factor": 0.9485,
+                "min_edge_delta": 0.02,
+                "sources": [
+                  "BTTS below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 2.0
+            },
+            "ou_goals": {
+              "pick": "Under",
+              "line": 2.5,
+              "probability": 0.5457,
+              "raw_probability": 0.5476,
+              "calibration": {
+                "trust_factor": 0.9595,
+                "min_edge_delta": 0.0157,
+                "sources": [
+                  "Goals below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 2.2
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "probability": 0.5,
+              "raw_probability": 0.5,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "calibration": {
+                "trust_factor": 0.9948,
+                "min_edge_delta": 0.002,
+                "sources": [
+                  "Cards below 60% target over 382 settled markets."
+                ]
+              }
+            },
+            "factors": {
+              "lambda_home": 1.537,
+              "lambda_away": 0.95,
+              "h2h_n": 0,
+              "h2h_home_wins": 0,
+              "h2h_away_wins": 0,
+              "h2h_draws": 0,
+              "h2h_home_goals": 0,
+              "h2h_away_goals": 0,
+              "h_rank": null,
+              "a_rank": null,
+              "home_elo": 1500.0,
+              "away_elo": 1500.0,
+              "dixon_coles_rho": -0.1,
+              "winner_bookmaker_blend": 0.4,
+              "draw_rule": {
+                "min_probability": 0.28,
+                "max_home_away_gap": 0.15,
+                "max_favourite_gap": 0.15
+              },
+              "cards_over_threshold": 0.68,
+              "cards_over_streaks": 0,
+              "cards_under_streaks": 0,
+              "model_calibration": "2026-05-21 05:17:53 ACST",
+              "source": "pre_match_prefill",
+              "source_note": "Generated before kickoff from available 1X2 odds plus league/global baselines because detailed team context was missing.",
+              "data_quality": "Data weak"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.9015,
+              "model_probability": 0.9015,
+              "model_average_total": 7.0,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "7.0 avg",
+              "team": "both"
+            }
+          },
           "odds": {
             "home": 1.44,
             "draw": 4.2,
             "away": 5.5
           },
           "sportsbet_odds": {
-            "home": 1.44,
+            "home": 1.4,
             "draw": 4.2,
-            "away": 5.5,
+            "away": 6.0,
             "event_id": 10500477,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/swedish-allsvenskan/hammarby-v-aik-10500477"
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 1.44,
+              "1": 1.4,
               "X": 4.2,
-              "2": 5.5
+              "2": 6.0
             },
             "Match goals 1.5": {
               "Over": 1.17,
               "Under": 4.6
             },
             "Match goals 2.5": {
-              "Over": 1.63,
-              "Under": 2.19
+              "Over": 1.62,
+              "Under": 2.2
             },
             "Both teams to score": {
               "Yes": 1.72,
@@ -96507,7 +98268,124 @@
             "short": "GAIS",
             "team_id": "sportsbet:10500479:away"
           },
-          "predictions": {},
+          "predictions": {
+            "winner": {
+              "pick": "Sirius",
+              "type": "home",
+              "probability": 0.4834,
+              "raw_probability": 0.4744,
+              "probabilities": {
+                "home": 0.4834,
+                "draw": 0.2749,
+                "away": 0.2417
+              },
+              "model_probabilities": {
+                "home": 0.4609,
+                "draw": 0.2951,
+                "away": 0.244
+              },
+              "raw_probabilities": {
+                "home": 0.4744,
+                "draw": 0.291,
+                "away": 0.2346
+              },
+              "bookmaker_probabilities": {
+                "home": 0.5172,
+                "draw": 0.2446,
+                "away": 0.2382
+              },
+              "bookmaker_blend_weight": 0.4,
+              "calibration": {
+                "trust_factor": 0.9045,
+                "min_edge_delta": 0.0371,
+                "sources": [
+                  "Winner below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 1.75
+            },
+            "btts": {
+              "pick": "No",
+              "probability": 0.5171,
+              "raw_probability": 0.5181,
+              "calibration": {
+                "trust_factor": 0.9485,
+                "min_edge_delta": 0.02,
+                "sources": [
+                  "BTTS below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 2.2
+            },
+            "ou_goals": {
+              "pick": "Under",
+              "line": 2.5,
+              "probability": 0.5671,
+              "raw_probability": 0.5699,
+              "calibration": {
+                "trust_factor": 0.9595,
+                "min_edge_delta": 0.0157,
+                "sources": [
+                  "Goals below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 2.09
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "probability": 0.5,
+              "raw_probability": 0.5,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "calibration": {
+                "trust_factor": 0.9948,
+                "min_edge_delta": 0.002,
+                "sources": [
+                  "Cards below 60% target over 382 settled markets."
+                ]
+              }
+            },
+            "factors": {
+              "lambda_home": 1.451,
+              "lambda_away": 0.95,
+              "h2h_n": 0,
+              "h2h_home_wins": 0,
+              "h2h_away_wins": 0,
+              "h2h_draws": 0,
+              "h2h_home_goals": 0,
+              "h2h_away_goals": 0,
+              "h_rank": null,
+              "a_rank": null,
+              "home_elo": 1500.0,
+              "away_elo": 1500.0,
+              "dixon_coles_rho": -0.1,
+              "winner_bookmaker_blend": 0.4,
+              "draw_rule": {
+                "min_probability": 0.28,
+                "max_home_away_gap": 0.15,
+                "max_favourite_gap": 0.15
+              },
+              "cards_over_threshold": 0.68,
+              "cards_over_streaks": 0,
+              "cards_under_streaks": 0,
+              "model_calibration": "2026-05-21 05:17:53 ACST",
+              "source": "pre_match_prefill",
+              "source_note": "Generated before kickoff from available 1X2 odds plus league/global baselines because detailed team context was missing.",
+              "data_quality": "Data weak"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.9015,
+              "model_probability": 0.9015,
+              "model_average_total": 7.0,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "7.0 avg",
+              "team": "both"
+            }
+          },
           "odds": {
             "home": 1.75,
             "draw": 3.7,
@@ -96578,7 +98456,124 @@
             "short": "Vasteras SK",
             "team_id": "sportsbet:10495693:away"
           },
-          "predictions": {},
+          "predictions": {
+            "winner": {
+              "pick": "Malmo FF",
+              "type": "home",
+              "probability": 0.5233,
+              "raw_probability": 0.4972,
+              "probabilities": {
+                "home": 0.5233,
+                "draw": 0.2638,
+                "away": 0.2129
+              },
+              "model_probabilities": {
+                "home": 0.4816,
+                "draw": 0.2863,
+                "away": 0.2321
+              },
+              "raw_probabilities": {
+                "home": 0.4972,
+                "draw": 0.2813,
+                "away": 0.2215
+              },
+              "bookmaker_probabilities": {
+                "home": 0.586,
+                "draw": 0.23,
+                "away": 0.184
+              },
+              "bookmaker_blend_weight": 0.4,
+              "calibration": {
+                "trust_factor": 0.9045,
+                "min_edge_delta": 0.0371,
+                "sources": [
+                  "Winner below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 1.57
+            },
+            "btts": {
+              "pick": "No",
+              "probability": 0.5062,
+              "raw_probability": 0.5065,
+              "calibration": {
+                "trust_factor": 0.9485,
+                "min_edge_delta": 0.02,
+                "sources": [
+                  "BTTS below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 2.0
+            },
+            "ou_goals": {
+              "pick": "Under",
+              "line": 2.5,
+              "probability": 0.5457,
+              "raw_probability": 0.5476,
+              "calibration": {
+                "trust_factor": 0.9595,
+                "min_edge_delta": 0.0157,
+                "sources": [
+                  "Goals below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 2.03
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "probability": 0.5,
+              "raw_probability": 0.5,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "calibration": {
+                "trust_factor": 0.9948,
+                "min_edge_delta": 0.002,
+                "sources": [
+                  "Cards below 60% target over 382 settled markets."
+                ]
+              }
+            },
+            "factors": {
+              "lambda_home": 1.537,
+              "lambda_away": 0.95,
+              "h2h_n": 0,
+              "h2h_home_wins": 0,
+              "h2h_away_wins": 0,
+              "h2h_draws": 0,
+              "h2h_home_goals": 0,
+              "h2h_away_goals": 0,
+              "h_rank": null,
+              "a_rank": null,
+              "home_elo": 1500.0,
+              "away_elo": 1500.0,
+              "dixon_coles_rho": -0.1,
+              "winner_bookmaker_blend": 0.4,
+              "draw_rule": {
+                "min_probability": 0.28,
+                "max_home_away_gap": 0.15,
+                "max_favourite_gap": 0.15
+              },
+              "cards_over_threshold": 0.68,
+              "cards_over_streaks": 0,
+              "cards_under_streaks": 0,
+              "model_calibration": "2026-05-21 05:17:53 ACST",
+              "source": "pre_match_prefill",
+              "source_note": "Generated before kickoff from available 1X2 odds plus league/global baselines because detailed team context was missing.",
+              "data_quality": "Data weak"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.9015,
+              "model_probability": 0.9015,
+              "model_average_total": 7.0,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "7.0 avg",
+              "team": "both"
+            }
+          },
           "odds": {
             "home": 1.57,
             "draw": 4.0,
@@ -96649,7 +98644,124 @@
             "short": "Hacken",
             "team_id": "sportsbet:10500499:away"
           },
-          "predictions": {},
+          "predictions": {
+            "winner": {
+              "pick": "Draw",
+              "type": "draw",
+              "probability": 0.3029,
+              "raw_probability": 0.3175,
+              "probabilities": {
+                "home": 0.3874,
+                "draw": 0.3029,
+                "away": 0.3097
+              },
+              "model_probabilities": {
+                "home": 0.4005,
+                "draw": 0.319,
+                "away": 0.2805
+              },
+              "raw_probabilities": {
+                "home": 0.4075,
+                "draw": 0.3175,
+                "away": 0.2749
+              },
+              "bookmaker_probabilities": {
+                "home": 0.3678,
+                "draw": 0.2786,
+                "away": 0.3536
+              },
+              "bookmaker_blend_weight": 0.4,
+              "calibration": {
+                "trust_factor": 0.9045,
+                "min_edge_delta": 0.0371,
+                "sources": [
+                  "Winner below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 3.3
+            },
+            "btts": {
+              "pick": "No",
+              "probability": 0.553,
+              "raw_probability": 0.5559,
+              "calibration": {
+                "trust_factor": 0.9485,
+                "min_edge_delta": 0.02,
+                "sources": [
+                  "BTTS below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 2.25
+            },
+            "ou_goals": {
+              "pick": "Under",
+              "line": 2.5,
+              "probability": 0.6275,
+              "raw_probability": 0.6329,
+              "calibration": {
+                "trust_factor": 0.9595,
+                "min_edge_delta": 0.0157,
+                "sources": [
+                  "Goals below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 1.98
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "probability": 0.5,
+              "raw_probability": 0.5,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "calibration": {
+                "trust_factor": 0.9948,
+                "min_edge_delta": 0.002,
+                "sources": [
+                  "Cards below 60% target over 382 settled markets."
+                ]
+              }
+            },
+            "factors": {
+              "lambda_home": 1.213,
+              "lambda_away": 0.95,
+              "h2h_n": 0,
+              "h2h_home_wins": 0,
+              "h2h_away_wins": 0,
+              "h2h_draws": 0,
+              "h2h_home_goals": 0,
+              "h2h_away_goals": 0,
+              "h_rank": null,
+              "a_rank": null,
+              "home_elo": 1500.0,
+              "away_elo": 1500.0,
+              "dixon_coles_rho": -0.1,
+              "winner_bookmaker_blend": 0.4,
+              "draw_rule": {
+                "min_probability": 0.28,
+                "max_home_away_gap": 0.15,
+                "max_favourite_gap": 0.15
+              },
+              "cards_over_threshold": 0.68,
+              "cards_over_streaks": 0,
+              "cards_under_streaks": 0,
+              "model_calibration": "2026-05-21 05:17:53 ACST",
+              "source": "pre_match_prefill",
+              "source_note": "Generated before kickoff from available 1X2 odds plus league/global baselines because detailed team context was missing.",
+              "data_quality": "Data weak"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.9015,
+              "model_probability": 0.9015,
+              "model_average_total": 7.0,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "7.0 avg",
+              "team": "both"
+            }
+          },
           "odds": {
             "home": 2.5,
             "draw": 3.5,
@@ -96657,28 +98769,28 @@
           },
           "sportsbet_odds": {
             "home": 2.5,
-            "draw": 3.5,
-            "away": 2.5,
+            "draw": 3.3,
+            "away": 2.6,
             "event_id": 10500499,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/swedish-allsvenskan/elfsborg-v-hacken-10500499"
           },
           "sportsbet_markets": {
             "Full time": {
               "1": 2.5,
-              "X": 3.5,
-              "2": 2.5
+              "X": 3.3,
+              "2": 2.6
             },
             "Match goals 1.5": {
-              "Over": 1.2,
-              "Under": 4.25
+              "Over": 1.22,
+              "Under": 4.0
             },
             "Match goals 2.5": {
-              "Over": 1.68,
-              "Under": 2.1
+              "Over": 1.76,
+              "Under": 1.98
             },
             "Both teams to score": {
-              "Yes": 1.57,
-              "No": 2.3
+              "Yes": 1.62,
+              "No": 2.25
             }
           },
           "bookmaker_links": {
@@ -96720,7 +98832,124 @@
             "short": "Mjallby",
             "team_id": "sportsbet:10500829:away"
           },
-          "predictions": {},
+          "predictions": {
+            "winner": {
+              "pick": "Draw",
+              "type": "draw",
+              "probability": 0.3001,
+              "raw_probability": 0.3131,
+              "probabilities": {
+                "home": 0.348,
+                "draw": 0.3001,
+                "away": 0.3519
+              },
+              "model_probabilities": {
+                "home": 0.3762,
+                "draw": 0.315,
+                "away": 0.3088
+              },
+              "raw_probabilities": {
+                "home": 0.3808,
+                "draw": 0.3131,
+                "away": 0.3062
+              },
+              "bookmaker_probabilities": {
+                "home": 0.3056,
+                "draw": 0.2778,
+                "away": 0.4167
+              },
+              "bookmaker_blend_weight": 0.4,
+              "calibration": {
+                "trust_factor": 0.9045,
+                "min_edge_delta": 0.0371,
+                "sources": [
+                  "Winner below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 3.3
+            },
+            "btts": {
+              "pick": "No",
+              "probability": 0.5308,
+              "raw_probability": 0.5325,
+              "calibration": {
+                "trust_factor": 0.9485,
+                "min_edge_delta": 0.02,
+                "sources": [
+                  "BTTS below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 2.0
+            },
+            "ou_goals": {
+              "pick": "Under",
+              "line": 2.5,
+              "probability": 0.6051,
+              "raw_probability": 0.6096,
+              "calibration": {
+                "trust_factor": 0.9595,
+                "min_edge_delta": 0.0157,
+                "sources": [
+                  "Goals below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 1.83
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "probability": 0.5,
+              "raw_probability": 0.5,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "calibration": {
+                "trust_factor": 0.9948,
+                "min_edge_delta": 0.002,
+                "sources": [
+                  "Cards below 60% target over 382 settled markets."
+                ]
+              }
+            },
+            "factors": {
+              "lambda_home": 1.2,
+              "lambda_away": 1.05,
+              "h2h_n": 0,
+              "h2h_home_wins": 0,
+              "h2h_away_wins": 0,
+              "h2h_draws": 0,
+              "h2h_home_goals": 0,
+              "h2h_away_goals": 0,
+              "h_rank": null,
+              "a_rank": null,
+              "home_elo": 1500.0,
+              "away_elo": 1500.0,
+              "dixon_coles_rho": -0.1,
+              "winner_bookmaker_blend": 0.4,
+              "draw_rule": {
+                "min_probability": 0.28,
+                "max_home_away_gap": 0.15,
+                "max_favourite_gap": 0.15
+              },
+              "cards_over_threshold": 0.68,
+              "cards_over_streaks": 0,
+              "cards_under_streaks": 0,
+              "model_calibration": "2026-05-21 05:17:53 ACST",
+              "source": "pre_match_prefill",
+              "source_note": "Generated before kickoff from available 1X2 odds plus league/global baselines because detailed team context was missing.",
+              "data_quality": "Data weak"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.9015,
+              "model_probability": 0.9015,
+              "model_average_total": 7.0,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "7.0 avg",
+              "team": "both"
+            }
+          },
           "odds": {
             "home": 3.0,
             "draw": 3.3,
@@ -96782,88 +99011,104 @@
       "logo": "https://api.sofascore.app/api/v1/unique-tournament/20/image",
       "matches": [
         {
-          "id": "flashscore:YobepuNG",
+          "id": "sportsbet:10495000",
           "date": "2026-05-21",
-          "time": "02:30",
-          "status": "upcoming",
-          "source": "Phase pipeline",
+          "time": "FT",
+          "status": "FT",
+          "source": "Sportsbet",
           "source_status": "healthy",
-          "phase_status": "unmatched_market",
-          "phase_notes": "No Sportsbet event matched this fixture.",
+          "phase_status": "ready_for_phase_3",
+          "phase_notes": "Sportsbet fixture and 1X2 odds fallback.",
           "home": {
-            "name": "Lilleström",
-            "short": "Lilleström"
+            "name": "Lillestrom",
+            "short": "Lillestrom",
+            "team_id": "sportsbet:10495000:home",
+            "goals": 1
           },
           "away": {
             "name": "Kristiansund",
-            "short": "Kristiansund"
+            "short": "Kristiansund",
+            "team_id": "sportsbet:10495000:away",
+            "goals": 2
           },
           "predictions": {},
           "sportsbet_odds": {
-            "home": 2.2,
-            "draw": 3.3,
-            "away": 2.62,
+            "home": 81.0,
+            "draw": 8.5,
+            "away": 1.01,
             "event_id": 10495000,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/norwegian-eliteserien/lillestrom-v-kristiansund-10495000"
           },
           "sportsbet_markets": {
-            "Full time": {
-              "1": 2.2,
-              "X": 3.3,
-              "2": 2.62
-            },
-            "Match goals 2.5": {
-              "Over": 1.22,
-              "Under": 3.98
-            },
-            "Both teams to score": {
-              "Yes": 1.08,
-              "No": 6.5
-            },
-            "Match goals 1.5": {
-              "Over": 1.03,
-              "Under": 10.0
-            },
             "Match goals 3.5": {
-              "Over": 1.78,
-              "Under": 1.96
-            },
-            "Match goals 5.5": {
-              "Over": 5.5,
+              "Over": 5.4,
               "Under": 1.13
             },
+            "Match goals 5.5": {
+              "Over": 101.0
+            },
             "Match goals 4.5": {
-              "Over": 3.08,
-              "Under": 1.34
+              "Over": 81.0
             },
             "Match goals 6.5": {
-              "Over": 10.0,
-              "Under": 1.03
+              "Over": 101.0
             },
             "Match goals 7.5": {
-              "Over": 21.0
+              "Over": 101.0
             }
           },
           "bookmaker_links": {
             "sportsbet": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/norwegian-eliteserien/lillestrom-v-kristiansund-10495000"
+          },
+          "settled_at": "2026-05-21",
+          "prediction_locked": true,
+          "prediction_locked_at": "2026-05-21T05:32:31.257297+09:30",
+          "flashscore_score": {
+            "home": 1,
+            "away": 2,
+            "status": "FT",
+            "source_match_id": "YobepuNG",
+            "fetched_at": "2026-05-21"
+          },
+          "settled_source": "Flashscore",
+          "actuals": {
+            "source": "LiveScore",
+            "home_corners": 8,
+            "away_corners": 3,
+            "corners_total": 11,
+            "home_fouls": 9,
+            "away_fouls": 17,
+            "fouls_total": 26,
+            "home_sot": 5,
+            "away_sot": 6,
+            "home_cards": 3,
+            "away_cards": 5,
+            "cards_total": 8,
+            "first_to_score": "away",
+            "first_scorer": "Adrian Kurd Ronning",
+            "ht_home": 0,
+            "ht_away": 1,
+            "ht_winner": "away"
           }
         },
         {
           "id": "flashscore:0A1Nl9Wh",
           "date": "2026-05-21",
-          "time": "03:30",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "source": "Phase pipeline",
           "source_status": "healthy",
           "phase_status": "ready_for_phase_3",
           "phase_notes": "Clean Phase 2 odds.",
           "home": {
             "name": "Aalesund",
-            "short": "Aalesund"
+            "short": "Aalesund",
+            "goals": 2
           },
           "away": {
             "name": "Brann",
-            "short": "Brann"
+            "short": "Brann",
+            "goals": 1
           },
           "predictions": {},
           "odds": {
@@ -96872,56 +99117,71 @@
             "away": 1.95
           },
           "sportsbet_odds": {
-            "home": 3.0,
-            "draw": 3.5,
-            "away": 1.91,
+            "home": 4.0,
+            "draw": 1.61,
+            "away": 3.7,
             "event_id": 10483693,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/norwegian-eliteserien/aalesunds-v-brann-10483693"
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 3.0,
-              "X": 3.5,
-              "2": 1.91
+              "1": 4.4,
+              "X": 1.53,
+              "2": 3.75
             },
             "Match goals 2.5": {
-              "Over": 1.51,
-              "Under": 2.44
-            },
-            "Both teams to score": {
-              "Yes": 1.5,
-              "No": 2.5
-            },
-            "Match goals 0.5": {
-              "Over": 1.02,
-              "Under": 12.0
-            },
-            "Match goals 1.5": {
-              "Over": 1.14,
-              "Under": 5.2
+              "Over": 2.09,
+              "Under": 1.69
             },
             "Match goals 3.5": {
-              "Over": 2.39,
-              "Under": 1.53
+              "Over": 6.5,
+              "Under": 1.08
             },
             "Match goals 5.5": {
-              "Over": 7.5,
-              "Under": 1.06
+              "Over": 101.0
             },
             "Match goals 6.5": {
-              "Over": 12.0,
-              "Under": 1.02
+              "Over": 101.0
             },
             "Match goals 4.5": {
-              "Over": 4.25,
-              "Under": 1.2
+              "Over": 21.0
             },
             "Match goals 7.5": {
-              "Over": 41.0
+              "Over": 101.0
             }
           },
           "bookmaker_links": {
             "sportsbet": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/norwegian-eliteserien/aalesunds-v-brann-10483693"
+          },
+          "settled_at": "2026-05-21",
+          "prediction_locked": true,
+          "prediction_locked_at": "2026-05-21T05:32:31.266525+09:30",
+          "flashscore_score": {
+            "home": 2,
+            "away": 1,
+            "status": "FT",
+            "source_match_id": "0A1Nl9Wh",
+            "fetched_at": "2026-05-21"
+          },
+          "settled_source": "Flashscore",
+          "actuals": {
+            "source": "LiveScore",
+            "home_corners": 4,
+            "away_corners": 7,
+            "corners_total": 11,
+            "home_fouls": 17,
+            "away_fouls": 15,
+            "fouls_total": 32,
+            "home_sot": 5,
+            "away_sot": 3,
+            "home_cards": 1,
+            "away_cards": 3,
+            "cards_total": 4,
+            "first_to_score": "home",
+            "first_scorer": "Marcus Haagensen Reed",
+            "ht_home": 1,
+            "ht_away": 0,
+            "ht_winner": "home"
           }
         },
         {
@@ -96994,7 +99254,124 @@
             "short": "Brann",
             "team_id": "sportsbet:10495050:away"
           },
-          "predictions": {},
+          "predictions": {
+            "winner": {
+              "pick": "Bodo Glimt",
+              "type": "home",
+              "probability": 0.5546,
+              "raw_probability": 0.5016,
+              "probabilities": {
+                "home": 0.5546,
+                "draw": 0.2066,
+                "away": 0.2388
+              },
+              "model_probabilities": {
+                "home": 0.4855,
+                "draw": 0.225,
+                "away": 0.2895
+              },
+              "raw_probabilities": {
+                "home": 0.5016,
+                "draw": 0.2135,
+                "away": 0.2849
+              },
+              "bookmaker_probabilities": {
+                "home": 0.6582,
+                "draw": 0.179,
+                "away": 0.1628
+              },
+              "bookmaker_blend_weight": 0.4,
+              "calibration": {
+                "trust_factor": 0.9045,
+                "min_edge_delta": 0.0371,
+                "sources": [
+                  "Winner below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 1.36
+            },
+            "btts": {
+              "pick": "Yes",
+              "probability": 0.7392,
+              "raw_probability": 0.7522,
+              "calibration": {
+                "trust_factor": 0.9485,
+                "min_edge_delta": 0.02,
+                "sources": [
+                  "BTTS below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 1.45
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "probability": 0.7606,
+              "raw_probability": 0.7716,
+              "calibration": {
+                "trust_factor": 0.9595,
+                "min_edge_delta": 0.0157,
+                "sources": [
+                  "Goals below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 1.33
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "probability": 0.5,
+              "raw_probability": 0.5,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "calibration": {
+                "trust_factor": 0.9948,
+                "min_edge_delta": 0.002,
+                "sources": [
+                  "Cards below 60% target over 382 settled markets."
+                ]
+              }
+            },
+            "factors": {
+              "lambda_home": 2.338,
+              "lambda_away": 1.75,
+              "h2h_n": 0,
+              "h2h_home_wins": 0,
+              "h2h_away_wins": 0,
+              "h2h_draws": 0,
+              "h2h_home_goals": 0,
+              "h2h_away_goals": 0,
+              "h_rank": null,
+              "a_rank": null,
+              "home_elo": 1500.0,
+              "away_elo": 1500.0,
+              "dixon_coles_rho": -0.1,
+              "winner_bookmaker_blend": 0.4,
+              "draw_rule": {
+                "min_probability": 0.28,
+                "max_home_away_gap": 0.15,
+                "max_favourite_gap": 0.15
+              },
+              "cards_over_threshold": 0.68,
+              "cards_over_streaks": 0,
+              "cards_under_streaks": 0,
+              "model_calibration": "2026-05-21 05:17:53 ACST",
+              "source": "pre_match_prefill",
+              "source_note": "Generated before kickoff from available 1X2 odds plus league/global baselines because detailed team context was missing.",
+              "data_quality": "Data weak"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6658,
+              "model_probability": 0.6658,
+              "model_average_total": 9.33,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.3 avg",
+              "team": "both"
+            }
+          },
           "odds": {
             "home": 1.36,
             "draw": 4.75,
@@ -97002,28 +99379,28 @@
           },
           "sportsbet_odds": {
             "home": 1.36,
-            "draw": 4.75,
-            "away": 6.0,
+            "draw": 5.0,
+            "away": 5.5,
             "event_id": 10495050,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/norwegian-eliteserien/bodo-glimt-v-brann-10495050"
           },
           "sportsbet_markets": {
             "Full time": {
               "1": 1.36,
-              "X": 4.75,
-              "2": 6.0
+              "X": 5.0,
+              "2": 5.5
             },
             "Match goals 1.5": {
-              "Over": 1.1,
-              "Under": 6.0
+              "Over": 1.08,
+              "Under": 6.5
             },
             "Match goals 2.5": {
-              "Over": 1.36,
-              "Under": 2.99
+              "Over": 1.33,
+              "Under": 3.2
             },
             "Both teams to score": {
-              "Yes": 1.53,
-              "No": 2.4
+              "Yes": 1.45,
+              "No": 2.6
             }
           },
           "bookmaker_links": {
@@ -97065,24 +99442,141 @@
             "short": "Viking",
             "team_id": "sportsbet:10495087:away"
           },
-          "predictions": {},
+          "predictions": {
+            "winner": {
+              "pick": "Viking",
+              "type": "away",
+              "probability": 0.5114,
+              "raw_probability": 0.406,
+              "probabilities": {
+                "home": 0.2774,
+                "draw": 0.2112,
+                "away": 0.5114
+              },
+              "model_probabilities": {
+                "home": 0.3696,
+                "draw": 0.2314,
+                "away": 0.399
+              },
+              "raw_probabilities": {
+                "home": 0.3734,
+                "draw": 0.2207,
+                "away": 0.406
+              },
+              "bookmaker_probabilities": {
+                "home": 0.1391,
+                "draw": 0.1809,
+                "away": 0.68
+              },
+              "bookmaker_blend_weight": 0.4,
+              "calibration": {
+                "trust_factor": 0.9045,
+                "min_edge_delta": 0.0371,
+                "sources": [
+                  "Winner below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 1.33
+            },
+            "btts": {
+              "pick": "Yes",
+              "probability": 0.7498,
+              "raw_probability": 0.7634,
+              "calibration": {
+                "trust_factor": 0.9485,
+                "min_edge_delta": 0.02,
+                "sources": [
+                  "BTTS below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 1.53
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "probability": 0.7611,
+              "raw_probability": 0.7721,
+              "calibration": {
+                "trust_factor": 0.9595,
+                "min_edge_delta": 0.0157,
+                "sources": [
+                  "Goals below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 1.33
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "probability": 0.5,
+              "raw_probability": 0.5,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "calibration": {
+                "trust_factor": 0.9948,
+                "min_edge_delta": 0.002,
+                "sources": [
+                  "Cards below 60% target over 382 settled markets."
+                ]
+              }
+            },
+            "factors": {
+              "lambda_home": 2.0,
+              "lambda_away": 2.088,
+              "h2h_n": 0,
+              "h2h_home_wins": 0,
+              "h2h_away_wins": 0,
+              "h2h_draws": 0,
+              "h2h_home_goals": 0,
+              "h2h_away_goals": 0,
+              "h_rank": null,
+              "a_rank": null,
+              "home_elo": 1500.0,
+              "away_elo": 1500.0,
+              "dixon_coles_rho": -0.1,
+              "winner_bookmaker_blend": 0.4,
+              "draw_rule": {
+                "min_probability": 0.28,
+                "max_home_away_gap": 0.15,
+                "max_favourite_gap": 0.15
+              },
+              "cards_over_threshold": 0.68,
+              "cards_over_streaks": 0,
+              "cards_under_streaks": 0,
+              "model_calibration": "2026-05-21 05:17:53 ACST",
+              "source": "pre_match_prefill",
+              "source_note": "Generated before kickoff from available 1X2 odds plus league/global baselines because detailed team context was missing.",
+              "data_quality": "Data weak"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6658,
+              "model_probability": 0.6658,
+              "model_average_total": 9.33,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.3 avg",
+              "team": "both"
+            }
+          },
           "odds": {
             "home": 7.0,
             "draw": 5.0,
             "away": 1.3
           },
           "sportsbet_odds": {
-            "home": 7.0,
+            "home": 6.5,
             "draw": 5.0,
-            "away": 1.3,
+            "away": 1.33,
             "event_id": 10495087,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/norwegian-eliteserien/kristiansund-v-viking-10495087"
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 7.0,
+              "1": 6.5,
               "X": 5.0,
-              "2": 1.3
+              "2": 1.33
             },
             "Match goals 1.5": {
               "Over": 1.08,
@@ -97090,7 +99584,7 @@
             },
             "Match goals 2.5": {
               "Over": 1.33,
-              "Under": 3.18
+              "Under": 3.14
             },
             "Both teams to score": {
               "Yes": 1.53,
@@ -97136,7 +99630,124 @@
             "short": "Valerenga",
             "team_id": "sportsbet:10495089:away"
           },
-          "predictions": {},
+          "predictions": {
+            "winner": {
+              "pick": "Start",
+              "type": "home",
+              "probability": 0.3794,
+              "raw_probability": 0.4194,
+              "probabilities": {
+                "home": 0.3794,
+                "draw": 0.2448,
+                "away": 0.3758
+              },
+              "model_probabilities": {
+                "home": 0.4111,
+                "draw": 0.239,
+                "away": 0.3499
+              },
+              "raw_probabilities": {
+                "home": 0.4194,
+                "draw": 0.229,
+                "away": 0.3516
+              },
+              "bookmaker_probabilities": {
+                "home": 0.3318,
+                "draw": 0.2535,
+                "away": 0.4147
+              },
+              "bookmaker_blend_weight": 0.4,
+              "calibration": {
+                "trust_factor": 0.9045,
+                "min_edge_delta": 0.0371,
+                "sources": [
+                  "Winner below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 2.75
+            },
+            "btts": {
+              "pick": "Yes",
+              "probability": 0.7204,
+              "raw_probability": 0.7323,
+              "calibration": {
+                "trust_factor": 0.9485,
+                "min_edge_delta": 0.02,
+                "sources": [
+                  "BTTS below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 1.53
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "probability": 0.7237,
+              "raw_probability": 0.7331,
+              "calibration": {
+                "trust_factor": 0.9595,
+                "min_edge_delta": 0.0157,
+                "sources": [
+                  "Goals below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 1.6
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "probability": 0.5,
+              "raw_probability": 0.5,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "calibration": {
+                "trust_factor": 0.9948,
+                "min_edge_delta": 0.002,
+                "sources": [
+                  "Cards below 60% target over 382 settled markets."
+                ]
+              }
+            },
+            "factors": {
+              "lambda_home": 2.0,
+              "lambda_away": 1.825,
+              "h2h_n": 0,
+              "h2h_home_wins": 0,
+              "h2h_away_wins": 0,
+              "h2h_draws": 0,
+              "h2h_home_goals": 0,
+              "h2h_away_goals": 0,
+              "h_rank": null,
+              "a_rank": null,
+              "home_elo": 1500.0,
+              "away_elo": 1500.0,
+              "dixon_coles_rho": -0.1,
+              "winner_bookmaker_blend": 0.4,
+              "draw_rule": {
+                "min_probability": 0.28,
+                "max_home_away_gap": 0.15,
+                "max_favourite_gap": 0.15
+              },
+              "cards_over_threshold": 0.68,
+              "cards_over_streaks": 0,
+              "cards_under_streaks": 0,
+              "model_calibration": "2026-05-21 05:17:53 ACST",
+              "source": "pre_match_prefill",
+              "source_note": "Generated before kickoff from available 1X2 odds plus league/global baselines because detailed team context was missing.",
+              "data_quality": "Data weak"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6658,
+              "model_probability": 0.6658,
+              "model_average_total": 9.33,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.3 avg",
+              "team": "both"
+            }
+          },
           "odds": {
             "home": 2.75,
             "draw": 3.6,
@@ -97207,7 +99818,124 @@
             "short": "Rosenborg",
             "team_id": "sportsbet:10495091:away"
           },
-          "predictions": {},
+          "predictions": {
+            "winner": {
+              "pick": "Kfum Oslo",
+              "type": "home",
+              "probability": 0.4346,
+              "raw_probability": 0.4535,
+              "probabilities": {
+                "home": 0.4346,
+                "draw": 0.2459,
+                "away": 0.3195
+              },
+              "model_probabilities": {
+                "home": 0.442,
+                "draw": 0.2364,
+                "away": 0.3216
+              },
+              "raw_probabilities": {
+                "home": 0.4535,
+                "draw": 0.2261,
+                "away": 0.3204
+              },
+              "bookmaker_probabilities": {
+                "home": 0.4236,
+                "draw": 0.2602,
+                "away": 0.3162
+              },
+              "bookmaker_blend_weight": 0.4,
+              "calibration": {
+                "trust_factor": 0.9045,
+                "min_edge_delta": 0.0371,
+                "sources": [
+                  "Winner below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 2.15
+            },
+            "btts": {
+              "pick": "Yes",
+              "probability": 0.7197,
+              "raw_probability": 0.7317,
+              "calibration": {
+                "trust_factor": 0.9485,
+                "min_edge_delta": 0.02,
+                "sources": [
+                  "BTTS below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 1.57
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "probability": 0.7269,
+              "raw_probability": 0.7364,
+              "calibration": {
+                "trust_factor": 0.9595,
+                "min_edge_delta": 0.0157,
+                "sources": [
+                  "Goals below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 1.71
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "probability": 0.5,
+              "raw_probability": 0.5,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "calibration": {
+                "trust_factor": 0.9948,
+                "min_edge_delta": 0.002,
+                "sources": [
+                  "Cards below 60% target over 382 settled markets."
+                ]
+              }
+            },
+            "factors": {
+              "lambda_home": 2.097,
+              "lambda_away": 1.75,
+              "h2h_n": 0,
+              "h2h_home_wins": 0,
+              "h2h_away_wins": 0,
+              "h2h_draws": 0,
+              "h2h_home_goals": 0,
+              "h2h_away_goals": 0,
+              "h_rank": null,
+              "a_rank": null,
+              "home_elo": 1500.0,
+              "away_elo": 1500.0,
+              "dixon_coles_rho": -0.1,
+              "winner_bookmaker_blend": 0.4,
+              "draw_rule": {
+                "min_probability": 0.28,
+                "max_home_away_gap": 0.15,
+                "max_favourite_gap": 0.15
+              },
+              "cards_over_threshold": 0.68,
+              "cards_over_streaks": 0,
+              "cards_under_streaks": 0,
+              "model_calibration": "2026-05-21 05:17:53 ACST",
+              "source": "pre_match_prefill",
+              "source_note": "Generated before kickoff from available 1X2 odds plus league/global baselines because detailed team context was missing.",
+              "data_quality": "Data weak"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6658,
+              "model_probability": 0.6658,
+              "model_average_total": 9.33,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.3 avg",
+              "team": "both"
+            }
+          },
           "odds": {
             "home": 2.15,
             "draw": 3.5,
@@ -97278,7 +100006,124 @@
             "short": "Molde",
             "team_id": "sportsbet:10495092:away"
           },
-          "predictions": {},
+          "predictions": {
+            "winner": {
+              "pick": "Sarpsborg",
+              "type": "home",
+              "probability": 0.4062,
+              "raw_probability": 0.4333,
+              "probabilities": {
+                "home": 0.4062,
+                "draw": 0.2404,
+                "away": 0.3533
+              },
+              "model_probabilities": {
+                "home": 0.4237,
+                "draw": 0.2407,
+                "away": 0.3356
+              },
+              "raw_probabilities": {
+                "home": 0.4333,
+                "draw": 0.2309,
+                "away": 0.3358
+              },
+              "bookmaker_probabilities": {
+                "home": 0.38,
+                "draw": 0.24,
+                "away": 0.38
+              },
+              "bookmaker_blend_weight": 0.4,
+              "calibration": {
+                "trust_factor": 0.9045,
+                "min_edge_delta": 0.0371,
+                "sources": [
+                  "Winner below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 2.4
+            },
+            "btts": {
+              "pick": "Yes",
+              "probability": 0.7104,
+              "raw_probability": 0.7219,
+              "calibration": {
+                "trust_factor": 0.9485,
+                "min_edge_delta": 0.02,
+                "sources": [
+                  "BTTS below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 1.4
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "probability": 0.7121,
+              "raw_probability": 0.7211,
+              "calibration": {
+                "trust_factor": 0.9595,
+                "min_edge_delta": 0.0157,
+                "sources": [
+                  "Goals below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 1.46
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "probability": 0.5,
+              "raw_probability": 0.5,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "calibration": {
+                "trust_factor": 0.9948,
+                "min_edge_delta": 0.002,
+                "sources": [
+                  "Cards below 60% target over 382 settled markets."
+                ]
+              }
+            },
+            "factors": {
+              "lambda_home": 2.0,
+              "lambda_away": 1.75,
+              "h2h_n": 0,
+              "h2h_home_wins": 0,
+              "h2h_away_wins": 0,
+              "h2h_draws": 0,
+              "h2h_home_goals": 0,
+              "h2h_away_goals": 0,
+              "h_rank": null,
+              "a_rank": null,
+              "home_elo": 1500.0,
+              "away_elo": 1500.0,
+              "dixon_coles_rho": -0.1,
+              "winner_bookmaker_blend": 0.4,
+              "draw_rule": {
+                "min_probability": 0.28,
+                "max_home_away_gap": 0.15,
+                "max_favourite_gap": 0.15
+              },
+              "cards_over_threshold": 0.68,
+              "cards_over_streaks": 0,
+              "cards_under_streaks": 0,
+              "model_calibration": "2026-05-21 05:17:53 ACST",
+              "source": "pre_match_prefill",
+              "source_note": "Generated before kickoff from available 1X2 odds plus league/global baselines because detailed team context was missing.",
+              "data_quality": "Data weak"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6658,
+              "model_probability": 0.6658,
+              "model_average_total": 9.33,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.3 avg",
+              "team": "both"
+            }
+          },
           "odds": {
             "home": 2.4,
             "draw": 3.8,
@@ -97349,7 +100194,124 @@
             "short": "Aalesunds",
             "team_id": "sportsbet:10495093:away"
           },
-          "predictions": {},
+          "predictions": {
+            "winner": {
+              "pick": "Tromso",
+              "type": "home",
+              "probability": 0.5503,
+              "raw_probability": 0.5016,
+              "probabilities": {
+                "home": 0.5503,
+                "draw": 0.2156,
+                "away": 0.2341
+              },
+              "model_probabilities": {
+                "home": 0.4855,
+                "draw": 0.225,
+                "away": 0.2895
+              },
+              "raw_probabilities": {
+                "home": 0.5016,
+                "draw": 0.2135,
+                "away": 0.2849
+              },
+              "bookmaker_probabilities": {
+                "home": 0.6475,
+                "draw": 0.2014,
+                "away": 0.1511
+              },
+              "bookmaker_blend_weight": 0.4,
+              "calibration": {
+                "trust_factor": 0.9045,
+                "min_edge_delta": 0.0371,
+                "sources": [
+                  "Winner below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 1.4
+            },
+            "btts": {
+              "pick": "Yes",
+              "probability": 0.7392,
+              "raw_probability": 0.7522,
+              "calibration": {
+                "trust_factor": 0.9485,
+                "min_edge_delta": 0.02,
+                "sources": [
+                  "BTTS below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 1.72
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "probability": 0.7606,
+              "raw_probability": 0.7716,
+              "calibration": {
+                "trust_factor": 0.9595,
+                "min_edge_delta": 0.0157,
+                "sources": [
+                  "Goals below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 1.56
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "probability": 0.5,
+              "raw_probability": 0.5,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "calibration": {
+                "trust_factor": 0.9948,
+                "min_edge_delta": 0.002,
+                "sources": [
+                  "Cards below 60% target over 382 settled markets."
+                ]
+              }
+            },
+            "factors": {
+              "lambda_home": 2.338,
+              "lambda_away": 1.75,
+              "h2h_n": 0,
+              "h2h_home_wins": 0,
+              "h2h_away_wins": 0,
+              "h2h_draws": 0,
+              "h2h_home_goals": 0,
+              "h2h_away_goals": 0,
+              "h_rank": null,
+              "a_rank": null,
+              "home_elo": 1500.0,
+              "away_elo": 1500.0,
+              "dixon_coles_rho": -0.1,
+              "winner_bookmaker_blend": 0.4,
+              "draw_rule": {
+                "min_probability": 0.28,
+                "max_home_away_gap": 0.15,
+                "max_favourite_gap": 0.15
+              },
+              "cards_over_threshold": 0.68,
+              "cards_over_streaks": 0,
+              "cards_under_streaks": 0,
+              "model_calibration": "2026-05-21 05:17:53 ACST",
+              "source": "pre_match_prefill",
+              "source_note": "Generated before kickoff from available 1X2 odds plus league/global baselines because detailed team context was missing.",
+              "data_quality": "Data weak"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6658,
+              "model_probability": 0.6658,
+              "model_average_total": 9.33,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.3 avg",
+              "team": "both"
+            }
+          },
           "odds": {
             "home": 1.4,
             "draw": 4.5,
@@ -97420,7 +100382,124 @@
             "short": "Lillestrom",
             "team_id": "sportsbet:10495094:away"
           },
-          "predictions": {},
+          "predictions": {
+            "winner": {
+              "pick": "Lillestrom",
+              "type": "away",
+              "probability": 0.3982,
+              "raw_probability": 0.3645,
+              "probabilities": {
+                "home": 0.3615,
+                "draw": 0.2404,
+                "away": 0.3982
+              },
+              "model_probabilities": {
+                "home": 0.4011,
+                "draw": 0.2374,
+                "away": 0.3615
+              },
+              "raw_probabilities": {
+                "home": 0.4082,
+                "draw": 0.2273,
+                "away": 0.3645
+              },
+              "bookmaker_probabilities": {
+                "home": 0.302,
+                "draw": 0.2449,
+                "away": 0.4531
+              },
+              "bookmaker_blend_weight": 0.4,
+              "calibration": {
+                "trust_factor": 0.9045,
+                "min_edge_delta": 0.0371,
+                "sources": [
+                  "Winner below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 2.0
+            },
+            "btts": {
+              "pick": "Yes",
+              "probability": 0.728,
+              "raw_probability": 0.7404,
+              "calibration": {
+                "trust_factor": 0.9485,
+                "min_edge_delta": 0.02,
+                "sources": [
+                  "BTTS below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 1.5
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "probability": 0.7329,
+              "raw_probability": 0.7427,
+              "calibration": {
+                "trust_factor": 0.9595,
+                "min_edge_delta": 0.0157,
+                "sources": [
+                  "Goals below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 1.54
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "probability": 0.5,
+              "raw_probability": 0.5,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "calibration": {
+                "trust_factor": 0.9948,
+                "min_edge_delta": 0.002,
+                "sources": [
+                  "Cards below 60% target over 382 settled markets."
+                ]
+              }
+            },
+            "factors": {
+              "lambda_home": 2.0,
+              "lambda_away": 1.886,
+              "h2h_n": 0,
+              "h2h_home_wins": 0,
+              "h2h_away_wins": 0,
+              "h2h_draws": 0,
+              "h2h_home_goals": 0,
+              "h2h_away_goals": 0,
+              "h_rank": null,
+              "a_rank": null,
+              "home_elo": 1500.0,
+              "away_elo": 1500.0,
+              "dixon_coles_rho": -0.1,
+              "winner_bookmaker_blend": 0.4,
+              "draw_rule": {
+                "min_probability": 0.28,
+                "max_home_away_gap": 0.15,
+                "max_favourite_gap": 0.15
+              },
+              "cards_over_threshold": 0.68,
+              "cards_over_streaks": 0,
+              "cards_under_streaks": 0,
+              "model_calibration": "2026-05-21 05:17:53 ACST",
+              "source": "pre_match_prefill",
+              "source_note": "Generated before kickoff from available 1X2 odds plus league/global baselines because detailed team context was missing.",
+              "data_quality": "Data weak"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6658,
+              "model_probability": 0.6658,
+              "model_average_total": 9.33,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.3 avg",
+              "team": "both"
+            }
+          },
           "odds": {
             "home": 3.0,
             "draw": 3.7,
@@ -97491,7 +100570,124 @@
             "short": "Fredrikstad",
             "team_id": "sportsbet:10495090:away"
           },
-          "predictions": {},
+          "predictions": {
+            "winner": {
+              "pick": "Sandefjord",
+              "type": "home",
+              "probability": 0.4846,
+              "raw_probability": 0.4817,
+              "probabilities": {
+                "home": 0.4846,
+                "draw": 0.2346,
+                "away": 0.2809
+              },
+              "model_probabilities": {
+                "home": 0.4675,
+                "draw": 0.2299,
+                "away": 0.3026
+              },
+              "raw_probabilities": {
+                "home": 0.4817,
+                "draw": 0.2189,
+                "away": 0.2994
+              },
+              "bookmaker_probabilities": {
+                "home": 0.5102,
+                "draw": 0.2417,
+                "away": 0.2482
+              },
+              "bookmaker_blend_weight": 0.4,
+              "calibration": {
+                "trust_factor": 0.9045,
+                "min_edge_delta": 0.0371,
+                "sources": [
+                  "Winner below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 1.8
+            },
+            "btts": {
+              "pick": "Yes",
+              "probability": 0.7316,
+              "raw_probability": 0.7442,
+              "calibration": {
+                "trust_factor": 0.9485,
+                "min_edge_delta": 0.02,
+                "sources": [
+                  "BTTS below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 1.5
+            },
+            "ou_goals": {
+              "pick": "Over",
+              "line": 2.5,
+              "probability": 0.7469,
+              "raw_probability": 0.7573,
+              "calibration": {
+                "trust_factor": 0.9595,
+                "min_edge_delta": 0.0157,
+                "sources": [
+                  "Goals below 60% target over 409 settled markets."
+                ]
+              },
+              "odds": 1.53
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "probability": 0.5,
+              "raw_probability": 0.5,
+              "over_probability": 0.5,
+              "raw_over_probability": 0.5,
+              "over_threshold": 0.68,
+              "calibration": {
+                "trust_factor": 0.9948,
+                "min_edge_delta": 0.002,
+                "sources": [
+                  "Cards below 60% target over 382 settled markets."
+                ]
+              }
+            },
+            "factors": {
+              "lambda_home": 2.236,
+              "lambda_away": 1.75,
+              "h2h_n": 0,
+              "h2h_home_wins": 0,
+              "h2h_away_wins": 0,
+              "h2h_draws": 0,
+              "h2h_home_goals": 0,
+              "h2h_away_goals": 0,
+              "h_rank": null,
+              "a_rank": null,
+              "home_elo": 1500.0,
+              "away_elo": 1500.0,
+              "dixon_coles_rho": -0.1,
+              "winner_bookmaker_blend": 0.4,
+              "draw_rule": {
+                "min_probability": 0.28,
+                "max_home_away_gap": 0.15,
+                "max_favourite_gap": 0.15
+              },
+              "cards_over_threshold": 0.68,
+              "cards_over_streaks": 0,
+              "cards_under_streaks": 0,
+              "model_calibration": "2026-05-21 05:17:53 ACST",
+              "source": "pre_match_prefill",
+              "source_note": "Generated before kickoff from available 1X2 odds plus league/global baselines because detailed team context was missing.",
+              "data_quality": "Data weak"
+            },
+            "ou_corners": {
+              "pick": "Under",
+              "line": 10.5,
+              "probability": 0.6658,
+              "model_probability": 0.6658,
+              "model_average_total": 9.33,
+              "sourceLabel": "Pre-match corners baseline",
+              "sourceValue": "9.3 avg",
+              "team": "both"
+            }
+          },
           "odds": {
             "home": 1.8,
             "draw": 3.8,

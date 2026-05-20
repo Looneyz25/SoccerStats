@@ -17,6 +17,8 @@ Phase 4 does not pick bets, size stakes, or compose recommendations. It produces
 
 Only rows whose `phase3_status = ready_for_phase_4` are scored. Other rows are echoed through with `phase4_status = upstream_blocked`.
 
+For newly added leagues, use the same model path as established leagues. If league-specific calibration is missing, apply the default global coefficients and mark the output as thin-data or uncalibrated in `phase4_notes`; do not skip winner/BTTS/goals/cards/corners predictions solely because the league is new.
+
 ## Model
 
 A capped Poisson scoreline grid (0..6 home, 0..6 away). Lambda construction:
@@ -36,7 +38,7 @@ away_defence = away_ga5 / 5
 HOME_ADV = 0.20
 ```
 
-If either side has fewer than 3 form matches the Phase 3 row will not be `ready_for_phase_4` so we never hit that case.
+If either side has fewer than 3 form matches and no documented generic fallback exists, the Phase 3 row will not be `ready_for_phase_4` so we never hit that case.
 
 Outputs derived from the scoreline grid:
 
@@ -68,6 +70,7 @@ Cards use a stricter learned gate because recent resulted data showed Over 4.5 w
 5. Compute fair odds and edge vs Phase 2 prices.
 6. Assign `phase4_status`.
 7. Write the Phase 4 review workbook.
+8. Confirm every new-league row with usable inputs has winner, BTTS, goals, cards, corners, fair odds/model percentage fields, and a suggested-pick candidate for display precompute.
 
 ## Required Fields
 
@@ -117,3 +120,4 @@ Workbook sheets:
 - BTTS and O2.5 probabilities are reported.
 - Lambdas are floored at 0.20 to avoid pathological zero-goal predictions.
 - Dashboard winner display applies a bookmaker guard after model probabilities are produced: if direct 1X2 odds heavily favour another side (25+ implied-probability-point gap or roughly 3x+ price ratio), display the bookmaker-backed side unless model support is overwhelming. This keeps visible predictions aligned with high-signal market disagreement.
+- Missing league-specific calibration never creates a dashboard-only `No pick` state. Use global defaults, write caution notes, and let Phase 5/Display decide whether the pick is strong enough to recommend.

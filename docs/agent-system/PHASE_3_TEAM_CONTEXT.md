@@ -29,7 +29,9 @@ All SofaScore requests must run through the smart-mimic session: a `curl_cffi` S
 
 ## Listed Leagues
 
-Same 10 leagues as Phase 1 / Phase 2. No additional league mapping required at this phase — fixtures are already filtered upstream.
+Same league set as Phase 1 / Phase 2. No additional allow-list is required at this phase because fixtures are already filtered upstream.
+
+Newly added leagues must be processed through the same team-resolution and form routine as established leagues. If SofaScore aliases or IDs are missing, extend the alias/cache mapping when possible, then use the generic recent-form and H2H fallback path. Thin samples should produce `partial_form` or `Data weak` notes, not a silent skip.
 
 ## Required Agents
 
@@ -80,8 +82,8 @@ Same 10 leagues as Phase 1 / Phase 2. No additional league mapping required at t
 
 | Status | Meaning |
 | --- | --- |
-| `ready_for_phase_4` | Both teams resolved with at least 3 form matches each |
-| `partial_form` | At least one team resolved but with fewer than 3 form matches |
+| `ready_for_phase_4` | Both teams resolved with at least 3 form matches each, or a documented generic fallback supplies usable model inputs for a new/thin league |
+| `partial_form` | At least one team resolved but with fewer than 3 form matches and no usable fallback inputs |
 | `team_unresolved` | One or both team names could not be resolved on SofaScore |
 | `source_blocked` | SofaScore endpoint failed for this fixture |
 | `upstream_blocked` | Phase 2 row was not `ready_for_phase_3`; no context attempted |
@@ -111,3 +113,4 @@ Workbook sheets:
 - SofaScore is accessed only through the smart-mimic session.
 - Source failures are visible in Source Health with HTTP status / exception text.
 - No fixture is sent to Phase 4 without home and away form metrics.
+- Newly added leagues are not skipped because they lack bespoke notes. They either resolve to normal/generic model inputs or carry a clear blocker explaining why prediction cannot run.

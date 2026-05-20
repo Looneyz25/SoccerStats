@@ -56,6 +56,14 @@ For betting picks, use this sequence:
 7. Risk Manager sizes stakes and removes correlated or low-confidence picks.
 8. Compliance Reviewer checks wording and uncertainty.
 
+## New League Onboarding Rule
+
+When a league is added to the fixture or source config, treat it as a normal production league immediately. Do not require bespoke league notes before predicting, and do not stop at fixture/odds display.
+
+The full routine must run for the new league: Phase 1 fixtures, Phase 2 odds, Phase 3 team context, Phase 4 predictions, Phase 5 value/risk, Phase 6 settlement, result review/calibration, display precompute, and Firestore upload. If a league has thin history, missing aliases, or no league-specific calibration yet, use the standard generic model defaults and mark the row with `Data weak`, caution notes, or source-health blockers. A new league should only show `No pick` when the actual source data needed for that market is unavailable after the normal fallback path has been attempted.
+
+Before Firestore upload, the run should flag any new-league match that has valid teams and 1X2 odds but no winner/BTTS/goals/cards/corners predictions or no suggested pick, unless the row carries an explicit source blocker. The dashboard must receive the same precomputed five-card market shape as every established league.
+
 ## Phase Plan
 
 | Phase | Name | Lead Agents | Output |
@@ -94,6 +102,7 @@ Phase 1 must produce `docs/agent-system/outputs/Phase1_Fixture_Slate.xlsx` with 
 - Use API-Football as the primary fixture/status/source-of-truth for Phase 1.
 - Daily fixture collection should cover today plus the next 6 Adelaide-local days by default.
 - Use Sportsbet as the only Phase 2 odds source until a second odds provider is deliberately added.
+- New leagues use the same fetch-and-predict routine as existing leagues. Missing league-specific detail is a caution signal, not a reason to skip predictions.
 - Treat TheSportsDB and Flashscore as fallback score sources, not primary model inputs.
 - Treat Understat xG as high-value enrichment when matched, but do not block analysis if unavailable.
 - Never claim certainty. Use probability, fair odds, market odds, edge, and confidence.

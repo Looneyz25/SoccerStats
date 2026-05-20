@@ -21,6 +21,7 @@ import os
 import random
 import re
 import time
+import unicodedata
 import zipfile
 from collections import Counter, defaultdict
 from datetime import datetime, timedelta, timezone
@@ -198,7 +199,8 @@ HEALTH_HEADERS = [
 # ---------- name normalization ----------
 
 def norm(value):
-    text = re.sub(r"[^a-z0-9]", "", (value or "").lower())
+    folded = unicodedata.normalize("NFKD", value or "").encode("ascii", "ignore").decode("ascii")
+    text = re.sub(r"[^a-z0-9]", "", folded.lower())
     return text.replace("utd", "united").replace("fc", "")
 
 

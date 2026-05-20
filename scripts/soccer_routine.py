@@ -91,6 +91,8 @@ DRAW_MIN_PROBABILITY = 0.28
 DRAW_MAX_HOME_AWAY_GAP = 0.15
 DRAW_MAX_FAVOURITE_GAP = 0.15
 CARDS_OVER_THRESHOLD = 0.68
+DEFAULT_PREMATCH_TEAM_GOALS = 1.35
+DEFAULT_PREMATCH_CORNERS_TOTAL = 10.2
 TODAY     = datetime.now(ADL).date()
 YESTERDAY = TODAY - timedelta(days=1)
 TOMORROW  = TODAY + timedelta(days=1)
@@ -1610,6 +1612,260 @@ def predict_poisson(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
                             market_odds=market_odds)
 
 
+def has_real_three_way_odds(odds):
+    return bool(bookmaker_three_way_probabilities(odds))
+
+
+def market_odds_for_match(match):
+    for key in ("sportsbet_odds", "odds"):
+        odds = match.get(key) or {}
+        if has_real_three_way_odds(odds):
+            return {side: float(odds[side]) for side in ("home", "draw", "away")}
+    return None
+
+
+def league_goal_baseline(matches):
+    totals = []
+    for match in matches:
+        if match.get("status") != "FT":
+            continue
+        home_goals = (match.get("home") or {}).get("goals")
+        away_goals = (match.get("away") or {}).get("goals")
+        if isinstance(home_goals, (int, float)) and isinstance(away_goals, (int, float)):
+            totals.append(float(home_goals) + float(away_goals))
+    if not totals:
+        return DEFAULT_PREMATCH_TEAM_GOALS
+    per_team = sum(totals) / (len(totals) * 2)
+    return max(0.9, min(1.8, per_team))
+
+
+def pre_prediction_form_inputs(match, league_matches, odds):
+    base = league_goal_baseline(league_matches)
+    market = bookmaker_three_way_probabilities(odds) or {}
+    bias = max(-0.45, min(0.45, (market.get("home", 1 / 3) - market.get("away", 1 / 3)) * 1.2))
+    home_boost = max(0.0, bias)
+    away_boost = max(0.0, -bias)
+    return (
+        base + home_boost,
+        base + away_boost * 0.5,
+        base + away_boost,
+        base + home_boost * 0.5,
+    )
+
+
+def poisson_over_probability(lam, line, max_goals=40):
+    if not isinstance(lam, (int, float)) or lam <= 0:
+        return None
+    cutoff = int(math.floor(float(line)))
+    under_or_equal = 0.0
+    for k in range(min(cutoff, max_goals) + 1):
+        under_or_equal += math.exp(-lam) * (lam ** k) / math.factorial(k)
+    return max(0.0, min(1.0, 1.0 - under_or_equal))
+
+
+def average_corners_for_scope(matches, fallback=DEFAULT_PREMATCH_CORNERS_TOTAL):
+    values = []
+    for match in matches:
+        if match.get("status") != "FT":
+            continue
+        actual = (match.get("actuals") or {}).get("corners_total")
+        if isinstance(actual, (int, float)):
+            values.append(float(actual))
+    if not values:
+        return fallback
+    return max(7.0, min(13.5, sum(values) / len(values)))
+
+
+def corner_odds_for_prediction(match, line, pick):
+    odds_by_line = match.get("corner_odds") or {}
+    prices = odds_by_line.get(str(line)) or odds_by_line.get(f"{float(line):.1f}") or {}
+    value = prices.get(pick)
+    try:
+        value = float(value)
+    except (TypeError, ValueError):
+        return None
+    return value if value > 1.01 else None
+
+
+def pre_corners_prediction(match, league_matches, all_matches):
+    line = 10.5
+    league_avg = average_corners_for_scope(league_matches, None)
+    avg = league_avg if league_avg is not None else average_corners_for_scope(all_matches)
+    p_over = poisson_over_probability(avg, line)
+    if p_over is None:
+        p_over = 0.5
+    pick = "Over" if p_over >= 0.53 else "Under"
+    probability = p_over if pick == "Over" else 1 - p_over
+    market = {
+        "pick": pick,
+        "line": line,
+        "probability": round(probability, 4),
+        "model_probability": round(probability, 4),
+        "model_average_total": round(avg, 2),
+        "sourceLabel": "Pre-match corners baseline",
+        "sourceValue": f"{avg:.1f} avg",
+        "team": "both",
+    }
+    odds = corner_odds_for_prediction(match, line, pick)
+    if odds:
+        market["odds"] = odds
+    return market
+
+
+def populate_pre_match_predictions(store):
+    """Fill missing pre-kickoff prediction objects before odds/display upload.
+
+    This is intentionally only for non-FT matches. Resulted rows keep the hard
+    truth rule: never create retro predictions after the score is known.
+    """
+    all_matches = [m for league in store.get("leagues", []) for m in league.get("matches", [])]
+    created = 0
+    corner_created = 0
+    by_league = {}
+    for league in store.get("leagues", []):
+        league_name = league.get("name") or ""
+        league_matches = league.get("matches", [])
+        for match in league_matches:
+            if match.get("status") == "FT":
+                continue
+            predictions = match.setdefault("predictions", {})
+            odds = market_odds_for_match(match)
+            h_name = (match.get("home") or {}).get("name") or "Home"
+            a_name = (match.get("away") or {}).get("name") or "Away"
+            before_keys = {key for key, value in predictions.items() if value}
+
+            if odds and not all(predictions.get(key) for key in ("winner", "btts", "ou_goals", "ou_cards")):
+                h_att, h_def, a_att, a_def = pre_prediction_form_inputs(match, league_matches, odds)
+                fallback = predict_enhanced(
+                    h_att,
+                    h_def,
+                    a_att,
+                    a_def,
+                    h_name,
+                    a_name,
+                    match.get("team_streaks") or [],
+                    h_team_id=(match.get("home") or {}).get("team_id"),
+                    a_team_id=(match.get("away") or {}).get("team_id"),
+                    league=league_name,
+                    market_odds=odds,
+                )
+                fallback_factors = fallback.get("factors") or {}
+                fallback_factors.update({
+                    "source": "pre_match_prefill",
+                    "source_note": "Generated before kickoff from available 1X2 odds plus league/global baselines because detailed team context was missing.",
+                    "data_quality": "Data weak",
+                })
+                fallback["factors"] = {**fallback_factors, **(predictions.get("factors") or {})}
+                for key in ("winner", "btts", "ou_goals", "ou_cards"):
+                    if not predictions.get(key) and fallback.get(key):
+                        predictions[key] = fallback[key]
+                predictions["factors"] = fallback["factors"]
+
+            if not predictions.get("ou_corners"):
+                predictions["ou_corners"] = pre_corners_prediction(match, league_matches, all_matches)
+                corner_created += 1
+
+            after_keys = {key for key, value in predictions.items() if value}
+            delta = len(after_keys - before_keys)
+            if delta:
+                created += delta
+                by_league[league_name] = by_league.get(league_name, 0) + delta
+
+    if created:
+        save_store(store)
+    return {"created": created, "corner_created": corner_created, "by_league": by_league}
+
+
+def settle_generated_prediction_markets(match):
+    home_goals = (match.get("home") or {}).get("goals")
+    away_goals = (match.get("away") or {}).get("goals")
+    if not isinstance(home_goals, (int, float)) or not isinstance(away_goals, (int, float)):
+        return
+    predictions = match.get("predictions") or {}
+    actual_winner = "home" if home_goals > away_goals else ("away" if away_goals > home_goals else "draw")
+    if predictions.get("winner"):
+        predictions["winner"]["result"] = "hit" if predictions["winner"].get("type") == actual_winner else "miss"
+    if predictions.get("btts"):
+        actual_btts = home_goals > 0 and away_goals > 0
+        predictions["btts"]["actual_btts"] = actual_btts
+        predictions["btts"]["result"] = "hit" if (str(predictions["btts"].get("pick", "")).lower() == "yes") == actual_btts else "miss"
+    if predictions.get("ou_goals"):
+        total_goals = home_goals + away_goals
+        line = float(predictions["ou_goals"].get("line", 2.5))
+        predictions["ou_goals"]["actual"] = total_goals
+        predictions["ou_goals"]["result"] = (
+            "hit"
+            if (predictions["ou_goals"].get("pick") == "Over" and total_goals > line)
+            or (predictions["ou_goals"].get("pick") == "Under" and total_goals < line)
+            else "miss"
+        )
+    settle_stat_markets(match)
+
+
+def populate_today_new_league_calibration_predictions(store):
+    """One-day exception for newly added leagues that need immediate calibration.
+
+    Scope is deliberately narrow: only today's FT rows in the two newly added
+    fallback leagues. This is not a general retro-prediction path.
+    """
+    today_iso = TODAY.isoformat()
+    all_matches = [m for league in store.get("leagues", []) for m in league.get("matches", [])]
+    created = 0
+    settled = 0
+    by_league = {}
+    for league in store.get("leagues", []):
+        league_name = league.get("name") or ""
+        if league_name not in PHASE_FIXTURE_FALLBACK_LEAGUES:
+            continue
+        league_matches = league.get("matches", [])
+        for match in league_matches:
+            if match.get("status") != "FT" or match.get("date") != today_iso:
+                continue
+            predictions = match.setdefault("predictions", {})
+            before_keys = {key for key, value in predictions.items() if value}
+            odds = market_odds_for_match(match) or {"home": 3.0, "draw": 3.2, "away": 3.0}
+            h_name = (match.get("home") or {}).get("name") or "Home"
+            a_name = (match.get("away") or {}).get("name") or "Away"
+            h_att, h_def, a_att, a_def = pre_prediction_form_inputs(match, league_matches, odds)
+            fallback = predict_enhanced(
+                h_att,
+                h_def,
+                a_att,
+                a_def,
+                h_name,
+                a_name,
+                match.get("team_streaks") or [],
+                h_team_id=(match.get("home") or {}).get("team_id"),
+                a_team_id=(match.get("away") or {}).get("team_id"),
+                league=league_name,
+                market_odds=odds,
+            )
+            fallback_factors = fallback.get("factors") or {}
+            fallback_factors.update({
+                "source": "today_new_league_calibration_exception",
+                "source_note": f"One-day {today_iso} calibration exception for newly added leagues.",
+                "data_quality": "Data weak",
+                "calibration_exception_date": today_iso,
+            })
+            fallback["factors"] = {**fallback_factors, **(predictions.get("factors") or {})}
+            for key in ("winner", "btts", "ou_goals", "ou_cards"):
+                if not predictions.get(key) and fallback.get(key):
+                    predictions[key] = fallback[key]
+            if not predictions.get("ou_corners"):
+                predictions["ou_corners"] = pre_corners_prediction(match, league_matches, all_matches)
+            predictions["factors"] = fallback["factors"]
+            settle_generated_prediction_markets(match)
+            after_keys = {key for key, value in predictions.items() if value}
+            delta = len(after_keys - before_keys)
+            if delta:
+                created += delta
+                settled += 1
+                by_league[league_name] = by_league.get(league_name, 0) + delta
+    if created:
+        save_store(store)
+    return {"created": created, "settled_matches": settled, "by_league": by_league}
+
+
 def phase_a6_retro(store):
     done = 0
     factors_backfilled = 0
@@ -1852,21 +2108,61 @@ def phase_fixture_record(row):
         "away": phase_fixture_team(row.get("away"), row.get("away_team_id"), row.get("away_logo")),
         "predictions": {},
     }
+    record.update(phase_fixture_odds_payload(row))
+    return record
+
+
+def phase_fixture_odds_payload(row):
     odds = {
         "home": parse_decimal(row.get("home_odds")),
         "draw": parse_decimal(row.get("draw_odds")),
         "away": parse_decimal(row.get("away_odds")),
     }
-    if all(odds.values()):
-        record["odds"] = odds
-        record["sportsbet_odds"] = {
+    if not all(odds.values()):
+        return {}
+    source = row.get("odds_source") or "Sportsbet"
+    payload = {
+        "odds": odds,
+        "bookmaker_odds_source": source,
+    }
+    if source.lower() == "sportsbet":
+        payload["sportsbet_odds"] = {
             "matched": True,
-            "source": row.get("odds_source") or "Sportsbet",
+            "source": source,
             "event_id": row.get("sportsbet_event_id") or "",
             "event_name": f"{row.get('sportsbet_home_name') or row.get('home')} vs {row.get('sportsbet_away_name') or row.get('away')}",
             **odds,
         }
-    return record
+    else:
+        payload.setdefault("bookmaker_meta", {})[source.lower()] = {
+            "matched": True,
+            "source": "entain_event_request",
+            "event_id": row.get("sportsbet_event_id") or "",
+            "event_name": f"{row.get('sportsbet_home_name') or row.get('home')} vs {row.get('sportsbet_away_name') or row.get('away')}",
+        }
+    return payload
+
+
+def backfill_phase_fixture_odds(league, row):
+    payload = phase_fixture_odds_payload(row)
+    if not payload:
+        return False
+    row_key = (
+        row.get("date") or "",
+        row.get("time") or "",
+    )
+    for match in league.get("matches", []):
+        if (
+            match.get("date") == row_key[0]
+            and match.get("time") == row_key[1]
+            and team_names_match((match.get("home") or {}).get("name") or "", row.get("home") or "")
+            and team_names_match((match.get("away") or {}).get("name") or "", row.get("away") or "")
+        ):
+            if match.get("odds") and (match.get("sportsbet_odds") or payload.get("bookmaker_odds_source") != "Sportsbet"):
+                return False
+            match.update(payload)
+            return True
+    return False
 
 
 def sportsbet_fixture_rows():
@@ -1920,6 +2216,133 @@ def sportsbet_fixture_rows():
     return rows
 
 
+def entain_decimal(price):
+    odds = (price or {}).get("odds") or {}
+    try:
+        numerator = float(odds.get("numerator"))
+        denominator = float(odds.get("denominator"))
+    except (TypeError, ValueError):
+        return None
+    if denominator <= 0:
+        return None
+    return round((numerator / denominator) + 1.0, 2)
+
+
+def entain_price_for_entrant(prices, entrant_id):
+    prefix = f"{entrant_id}:"
+    for key, price in prices.items():
+        if str(key).startswith(prefix):
+            return entain_decimal(price)
+    return None
+
+
+def entain_fixture_rows():
+    try:
+        import soccer_fetch_bookmaker_links as bookmaker_links
+    except Exception:
+        return []
+    allowed_dates = set((TODAY + timedelta(days=i)).isoformat() for i in range(FIXTURE_LOOKAHEAD_DAYS))
+    league_hints = {
+        "Premier League": ("premier league",),
+        "LaLiga": ("spanish la liga",),
+        "Bundesliga": ("german bundesliga", "german bundesliga men's"),
+        "Ligue 1": ("french ligue 1",),
+        "UEFA Champions League": ("uefa champions league",),
+        "Serie A": ("italian serie a",),
+        "Eredivisie": ("dutch eredivisie",),
+        "Primeira Liga": ("portuguese primeira liga", "portugal primeira liga"),
+        "MLS": ("us major league soccer",),
+        "A-League Men": ("a-league men",),
+        "Scottish Premiership": ("scotland premiership", "scottish premiership"),
+        "J1 League": ("japanese j1 league",),
+        "Championship": ("championship",),
+        "League One": ("league one",),
+        "League Two": ("league two",),
+        "Allsvenskan": ("allsvenskan", "swedish allsvenskan"),
+        "Eliteserien": ("eliteserien", "norwegian eliteserien"),
+    }
+    rows = []
+    for bookmaker_id, config in bookmaker_links.ENTAIN_BOOKMAKERS.items():
+        payload = bookmaker_links.fetch_json(config["api"], config["origin"])
+        if not payload:
+            continue
+        events = (payload.get("events") or {}).values()
+        markets = payload.get("markets") or {}
+        entrants = payload.get("entrants") or {}
+        prices = payload.get("prices") or {}
+        for event in events:
+            competition = ((event.get("competition") or {}).get("name") or "").lower()
+            league_name = next(
+                (name for name, hints in league_hints.items() if any(hint in competition for hint in hints)),
+                "",
+            )
+            if not league_name:
+                continue
+            market = None
+            for market_id in event.get("main_markets") or []:
+                candidate = markets.get(market_id)
+                if (candidate or {}).get("name") == "Match Result":
+                    market = candidate
+                    break
+            if not market:
+                continue
+            try:
+                start = datetime.fromisoformat(str(event.get("advertised_start") or event.get("actual_start")).replace("Z", "+00:00")).astimezone(ADL)
+            except Exception:
+                continue
+            local_date = start.strftime("%Y-%m-%d")
+            if local_date not in allowed_dates:
+                continue
+            home = draw = away = None
+            home_name = away_name = ""
+            for entrant_id in market.get("entrant_ids") or []:
+                entrant = entrants.get(entrant_id) or {}
+                price = entain_price_for_entrant(prices, entrant_id)
+                if not price:
+                    continue
+                home_away = entrant.get("home_away")
+                entrant_name = entrant.get("name") or ""
+                if home_away == "HOME":
+                    home = price
+                    home_name = entrant_name
+                elif home_away == "AWAY":
+                    away = price
+                    away_name = entrant_name
+                elif entrant_name.lower() == "draw":
+                    draw = price
+            if not all((home, draw, away)):
+                continue
+            league_id = next(k for k, v in TOURNAMENTS.items() if v == league_name)
+            rows.append({
+                "run_timestamp": datetime.now(ADL).strftime("%Y-%m-%d %H:%M:%S %Z"),
+                "source": bookmaker_id.title(),
+                "source_health": "healthy",
+                "league_id": league_id,
+                "league": league_name,
+                "event_id": f"{bookmaker_id}:{event.get('id')}",
+                "date": local_date,
+                "time": start.strftime("%H:%M"),
+                "timezone": "Australia/Adelaide",
+                "home": home_name,
+                "away": away_name,
+                "home_team_id": f"{bookmaker_id}:{event.get('id')}:home",
+                "away_team_id": f"{bookmaker_id}:{event.get('id')}:away",
+                "phase1_status": "ready_for_phase_2",
+                "phase2_status": "ready_for_phase_3",
+                "odds_backfill_only": "yes",
+                "phase1_notes": f"{bookmaker_id.title()} fallback fixture.",
+                "phase2_notes": f"{bookmaker_id.title()} fallback 1X2 odds.",
+                "odds_source": bookmaker_id.title(),
+                "sportsbet_event_id": event.get("id") or "",
+                "sportsbet_home_name": home_name,
+                "sportsbet_away_name": away_name,
+                "home_odds": home,
+                "draw_odds": draw,
+                "away_odds": away,
+            })
+    return rows
+
+
 def promote_phase_fixtures_to_store(store=None):
     """Keep real Phase 1/2 fixtures visible even when later model phases block."""
     store = store or load_store()
@@ -1928,8 +2351,10 @@ def promote_phase_fixtures_to_store(store=None):
     odds_by_event = {row.get("event_id"): row for row in phase2_rows if row.get("event_id")}
     rows = list(phase2_rows or phase1_rows)
     rows.extend(sportsbet_fixture_rows())
+    rows.extend(entain_fixture_rows())
     by_name = {league.get("name"): league for league in store.get("leagues", [])}
     added = 0
+    odds_backfilled = 0
     for row in rows:
         league_name = row.get("league")
         if league_name not in TOURNAMENTS.values():
@@ -1946,14 +2371,18 @@ def promote_phase_fixtures_to_store(store=None):
             by_name[league_name] = league
         merged = {**row, **(odds_by_event.get(row.get("event_id")) or {})}
         if phase_fixture_exists(league, merged):
+            if backfill_phase_fixture_odds(league, merged):
+                odds_backfilled += 1
+            continue
+        if merged.get("odds_backfill_only") == "yes":
             continue
         league.setdefault("matches", []).append(phase_fixture_record(merged))
         added += 1
     removed = dedupe_phase_fixture_matches(store)
-    if added or removed:
+    if added or removed or odds_backfilled:
         sort_store(store)
         save_store(store)
-    return {"added": added, "removed_duplicates": removed}
+    return {"added": added, "odds_backfilled": odds_backfilled, "removed_duplicates": removed}
 
 
 # ----------------------------------------------------------------------------
@@ -1974,6 +2403,22 @@ def run_dashboard_enrichment_helpers():
 
     print("\n[Phase B.5a] bookmaker direct links")
     run_helper("soccer_fetch_bookmaker_links.py")
+
+    print("\n[Phase B.5b] pre-match prediction prefill")
+    store = load_store()
+    pre = populate_pre_match_predictions(store)
+    print(f"  created={pre['created']}  corners={pre['corner_created']}")
+    if pre["by_league"]:
+        for league_name, count in sorted(pre["by_league"].items()):
+            print(f"  + {league_name}: {count}")
+
+    print("\n[Phase B.5c] today new-league calibration exception")
+    store = load_store()
+    cal = populate_today_new_league_calibration_predictions(store)
+    print(f"  created={cal['created']}  settled_matches={cal['settled_matches']}")
+    if cal["by_league"]:
+        for league_name, count in sorted(cal["by_league"].items()):
+            print(f"  + {league_name}: {count}")
 
     print("\n[Phase B.6] streak odds")
     run_helper("soccer_enrich_streak_odds.py")

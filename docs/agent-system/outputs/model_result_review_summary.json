@@ -1,17 +1,17 @@
 {
-  "generated_at": "2026-05-21 03:43:12 ACST",
+  "generated_at": "2026-05-21 05:58:00 ACST",
   "prediction_tracking_start_date": "2026-04-22",
-  "settled_market_rows": 1606,
+  "settled_market_rows": 1609,
   "market_summary": [
     {
       "market": "BTTS",
-      "settled": 408,
+      "settled": 409,
       "hits": 222,
-      "misses": 186,
-      "hit_rate": 0.5441,
+      "misses": 187,
+      "hit_rate": 0.5428,
       "odds_hit": 164.95,
-      "odds_loss": 127.03,
-      "odds_net": 37.92
+      "odds_loss": 129.41,
+      "odds_net": 35.54
     },
     {
       "market": "Cards",
@@ -25,23 +25,23 @@
     },
     {
       "market": "Goals",
-      "settled": 408,
+      "settled": 409,
       "hits": 227,
-      "misses": 181,
-      "hit_rate": 0.5564,
+      "misses": 182,
+      "hit_rate": 0.555,
       "odds_hit": 166.04,
-      "odds_loss": 139.54,
-      "odds_net": 26.5
+      "odds_loss": 141.79,
+      "odds_net": 24.25
     },
     {
       "market": "Winner",
-      "settled": 408,
+      "settled": 409,
       "hits": 202,
-      "misses": 206,
-      "hit_rate": 0.4951,
+      "misses": 207,
+      "hit_rate": 0.4939,
       "odds_hit": 162.29,
-      "odds_loss": 229.87,
-      "odds_net": -67.58
+      "odds_loss": 231.92,
+      "odds_net": -69.63
     }
   ],
   "league_summary": [
@@ -77,13 +77,13 @@
     },
     {
       "league": "Eredivisie",
-      "settled": 165,
+      "settled": 168,
       "hits": 92,
-      "misses": 73,
-      "hit_rate": 0.5576,
+      "misses": 76,
+      "hit_rate": 0.5476,
       "odds_hit": 66.97,
-      "odds_loss": 62.61,
-      "odds_net": 4.36
+      "odds_loss": 69.29,
+      "odds_net": -2.32
     },
     {
       "league": "J1 League",
@@ -278,19 +278,19 @@
       "action": "review_weighting"
     },
     {
+      "league": "Eredivisie",
+      "market": "Goals",
+      "settled": 44,
+      "hit_rate": 0.4773,
+      "odds_net": -6.03,
+      "action": "review_weighting"
+    },
+    {
       "league": "Premier League",
       "market": "Winner",
       "settled": 40,
       "hit_rate": 0.5,
       "odds_net": -12.84,
-      "action": "review_weighting"
-    },
-    {
-      "league": "Ligue 1",
-      "market": "Goals",
-      "settled": 39,
-      "hit_rate": 0.5128,
-      "odds_net": -7.83,
       "action": "review_weighting"
     }
   ],

@@ -24,6 +24,7 @@ All Phase 1-8 outputs in `docs/agent-system/outputs/`.
    - Result Review Agent top model-feedback action
    - Model Calibration Agent adjustment counts
 4. Upload dashboard data to Firestore with `scripts/upload_match_data_to_firestore.mjs`. Do not prepare or rely on public JSON for the live dashboard.
+5. Before upload, check newly added leagues for display completeness: every match should have the same five-card market shape as established leagues (`Suggested pick`, `BTTS`, `Goals`, `Cards`, `Corners`). If a card has `No pick`, the generated data must include an explicit source/model blocker; it must not be missing only because the league is new.
 
 ## Firestore Data Publish
 
@@ -72,6 +73,7 @@ This is the smaller automation loop after the initial 7-day pull. It writes `doc
 - The daily summary includes the Result Review Agent's top model-feedback action.
 - The run log records exit codes and timing for each phase.
 - The workflow does not modify `index.html`; the legacy static dashboard has been removed.
+- Newly added leagues are fetched, predicted, reviewed, and published through the same routine as current leagues. A valid new-league fixture with teams and odds should not reach Firestore as fixture-only data with empty prediction cards unless a real upstream blocker is recorded.
 
 ## Daily Summary Template
 
