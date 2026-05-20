@@ -95,6 +95,13 @@ export default function AuthGate({ children }) {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (new URLSearchParams(window.location.search).get('auth') === 'create') {
+      setMode('create');
+    }
+  }, []);
+
+  useEffect(() => {
     let resolved = false;
     const fallback = window.setTimeout(() => {
       if (resolved) return;
