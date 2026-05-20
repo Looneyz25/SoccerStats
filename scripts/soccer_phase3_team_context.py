@@ -66,6 +66,8 @@ LEAGUE_COUNTRY_HINT = {
     "Eredivisie": "netherlands",
     "UEFA Champions League": "europe",
     "MLS": "united states",
+    "Allsvenskan": "sweden",
+    "Eliteserien": "norway",
 }
 
 FORM_N = 5

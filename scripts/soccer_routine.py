@@ -110,10 +110,13 @@ TOURNAMENTS = {
     18:  "Championship",
     24:  "League One",
     25:  "League Two",
+    40:  "Allsvenskan",
+    20:  "Eliteserien",
 }
 ORDER = ["Premier League","LaLiga","Bundesliga","Ligue 1","UEFA Champions League",
          "Serie A","Eredivisie","Primeira Liga","MLS","A-League Men",
-         "Scottish Premiership","J1 League","Championship","League One","League Two"]
+         "Scottish Premiership","J1 League","Championship","League One","League Two",
+         "Allsvenskan","Eliteserien"]
 
 
 def load_model_calibration():
@@ -560,6 +563,8 @@ FLASH_LEAGUE_ALIASES = {
     "J1 League": ("japan", {"j1 league"}),
     "UEFA Champions League": ("europe", {"champions league"}),
     "MLS": ("usa", {"mls", "major league soccer"}),
+    "Allsvenskan": ("sweden", {"allsvenskan"}),
+    "Eliteserien": ("norway", {"eliteserien"}),
 }
 
 TEAM_ALIASES = {

@@ -1,30 +1,30 @@
 # Soccer Stats Daily Summary
 
-Generated: 2026-05-20 17:58 ACST
-Date window: 2026-05-21 to 2026-05-27
+Generated: 2026-05-21 01:56 ACST
+Date window: 2026-05-21 to 2026-05-21
 
 ## Phase Run Status
 
 | Phase | Status | Exit | Duration | Last line |
 | --- | --- | --- | --- | --- |
-| 1 Fixtures | ok | 0 | 22.83s | NOTE: Missing API_FOOTBALL_KEY/APISPORTS_KEY and live fallbacks returned no fixtures; used local match_data.json fallbac |
-| 2 Odds | ok | 0 | 7.88s | total=71 ready_for_phase_3=0 unmatched=0 blocked=71 |
-| 3 Team Context | ok | 0 | 3.2s | total=71 ready_for_phase_4=0 unresolved=0 upstream_blocked=71 |
-| 4 Predictions | ok | 0 | 0.11s | total=71 ready_for_phase_5=0 model_only=0 upstream_blocked=71 |
-| 5 Value & Risk | ok | 0 | 0.11s | total=71 bets=0 leans=0 no_value=0 upstream_blocked=71 scale=1.0 |
-| 6 Settlement | ok | 0 | 2.38s | settled_this_run=0 won=0 lost=0 pending=0 history_hit_rate=0.0 history_roi=-1.0 |
-| Result Review | ok | 0 | 5.11s | settled_market_rows=1606 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the revie |
-| Model Calibration | ok | 0 | 0.06s | market_adjustments=4 league_market_adjustments=7 |
+| 1 Fixtures | ok | 0 | 0.84s | NOTE: Missing API_FOOTBALL_KEY/APISPORTS_KEY; used keyless Flashscore feed. |
+| 2 Odds | ok | 0 | 16.95s | total=4 ready_for_phase_3=2 unmatched=2 blocked=0 |
+| 3 Team Context | ok | 0 | 41.73s | total=4 ready_for_phase_4=0 unresolved=2 upstream_blocked=2 |
+| 4 Predictions | ok | 0 | 0.12s | total=4 ready_for_phase_5=0 model_only=0 upstream_blocked=4 |
+| 5 Value & Risk | ok | 0 | 0.12s | total=4 bets=0 leans=0 no_value=0 upstream_blocked=4 scale=1.0 |
+| 6 Settlement | ok | 0 | 1.64s | settled_this_run=0 won=0 lost=0 pending=0 history_hit_rate=0.0 history_roi=-1.0 |
+| Result Review | ok | 0 | 0.14s | settled_market_rows=1606 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the revie |
+| Model Calibration | ok | 0 | 0.08s | market_adjustments=4 league_market_adjustments=7 |
 
 ## Phase Health
 
 | Phase | Ready | Blocked | Source |
 | --- | --- | --- | --- |
-| 1 Fixtures | 0 | 71 | Flashscore |
-| 2 Odds | 0 | 71 | Sportsbet (mimic) |
-| 3 Team Context | 0 | 71 | SofaScore (mimic) |
-| 4 Predictions | 0 | 71 | model |
-| 5 Value & Risk | 0 bets / 0 leans | 71 | model |
+| 1 Fixtures | 4 | 0 | Flashscore |
+| 2 Odds | 2 | 2 | Sportsbet (mimic) |
+| 3 Team Context | 0 | 4 | SofaScore (mimic) |
+| 4 Predictions | 0 | 4 | model |
+| 5 Value & Risk | 0 bets / 0 leans | 4 | model |
 | 6 Settlement | 0 won / 0 lost | 0 | Flashscore |
 | Result Review | 1606 | 12 | match_data.json |
 | Model Calibration | 4 | 7 | model_calibration.json |

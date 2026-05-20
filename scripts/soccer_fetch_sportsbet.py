@@ -39,6 +39,8 @@ LEAGUE_PAGES = {
     "A-League Men":           "australia/australian-a-league-men",
     "Scottish Premiership":   "united-kingdom/scottish-premiership",
     "J1 League":              "asia/japanese-j1-league",
+    "Allsvenskan":            "rest-of-europe/swedish-allsvenskan",
+    "Eliteserien":            "rest-of-europe/norwegian-eliteserien",
 }
 
 ABBREV = {

@@ -20,3 +20,37 @@ Starting Soccer Stats dev server on http://localhost:3001
  ✓ Compiled /dashboard in 1128ms (834 modules)
  GET /dashboard 200 in 1518ms
  ✓ Compiled in 193ms (292 modules)
+ ✓ Compiled / in 438ms (856 modules)
+ GET / 200 in 762ms
+ ✓ Compiled in 303ms (300 modules)
+ ✓ Compiled /dashboard in 101ms (597 modules)
+ GET /dashboard 200 in 268ms
+ ✓ Compiled /api/match-data in 193ms (909 modules)
+ GET /dashboard 200 in 361ms
+ GET /api/match-data 403 in 2099ms
+ GET /api/match-data 200 in 2010ms
+ GET /api/match-data?date=2026-05-20 200 in 1991ms
+ GET /dashboard?view=settings 200 in 17ms
+ GET /api/match-data?teamOptions=1 200 in 5291ms
+ GET /api/match-data?teamOptions=1 200 in 5292ms
+ ○ Compiling /dashboard/admin ...
+ ✓ Compiled /dashboard/admin in 528ms (924 modules)
+ GET /dashboard?view=settings 200 in 148ms
+ GET /dashboard/admin 200 in 687ms
+ ✓ Compiled /api/stripe/sync-user in 147ms (926 modules)
+ GET /api/match-data 200 in 1530ms
+ POST /api/stripe/sync-user 200 in 3283ms
+ POST /api/stripe/sync-user 200 in 3776ms
+ POST /api/stripe/sync-user 200 in 4381ms
+ POST /api/stripe/sync-user 200 in 4458ms
+ POST /api/stripe/sync-user 200 in 4813ms
+ POST /api/stripe/sync-user 200 in 4212ms
+ POST /api/stripe/sync-user 200 in 4167ms
+ POST /api/stripe/sync-user 200 in 4180ms
+ POST /api/stripe/sync-user 200 in 3843ms
+ GET /dashboard/admin 200 in 27ms
+ POST /api/stripe/sync-user 200 in 3873ms
+ POST /api/stripe/sync-user 200 in 3722ms
+ POST /api/stripe/sync-user 200 in 3854ms
+ POST /api/stripe/sync-user 200 in 2865ms
+ POST /api/stripe/sync-user 200 in 2712ms

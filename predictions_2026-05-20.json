@@ -8416,7 +8416,7 @@
           "sportsbet_odds": {
             "home": 4.0,
             "draw": 4.0,
-            "away": 1.8,
+            "away": 1.75,
             "event_id": 10498401,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/crystal-palace-v-arsenal-10498401"
           },
@@ -8429,22 +8429,22 @@
             "Full time": {
               "1": 4.0,
               "X": 4.0,
-              "2": 1.8
+              "2": 1.75
             },
             "Match goals 0.5": {
               "Over": 1.02,
-              "Under": 15.25
+              "Under": 14.5
             },
             "Match goals 1.5": {
               "Over": 1.17,
-              "Under": 4.65
+              "Under": 4.6
             },
             "Match goals 2.5": {
-              "Over": 1.61,
-              "Under": 2.22
+              "Over": 1.63,
+              "Under": 2.2
             },
             "Match goals 3.5": {
-              "Over": 2.65,
+              "Over": 2.67,
               "Under": 1.44
             },
             "Both teams to score": {
@@ -8452,18 +8452,18 @@
               "No": 2.3
             },
             "Match goals 4.5": {
-              "Over": 4.65,
-              "Under": 1.17
+              "Over": 5.2,
+              "Under": 1.14
             },
             "Match goals 5.5": {
-              "Over": 8.5,
-              "Under": 1.05
+              "Over": 9.5,
+              "Under": 1.04
             },
             "Match goals 6.5": {
-              "Over": 13.0
+              "Over": 14.0
             },
             "Match goals 7.5": {
-              "Over": 51.0
+              "Over": 67.0
             }
           },
           "bookmaker_meta": {
@@ -9727,9 +9727,9 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 1.87,
-            "draw": 3.8,
-            "away": 3.9,
+            "home": 1.85,
+            "draw": 3.75,
+            "away": 4.0,
             "event_id": 10498814,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/tottenham-v-everton-10498814"
           },
@@ -9740,9 +9740,9 @@
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 1.87,
-              "X": 3.8,
-              "2": 3.9
+              "1": 1.85,
+              "X": 3.75,
+              "2": 4.0
             },
             "Match goals 2.5": {
               "Over": 1.68,
@@ -9952,7 +9952,7 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 1.83,
+            "home": 1.85,
             "draw": 4.0,
             "away": 3.8,
             "event_id": 10498817,
@@ -9965,13 +9965,13 @@
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 1.83,
+              "1": 1.85,
               "X": 4.0,
               "2": 3.8
             },
             "Match goals 2.5": {
               "Over": 1.63,
-              "Under": 2.19
+              "Under": 2.18
             },
             "Both teams to score": {
               "Yes": 1.62,
@@ -20239,9 +20239,9 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 2.55,
+            "home": 2.4,
             "draw": 2.7,
-            "away": 3.5,
+            "away": 3.7,
             "event_id": 10498409,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/getafe-v-osasuna-10498409"
           },
@@ -20252,16 +20252,16 @@
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 2.55,
+              "1": 2.4,
               "X": 2.7,
-              "2": 3.5
+              "2": 3.7
             },
             "Match goals 1.5": {
-              "Over": 1.51,
-              "Under": 2.45
+              "Over": 1.5,
+              "Under": 2.47
             },
             "Match goals 2.5": {
-              "Over": 2.71,
+              "Over": 2.7,
               "Under": 1.43
             },
             "Both teams to score": {
@@ -20968,7 +20968,7 @@
           "sportsbet_odds": {
             "home": 2.2,
             "draw": 3.3,
-            "away": 3.3,
+            "away": 3.4,
             "event_id": 10498404,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/betis-v-levante-10498404"
           },
@@ -20981,19 +20981,19 @@
             "Full time": {
               "1": 2.2,
               "X": 3.3,
-              "2": 3.3
+              "2": 3.4
             },
             "Match goals 1.5": {
               "Over": 1.17,
               "Under": 4.6
             },
             "Match goals 2.5": {
-              "Over": 1.63,
-              "Under": 2.19
+              "Over": 1.62,
+              "Under": 2.21
             },
             "Both teams to score": {
-              "Yes": 1.57,
-              "No": 2.37
+              "Yes": 1.53,
+              "No": 2.4
             }
           },
           "corner_odds": {
@@ -40235,9 +40235,9 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 3.0,
+            "home": 2.9,
             "draw": 3.6,
-            "away": 2.2,
+            "away": 2.25,
             "event_id": 10498411,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/italy/italian-serie-a/bologna-v-inter-10498411"
           },
@@ -40248,21 +40248,21 @@
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 3.0,
+              "1": 2.9,
               "X": 3.6,
-              "2": 2.2
+              "2": 2.25
             },
             "Match goals 1.5": {
               "Over": 1.14,
               "Under": 5.2
             },
             "Match goals 2.5": {
-              "Over": 1.5,
-              "Under": 2.46
+              "Over": 1.51,
+              "Under": 2.44
             },
             "Both teams to score": {
               "Yes": 1.45,
-              "No": 2.6
+              "No": 2.63
             }
           },
           "corner_odds": {

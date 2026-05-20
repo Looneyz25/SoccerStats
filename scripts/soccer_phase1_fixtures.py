@@ -76,6 +76,8 @@ LEAGUES = [
     {"legacy_id": 18, "api_id": 40, "season": 2025, "name": "Championship"},
     {"legacy_id": 24, "api_id": 41, "season": 2025, "name": "League One"},
     {"legacy_id": 25, "api_id": 42, "season": 2025, "name": "League Two"},
+    {"legacy_id": 40, "api_id": 113, "season": 2026, "name": "Allsvenskan"},
+    {"legacy_id": 20, "api_id": 103, "season": 2026, "name": "Eliteserien"},
 ]
 
 LEAGUE_BY_API = {x["api_id"]: x for x in LEAGUES}
@@ -95,6 +97,8 @@ THESPORTSDB_LEAGUES = {
     "Eredivisie": "4337",
     "MLS": "4346",
     "UEFA Champions League": "4480",
+    "Allsvenskan": "4339",
+    "Eliteserien": "4396",
 }
 
 THESPORTSDB_LEAGUE_HINTS = {
@@ -113,6 +117,8 @@ THESPORTSDB_LEAGUE_HINTS = {
     "J1 League": ("japanese j1 league", "j1 league"),
     "UEFA Champions League": ("uefa champions league", "champions league"),
     "MLS": ("american major league soccer", "major league soccer", "mls"),
+    "Allsvenskan": ("swedish allsvenskan", "allsvenskan"),
+    "Eliteserien": ("norwegian eliteserien", "eliteserien"),
 }
 
 # Exact Flashscore league names (after stripping the country prefix). Some
@@ -135,6 +141,8 @@ FLASHSCORE_LEAGUE_NAMES = {
     "J1 League": ("japan", {"j1 league"}),
     "UEFA Champions League": ("europe", {"champions league"}),
     "MLS": ("usa", {"mls", "major league soccer"}),
+    "Allsvenskan": ("sweden", {"allsvenskan"}),
+    "Eliteserien": ("norway", {"eliteserien"}),
 }
 
 # Tokens that indicate a competition is NOT one of the listed top-flight men's leagues.
