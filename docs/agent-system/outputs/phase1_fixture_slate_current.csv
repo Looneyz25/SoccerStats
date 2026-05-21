@@ -1,2 +1,2 @@
 run_timestamp,source,source_health,league_id,api_league_id,league,league_logo,event_id,date,time,timezone,utc_timestamp,status,home,home_team_id,home_logo,away,away_team_id,away_logo,is_duplicate,is_stale,missing_fields,phase1_status,phase1_notes
-2026-05-21 18:22:04 ACST,Flashscore,healthy,40,,Allsvenskan,,flashscore:zHabevSa,2026-05-22,02:30,Australia/Adelaide,1779382800,live,Elfsborg,flashscore:elfsborg,,Mjallby,flashscore:mjallby,,no,no,,ready_for_phase_2,Keyless Flashscore fixture feed.
+2026-05-22 01:58:44 ACST,Flashscore,healthy,40,,Allsvenskan,,flashscore:zHabevSa,2026-05-22,02:30,Australia/Adelaide,1779382800,live,Elfsborg,flashscore:elfsborg,,Mjallby,flashscore:mjallby,,no,no,,ready_for_phase_2,Keyless Flashscore fixture feed.

@@ -7,7 +7,7 @@ Source: Sportsbet AU (Win-Draw-Win, 90-min regular time)
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-21 18:22:06 ACST |
+| run_timestamp | 2026-05-22 01:58:46 ACST |
 | timezone | Australia/Adelaide |
 | source | Sportsbet AU |
 | phase1_input_rows | 1 |
@@ -32,4 +32,4 @@ Source: Sportsbet AU (Win-Draw-Win, 90-min regular time)
 
 | Date | Time | League | Home | Away | H | D | A | Overround | Match | Phase 2 Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-22 | 02:30 | Allsvenskan | Elfsborg | Mjallby | 2.7 | 3.1 | 2.5 | 1.093 | exact:1.0 | ready_for_phase_3 |
+| 2026-05-22 | 02:30 | Allsvenskan | Elfsborg | Mjallby | 2.1 | 3.1 | 3.3 | 1.1018 | exact:1.0 | ready_for_phase_3 |

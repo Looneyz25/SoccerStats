@@ -1165,7 +1165,7 @@
             "rank": 11,
             "pts": 49,
             "goals": 0,
-            "logo": "https://media.api-sports.io/football/teams/39.png"
+            "logo": "https://media.api-sports.io/football/teams/3.png"
           },
           "away": {
             "name": "Tottenham",
@@ -1434,7 +1434,7 @@
             "rank": 19,
             "pts": 21,
             "goals": 0,
-            "logo": "https://media.api-sports.io/football/teams/6.png"
+            "logo": "https://media.api-sports.io/football/teams/39.png"
           },
           "predictions": {
             "winner": {
@@ -10162,7 +10162,7 @@
             "rank": 5,
             "pts": 49,
             "goals": 1,
-            "logo": "https://media.api-sports.io/football/teams/2783.png"
+            "logo": "https://media.api-sports.io/football/teams/2816.png"
           },
           "away": {
             "name": "Real Madrid",
@@ -10362,14 +10362,14 @@
             "short": "Alavés",
             "team_id": 2796,
             "goals": 2,
-            "logo": "https://media.api-sports.io/football/teams/2796.png"
+            "logo": "https://media.api-sports.io/football/teams/2885.png"
           },
           "away": {
             "name": "Mallorca",
             "short": "Mallorca",
             "team_id": 2799,
             "goals": 1,
-            "logo": "https://media.api-sports.io/football/teams/2799.png"
+            "logo": "https://media.api-sports.io/football/teams/2826.png"
           },
           "predictions": {
             "winner": {
@@ -11244,7 +11244,7 @@
             "goals": 1,
             "rank": 3,
             "pts": 69,
-            "logo": "https://media.api-sports.io/football/teams/2819.png"
+            "logo": "https://media.api-sports.io/football/teams/24264.png"
           },
           "predictions": {
             "winner": {
@@ -11447,7 +11447,7 @@
             "short": "Athletic",
             "team_id": 2804,
             "goals": 2,
-            "logo": "https://media.api-sports.io/football/teams/2804.png"
+            "logo": "https://media.api-sports.io/football/teams/2825.png"
           },
           "predictions": {
             "winner": {
@@ -22096,7 +22096,7 @@
             "rank": 3,
             "pts": 59,
             "goals": 3,
-            "logo": "https://media.api-sports.io/football/teams/2698.png"
+            "logo": "https://media.api-sports.io/football/teams/36360.png"
           },
           "away": {
             "name": "Union Berlin",
@@ -22340,14 +22340,14 @@
             "short": "Heidenheim",
             "team_id": 2457,
             "goals": 2,
-            "logo": "https://media.api-sports.io/football/teams/2457.png"
+            "logo": "https://media.api-sports.io/football/teams/5885.png"
           },
           "away": {
             "name": "St. Pauli",
             "short": "St. Pauli",
             "team_id": 2552,
             "goals": 0,
-            "logo": "https://media.api-sports.io/football/teams/2552.png"
+            "logo": "https://media.api-sports.io/football/teams/2526.png"
           },
           "predictions": {
             "winner": {
@@ -22594,7 +22594,7 @@
             "goals": 1,
             "rank": 2,
             "pts": 73,
-            "logo": "https://media.api-sports.io/football/teams/2673.png"
+            "logo": "https://media.api-sports.io/football/teams/2671.png"
           },
           "away": {
             "name": "Leverkusen",
@@ -23327,7 +23327,7 @@
             "short": "Gladbach",
             "team_id": 2546,
             "goals": 0,
-            "logo": "https://media.api-sports.io/football/teams/2546.png"
+            "logo": "https://media.api-sports.io/football/teams/2527.png"
           },
           "predictions": {
             "winner": {
@@ -23728,7 +23728,7 @@
             "short": "HSV",
             "team_id": 2504,
             "goals": 1,
-            "logo": "https://media.api-sports.io/football/teams/2504.png"
+            "logo": "https://media.api-sports.io/football/teams/2676.png"
           },
           "away": {
             "name": "Hoffenheim",
@@ -51151,7 +51151,44 @@
             "source_match_id": "1779006",
             "fetched_at": "2026-05-21"
           },
-          "settled_source": "LiveScore"
+          "settled_source": "LiveScore",
+          "odds": {
+            "home": 2.3,
+            "draw": 3.3,
+            "away": 2.85
+          },
+          "h2h_streaks": [
+            {
+              "team": "home",
+              "label": "Wins",
+              "value": "5"
+            },
+            {
+              "team": "away",
+              "label": "Without clean sheet",
+              "value": "11"
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "8/10"
+            }
+          ],
+          "actuals": {
+            "home_corners": 3,
+            "away_corners": 4,
+            "corners_total": 7,
+            "home_fouls": 9,
+            "away_fouls": 5,
+            "fouls_total": 14,
+            "home_sot": 5,
+            "away_sot": 5,
+            "first_to_score": "away",
+            "first_scorer": "Bilal Ould-Chikh",
+            "ht_home": 0,
+            "ht_away": 2,
+            "ht_winner": "away"
+          }
         },
         {
           "id": 16196423,
@@ -78234,7 +78271,7 @@
             "short": "Millwall",
             "team_id": 55,
             "goals": 1,
-            "logo": "https://media.api-sports.io/football/teams/55.png"
+            "logo": "https://media.api-sports.io/football/teams/25.png"
           },
           "odds": {
             "home": 4,
@@ -78447,7 +78484,7 @@
             "short": "Charlton",
             "team_id": 72,
             "goals": 2,
-            "logo": "https://media.api-sports.io/football/teams/72.png"
+            "logo": "https://media.api-sports.io/football/teams/47.png"
           },
           "away": {
             "name": "Hull",
@@ -78456,7 +78493,7 @@
             "goals": 1,
             "rank": 2,
             "pts": 84,
-            "logo": "https://media.api-sports.io/football/teams/32.png"
+            "logo": "https://media.api-sports.io/football/teams/96.png"
           },
           "predictions": {
             "winner": {
@@ -78669,7 +78706,7 @@
             "goals": 5,
             "rank": 13,
             "pts": 60,
-            "logo": "https://media.api-sports.io/football/teams/15.png"
+            "logo": "https://media.api-sports.io/football/teams/36.png"
           },
           "away": {
             "name": "Watford",
@@ -78678,7 +78715,7 @@
             "goals": 1,
             "rank": 4,
             "pts": 80,
-            "logo": "https://media.api-sports.io/football/teams/45.png"
+            "logo": "https://media.api-sports.io/football/teams/24.png"
           },
           "predictions": {
             "winner": {
@@ -78895,7 +78932,7 @@
             "goals": 0,
             "rank": 11,
             "pts": 64,
-            "logo": "https://media.api-sports.io/football/teams/74.png"
+            "logo": "https://media.api-sports.io/football/teams/8.png"
           },
           "away": {
             "name": "Ipswich",
@@ -78904,7 +78941,7 @@
             "goals": 0,
             "rank": 20,
             "pts": 52,
-            "logo": "https://media.api-sports.io/football/teams/46.png"
+            "logo": "https://media.api-sports.io/football/teams/32.png"
           },
           "predictions": {
             "winner": {
@@ -79128,7 +79165,7 @@
             "short": "Birmingham",
             "team_id": 22,
             "goals": 2,
-            "logo": "https://media.api-sports.io/football/teams/22.png"
+            "logo": "https://media.api-sports.io/football/teams/9.png"
           },
           "away": {
             "name": "Bristol City",
@@ -79137,7 +79174,7 @@
             "goals": 1,
             "rank": 24,
             "pts": 0,
-            "logo": "https://media.api-sports.io/football/teams/12.png"
+            "logo": "https://media.api-sports.io/football/teams/58.png"
           },
           "predictions": {
             "winner": {
@@ -79341,14 +79378,14 @@
             "goals": 1,
             "rank": 16,
             "pts": 57,
-            "logo": "https://media.api-sports.io/football/teams/24.png"
+            "logo": "https://media.api-sports.io/football/teams/263.png"
           },
           "away": {
             "name": "Swansea",
             "short": "Swansea",
             "team_id": 28,
             "goals": 1,
-            "logo": "https://media.api-sports.io/football/teams/28.png"
+            "logo": "https://media.api-sports.io/football/teams/74.png"
           },
           "predictions": {
             "winner": {
@@ -79528,14 +79565,14 @@
             "short": "Oxford",
             "team_id": 20,
             "goals": 4,
-            "logo": "https://media.api-sports.io/football/teams/20.png"
+            "logo": "https://media.api-sports.io/football/teams/95.png"
           },
           "away": {
             "name": "Sheffield Wed",
             "short": "Sheff Wed",
             "team_id": 26,
             "goals": 1,
-            "logo": "https://media.api-sports.io/football/teams/26.png"
+            "logo": "https://media.api-sports.io/football/teams/12.png"
           },
           "predictions": {
             "winner": {
@@ -84102,6 +84139,203 @@
             }
           ],
           "prediction_locked": true
+        },
+        {
+          "id": 16211368,
+          "date": "2026-05-24",
+          "time": "00:00",
+          "status": "upcoming",
+          "home": {
+            "name": "Hull City",
+            "short": "Hull",
+            "team_id": 96,
+            "logo": "https://media.api-sports.io/football/teams/96.png",
+            "rank": 6,
+            "pts": 73
+          },
+          "away": {
+            "name": "Middlesbrough",
+            "short": "Middlesbrough",
+            "team_id": 36,
+            "logo": "https://media.api-sports.io/football/teams/36.png",
+            "rank": 5,
+            "pts": 80
+          },
+          "predictions": {
+            "winner": {
+              "pick": "Hull City",
+              "type": "home",
+              "probability": 0.3685,
+              "raw_probability": 0.4771,
+              "probabilities": {
+                "home": 0.3685,
+                "draw": 0.2777,
+                "away": 0.3538
+              },
+              "model_probabilities": {
+                "home": 0.4626,
+                "draw": 0.2949,
+                "away": 0.2425
+              },
+              "raw_probabilities": {
+                "home": 0.4771,
+                "draw": 0.2906,
+                "away": 0.2323
+              },
+              "bookmaker_probabilities": {
+                "home": 0.2273,
+                "draw": 0.2519,
+                "away": 0.5207
+              },
+              "bookmaker_blend_weight": 0.4,
+              "calibration": {
+                "trust_factor": 0.8991,
+                "min_edge_delta": 0.0392,
+                "sources": [
+                  "Winner below 60% target over 414 settled markets."
+                ]
+              }
+            },
+            "btts": {
+              "pick": "No",
+              "probability": 0.5183,
+              "raw_probability": 0.5191,
+              "calibration": {
+                "trust_factor": 0.9535,
+                "min_edge_delta": 0.0181,
+                "sources": [
+                  "BTTS below 60% target over 414 settled markets."
+                ]
+              }
+            },
+            "ou_goals": {
+              "pick": "Under",
+              "line": 2.5,
+              "probability": 0.5677,
+              "raw_probability": 0.5702,
+              "calibration": {
+                "trust_factor": 0.9644,
+                "min_edge_delta": 0.0139,
+                "sources": [
+                  "Goals below 60% target over 414 settled markets."
+                ]
+              }
+            },
+            "ou_cards": {
+              "pick": "Under",
+              "line": 4.5,
+              "probability": 0.6658,
+              "raw_probability": 0.6667,
+              "over_probability": 0.3342,
+              "raw_over_probability": 0.3333,
+              "over_threshold": 0.68,
+              "calibration": {
+                "trust_factor": 0.9949,
+                "min_edge_delta": 0.002,
+                "sources": [
+                  "Cards below 60% target over 387 settled markets."
+                ]
+              }
+            },
+            "factors": {
+              "lambda_home": 1.456,
+              "lambda_away": 0.944,
+              "h2h_n": 1,
+              "h2h_home_wins": 1,
+              "h2h_away_wins": 0,
+              "h2h_draws": 0,
+              "h2h_home_goals": 1,
+              "h2h_away_goals": 0,
+              "h_rank": 6,
+              "a_rank": 5,
+              "home_elo": 1518.7,
+              "away_elo": 1491.3,
+              "dixon_coles_rho": -0.1,
+              "winner_bookmaker_blend": 0.4,
+              "draw_rule": {
+                "min_probability": 0.28,
+                "max_home_away_gap": 0.15,
+                "max_favourite_gap": 0.15
+              },
+              "cards_over_threshold": 0.68,
+              "cards_over_streaks": 0,
+              "cards_under_streaks": 1,
+              "model_calibration": "2026-05-21 18:22:51 ACST"
+            }
+          },
+          "odds": {
+            "home": 4.1,
+            "draw": 3.7,
+            "away": 1.79
+          },
+          "h2h_streaks": [
+            {
+              "team": "both",
+              "label": "More than 2.5 goals",
+              "value": "6/8"
+            },
+            {
+              "team": "both",
+              "label": "Both teams scoring",
+              "value": "6/8"
+            },
+            {
+              "team": "away",
+              "label": "First to score",
+              "value": "5/6"
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "7/8"
+            }
+          ],
+          "h2h_history": [
+            {
+              "event_id": 14059737,
+              "date": "2025-12-30",
+              "home_name": "Middlesbrough",
+              "away_name": "Hull City",
+              "home_score": 0,
+              "away_score": 1,
+              "current_home_scored": 1,
+              "current_away_scored": 0,
+              "h_scored": 1,
+              "a_scored": 0
+            }
+          ],
+          "h2h_duel": {
+            "home_wins": 4,
+            "away_wins": 5,
+            "draws": 1
+          },
+          "team_streaks": [
+            {
+              "team": "home",
+              "label": "No losses",
+              "value": "3"
+            },
+            {
+              "team": "away",
+              "label": "No wins",
+              "value": "3"
+            },
+            {
+              "team": "home",
+              "label": "Both teams scoring",
+              "value": "5/7"
+            },
+            {
+              "team": "away",
+              "label": "First to score",
+              "value": "5/6"
+            },
+            {
+              "team": "away",
+              "label": "Less than 4.5 cards",
+              "value": "4/5"
+            }
+          ]
         },
         {
           "id": 16172173,
@@ -97457,6 +97691,125 @@
       "round": null,
       "logo": "https://api.sofascore.app/api/v1/unique-tournament/40/image",
       "matches": [
+        {
+          "id": 15272431,
+          "date": "2026-05-19",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Örgryte IS",
+            "short": "Örgryte",
+            "team_id": 1766,
+            "logo": "https://media.api-sports.io/football/teams/1766.png",
+            "goals": 2,
+            "rank": 15,
+            "pts": 5
+          },
+          "away": {
+            "name": "IFK Göteborg",
+            "short": "Göteborg",
+            "team_id": 1761,
+            "logo": "https://media.api-sports.io/football/teams/1761.png",
+            "goals": 3,
+            "rank": 14,
+            "pts": 6
+          },
+          "settled_at": "2026-05-21",
+          "odds": {
+            "home": 4.0,
+            "draw": 3.8,
+            "away": 1.76
+          },
+          "h2h_streaks": [
+            {
+              "team": "away",
+              "label": "Wins",
+              "value": "4"
+            },
+            {
+              "team": "home",
+              "label": "Without clean sheet",
+              "value": "4"
+            }
+          ],
+          "team_streaks": [
+            {
+              "team": "home",
+              "label": "No wins",
+              "value": "5"
+            },
+            {
+              "team": "away",
+              "label": "No wins",
+              "value": "8"
+            },
+            {
+              "team": "home",
+              "label": "Without clean sheet",
+              "value": "5"
+            },
+            {
+              "team": "away",
+              "label": "Without clean sheet",
+              "value": "9"
+            },
+            {
+              "team": "away",
+              "label": "Less than 2.5 goals",
+              "value": "5/7"
+            },
+            {
+              "team": "home",
+              "label": "First to concede",
+              "value": "5/5"
+            },
+            {
+              "team": "away",
+              "label": "First to concede",
+              "value": "6/7"
+            },
+            {
+              "team": "home",
+              "label": "First half loser",
+              "value": "4/5"
+            },
+            {
+              "team": "home",
+              "label": "Less than 4.5 cards",
+              "value": "4/5"
+            },
+            {
+              "team": "away",
+              "label": "Less than 4.5 cards",
+              "value": "5/5"
+            },
+            {
+              "team": "home",
+              "label": "Less than 10.5 corners",
+              "value": "4/5"
+            }
+          ],
+          "actuals": {
+            "home_corners": 6,
+            "away_corners": 6,
+            "corners_total": 12,
+            "home_fouls": 14,
+            "away_fouls": 12,
+            "fouls_total": 26,
+            "home_sot": 2,
+            "away_sot": 7,
+            "first_to_score": "away",
+            "first_scorer": "August Erlingmark",
+            "ht_home": 1,
+            "ht_away": 2,
+            "ht_winner": "away",
+            "source": "LiveScore",
+            "home_cards": 2,
+            "away_cards": 3,
+            "cards_total": 5
+          },
+          "prediction_locked": true
+        },
         {
           "id": "flashscore:rJKJ2MZP",
           "date": "2026-05-21",
