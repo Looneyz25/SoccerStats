@@ -20,7 +20,6 @@ import {
   Search,
   ShieldCheck,
   SlidersHorizontal,
-  UploadCloud,
   XCircle,
 } from 'lucide-react';
 
@@ -53,15 +52,6 @@ function daysUntil(value) {
   if (Number.isNaN(date.getTime())) return null;
   const diff = date.getTime() - Date.now();
   return Math.max(0, Math.ceil(diff / 86400000));
-}
-
-function parsePastedJson(text) {
-  const trimmed = String(text || '').trim().replace(/^```(?:json)?/i, '').replace(/```$/i, '').trim();
-  const objectStart = trimmed.indexOf('{');
-  const arrayStart = trimmed.indexOf('[');
-  const start = [objectStart, arrayStart].filter((index) => index >= 0).sort((a, b) => a - b)[0] ?? 0;
-  const end = Math.max(trimmed.lastIndexOf('}'), trimmed.lastIndexOf(']'));
-  return JSON.parse(end >= start ? trimmed.slice(start, end + 1) : trimmed);
 }
 
 function stripeStatusClass(status) {
@@ -100,23 +90,6 @@ function InfoLine({ label, value, valueClassName = 'text-ink' }) {
   );
 }
 
-const RESULT_IMPORT_EXAMPLE = `{
-  "date": "2026-05-21",
-  "league": "Eliteserien",
-  "home": "Aalesund",
-  "away": "Brann",
-  "status": "FT",
-  "score": { "home": 2, "away": 1 },
-  "stats": {
-    "corners": { "home": 4, "away": 5 },
-    "fouls": { "home": 12, "away": 10 },
-    "shotsOnTarget": { "home": 5, "away": 3 },
-    "yellowCards": { "home": 2, "away": 1 },
-    "redCards": { "home": 0, "away": 0 },
-    "firstToScore": "home"
-  }
-}`;
-
 function AdminDashboard() {
   const GROUP_STORAGE_KEY = 'soccer_stats_admin_groups_v1';
   const UNASSIGNED_GROUP_FILTER = '__unassigned__';
@@ -131,9 +104,6 @@ function AdminDashboard() {
   const [groupAssignments, setGroupAssignments] = useState({});
   const [groupDraft, setGroupDraft] = useState('');
   const [groupFilter, setGroupFilter] = useState('all');
-  const [resultImportJson, setResultImportJson] = useState(RESULT_IMPORT_EXAMPLE);
-  const [importingResults, setImportingResults] = useState(false);
-  const [resultImportMessage, setResultImportMessage] = useState('');
   const router = useRouter();
 
   async function syncStripeUser(uid) {
@@ -399,41 +369,6 @@ function AdminDashboard() {
     }
   }
 
-  async function handleResultImport(event) {
-    event.preventDefault();
-    setError('');
-    setResultImportMessage('');
-    setImportingResults(true);
-    try {
-      const parsed = parsePastedJson(resultImportJson);
-      const auth = getFirebaseAuth();
-      const token = await auth.currentUser?.getIdToken();
-      if (!token) throw new Error('Sign in again before importing results.');
-
-      const response = await fetch('/api/admin/import-result', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(parsed),
-      });
-      const payload = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        throw new Error(payload.detail || payload.error || 'Result import failed.');
-      }
-      const count = payload.updated?.length || 0;
-      const missed = payload.missed?.length || 0;
-      const label = payload.updated?.map((match) => `${match.league}: ${match.home} ${match.score} ${match.away}`).join(' | ');
-      setResultImportMessage(`${count} match${count === 1 ? '' : 'es'} updated${missed ? `, ${missed} not matched` : ''}.${label ? ` ${label}` : ''}`);
-    } catch (err) {
-      console.error(err);
-      setError(err?.message || 'Failed to import result JSON.');
-    } finally {
-      setImportingResults(false);
-    }
-  }
-
   if (loading) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-field px-4">
@@ -502,62 +437,6 @@ function AdminDashboard() {
             {error}
           </div>
         )}
-
-        <section className="mb-4 rounded-lg border border-line bg-white p-4 shadow-panel">
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
-            <div>
-              <h2 className="text-sm font-semibold text-ink">SofaScore result import</h2>
-              <p className="mt-1 max-w-2xl text-xs text-slate-500">
-                Platform-owner only. Paste one converted mobile screenshot page as JSON; the server matches the existing Firestore fixture and updates the league, date, and fast dashboard docs.
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => setResultImportJson(RESULT_IMPORT_EXAMPLE)}
-              className="h-9 rounded-md border border-line bg-white px-3 text-xs font-semibold text-slate-700 transition hover:bg-field"
-            >
-              Reset example
-            </button>
-          </div>
-
-          <form onSubmit={handleResultImport} className="mt-3 grid gap-3 lg:grid-cols-[minmax(0,1fr)_17rem]">
-            <textarea
-              value={resultImportJson}
-              onChange={(event) => setResultImportJson(event.target.value)}
-              spellCheck={false}
-              className="min-h-72 w-full rounded-md border border-line bg-slate-50 p-3 font-mono text-xs leading-5 text-ink outline-none transition focus:border-slate-400 focus:bg-white"
-            />
-            <div className="flex flex-col gap-3">
-              <div className="rounded-md border border-line bg-field p-3 text-xs text-slate-600">
-                <div className="font-semibold text-ink">Required</div>
-                <div className="mt-2 space-y-1">
-                  <div>Date: YYYY-MM-DD</div>
-                  <div>League, home, away</div>
-                  <div>Final score</div>
-                </div>
-                <div className="mt-3 font-semibold text-ink">Optional stats</div>
-                <div className="mt-2 space-y-1">
-                  <div>Corners, fouls, shots on target</div>
-                  <div>Yellow/red cards or total cards</div>
-                  <div>firstToScore: home / away</div>
-                </div>
-              </div>
-              <button
-                type="submit"
-                disabled={importingResults}
-                className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-ink px-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-wait disabled:bg-slate-500"
-              >
-                {importingResults ? <Loader2 className="h-4 w-4 animate-spin" /> : <UploadCloud className="h-4 w-4" />}
-                Import result
-              </button>
-              {resultImportMessage && (
-                <div className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-xs font-semibold text-emerald-700">
-                  {resultImportMessage}
-                </div>
-              )}
-            </div>
-          </form>
-        </section>
 
         <div className="grid gap-3 sm:gap-4 lg:grid-cols-[minmax(21rem,0.8fr)_minmax(28rem,1.2fr)]">
           <section className="rounded-lg border border-line bg-white shadow-panel">

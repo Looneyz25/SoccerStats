@@ -84,6 +84,22 @@ function firstValue(...values) {
   return values.find((value) => value !== undefined && value !== null && value !== '');
 }
 
+function normalizeDate(value) {
+  const text = String(value || '').trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(text)) return text;
+  const dotMatch = text.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+  if (dotMatch) {
+    const [, day, month, year] = dotMatch;
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  }
+  const slashMatch = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (slashMatch) {
+    const [, day, month, year] = slashMatch;
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  }
+  return text;
+}
+
 function sidePair(value, homeKeys = ['home'], awayKeys = ['away']) {
   if (Array.isArray(value) && value.length >= 2) {
     const homeNumber = parseNumber(value[0]);
@@ -116,8 +132,8 @@ function parseScore(input) {
   const direct = sidePair(input?.score || input?.result || input?.fullTime || input?.ft || input, ['home', 'homeScore'], ['away', 'awayScore']);
   if (direct) return direct;
 
-  const home = parseNumber(firstValue(input?.homeScore, input?.home?.score, input?.home?.goals, input?.scoreHome));
-  const away = parseNumber(firstValue(input?.awayScore, input?.away?.score, input?.away?.goals, input?.scoreAway));
+  const home = parseNumber(firstValue(input?.homeScore, input?.home?.score, input?.home?.goals, input?.scoreHome, input?.match?.homeScore));
+  const away = parseNumber(firstValue(input?.awayScore, input?.away?.score, input?.away?.goals, input?.scoreAway, input?.match?.awayScore));
   if (home !== null && away !== null) return { home, away };
 
   const scoreText = firstValue(input?.score, input?.result, input?.fullTime, input?.ft);
@@ -144,10 +160,10 @@ function normalizeImport(raw) {
   }
 
   const teams = raw.teams || raw.match || {};
-  const homeName = String(firstValue(raw.home?.name, raw.homeTeam?.name, teams.home?.name, raw.home, raw.homeTeam, teams.home) || '').trim();
-  const awayName = String(firstValue(raw.away?.name, raw.awayTeam?.name, teams.away?.name, raw.away, raw.awayTeam, teams.away) || '').trim();
+  const homeName = String(firstValue(raw.home?.name, raw.homeTeam?.name, teams.home?.name, raw.match?.homeTeam, raw.home, raw.homeTeam, teams.home) || '').trim();
+  const awayName = String(firstValue(raw.away?.name, raw.awayTeam?.name, teams.away?.name, raw.match?.awayTeam, raw.away, raw.awayTeam, teams.away) || '').trim();
   const score = parseScore(raw);
-  const statsRaw = raw.stats || raw.statistics || raw.matchStats || {};
+  const statsRaw = raw.stats || raw.statistics || raw.matchStats || raw.matchOverview || raw.overview || {};
   const stats = Object.fromEntries(Object.entries(statsRaw).map(([key, value]) => [cleanKey(key), value]));
 
   const corners = statPair(stats, 'corners', 'cornerKicks', 'corner kicks');
@@ -182,7 +198,7 @@ function normalizeImport(raw) {
   );
   if (firstToScore) actuals.first_to_score = firstToScore;
 
-  const date = String(firstValue(raw.date, raw.matchDate, raw.kickoffDate) || '').trim();
+  const date = normalizeDate(firstValue(raw.date, raw.matchDate, raw.kickoffDate, raw.match?.date));
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) throw new Error('Use date as YYYY-MM-DD.');
   if (!homeName || !awayName) throw new Error('Import needs home and away team names.');
   if (!score) throw new Error('Import needs a final score.');
