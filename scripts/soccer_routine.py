@@ -403,7 +403,19 @@ def short(name):
 
 
 def sofascore_team_logo(team_id):
-    return f"https://api.sofascore.app/api/v1/team/{team_id}/image" if team_id else ""
+    """Return a stable team badge URL to persist into match_data/Firestore.
+
+    SofaScore team image endpoints are currently hotlink-blocked (403) in the
+    dashboard. For numeric team IDs, prefer API-Sports PNG badges which render
+    reliably in-browser. Non-numeric synthetic IDs (for fallback fixtures) skip
+    logo assignment so the UI initials fallback is used.
+    """
+    if team_id in (None, ""):
+        return ""
+    team_id_str = str(team_id).strip()
+    if not team_id_str.isdigit():
+        return ""
+    return f"https://media.api-sports.io/football/teams/{team_id_str}.png"
 
 
 def sofascore_league_logo(unique_tournament_id):

@@ -1,0 +1,90 @@
+# get:data transcript 20260521T072443Z
+root=C:\Betting\Soccer Stats
+mode=results-only
+started_at=2026-05-21T07:24:43.321Z
+npm_command=npm.cmd
+
+## Apply manual result imports
+$ node scripts/apply_manual_result_imports.mjs
+started_at=2026-05-21T07:24:43.321Z
+Manual result imports reapplied to match_data.json: 1/1
+
+completed_at=2026-05-21T07:24:45.259Z
+exit_code=0
+
+## Settle due results
+$ node scripts/run-python.js scripts/soccer_routine.py --results-only
+started_at=2026-05-21T07:24:45.259Z
+=== soccer_routine.py results-only � 2026-05-21 (Adelaide) ===
+  result_check_buffer_minutes=150
+  result_backfill_dates=2026-05-18, 2026-05-19, 2026-05-20, 2026-05-21
+  due_for_result_check=0
+
+[Results A] settle due pending matches
+  settled=0  skipped=0  not_due=86  flashscore_settled=0  livescore_settled=0
+
+[Results B] backfill finished + enrich recent FT
+  added=0  enriched=6
+
+[Results B.5] today new-league calibration exception
+  created=0  settled_matches=0
+
+[Results C] protect resulted predictions
+  protected=414
+
+[Results D] prune stale unresolved matches
+  pruned=0
+  result_schedule=docs\agent-system\outputs\result_check_schedule_20260521T165456+0930.md
+
+=== TOTAL: 500  FT: 414  upcoming: 86  | winner hit: 202  miss: 212  pending: 86 ===
+
+completed_at=2026-05-21T07:24:56.460Z
+exit_code=0
+
+## Run result review
+$ node scripts/run-python.js scripts/soccer_result_review_agent.py
+started_at=2026-05-21T07:24:56.460Z
+Result review written: C:\Betting\Soccer Stats\docs\agent-system\outputs\model_result_review_current.md
+CSV: C:\Betting\Soccer Stats\docs\agent-system\outputs\model_result_review_current.csv
+settled_market_rows=1634 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the review agent can compare confidence bands to actual hit rate.
+
+completed_at=2026-05-21T07:24:56.634Z
+exit_code=0
+
+## Run model calibration
+$ node scripts/run-python.js scripts/soccer_model_calibration_agent.py
+started_at=2026-05-21T07:24:56.634Z
+Model calibration written: C:\Betting\Soccer Stats\docs\agent-system\outputs\model_calibration.json
+Markdown: C:\Betting\Soccer Stats\docs\agent-system\outputs\model_calibration.md
+market_adjustments=4 league_market_adjustments=8
+
+completed_at=2026-05-21T07:24:56.743Z
+exit_code=0
+
+seed_next_day_decision=day+1 already seeded for 2026-05-22
+
+## Upload league docs to Firestore
+$ node scripts/upload_match_data_to_firestore.mjs
+started_at=2026-05-21T07:24:56.744Z
+Manual result imports reapplied: 1/1
+
+Fast doc payload 2753.6 KB at 14d window, retrying with smaller window
+
+Fast doc payload 2123.8 KB at 7d window, retrying with smaller window
+
+Fast doc payload 1248.9 KB at 3d window, retrying with smaller window
+
+Fast doc payload 1002.9 KB at 1d window, retrying with smaller window
+
+(node:37032) TimeoutNegativeWarning: -1 is a negative number.
+Timeout duration was set to 1.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+Uploaded C:\Betting\Soccer Stats\match_data.json to Firestore dashboardData/match_data as 17 league docs and 33 date docs.
+Uploaded fast dashboard doc dashboardData/match_data_fast (0-day window from 2026-05-21, 979.6 KB).
+
+completed_at=2026-05-21T07:35:52.632Z
+exit_code=0
+
+completed_at=2026-05-21T07:35:52.632Z
+status=ok

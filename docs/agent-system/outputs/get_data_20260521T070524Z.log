@@ -1,0 +1,241 @@
+# get:data transcript 20260521T070524Z
+root=C:\Betting\Soccer Stats
+mode=results-only
+started_at=2026-05-21T07:05:24.934Z
+npm_command=npm.cmd
+
+## Apply manual result imports
+$ node scripts/apply_manual_result_imports.mjs
+started_at=2026-05-21T07:05:24.934Z
+Manual result imports reapplied to match_data.json: 1/1
+
+completed_at=2026-05-21T07:05:26.556Z
+exit_code=0
+
+## Settle due results
+$ node scripts/run-python.js scripts/soccer_routine.py --results-only
+started_at=2026-05-21T07:05:26.556Z
+=== soccer_routine.py results-only � 2026-05-21 (Adelaide) ===
+  result_check_buffer_minutes=150
+  result_backfill_dates=2026-05-18, 2026-05-19, 2026-05-20, 2026-05-21
+  due_for_result_check=0
+
+[Results A] settle due pending matches
+  settled=0  skipped=0  not_due=86  flashscore_settled=0  livescore_settled=0
+
+[Results B] backfill finished + enrich recent FT
+  added=0  enriched=6
+
+[Results B.5] today new-league calibration exception
+  created=0  settled_matches=0
+
+[Results C] protect resulted predictions
+  protected=414
+
+[Results D] prune stale unresolved matches
+  pruned=0
+  result_schedule=docs\agent-system\outputs\result_check_schedule_20260521T163537+0930.md
+
+=== TOTAL: 500  FT: 414  upcoming: 86  | winner hit: 202  miss: 212  pending: 86 ===
+
+completed_at=2026-05-21T07:05:37.780Z
+exit_code=0
+
+## Run result review
+$ node scripts/run-python.js scripts/soccer_result_review_agent.py
+started_at=2026-05-21T07:05:37.780Z
+Result review written: C:\Betting\Soccer Stats\docs\agent-system\outputs\model_result_review_current.md
+CSV: C:\Betting\Soccer Stats\docs\agent-system\outputs\model_result_review_current.csv
+settled_market_rows=1634 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the review agent can compare confidence bands to actual hit rate.
+
+completed_at=2026-05-21T07:05:37.924Z
+exit_code=0
+
+## Run model calibration
+$ node scripts/run-python.js scripts/soccer_model_calibration_agent.py
+started_at=2026-05-21T07:05:37.924Z
+Model calibration written: C:\Betting\Soccer Stats\docs\agent-system\outputs\model_calibration.json
+Markdown: C:\Betting\Soccer Stats\docs\agent-system\outputs\model_calibration.md
+market_adjustments=4 league_market_adjustments=8
+
+completed_at=2026-05-21T07:05:38.039Z
+exit_code=0
+
+seed_next_day_decision=active slate complete; seed 2026-05-22
+
+## Seed day+1 slate
+$ node scripts/run-python.js scripts/soccer_routine.py --seed-next-day
+started_at=2026-05-21T07:05:38.041Z
+=== soccer_routine.py seed-next-day � 2026-05-21 (Adelaide) ===
+  fixture_lookahead_days=2
+
+[Seed A] compute team Elo + build xG index
+  teams_rated=288  teams_with_xg=0  elo_file=team_elo.json
+
+[Seed B] forecast current/tomorrow (+2 days)
+  added=0
+
+[Seed C] attach standings to home/away
+  attached=0
+
+[Seed C.5] promote phase fixture cards
+  added=0
+
+[Phase B.4] computed team streaks (PRIMARY) � derived from team match history
+
+DONE. enriched=0
+
+[Phase B.5] sportsbet odds
+Fetching Premier League (united-kingdom/english-premier-league)
+  events with odds: 10
+Fetching LaLiga (spain/spanish-la-liga)
+  events with odds: 10
+Fetching Bundesliga (germany/german-bundesliga)
+  events with odds: 1
+Fetching Ligue 1 (france/french-ligue-1)
+  events with odds: 1
+Fetching UEFA Champions League (uefa-competitions/uefa-champions-league)
+  events with odds: 1
+Fetching Serie A (italy/italian-serie-a)
+  events with odds: 10
+Fetching Eredivisie (rest-of-europe/dutch-eredivisie)
+  events with odds: 2
+Fetching Primeira Liga (rest-of-europe/portuguese-primeira-liga)
+  events with odds: 3
+Fetching MLS (north-america/usa-major-league-soccer)
+  events with odds: 225
+Fetching A-League Men (australia/australian-a-league-men)
+  events with odds: 1
+Fetching Scottish Premiership (united-kingdom/scottish-premiership)
+  events with odds: 0
+Fetching J1 League (asia/japanese-j1-league)
+  events with odds: 8
+Fetching Championship (united-kingdom/english-championship)
+  events with odds: 1
+Fetching League One (united-kingdom/english-league-one)
+  events with odds: 10
+Fetching League Two (united-kingdom/english-league-two)
+  events with odds: 10
+Fetching Allsvenskan (rest-of-europe/swedish-allsvenskan)
+  events with odds: 9
+Fetching Eliteserien (rest-of-europe/norwegian-eliteserien)
+  events with odds: 8
+[deep] budget 180s reached; stopped after 54 events
+=== matched: 66 | deep_markets: 54 | unmatched: 18
+  - ('Bundesliga', 'VfL Wolfsburg', 'SC Paderborn 07')
+  - ('Bundesliga', 'SC Paderborn 07', 'VfL Wolfsburg')
+  - ('Ligue 1', 'Saint-�tienne', 'Nice')
+  - ('Eredivisie', 'FC Volendam', 'Willem II Tilburg')
+  - ('J1 League', 'Machida Zelvia', 'Urawa Red Diamonds')
+  - ('J1 League', 'Avispa Fukuoka', 'Vissel Kobe')
+  - ('J1 League', 'Sanfrecce Hiroshima', 'Nagoya Grampus')
+  - ('J1 League', 'Kashima Antlers', 'FC Tokyo')
+  - ('J1 League', 'Kashiwa Reysol', 'JEF United Chiba')
+  - ('J1 League', 'Kyoto Sanga FC', 'V-Varen Nagasaki')
+  - ('J1 League', 'Fagiano Okayama', 'Cerezo Osaka')
+  - ('J1 League', 'Mito Hollyhock', 'Kawasaki Frontale')
+  - ('J1 League', 'Tokyo Verdy', 'Yokohama F. Marinos')
+  - ('J1 League', 'Shimizu S-Pulse', 'Gamba Osaka')
+  - ('Championship', 'Hull City', 'Southampton')
+
+[Phase B.5a] bookmaker direct links
+[ladbrokes] scanning event-request API
+  events: 1637
+[neds] scanning event-request API
+  events: 1637
+[ladbrokes] scanning public soccer/sports pages
+  https://www.ladbrokes.com.au/sports/soccer -> 557 candidates
+  https://www.ladbrokes.com.au/sports -> 557 candidates
+[neds] scanning public soccer/sports pages
+  https://www.neds.com.au/sports/soccer -> 507 candidates
+  https://www.neds.com.au/sports -> 507 candidates
+[sportsbet] mirrored direct links: 0
+[entain] cleared generated links: 150
+[non-direct] cleared TAB/bet365 links: 0
+[ladbrokes] event API links found: 75
+[neds] event API links found: 75
+[ladbrokes] direct links found: 0
+[neds] direct links found: 0
+
+[Phase B.5b] pre-match prediction prefill
+  created=0  corners=0
+
+[Phase B.5c] today new-league calibration exception
+  created=0  settled_matches=0
+
+[Phase B.6] streak odds
+DONE. odds_added=0
+
+[Phase B.7] prediction odds
+DONE. added=0 five_market_missing=86
+  missing ou_cards: Eredivisie AFC Ajax vs FC Groningen (2026-05-22)
+  missing ou_cards,corners: Allsvenskan Elfsborg vs Mjallby (2026-05-22)
+  missing ou_cards,corners: Bundesliga VfL Wolfsburg vs SC Paderborn 07 (2026-05-22)
+  missing ou_cards: Eredivisie FC Utrecht vs SC Heerenveen (2026-05-22)
+  missing corners: Scottish Premiership Partick Thistle vs St. Mirren (2026-05-22)
+  missing ou_cards: J1 League Machida Zelvia vs Urawa Red Diamonds (2026-05-22)
+  missing ou_cards,corners: Allsvenskan Djurgardens vs Brommapojkarna (2026-05-23)
+  missing ou_cards: Serie A Fiorentina vs Atalanta (2026-05-23)
+  missing ou_cards: J1 League Avispa Fukuoka vs Vissel Kobe (2026-05-23)
+  missing ou_cards: J1 League Sanfrecce Hiroshima vs Nagoya Grampus (2026-05-23)
+  missing ou_cards: A-League Men Auckland FC vs Sydney FC (2026-05-23)
+  missing ou_cards: J1 League Kashima Antlers vs FC Tokyo (2026-05-23)
+  missing ou_cards: J1 League Kashiwa Reysol vs JEF United Chiba (2026-05-23)
+  missing ou_cards: J1 League Kyoto Sanga FC vs V-Varen Nagasaki (2026-05-23)
+  missing ou_cards,corners: Allsvenskan Halmstads vs Orgryte (2026-05-23)
+  missing ou_cards,corners: Allsvenskan Kalmar FF vs Degerfors (2026-05-23)
+  missing ou_cards: Championship Hull City vs Southampton (2026-05-24)
+  missing ou_cards,corners: Championship Hull City vs Middlesbrough (2026-05-24)
+  missing ou_cards: Serie A Bologna vs Inter (2026-05-24)
+  missing winner,btts,ou_goals,ou_cards,corners: Eredivisie FC Volendam vs Willem II Tilburg (2026-05-24)
+
+[Phase B.8] TheSportsDB fallback (records score hint when SofaScore was 403)
+  2026-05-20: 3 total events / 3 finished
+  2026-05-21: 3 total events / 0 finished
+
+DONE. matched=0
+
+[Phase B.9] Understat xG enrichment
+  fetching Understat: Premier League (EPL)
+    found 0 events, 0 finished
+  fetching Understat: LaLiga (La_liga)
+    found 0 events, 0 finished
+  fetching Understat: Serie A (Serie_A)
+    found 0 events, 0 finished
+  fetching Understat: Bundesliga (Bundesliga)
+    found 0 events, 0 finished
+  fetching Understat: Ligue 1 (Ligue_1)
+    found 0 events, 0 finished
+
+DONE. enriched=0
+
+=== TOTAL: 500  FT: 414  upcoming: 86  | winner hit: 202  miss: 212  pending: 86 ===
+
+completed_at=2026-05-21T07:12:44.134Z
+exit_code=0
+
+## Upload league docs to Firestore
+$ node scripts/upload_match_data_to_firestore.mjs
+started_at=2026-05-21T07:12:44.135Z
+Manual result imports reapplied: 1/1
+
+Fast doc payload 2753.5 KB at 14d window, retrying with smaller window
+
+Fast doc payload 2123.8 KB at 7d window, retrying with smaller window
+
+Fast doc payload 1248.9 KB at 3d window, retrying with smaller window
+
+Fast doc payload 1002.9 KB at 1d window, retrying with smaller window
+
+(node:10204) TimeoutNegativeWarning: -1 is a negative number.
+Timeout duration was set to 1.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+Uploaded C:\Betting\Soccer Stats\match_data.json to Firestore dashboardData/match_data as 17 league docs and 33 date docs.
+Uploaded fast dashboard doc dashboardData/match_data_fast (0-day window from 2026-05-21, 905.9 KB).
+
+completed_at=2026-05-21T07:23:42.228Z
+exit_code=0
+
+completed_at=2026-05-21T07:23:42.229Z
+status=failed

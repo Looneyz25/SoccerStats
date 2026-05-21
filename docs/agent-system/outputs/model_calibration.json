@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-21 06:47:24 ACST",
+  "generated_at": "2026-05-21 18:02:59 ACST",
   "source": "docs\\agent-system\\outputs\\model_result_review_summary.json",
   "mode": "conservative_auto_learning",
   "rules": {
@@ -13,35 +13,35 @@
   "market_adjustments": {
     "btts": {
       "market": "BTTS",
-      "settled": 413,
-      "hit_rate": 0.5472,
-      "trust_factor": 0.9525,
-      "min_edge_delta": 0.0185,
-      "reason": "BTTS below 60% target over 413 settled markets."
+      "settled": 414,
+      "hit_rate": 0.5483,
+      "trust_factor": 0.9535,
+      "min_edge_delta": 0.0181,
+      "reason": "BTTS below 60% target over 414 settled markets."
     },
     "ou_cards": {
       "market": "Cards",
-      "settled": 386,
-      "hit_rate": 0.5959,
-      "trust_factor": 0.9963,
-      "min_edge_delta": 0.0014,
-      "reason": "Cards below 60% target over 386 settled markets."
+      "settled": 387,
+      "hit_rate": 0.5943,
+      "trust_factor": 0.9949,
+      "min_edge_delta": 0.002,
+      "reason": "Cards below 60% target over 387 settled markets."
     },
     "ou_goals": {
       "market": "Goals",
-      "settled": 413,
-      "hit_rate": 0.5593,
-      "trust_factor": 0.9634,
-      "min_edge_delta": 0.0142,
-      "reason": "Goals below 60% target over 413 settled markets."
+      "settled": 414,
+      "hit_rate": 0.5604,
+      "trust_factor": 0.9644,
+      "min_edge_delta": 0.0139,
+      "reason": "Goals below 60% target over 414 settled markets."
     },
     "winner": {
       "market": "Winner",
-      "settled": 413,
-      "hit_rate": 0.4891,
-      "trust_factor": 0.9002,
-      "min_edge_delta": 0.0388,
-      "reason": "Winner below 60% target over 413 settled markets."
+      "settled": 414,
+      "hit_rate": 0.4879,
+      "trust_factor": 0.8991,
+      "min_edge_delta": 0.0392,
+      "reason": "Winner below 60% target over 414 settled markets."
     }
   },
   "league_market_adjustments": {
@@ -121,6 +121,17 @@
       "trust_factor": 0.964,
       "min_edge_delta": 0.014,
       "reason": "Premier League Winner weak spot from result review."
+    },
+    "Ligue 1|ou_goals": {
+      "league": "Ligue 1",
+      "market": "Goals",
+      "market_key": "ou_goals",
+      "settled": 39,
+      "hit_rate": 0.5128,
+      "odds_net": -7.83,
+      "trust_factor": 0.9694,
+      "min_edge_delta": 0.0119,
+      "reason": "Ligue 1 Goals weak spot from result review."
     }
   },
   "notes": [

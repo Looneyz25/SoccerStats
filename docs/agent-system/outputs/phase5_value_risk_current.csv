@@ -1,5 +1,2 @@
 run_timestamp,league,event_id,date,time,home,away,home_p,home_market,home_edge,home_ev,home_kelly,home_stake,home_decision,draw_p,draw_market,draw_edge,draw_ev,draw_kelly,draw_stake,draw_decision,away_p,away_market,away_edge,away_ev,away_kelly,away_stake,away_decision,top_side,top_decision,top_market_odds,top_p,top_edge,top_stake,risk_scale_factor,phase5_status,phase5_notes
-2026-05-21 05:57:50 ACST,Allsvenskan,flashscore:rJKJ2MZP,2026-05-21,FT,GAIS,Hammarby,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-21 05:57:50 ACST,Eliteserien,flashscore:0A1Nl9Wh,2026-05-21,FT,Aalesund,Brann,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-21 05:57:50 ACST,Eliteserien,flashscore:YobepuNG,2026-05-21,FT,Lilleström,Kristiansund,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-21 05:57:50 ACST,Eliteserien,flashscore:v3i3qEfD,2026-05-21,FT,Start,Bodo/Glimt,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-21 18:08:48 ACST,Allsvenskan,flashscore:zHabevSa,2026-05-22,02:30,Elfsborg,Mjallby,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.

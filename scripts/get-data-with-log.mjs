@@ -42,6 +42,12 @@ const FULL_REFRESH_STEPS = [
 
 const RESULTS_ONLY_STEPS = [
   {
+    id: 'apply_manual_result_imports',
+    label: 'Apply manual result imports',
+    command: 'node',
+    args: ['scripts/apply_manual_result_imports.mjs'],
+  },
+  {
     id: 'settle_due_results',
     label: 'Settle due results',
     command: 'node',
@@ -412,7 +418,10 @@ async function main() {
 
   const completedAt = nowIso();
   const artifacts = await collectArtifacts();
-  const status = steps.length === STEPS.length && steps.every((step) => step.status === 'ok') ? 'ok' : 'failed';
+  const requiredStepsOk = STEPS.every((requiredStep) =>
+    steps.some((step) => step.id === requiredStep.id && step.status === 'ok'),
+  );
+  const status = requiredStepsOk && steps.every((step) => step.status === 'ok') ? 'ok' : 'failed';
   const log = {
     runId,
     mode: runMode,

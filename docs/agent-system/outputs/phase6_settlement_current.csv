@@ -1,5 +1,2 @@
 run_timestamp,event_id,league,date,time,home,away,top_side,top_market_odds,top_p,top_edge,top_stake,phase5_status,actual_status,actual_home_score,actual_away_score,actual_outcome,phase6_status,realized_return,phase6_notes
-2026-05-21 05:57:50 ACST,flashscore:0A1Nl9Wh,Eliteserien,2026-05-21,FT,Aalesund,Brann,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-21 05:57:50 ACST,flashscore:rJKJ2MZP,Allsvenskan,2026-05-21,FT,GAIS,Hammarby,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-21 05:57:50 ACST,flashscore:YobepuNG,Eliteserien,2026-05-21,FT,Lilleström,Kristiansund,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
-2026-05-21 05:57:50 ACST,flashscore:v3i3qEfD,Eliteserien,2026-05-21,FT,Start,Bodo/Glimt,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-21 18:08:48 ACST,flashscore:zHabevSa,Allsvenskan,2026-05-22,02:30,Elfsborg,Mjallby,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).

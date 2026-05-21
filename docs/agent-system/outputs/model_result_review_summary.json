@@ -1,57 +1,57 @@
 {
-  "generated_at": "2026-05-21 06:47:19 ACST",
+  "generated_at": "2026-05-21 18:02:58 ACST",
   "prediction_tracking_start_date": "2026-04-22",
-  "settled_market_rows": 1629,
+  "settled_market_rows": 1634,
   "market_summary": [
     {
       "market": "BTTS",
-      "settled": 413,
-      "hits": 226,
+      "settled": 414,
+      "hits": 227,
       "misses": 187,
-      "hit_rate": 0.5472,
-      "odds_hit": 164.95,
+      "hit_rate": 0.5483,
+      "odds_hit": 166.78,
       "odds_loss": 129.41,
-      "odds_net": 35.54
+      "odds_net": 37.37
     },
     {
       "market": "Cards",
-      "settled": 386,
+      "settled": 387,
       "hits": 230,
-      "misses": 156,
-      "hit_rate": 0.5959,
+      "misses": 157,
+      "hit_rate": 0.5943,
       "odds_hit": 144.97,
       "odds_loss": 125.45,
       "odds_net": 19.52
     },
     {
       "market": "Corners",
-      "settled": 4,
-      "hits": 2,
+      "settled": 5,
+      "hits": 3,
       "misses": 2,
-      "hit_rate": 0.5,
-      "odds_hit": 0,
+      "hit_rate": 0.6,
+      "odds_hit": 1.67,
       "odds_loss": 0,
-      "odds_net": 0
+      "odds_net": 1.67
     },
     {
       "market": "Goals",
-      "settled": 413,
-      "hits": 231,
+      "settled": 414,
+      "hits": 232,
       "misses": 182,
-      "hit_rate": 0.5593,
-      "odds_hit": 166.04,
+      "hit_rate": 0.5604,
+      "odds_hit": 167.69,
       "odds_loss": 141.79,
-      "odds_net": 24.25
+      "odds_net": 25.9
     },
     {
       "market": "Winner",
-      "settled": 413,
+      "settled": 414,
       "hits": 202,
-      "misses": 211,
-      "hit_rate": 0.4891,
+      "misses": 212,
+      "hit_rate": 0.4879,
       "odds_hit": 162.29,
-      "odds_loss": 231.92,
-      "odds_net": -69.63
+      "odds_loss": 234.27,
+      "odds_net": -71.98
     }
   ],
   "league_summary": [
@@ -187,13 +187,13 @@
     },
     {
       "league": "Primeira Liga",
-      "settled": 35,
-      "hits": 20,
-      "misses": 15,
-      "hit_rate": 0.5714,
-      "odds_hit": 0,
-      "odds_loss": 0,
-      "odds_net": 0
+      "settled": 40,
+      "hits": 23,
+      "misses": 17,
+      "hit_rate": 0.575,
+      "odds_hit": 5.15,
+      "odds_loss": 2.35,
+      "odds_net": 2.8
     },
     {
       "league": "Scottish Premiership",
@@ -236,6 +236,14 @@
       "action": "review_weighting"
     },
     {
+      "league": "Primeira Liga",
+      "market": "Cards",
+      "settled": 9,
+      "hit_rate": 0.3333,
+      "odds_net": 0,
+      "action": "review_weighting"
+    },
+    {
       "league": "League One",
       "market": "BTTS",
       "settled": 31,
@@ -249,14 +257,6 @@
       "settled": 36,
       "hit_rate": 0.3611,
       "odds_net": -7.47,
-      "action": "review_weighting"
-    },
-    {
-      "league": "Primeira Liga",
-      "market": "Cards",
-      "settled": 8,
-      "hit_rate": 0.375,
-      "odds_net": 0,
       "action": "review_weighting"
     },
     {
@@ -300,14 +300,6 @@
       "action": "review_weighting"
     },
     {
-      "league": "Primeira Liga",
-      "market": "BTTS",
-      "settled": 9,
-      "hit_rate": 0.4444,
-      "odds_net": 0,
-      "action": "review_weighting"
-    },
-    {
       "league": "Eredivisie",
       "market": "Goals",
       "settled": 44,
@@ -321,6 +313,14 @@
       "settled": 40,
       "hit_rate": 0.5,
       "odds_net": -12.84,
+      "action": "review_weighting"
+    },
+    {
+      "league": "Ligue 1",
+      "market": "Goals",
+      "settled": 39,
+      "hit_rate": 0.5128,
+      "odds_net": -7.83,
       "action": "review_weighting"
     }
   ],

@@ -7,21 +7,18 @@ Model: capped Poisson grid, last-5 form, +0.20 home advantage
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-21 05:57:50 ACST |
+| run_timestamp | 2026-05-21 18:08:48 ACST |
 | model | capped Poisson 7x7, last-5 form, home advantage +0.20 |
-| model_calibration | 2026-05-21 05:54:42 ACST |
-| phase3_input_rows | 4 |
-| phase4_total_rows | 4 |
+| model_calibration | 2026-05-21 18:02:59 ACST |
+| phase3_input_rows | 1 |
+| phase4_total_rows | 1 |
 | ready_for_phase_5 | 0 |
 | model_only | 0 |
-| upstream_blocked | 4 |
+| upstream_blocked | 1 |
 | next_action | No ready predictions; check Phase 2/3 outputs. |
 
 ## Predictions
 
 | Date | League | Match | λH | λA | pH | pD | pA | pick | fH/mH | fD/mD | fA/mA | edgeH | edgeD | edgeA | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-21 | Allsvenskan | GAIS vs Hammarby |  |  |  |  |  |  | / | / | / |  |  |  | upstream_blocked |
-| 2026-05-21 | Eliteserien | Aalesund vs Brann |  |  |  |  |  |  | / | / | / |  |  |  | upstream_blocked |
-| 2026-05-21 | Eliteserien | Lilleström vs Kristiansund |  |  |  |  |  |  | / | / | / |  |  |  | upstream_blocked |
-| 2026-05-21 | Eliteserien | Start vs Bodo/Glimt |  |  |  |  |  |  | / | / | / |  |  |  | upstream_blocked |
+| 2026-05-22 | Allsvenskan | Elfsborg vs Mjallby |  |  |  |  |  |  | / | / | / |  |  |  | upstream_blocked |
