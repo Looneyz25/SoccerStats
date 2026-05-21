@@ -489,6 +489,7 @@ function buildDateBuckets(leagues) {
 }
 
 export async function POST(request) {
+  const startedAt = Date.now();
   let owner;
   try {
     owner = await verifyOwner(request);
@@ -507,6 +508,8 @@ export async function POST(request) {
   const leagueDocs = await loadLeagueDocs(db);
   const updated = [];
   const misses = [];
+  const affectedLeagueIndexes = new Set();
+  const affectedDates = new Set();
 
   for (const item of imports) {
     const target = findImportTarget(leagueDocs, item);
@@ -517,6 +520,8 @@ export async function POST(request) {
     const league = leagueDocs[target.leagueIndex];
     const nextMatch = applyResultToMatch(league.matches[target.matchIndex], item, owner);
     league.matches[target.matchIndex] = nextMatch;
+    affectedLeagueIndexes.add(target.leagueIndex);
+    affectedDates.add(nextMatch.date || item.date);
     updated.push({
       date: item.date,
       league: league.name,
@@ -557,7 +562,8 @@ export async function POST(request) {
     return false;
   });
 
-  for (const league of nextLeagueDocs) {
+  const changedLeagueDocs = nextLeagueDocs.filter((league, index) => affectedLeagueIndexes.has(index));
+  for (const league of changedLeagueDocs) {
     writer.set(metaRef.collection('leagues').doc(league.docId), firestoreSafe({
       index: league.index,
       id: league.id ?? league.docId,
@@ -572,6 +578,7 @@ export async function POST(request) {
   }
 
   for (const [date, leaguesByDate] of dateBuckets.entries()) {
+    if (!affectedDates.has(date)) continue;
     const dateLeagues = [...leaguesByDate.values()];
     writer.set(metaRef.collection('dates').doc(slugify(date, 'unknown')), firestoreSafe({
       format: 'date_doc_v1',
@@ -614,6 +621,13 @@ export async function POST(request) {
     ok: true,
     updated,
     missed: misses,
+    durationMs: Date.now() - startedAt,
+    writes: {
+      leagues: changedLeagueDocs.length,
+      dates: [...affectedDates].filter((date) => dateBuckets.has(date)).length,
+      fast: 1,
+      meta: 1,
+    },
     format: {
       date: 'YYYY-MM-DD',
       league: 'League name as shown in dashboard',

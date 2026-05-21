@@ -56,7 +56,20 @@ function parsePastedJson(text) {
   const arrayStart = trimmed.indexOf('[');
   const start = [objectStart, arrayStart].filter((index) => index >= 0).sort((a, b) => a - b)[0] ?? 0;
   const end = Math.max(trimmed.lastIndexOf('}'), trimmed.lastIndexOf(']'));
-  return JSON.parse(end >= start ? trimmed.slice(start, end + 1) : trimmed);
+  const json = end >= start ? trimmed.slice(start, end + 1) : trimmed;
+  try {
+    return JSON.parse(json);
+  } catch (error) {
+    const repaired = json
+      .replace(/}\s*(?="[^"]+"\s*:)/g, '},')
+      .replace(/]\s*(?="[^"]+"\s*:)/g, '],')
+      .replace(/,\s*([}\]])/g, '$1');
+    try {
+      return JSON.parse(repaired);
+    } catch {
+      throw error;
+    }
+  }
 }
 
 async function loadMatchDataWithRetry(date = '', retries = 1, retryDelayMs = 1200) {
@@ -3598,17 +3611,7 @@ function PredictionSummaryCard({ match, allMatches }) {
 
 function MatchResultImportPanel({ match, onImported }) {
   const [open, setOpen] = useState(false);
-  const [jsonText, setJsonText] = useState(() => JSON.stringify({
-    score: { home: null, away: null },
-    stats: {
-      corners: { home: null, away: null },
-      fouls: { home: null, away: null },
-      shotsOnTarget: { home: null, away: null },
-      yellowCards: { home: null, away: null },
-      redCards: { home: 0, away: 0 },
-      firstToScore: 'home',
-    },
-  }, null, 2));
+  const [jsonText, setJsonText] = useState('');
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -3678,6 +3681,7 @@ function MatchResultImportPanel({ match, onImported }) {
             value={jsonText}
             onChange={(event) => setJsonText(event.target.value)}
             spellCheck={false}
+            placeholder="Paste the JSON result here"
             className="min-h-60 w-full rounded-md border border-amber-200 bg-white p-3 font-mono text-xs leading-5 text-ink outline-none focus:border-amber-400"
           />
           <div className="grid gap-2 sm:grid-cols-[1fr_auto] sm:items-center">
