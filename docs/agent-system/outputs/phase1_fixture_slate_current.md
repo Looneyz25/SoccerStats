@@ -26,4 +26,4 @@ Timezone: Australia/Adelaide
 
 | Date | Time | League | Home | Away | Event ID | Status | Phase 1 Status | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-22 | 02:30 | Allsvenskan | Elfsborg | Mjallby | flashscore:zHabevSa | live | ready_for_phase_2 | Keyless Flashscore fixture feed. |
+| 2026-05-22 | FT | Allsvenskan | Elfsborg | Mjallby | flashscore:zHabevSa | FT | ready_for_phase_2 | Keyless Flashscore fixture feed. |

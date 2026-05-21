@@ -310,6 +310,23 @@ export async function updateUserStripeInheritance(uid, inheritStripeStatus) {
 }
 
 export async function getAdminUserGroupsConfig() {
+  if (typeof window !== 'undefined' && typeof fetch === 'function') {
+    const token = await getFirebaseAuth().currentUser?.getIdToken();
+    if (token) {
+      const response = await fetch('/api/admin/user-groups', {
+        headers: { Authorization: `Bearer ${token}` },
+        cache: 'no-store',
+      });
+      if (response.ok) {
+        const payload = await response.json();
+        return {
+          groups: Array.isArray(payload.groups) ? payload.groups : [],
+          assignments: payload.assignments && typeof payload.assignments === 'object' ? payload.assignments : {},
+        };
+      }
+    }
+  }
+
   const db = getFirebaseDb();
   const configRef = doc(db, 'dashboardData', ADMIN_GROUPS_DOC);
   const snap = await getDoc(configRef);
@@ -324,9 +341,6 @@ export async function getAdminUserGroupsConfig() {
 }
 
 export async function saveAdminUserGroupsConfig(config) {
-  const db = getFirebaseDb();
-  const configRef = doc(db, 'dashboardData', ADMIN_GROUPS_DOC);
-
   const rawGroups = Array.isArray(config?.groups) ? config.groups : [];
   const groups = [...new Set(
     rawGroups
@@ -346,11 +360,23 @@ export async function saveAdminUserGroupsConfig(config) {
     assignments[cleanUid] = cleanGroups;
   });
 
-  await setDoc(configRef, {
-    groups,
-    assignments,
-    updatedAt: new Date().toISOString(),
-  }, { merge: true });
+  const token = await getFirebaseAuth().currentUser?.getIdToken();
+  if (!token) throw new Error('Sign in again before saving groups.');
 
-  return { groups, assignments };
+  const response = await fetch('/api/admin/user-groups', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    cache: 'no-store',
+    body: JSON.stringify({ groups, assignments }),
+  });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(payload.error || 'Failed to save groups.');
+
+  return {
+    groups: Array.isArray(payload.groups) ? payload.groups : groups,
+    assignments: payload.assignments && typeof payload.assignments === 'object' ? payload.assignments : assignments,
+  };
 }

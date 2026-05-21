@@ -6,8 +6,10 @@ import { useRouter } from 'next/navigation';
 import AuthGate from '../../auth-gate';
 import {
   getAllUsers,
+  getAdminUserGroupsConfig,
   getUserProfile,
   loadMatchDataFromFirestore,
+  saveAdminUserGroupsConfig,
   updateUserManualAccess,
   updateUserStripeInheritance,
 } from '../../firestore-data';
@@ -172,6 +174,42 @@ function AdminDashboard() {
   const [groupFilter, setGroupFilter] = useState('all');
   const router = useRouter();
 
+  function readLocalGroupConfig() {
+    try {
+      const raw = window.localStorage.getItem(GROUP_STORAGE_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      return {
+        groups: Array.isArray(parsed?.groups) ? parsed.groups : [],
+        assignments: parsed?.assignments && typeof parsed.assignments === 'object' ? parsed.assignments : {},
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  async function loadGroupConfig() {
+    const config = await getAdminUserGroupsConfig();
+    if (config.groups.length || Object.keys(config.assignments || {}).length) {
+      setGroups(config.groups);
+      setGroupAssignments(config.assignments || {});
+      window.localStorage.setItem(GROUP_STORAGE_KEY, JSON.stringify(config));
+      return;
+    }
+
+    const localConfig = readLocalGroupConfig();
+    if (localConfig?.groups?.length || Object.keys(localConfig?.assignments || {}).length) {
+      const saved = await saveAdminUserGroupsConfig(localConfig);
+      setGroups(saved.groups);
+      setGroupAssignments(saved.assignments || {});
+      window.localStorage.setItem(GROUP_STORAGE_KEY, JSON.stringify(saved));
+      return;
+    }
+
+    setGroups([]);
+    setGroupAssignments({});
+  }
+
   async function syncStripeUser(uid) {
     const auth = getFirebaseAuth();
     const token = await auth.currentUser?.getIdToken();
@@ -208,6 +246,7 @@ function AdminDashboard() {
         router.push('/dashboard');
         return;
       }
+      await loadGroupConfig();
 
       setMatchDataLoading(true);
       setMatchDataError('');
@@ -240,18 +279,6 @@ function AdminDashboard() {
 
   useEffect(() => {
     loadUsers();
-  }, []);
-
-  useEffect(() => {
-    try {
-      const raw = window.localStorage.getItem(GROUP_STORAGE_KEY);
-      if (!raw) return;
-      const parsed = JSON.parse(raw);
-      setGroups(Array.isArray(parsed?.groups) ? parsed.groups : []);
-      setGroupAssignments(parsed?.assignments && typeof parsed.assignments === 'object' ? parsed.assignments : {});
-    } catch {
-      // ignore malformed local storage payload
-    }
   }, []);
 
   const filteredUsers = useMemo(() => {
@@ -293,11 +320,12 @@ function AdminDashboard() {
   }, [filteredUsers, selectedUid]);
 
   async function persistGroups(nextGroups, nextAssignments) {
-    const payload = {
+    const payload = await saveAdminUserGroupsConfig({
       groups: nextGroups,
       assignments: nextAssignments,
-    };
+    });
     window.localStorage.setItem(GROUP_STORAGE_KEY, JSON.stringify(payload));
+    return payload;
   }
 
   async function handleCreateGroup(event) {
@@ -310,8 +338,9 @@ function AdminDashboard() {
     }
     const nextGroups = [...groups, cleanName];
     try {
-      await persistGroups(nextGroups, groupAssignments);
-      setGroups(nextGroups);
+      const saved = await persistGroups(nextGroups, groupAssignments);
+      setGroups(saved.groups);
+      setGroupAssignments(saved.assignments || {});
       setGroupDraft('');
     } catch (err) {
       console.error(err);
@@ -325,8 +354,9 @@ function AdminDashboard() {
     const nextUserGroups = hasGroup ? current.filter((name) => name !== groupName) : [...current, groupName];
     const nextAssignments = { ...groupAssignments, [uid]: nextUserGroups };
     try {
-      await persistGroups(groups, nextAssignments);
-      setGroupAssignments(nextAssignments);
+      const saved = await persistGroups(groups, nextAssignments);
+      setGroups(saved.groups);
+      setGroupAssignments(saved.assignments || {});
     } catch (err) {
       console.error(err);
       setError(err?.message || 'Failed to update group assignment.');
@@ -339,9 +369,9 @@ function AdminDashboard() {
       Object.entries(groupAssignments).map(([uid, groupList]) => [uid, (groupList || []).filter((name) => name !== groupName)])
     );
     try {
-      await persistGroups(nextGroups, nextAssignments);
-      setGroups(nextGroups);
-      setGroupAssignments(nextAssignments);
+      const saved = await persistGroups(nextGroups, nextAssignments);
+      setGroups(saved.groups);
+      setGroupAssignments(saved.assignments || {});
       if (groupFilter === groupName) setGroupFilter('all');
     } catch (err) {
       console.error(err);

@@ -1165,7 +1165,7 @@
             "rank": 11,
             "pts": 49,
             "goals": 0,
-            "logo": "https://media.api-sports.io/football/teams/3.png"
+            "logo": "https://media.api-sports.io/football/teams/39.png"
           },
           "away": {
             "name": "Tottenham",
@@ -1434,7 +1434,7 @@
             "rank": 19,
             "pts": 21,
             "goals": 0,
-            "logo": "https://media.api-sports.io/football/teams/39.png"
+            "logo": "https://media.api-sports.io/football/teams/6.png"
           },
           "predictions": {
             "winner": {
@@ -7959,9 +7959,9 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 1.87,
+            "home": 1.85,
             "draw": 4.2,
-            "away": 3.5,
+            "away": 3.6,
             "event_id": 10495949,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/brighton-v-man-utd-10495949"
           },
@@ -7972,12 +7972,12 @@
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 1.87,
+              "1": 1.85,
               "X": 4.2,
-              "2": 3.5
+              "2": 3.6
             },
             "Match goals 0.5": {
-              "Under": 20.25
+              "Under": 21.0
             },
             "Match goals 1.5": {
               "Over": 1.13,
@@ -7985,11 +7985,11 @@
             },
             "Match goals 2.5": {
               "Over": 1.43,
-              "Under": 2.7
+              "Under": 2.69
             },
             "Match goals 3.5": {
-              "Over": 2.15,
-              "Under": 1.65
+              "Over": 2.16,
+              "Under": 1.64
             },
             "Both teams to score": {
               "Yes": 1.4,
@@ -8011,51 +8011,51 @@
               "Over": 34.0
             },
             "Corners 2-Way 4.5": {
-              "Under": 19.75
+              "Under": 21.0
             },
             "Corners 2-Way 5.5": {
               "Over": 1.03,
-              "Under": 10.2
+              "Under": 11.0
             },
             "Corners 2-Way 6.5": {
-              "Over": 1.09,
-              "Under": 6.05
+              "Over": 1.08,
+              "Under": 6.4
             },
             "Corners 2-Way 7.5": {
-              "Over": 1.2,
-              "Under": 3.9
+              "Over": 1.19,
+              "Under": 4.05
             },
             "Corners 2-Way 8.5": {
-              "Over": 1.4,
-              "Under": 2.7
+              "Over": 1.38,
+              "Under": 2.8
             },
             "Corners 2-Way 9.5": {
-              "Over": 1.72,
-              "Under": 2.0
+              "Over": 1.67,
+              "Under": 2.07
             },
             "Corners 2-Way 10.5": {
-              "Over": 2.17,
-              "Under": 1.61
+              "Over": 2.11,
+              "Under": 1.64
             },
             "Corners 2-Way 11.5": {
-              "Over": 2.89,
-              "Under": 1.35
+              "Over": 2.78,
+              "Under": 1.38
             },
             "Corners 2-Way 12.5": {
-              "Over": 4.0,
-              "Under": 1.19
+              "Over": 3.84,
+              "Under": 1.2
             },
             "Corners 2-Way 13.5": {
-              "Over": 5.75,
-              "Under": 1.1
+              "Over": 5.45,
+              "Under": 1.11
             },
             "Corners 2-Way 14.5": {
-              "Over": 8.4,
+              "Over": 7.9,
               "Under": 1.05
             },
             "Corners 2-Way 15.5": {
-              "Over": 12.75,
-              "Under": 1.02
+              "Over": 11.8,
+              "Under": 1.03
             },
             "Cards in match 0.5": {
               "Under": 15.0
@@ -8066,7 +8066,7 @@
             },
             "Cards in match 2.5": {
               "Over": 1.47,
-              "Under": 2.5
+              "Under": 2.48
             },
             "Cards in match 3.5": {
               "Over": 2.26,
@@ -8081,7 +8081,7 @@
               "Under": 1.05
             },
             "Cards in match 6.5": {
-              "Over": 17.0
+              "Over": 17.5
             }
           },
           "corner_odds": {
@@ -9156,7 +9156,7 @@
           "sportsbet_odds": {
             "home": 1.8,
             "draw": 4.2,
-            "away": 3.75,
+            "away": 3.8,
             "event_id": 10498403,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/liverpool-v-brentford-10498403"
           },
@@ -9169,7 +9169,7 @@
             "Full time": {
               "1": 1.8,
               "X": 4.2,
-              "2": 3.75
+              "2": 3.8
             },
             "Match goals 0.5": {
               "Under": 19.75
@@ -9206,7 +9206,7 @@
               "Over": 34.0
             },
             "Corners 2-Way 4.5": {
-              "Under": 24.0
+              "Under": 23.0
             },
             "Corners 2-Way 5.5": {
               "Over": 1.03,
@@ -9493,7 +9493,7 @@
               "Under": 29.0
             },
             "Match goals 1.5": {
-              "Over": 1.06,
+              "Over": 1.07,
               "Under": 7.5
             },
             "Match goals 2.5": {
@@ -9501,98 +9501,96 @@
               "Under": 3.45
             },
             "Match goals 3.5": {
-              "Over": 1.73,
-              "Under": 2.02
+              "Over": 1.76,
+              "Under": 1.98
             },
             "Both teams to score": {
-              "Yes": 1.5,
-              "No": 2.5
+              "Yes": 1.53,
+              "No": 2.4
             },
             "Match goals 4.5": {
-              "Over": 2.75,
-              "Under": 1.41
+              "Over": 2.83,
+              "Under": 1.39
             },
             "Match goals 5.5": {
               "Over": 4.65,
-              "Under": 1.17
+              "Under": 1.16
             },
             "Match goals 6.5": {
-              "Over": 8.0,
-              "Under": 1.06
+              "Over": 8.5,
+              "Under": 1.05
             },
             "Match goals 7.5": {
-              "Over": 12.0,
-              "Under": 1.02
+              "Over": 12.0
             },
             "Corners 2-Way 4.5": {
-              "Under": 18.0
+              "Under": 18.25
             },
             "Corners 2-Way 5.5": {
               "Over": 1.04,
-              "Under": 9.7
+              "Under": 9.4
             },
             "Corners 2-Way 6.5": {
-              "Over": 1.1,
-              "Under": 5.65
+              "Over": 1.11,
+              "Under": 5.55
             },
             "Corners 2-Way 7.5": {
-              "Over": 1.23,
-              "Under": 3.68
+              "Over": 1.24,
+              "Under": 3.6
             },
             "Corners 2-Way 8.5": {
-              "Over": 1.44,
-              "Under": 2.58
+              "Over": 1.45,
+              "Under": 2.54
             },
             "Corners 2-Way 9.5": {
-              "Over": 1.75,
-              "Under": 1.95
+              "Over": 1.78,
+              "Under": 1.92
             },
             "Corners 2-Way 10.5": {
-              "Over": 2.22,
-              "Under": 1.58
+              "Over": 2.28,
+              "Under": 1.55
             },
             "Corners 2-Way 11.5": {
-              "Over": 2.95,
-              "Under": 1.34
+              "Over": 3.04,
+              "Under": 1.32
             },
             "Corners 2-Way 12.5": {
-              "Over": 4.1,
-              "Under": 1.19
+              "Over": 4.2,
+              "Under": 1.18
             },
             "Corners 2-Way 13.5": {
-              "Over": 5.75,
-              "Under": 1.1
+              "Over": 5.95,
+              "Under": 1.09
             },
             "Corners 2-Way 14.5": {
-              "Over": 8.2,
+              "Over": 8.6,
               "Under": 1.05
             },
             "Corners 2-Way 15.5": {
-              "Over": 12.0,
-              "Under": 1.03
-            },
-            "Cards in match 1.5": {
-              "Over": 1.28,
-              "Under": 3.2
-            },
-            "Cards in match 2.5": {
-              "Over": 1.96,
-              "Under": 1.74
-            },
-            "Cards in match 3.5": {
-              "Over": 3.52,
-              "Under": 1.25
-            },
-            "Cards in match 4.5": {
-              "Over": 7.0,
-              "Under": 1.07
-            },
-            "Cards in match 5.5": {
-              "Over": 15.25,
+              "Over": 12.75,
               "Under": 1.02
             },
+            "Cards in match 1.5": {
+              "Over": 1.36,
+              "Under": 2.8
+            },
+            "Cards in match 2.5": {
+              "Over": 2.19,
+              "Under": 1.6
+            },
+            "Cards in match 3.5": {
+              "Over": 4.2,
+              "Under": 1.18
+            },
+            "Cards in match 4.5": {
+              "Over": 8.9,
+              "Under": 1.04
+            },
+            "Cards in match 5.5": {
+              "Over": 20.5
+            },
             "Cards in match 6.5": {
-              "Over": 42.0
+              "Over": 58.0
             }
           },
           "corner_odds": {
@@ -10398,16 +10396,16 @@
               "2": 4.0
             },
             "Match goals 2.5": {
-              "Over": 1.73,
-              "Under": 2.03
+              "Over": 1.72,
+              "Under": 2.04
             },
             "Both teams to score": {
-              "Yes": 1.62,
+              "Yes": 1.67,
               "No": 2.2
             },
             "Corners 2-Way 8.5": {
-              "Over": 1.31,
-              "Under": 3.12
+              "Over": 1.3,
+              "Under": 3.16
             }
           },
           "corner_odds": {
@@ -10650,7 +10648,7 @@
             },
             "Match goals 0.5": {
               "Over": 1.02,
-              "Under": 14.5
+              "Under": 14.25
             },
             "Match goals 1.5": {
               "Over": 1.17,
@@ -10658,7 +10656,7 @@
             },
             "Match goals 2.5": {
               "Over": 1.64,
-              "Under": 2.17
+              "Under": 2.16
             },
             "Match goals 3.5": {
               "Over": 2.72,
@@ -10666,7 +10664,7 @@
             },
             "Both teams to score": {
               "Yes": 1.62,
-              "No": 2.3
+              "No": 2.25
             },
             "Match goals 4.5": {
               "Over": 5.2,
@@ -10680,49 +10678,49 @@
               "Over": 14.0
             },
             "Match goals 7.5": {
-              "Over": 51.0
+              "Over": 67.0
             },
             "Corners 2-Way 4.5": {
-              "Under": 23.0
+              "Under": 24.0
             },
             "Corners 2-Way 5.5": {
               "Over": 1.03,
-              "Under": 11.7
+              "Under": 12.0
             },
             "Corners 2-Way 6.5": {
               "Over": 1.07,
-              "Under": 6.85
+              "Under": 6.95
             },
             "Corners 2-Way 7.5": {
-              "Over": 1.16,
+              "Over": 1.17,
               "Under": 4.35
             },
             "Corners 2-Way 8.5": {
-              "Over": 1.33,
-              "Under": 3.0
+              "Over": 1.34,
+              "Under": 2.95
             },
             "Corners 2-Way 9.5": {
-              "Over": 1.59,
-              "Under": 2.2
+              "Over": 1.6,
+              "Under": 2.18
             },
             "Corners 2-Way 10.5": {
-              "Over": 1.98,
-              "Under": 1.74
+              "Over": 2.0,
+              "Under": 1.72
             },
             "Corners 2-Way 11.5": {
-              "Over": 2.57,
-              "Under": 1.44
+              "Over": 2.6,
+              "Under": 1.43
             },
             "Corners 2-Way 12.5": {
-              "Over": 3.5,
-              "Under": 1.25
+              "Over": 3.54,
+              "Under": 1.24
             },
             "Corners 2-Way 13.5": {
-              "Over": 4.9,
+              "Over": 5.0,
               "Under": 1.13
             },
             "Corners 2-Way 14.5": {
-              "Over": 7.0,
+              "Over": 7.1,
               "Under": 1.07
             },
             "Corners 2-Way 15.5": {
@@ -10730,31 +10728,31 @@
               "Under": 1.03
             },
             "Cards in match 0.5": {
-              "Under": 19.0
+              "Under": 21.0
             },
             "Cards in match 1.5": {
-              "Over": 1.05,
-              "Under": 7.0
+              "Over": 1.04,
+              "Under": 8.0
             },
             "Cards in match 2.5": {
-              "Over": 1.3,
-              "Under": 3.18
+              "Over": 1.23,
+              "Under": 3.62
             },
             "Cards in match 3.5": {
-              "Over": 1.83,
-              "Under": 1.87
+              "Over": 1.69,
+              "Under": 2.04
             },
             "Cards in match 4.5": {
-              "Over": 2.95,
-              "Under": 1.34
+              "Over": 2.6,
+              "Under": 1.43
             },
             "Cards in match 5.5": {
-              "Over": 5.35,
-              "Under": 1.11
+              "Over": 4.6,
+              "Under": 1.15
             },
             "Cards in match 6.5": {
-              "Over": 10.3,
-              "Under": 1.03
+              "Over": 8.6,
+              "Under": 1.05
             }
           },
           "corner_odds": {
@@ -10818,7 +10816,7 @@
             "rank": 5,
             "pts": 49,
             "goals": 1,
-            "logo": "https://media.api-sports.io/football/teams/2816.png"
+            "logo": "https://media.api-sports.io/football/teams/2783.png"
           },
           "away": {
             "name": "Real Madrid",
@@ -11018,14 +11016,14 @@
             "short": "Alavés",
             "team_id": 2796,
             "goals": 2,
-            "logo": "https://media.api-sports.io/football/teams/2885.png"
+            "logo": "https://media.api-sports.io/football/teams/2796.png"
           },
           "away": {
             "name": "Mallorca",
             "short": "Mallorca",
             "team_id": 2799,
             "goals": 1,
-            "logo": "https://media.api-sports.io/football/teams/2826.png"
+            "logo": "https://media.api-sports.io/football/teams/2799.png"
           },
           "predictions": {
             "winner": {
@@ -11900,7 +11898,7 @@
             "goals": 1,
             "rank": 3,
             "pts": 69,
-            "logo": "https://media.api-sports.io/football/teams/24264.png"
+            "logo": "https://media.api-sports.io/football/teams/2819.png"
           },
           "predictions": {
             "winner": {
@@ -12103,7 +12101,7 @@
             "short": "Athletic",
             "team_id": 2804,
             "goals": 2,
-            "logo": "https://media.api-sports.io/football/teams/2825.png"
+            "logo": "https://media.api-sports.io/football/teams/2804.png"
           },
           "predictions": {
             "winner": {
@@ -20377,7 +20375,7 @@
             },
             "Match goals 0.5": {
               "Over": 1.03,
-              "Under": 11.5
+              "Under": 11.8
             },
             "Match goals 1.5": {
               "Over": 1.25,
@@ -20388,12 +20386,12 @@
               "Under": 1.88
             },
             "Match goals 3.5": {
-              "Over": 3.28,
-              "Under": 1.31
+              "Over": 3.31,
+              "Under": 1.3
             },
             "Both teams to score": {
               "Yes": 1.8,
-              "No": 2.0
+              "No": 1.91
             },
             "Match goals 4.5": {
               "Over": 6.0,
@@ -20408,12 +20406,79 @@
             },
             "Match goals 7.5": {
               "Over": 81.0
+            },
+            "Corners 2-Way 4.5": {
+              "Over": 1.02,
+              "Under": 12.75
+            },
+            "Corners 2-Way 5.5": {
+              "Over": 1.07,
+              "Under": 7.0
+            },
+            "Corners 2-Way 6.5": {
+              "Over": 1.17,
+              "Under": 4.3
+            },
+            "Corners 2-Way 7.5": {
+              "Over": 1.36,
+              "Under": 2.86
+            },
+            "Corners 2-Way 8.5": {
+              "Over": 1.66,
+              "Under": 2.08
+            },
+            "Corners 2-Way 9.5": {
+              "Over": 2.13,
+              "Under": 1.63
+            },
+            "Corners 2-Way 10.5": {
+              "Over": 2.88,
+              "Under": 1.35
+            },
+            "Corners 2-Way 11.5": {
+              "Over": 4.1,
+              "Under": 1.18
+            },
+            "Corners 2-Way 12.5": {
+              "Over": 5.95,
+              "Under": 1.09
+            },
+            "Corners 2-Way 13.5": {
+              "Over": 8.8,
+              "Under": 1.04
+            },
+            "Corners 2-Way 14.5": {
+              "Over": 13.5,
+              "Under": 1.02
+            },
+            "Corners 2-Way 15.5": {
+              "Over": 22.0
             }
           },
           "corner_odds": {
             "9.5": {
-              "Over": 2.1,
-              "Under": 1.67
+              "Over": 2.13,
+              "Under": 1.63
+            },
+            "7.5": {
+              "Over": 1.36,
+              "Under": 2.86
+            },
+            "8.5": {
+              "Over": 1.66,
+              "Under": 2.08
+            },
+            "10.5": {
+              "Over": 2.88,
+              "Under": 1.35
+            },
+            "11.5": {
+              "Over": 4.1,
+              "Under": 1.18
+            },
+            "12.5": {
+              "Over": 5.95,
+              "Under": 1.09
             }
           }
         },
@@ -20620,8 +20685,8 @@
               "2": 2.88
             },
             "Match goals 0.5": {
-              "Over": 1.03,
-              "Under": 10.2
+              "Over": 1.04,
+              "Under": 10.1
             },
             "Match goals 1.5": {
               "Over": 1.3,
@@ -20629,7 +20694,7 @@
             },
             "Match goals 2.5": {
               "Over": 1.98,
-              "Under": 1.77
+              "Under": 1.76
             },
             "Match goals 3.5": {
               "Over": 3.45,
@@ -20652,12 +20717,79 @@
             },
             "Match goals 7.5": {
               "Over": 101.0
+            },
+            "Corners 2-Way 4.5": {
+              "Under": 18.75
+            },
+            "Corners 2-Way 5.5": {
+              "Over": 1.04,
+              "Under": 9.7
+            },
+            "Corners 2-Way 6.5": {
+              "Over": 1.1,
+              "Under": 5.65
+            },
+            "Corners 2-Way 7.5": {
+              "Over": 1.23,
+              "Under": 3.62
+            },
+            "Corners 2-Way 8.5": {
+              "Over": 1.45,
+              "Under": 2.54
+            },
+            "Corners 2-Way 9.5": {
+              "Over": 1.79,
+              "Under": 1.91
+            },
+            "Corners 2-Way 10.5": {
+              "Over": 2.3,
+              "Under": 1.54
+            },
+            "Corners 2-Way 11.5": {
+              "Over": 3.08,
+              "Under": 1.31
+            },
+            "Corners 2-Way 12.5": {
+              "Over": 4.35,
+              "Under": 1.17
+            },
+            "Corners 2-Way 13.5": {
+              "Over": 6.3,
+              "Under": 1.08
+            },
+            "Corners 2-Way 14.5": {
+              "Over": 9.3,
+              "Under": 1.04
+            },
+            "Corners 2-Way 15.5": {
+              "Over": 14.0,
+              "Under": 1.02
             }
           },
           "corner_odds": {
             "10.5": {
-              "Over": 2.1,
-              "Under": 1.67
+              "Over": 2.3,
+              "Under": 1.54
+            },
+            "7.5": {
+              "Over": 1.23,
+              "Under": 3.62
+            },
+            "8.5": {
+              "Over": 1.45,
+              "Under": 2.54
+            },
+            "9.5": {
+              "Over": 1.79,
+              "Under": 1.91
+            },
+            "11.5": {
+              "Over": 3.08,
+              "Under": 1.31
+            },
+            "12.5": {
+              "Over": 4.35,
+              "Under": 1.17
             }
           },
           "odds": {
@@ -20899,12 +21031,12 @@
               "Under": 4.0
             },
             "Match goals 2.5": {
-              "Over": 1.77,
-              "Under": 1.97
+              "Over": 1.78,
+              "Under": 1.96
             },
             "Match goals 3.5": {
-              "Over": 3.04,
-              "Under": 1.35
+              "Over": 3.06,
+              "Under": 1.34
             },
             "Both teams to score": {
               "Yes": 1.62,
@@ -20923,12 +21055,78 @@
             },
             "Match goals 7.5": {
               "Over": 81.0
+            },
+            "Corners 2-Way 4.5": {
+              "Under": 16.25
+            },
+            "Corners 2-Way 5.5": {
+              "Over": 1.05,
+              "Under": 8.5
+            },
+            "Corners 2-Way 6.5": {
+              "Over": 1.13,
+              "Under": 5.0
+            },
+            "Corners 2-Way 7.5": {
+              "Over": 1.28,
+              "Under": 3.26
+            },
+            "Corners 2-Way 8.5": {
+              "Over": 1.54,
+              "Under": 2.31
+            },
+            "Corners 2-Way 9.5": {
+              "Over": 1.93,
+              "Under": 1.77
+            },
+            "Corners 2-Way 10.5": {
+              "Over": 2.53,
+              "Under": 1.45
+            },
+            "Corners 2-Way 11.5": {
+              "Over": 3.46,
+              "Under": 1.25
+            },
+            "Corners 2-Way 12.5": {
+              "Over": 4.9,
+              "Under": 1.13
+            },
+            "Corners 2-Way 13.5": {
+              "Over": 7.2,
+              "Under": 1.06
+            },
+            "Corners 2-Way 14.5": {
+              "Over": 10.8,
+              "Under": 1.03
+            },
+            "Corners 2-Way 15.5": {
+              "Over": 17.25
             }
           },
           "corner_odds": {
             "9.5": {
-              "Over": 1.83,
-              "Under": 1.83
+              "Over": 1.93,
+              "Under": 1.77
+            },
+            "7.5": {
+              "Over": 1.28,
+              "Under": 3.26
+            },
+            "8.5": {
+              "Over": 1.54,
+              "Under": 2.31
+            },
+            "10.5": {
+              "Over": 2.53,
+              "Under": 1.45
+            },
+            "11.5": {
+              "Over": 3.46,
+              "Under": 1.25
+            },
+            "12.5": {
+              "Over": 4.9,
+              "Under": 1.13
             }
           },
           "bookmaker_meta": {
@@ -21160,15 +21358,15 @@
             },
             "Match goals 0.5": {
               "Over": 1.07,
-              "Under": 6.75
+              "Under": 6.8
             },
             "Match goals 1.5": {
               "Over": 1.5,
-              "Under": 2.47
+              "Under": 2.46
             },
             "Match goals 2.5": {
-              "Over": 2.7,
-              "Under": 1.43
+              "Over": 2.67,
+              "Under": 1.44
             },
             "Match goals 3.5": {
               "Over": 5.2,
@@ -21176,7 +21374,7 @@
             },
             "Both teams to score": {
               "Yes": 2.2,
-              "No": 1.62
+              "No": 1.67
             },
             "Match goals 4.5": {
               "Over": 10.0,
@@ -21190,12 +21388,79 @@
             },
             "Match goals 7.5": {
               "Over": 101.0
+            },
+            "Corners 2-Way 4.5": {
+              "Over": 1.03,
+              "Under": 11.9
+            },
+            "Corners 2-Way 5.5": {
+              "Over": 1.08,
+              "Under": 6.55
+            },
+            "Corners 2-Way 6.5": {
+              "Over": 1.2,
+              "Under": 3.96
+            },
+            "Corners 2-Way 7.5": {
+              "Over": 1.41,
+              "Under": 2.66
+            },
+            "Corners 2-Way 8.5": {
+              "Over": 1.74,
+              "Under": 1.97
+            },
+            "Corners 2-Way 9.5": {
+              "Over": 2.25,
+              "Under": 1.56
+            },
+            "Corners 2-Way 10.5": {
+              "Over": 3.1,
+              "Under": 1.31
+            },
+            "Corners 2-Way 11.5": {
+              "Over": 4.4,
+              "Under": 1.16
+            },
+            "Corners 2-Way 12.5": {
+              "Over": 6.45,
+              "Under": 1.08
+            },
+            "Corners 2-Way 13.5": {
+              "Over": 9.7,
+              "Under": 1.04
+            },
+            "Corners 2-Way 14.5": {
+              "Over": 15.0,
+              "Under": 1.02
+            },
+            "Corners 2-Way 15.5": {
+              "Over": 25.0
             }
           },
           "corner_odds": {
             "8.5": {
-              "Over": 1.73,
-              "Under": 2.0
+              "Over": 1.74,
+              "Under": 1.97
+            },
+            "7.5": {
+              "Over": 1.41,
+              "Under": 2.66
+            },
+            "9.5": {
+              "Over": 2.25,
+              "Under": 1.56
+            },
+            "10.5": {
+              "Over": 3.1,
+              "Under": 1.31
+            },
+            "11.5": {
+              "Over": 4.4,
+              "Under": 1.16
+            },
+            "12.5": {
+              "Over": 6.45,
+              "Under": 1.08
             }
           },
           "odds": {
@@ -21428,36 +21693,99 @@
               "Under": 2.17
             },
             "Match goals 3.5": {
-              "Over": 2.71,
-              "Under": 1.43
+              "Over": 2.67,
+              "Under": 1.44
             },
             "Both teams to score": {
               "Yes": 1.62,
               "No": 2.2
             },
             "Match goals 4.5": {
-              "Over": 5.2,
-              "Under": 1.14
+              "Over": 4.8,
+              "Under": 1.16
             },
             "Match goals 5.5": {
-              "Over": 9.5,
-              "Under": 1.04
+              "Over": 8.5,
+              "Under": 1.05
             },
             "Match goals 6.5": {
               "Over": 14.0
             },
             "Match goals 7.5": {
-              "Over": 51.0
+              "Over": 67.0
+            },
+            "Corners 2-Way 4.5": {
+              "Over": 1.02,
+              "Under": 15.75
+            },
+            "Corners 2-Way 5.5": {
+              "Over": 1.05,
+              "Under": 8.4
+            },
+            "Corners 2-Way 6.5": {
+              "Over": 1.12,
+              "Under": 5.1
+            },
+            "Corners 2-Way 7.5": {
+              "Over": 1.27,
+              "Under": 3.32
+            },
+            "Corners 2-Way 8.5": {
+              "Over": 1.52,
+              "Under": 2.34
+            },
+            "Corners 2-Way 9.5": {
+              "Over": 1.89,
+              "Under": 1.81
+            },
+            "Corners 2-Way 10.5": {
+              "Over": 2.48,
+              "Under": 1.47
+            },
+            "Corners 2-Way 11.5": {
+              "Over": 3.4,
+              "Under": 1.26
+            },
+            "Corners 2-Way 12.5": {
+              "Over": 4.85,
+              "Under": 1.14
+            },
+            "Corners 2-Way 13.5": {
+              "Over": 7.0,
+              "Under": 1.07
+            },
+            "Corners 2-Way 14.5": {
+              "Over": 10.6,
+              "Under": 1.03
+            },
+            "Corners 2-Way 15.5": {
+              "Over": 16.75
             }
           },
           "corner_odds": {
             "8.5": {
-              "Over": 1.73,
-              "Under": 2
+              "Over": 1.52,
+              "Under": 2.34
             },
             "9.5": {
-              "Over": 1.83,
-              "Under": 1.83
+              "Over": 1.89,
+              "Under": 1.81
+            },
+            "7.5": {
+              "Over": 1.27,
+              "Under": 3.32
+            },
+            "10.5": {
+              "Over": 2.48,
+              "Under": 1.47
+            },
+            "11.5": {
+              "Over": 3.4,
+              "Under": 1.26
+            },
+            "12.5": {
+              "Over": 4.85,
+              "Under": 1.14
             }
           },
           "odds": {
@@ -21672,7 +22000,7 @@
           ],
           "sportsbet_odds": {
             "home": 1.47,
-            "draw": 4.2,
+            "draw": 4.4,
             "away": 7.0,
             "event_id": 10498406,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/mallorca-v-oviedo-10498406"
@@ -21685,7 +22013,7 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 1.47,
-              "X": 4.2,
+              "X": 4.4,
               "2": 7.0
             },
             "Match goals 0.5": {
@@ -21694,22 +22022,22 @@
             },
             "Match goals 1.5": {
               "Over": 1.25,
-              "Under": 3.7
+              "Under": 3.78
             },
             "Match goals 2.5": {
-              "Over": 1.83,
-              "Under": 1.9
+              "Over": 1.81,
+              "Under": 1.92
             },
             "Match goals 3.5": {
-              "Over": 3.22,
-              "Under": 1.31
+              "Over": 3.14,
+              "Under": 1.33
             },
             "Both teams to score": {
-              "Yes": 2.0,
-              "No": 1.72
+              "Yes": 1.91,
+              "No": 1.8
             },
             "Match goals 4.5": {
-              "Over": 6.0,
+              "Over": 5.9,
               "Under": 1.11
             },
             "Match goals 5.5": {
@@ -21717,16 +22045,83 @@
               "Under": 1.03
             },
             "Match goals 6.5": {
-              "Over": 34.0
+              "Over": 21.0
             },
             "Match goals 7.5": {
               "Over": 81.0
+            },
+            "Corners 2-Way 4.5": {
+              "Under": 16.5
+            },
+            "Corners 2-Way 5.5": {
+              "Over": 1.04,
+              "Under": 8.8
+            },
+            "Corners 2-Way 6.5": {
+              "Over": 1.12,
+              "Under": 5.25
+            },
+            "Corners 2-Way 7.5": {
+              "Over": 1.26,
+              "Under": 3.42
+            },
+            "Corners 2-Way 8.5": {
+              "Over": 1.49,
+              "Under": 2.42
+            },
+            "Corners 2-Way 9.5": {
+              "Over": 1.85,
+              "Under": 1.84
+            },
+            "Corners 2-Way 10.5": {
+              "Over": 2.38,
+              "Under": 1.51
+            },
+            "Corners 2-Way 11.5": {
+              "Over": 3.22,
+              "Under": 1.29
+            },
+            "Corners 2-Way 12.5": {
+              "Over": 4.5,
+              "Under": 1.16
+            },
+            "Corners 2-Way 13.5": {
+              "Over": 6.45,
+              "Under": 1.08
+            },
+            "Corners 2-Way 14.5": {
+              "Over": 9.4,
+              "Under": 1.04
+            },
+            "Corners 2-Way 15.5": {
+              "Over": 14.5,
+              "Under": 1.02
             }
           },
           "corner_odds": {
             "9.5": {
-              "Over": 1.83,
-              "Under": 1.83
+              "Over": 1.85,
+              "Under": 1.84
+            },
+            "7.5": {
+              "Over": 1.26,
+              "Under": 3.42
+            },
+            "8.5": {
+              "Over": 1.49,
+              "Under": 2.42
+            },
+            "10.5": {
+              "Over": 2.38,
+              "Under": 1.51
+            },
+            "11.5": {
+              "Over": 3.22,
+              "Under": 1.29
+            },
+            "12.5": {
+              "Over": 4.5,
+              "Under": 1.16
             }
           },
           "odds": {
@@ -21966,14 +22361,14 @@
             },
             "Match goals 2.5": {
               "Over": 1.63,
-              "Under": 2.19
+              "Under": 2.18
             },
             "Match goals 3.5": {
-              "Over": 2.67,
-              "Under": 1.44
+              "Over": 2.68,
+              "Under": 1.43
             },
             "Both teams to score": {
-              "Yes": 1.57,
+              "Yes": 1.53,
               "No": 2.4
             },
             "Match goals 4.5": {
@@ -21981,20 +22376,87 @@
               "Under": 1.14
             },
             "Match goals 5.5": {
-              "Over": 9.5,
-              "Under": 1.04
+              "Over": 8.5,
+              "Under": 1.05
             },
             "Match goals 6.5": {
               "Over": 14.0
             },
             "Match goals 7.5": {
-              "Over": 51.0
+              "Over": 67.0
+            },
+            "Corners 2-Way 4.5": {
+              "Under": 18.0
+            },
+            "Corners 2-Way 5.5": {
+              "Over": 1.04,
+              "Under": 9.2
+            },
+            "Corners 2-Way 6.5": {
+              "Over": 1.11,
+              "Under": 5.5
+            },
+            "Corners 2-Way 7.5": {
+              "Over": 1.25,
+              "Under": 3.52
+            },
+            "Corners 2-Way 8.5": {
+              "Over": 1.48,
+              "Under": 2.47
+            },
+            "Corners 2-Way 9.5": {
+              "Over": 1.82,
+              "Under": 1.88
+            },
+            "Corners 2-Way 10.5": {
+              "Over": 2.38,
+              "Under": 1.51
+            },
+            "Corners 2-Way 11.5": {
+              "Over": 3.2,
+              "Under": 1.29
+            },
+            "Corners 2-Way 12.5": {
+              "Over": 4.5,
+              "Under": 1.16
+            },
+            "Corners 2-Way 13.5": {
+              "Over": 6.55,
+              "Under": 1.08
+            },
+            "Corners 2-Way 14.5": {
+              "Over": 9.6,
+              "Under": 1.04
+            },
+            "Corners 2-Way 15.5": {
+              "Over": 14.75,
+              "Under": 1.02
             }
           },
           "corner_odds": {
             "9.5": {
-              "Over": 1.91,
-              "Under": 1.8
+              "Over": 1.82,
+              "Under": 1.88
+            },
+            "7.5": {
+              "Over": 1.25,
+              "Under": 3.52
+            },
+            "8.5": {
+              "Over": 1.48,
+              "Under": 2.47
+            },
+            "10.5": {
+              "Over": 2.38,
+              "Under": 1.51
+            },
+            "11.5": {
+              "Over": 3.2,
+              "Under": 1.29
+            },
+            "12.5": {
+              "Over": 4.5,
+              "Under": 1.16
             }
           },
           "odds": {
@@ -22216,31 +22678,31 @@
               "2": 6.0
             },
             "Match goals 0.5": {
-              "Under": 21.0
+              "Under": 20.5
             },
             "Match goals 1.5": {
               "Over": 1.13,
               "Under": 5.4
             },
             "Match goals 2.5": {
-              "Over": 1.44,
-              "Under": 2.66
+              "Over": 1.45,
+              "Under": 2.64
             },
             "Match goals 3.5": {
-              "Over": 2.16,
-              "Under": 1.64
+              "Over": 2.18,
+              "Under": 1.63
             },
             "Both teams to score": {
               "Yes": 1.57,
               "No": 2.3
             },
             "Match goals 4.5": {
-              "Over": 3.7,
+              "Over": 3.8,
               "Under": 1.25
             },
             "Match goals 5.5": {
-              "Over": 6.0,
-              "Under": 1.1
+              "Over": 6.5,
+              "Under": 1.09
             },
             "Match goals 6.5": {
               "Over": 11.0,
@@ -22248,12 +22710,79 @@
             },
             "Match goals 7.5": {
               "Over": 21.0
+            },
+            "Corners 2-Way 4.5": {
+              "Under": 18.75
+            },
+            "Corners 2-Way 5.5": {
+              "Over": 1.04,
+              "Under": 9.7
+            },
+            "Corners 2-Way 6.5": {
+              "Over": 1.1,
+              "Under": 5.8
+            },
+            "Corners 2-Way 7.5": {
+              "Over": 1.22,
+              "Under": 3.72
+            },
+            "Corners 2-Way 8.5": {
+              "Over": 1.43,
+              "Under": 2.59
+            },
+            "Corners 2-Way 9.5": {
+              "Over": 1.76,
+              "Under": 1.95
+            },
+            "Corners 2-Way 10.5": {
+              "Over": 2.24,
+              "Under": 1.57
+            },
+            "Corners 2-Way 11.5": {
+              "Over": 2.97,
+              "Under": 1.33
+            },
+            "Corners 2-Way 12.5": {
+              "Over": 4.15,
+              "Under": 1.18
+            },
+            "Corners 2-Way 13.5": {
+              "Over": 5.9,
+              "Under": 1.09
+            },
+            "Corners 2-Way 14.5": {
+              "Over": 8.6,
+              "Under": 1.05
+            },
+            "Corners 2-Way 15.5": {
+              "Over": 13.0,
+              "Under": 1.02
             }
           },
           "corner_odds": {
             "9.5": {
-              "Over": 1.73,
-              "Under": 2.0
+              "Over": 1.76,
+              "Under": 1.95
+            },
+            "7.5": {
+              "Over": 1.22,
+              "Under": 3.72
+            },
+            "8.5": {
+              "Over": 1.43,
+              "Under": 2.59
+            },
+            "10.5": {
+              "Over": 2.24,
+              "Under": 1.57
+            },
+            "11.5": {
+              "Over": 2.97,
+              "Under": 1.33
+            },
+            "12.5": {
+              "Over": 4.15,
+              "Under": 1.18
             }
           },
           "bookmaker_meta": {
@@ -22438,9 +22967,9 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 3.7,
+            "home": 3.5,
             "draw": 4.2,
-            "away": 1.85,
+            "away": 1.87,
             "event_id": 10498397,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/valencia-v-barcelona-10498397"
           },
@@ -22451,9 +22980,9 @@
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 3.7,
+              "1": 3.5,
               "X": 4.2,
-              "2": 1.85
+              "2": 1.87
             },
             "Match goals 0.5": {
               "Under": 23.0
@@ -22464,19 +22993,19 @@
             },
             "Match goals 2.5": {
               "Over": 1.38,
-              "Under": 2.9
+              "Under": 2.87
             },
             "Match goals 3.5": {
-              "Over": 2.03,
-              "Under": 1.73
+              "Over": 2.05,
+              "Under": 1.71
             },
             "Both teams to score": {
               "Yes": 1.4,
               "No": 2.88
             },
             "Match goals 4.5": {
-              "Over": 3.32,
-              "Under": 1.3
+              "Over": 3.45,
+              "Under": 1.28
             },
             "Match goals 5.5": {
               "Over": 6.0,
@@ -22487,13 +23016,80 @@
               "Under": 1.03
             },
             "Match goals 7.5": {
-              "Over": 15.0
+              "Over": 17.0
+            },
+            "Corners 2-Way 4.5": {
+              "Under": 19.5
+            },
+            "Corners 2-Way 5.5": {
+              "Over": 1.03,
+              "Under": 10.1
+            },
+            "Corners 2-Way 6.5": {
+              "Over": 1.09,
+              "Under": 5.9
+            },
+            "Corners 2-Way 7.5": {
+              "Over": 1.2,
+              "Under": 3.82
+            },
+            "Corners 2-Way 8.5": {
+              "Over": 1.41,
+              "Under": 2.66
+            },
+            "Corners 2-Way 9.5": {
+              "Over": 1.72,
+              "Under": 2.0
+            },
+            "Corners 2-Way 10.5": {
+              "Over": 2.17,
+              "Under": 1.61
+            },
+            "Corners 2-Way 11.5": {
+              "Over": 2.91,
+              "Under": 1.35
+            },
+            "Corners 2-Way 12.5": {
+              "Over": 4.05,
+              "Under": 1.19
+            },
+            "Corners 2-Way 13.5": {
+              "Over": 5.75,
+              "Under": 1.1
+            },
+            "Corners 2-Way 14.5": {
+              "Over": 8.4,
+              "Under": 1.05
+            },
+            "Corners 2-Way 15.5": {
+              "Over": 12.75,
+              "Under": 1.02
             }
           },
           "corner_odds": {
             "9.5": {
-              "Over": 1.73,
+              "Over": 1.72,
               "Under": 2.0
+            },
+            "7.5": {
+              "Over": 1.2,
+              "Under": 3.82
+            },
+            "8.5": {
+              "Over": 1.41,
+              "Under": 2.66
+            },
+            "10.5": {
+              "Over": 2.17,
+              "Under": 1.61
+            },
+            "11.5": {
+              "Over": 2.91,
+              "Under": 1.35
+            },
+            "12.5": {
+              "Over": 4.05,
+              "Under": 1.19
             }
           },
           "odds": {
@@ -22762,7 +23358,7 @@
             "rank": 3,
             "pts": 59,
             "goals": 3,
-            "logo": "https://media.api-sports.io/football/teams/36360.png"
+            "logo": "https://media.api-sports.io/football/teams/2698.png"
           },
           "away": {
             "name": "Union Berlin",
@@ -23006,14 +23602,14 @@
             "short": "Heidenheim",
             "team_id": 2457,
             "goals": 2,
-            "logo": "https://media.api-sports.io/football/teams/5885.png"
+            "logo": "https://media.api-sports.io/football/teams/2457.png"
           },
           "away": {
             "name": "St. Pauli",
             "short": "St. Pauli",
             "team_id": 2552,
             "goals": 0,
-            "logo": "https://media.api-sports.io/football/teams/2526.png"
+            "logo": "https://media.api-sports.io/football/teams/2552.png"
           },
           "predictions": {
             "winner": {
@@ -23260,7 +23856,7 @@
             "goals": 1,
             "rank": 2,
             "pts": 73,
-            "logo": "https://media.api-sports.io/football/teams/2671.png"
+            "logo": "https://media.api-sports.io/football/teams/2673.png"
           },
           "away": {
             "name": "Leverkusen",
@@ -23993,7 +24589,7 @@
             "short": "Gladbach",
             "team_id": 2546,
             "goals": 0,
-            "logo": "https://media.api-sports.io/football/teams/2527.png"
+            "logo": "https://media.api-sports.io/football/teams/2546.png"
           },
           "predictions": {
             "winner": {
@@ -24394,7 +24990,7 @@
             "short": "HSV",
             "team_id": 2504,
             "goals": 1,
-            "logo": "https://media.api-sports.io/football/teams/2676.png"
+            "logo": "https://media.api-sports.io/football/teams/2504.png"
           },
           "away": {
             "name": "Hoffenheim",
@@ -30084,24 +30680,6 @@
             "10.5": {
               "Over": 2.0,
               "Under": 1.73
-            }
-          },
-          "bookmaker_links": {
-            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/germany/german-bundesliga/vfl-wolfsburg-vs-sc-paderborn-07/384833dc-2464-4753-9569-6a711cfd6860",
-            "neds": "https://www.neds.com.au/sports/soccer/germany/german-bundesliga/vfl-wolfsburg-vs-sc-paderborn-07/384833dc-2464-4753-9569-6a711cfd6860"
-          },
-          "bookmaker_meta": {
-            "ladbrokes": {
-              "matched": true,
-              "source": "entain_event_request",
-              "event_id": "384833dc-2464-4753-9569-6a711cfd6860",
-              "event_name": "VfL Wolfsburg vs SC Paderborn 07"
-            },
-            "neds": {
-              "matched": true,
-              "source": "entain_event_request",
-              "event_id": "384833dc-2464-4753-9569-6a711cfd6860",
-              "event_name": "VfL Wolfsburg vs SC Paderborn 07"
             }
           }
         },
@@ -41116,7 +41694,7 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 2.5,
+            "home": 2.55,
             "draw": 3.5,
             "away": 2.62,
             "event_id": 10498423,
@@ -41129,90 +41707,90 @@
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 2.5,
+              "1": 2.55,
               "X": 3.5,
               "2": 2.62
             },
             "Match goals 0.5": {
               "Over": 1.02,
-              "Under": 15.5
+              "Under": 14.0
             },
             "Match goals 1.5": {
-              "Over": 1.17,
-              "Under": 4.6
+              "Over": 1.2,
+              "Under": 4.3
             },
             "Match goals 2.5": {
-              "Over": 1.6,
-              "Under": 2.24
+              "Over": 1.65,
+              "Under": 2.14
             },
             "Match goals 3.5": {
-              "Over": 2.59,
-              "Under": 1.46
+              "Over": 2.72,
+              "Under": 1.42
             },
             "Both teams to score": {
               "Yes": 1.53,
-              "No": 2.5
+              "No": 2.4
             },
             "Match goals 4.5": {
-              "Over": 4.65,
-              "Under": 1.17
+              "Over": 5.2,
+              "Under": 1.14
             },
             "Match goals 5.5": {
-              "Over": 8.5,
-              "Under": 1.05
+              "Over": 9.5,
+              "Under": 1.04
             },
             "Match goals 6.5": {
-              "Over": 13.0
+              "Over": 14.0
             },
             "Match goals 7.5": {
-              "Over": 51.0
+              "Over": 67.0
             },
             "Corners 2-Way 4.5": {
               "Over": 1.02,
-              "Under": 15.5
+              "Under": 16.25
             },
             "Corners 2-Way 5.5": {
               "Over": 1.05,
               "Under": 8.3
             },
             "Corners 2-Way 6.5": {
-              "Over": 1.12,
+              "Over": 1.13,
               "Under": 5.05
             },
             "Corners 2-Way 7.5": {
               "Over": 1.28,
-              "Under": 3.3
+              "Under": 3.28
             },
             "Corners 2-Way 8.5": {
-              "Over": 1.52,
-              "Under": 2.34
+              "Over": 1.53,
+              "Under": 2.33
             },
             "Corners 2-Way 9.5": {
-              "Over": 1.91,
-              "Under": 1.79
+              "Over": 1.9,
+              "Under": 1.8
             },
             "Corners 2-Way 10.5": {
-              "Over": 2.51,
-              "Under": 1.46
+              "Over": 2.47,
+              "Under": 1.47
             },
             "Corners 2-Way 11.5": {
-              "Over": 3.48,
-              "Under": 1.25
+              "Over": 3.4,
+              "Under": 1.26
             },
             "Corners 2-Way 12.5": {
-              "Over": 5.0,
-              "Under": 1.13
+              "Over": 4.8,
+              "Under": 1.14
             },
             "Corners 2-Way 13.5": {
-              "Over": 7.2,
-              "Under": 1.06
+              "Over": 7.1,
+              "Under": 1.07
             },
             "Corners 2-Way 14.5": {
-              "Over": 11.1,
+              "Over": 10.9,
               "Under": 1.03
             },
             "Corners 2-Way 15.5": {
-              "Over": 17.5
+              "Over": 17.0
             }
           },
           "corner_odds": {
@@ -41422,7 +42000,7 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 3.0,
+            "home": 3.1,
             "draw": 3.6,
             "away": 2.2,
             "event_id": 10498411,
@@ -41435,7 +42013,7 @@
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 3.0,
+              "1": 3.1,
               "X": 3.6,
               "2": 2.2
             },
@@ -41447,16 +42025,16 @@
               "Under": 5.2
             },
             "Match goals 2.5": {
-              "Over": 1.51,
-              "Under": 2.45
+              "Over": 1.5,
+              "Under": 2.47
             },
             "Match goals 3.5": {
-              "Over": 2.37,
-              "Under": 1.54
+              "Over": 2.32,
+              "Under": 1.56
             },
             "Both teams to score": {
               "Yes": 1.45,
-              "No": 2.6
+              "No": 2.63
             },
             "Match goals 4.5": {
               "Over": 4.25,
@@ -41464,7 +42042,7 @@
             },
             "Match goals 5.5": {
               "Over": 7.5,
-              "Under": 1.06
+              "Under": 1.07
             },
             "Match goals 6.5": {
               "Over": 12.0,
@@ -41475,49 +42053,50 @@
             },
             "Corners 2-Way 4.5": {
               "Over": 1.03,
-              "Under": 10.8
+              "Under": 11.9
             },
             "Corners 2-Way 5.5": {
-              "Over": 1.09,
-              "Under": 6.05
+              "Over": 1.08,
+              "Under": 6.55
             },
             "Corners 2-Way 6.5": {
-              "Over": 1.22,
-              "Under": 3.74
+              "Over": 1.19,
+              "Under": 4.0
             },
             "Corners 2-Way 7.5": {
-              "Over": 1.45,
-              "Under": 2.54
+              "Over": 1.4,
+              "Under": 2.69
             },
             "Corners 2-Way 8.5": {
-              "Over": 1.81,
-              "Under": 1.89
+              "Over": 1.74,
+              "Under": 1.98
             },
             "Corners 2-Way 9.5": {
-              "Over": 2.38,
-              "Under": 1.51
+              "Over": 2.25,
+              "Under": 1.57
             },
             "Corners 2-Way 10.5": {
-              "Over": 3.28,
-              "Under": 1.28
+              "Over": 3.08,
+              "Under": 1.31
             },
             "Corners 2-Way 11.5": {
-              "Over": 4.7,
-              "Under": 1.14
+              "Over": 4.35,
+              "Under": 1.16
             },
             "Corners 2-Way 12.5": {
-              "Over": 7.0,
-              "Under": 1.07
+              "Over": 6.4,
+              "Under": 1.08
             },
             "Corners 2-Way 13.5": {
-              "Over": 10.6,
-              "Under": 1.03
+              "Over": 9.8,
+              "Under": 1.04
             },
             "Corners 2-Way 14.5": {
-              "Over": 16.75
+              "Over": 15.75,
+              "Under": 1.02
             },
             "Corners 2-Way 15.5": {
-              "Over": 28.0
+              "Over": 26.0
             }
           },
           "corner_odds": {
@@ -41759,9 +42338,9 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 1.55,
-            "draw": 4.1,
-            "away": 6.0,
+            "home": 1.5,
+            "draw": 4.0,
+            "away": 6.5,
             "event_id": 10498420,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/italy/italian-serie-a/lazio-v-pisa-10498420"
           },
@@ -41772,31 +42351,31 @@
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 1.55,
-              "X": 4.1,
-              "2": 6.0
+              "1": 1.5,
+              "X": 4.0,
+              "2": 6.5
             },
             "Match goals 1.5": {
               "Over": 1.22,
               "Under": 4.0
             },
             "Match goals 2.5": {
-              "Over": 1.77,
-              "Under": 1.97
+              "Over": 1.76,
+              "Under": 1.98
             },
             "Both teams to score": {
               "Yes": 1.83,
-              "No": 1.91
+              "No": 1.83
             },
             "Corners 2-Way 8.5": {
-              "Over": 1.81,
-              "Under": 1.88
+              "Over": 1.79,
+              "Under": 1.91
             }
           },
           "corner_odds": {
             "8.5": {
-              "Over": 1.81,
-              "Under": 1.88
+              "Over": 1.79,
+              "Under": 1.91
             }
           },
           "odds": {
@@ -42872,7 +43451,7 @@
           "sportsbet_odds": {
             "home": 1.75,
             "draw": 3.5,
-            "away": 5.0,
+            "away": 4.75,
             "event_id": 10498419,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/italy/italian-serie-a/lecce-v-genoa-10498419"
           },
@@ -42885,7 +43464,7 @@
             "Full time": {
               "1": 1.75,
               "X": 3.5,
-              "2": 5.0
+              "2": 4.75
             },
             "Match goals 1.5": {
               "Over": 1.37,
@@ -42897,11 +43476,11 @@
             },
             "Both teams to score": {
               "Yes": 2.1,
-              "No": 1.67
+              "No": 1.72
             },
             "Corners 2-Way 8.5": {
-              "Over": 1.48,
-              "Under": 2.46
+              "Over": 1.47,
+              "Under": 2.5
             }
           },
           "corner_odds": {
@@ -42910,8 +43489,8 @@
               "Under": 1.8
             },
             "8.5": {
-              "Over": 1.48,
-              "Under": 2.46
+              "Over": 1.47,
+              "Under": 2.5
             }
           },
           "odds": {
@@ -52255,98 +52834,94 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 1.85,
-            "draw": 3.7,
-            "away": 3.8,
+            "home": 1.25,
+            "draw": 4.5,
+            "away": 10.0,
             "event_id": 10497512,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/dutch-eredivisie/ajax-v-fc-groningen-10497512"
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 1.85,
-              "X": 3.7,
-              "2": 3.8
-            },
-            "Match goals 0.5": {
-              "Under": 16.5
-            },
-            "Match goals 1.5": {
-              "Over": 1.14,
-              "Under": 5.2
+              "1": 1.25,
+              "X": 4.5,
+              "2": 9.5
             },
             "Match goals 2.5": {
-              "Over": 1.54,
-              "Under": 2.37
-            },
-            "Match goals 3.5": {
-              "Over": 2.42,
-              "Under": 1.52
+              "Over": 2.04,
+              "Under": 1.72
             },
             "Both teams to score": {
-              "Yes": 1.5,
-              "No": 2.5
+              "Yes": 1.91,
+              "No": 1.83
             },
-            "Match goals 4.5": {
-              "Over": 4.25,
-              "Under": 1.2
+            "Match goals 1.5": {
+              "Over": 1.2,
+              "Under": 4.25
             },
-            "Match goals 5.5": {
-              "Over": 7.5,
-              "Under": 1.06
+            "Match goals 3.5": {
+              "Over": 4.5,
+              "Under": 1.17
             },
             "Match goals 6.5": {
-              "Over": 12.0,
-              "Under": 1.02
+              "Over": 101.0
+            },
+            "Match goals 4.5": {
+              "Over": 9.5,
+              "Under": 1.04
+            },
+            "Match goals 5.5": {
+              "Over": 34.0
             },
             "Match goals 7.5": {
-              "Over": 41.0
+              "Over": 101.0
             },
-            "Corners 2-Way 4.5": {
-              "Under": 24.0
-            },
-            "Corners 2-Way 5.5": {
-              "Over": 1.03,
+            "Corners 2-Way 2.5": {
               "Under": 12.0
             },
+            "Corners 2-Way 3.5": {
+              "Over": 1.09,
+              "Under": 5.35
+            },
+            "Corners 2-Way 4.5": {
+              "Over": 1.32,
+              "Under": 2.84
+            },
+            "Corners 2-Way 5.5": {
+              "Over": 1.79,
+              "Under": 1.83
+            },
             "Corners 2-Way 6.5": {
-              "Over": 1.07,
-              "Under": 6.85
+              "Over": 2.62,
+              "Under": 1.38
             },
             "Corners 2-Way 7.5": {
-              "Over": 1.18,
-              "Under": 4.2
+              "Over": 4.25,
+              "Under": 1.14
             },
             "Corners 2-Way 8.5": {
-              "Over": 1.36,
-              "Under": 2.88
+              "Over": 7.2,
+              "Under": 1.04
             },
             "Corners 2-Way 9.5": {
-              "Over": 1.64,
-              "Under": 2.12
+              "Over": 12.0
             },
             "Corners 2-Way 10.5": {
-              "Over": 2.07,
-              "Under": 1.67
+              "Over": 19.5
             },
             "Corners 2-Way 11.5": {
-              "Over": 2.74,
-              "Under": 1.39
+              "Over": 45.0
             },
             "Corners 2-Way 12.5": {
-              "Over": 3.84,
-              "Under": 1.2
+              "Over": 51.0
             },
             "Corners 2-Way 13.5": {
-              "Over": 5.5,
-              "Under": 1.11
+              "Over": 51.0
             },
             "Corners 2-Way 14.5": {
-              "Over": 8.0,
-              "Under": 1.05
+              "Over": 51.0
             },
             "Corners 2-Way 15.5": {
-              "Over": 12.25,
-              "Under": 1.02
+              "Over": 51.0
             }
           },
           "bookmaker_links": {
@@ -52600,9 +53175,9 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 1.87,
+            "home": 1.85,
             "draw": 3.6,
-            "away": 3.8,
+            "away": 3.9,
             "event_id": 10497513,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/dutch-eredivisie/fc-utrecht-v-heerenveen-10497513"
           },
@@ -52616,23 +53191,23 @@
               "Under": 16.5
             },
             "Match goals 1.5": {
-              "Over": 1.16,
-              "Under": 4.8
+              "Over": 1.15,
+              "Under": 5.0
             },
             "Match goals 2.5": {
               "Over": 1.55,
-              "Under": 2.34
+              "Under": 2.35
             },
             "Match goals 3.5": {
-              "Over": 2.45,
-              "Under": 1.51
+              "Over": 2.46,
+              "Under": 1.5
             },
             "Both teams to score": {
               "Yes": 1.53,
               "No": 2.4
             },
             "Match goals 4.5": {
-              "Over": 4.6,
+              "Over": 4.5,
               "Under": 1.17
             },
             "Match goals 5.5": {
@@ -52646,51 +53221,51 @@
               "Over": 41.0
             },
             "Corners 2-Way 4.5": {
-              "Under": 22.0
+              "Under": 26.0
             },
             "Corners 2-Way 5.5": {
-              "Over": 1.03,
-              "Under": 11.0
+              "Over": 1.02,
+              "Under": 12.5
             },
             "Corners 2-Way 6.5": {
-              "Over": 1.08,
-              "Under": 6.4
+              "Over": 1.07,
+              "Under": 7.1
             },
             "Corners 2-Way 7.5": {
-              "Over": 1.19,
-              "Under": 4.0
+              "Over": 1.16,
+              "Under": 4.35
             },
             "Corners 2-Way 8.5": {
-              "Over": 1.39,
-              "Under": 2.75
+              "Over": 1.34,
+              "Under": 2.96
             },
             "Corners 2-Way 9.5": {
-              "Over": 1.69,
-              "Under": 2.04
+              "Over": 1.61,
+              "Under": 2.16
             },
             "Corners 2-Way 10.5": {
-              "Over": 2.14,
-              "Under": 1.62
+              "Over": 2.03,
+              "Under": 1.7
             },
             "Corners 2-Way 11.5": {
-              "Over": 2.88,
-              "Under": 1.35
+              "Over": 2.67,
+              "Under": 1.41
             },
             "Corners 2-Way 12.5": {
-              "Over": 4.05,
-              "Under": 1.19
+              "Over": 3.72,
+              "Under": 1.22
             },
             "Corners 2-Way 13.5": {
-              "Over": 5.9,
-              "Under": 1.1
+              "Over": 5.35,
+              "Under": 1.11
             },
             "Corners 2-Way 14.5": {
-              "Over": 8.7,
-              "Under": 1.04
+              "Over": 7.9,
+              "Under": 1.05
             },
             "Corners 2-Way 15.5": {
-              "Over": 13.5,
-              "Under": 1.02
+              "Over": 12.0,
+              "Under": 1.03
             }
           },
           "bookmaker_links": {
@@ -52700,28 +53275,28 @@
           },
           "corner_odds": {
             "9.5": {
-              "Over": 1.69,
-              "Under": 2.04
+              "Over": 1.61,
+              "Under": 2.16
             },
             "7.5": {
-              "Over": 1.19,
-              "Under": 4.0
+              "Over": 1.16,
+              "Under": 4.35
             },
             "8.5": {
-              "Over": 1.39,
-              "Under": 2.75
+              "Over": 1.34,
+              "Under": 2.96
             },
             "10.5": {
-              "Over": 2.14,
-              "Under": 1.62
+              "Over": 2.03,
+              "Under": 1.7
             },
             "11.5": {
-              "Over": 2.88,
-              "Under": 1.35
+              "Over": 2.67,
+              "Under": 1.41
             },
             "12.5": {
-              "Over": 4.05,
-              "Under": 1.19
+              "Over": 3.72,
+              "Under": 1.22
             }
           },
           "bookmaker_meta": {
@@ -69132,18 +69707,26 @@
               "2": 5.0
             },
             "Match goals 2.5": {
-              "Over": 1.48,
-              "Under": 2.53
+              "Over": 1.49,
+              "Under": 2.5
             },
             "Both teams to score": {
               "Yes": 1.53,
               "No": 2.4
+            },
+            "Corners 2-Way 8.5": {
+              "Over": 1.38,
+              "Under": 2.76
             }
           },
           "corner_odds": {
             "9.5": {
               "Over": 1.73,
               "Under": 2.0
+            },
+            "8.5": {
+              "Over": 1.38,
+              "Under": 2.76
             }
           },
           "odds": {
@@ -69386,7 +69969,7 @@
               "2": 3.1
             },
             "Match goals 0.5": {
-              "Under": 17.25
+              "Under": 16.75
             },
             "Match goals 1.5": {
               "Over": 1.14,
@@ -69402,14 +69985,14 @@
             },
             "Both teams to score": {
               "Yes": 1.45,
-              "No": 2.6
+              "No": 2.5
             },
             "Match goals 4.5": {
-              "Over": 4.3,
+              "Over": 4.25,
               "Under": 1.2
             },
             "Match goals 5.5": {
-              "Over": 7.5,
+              "Over": 7.75,
               "Under": 1.06
             },
             "Match goals 6.5": {
@@ -69418,12 +70001,79 @@
             },
             "Match goals 7.5": {
               "Over": 41.0
+            },
+            "Corners 2-Way 4.5": {
+              "Under": 21.0
+            },
+            "Corners 2-Way 5.5": {
+              "Over": 1.03,
+              "Under": 10.8
+            },
+            "Corners 2-Way 6.5": {
+              "Over": 1.09,
+              "Under": 6.2
+            },
+            "Corners 2-Way 7.5": {
+              "Over": 1.2,
+              "Under": 3.92
+            },
+            "Corners 2-Way 8.5": {
+              "Over": 1.4,
+              "Under": 2.69
+            },
+            "Corners 2-Way 9.5": {
+              "Over": 1.72,
+              "Under": 2.0
+            },
+            "Corners 2-Way 10.5": {
+              "Over": 2.19,
+              "Under": 1.6
+            },
+            "Corners 2-Way 11.5": {
+              "Over": 2.93,
+              "Under": 1.34
+            },
+            "Corners 2-Way 12.5": {
+              "Over": 4.05,
+              "Under": 1.19
+            },
+            "Corners 2-Way 13.5": {
+              "Over": 5.8,
+              "Under": 1.1
+            },
+            "Corners 2-Way 14.5": {
+              "Over": 8.4,
+              "Under": 1.05
+            },
+            "Corners 2-Way 15.5": {
+              "Over": 12.75,
+              "Under": 1.02
             }
           },
           "corner_odds": {
             "9.5": {
-              "Over": 1.73,
+              "Over": 1.72,
               "Under": 2.0
+            },
+            "7.5": {
+              "Over": 1.2,
+              "Under": 3.92
+            },
+            "8.5": {
+              "Over": 1.4,
+              "Under": 2.69
+            },
+            "10.5": {
+              "Over": 2.19,
+              "Under": 1.6
+            },
+            "11.5": {
+              "Over": 2.93,
+              "Under": 1.34
+            },
+            "12.5": {
+              "Over": 4.05,
+              "Under": 1.19
             }
           },
           "odds": {
@@ -69648,9 +70298,9 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 1.91,
-            "draw": 3.75,
-            "away": 3.75,
+            "home": 1.87,
+            "draw": 3.6,
+            "away": 4.0,
             "event_id": 10494377,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/charlotte-fc-v-new-england-revolution-10494377"
           },
@@ -69661,13 +70311,13 @@
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 1.91,
-              "X": 3.75,
-              "2": 3.75
+              "1": 1.87,
+              "X": 3.6,
+              "2": 4.0
             },
             "Match goals 0.5": {
               "Over": 1.02,
-              "Under": 13.5
+              "Under": 13.75
             },
             "Match goals 1.5": {
               "Over": 1.2,
@@ -69679,7 +70329,7 @@
             },
             "Match goals 3.5": {
               "Over": 2.79,
-              "Under": 1.4
+              "Under": 1.41
             },
             "Both teams to score": {
               "Yes": 1.62,
@@ -69698,12 +70348,79 @@
             },
             "Match goals 7.5": {
               "Over": 67.0
+            },
+            "Corners 2-Way 4.5": {
+              "Over": 1.02,
+              "Under": 14.25
+            },
+            "Corners 2-Way 5.5": {
+              "Over": 1.06,
+              "Under": 7.8
+            },
+            "Corners 2-Way 6.5": {
+              "Over": 1.14,
+              "Under": 4.7
+            },
+            "Corners 2-Way 7.5": {
+              "Over": 1.31,
+              "Under": 3.12
+            },
+            "Corners 2-Way 8.5": {
+              "Over": 1.58,
+              "Under": 2.22
+            },
+            "Corners 2-Way 9.5": {
+              "Over": 2.0,
+              "Under": 1.72
+            },
+            "Corners 2-Way 10.5": {
+              "Over": 2.64,
+              "Under": 1.42
+            },
+            "Corners 2-Way 11.5": {
+              "Over": 3.7,
+              "Under": 1.23
+            },
+            "Corners 2-Way 12.5": {
+              "Over": 5.3,
+              "Under": 1.11
+            },
+            "Corners 2-Way 13.5": {
+              "Over": 7.7,
+              "Under": 1.06
+            },
+            "Corners 2-Way 14.5": {
+              "Over": 11.7,
+              "Under": 1.03
+            },
+            "Corners 2-Way 15.5": {
+              "Over": 18.5
             }
           },
           "corner_odds": {
             "9.5": {
-              "Over": 1.91,
-              "Under": 1.8
+              "Over": 2.0,
+              "Under": 1.72
+            },
+            "7.5": {
+              "Over": 1.31,
+              "Under": 3.12
+            },
+            "8.5": {
+              "Over": 1.58,
+              "Under": 2.22
+            },
+            "10.5": {
+              "Over": 2.64,
+              "Under": 1.42
+            },
+            "11.5": {
+              "Over": 3.7,
+              "Under": 1.23
+            },
+            "12.5": {
+              "Over": 5.3,
+              "Under": 1.11
             }
           },
           "odds": {
@@ -69952,8 +70669,8 @@
               "Under": 1.98
             },
             "Match goals 3.5": {
-              "Over": 3.01,
-              "Under": 1.35
+              "Over": 3.0,
+              "Under": 1.36
             },
             "Both teams to score": {
               "Yes": 1.67,
@@ -69972,12 +70689,78 @@
             },
             "Match goals 7.5": {
               "Over": 81.0
+            },
+            "Corners 2-Way 4.5": {
+              "Under": 17.0
+            },
+            "Corners 2-Way 5.5": {
+              "Over": 1.04,
+              "Under": 8.8
+            },
+            "Corners 2-Way 6.5": {
+              "Over": 1.12,
+              "Under": 5.2
+            },
+            "Corners 2-Way 7.5": {
+              "Over": 1.27,
+              "Under": 3.36
+            },
+            "Corners 2-Way 8.5": {
+              "Over": 1.51,
+              "Under": 2.37
+            },
+            "Corners 2-Way 9.5": {
+              "Over": 1.88,
+              "Under": 1.82
+            },
+            "Corners 2-Way 10.5": {
+              "Over": 2.45,
+              "Under": 1.48
+            },
+            "Corners 2-Way 11.5": {
+              "Over": 3.38,
+              "Under": 1.27
+            },
+            "Corners 2-Way 12.5": {
+              "Over": 4.8,
+              "Under": 1.14
+            },
+            "Corners 2-Way 13.5": {
+              "Over": 6.9,
+              "Under": 1.07
+            },
+            "Corners 2-Way 14.5": {
+              "Over": 10.4,
+              "Under": 1.03
+            },
+            "Corners 2-Way 15.5": {
+              "Over": 16.5
             }
           },
           "corner_odds": {
             "9.5": {
-              "Over": 1.83,
-              "Under": 1.83
+              "Over": 1.88,
+              "Under": 1.82
+            },
+            "7.5": {
+              "Over": 1.27,
+              "Under": 3.36
+            },
+            "8.5": {
+              "Over": 1.51,
+              "Under": 2.37
+            },
+            "10.5": {
+              "Over": 2.45,
+              "Under": 1.48
+            },
+            "11.5": {
+              "Over": 3.38,
+              "Under": 1.27
+            },
+            "12.5": {
+              "Over": 4.8,
+              "Under": 1.14
             }
           },
           "odds": {
@@ -70253,18 +71036,26 @@
               "2": 4.6
             },
             "Match goals 2.5": {
-              "Over": 1.25,
-              "Under": 3.66
+              "Over": 1.28,
+              "Under": 3.45
             },
             "Both teams to score": {
-              "Yes": 1.3,
-              "No": 3.2
+              "Yes": 1.33,
+              "No": 3.1
+            },
+            "Corners 2-Way 8.5": {
+              "Over": 1.51,
+              "Under": 2.38
             }
           },
           "corner_odds": {
             "9.5": {
               "Over": 1.83,
               "Under": 1.83
+            },
+            "8.5": {
+              "Over": 1.51,
+              "Under": 2.38
             }
           },
           "odds": {
@@ -70520,12 +71311,20 @@
             "Both teams to score": {
               "Yes": 1.62,
               "No": 2.25
+            },
+            "Corners 2-Way 8.5": {
+              "Over": 1.55,
+              "Under": 2.28
             }
           },
           "corner_odds": {
             "9.5": {
               "Over": 1.91,
               "Under": 1.8
+            },
+            "8.5": {
+              "Over": 1.55,
+              "Under": 2.28
             }
           },
           "odds": {
@@ -70753,12 +71552,20 @@
             "Both teams to score": {
               "Yes": 1.67,
               "No": 2.1
+            },
+            "Corners 2-Way 8.5": {
+              "Over": 1.64,
+              "Under": 2.12
             }
           },
           "corner_odds": {
             "9.5": {
               "Over": 2.1,
               "Under": 1.67
+            },
+            "8.5": {
+              "Over": 1.64,
+              "Under": 2.12
             }
           },
           "odds": {
@@ -71027,12 +71834,79 @@
             },
             "Match goals 7.5": {
               "Over": 13.0
+            },
+            "Corners 2-Way 4.5": {
+              "Under": 17.25
+            },
+            "Corners 2-Way 5.5": {
+              "Over": 1.04,
+              "Under": 8.9
+            },
+            "Corners 2-Way 6.5": {
+              "Over": 1.11,
+              "Under": 5.35
+            },
+            "Corners 2-Way 7.5": {
+              "Over": 1.25,
+              "Under": 3.46
+            },
+            "Corners 2-Way 8.5": {
+              "Over": 1.49,
+              "Under": 2.43
+            },
+            "Corners 2-Way 9.5": {
+              "Over": 1.85,
+              "Under": 1.84
+            },
+            "Corners 2-Way 10.5": {
+              "Over": 2.4,
+              "Under": 1.5
+            },
+            "Corners 2-Way 11.5": {
+              "Over": 3.3,
+              "Under": 1.28
+            },
+            "Corners 2-Way 12.5": {
+              "Over": 4.65,
+              "Under": 1.15
+            },
+            "Corners 2-Way 13.5": {
+              "Over": 6.85,
+              "Under": 1.07
+            },
+            "Corners 2-Way 14.5": {
+              "Over": 10.5,
+              "Under": 1.03
+            },
+            "Corners 2-Way 15.5": {
+              "Over": 16.25,
+              "Under": 1.02
             }
           },
           "corner_odds": {
             "9.5": {
-              "Over": 1.83,
-              "Under": 1.83
+              "Over": 1.85,
+              "Under": 1.84
+            },
+            "7.5": {
+              "Over": 1.25,
+              "Under": 3.46
+            },
+            "8.5": {
+              "Over": 1.49,
+              "Under": 2.43
+            },
+            "10.5": {
+              "Over": 2.4,
+              "Under": 1.5
+            },
+            "11.5": {
+              "Over": 3.3,
+              "Under": 1.28
+            },
+            "12.5": {
+              "Over": 4.65,
+              "Under": 1.15
             }
           },
           "odds": {
@@ -71301,7 +72175,7 @@
               "No": 2.6
             },
             "Match goals 4.5": {
-              "Over": 4.3,
+              "Over": 4.25,
               "Under": 1.2
             },
             "Match goals 5.5": {
@@ -71314,12 +72188,79 @@
             },
             "Match goals 7.5": {
               "Over": 41.0
+            },
+            "Corners 2-Way 4.5": {
+              "Under": 19.25
+            },
+            "Corners 2-Way 5.5": {
+              "Over": 1.04,
+              "Under": 9.9
+            },
+            "Corners 2-Way 6.5": {
+              "Over": 1.1,
+              "Under": 5.8
+            },
+            "Corners 2-Way 7.5": {
+              "Over": 1.22,
+              "Under": 3.78
+            },
+            "Corners 2-Way 8.5": {
+              "Over": 1.43,
+              "Under": 2.61
+            },
+            "Corners 2-Way 9.5": {
+              "Over": 1.75,
+              "Under": 1.96
+            },
+            "Corners 2-Way 10.5": {
+              "Over": 2.24,
+              "Under": 1.57
+            },
+            "Corners 2-Way 11.5": {
+              "Over": 3.0,
+              "Under": 1.33
+            },
+            "Corners 2-Way 12.5": {
+              "Over": 4.2,
+              "Under": 1.18
+            },
+            "Corners 2-Way 13.5": {
+              "Over": 6.1,
+              "Under": 1.09
+            },
+            "Corners 2-Way 14.5": {
+              "Over": 8.9,
+              "Under": 1.04
+            },
+            "Corners 2-Way 15.5": {
+              "Over": 13.25,
+              "Under": 1.02
             }
           },
           "corner_odds": {
             "9.5": {
-              "Over": 1.73,
-              "Under": 2.0
+              "Over": 1.75,
+              "Under": 1.96
+            },
+            "7.5": {
+              "Over": 1.22,
+              "Under": 3.78
+            },
+            "8.5": {
+              "Over": 1.43,
+              "Under": 2.61
+            },
+            "10.5": {
+              "Over": 2.24,
+              "Under": 1.57
+            },
+            "11.5": {
+              "Over": 3.0,
+              "Under": 1.33
+            },
+            "12.5": {
+              "Over": 4.2,
+              "Under": 1.18
             }
           },
           "odds": {
@@ -71556,7 +72497,7 @@
               "Under": 24.0
             },
             "Match goals 1.5": {
-              "Over": 1.11,
+              "Over": 1.1,
               "Under": 6.0
             },
             "Match goals 2.5": {
@@ -71564,33 +72505,100 @@
               "Under": 2.94
             },
             "Match goals 3.5": {
-              "Over": 2.0,
-              "Under": 1.75
+              "Over": 1.97,
+              "Under": 1.77
             },
             "Both teams to score": {
               "Yes": 1.36,
-              "No": 3.0
+              "No": 3.1
             },
             "Match goals 4.5": {
               "Over": 3.32,
               "Under": 1.3
             },
             "Match goals 5.5": {
-              "Over": 5.9,
-              "Under": 1.11
+              "Over": 5.5,
+              "Under": 1.13
             },
             "Match goals 6.5": {
-              "Over": 10.0,
-              "Under": 1.03
+              "Over": 9.5,
+              "Under": 1.04
             },
             "Match goals 7.5": {
               "Over": 15.0
+            },
+            "Corners 2-Way 4.5": {
+              "Under": 23.0
+            },
+            "Corners 2-Way 5.5": {
+              "Over": 1.03,
+              "Under": 11.8
+            },
+            "Corners 2-Way 6.5": {
+              "Over": 1.07,
+              "Under": 6.75
+            },
+            "Corners 2-Way 7.5": {
+              "Over": 1.17,
+              "Under": 4.3
+            },
+            "Corners 2-Way 8.5": {
+              "Over": 1.34,
+              "Under": 2.95
+            },
+            "Corners 2-Way 9.5": {
+              "Over": 1.61,
+              "Under": 2.17
+            },
+            "Corners 2-Way 10.5": {
+              "Over": 2.02,
+              "Under": 1.7
+            },
+            "Corners 2-Way 11.5": {
+              "Over": 2.63,
+              "Under": 1.42
+            },
+            "Corners 2-Way 12.5": {
+              "Over": 3.62,
+              "Under": 1.23
+            },
+            "Corners 2-Way 13.5": {
+              "Over": 5.15,
+              "Under": 1.12
+            },
+            "Corners 2-Way 14.5": {
+              "Over": 7.5,
+              "Under": 1.06
+            },
+            "Corners 2-Way 15.5": {
+              "Over": 11.3,
+              "Under": 1.03
             }
           },
           "corner_odds": {
             "10.5": {
-              "Over": 2.0,
-              "Under": 1.73
+              "Over": 2.02,
+              "Under": 1.7
+            },
+            "7.5": {
+              "Over": 1.17,
+              "Under": 4.3
+            },
+            "8.5": {
+              "Over": 1.34,
+              "Under": 2.95
+            },
+            "9.5": {
+              "Over": 1.61,
+              "Under": 2.17
+            },
+            "11.5": {
+              "Over": 2.63,
+              "Under": 1.42
+            },
+            "12.5": {
+              "Over": 3.62,
+              "Under": 1.23
             }
           },
           "odds": {
@@ -71814,20 +72822,20 @@
               "Under": 22.0
             },
             "Match goals 1.5": {
-              "Over": 1.11,
-              "Under": 6.0
+              "Over": 1.12,
+              "Under": 5.7
             },
             "Match goals 2.5": {
-              "Over": 1.4,
-              "Under": 2.81
+              "Over": 1.41,
+              "Under": 2.77
             },
             "Match goals 3.5": {
-              "Over": 2.07,
-              "Under": 1.7
+              "Over": 2.09,
+              "Under": 1.69
             },
             "Both teams to score": {
               "Yes": 1.4,
-              "No": 2.88
+              "No": 2.8
             },
             "Match goals 4.5": {
               "Over": 3.45,
@@ -71838,17 +72846,84 @@
               "Under": 1.1
             },
             "Match goals 6.5": {
-              "Over": 10.0,
+              "Over": 11.0,
               "Under": 1.03
             },
             "Match goals 7.5": {
-              "Over": 17.0
+              "Over": 21.0
+            },
+            "Corners 2-Way 4.5": {
+              "Over": 1.02,
+              "Under": 14.5
+            },
+            "Corners 2-Way 5.5": {
+              "Over": 1.06,
+              "Under": 7.5
+            },
+            "Corners 2-Way 6.5": {
+              "Over": 1.15,
+              "Under": 4.5
+            },
+            "Corners 2-Way 7.5": {
+              "Over": 1.33,
+              "Under": 2.99
+            },
+            "Corners 2-Way 8.5": {
+              "Over": 1.61,
+              "Under": 2.17
+            },
+            "Corners 2-Way 9.5": {
+              "Over": 2.04,
+              "Under": 1.69
+            },
+            "Corners 2-Way 10.5": {
+              "Over": 2.74,
+              "Under": 1.39
+            },
+            "Corners 2-Way 11.5": {
+              "Over": 3.82,
+              "Under": 1.2
+            },
+            "Corners 2-Way 12.5": {
+              "Over": 5.6,
+              "Under": 1.1
+            },
+            "Corners 2-Way 13.5": {
+              "Over": 8.3,
+              "Under": 1.05
+            },
+            "Corners 2-Way 14.5": {
+              "Over": 12.75,
+              "Under": 1.02
+            },
+            "Corners 2-Way 15.5": {
+              "Over": 21.0
             }
           },
           "corner_odds": {
             "9.5": {
-              "Over": 2.0,
-              "Under": 1.73
+              "Over": 2.04,
+              "Under": 1.69
+            },
+            "7.5": {
+              "Over": 1.33,
+              "Under": 2.99
+            },
+            "8.5": {
+              "Over": 1.61,
+              "Under": 2.17
+            },
+            "10.5": {
+              "Over": 2.74,
+              "Under": 1.39
+            },
+            "11.5": {
+              "Over": 3.82,
+              "Under": 1.2
+            },
+            "12.5": {
+              "Over": 5.6,
+              "Under": 1.1
             }
           },
           "odds": {
@@ -72065,7 +73140,7 @@
             },
             "Match goals 2.5": {
               "Over": 1.48,
-              "Under": 2.53
+              "Under": 2.52
             },
             "Match goals 3.5": {
               "Over": 2.29,
@@ -72081,7 +73156,7 @@
             },
             "Match goals 5.5": {
               "Over": 7.0,
-              "Under": 1.08
+              "Under": 1.07
             },
             "Match goals 6.5": {
               "Over": 12.0,
@@ -72089,12 +73164,79 @@
             },
             "Match goals 7.5": {
               "Over": 34.0
+            },
+            "Corners 2-Way 4.5": {
+              "Under": 20.5
+            },
+            "Corners 2-Way 5.5": {
+              "Over": 1.03,
+              "Under": 10.4
+            },
+            "Corners 2-Way 6.5": {
+              "Over": 1.09,
+              "Under": 6.1
+            },
+            "Corners 2-Way 7.5": {
+              "Over": 1.2,
+              "Under": 3.92
+            },
+            "Corners 2-Way 8.5": {
+              "Over": 1.4,
+              "Under": 2.69
+            },
+            "Corners 2-Way 9.5": {
+              "Over": 1.71,
+              "Under": 2.01
+            },
+            "Corners 2-Way 10.5": {
+              "Over": 2.16,
+              "Under": 1.61
+            },
+            "Corners 2-Way 11.5": {
+              "Over": 2.89,
+              "Under": 1.35
+            },
+            "Corners 2-Way 12.5": {
+              "Over": 4.0,
+              "Under": 1.19
+            },
+            "Corners 2-Way 13.5": {
+              "Over": 5.7,
+              "Under": 1.1
+            },
+            "Corners 2-Way 14.5": {
+              "Over": 8.4,
+              "Under": 1.05
+            },
+            "Corners 2-Way 15.5": {
+              "Over": 12.5,
+              "Under": 1.02
             }
           },
           "corner_odds": {
             "9.5": {
-              "Over": 1.73,
-              "Under": 2.0
+              "Over": 1.71,
+              "Under": 2.01
+            },
+            "7.5": {
+              "Over": 1.2,
+              "Under": 3.92
+            },
+            "8.5": {
+              "Over": 1.4,
+              "Under": 2.69
+            },
+            "10.5": {
+              "Over": 2.16,
+              "Under": 1.61
+            },
+            "11.5": {
+              "Over": 2.89,
+              "Under": 1.35
+            },
+            "12.5": {
+              "Over": 4.0,
+              "Under": 1.19
             }
           }
         },
@@ -72340,12 +73482,20 @@
             "Both teams to score": {
               "Yes": 1.62,
               "No": 2.25
+            },
+            "Corners 2-Way 8.5": {
+              "Over": 1.64,
+              "Under": 2.12
             }
           },
           "corner_odds": {
             "9.5": {
               "Over": 2.0,
               "Under": 1.73
+            },
+            "8.5": {
+              "Over": 1.64,
+              "Under": 2.12
             }
           },
           "bookmaker_meta": {
@@ -72584,12 +73734,20 @@
             "Both teams to score": {
               "Yes": 1.45,
               "No": 2.5
+            },
+            "Corners 2-Way 8.5": {
+              "Over": 1.58,
+              "Under": 2.22
             }
           },
           "corner_odds": {
             "9.5": {
               "Over": 2.0,
               "Under": 1.73
+            },
+            "8.5": {
+              "Over": 1.58,
+              "Under": 2.22
             }
           }
         },
@@ -72775,17 +73933,25 @@
             },
             "Match goals 2.5": {
               "Over": 1.67,
-              "Under": 2.11
+              "Under": 2.12
             },
             "Both teams to score": {
               "Yes": 1.62,
               "No": 2.25
+            },
+            "Corners 2-Way 8.5": {
+              "Over": 1.46,
+              "Under": 2.51
             }
           },
           "corner_odds": {
             "9.5": {
               "Over": 1.73,
               "Under": 2.0
+            },
+            "8.5": {
+              "Over": 1.46,
+              "Under": 2.51
             }
           },
           "bookmaker_meta": {
@@ -79290,7 +80456,7 @@
             "short": "Millwall",
             "team_id": 55,
             "goals": 1,
-            "logo": "https://media.api-sports.io/football/teams/25.png"
+            "logo": "https://media.api-sports.io/football/teams/55.png"
           },
           "odds": {
             "home": 4,
@@ -79503,7 +80669,7 @@
             "short": "Charlton",
             "team_id": 72,
             "goals": 2,
-            "logo": "https://media.api-sports.io/football/teams/47.png"
+            "logo": "https://media.api-sports.io/football/teams/72.png"
           },
           "away": {
             "name": "Hull",
@@ -79512,7 +80678,7 @@
             "goals": 1,
             "rank": 2,
             "pts": 84,
-            "logo": "https://media.api-sports.io/football/teams/96.png"
+            "logo": "https://media.api-sports.io/football/teams/32.png"
           },
           "predictions": {
             "winner": {
@@ -79725,7 +80891,7 @@
             "goals": 5,
             "rank": 13,
             "pts": 60,
-            "logo": "https://media.api-sports.io/football/teams/36.png"
+            "logo": "https://media.api-sports.io/football/teams/15.png"
           },
           "away": {
             "name": "Watford",
@@ -79734,7 +80900,7 @@
             "goals": 1,
             "rank": 4,
             "pts": 80,
-            "logo": "https://media.api-sports.io/football/teams/24.png"
+            "logo": "https://media.api-sports.io/football/teams/45.png"
           },
           "predictions": {
             "winner": {
@@ -79951,7 +81117,7 @@
             "goals": 0,
             "rank": 11,
             "pts": 64,
-            "logo": "https://media.api-sports.io/football/teams/8.png"
+            "logo": "https://media.api-sports.io/football/teams/74.png"
           },
           "away": {
             "name": "Ipswich",
@@ -79960,7 +81126,7 @@
             "goals": 0,
             "rank": 20,
             "pts": 52,
-            "logo": "https://media.api-sports.io/football/teams/32.png"
+            "logo": "https://media.api-sports.io/football/teams/46.png"
           },
           "predictions": {
             "winner": {
@@ -80184,7 +81350,7 @@
             "short": "Birmingham",
             "team_id": 22,
             "goals": 2,
-            "logo": "https://media.api-sports.io/football/teams/9.png"
+            "logo": "https://media.api-sports.io/football/teams/22.png"
           },
           "away": {
             "name": "Bristol City",
@@ -80193,7 +81359,7 @@
             "goals": 1,
             "rank": 24,
             "pts": 0,
-            "logo": "https://media.api-sports.io/football/teams/58.png"
+            "logo": "https://media.api-sports.io/football/teams/12.png"
           },
           "predictions": {
             "winner": {
@@ -80397,14 +81563,14 @@
             "goals": 1,
             "rank": 16,
             "pts": 57,
-            "logo": "https://media.api-sports.io/football/teams/263.png"
+            "logo": "https://media.api-sports.io/football/teams/24.png"
           },
           "away": {
             "name": "Swansea",
             "short": "Swansea",
             "team_id": 28,
             "goals": 1,
-            "logo": "https://media.api-sports.io/football/teams/74.png"
+            "logo": "https://media.api-sports.io/football/teams/28.png"
           },
           "predictions": {
             "winner": {
@@ -80584,14 +81750,14 @@
             "short": "Oxford",
             "team_id": 20,
             "goals": 4,
-            "logo": "https://media.api-sports.io/football/teams/95.png"
+            "logo": "https://media.api-sports.io/football/teams/20.png"
           },
           "away": {
             "name": "Sheffield Wed",
             "short": "Sheff Wed",
             "team_id": 26,
             "goals": 1,
-            "logo": "https://media.api-sports.io/football/teams/12.png"
+            "logo": "https://media.api-sports.io/football/teams/26.png"
           },
           "predictions": {
             "winner": {
@@ -85361,7 +86527,7 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 4.2,
+            "home": 4.33,
             "draw": 3.4,
             "away": 1.87,
             "event_id": 10506218,
@@ -85369,25 +86535,25 @@
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 4.2,
+              "1": 4.33,
               "X": 3.4,
               "2": 1.87
             },
             "Match goals 1.5": {
-              "Over": 1.3,
-              "Under": 3.32
+              "Over": 1.31,
+              "Under": 3.22
             },
             "Match goals 2.5": {
-              "Over": 2.01,
-              "Under": 1.74
+              "Over": 2.07,
+              "Under": 1.7
             },
             "Both teams to score": {
-              "Yes": 1.83,
-              "No": 1.91
+              "Yes": 1.91,
+              "No": 1.83
             },
             "Corners 2-Way 8.5": {
-              "Over": 1.27,
-              "Under": 3.34
+              "Over": 1.23,
+              "Under": 3.68
             }
           },
           "bookmaker_links": {
@@ -85397,8 +86563,8 @@
           },
           "corner_odds": {
             "8.5": {
-              "Over": 1.27,
-              "Under": 3.34
+              "Over": 1.23,
+              "Under": 3.68
             },
             "11.5": {
               "Over": 2.0,
@@ -85858,7 +87024,7 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 4.2,
+            "home": 4.33,
             "draw": 3.4,
             "away": 1.87,
             "event_id": 10506218,
@@ -85866,25 +87032,25 @@
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 4.2,
+              "1": 4.33,
               "X": 3.4,
               "2": 1.87
             },
             "Match goals 1.5": {
-              "Over": 1.3,
-              "Under": 3.32
+              "Over": 1.31,
+              "Under": 3.22
             },
             "Match goals 2.5": {
-              "Over": 2.01,
-              "Under": 1.74
+              "Over": 2.07,
+              "Under": 1.7
             },
             "Both teams to score": {
-              "Yes": 1.83,
-              "No": 1.91
+              "Yes": 1.91,
+              "No": 1.83
             },
             "Corners 2-Way 8.5": {
-              "Over": 1.27,
-              "Under": 3.34
+              "Over": 1.23,
+              "Under": 3.68
             }
           },
           "bookmaker_links": {
@@ -85894,8 +87060,8 @@
           },
           "corner_odds": {
             "8.5": {
-              "Over": 1.27,
-              "Under": 3.34
+              "Over": 1.23,
+              "Under": 3.68
             }
           },
           "bookmaker_meta": {
@@ -99263,50 +100429,57 @@
             "away": 2.3
           },
           "sportsbet_odds": {
-            "home": 2.3,
-            "draw": 3.1,
-            "away": 3.0,
+            "home": 1.25,
+            "draw": 4.1,
+            "away": 9.5,
             "event_id": 10495548,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/swedish-allsvenskan/elfsborg-v-mjallby-10495548"
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 2.3,
-              "X": 3.1,
-              "2": 3.0
-            },
-            "Match goals 1.5": {
-              "Over": 1.3,
-              "Under": 3.32
+              "1": 1.25,
+              "X": 4.1,
+              "2": 9.5
             },
             "Match goals 2.5": {
-              "Over": 1.97,
-              "Under": 1.77
+              "Over": 2.44,
+              "Under": 1.51
             },
             "Both teams to score": {
-              "Yes": 1.72,
-              "No": 2.0
+              "Yes": 2.0,
+              "No": 1.72
+            },
+            "Match goals 1.5": {
+              "Over": 1.28,
+              "Under": 3.45
+            },
+            "Match goals 3.5": {
+              "Over": 5.4,
+              "Under": 1.13
             }
           },
           "bookmaker_links": {
-            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/swedish-allsvenskan/elfsborg-v-mjallby-10495548",
-            "ladbrokes": "https://www.ladbrokes.com.au/sports/soccer/sweden/swedish-allsvenskan/if-elfsborg-vs-mjallby-aif/9a6e35b4-68fa-447f-b4b1-495ae54fb02e",
-            "neds": "https://www.neds.com.au/sports/soccer/sweden/swedish-allsvenskan/if-elfsborg-vs-mjallby-aif/9a6e35b4-68fa-447f-b4b1-495ae54fb02e"
-          },
-          "bookmaker_meta": {
-            "ladbrokes": {
-              "matched": true,
-              "source": "entain_event_request",
-              "event_id": "9a6e35b4-68fa-447f-b4b1-495ae54fb02e",
-              "event_name": "IF Elfsborg vs Mjallby AIF"
-            },
-            "neds": {
-              "matched": true,
-              "source": "entain_event_request",
-              "event_id": "9a6e35b4-68fa-447f-b4b1-495ae54fb02e",
-              "event_name": "IF Elfsborg vs Mjallby AIF"
-            }
+            "sportsbet": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/swedish-allsvenskan/elfsborg-v-mjallby-10495548"
           }
+        },
+        {
+          "id": "flashscore:zHabevSa",
+          "date": "2026-05-22",
+          "time": "FT",
+          "status": "upcoming",
+          "source": "Phase pipeline",
+          "source_status": "healthy",
+          "phase_status": "unmatched_market",
+          "phase_notes": "No Sportsbet event matched this fixture.",
+          "home": {
+            "name": "Elfsborg",
+            "short": "Elfsborg"
+          },
+          "away": {
+            "name": "Mjallby",
+            "short": "Mjallby"
+          },
+          "predictions": {}
         },
         {
           "id": "sportsbet:10500468",
@@ -100587,21 +101760,21 @@
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 2.55,
-              "X": 3.5,
+              "1": 2.62,
+              "X": 3.4,
               "2": 2.4
             },
             "Match goals 1.5": {
-              "Over": 1.2,
-              "Under": 4.25
+              "Over": 1.22,
+              "Under": 4.0
             },
             "Match goals 2.5": {
-              "Over": 1.68,
-              "Under": 2.1
+              "Over": 1.75,
+              "Under": 1.99
             },
             "Both teams to score": {
-              "Yes": 1.57,
-              "No": 2.3
+              "Yes": 1.62,
+              "No": 2.25
             }
           },
           "bookmaker_links": {
@@ -102877,17 +104050,17 @@
             "away": 3.7
           },
           "sportsbet_odds": {
-            "home": 1.8,
+            "home": 1.75,
             "draw": 3.8,
-            "away": 3.7,
+            "away": 3.8,
             "event_id": 10495090,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/norwegian-eliteserien/sandefjord-v-fredrikstad-10495090"
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 1.8,
+              "1": 1.75,
               "X": 3.8,
-              "2": 3.7
+              "2": 3.8
             },
             "Match goals 1.5": {
               "Over": 1.14,
@@ -102895,7 +104068,7 @@
             },
             "Match goals 2.5": {
               "Over": 1.53,
-              "Under": 2.4
+              "Under": 2.39
             },
             "Both teams to score": {
               "Yes": 1.5,

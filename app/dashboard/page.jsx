@@ -1829,6 +1829,20 @@ function expectedGoalsShape(xg) {
   return 'balanced game where one goal can change the read';
 }
 
+function stableNarrativeIndex(match, salt, count) {
+  if (!count) return 0;
+  const seed = `${match.id || ''}|${match.date || ''}|${match.home?.name || ''}|${match.away?.name || ''}|${salt}`;
+  let hash = 0;
+  for (let i = 0; i < seed.length; i += 1) {
+    hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
+  }
+  return hash % count;
+}
+
+function pickNarrative(match, salt, options) {
+  return options[stableNarrativeIndex(match, salt, options.length)];
+}
+
 function expectedGoalsWinnerLead(match, winner) {
   const xg = modelExpectedGoals(match);
   const homeName = teamNameForCopy(match.home?.name || 'Home');
@@ -1881,26 +1895,57 @@ function matchExpectationSummary(match, allMatches) {
   const suggested = suggestedPickForMatch(match, allMatches);
   const confidence = loadMatchConfidence(match, allMatches);
   const sentences = [];
+  const homeXg = xg ? formatExpectedGoals(xg.home) : null;
+  const awayXg = xg ? formatExpectedGoals(xg.away) : null;
 
   if (xg && shape) {
-    sentences.push(`${statusPrefix} a ${shape}: ${homeName} about ${formatExpectedGoals(xg.home)} model expected goals, ${awayName} about ${formatExpectedGoals(xg.away)}.`);
+    sentences.push(pickNarrative(match, 'expectation-shape', [
+      `${statusPrefix} a ${shape}: ${homeName} about ${homeXg} model expected goals, ${awayName} about ${awayXg}.`,
+      `This profiles as a ${shape}. The model has ${homeName} near ${homeXg} expected goals and ${awayName} near ${awayXg}.`,
+      `The game shape is ${shape}: ${homeName} ${homeXg} and ${awayName} ${awayXg} on the model expected-goals read.`,
+      `Main read: not a runaway either way. The expected-goals line is ${homeName} ${homeXg}, ${awayName} ${awayXg}, which points to a ${shape}.`,
+      `The model is pricing the match through chances first: ${homeName} ${homeXg} expected goals, ${awayName} ${awayXg}; that makes it a ${shape}.`,
+    ]));
   } else {
-    sentences.push(`${statusPrefix} based on model probabilities, bookmaker odds and recent team signals; model expected-goals detail is missing here.`);
+    sentences.push(pickNarrative(match, 'expectation-missing-xg', [
+      `${statusPrefix} based on model probabilities, bookmaker odds and recent team signals; model expected-goals detail is missing here.`,
+      `This read leans on probabilities, market prices and recent team signals because the model expected-goals detail is missing.`,
+      `There is no clean expected-goals number for this match, so the summary is driven by the market, team context and model probabilities.`,
+    ]));
   }
 
   const marketReads = [];
   if (goals?.pick) marketReads.push(`${goals.pick} ${goals.line ?? 2.5} goals`);
   if (displayBtts?.pick) marketReads.push(`BTTS ${displayBtts.pick}`);
   if (marketReads.length) {
-    sentences.push(`That points toward ${marketReads.join(' and ')} rather than a blind winner bet.`);
+    const marketText = marketReads.join(' and ');
+    sentences.push(pickNarrative(match, 'expectation-markets', [
+      `That points toward ${marketText} rather than a blind winner bet.`,
+      `The cleaner angle is ${marketText}; the winner market is less clear.`,
+      `For the match markets, ${marketText} fits the model better than forcing a side.`,
+      `That is why the card favours ${marketText} over a straight home-or-away call.`,
+      `The totals read carries more weight here, with ${marketText} the main direction.`,
+    ]));
   }
 
   if (suggested?.market) {
     const probability = fmtPct(suggested.modelProbability ?? modelProbabilityForMarket(suggested.market));
     const probabilityText = probability ? ` at ${probability}` : '';
-    sentences.push(`Best pick is ${suggested.label} ${formatMarketDetail(suggested.market)}${probabilityText}; ${confidence.label.toLowerCase()} means check the caution notes before staking.`);
+    const suggestedText = `${suggested.label} ${formatMarketDetail(suggested.market)}${probabilityText}`;
+    const confidenceText = confidence.label.toLowerCase();
+    sentences.push(pickNarrative(match, 'expectation-suggested', [
+      `Best pick is ${suggestedText}; ${confidenceText} means check the caution notes before staking.`,
+      `The pick to notice is ${suggestedText}. With ${confidenceText}, it is a lean, not a guarantee.`,
+      `Strongest card here is ${suggestedText}; the ${confidenceText} tag tells you how much trust to place in it.`,
+      `If taking one view from this match, start with ${suggestedText}. The ${confidenceText} label is the risk guide.`,
+      `Suggested pick: ${suggestedText}. Treat the ${confidenceText} label as the warning level around the data.`,
+    ]));
   } else if (confidence?.label) {
-    sentences.push(`${confidence.label}: there is not enough clean edge to force a suggested pick.`);
+    sentences.push(pickNarrative(match, 'expectation-no-pick', [
+      `${confidence.label}: there is not enough clean edge to force a suggested pick.`,
+      `${confidence.label}: the data is readable, but no market separates enough to call out.`,
+      `${confidence.label}: better to watch this one than turn a thin edge into a forced pick.`,
+    ]));
   }
 
   return sentences.slice(0, 3).join(' ');
@@ -3724,7 +3769,7 @@ function H2HContextPanel({ match, allMatches }) {
   );
 }
 
-function PredictionSummaryCard({ match, allMatches }) {
+function PredictionSummaryCard({ match, allMatches, voteState = null }) {
   const matchWithContext = { ...match, __allMatches: allMatches };
   const predictions = match.predictions || {};
   const precomputed = match.display_markets || {};
@@ -3747,12 +3792,13 @@ function PredictionSummaryCard({ match, allMatches }) {
   const expectationSummary = matchExpectationSummary(match, allMatches);
 
   const lines = [
-    { label: 'Winner', pick: winnerPick, text: winnerText, comparison: winnerComparison, result: winnerLowConfidence ? null : winner?.result },
-    { label: 'BTTS', pick: displayBtts ? formatMarketDetail(displayBtts) : null, text: bttsRationale(match), comparison: bttsComparison, result: displayBtts?.result },
-    { label: 'Goals', pick: predictions.ou_goals ? formatMarketDetail(predictions.ou_goals) : null, text: goalsRationale(match, allMatches), comparison: goalsComparison, result: predictions.ou_goals?.result },
-    { label: 'Cards', pick: displayCards ? formatMarketDetail(displayCards) : null, text: cardsRationale(match, allMatches), comparison: cardsComparison, result: displayCards?.result },
-    { label: 'Corners', pick: cornerMarket ? formatMarketDetail(cornerMarket) : null, text: cornersRationale(match, allMatches, cornerMarket), comparison: cornersComparison, result: cornerMarket?.result },
+    { label: 'Winner', voteKey: 'winner', pick: winnerPick, text: winnerText, comparison: winnerComparison, result: winnerLowConfidence ? null : winner?.result },
+    { label: 'BTTS', voteKey: 'btts', pick: displayBtts ? formatMarketDetail(displayBtts) : null, text: bttsRationale(match), comparison: bttsComparison, result: displayBtts?.result },
+    { label: 'Goals', voteKey: 'goals', pick: predictions.ou_goals ? formatMarketDetail(predictions.ou_goals) : null, text: goalsRationale(match, allMatches), comparison: goalsComparison, result: predictions.ou_goals?.result },
+    { label: 'Cards', voteKey: 'cards', pick: displayCards ? formatMarketDetail(displayCards) : null, text: cardsRationale(match, allMatches), comparison: cardsComparison, result: displayCards?.result },
+    { label: 'Corners', voteKey: 'corners', pick: cornerMarket ? formatMarketDetail(cornerMarket) : null, text: cornersRationale(match, allMatches, cornerMarket), comparison: cornersComparison, result: cornerMarket?.result },
   ].filter((row) => row.pick && (row.text || row.comparison));
+  const voteCutoff = formatVoteCutoff(voteState?.data?.cutoffAt);
 
   if (!lines.length) return null;
 
@@ -3763,7 +3809,16 @@ function PredictionSummaryCard({ match, allMatches }) {
           <h3 className="text-base font-semibold leading-6 text-ink">Prediction summary</h3>
           <p className="mt-1 text-xs text-slate-500">{confidence.reason}</p>
         </div>
+        {voteState && (
+          <div className="inline-flex items-center gap-2 rounded-md border border-slate-300 bg-slate-50 px-2.5 py-1.5 text-xs font-semibold text-slate-600">
+            <span>Crowd votes</span>
+            <span className="text-slate-400">·</span>
+            <span>{voteState.data?.locked ? 'Closed' : voteCutoff ? `Closes ${voteCutoff}` : 'Open'}</span>
+          </div>
+        )}
       </div>
+      {voteState?.message && <div className="mt-3 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700">{voteState.message}</div>}
+      {voteState?.error && <div className="mt-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700">{voteState.error}</div>}
       {expectationSummary && (
         <div className="mt-4 rounded-md border border-blue-200 bg-blue-50/70 px-3 py-3 text-sm leading-6 text-slate-700">
           <div className="text-xs font-semibold uppercase tracking-wide text-blue-900">What to expect</div>
@@ -3794,6 +3849,7 @@ function PredictionSummaryCard({ match, allMatches }) {
                   <span>{row.result}</span>
                 </span>
               )}
+              <MarketVoteControls voteState={voteState} marketKey={row.voteKey} />
             </span>
           </li>
         ))}
@@ -3919,6 +3975,91 @@ function MatchResultImportPanel({ match, onImported }) {
   );
 }
 
+function formatVoteCutoff(value) {
+  if (!value) return '';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  return date.toLocaleString('en-AU', {
+    day: '2-digit',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
+function voteSummaryOption(summary, marketKey, optionValue) {
+  return summary?.markets?.[marketKey]?.options?.[optionValue] || null;
+}
+
+function votePercent(summary, marketKey, optionValue) {
+  const market = summary?.markets?.[marketKey];
+  const count = Number(voteSummaryOption(summary, marketKey, optionValue)?.count || 0);
+  const total = Number(market?.total || 0);
+  return total > 0 ? Math.round((count / total) * 100) : 0;
+}
+
+function matchVoteErrorMessage(result, fallback = 'Could not load crowd votes yet.') {
+  const raw = result?.detail || result?.error || fallback;
+  if (raw === 'missing-token' || raw === 'invalid-token') return 'Sign in again before voting.';
+  if (raw === 'no-access') return 'Your account needs dashboard access before voting.';
+  if (raw === 'match-not-found') return 'Crowd voting could not find this match yet.';
+  if (raw === 'voting-closed') return result?.detail || 'Voting is closed for this match.';
+  return raw;
+}
+
+function MarketVoteControls({ voteState, marketKey }) {
+  if (!voteState || !marketKey) return null;
+  const { data, loading, busyKey, onVote } = voteState;
+  const market = data?.options?.[marketKey];
+  if (loading) {
+    return (
+      <div className="mt-3 inline-flex items-center gap-2 rounded-md border border-slate-200 bg-white/70 px-2.5 py-1.5 text-xs font-semibold text-slate-500">
+        <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+        Loading crowd votes
+      </div>
+    );
+  }
+  if (!market?.options?.length) return null;
+
+  const summary = data?.summary || {};
+  const selectedValue = data?.myVotes?.[marketKey];
+  const locked = Boolean(data?.locked);
+
+  return (
+    <div className="mt-3 rounded-md border border-slate-200 bg-white/75 p-2">
+      <div className="mb-1.5 flex items-center justify-between gap-2 text-[11px] font-semibold uppercase text-slate-500">
+        <span>Crowd vote</span>
+        <span>{summary.markets?.[marketKey]?.total || 0} votes</span>
+      </div>
+      <div className="grid gap-1.5 sm:grid-cols-3">
+        {market.options.map((option) => {
+          const selected = selectedValue === option.value;
+          const count = Number(voteSummaryOption(summary, marketKey, option.value)?.count || 0);
+          const percent = votePercent(summary, marketKey, option.value);
+          const busy = busyKey === `${marketKey}:${option.value}`;
+          return (
+            <button
+              key={option.value}
+              type="button"
+              disabled={locked || Boolean(busyKey)}
+              onClick={() => onVote?.(marketKey, option.value)}
+              className={`min-h-11 rounded-md border px-2 py-1.5 text-left transition disabled:cursor-not-allowed disabled:opacity-70 ${
+                selected ? 'border-emerald-400 bg-emerald-50 text-emerald-900 ring-1 ring-emerald-400' : 'border-slate-300 bg-white text-ink hover:border-slate-400'
+              }`}
+            >
+              <span className="flex items-center justify-between gap-1.5">
+                <span className="min-w-0 truncate text-xs font-semibold">{option.label}</span>
+                {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : selected ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" aria-hidden="true" /> : null}
+              </span>
+              <span className="mt-0.5 block text-[11px] font-semibold text-slate-500">{percent}% · {count}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerChange, favoriteTeams = [], onToggleFavoriteTeam, isPlatformOwner = false, onMatchImported }) {
   const predictions = match.predictions || {};
   const odds = displayThreeWayOdds(match);
@@ -3932,6 +4073,99 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
     selectedBookmaker.id === 'sportsbet'
       ? `${selectedBookmaker.name} odds ${formatOdds(odds.home)} / ${formatOdds(odds.draw)} / ${formatOdds(odds.away)}`
       : `${hasDirectBookmakerLink ? 'Open' : 'Find'} ${selectedBookmaker.name} match`;
+  const [voteData, setVoteData] = useState(null);
+  const [voteLoading, setVoteLoading] = useState(true);
+  const [voteBusyKey, setVoteBusyKey] = useState('');
+  const [voteError, setVoteError] = useState('');
+  const [voteMessage, setVoteMessage] = useState('');
+
+  useEffect(() => {
+    let active = true;
+    const controller = new AbortController();
+
+    async function loadVotes() {
+      setVoteLoading(true);
+      setVoteError('');
+      setVoteMessage('');
+      try {
+        const { getFirebaseAuth } = await import('../firebase');
+        const token = await getFirebaseAuth().currentUser?.getIdToken();
+        if (!token) throw new Error('Sign in again before voting.');
+        const params = new URLSearchParams({
+          matchId: String(match.id || ''),
+          date: String(match.date || ''),
+        });
+        const response = await fetch(`/api/match-votes?${params.toString()}`, {
+          headers: { Authorization: `Bearer ${token}` },
+          cache: 'no-store',
+          signal: controller.signal,
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(matchVoteErrorMessage(result));
+        if (active) setVoteData(result);
+      } catch (error) {
+        if (error.name === 'AbortError') return;
+        if (active) setVoteError(error.message || 'Could not load crowd votes yet.');
+      } finally {
+        if (active) setVoteLoading(false);
+      }
+    }
+
+    if (match.id) loadVotes();
+    return () => {
+      active = false;
+      controller.abort();
+    };
+  }, [match.date, match.id]);
+
+  const submitVote = useCallback(
+    async (marketKey, optionValue) => {
+      const busyKey = `${marketKey}:${optionValue}`;
+      setVoteBusyKey(busyKey);
+      setVoteError('');
+      setVoteMessage('');
+      try {
+        const { getFirebaseAuth } = await import('../firebase');
+        const token = await getFirebaseAuth().currentUser?.getIdToken();
+        if (!token) throw new Error('Sign in again before voting.');
+        const response = await fetch('/api/match-votes', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          cache: 'no-store',
+          body: JSON.stringify({
+            matchId: String(match.id || ''),
+            date: match.date,
+            market: marketKey,
+            option: optionValue,
+          }),
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(matchVoteErrorMessage(result));
+        setVoteData(result);
+        setVoteMessage('Vote saved.');
+      } catch (error) {
+        setVoteError(error.message || 'Could not save your vote.');
+      } finally {
+        setVoteBusyKey('');
+      }
+    },
+    [match.date, match.id],
+  );
+
+  const voteState = useMemo(
+    () => ({
+      data: voteData,
+      loading: voteLoading,
+      busyKey: voteBusyKey,
+      error: voteError,
+      message: voteMessage,
+      onVote: submitVote,
+    }),
+    [submitVote, voteBusyKey, voteData, voteError, voteLoading, voteMessage],
+  );
 
   useEffect(() => {
     function handleKeyDown(event) {
@@ -4036,7 +4270,7 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
           </div>
         )}
 
-        <PredictionSummaryCard match={match} allMatches={allMatches} />
+        <PredictionSummaryCard match={match} allMatches={allMatches} voteState={voteState} />
         <QualityDetailPanel confidence={confidence} />
 
         {Object.keys(actuals).length > 0 && (
