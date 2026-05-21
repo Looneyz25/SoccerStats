@@ -12,6 +12,7 @@ export const dynamic = 'force-dynamic';
 const PROJECT_ID = 'sports-predictions-f91fd';
 const META_DOC_ID = 'match_data';
 const FAST_DOC_ID = 'match_data_fast';
+const MANUAL_IMPORTS_COLLECTION = 'manualResultImports';
 const DEFAULT_SERVICE_ACCOUNT_PATH = path.join(process.cwd(), '.secrets', 'firebase-service-account.json');
 const OWNER_EMAIL = 'l.vorabouth@gmail.com';
 
@@ -63,6 +64,15 @@ function slugify(value, fallback) {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
   return slug || fallback;
+}
+
+function manualImportDocId(item, match) {
+  return slugify(
+    item.matchId ||
+      match?.id ||
+      `${item.date}-${item.league || ''}-${item.homeName}-${item.awayName}`,
+    `${item.date || 'unknown'}-${Date.now()}`,
+  );
 }
 
 function cleanKey(value) {
@@ -426,9 +436,7 @@ function selectFastLeagues(leagues) {
     const byteLength = Buffer.byteLength(JSON.stringify({ leagues: fastLeagues }));
     if (byteLength <= 900_000) return { fastLeagues, cutoff, byteLength, days };
   }
-  const fastLeagues = buildFastLeagues(leagues, today)
-    .map((league) => ({ ...league, matches: league.matches.filter((match) => match.status !== 'FT') }))
-    .filter((league) => league.matches.length > 0);
+  const fastLeagues = buildFastLeagues(leagues, today);
   return { fastLeagues, cutoff: today, byteLength: Buffer.byteLength(JSON.stringify({ leagues: fastLeagues })), days: 0 };
 }
 
@@ -508,6 +516,7 @@ export async function POST(request) {
   const leagueDocs = await loadLeagueDocs(db);
   const updated = [];
   const misses = [];
+  const manualImportDocs = [];
   const affectedLeagueIndexes = new Set();
   const affectedDates = new Set();
 
@@ -522,6 +531,24 @@ export async function POST(request) {
     league.matches[target.matchIndex] = nextMatch;
     affectedLeagueIndexes.add(target.leagueIndex);
     affectedDates.add(nextMatch.date || item.date);
+    manualImportDocs.push({
+      id: manualImportDocId(item, nextMatch),
+      data: {
+        matchId: String(item.matchId || nextMatch.id || ''),
+        date: nextMatch.date || item.date,
+        league: league.name || item.league || '',
+        homeName: nextMatch.home?.name || item.homeName,
+        awayName: nextMatch.away?.name || item.awayName,
+        score: item.score,
+        status: 'FT',
+        actuals: item.actuals,
+        source: 'sofascore_mobile_screenshot_json',
+        raw: item.raw || null,
+        importedAt: new Date().toISOString(),
+        importedBy: owner.uid,
+        importedByEmail: owner.email || null,
+      },
+    });
     updated.push({
       date: item.date,
       league: league.name,
@@ -563,6 +590,13 @@ export async function POST(request) {
   });
 
   const changedLeagueDocs = nextLeagueDocs.filter((league, index) => affectedLeagueIndexes.has(index));
+  for (const item of manualImportDocs) {
+    writer.set(metaRef.collection(MANUAL_IMPORTS_COLLECTION).doc(item.id), {
+      ...firestoreSafe(item.data),
+      updatedAt: FieldValue.serverTimestamp(),
+    }, { merge: true });
+  }
+
   for (const league of changedLeagueDocs) {
     writer.set(metaRef.collection('leagues').doc(league.docId), firestoreSafe({
       index: league.index,

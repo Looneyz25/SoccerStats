@@ -434,6 +434,16 @@ def team_payload(team, score=None):
     return payload
 
 
+def normalize_team_logo_payload(team):
+    if not isinstance(team, dict):
+        return
+    stable_logo = sofascore_team_logo(team.get("team_id"))
+    if stable_logo:
+        team["logo"] = stable_logo
+    elif isinstance(team.get("logo"), str) and "api.sofascore.app/api/v1/team/" in team.get("logo", ""):
+        team["logo"] = ""
+
+
 def load_store():
     if STORE.exists():
         return json.loads(STORE.read_text(encoding="utf-8"))
@@ -461,6 +471,11 @@ def phase_0_validate(store):
             if eid: seen[eid] = True
             keep.append(m)
         L["matches"] = keep
+
+    for L in store["leagues"]:
+        for m in L.get("matches", []):
+            normalize_team_logo_payload(m.get("home"))
+            normalize_team_logo_payload(m.get("away"))
 
     by_name = {info: L for info in TOURNAMENTS.values() for L in store["leagues"] if L["name"] == info}
     # ensure all canonical leagues exist

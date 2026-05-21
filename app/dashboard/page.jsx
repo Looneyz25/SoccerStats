@@ -39,6 +39,8 @@ const FAVORITE_TEAMS_STORAGE_KEY = 'favoriteTeams';
 const MAX_FAVORITE_TEAMS = 100;
 const PREDICTION_TRACKING_START_DATE = '2026-04-22';
 const WINNER_CONFIDENCE_THRESHOLD = 0.40;
+const BOOKMAKER_WINNER_GUARD_THRESHOLD = 0.65;
+const RESULT_IMPORT_TIMEOUT_MS = 30000;
 
 async function loadMatchData(date = '') {
   return loadMatchDataFromFirestore(date);
@@ -70,6 +72,15 @@ function parsePastedJson(text) {
       throw error;
     }
   }
+}
+
+function ownerImportErrorMessage(result, fallback = 'Result import failed.') {
+  const raw = result?.detail || result?.error || fallback;
+  if (raw === 'platform-owner-required') return 'Only the platform owner can import match results.';
+  if (raw === 'missing-token' || raw === 'invalid-token') return 'Sign in again before importing results.';
+  if (raw === 'no-matching-firestore-match') return 'No matching Firestore match was found for this card.';
+  if (raw === 'invalid-import-json') return result?.detail || 'The pasted JSON could not be read.';
+  return raw;
 }
 
 async function loadMatchDataWithRetry(date = '', retries = 1, retryDelayMs = 1200) {
@@ -317,14 +328,6 @@ function TeamBadge({ src, name }) {
       ) : (
         initials
       )}
-    </span>
-  );
-}
-
-function TeamScoreBadge({ value }) {
-  return (
-    <span className="inline-flex h-8 min-w-8 shrink-0 items-center justify-center rounded-md bg-ink px-2 text-sm font-semibold text-white shadow-sm">
-      {value ?? '-'}
     </span>
   );
 }
@@ -1137,6 +1140,7 @@ function winnerMarketWithGuidance(match, allMatches = []) {
     ? bookmakerForm.pointsPerMatch - pickedForm.pointsPerMatch
     : 0;
   const noExactH2h = Number(match.predictions?.factors?.h2h_n || 0) === 0;
+  const bookmakerGuardEligible = bookmakerSide.probability >= BOOKMAKER_WINNER_GUARD_THRESHOLD;
   const strongMarketDisagreement = bookProbabilityGap >= 0.18 || oddsRatio >= 2;
   const majorMarketDisagreement = bookProbabilityGap >= 0.25 || oddsRatio >= 3;
   const modelIsNotClear = !Number.isFinite(selectedModel) || selectedModel < 0.5 || modelLead <= 0.1;
@@ -1144,6 +1148,7 @@ function winnerMarketWithGuidance(match, allMatches = []) {
   const contextSupportsBookmaker = pickedNoWins || bookmakerFormEdge >= 0.35 || noExactH2h;
 
   const shouldGuideToBookmaker =
+    bookmakerGuardEligible &&
     !modelCanOverrideBookmaker &&
     (majorMarketDisagreement || (strongMarketDisagreement && modelIsNotClear && contextSupportsBookmaker));
   if (!shouldGuideToBookmaker) return withWinnerConfidenceGate(match, market);
@@ -1212,9 +1217,10 @@ function WinnerPredictionMeta({ match, side, modelProbability, winner = match.pr
     return <div className="mt-2 h-7" aria-hidden="true" />;
   }
   const modelText = fmtPct(modelProbability);
+  const predictionLabel = side === 'draw' ? 'Draw' : 'Prediction';
   return (
     <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs">
-      <span className="inline-flex h-7 items-center rounded-md bg-white/70 px-2 font-semibold text-slate-700">Prediction</span>
+      <span className="inline-flex h-7 items-center rounded-md bg-white/70 px-2 font-semibold text-slate-700">{predictionLabel}</span>
       {modelText && <span className="inline-flex h-7 items-center rounded-md bg-white/70 px-2 font-semibold text-slate-700">Model {modelText}</span>}
       {winner.result && (
         <span className={`inline-flex h-7 items-center gap-1 rounded-md font-semibold leading-none ${visibleResultLabel(winner.result) ? 'px-2' : 'px-1.5'} ${resultBadgeClass(winner.result)}`}>
@@ -1303,8 +1309,8 @@ function dataQualityForMatch(match) {
   if (match.sportsbet_odds?.event_url) signals.push('direct Sportsbet');
   else cautions.push('bookmaker link fallback');
 
-  if (Number.isFinite(Number(f.lambda_home)) && Number.isFinite(Number(f.lambda_away))) signals.push('model xG');
-  else cautions.push('model xG missing');
+  if (Number.isFinite(Number(f.lambda_home)) && Number.isFinite(Number(f.lambda_away))) signals.push('model expected goals');
+  else cautions.push('model expected goals missing');
 
   if ((match.team_streaks || []).length >= 2) signals.push('team streaks');
   else cautions.push('thin team streaks');
@@ -1346,6 +1352,73 @@ function normalizeConfidenceLabel(confidence) {
 
 function loadMatchConfidence(match, allMatches) {
   return normalizeConfidenceLabel(match.display_summary?.confidence) || confidenceForMatch(match, allMatches);
+}
+
+function confidenceDetailCopy(confidence) {
+  if (!confidence) return 'Confidence is based on odds, model inputs, recent team context, H2H, and data availability.';
+  if (confidence.tone === 'positive') return 'Strong confidence means the model sees a usable edge and enough supporting data behind it.';
+  if (confidence.tone === 'warning') return 'Lower confidence means the pick depends on thin data, missing odds, or signals that disagree.';
+  return 'Usable confidence means there is enough context to show the pick, but it still needs normal caution.';
+}
+
+function QualityDetailPanel({ confidence }) {
+  const quality = confidence?.quality;
+  if (!confidence || !quality) return null;
+  const signals = Array.isArray(quality.signals) ? quality.signals : [];
+  const cautions = Array.isArray(quality.cautions) ? quality.cautions : [];
+
+  return (
+    <div className="rounded-lg border border-slate-300 bg-white p-4 shadow-panel">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h3 className="text-sm font-semibold text-ink">Data confidence</h3>
+          <p className="mt-1 text-sm leading-6 text-slate-600">{confidenceDetailCopy(confidence)}</p>
+        </div>
+        <div className="flex shrink-0 flex-wrap gap-1.5">
+          <ConfidenceBadge confidence={confidence} />
+          <span className={`inline-flex items-center rounded-md border px-2 py-1 text-xs font-semibold leading-none ${toneBadgeClass(quality.tone)}`}>
+            {quality.label}
+          </span>
+        </div>
+      </div>
+
+      <div className="mt-3 grid gap-3 sm:grid-cols-2">
+        <div className="rounded-md border border-emerald-200 bg-emerald-50/60 p-3">
+          <div className="text-xs font-semibold uppercase text-emerald-800">Supporting signals</div>
+          {signals.length ? (
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {signals.map((item) => (
+                <span key={item} className="rounded-md border border-emerald-200 bg-white px-2 py-1 text-xs font-semibold text-emerald-800">
+                  {item}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-2 text-xs leading-5 text-emerald-900">No strong supporting data was available for this match.</p>
+          )}
+        </div>
+
+        <div className="rounded-md border border-amber-200 bg-amber-50/70 p-3">
+          <div className="text-xs font-semibold uppercase text-amber-900">Caution notes</div>
+          {cautions.length ? (
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {cautions.map((item) => (
+                <span key={item} className="rounded-md border border-amber-200 bg-white px-2 py-1 text-xs font-semibold text-amber-900">
+                  {item}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-2 text-xs leading-5 text-amber-950">No major caution flags for the available data.</p>
+          )}
+        </div>
+      </div>
+
+      <div className="mt-3 rounded-md bg-slate-50 px-3 py-2 text-xs leading-5 text-slate-600">
+        Score {quality.score ?? 0}: odds, direct bookmaker link, model expected goals, team streaks, H2H context and league quality all contribute to this label.
+      </div>
+    </div>
+  );
 }
 
 function sameTeamId(left, right) {
@@ -1734,6 +1807,105 @@ function h2hDuelSummary(match) {
   return { count, homeWins, awayWins, draws };
 }
 
+function modelExpectedGoals(match) {
+  const f = match.predictions?.factors || {};
+  const home = Number(f.lambda_home);
+  const away = Number(f.lambda_away);
+  if (!Number.isFinite(home) || !Number.isFinite(away)) return null;
+  return { home, away, total: home + away };
+}
+
+function formatExpectedGoals(value) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return null;
+  return number.toFixed(1);
+}
+
+function expectedGoalsShape(xg) {
+  if (!xg) return null;
+  if (xg.total >= 3.05) return 'open game with chances for both sides';
+  if (xg.total >= 2.55) return 'game with enough goal threat to respect the over';
+  if (xg.total <= 2.15) return 'tight, lower-scoring game';
+  return 'balanced game where one goal can change the read';
+}
+
+function expectedGoalsWinnerLead(match, winner) {
+  const xg = modelExpectedGoals(match);
+  const homeName = teamNameForCopy(match.home?.name || 'Home');
+  const awayName = teamNameForCopy(match.away?.name || 'Away');
+  if (winner.guidance?.type === 'bookmaker_guard') {
+    const rows = winnerProbabilityBreakdown(match) || [];
+    const originalType = winner.guidance.originalType;
+    const originalName = teamNameForSide(originalType, match) || winner.guidance.originalPick || 'the original model side';
+    const guidedName = teamNameForSide(winner.type, match) || winner.pick || 'the bookmaker side';
+    const originalModel = fmtPct(rows.find((row) => row.key === originalType)?.model);
+    const guidedModel = fmtPct(rows.find((row) => row.key === winner.type)?.model);
+    const originalModelText = originalModel ? ` at ${originalModel}` : '';
+    const guidedModelText = guidedModel ? ` (${guidedModel} model)` : '';
+    const xgText = xg
+      ? ` Expected goals were ${homeName} ${formatExpectedGoals(xg.home)} vs ${awayName} ${formatExpectedGoals(xg.away)}.`
+      : '';
+    return `Raw model leaned ${originalName}${originalModelText}, but the visible winner was guarded to ${guidedName}${guidedModelText} because the bookmaker market strongly disagreed.${xgText}`;
+  }
+  if (!xg) {
+    if (winner.type === 'draw') return 'The model sees this as tight, but expected-goals detail is not available for this match.';
+    const pickedName = winner.type === 'away' ? awayName : homeName;
+    return `The model leans ${pickedName}, but expected-goals detail is not available for this match.`;
+  }
+
+  const homeXg = formatExpectedGoals(xg.home);
+  const awayXg = formatExpectedGoals(xg.away);
+  const gap = Math.abs(xg.home - xg.away);
+  if (winner.type === 'draw' || gap < 0.18) {
+    return `This looks tight: our model has ${homeName} around ${homeXg} expected goals and ${awayName} around ${awayXg}.`;
+  }
+
+  const pickedName = winner.type === 'away' ? awayName : homeName;
+  const otherName = winner.type === 'away' ? homeName : awayName;
+  const pickedXg = winner.type === 'away' ? awayXg : homeXg;
+  const otherXg = winner.type === 'away' ? homeXg : awayXg;
+  return `The model leans ${pickedName} because its expected-goals read is stronger: about ${pickedXg} for ${pickedName} vs ${otherXg} for ${otherName}.`;
+}
+
+function matchExpectationSummary(match, allMatches) {
+  const stored = match.display_summary?.expectationSummary || match.display_summary?.plainEnglishSummary;
+  if (typeof stored === 'string' && stored.trim()) return stored.trim();
+
+  const homeName = teamNameForCopy(match.home?.name || 'Home');
+  const awayName = teamNameForCopy(match.away?.name || 'Away');
+  const xg = modelExpectedGoals(match);
+  const statusPrefix = match.status === 'FT' ? 'The pre-match read was' : 'Expect';
+  const shape = expectedGoalsShape(xg);
+  const displayBtts = match.display_markets?.btts?.market || displayBttsMarket(match.predictions?.btts, match);
+  const goals = match.display_markets?.goals?.market || match.predictions?.ou_goals;
+  const suggested = suggestedPickForMatch(match, allMatches);
+  const confidence = loadMatchConfidence(match, allMatches);
+  const sentences = [];
+
+  if (xg && shape) {
+    sentences.push(`${statusPrefix} a ${shape}: ${homeName} about ${formatExpectedGoals(xg.home)} model expected goals, ${awayName} about ${formatExpectedGoals(xg.away)}.`);
+  } else {
+    sentences.push(`${statusPrefix} based on model probabilities, bookmaker odds and recent team signals; model expected-goals detail is missing here.`);
+  }
+
+  const marketReads = [];
+  if (goals?.pick) marketReads.push(`${goals.pick} ${goals.line ?? 2.5} goals`);
+  if (displayBtts?.pick) marketReads.push(`BTTS ${displayBtts.pick}`);
+  if (marketReads.length) {
+    sentences.push(`That points toward ${marketReads.join(' and ')} rather than a blind winner bet.`);
+  }
+
+  if (suggested?.market) {
+    const probability = fmtPct(suggested.modelProbability ?? modelProbabilityForMarket(suggested.market));
+    const probabilityText = probability ? ` at ${probability}` : '';
+    sentences.push(`Best pick is ${suggested.label} ${formatMarketDetail(suggested.market)}${probabilityText}; ${confidence.label.toLowerCase()} means check the caution notes before staking.`);
+  } else if (confidence?.label) {
+    sentences.push(`${confidence.label}: there is not enough clean edge to force a suggested pick.`);
+  }
+
+  return sentences.slice(0, 3).join(' ');
+}
+
 function winnerRationale(match, allMatches, winnerMarket = null) {
   const w = winnerMarket || match.predictions?.winner;
   const f = match.predictions?.factors || {};
@@ -1746,13 +1918,7 @@ function winnerRationale(match, allMatches, winnerMarket = null) {
   const priceComparison = modelVsBookmakerComparison({ ...match, __allMatches: allMatches }, 'winner', w);
   const parts = [];
 
-  if (w.type === 'home') {
-    parts.push(`The model leans ${homeName} because it expects them to create more good chances than ${awayName}.`);
-  } else if (w.type === 'away') {
-    parts.push(`The model leans ${awayName} because it expects them to create more good chances than ${homeName}.`);
-  } else {
-    parts.push('The model sees this as tight, with both teams projected close on chances.');
-  }
+  parts.push(expectedGoalsWinnerLead(match, w));
   if (priceComparison?.badge?.label === 'Verify pick') {
     parts.push('This is not a clean value bet yet; the market/context mismatch needs checking before trusting the winner.');
   }
@@ -1869,9 +2035,9 @@ function bttsRationale(match) {
   if (Number.isFinite(lh) && Number.isFinite(la)) {
     const pBoth = (1 - Math.exp(-lh)) * (1 - Math.exp(-la));
     if (b.pick === 'No') {
-      parts.push(`${((1 - pBoth) * 100).toFixed(0)}% chance at least one team blanks`);
+      parts.push(`BTTS No is the read because the model gives about ${((1 - pBoth) * 100).toFixed(0)}% chance that at least one team does not score.`);
     } else {
-      parts.push(`${(pBoth * 100).toFixed(0)}% chance both teams score`);
+      parts.push(`BTTS Yes is the read because the model gives about ${(pBoth * 100).toFixed(0)}% chance both teams score.`);
     }
   }
   const streakHints = (match.team_streaks || []).filter((s) => {
@@ -1934,8 +2100,8 @@ function goalsRationale(match, allMatches) {
   }
 
   const lead = g.pick === 'Over'
-    ? `The model leans Over ${line}: ${pct}% chance of 3 or more goals, with ${total} expected goals.`
-    : `The model leans Under ${line}: ${underPct}% chance the match stays below 3 goals, even though there is still a ${pct}% goal-risk. Expected total is ${total}.`;
+    ? `Goals lean Over ${line}: about ${pct}% chance of 3 or more goals, with ${total} model expected goals.`
+    : `Goals lean Under ${line}: about ${underPct}% chance the match stays below 3 goals, even though there is still ${pct}% goal-risk. Model expected goals total is ${total}.`;
   return formParts.length ? `${lead} · ${formParts.join(' · ')}` : lead;
 }
 
@@ -2443,7 +2609,7 @@ function streakResultFor(streak, match) {
   return null;
 }
 
-function Stat({ icon: Icon, label, value, tone = 'text-ink' }) {
+function Stat({ icon: Icon, label, value, tone = 'text-ink', sublabel = '' }) {
   return (
     <div className="min-w-0 border-b border-line bg-white px-3 py-3 text-center sm:border-b-0 sm:border-r sm:px-4 last:border-r-0">
       <div className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-normal text-slate-500">
@@ -2451,6 +2617,7 @@ function Stat({ icon: Icon, label, value, tone = 'text-ink' }) {
         <span className="truncate">{label}</span>
       </div>
       <div className={`mt-1 flex justify-center text-xl font-semibold sm:text-2xl ${tone}`}>{value}</div>
+      {sublabel && <div className="mt-1 text-[11px] font-semibold uppercase text-slate-400">{sublabel}</div>}
     </div>
   );
 }
@@ -3376,11 +3543,26 @@ function ResultsReview({ matches, selectedDate, reviewSummary, activeReviewFilte
     { key: 'week', label: 'This week' },
     { key: 'all', label: 'All time' },
   ];
+  const activeScope = scopeOptions.find((option) => option.key === reviewScope) || scopeOptions[0];
+  const weekEnd = selectedWeek ? addDaysToIsoDate(selectedWeek, 6) : '';
+  const rangeLabel =
+    reviewScope === 'date'
+      ? selectedDate && selectedDate !== 'all' ? formatDateDMY(selectedDate) : 'Selected date'
+      : reviewScope === 'week' && selectedWeek
+        ? `${formatDateDMY(selectedWeek)} to ${formatDateDMY(weekEnd)}`
+        : 'All time';
+  const rangeTitle = reviewScope === 'date' ? 'Date' : activeScope.label;
 
   return (
     <section className="mt-3 rounded-lg border border-slate-300 bg-white p-3 shadow-panel sm:mt-5 sm:p-4">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-base font-semibold text-ink">Results review</h2>
+        <div>
+          <h2 className="text-base font-semibold text-ink">Results review</h2>
+          <div className="mt-1 flex flex-wrap items-center gap-1.5 text-xs font-semibold text-slate-500">
+            <span className="rounded-md bg-slate-100 px-2 py-1 text-ink">{rangeTitle}: {rangeLabel}</span>
+            <span>Tracked from {formatDateDMY(PREDICTION_TRACKING_START_DATE)}</span>
+          </div>
+        </div>
         <div className="grid shrink-0 grid-cols-3 gap-1 text-xs font-semibold">
           {scopeOptions.map((option) => {
             const active = reviewScope === option.key;
@@ -3409,18 +3591,22 @@ function ResultsReview({ matches, selectedDate, reviewSummary, activeReviewFilte
         <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
           {rows.map((row) => {
             const active = activeReviewFilter === row.key;
+            const isSuggested = row.key === 'suggested';
             return (
               <button
                 key={row.key}
                 type="button"
                 onClick={() => onReviewFilterChange?.(active ? 'all' : row.key)}
                 aria-pressed={active}
-                className={`rounded-md border px-2.5 py-2 text-left transition sm:px-3 ${
+                className={`rounded-md border px-2.5 py-2 text-left transition sm:px-3 ${isSuggested ? 'col-span-2 sm:col-span-2' : ''} ${
                   active ? 'border-ink bg-white ring-2 ring-ink/15' : 'border-slate-300 bg-field hover:border-slate-400 hover:bg-white'
                 }`}
               >
                 <div className="flex items-center justify-between gap-1.5">
-                  <span className="text-xs font-semibold uppercase text-slate-500">{row.label}</span>
+                  <span className="flex min-w-0 flex-wrap items-center gap-1.5 text-xs font-semibold uppercase text-slate-500">
+                    <span>{row.label}</span>
+                    {isSuggested && <span className="rounded bg-white px-1.5 py-0.5 text-[10px] text-slate-500 ring-1 ring-slate-200">Primary</span>}
+                  </span>
                   <span className={`rounded px-1.5 py-0.5 text-xs font-semibold ${row.hitRate >= 55 ? 'bg-emerald-100 text-emerald-700' : row.hitRate < 45 ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600'}`}>
                     {row.hitRate}%
                   </span>
@@ -3558,6 +3744,7 @@ function PredictionSummaryCard({ match, allMatches }) {
   const winnerText = winnerLowConfidence
     ? `Bookmaker no-vig probability for every side is below ${Math.round(WINNER_CONFIDENCE_THRESHOLD * 100)}%; outside the band where our backtest shows real edge.`
     : winnerRationale(match, allMatches, winner);
+  const expectationSummary = matchExpectationSummary(match, allMatches);
 
   const lines = [
     { label: 'Winner', pick: winnerPick, text: winnerText, comparison: winnerComparison, result: winnerLowConfidence ? null : winner?.result },
@@ -3577,6 +3764,12 @@ function PredictionSummaryCard({ match, allMatches }) {
           <p className="mt-1 text-xs text-slate-500">{confidence.reason}</p>
         </div>
       </div>
+      {expectationSummary && (
+        <div className="mt-4 rounded-md border border-blue-200 bg-blue-50/70 px-3 py-3 text-sm leading-6 text-slate-700">
+          <div className="text-xs font-semibold uppercase tracking-wide text-blue-900">What to expect</div>
+          <p className="mt-1">{expectationSummary}</p>
+        </div>
+      )}
       <ul className="mt-4 space-y-3 text-sm">
         {lines.map((row) => (
           <li key={row.label} className={`grid gap-3 rounded-md px-3 py-3 sm:grid-cols-[24rem_minmax(0,1fr)] sm:items-start ${summaryRowClass(row.result)}`}>
@@ -3613,15 +3806,20 @@ function MatchResultImportPanel({ match, onImported }) {
   const [open, setOpen] = useState(false);
   const [jsonText, setJsonText] = useState('');
   const [busy, setBusy] = useState(false);
+  const [busyStage, setBusyStage] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
   async function submitImport(event) {
     event.preventDefault();
     setBusy(true);
+    setBusyStage('Checking JSON...');
     setMessage('');
     setError('');
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), RESULT_IMPORT_TIMEOUT_MS);
     try {
+      if (!jsonText.trim()) throw new Error('Paste the JSON result first.');
       const parsedRaw = parsePastedJson(jsonText);
       const parsed = Array.isArray(parsedRaw) ? parsedRaw[0] : parsedRaw;
       if (!parsed || typeof parsed !== 'object') throw new Error('Paste one JSON result object for this match.');
@@ -3635,9 +3833,11 @@ function MatchResultImportPanel({ match, onImported }) {
         status: 'FT',
       };
       const { getFirebaseAuth } = await import('../firebase');
+      setBusyStage('Checking owner access...');
       const token = await getFirebaseAuth().currentUser?.getIdToken();
       if (!token) throw new Error('Sign in again before importing results.');
 
+      setBusyStage('Updating Firestore...');
       const response = await fetch('/api/admin/import-result', {
         method: 'POST',
         headers: {
@@ -3645,16 +3845,30 @@ function MatchResultImportPanel({ match, onImported }) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload),
+        signal: controller.signal,
       });
       const result = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(result.detail || result.error || 'Result import failed.');
+      if (!response.ok) throw new Error(ownerImportErrorMessage(result));
       const updated = result.updated?.[0];
-      setMessage(updated ? `Updated ${updated.home} ${updated.score} ${updated.away}.` : 'Match updated.');
-      await onImported?.(match.date);
+      setBusyStage('Refreshing match...');
+      try {
+        await onImported?.(match.date);
+        setJsonText('');
+        setOpen(false);
+        setMessage(updated ? `Updated ${updated.home} ${updated.score} ${updated.away}. Card refreshed.` : 'Match updated and refreshed.');
+      } catch {
+        setMessage(updated ? `Updated ${updated.home} ${updated.score} ${updated.away}. Refresh the page if the card has not changed yet.` : 'Match updated. Refresh the page if the card has not changed yet.');
+      }
     } catch (err) {
-      setError(err.message || 'Could not import this result.');
+      if (err.name === 'AbortError') {
+        setError('Upload timed out after 30 seconds. Refresh and check the match before trying again.');
+      } else {
+        setError(err.message || 'Could not import this result.');
+      }
     } finally {
+      window.clearTimeout(timeoutId);
       setBusy(false);
+      setBusyStage('');
     }
   }
 
@@ -3690,11 +3904,11 @@ function MatchResultImportPanel({ match, onImported }) {
             </div>
             <button
               type="submit"
-              disabled={busy}
+              disabled={busy || !jsonText.trim()}
               className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-ink px-4 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-wait disabled:bg-slate-500"
             >
               {busy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <UploadCloud className="h-4 w-4" aria-hidden="true" />}
-              Update Firestore
+              {busy ? busyStage || 'Updating...' : 'Update Firestore'}
             </button>
           </div>
           {message && <div className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-xs font-semibold text-emerald-700">{message}</div>}
@@ -3713,6 +3927,7 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
   const selectedBookmakerHref = bookmakerUrl(match, selectedBookmaker.id);
   const sofaScoreHref = sofascoreEventUrl(match);
   const hasDirectBookmakerLink = hasDirectBookmakerMatchLink(match, selectedBookmaker.id);
+  const confidence = loadMatchConfidence(match, allMatches);
   const bookmakerButtonLabel =
     selectedBookmaker.id === 'sportsbet'
       ? `${selectedBookmaker.name} odds ${formatOdds(odds.home)} / ${formatOdds(odds.draw)} / ${formatOdds(odds.away)}`
@@ -3822,6 +4037,7 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
         )}
 
         <PredictionSummaryCard match={match} allMatches={allMatches} />
+        <QualityDetailPanel confidence={confidence} />
 
         {Object.keys(actuals).length > 0 && (
           <div>
@@ -3904,9 +4120,8 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
                 <TeamBadge src={teamLogo(match, 'home')} name={match.home?.name} />
                 <div className="min-w-0 whitespace-normal break-words text-left text-sm font-semibold leading-snug text-ink sm:text-base">{match.home?.name}</div>
               </div>
-              <div className="flex shrink-0 items-center gap-1">
+              <div className="flex shrink-0 items-center gap-1.5">
                 <TeamFavoriteButton teamName={match.home?.name} favoriteTeams={favoriteTeams} onToggleFavoriteTeam={onToggleFavoriteTeam} />
-                {isFinished && <TeamScoreBadge value={match.home?.goals} />}
               </div>
             </div>
             <WinnerPredictionMeta match={match} side="home" modelProbability={winnerModelPct} winner={displayWinner} />
@@ -3917,9 +4132,8 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
                 <TeamBadge src={teamLogo(match, 'away')} name={match.away?.name} />
                 <div className="min-w-0 whitespace-normal break-words text-left text-sm font-semibold leading-snug text-ink sm:text-base">{match.away?.name}</div>
               </div>
-              <div className="flex shrink-0 items-center gap-1">
+              <div className="flex shrink-0 items-center gap-1.5">
                 <TeamFavoriteButton teamName={match.away?.name} favoriteTeams={favoriteTeams} onToggleFavoriteTeam={onToggleFavoriteTeam} />
-                {isFinished && <TeamScoreBadge value={match.away?.goals} />}
               </div>
             </div>
             <WinnerPredictionMeta match={match} side="away" modelProbability={winnerModelPct} winner={displayWinner} />
@@ -3932,16 +4146,20 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
           )}
         </div>
 
-        <div className="hidden items-center gap-3 sm:grid sm:grid-cols-[1fr_auto_1fr]">
-          <div className={`min-h-[5.75rem] min-w-0 rounded-md border px-2.5 py-2 text-left ${winnerPredictionCardClass(match, 'home', displayWinner)}`}>
-            <div className="flex min-w-0 items-center gap-2">
-              <TeamBadge src={teamLogo(match, 'home')} name={match.home?.name} />
-              <div className="min-w-0 whitespace-normal break-words text-base font-semibold leading-snug text-ink">{match.home?.name}</div>
-              <TeamFavoriteButton teamName={match.home?.name} favoriteTeams={favoriteTeams} onToggleFavoriteTeam={onToggleFavoriteTeam} />
+        <div className="hidden items-stretch gap-2 sm:grid sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] sm:gap-3">
+          <div className={`flex min-h-[5.75rem] min-w-0 flex-col justify-between rounded-md border px-2.5 py-2 text-left ${winnerPredictionCardClass(match, 'home', displayWinner)}`}>
+            <div className="flex min-w-0 items-center justify-between gap-2">
+              <div className="flex min-w-0 items-center gap-2">
+                <TeamBadge src={teamLogo(match, 'home')} name={match.home?.name} />
+                <div className="min-w-0 whitespace-normal break-words text-base font-semibold leading-snug text-ink">{match.home?.name}</div>
+              </div>
+              <div className="flex shrink-0 items-center gap-1.5">
+                <TeamFavoriteButton teamName={match.home?.name} favoriteTeams={favoriteTeams} onToggleFavoriteTeam={onToggleFavoriteTeam} />
+              </div>
             </div>
             <WinnerPredictionMeta match={match} side="home" modelProbability={winnerModelPct} winner={displayWinner} />
           </div>
-          <div className={`justify-self-center text-center font-semibold ${winnerPredictionScoreClass(match, displayWinner)}`}>
+          <div className={`self-center justify-self-center text-center font-semibold ${winnerPredictionScoreClass(match, displayWinner)}`}>
             <div>
               {match.status === 'FT' ? (
                 `${match.home?.goals ?? '-'}-${match.away?.goals ?? '-'}`
@@ -3951,13 +4169,19 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
                 </span>
               )}
             </div>
-            <WinnerPredictionMeta match={match} side="draw" modelProbability={winnerModelPct} winner={displayWinner} />
+            {winnerPredictionSide(match, displayWinner) === 'draw' && (
+              <WinnerPredictionMeta match={match} side="draw" modelProbability={winnerModelPct} winner={displayWinner} />
+            )}
           </div>
-          <div className={`min-h-[5.75rem] min-w-0 rounded-md border px-2.5 py-2 text-left ${winnerPredictionCardClass(match, 'away', displayWinner)}`}>
-            <div className="flex min-w-0 items-center gap-2">
-              <TeamBadge src={teamLogo(match, 'away')} name={match.away?.name} />
-              <div className="min-w-0 whitespace-normal break-words text-base font-semibold leading-snug text-ink">{match.away?.name}</div>
-              <TeamFavoriteButton teamName={match.away?.name} favoriteTeams={favoriteTeams} onToggleFavoriteTeam={onToggleFavoriteTeam} />
+          <div className={`flex min-h-[5.75rem] min-w-0 flex-col justify-between rounded-md border px-2.5 py-2 text-left ${winnerPredictionCardClass(match, 'away', displayWinner)}`}>
+            <div className="flex min-w-0 items-center justify-between gap-2">
+              <div className="flex min-w-0 items-center gap-2">
+                <TeamBadge src={teamLogo(match, 'away')} name={match.away?.name} />
+                <div className="min-w-0 whitespace-normal break-words text-base font-semibold leading-snug text-ink">{match.away?.name}</div>
+              </div>
+              <div className="flex shrink-0 items-center gap-1.5">
+                <TeamFavoriteButton teamName={match.away?.name} favoriteTeams={favoriteTeams} onToggleFavoriteTeam={onToggleFavoriteTeam} />
+              </div>
             </div>
             <WinnerPredictionMeta match={match} side="away" modelProbability={winnerModelPct} winner={displayWinner} />
           </div>
@@ -4713,13 +4937,14 @@ function HomeInner() {
       <section className="mx-auto max-w-7xl px-2 py-3 sm:px-6 sm:py-5 lg:px-8">
         <div className="overflow-hidden rounded-lg border border-line bg-white">
           <div className="grid grid-cols-2 sm:grid-cols-5">
-            <Stat icon={Activity} label="Matches" value={stats.total} />
-            <Stat icon={CheckCircle2} label="Finished" value={stats.finished} tone="text-signal" />
-            <Stat icon={Clock3} label="Upcoming" value={stats.upcoming} tone="text-blue-700" />
-            <Stat icon={Goal} label="All-Time Hit Rate" value={`${stats.accuracy}%`} />
+            <Stat icon={Activity} label="Matches" value={stats.total} sublabel="All time" />
+            <Stat icon={CheckCircle2} label="Finished" value={stats.finished} tone="text-signal" sublabel="All time" />
+            <Stat icon={Clock3} label="Upcoming" value={stats.upcoming} tone="text-blue-700" sublabel="All time" />
+            <Stat icon={Goal} label="Hit Rate" value={`${stats.accuracy}%`} sublabel="All time" />
             <Stat
               icon={BarChart3}
-              label="All-Time Odds"
+              label="Odds Hit / Loss"
+              sublabel="All time"
               value={
                 <span className="flex flex-nowrap items-baseline gap-x-1.5 whitespace-nowrap text-lg sm:gap-x-2 sm:text-2xl">
                   <span className="text-signal">{formatOddsTotal(stats.oddsTotals?.hit)}</span>
