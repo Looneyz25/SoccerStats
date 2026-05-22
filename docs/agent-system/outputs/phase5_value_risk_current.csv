@@ -1,4 +1,4 @@
 run_timestamp,league,event_id,date,time,home,away,home_p,home_market,home_edge,home_ev,home_kelly,home_stake,home_decision,draw_p,draw_market,draw_edge,draw_ev,draw_kelly,draw_stake,draw_decision,away_p,away_market,away_edge,away_ev,away_kelly,away_stake,away_decision,top_side,top_decision,top_market_odds,top_p,top_edge,top_stake,risk_scale_factor,phase5_status,phase5_notes
-2026-05-22 17:57:58 ACST,J1 League,flashscore:fXvLSp0T,2026-05-22,20:00,Machida,Urawa,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-22 17:57:58 ACST,Allsvenskan,flashscore:l6SULOIj,2026-05-23,02:30,Djurgarden,Brommapojkarna,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-22 17:57:58 ACST,Serie A,flashscore:ln2VQVwR,2026-05-23,04:15,Fiorentina,Atalanta,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-22 18:59:47 ACST,J1 League,flashscore:fXvLSp0T,2026-05-22,20:00,Machida,Urawa,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-22 18:59:47 ACST,Allsvenskan,flashscore:l6SULOIj,2026-05-23,02:30,Djurgarden,Brommapojkarna,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-05-22 18:59:47 ACST,Serie A,flashscore:ln2VQVwR,2026-05-23,04:15,Fiorentina,Atalanta,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.

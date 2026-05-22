@@ -45,6 +45,11 @@ service cloud.firestore {
         allow read: if request.auth != null && (hasAccess() || isPlatformOwner() || request.auth.token.email == 'l.vorabouth@gmail.com');
         allow write: if false;
       }
+
+      match /dates/{dateId} {
+        allow read: if request.auth != null && (hasAccess() || isPlatformOwner() || request.auth.token.email == 'l.vorabouth@gmail.com');
+        allow write: if false;
+      }
     }
   }
 }

@@ -155,15 +155,13 @@ async function loadDateDoc(date) {
     .get();
   if (!snap.exists) return null;
   const data = snap.data() || {};
-  if (data.format !== 'date_doc_v1' || !Array.isArray(data.leagues)) {
-    throw new Error('date doc format unexpected');
-  }
+  if ((data.format && data.format !== 'date_doc_v1') || !Array.isArray(data.leagues)) return null;
   let allTimeSummary = data.allTimeSummary || null;
   if (!allTimeSummary) {
     allTimeSummary = await loadAllTimeSummary();
   }
   return {
-    captured_at: data.capturedAt || null,
+    captured_at: data.capturedAt || data.generated_at || null,
     source: data.source || null,
     date: data.date || safeDate,
     availableDates: Array.isArray(data.availableDates) ? data.availableDates : [],

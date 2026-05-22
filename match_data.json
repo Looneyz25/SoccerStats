@@ -281,7 +281,10 @@
             "goals": 1,
             "rank": 1,
             "pts": 24,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/arsenal.png",
+            "badge_storage_path": "badges/teams/arsenal.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/42.png"
           },
           "odds": {
             "home": 2.8,
@@ -510,7 +513,10 @@
             "goals": 1,
             "rank": 1,
             "pts": 24,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/arsenal.png",
+            "badge_storage_path": "badges/teams/arsenal.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/42.png"
           },
           "away": {
             "name": "Atlético Madrid",
@@ -807,15 +813,21 @@
           "prediction_locked": true
         }
       ],
-      "logo": "https://api.sofascore.app/api/v1/unique-tournament/7/image"
+      "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/leagues/uefa-champions-league.png",
+      "badge_storage_path": "badges/leagues/uefa-champions-league.png",
+      "badge_source": "league",
+      "badge_source_url": "https://media.api-sports.io/football/leagues/2.png"
     },
     {
       "id": 679,
       "name": "UEFA Europa League",
       "season": "2025/26",
       "round": null,
-      "logo": "https://api.sofascore.app/api/v1/unique-tournament/679/image",
-      "matches": []
+      "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/leagues/uefa-europa-league.png",
+      "matches": [],
+      "badge_storage_path": "badges/leagues/uefa-europa-league.png",
+      "badge_source": "league",
+      "badge_source_url": "https://media.api-sports.io/football/leagues/3.png"
     },
     {
       "id": 17,
@@ -835,7 +847,10 @@
             "goals": 3,
             "rank": 7,
             "pts": 53,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/brighton.png",
+            "badge_storage_path": "badges/teams/brighton.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/51.png"
           },
           "away": {
             "name": "Chelsea",
@@ -844,7 +859,10 @@
             "goals": 0,
             "rank": 8,
             "pts": 52,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/chelsea.png",
+            "badge_storage_path": "badges/teams/chelsea.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/49.png"
           },
           "venue": "American Express Stadium",
           "referee": {
@@ -1055,7 +1073,10 @@
             "goals": 2,
             "rank": 6,
             "pts": 56,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/bournemouth.png",
+            "badge_storage_path": "badges/teams/bournemouth.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/35.png"
           },
           "away": {
             "name": "Leeds",
@@ -1064,7 +1085,10 @@
             "goals": 2,
             "rank": 14,
             "pts": 47,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/leeds.png",
+            "badge_storage_path": "badges/teams/leeds.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/63.png"
           },
           "predictions": {
             "winner": {
@@ -1235,7 +1259,10 @@
             "rank": 10,
             "pts": 51,
             "goals": 0,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/sunderland.png",
+            "badge_storage_path": "badges/teams/sunderland.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/746.png"
           },
           "away": {
             "name": "Forest",
@@ -1419,7 +1446,10 @@
             "rank": 13,
             "pts": 49,
             "goals": 1,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/fulham.png",
+            "badge_storage_path": "badges/teams/fulham.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/36.png"
           },
           "away": {
             "name": "Aston Villa",
@@ -1428,7 +1458,10 @@
             "rank": 4,
             "pts": 62,
             "goals": 0,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/aston-villa.png",
+            "badge_storage_path": "badges/teams/aston-villa.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/66.png"
           },
           "predictions": {
             "winner": {
@@ -1653,7 +1686,10 @@
             "rank": 5,
             "pts": 59,
             "goals": 3,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/liverpool.png",
+            "badge_storage_path": "badges/teams/liverpool.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/40.png"
           },
           "away": {
             "name": "Crystal Palace",
@@ -1662,7 +1698,10 @@
             "rank": 15,
             "pts": 45,
             "goals": 1,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/crystal-palace.png",
+            "badge_storage_path": "badges/teams/crystal-palace.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/52.png"
           },
           "predictions": {
             "winner": {
@@ -1822,7 +1861,10 @@
             "rank": 18,
             "pts": 36,
             "goals": 2,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/west-ham.png",
+            "badge_storage_path": "badges/teams/west-ham.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/48.png"
           },
           "away": {
             "name": "Everton",
@@ -1831,7 +1873,10 @@
             "rank": 12,
             "pts": 49,
             "goals": 1,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/everton.png",
+            "badge_storage_path": "badges/teams/everton.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/45.png"
           },
           "predictions": {
             "winner": {
@@ -1980,7 +2025,10 @@
             "rank": 11,
             "pts": 49,
             "goals": 0,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/wolves.png",
+            "badge_storage_path": "badges/teams/wolves.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/39.png"
           },
           "away": {
             "name": "Tottenham",
@@ -1989,7 +2037,10 @@
             "rank": 17,
             "pts": 38,
             "goals": 1,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/tottenham.png",
+            "badge_storage_path": "badges/teams/tottenham.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/47.png"
           },
           "predictions": {
             "winner": {
@@ -2240,7 +2291,10 @@
             "rank": 1,
             "pts": 82,
             "goals": 1,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/arsenal.png",
+            "badge_storage_path": "badges/teams/arsenal.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/42.png"
           },
           "away": {
             "name": "Newcastle",
@@ -2249,7 +2303,10 @@
             "rank": 19,
             "pts": 21,
             "goals": 0,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/newcastle.png",
+            "badge_storage_path": "badges/teams/newcastle.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/34.png"
           },
           "predictions": {
             "winner": {
@@ -2487,7 +2544,10 @@
             "goals": 2,
             "rank": 3,
             "pts": 68,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/manchester-united.png",
+            "badge_storage_path": "badges/teams/manchester-united.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/33.png"
           },
           "away": {
             "name": "Brentford",
@@ -2496,7 +2556,10 @@
             "goals": 1,
             "rank": 9,
             "pts": 52,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/brentford.png",
+            "badge_storage_path": "badges/teams/brentford.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/55.png"
           },
           "odds": {
             "home": 1.85,
@@ -2696,7 +2759,10 @@
             "goals": 3,
             "rank": 9,
             "pts": 52,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/brentford.png",
+            "badge_storage_path": "badges/teams/brentford.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/55.png"
           },
           "away": {
             "name": "West Ham United",
@@ -2705,7 +2771,10 @@
             "goals": 0,
             "rank": 18,
             "pts": 36,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/west-ham-united.png",
+            "badge_storage_path": "badges/teams/west-ham-united.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/48.png"
           },
           "odds": {
             "home": 2,
@@ -2914,7 +2983,10 @@
             "goals": 3,
             "rank": 11,
             "pts": 49,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/newcastle-united.png",
+            "badge_storage_path": "badges/teams/newcastle-united.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/34.png"
           },
           "away": {
             "name": "Brighton & Hove Albion",
@@ -2923,7 +2995,10 @@
             "goals": 1,
             "rank": 7,
             "pts": 53,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/brighton-and-hove-albion.png",
+            "badge_storage_path": "badges/teams/brighton-and-hove-albion.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/51.png"
           },
           "odds": {
             "home": 2.5,
@@ -3145,7 +3220,10 @@
             "goals": 1,
             "rank": 20,
             "pts": 19,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/wolverhampton.png",
+            "badge_storage_path": "badges/teams/wolverhampton.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/39.png"
           },
           "away": {
             "name": "Sunderland",
@@ -3154,7 +3232,10 @@
             "goals": 1,
             "rank": 10,
             "pts": 51,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/sunderland.png",
+            "badge_storage_path": "badges/teams/sunderland.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/746.png"
           },
           "odds": {
             "home": 3,
@@ -3375,7 +3456,10 @@
             "goals": 3,
             "rank": 14,
             "pts": 47,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/leeds-united.png",
+            "badge_storage_path": "badges/teams/leeds-united.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/63.png"
           },
           "away": {
             "name": "Burnley",
@@ -3384,7 +3468,10 @@
             "goals": 1,
             "rank": 19,
             "pts": 21,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/burnley.png",
+            "badge_storage_path": "badges/teams/burnley.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/44.png"
           },
           "odds": {
             "home": 1.38,
@@ -3585,7 +3672,10 @@
             "goals": 3,
             "rank": 1,
             "pts": 82,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/arsenal.png",
+            "badge_storage_path": "badges/teams/arsenal.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/42.png"
           },
           "away": {
             "name": "Fulham",
@@ -3594,7 +3684,10 @@
             "goals": 0,
             "rank": 13,
             "pts": 49,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/fulham.png",
+            "badge_storage_path": "badges/teams/fulham.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/36.png"
           },
           "odds": {
             "home": 1.4,
@@ -3761,7 +3854,10 @@
             "goals": 3,
             "rank": 6,
             "pts": 56,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/bournemouth.png",
+            "badge_storage_path": "badges/teams/bournemouth.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/35.png"
           },
           "away": {
             "name": "Crystal Palace",
@@ -3770,7 +3866,10 @@
             "goals": 0,
             "rank": 15,
             "pts": 45,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/crystal-palace.png",
+            "badge_storage_path": "badges/teams/crystal-palace.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/52.png"
           },
           "predictions": {
             "winner": {
@@ -3994,7 +4093,10 @@
             "goals": 1,
             "rank": 8,
             "pts": 52,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/chelsea.png",
+            "badge_storage_path": "badges/teams/chelsea.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/49.png"
           },
           "away": {
             "name": "Nottingham Forest",
@@ -4003,7 +4105,10 @@
             "goals": 3,
             "rank": 16,
             "pts": 43,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/nottingham-forest.png",
+            "badge_storage_path": "badges/teams/nottingham-forest.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/65.png"
           },
           "predictions": {
             "winner": {
@@ -4190,7 +4295,10 @@
             "goals": 3,
             "rank": 3,
             "pts": 68,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/manchester-united.png",
+            "badge_storage_path": "badges/teams/manchester-united.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/33.png"
           },
           "away": {
             "name": "Liverpool FC",
@@ -4199,7 +4307,10 @@
             "goals": 2,
             "rank": 5,
             "pts": 59,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/liverpool-fc.png",
+            "badge_storage_path": "badges/teams/liverpool-fc.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/40.png"
           },
           "predictions": {
             "winner": {
@@ -4423,7 +4534,10 @@
             "goals": 1,
             "rank": 4,
             "pts": 62,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/aston-villa.png",
+            "badge_storage_path": "badges/teams/aston-villa.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/66.png"
           },
           "away": {
             "name": "Tottenham Hotspur",
@@ -4432,7 +4546,10 @@
             "goals": 2,
             "rank": 17,
             "pts": 38,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/tottenham-hotspur.png",
+            "badge_storage_path": "badges/teams/tottenham-hotspur.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/47.png"
           },
           "predictions": {
             "winner": {
@@ -4634,7 +4751,10 @@
             "goals": 3,
             "rank": 12,
             "pts": 49,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/everton.png",
+            "badge_storage_path": "badges/teams/everton.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/45.png"
           },
           "away": {
             "name": "Manchester City",
@@ -4643,7 +4763,10 @@
             "goals": 3,
             "rank": 2,
             "pts": 78,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/manchester-city.png",
+            "badge_storage_path": "badges/teams/manchester-city.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/50.png"
           },
           "predictions": {
             "winner": {
@@ -4883,7 +5006,10 @@
             "goals": 1,
             "rank": 5,
             "pts": 59,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/liverpool-fc.png",
+            "badge_storage_path": "badges/teams/liverpool-fc.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/40.png"
           },
           "away": {
             "name": "Chelsea",
@@ -4892,7 +5018,10 @@
             "goals": 1,
             "rank": 8,
             "pts": 52,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/chelsea.png",
+            "badge_storage_path": "badges/teams/chelsea.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/49.png"
           },
           "predictions": {
             "winner": {
@@ -5016,7 +5145,10 @@
             "goals": 3,
             "rank": 7,
             "pts": 53,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/brighton-and-hove-albion.png",
+            "badge_storage_path": "badges/teams/brighton-and-hove-albion.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/51.png"
           },
           "away": {
             "name": "Wolverhampton",
@@ -5025,7 +5157,10 @@
             "goals": 0,
             "rank": 20,
             "pts": 19,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/wolverhampton.png",
+            "badge_storage_path": "badges/teams/wolverhampton.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/39.png"
           },
           "predictions": {
             "winner": {
@@ -5173,7 +5308,10 @@
             "goals": 0,
             "rank": 13,
             "pts": 49,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/fulham.png",
+            "badge_storage_path": "badges/teams/fulham.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/36.png"
           },
           "away": {
             "name": "Bournemouth",
@@ -5182,7 +5320,10 @@
             "goals": 1,
             "rank": 6,
             "pts": 56,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/bournemouth.png",
+            "badge_storage_path": "badges/teams/bournemouth.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/35.png"
           },
           "predictions": {
             "winner": {
@@ -5318,7 +5459,10 @@
             "goals": 0,
             "rank": 10,
             "pts": 51,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/sunderland.png",
+            "badge_storage_path": "badges/teams/sunderland.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/746.png"
           },
           "away": {
             "name": "Manchester United",
@@ -5327,7 +5471,10 @@
             "goals": 0,
             "rank": 3,
             "pts": 68,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/manchester-united.png",
+            "badge_storage_path": "badges/teams/manchester-united.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/33.png"
           },
           "predictions": {
             "winner": {
@@ -5498,7 +5645,10 @@
             "goals": 2,
             "rank": 19,
             "pts": 21,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/burnley.png",
+            "badge_storage_path": "badges/teams/burnley.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/44.png"
           },
           "away": {
             "name": "Aston Villa",
@@ -5507,7 +5657,10 @@
             "goals": 2,
             "rank": 4,
             "pts": 62,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/aston-villa.png",
+            "badge_storage_path": "badges/teams/aston-villa.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/66.png"
           },
           "predictions": {
             "winner": {
@@ -5644,7 +5797,10 @@
             "goals": 2,
             "rank": 15,
             "pts": 45,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/crystal-palace.png",
+            "badge_storage_path": "badges/teams/crystal-palace.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/52.png"
           },
           "away": {
             "name": "Everton",
@@ -5653,7 +5809,10 @@
             "goals": 2,
             "rank": 12,
             "pts": 49,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/everton.png",
+            "badge_storage_path": "badges/teams/everton.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/45.png"
           },
           "predictions": {
             "winner": {
@@ -5828,7 +5987,10 @@
             "goals": 1,
             "rank": 16,
             "pts": 43,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/nottingham-forest.png",
+            "badge_storage_path": "badges/teams/nottingham-forest.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/65.png"
           },
           "away": {
             "name": "Newcastle United",
@@ -5837,7 +5999,10 @@
             "goals": 1,
             "rank": 11,
             "pts": 49,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/newcastle-united.png",
+            "badge_storage_path": "badges/teams/newcastle-united.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/34.png"
           },
           "predictions": {
             "winner": {
@@ -5982,7 +6147,10 @@
             "goals": 3,
             "rank": 2,
             "pts": 78,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/manchester-city.png",
+            "badge_storage_path": "badges/teams/manchester-city.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/50.png"
           },
           "away": {
             "name": "Brentford",
@@ -5991,7 +6159,10 @@
             "goals": 0,
             "rank": 9,
             "pts": 52,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/brentford.png",
+            "badge_storage_path": "badges/teams/brentford.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/55.png"
           },
           "predictions": {
             "winner": {
@@ -6121,7 +6292,10 @@
             "goals": 0,
             "rank": 18,
             "pts": 36,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/west-ham-united.png",
+            "badge_storage_path": "badges/teams/west-ham-united.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/48.png"
           },
           "away": {
             "name": "Arsenal",
@@ -6130,7 +6304,10 @@
             "goals": 1,
             "rank": 1,
             "pts": 82,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/arsenal.png",
+            "badge_storage_path": "badges/teams/arsenal.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/42.png"
           },
           "predictions": {
             "winner": {
@@ -6271,7 +6448,10 @@
             "goals": 1,
             "rank": 17,
             "pts": 38,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/tottenham-hotspur.png",
+            "badge_storage_path": "badges/teams/tottenham-hotspur.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/47.png"
           },
           "away": {
             "name": "Leeds United",
@@ -6280,7 +6460,10 @@
             "goals": 1,
             "rank": 14,
             "pts": 47,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/leeds-united.png",
+            "badge_storage_path": "badges/teams/leeds-united.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/63.png"
           },
           "predictions": {
             "winner": {
@@ -6406,7 +6589,10 @@
             "goals": 3,
             "rank": 2,
             "pts": 78,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/manchester-city.png",
+            "badge_storage_path": "badges/teams/manchester-city.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/50.png"
           },
           "away": {
             "name": "Crystal Palace",
@@ -6415,7 +6601,10 @@
             "goals": 0,
             "rank": 15,
             "pts": 45,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/crystal-palace.png",
+            "badge_storage_path": "badges/teams/crystal-palace.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/52.png"
           },
           "predictions": {
             "winner": {
@@ -6571,7 +6760,10 @@
             "rank": 4,
             "pts": 62,
             "goals": 4,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/aston-villa.png",
+            "badge_storage_path": "badges/teams/aston-villa.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/66.png"
           },
           "away": {
             "name": "Liverpool FC",
@@ -6580,7 +6772,10 @@
             "rank": 5,
             "pts": 59,
             "goals": 2,
-            "logo": ""
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/liverpool-fc.png",
+            "badge_storage_path": "badges/teams/liverpool-fc.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/40.png"
           },
           "predictions": {
             "winner": {
@@ -6705,8 +6900,11 @@
             "team_id": 35,
             "rank": 3,
             "pts": 68,
-            "logo": "",
-            "goals": 3
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/manchester-united.png",
+            "goals": 3,
+            "badge_storage_path": "badges/teams/manchester-united.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/33.png"
           },
           "away": {
             "name": "Nottingham Forest",
@@ -6714,8 +6912,11 @@
             "team_id": 14,
             "rank": 16,
             "pts": 43,
-            "logo": "",
-            "goals": 2
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/nottingham-forest.png",
+            "goals": 2,
+            "badge_storage_path": "badges/teams/nottingham-forest.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/65.png"
           },
           "predictions": {
             "winner": {
@@ -6847,8 +7048,11 @@
             "team_id": 50,
             "rank": 9,
             "pts": 52,
-            "logo": "",
-            "goals": 2
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/brentford.png",
+            "goals": 2,
+            "badge_storage_path": "badges/teams/brentford.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/55.png"
           },
           "away": {
             "name": "Crystal Palace",
@@ -6856,8 +7060,11 @@
             "team_id": 7,
             "rank": 15,
             "pts": 45,
-            "logo": "",
-            "goals": 2
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/crystal-palace.png",
+            "goals": 2,
+            "badge_storage_path": "badges/teams/crystal-palace.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/52.png"
           },
           "predictions": {
             "winner": {
@@ -7008,8 +7215,11 @@
             "team_id": 48,
             "rank": 12,
             "pts": 49,
-            "logo": "",
-            "goals": 1
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/everton.png",
+            "goals": 1,
+            "badge_storage_path": "badges/teams/everton.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/45.png"
           },
           "away": {
             "name": "Sunderland",
@@ -7017,8 +7227,11 @@
             "team_id": 41,
             "rank": 10,
             "pts": 51,
-            "logo": "",
-            "goals": 3
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/sunderland.png",
+            "goals": 3,
+            "badge_storage_path": "badges/teams/sunderland.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/746.png"
           },
           "predictions": {
             "winner": {
@@ -7170,8 +7383,11 @@
             "team_id": 34,
             "rank": 14,
             "pts": 47,
-            "logo": "",
-            "goals": 1
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/leeds-united.png",
+            "goals": 1,
+            "badge_storage_path": "badges/teams/leeds-united.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/63.png"
           },
           "away": {
             "name": "Brighton & Hove Albion",
@@ -7179,8 +7395,11 @@
             "team_id": 30,
             "rank": 7,
             "pts": 53,
-            "logo": "",
-            "goals": 0
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/brighton-and-hove-albion.png",
+            "goals": 0,
+            "badge_storage_path": "badges/teams/brighton-and-hove-albion.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/51.png"
           },
           "predictions": {
             "winner": {
@@ -7324,8 +7543,11 @@
             "team_id": 3,
             "rank": 20,
             "pts": 19,
-            "logo": "",
-            "goals": 1
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/wolverhampton.png",
+            "goals": 1,
+            "badge_storage_path": "badges/teams/wolverhampton.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/39.png"
           },
           "away": {
             "name": "Fulham",
@@ -7333,8 +7555,11 @@
             "team_id": 43,
             "rank": 13,
             "pts": 49,
-            "logo": "",
-            "goals": 1
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/fulham.png",
+            "goals": 1,
+            "badge_storage_path": "badges/teams/fulham.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/36.png"
           },
           "predictions": {
             "winner": {
@@ -7491,8 +7716,11 @@
             "team_id": 39,
             "rank": 11,
             "pts": 49,
-            "logo": "",
-            "goals": 3
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/newcastle-united.png",
+            "goals": 3,
+            "badge_storage_path": "badges/teams/newcastle-united.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/34.png"
           },
           "away": {
             "name": "West Ham United",
@@ -7500,8 +7728,11 @@
             "team_id": 37,
             "rank": 18,
             "pts": 36,
-            "logo": "",
-            "goals": 1
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/west-ham-united.png",
+            "goals": 1,
+            "badge_storage_path": "badges/teams/west-ham-united.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/48.png"
           },
           "predictions": {
             "winner": {
@@ -7658,8 +7889,11 @@
             "team_id": 42,
             "rank": 1,
             "pts": 82,
-            "logo": "",
-            "goals": 1
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/arsenal.png",
+            "goals": 1,
+            "badge_storage_path": "badges/teams/arsenal.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/42.png"
           },
           "away": {
             "name": "Burnley",
@@ -7667,8 +7901,11 @@
             "team_id": 6,
             "rank": 19,
             "pts": 21,
-            "logo": "",
-            "goals": 0
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/burnley.png",
+            "goals": 0,
+            "badge_storage_path": "badges/teams/burnley.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/44.png"
           },
           "predictions": {
             "winner": {
@@ -7999,19 +8236,25 @@
             "name": "Chelsea",
             "short": "Chelsea",
             "team_id": 38,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/chelsea.png",
             "rank": 8,
             "pts": 52,
-            "goals": 2
+            "goals": 2,
+            "badge_storage_path": "badges/teams/chelsea.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/49.png"
           },
           "away": {
             "name": "Tottenham Hotspur",
             "short": "Tottenham",
             "team_id": 33,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/tottenham-hotspur.png",
             "rank": 17,
             "pts": 38,
-            "goals": 1
+            "goals": 1,
+            "badge_storage_path": "badges/teams/tottenham-hotspur.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/47.png"
           },
           "predictions": {
             "winner": {
@@ -8275,19 +8518,25 @@
             "name": "Bournemouth",
             "short": "Bournemouth",
             "team_id": 60,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/bournemouth.png",
             "rank": 6,
             "pts": 56,
-            "goals": 1
+            "goals": 1,
+            "badge_storage_path": "badges/teams/bournemouth.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/35.png"
           },
           "away": {
             "name": "Manchester City",
             "short": "Man City",
             "team_id": 17,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/manchester-city.png",
             "rank": 2,
             "pts": 78,
-            "goals": 1
+            "goals": 1,
+            "badge_storage_path": "badges/teams/manchester-city.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/50.png"
           },
           "predictions": {
             "winner": {
@@ -8587,17 +8836,23 @@
             "name": "Brighton & Hove Albion",
             "short": "Brighton",
             "team_id": 30,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/brighton-and-hove-albion.png",
             "rank": 7,
-            "pts": 53
+            "pts": 53,
+            "badge_storage_path": "badges/teams/brighton-and-hove-albion.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/51.png"
           },
           "away": {
             "name": "Manchester United",
             "short": "Man Utd",
             "team_id": 35,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/manchester-united.png",
             "rank": 3,
-            "pts": 68
+            "pts": 68,
+            "badge_storage_path": "badges/teams/manchester-united.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/33.png"
           },
           "predictions": {
             "winner": {
@@ -8788,11 +9043,11 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 1.85,
-              "X": 4.1,
-              "2": 3.7
+              "2": 3.7,
+              "X": 4.1
             },
             "Match goals 0.5": {
-              "Under": 21.0
+              "Under": 21
             },
             "Match goals 1.5": {
               "Over": 1.13,
@@ -8815,18 +9070,18 @@
               "Under": 1.25
             },
             "Match goals 5.5": {
-              "Over": 6.0,
+              "Over": 6,
               "Under": 1.1
             },
             "Match goals 6.5": {
-              "Over": 11.0,
+              "Over": 11,
               "Under": 1.02
             },
             "Match goals 7.5": {
-              "Over": 34.0
+              "Over": 34
             },
             "Corners 2-Way 4.5": {
-              "Under": 22.0
+              "Under": 22
             },
             "Corners 2-Way 5.5": {
               "Over": 1.03,
@@ -8873,7 +9128,7 @@
               "Under": 1.03
             },
             "Cards in match 0.5": {
-              "Under": 15.0
+              "Under": 15
             },
             "Cards in match 1.5": {
               "Over": 1.1,
@@ -8892,7 +9147,7 @@
               "Under": 1.19
             },
             "Cards in match 5.5": {
-              "Over": 8.0,
+              "Over": 8,
               "Under": 1.05
             },
             "Cards in match 6.5": {
@@ -8949,17 +9204,23 @@
             "name": "Burnley",
             "short": "Burnley",
             "team_id": 6,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/burnley.png",
             "rank": 19,
-            "pts": 21
+            "pts": 21,
+            "badge_storage_path": "badges/teams/burnley.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/44.png"
           },
           "away": {
             "name": "Wolverhampton",
             "short": "Wolves",
             "team_id": 3,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/wolverhampton.png",
             "rank": 20,
-            "pts": 19
+            "pts": 19,
+            "badge_storage_path": "badges/teams/wolverhampton.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/39.png"
           },
           "predictions": {
             "winner": {
@@ -9114,7 +9375,7 @@
           ],
           "sportsbet_odds": {
             "home": 2.38,
-            "draw": 3.5,
+            "draw": 3.6,
             "away": 2.8,
             "event_id": 10495997,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/burnley-v-wolves-10495997"
@@ -9127,54 +9388,54 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 2.38,
-              "X": 3.5,
-              "2": 2.8
+              "2": 2.8,
+              "X": 3.6
             },
             "Match goals 0.5": {
               "Over": 1.02,
-              "Under": 12.75
+              "Under": 14
             },
             "Match goals 1.5": {
-              "Over": 1.22,
-              "Under": 4.05
+              "Over": 1.2,
+              "Under": 4.25
             },
             "Match goals 2.5": {
-              "Over": 1.71,
-              "Under": 2.05
+              "Over": 1.66,
+              "Under": 2.13
             },
             "Match goals 3.5": {
-              "Over": 2.91,
-              "Under": 1.38
+              "Over": 2.74,
+              "Under": 1.42
             },
             "Both teams to score": {
               "Yes": 1.57,
               "No": 2.3
             },
             "Match goals 4.5": {
-              "Over": 5.4,
-              "Under": 1.13
+              "Over": 5.2,
+              "Under": 1.14
             },
             "Match goals 5.5": {
               "Over": 9.5,
               "Under": 1.04
             },
             "Match goals 6.5": {
-              "Over": 15.0
+              "Over": 14
             },
             "Match goals 7.5": {
-              "Over": 81.0
+              "Over": 67
             },
             "Corners 2-Way 4.5": {
               "Over": 1.02,
-              "Under": 14.0
+              "Under": 13.5
             },
             "Corners 2-Way 5.5": {
               "Over": 1.06,
               "Under": 7.5
             },
             "Corners 2-Way 6.5": {
-              "Over": 1.16,
-              "Under": 4.5
+              "Over": 1.15,
+              "Under": 4.55
             },
             "Corners 2-Way 7.5": {
               "Over": 1.34,
@@ -9182,57 +9443,57 @@
             },
             "Corners 2-Way 8.5": {
               "Over": 1.63,
-              "Under": 2.14
+              "Under": 2.13
             },
             "Corners 2-Way 9.5": {
-              "Over": 2.07,
-              "Under": 1.67
+              "Over": 2.09,
+              "Under": 1.66
             },
             "Corners 2-Way 10.5": {
-              "Over": 2.77,
-              "Under": 1.38
+              "Over": 2.8,
+              "Under": 1.37
             },
             "Corners 2-Way 11.5": {
-              "Over": 3.92,
+              "Over": 3.98,
               "Under": 1.2
             },
             "Corners 2-Way 12.5": {
-              "Over": 5.7,
+              "Over": 5.8,
               "Under": 1.1
             },
             "Corners 2-Way 13.5": {
-              "Over": 8.4,
-              "Under": 1.05
+              "Over": 8.8,
+              "Under": 1.04
             },
             "Corners 2-Way 14.5": {
-              "Over": 13.25,
+              "Over": 14,
               "Under": 1.02
             },
             "Corners 2-Way 15.5": {
-              "Over": 22.0
+              "Over": 22
             },
             "Cards in match 1.5": {
-              "Over": 1.17,
-              "Under": 4.33
+              "Over": 1.15,
+              "Under": 4.5
             },
             "Cards in match 2.5": {
-              "Over": 1.62,
-              "Under": 2.14
+              "Over": 1.61,
+              "Under": 2.16
             },
             "Cards in match 3.5": {
-              "Over": 2.67,
+              "Over": 2.66,
               "Under": 1.41
             },
             "Cards in match 4.5": {
-              "Over": 5.15,
-              "Under": 1.12
+              "Over": 5.05,
+              "Under": 1.13
             },
             "Cards in match 5.5": {
-              "Over": 10.7,
+              "Over": 10.6,
               "Under": 1.03
             },
             "Cards in match 6.5": {
-              "Over": 25.0
+              "Over": 25
             }
           },
           "corner_odds": {
@@ -9291,17 +9552,23 @@
             "name": "Crystal Palace",
             "short": "Crystal",
             "team_id": 7,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/crystal-palace.png",
             "rank": 15,
-            "pts": 45
+            "pts": 45,
+            "badge_storage_path": "badges/teams/crystal-palace.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/52.png"
           },
           "away": {
             "name": "Arsenal",
             "short": "Arsenal",
             "team_id": 42,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/arsenal.png",
             "rank": 1,
-            "pts": 82
+            "pts": 82,
+            "badge_storage_path": "badges/teams/arsenal.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/42.png"
           },
           "predictions": {
             "winner": {
@@ -9499,12 +9766,12 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 4.33,
-              "X": 3.9,
-              "2": 1.75
+              "2": 1.75,
+              "X": 3.9
             },
             "Match goals 0.5": {
               "Over": 1.02,
-              "Under": 15.0
+              "Under": 15
             },
             "Match goals 1.5": {
               "Over": 1.17,
@@ -9531,14 +9798,14 @@
               "Under": 1.05
             },
             "Match goals 6.5": {
-              "Over": 13.0
+              "Over": 13
             },
             "Match goals 7.5": {
-              "Over": 51.0
+              "Over": 51
             },
             "Corners 2-Way 4.5": {
               "Over": 1.02,
-              "Under": 14.0
+              "Under": 14
             },
             "Corners 2-Way 5.5": {
               "Over": 1.06,
@@ -9596,13 +9863,13 @@
               "Under": 1.04
             },
             "Cards in match 4.5": {
-              "Over": 24.0
+              "Over": 24
             },
             "Cards in match 5.5": {
-              "Over": 67.0
+              "Over": 67
             },
             "Cards in match 6.5": {
-              "Over": 67.0
+              "Over": 67
             }
           },
           "corner_odds": {
@@ -9655,17 +9922,23 @@
             "name": "Fulham",
             "short": "Fulham",
             "team_id": 43,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/fulham.png",
             "rank": 13,
-            "pts": 49
+            "pts": 49,
+            "badge_storage_path": "badges/teams/fulham.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/36.png"
           },
           "away": {
             "name": "Newcastle United",
             "short": "Newcastle",
             "team_id": 39,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/newcastle-united.png",
             "rank": 11,
-            "pts": 49
+            "pts": 49,
+            "badge_storage_path": "badges/teams/newcastle-united.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/34.png"
           },
           "predictions": {
             "winner": {
@@ -9872,8 +10145,8 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 2.8,
-              "X": 3.7,
-              "2": 2.3
+              "2": 2.3,
+              "X": 3.7
             },
             "Match goals 0.5": {
               "Under": 16.5
@@ -9899,17 +10172,17 @@
               "Under": 1.17
             },
             "Match goals 5.5": {
-              "Over": 8.0,
+              "Over": 8,
               "Under": 1.06
             },
             "Match goals 6.5": {
-              "Over": 13.0
+              "Over": 13
             },
             "Match goals 7.5": {
-              "Over": 41.0
+              "Over": 41
             },
             "Corners 2-Way 4.5": {
-              "Under": 25.0
+              "Under": 25
             },
             "Corners 2-Way 5.5": {
               "Over": 1.02,
@@ -9948,7 +10221,7 @@
               "Under": 1.13
             },
             "Corners 2-Way 14.5": {
-              "Over": 7.0,
+              "Over": 7,
               "Under": 1.07
             },
             "Corners 2-Way 15.5": {
@@ -10018,17 +10291,23 @@
             "name": "Liverpool FC",
             "short": "Liverpool",
             "team_id": 44,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/liverpool-fc.png",
             "rank": 5,
-            "pts": 59
+            "pts": 59,
+            "badge_storage_path": "badges/teams/liverpool-fc.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/40.png"
           },
           "away": {
             "name": "Brentford",
             "short": "Brentford",
             "team_id": 50,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/brentford.png",
             "rank": 9,
-            "pts": 52
+            "pts": 52,
+            "badge_storage_path": "badges/teams/brentford.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/55.png"
           },
           "predictions": {
             "winner": {
@@ -10181,8 +10460,8 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 1.8,
-              "X": 4.2,
-              "2": 3.8
+              "2": 3.8,
+              "X": 4.2
             },
             "Match goals 0.5": {
               "Under": 19.75
@@ -10204,7 +10483,7 @@
               "No": 2.63
             },
             "Match goals 4.5": {
-              "Over": 4.0,
+              "Over": 4,
               "Under": 1.22
             },
             "Match goals 5.5": {
@@ -10212,22 +10491,22 @@
               "Under": 1.08
             },
             "Match goals 6.5": {
-              "Over": 12.0,
+              "Over": 12,
               "Under": 1.02
             },
             "Match goals 7.5": {
-              "Over": 34.0
+              "Over": 34
             },
             "Corners 2-Way 4.5": {
-              "Under": 23.0
+              "Under": 23
             },
             "Corners 2-Way 5.5": {
               "Over": 1.03,
-              "Under": 12.0
+              "Under": 12
             },
             "Corners 2-Way 6.5": {
               "Over": 1.07,
-              "Under": 7.0
+              "Under": 7
             },
             "Corners 2-Way 7.5": {
               "Over": 1.16,
@@ -10262,15 +10541,15 @@
               "Under": 1.07
             },
             "Corners 2-Way 15.5": {
-              "Over": 10.0,
+              "Over": 10,
               "Under": 1.04
             },
             "Cards in match 0.5": {
-              "Under": 15.0
+              "Under": 15
             },
             "Cards in match 1.5": {
               "Over": 1.08,
-              "Under": 6.0
+              "Under": 6
             },
             "Cards in match 2.5": {
               "Over": 1.39,
@@ -10343,17 +10622,23 @@
             "name": "Manchester City",
             "short": "Man City",
             "team_id": 17,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/manchester-city.png",
             "rank": 2,
-            "pts": 78
+            "pts": 78,
+            "badge_storage_path": "badges/teams/manchester-city.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/50.png"
           },
           "away": {
             "name": "Aston Villa",
             "short": "Aston",
             "team_id": 40,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/aston-villa.png",
             "rank": 4,
-            "pts": 62
+            "pts": 62,
+            "badge_storage_path": "badges/teams/aston-villa.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/66.png"
           },
           "predictions": {
             "winner": {
@@ -10486,7 +10771,7 @@
           ],
           "sportsbet_odds": {
             "home": 1.3,
-            "draw": 6.0,
+            "draw": 6,
             "away": 8.5,
             "event_id": 10496350,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/man-city-v-aston-villa-10496350"
@@ -10499,11 +10784,11 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 1.3,
-              "X": 6.0,
-              "2": 8.5
+              "2": 8.5,
+              "X": 6
             },
             "Match goals 0.5": {
-              "Under": 28.0
+              "Under": 28
             },
             "Match goals 1.5": {
               "Over": 1.06,
@@ -10515,7 +10800,7 @@
             },
             "Match goals 3.5": {
               "Over": 1.75,
-              "Under": 2.0
+              "Under": 2
             },
             "Both teams to score": {
               "Yes": 1.53,
@@ -10530,11 +10815,11 @@
               "Under": 1.17
             },
             "Match goals 6.5": {
-              "Over": 8.0,
+              "Over": 8,
               "Under": 1.06
             },
             "Match goals 7.5": {
-              "Over": 12.0,
+              "Over": 12,
               "Under": 1.02
             },
             "Corners 2-Way 4.5": {
@@ -10604,7 +10889,7 @@
               "Over": 20.25
             },
             "Cards in match 6.5": {
-              "Over": 56.0
+              "Over": 56
             }
           },
           "corner_odds": {
@@ -10657,17 +10942,23 @@
             "name": "Nottingham Forest",
             "short": "Forest",
             "team_id": 14,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/nottingham-forest.png",
             "rank": 16,
-            "pts": 43
+            "pts": 43,
+            "badge_storage_path": "badges/teams/nottingham-forest.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/65.png"
           },
           "away": {
             "name": "Bournemouth",
             "short": "Bournemouth",
             "team_id": 60,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/bournemouth.png",
             "rank": 6,
-            "pts": 56
+            "pts": 56,
+            "badge_storage_path": "badges/teams/bournemouth.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/35.png"
           },
           "predictions": {
             "winner": {
@@ -10820,15 +11111,15 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 3.3,
-              "X": 3.7,
-              "2": 2.1
+              "2": 2.1,
+              "X": 3.7
             },
             "Match goals 0.5": {
               "Under": 17.25
             },
             "Match goals 1.5": {
               "Over": 1.15,
-              "Under": 5.0
+              "Under": 5
             },
             "Match goals 2.5": {
               "Over": 1.54,
@@ -10851,18 +11142,18 @@
               "Under": 1.06
             },
             "Match goals 6.5": {
-              "Over": 12.0,
+              "Over": 12,
               "Under": 1.02
             },
             "Match goals 7.5": {
-              "Over": 41.0
+              "Over": 41
             },
             "Corners 2-Way 4.5": {
-              "Under": 24.0
+              "Under": 24
             },
             "Corners 2-Way 5.5": {
               "Over": 1.03,
-              "Under": 12.0
+              "Under": 12
             },
             "Corners 2-Way 6.5": {
               "Over": 1.07,
@@ -10905,11 +11196,11 @@
               "Under": 1.03
             },
             "Cards in match 0.5": {
-              "Under": 17.0
+              "Under": 17
             },
             "Cards in match 1.5": {
               "Over": 1.08,
-              "Under": 6.0
+              "Under": 6
             },
             "Cards in match 2.5": {
               "Over": 1.37,
@@ -10972,17 +11263,23 @@
             "name": "Sunderland",
             "short": "Sunderland",
             "team_id": 41,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/sunderland.png",
             "rank": 10,
-            "pts": 51
+            "pts": 51,
+            "badge_storage_path": "badges/teams/sunderland.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/746.png"
           },
           "away": {
             "name": "Chelsea",
             "short": "Chelsea",
             "team_id": 38,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/chelsea.png",
             "rank": 8,
-            "pts": 52
+            "pts": 52,
+            "badge_storage_path": "badges/teams/chelsea.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/49.png"
           },
           "predictions": {
             "winner": {
@@ -11128,7 +11425,7 @@
           "sportsbet_odds": {
             "home": 3.4,
             "draw": 3.7,
-            "away": 2.0,
+            "away": 2,
             "event_id": 10496918,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/united-kingdom/english-premier-league/sunderland-v-chelsea-10496918"
           },
@@ -11140,8 +11437,8 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 3.4,
-              "X": 3.7,
-              "2": 2.0
+              "2": 2,
+              "X": 3.7
             },
             "Match goals 0.5": {
               "Over": 1.02,
@@ -11172,10 +11469,10 @@
               "Under": 1.04
             },
             "Match goals 6.5": {
-              "Over": 15.0
+              "Over": 15
             },
             "Match goals 7.5": {
-              "Over": 67.0
+              "Over": 67
             },
             "Corners 2-Way 4.5": {
               "Over": 1.02,
@@ -11218,17 +11515,17 @@
               "Under": 1.05
             },
             "Corners 2-Way 14.5": {
-              "Over": 12.0,
+              "Over": 12,
               "Under": 1.03
             },
             "Corners 2-Way 15.5": {
-              "Over": 19.0
+              "Over": 19
             },
             "Cards in match 0.5": {
-              "Under": 22.0
+              "Under": 22
             },
             "Cards in match 1.5": {
-              "Under": 11.0
+              "Under": 11
             },
             "Cards in match 2.5": {
               "Over": 1.1,
@@ -11307,17 +11604,23 @@
             "name": "Tottenham Hotspur",
             "short": "Tottenham",
             "team_id": 33,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/tottenham-hotspur.png",
             "rank": 17,
-            "pts": 38
+            "pts": 38,
+            "badge_storage_path": "badges/teams/tottenham-hotspur.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/47.png"
           },
           "away": {
             "name": "Everton",
             "short": "Everton",
             "team_id": 48,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/everton.png",
             "rank": 12,
-            "pts": 49
+            "pts": 49,
+            "badge_storage_path": "badges/teams/everton.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/45.png"
           },
           "predictions": {
             "winner": {
@@ -11547,7 +11850,7 @@
             },
             "Corners 2-Way 6.5": {
               "Over": 1.06,
-              "Under": 7.2
+              "Under": 7.3
             },
             "Corners 2-Way 7.5": {
               "Over": 1.15,
@@ -11555,30 +11858,30 @@
             },
             "Corners 2-Way 8.5": {
               "Over": 1.31,
-              "Under": 3.1
+              "Under": 3.12
             },
             "Corners 2-Way 9.5": {
-              "Over": 1.56,
-              "Under": 2.27
+              "Over": 1.55,
+              "Under": 2.29
             },
             "Corners 2-Way 10.5": {
-              "Over": 1.93,
-              "Under": 1.77
+              "Over": 1.92,
+              "Under": 1.78
             },
             "Corners 2-Way 11.5": {
-              "Over": 2.48,
+              "Over": 2.47,
               "Under": 1.47
             },
             "Corners 2-Way 12.5": {
-              "Over": 3.32,
-              "Under": 1.27
+              "Over": 3.3,
+              "Under": 1.28
             },
             "Corners 2-Way 13.5": {
               "Over": 4.55,
               "Under": 1.15
             },
             "Corners 2-Way 14.5": {
-              "Over": 6.5,
+              "Over": 6.45,
               "Under": 1.08
             },
             "Corners 2-Way 15.5": {
@@ -11647,17 +11950,23 @@
             "name": "West Ham United",
             "short": "West",
             "team_id": 37,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/west-ham-united.png",
             "rank": 18,
-            "pts": 36
+            "pts": 36,
+            "badge_storage_path": "badges/teams/west-ham-united.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/48.png"
           },
           "away": {
             "name": "Leeds United",
             "short": "Leeds",
             "team_id": 34,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/leeds-united.png",
             "rank": 14,
-            "pts": 47
+            "pts": 47,
+            "badge_storage_path": "badges/teams/leeds-united.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/63.png"
           },
           "predictions": {
             "winner": {
@@ -12002,7 +12311,10 @@
           }
         }
       ],
-      "logo": "https://api.sofascore.app/api/v1/unique-tournament/17/image"
+      "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/leagues/premier-league.png",
+      "badge_storage_path": "badges/leagues/premier-league.png",
+      "badge_source": "league",
+      "badge_source_url": "https://media.api-sports.io/football/leagues/39.png"
     },
     {
       "id": 8,
@@ -21575,8 +21887,8 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 1.75,
-              "X": 3.75,
-              "2": 4.6
+              "2": 4.6,
+              "X": 3.75
             },
             "Match goals 0.5": {
               "Over": 1.03,
@@ -21596,25 +21908,25 @@
             },
             "Both teams to score": {
               "Yes": 1.8,
-              "No": 2.0
+              "No": 2
             },
             "Match goals 4.5": {
-              "Over": 6.0,
+              "Over": 6,
               "Under": 1.11
             },
             "Match goals 5.5": {
-              "Over": 10.0,
+              "Over": 10,
               "Under": 1.03
             },
             "Match goals 6.5": {
-              "Over": 34.0
+              "Over": 34
             },
             "Match goals 7.5": {
-              "Over": 81.0
+              "Over": 81
             },
             "Corners 2-Way 4.5": {
               "Over": 1.02,
-              "Under": 13.0
+              "Under": 13
             },
             "Corners 2-Way 5.5": {
               "Over": 1.07,
@@ -21657,7 +21969,7 @@
               "Under": 1.02
             },
             "Corners 2-Way 15.5": {
-              "Over": 22.0
+              "Over": 22
             }
           },
           "corner_odds": {
@@ -21886,8 +22198,8 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 2.45,
-              "X": 3.3,
-              "2": 2.88
+              "2": 2.88,
+              "X": 3.3
             },
             "Match goals 0.5": {
               "Over": 1.04,
@@ -21907,21 +22219,21 @@
             },
             "Both teams to score": {
               "Yes": 1.72,
-              "No": 2.0
+              "No": 2
             },
             "Match goals 4.5": {
               "Over": 6.5,
               "Under": 1.08
             },
             "Match goals 5.5": {
-              "Over": 12.0,
+              "Over": 12,
               "Under": 1.02
             },
             "Match goals 6.5": {
-              "Over": 41.0
+              "Over": 41
             },
             "Match goals 7.5": {
-              "Over": 101.0
+              "Over": 101
             },
             "Corners 2-Way 4.5": {
               "Under": 18.75
@@ -21967,7 +22279,7 @@
               "Under": 1.04
             },
             "Corners 2-Way 15.5": {
-              "Over": 14.0,
+              "Over": 14,
               "Under": 1.02
             }
           },
@@ -22224,8 +22536,8 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 2.45,
-              "X": 3.4,
-              "2": 2.8
+              "2": 2.8,
+              "X": 3.4
             },
             "Match goals 0.5": {
               "Over": 1.02,
@@ -22233,7 +22545,7 @@
             },
             "Match goals 1.5": {
               "Over": 1.22,
-              "Under": 4.0
+              "Under": 4
             },
             "Match goals 2.5": {
               "Over": 1.78,
@@ -22252,17 +22564,17 @@
               "Under": 1.13
             },
             "Match goals 5.5": {
-              "Over": 10.0,
+              "Over": 10,
               "Under": 1.03
             },
             "Match goals 6.5": {
-              "Over": 17.0
+              "Over": 17
             },
             "Match goals 7.5": {
-              "Over": 81.0
+              "Over": 81
             },
             "Corners 2-Way 4.5": {
-              "Under": 18.0
+              "Under": 18
             },
             "Corners 2-Way 5.5": {
               "Over": 1.04,
@@ -22559,8 +22871,8 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 2.5,
-              "X": 2.7,
-              "2": 3.5
+              "2": 3.5,
+              "X": 2.7
             },
             "Match goals 0.5": {
               "Over": 1.07,
@@ -22583,17 +22895,17 @@
               "No": 1.62
             },
             "Match goals 4.5": {
-              "Over": 10.0,
+              "Over": 10,
               "Under": 1.03
             },
             "Match goals 5.5": {
-              "Over": 34.0
+              "Over": 34
             },
             "Match goals 6.5": {
-              "Over": 81.0
+              "Over": 81
             },
             "Match goals 7.5": {
-              "Over": 101.0
+              "Over": 101
             },
             "Corners 2-Way 4.5": {
               "Over": 1.03,
@@ -22640,7 +22952,7 @@
               "Under": 1.02
             },
             "Corners 2-Way 15.5": {
-              "Over": 25.0
+              "Over": 25
             }
           },
           "corner_odds": {
@@ -22883,8 +23195,8 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 1.75,
-              "X": 3.9,
-              "2": 4.33
+              "2": 4.33,
+              "X": 3.9
             },
             "Match goals 0.5": {
               "Over": 1.02,
@@ -22915,83 +23227,83 @@
               "Under": 1.05
             },
             "Match goals 6.5": {
-              "Over": 14.0
+              "Over": 14
             },
             "Match goals 7.5": {
-              "Over": 67.0
+              "Over": 67
             },
             "Corners 2-Way 4.5": {
-              "Over": 1.02,
-              "Under": 15.75
+              "Under": 17.5
             },
             "Corners 2-Way 5.5": {
-              "Over": 1.05,
-              "Under": 8.4
+              "Over": 1.04,
+              "Under": 9.2
             },
             "Corners 2-Way 6.5": {
-              "Over": 1.12,
-              "Under": 5.1
+              "Over": 1.11,
+              "Under": 5.5
             },
             "Corners 2-Way 7.5": {
-              "Over": 1.27,
-              "Under": 3.32
+              "Over": 1.24,
+              "Under": 3.54
             },
             "Corners 2-Way 8.5": {
-              "Over": 1.52,
-              "Under": 2.34
+              "Over": 1.47,
+              "Under": 2.47
             },
             "Corners 2-Way 9.5": {
-              "Over": 1.89,
-              "Under": 1.81
+              "Over": 1.82,
+              "Under": 1.88
             },
             "Corners 2-Way 10.5": {
-              "Over": 2.48,
-              "Under": 1.47
+              "Over": 2.36,
+              "Under": 1.52
             },
             "Corners 2-Way 11.5": {
-              "Over": 3.4,
-              "Under": 1.26
+              "Over": 3.18,
+              "Under": 1.3
             },
             "Corners 2-Way 12.5": {
-              "Over": 4.85,
-              "Under": 1.14
+              "Over": 4.45,
+              "Under": 1.16
             },
             "Corners 2-Way 13.5": {
-              "Over": 7.0,
-              "Under": 1.07
+              "Over": 6.4,
+              "Under": 1.08
             },
             "Corners 2-Way 14.5": {
-              "Over": 10.6,
-              "Under": 1.03
+              "Over": 9.4,
+              "Under": 1.04
             },
             "Corners 2-Way 15.5": {
-              "Over": 16.75
+              "Over": 14.5,
+              "Under": 1.02
             }
           },
           "corner_odds": {
             "8.5": {
-              "Over": 1.52,
-              "Under": 2.34
+              "Over": 1.47,
+              "Under": 2.47
             },
             "9.5": {
-              "Over": 1.89,
-              "Under": 1.81
+              "Over": 1.82,
+              "Under": 1.88
             },
             "7.5": {
-              "Over": 1.27,
-              "Under": 3.32
+              "Over": 1.24,
+              "Under": 3.54
             },
             "10.5": {
-              "Over": 2.48,
-              "Under": 1.47
+              "Over": 2.36,
+              "Under": 1.52
             },
             "11.5": {
-              "Over": 3.4,
-              "Under": 1.26
+              "Over": 3.18,
+              "Under": 1.3
             },
             "12.5": {
-              "Over": 4.85,
-              "Under": 1.14
+              "Over": 4.45,
+              "Under": 1.16
             }
           },
           "odds": {
@@ -23219,8 +23531,8 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 1.44,
-              "X": 4.4,
-              "2": 7.5
+              "2": 7.5,
+              "X": 4.4
             },
             "Match goals 0.5": {
               "Over": 1.02,
@@ -23239,22 +23551,22 @@
               "Under": 1.33
             },
             "Both teams to score": {
-              "Yes": 2.0,
+              "Yes": 2,
               "No": 1.72
             },
             "Match goals 4.5": {
-              "Over": 6.0,
+              "Over": 6,
               "Under": 1.11
             },
             "Match goals 5.5": {
-              "Over": 10.0,
+              "Over": 10,
               "Under": 1.03
             },
             "Match goals 6.5": {
-              "Over": 21.0
+              "Over": 21
             },
             "Match goals 7.5": {
-              "Over": 81.0
+              "Over": 81
             },
             "Corners 2-Way 4.5": {
               "Over": 1.02,
@@ -23262,7 +23574,7 @@
             },
             "Corners 2-Way 5.5": {
               "Over": 1.05,
-              "Under": 8.0
+              "Under": 8
             },
             "Corners 2-Way 6.5": {
               "Over": 1.13,
@@ -23293,7 +23605,7 @@
               "Under": 1.13
             },
             "Corners 2-Way 13.5": {
-              "Over": 7.0,
+              "Over": 7,
               "Under": 1.07
             },
             "Corners 2-Way 14.5": {
@@ -23301,7 +23613,7 @@
               "Under": 1.03
             },
             "Corners 2-Way 15.5": {
-              "Over": 16.0,
+              "Over": 16,
               "Under": 1.02
             }
           },
@@ -23555,8 +23867,8 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 2.2,
-              "X": 3.25,
-              "2": 3.4
+              "2": 3.4,
+              "X": 3.25
             },
             "Match goals 0.5": {
               "Over": 1.02,
@@ -23587,13 +23899,13 @@
               "Under": 1.05
             },
             "Match goals 6.5": {
-              "Over": 14.0
+              "Over": 14
             },
             "Match goals 7.5": {
-              "Over": 67.0
+              "Over": 67
             },
             "Corners 2-Way 4.5": {
-              "Under": 18.0
+              "Under": 18
             },
             "Corners 2-Way 5.5": {
               "Over": 1.04,
@@ -23869,7 +24181,7 @@
           "sportsbet_odds": {
             "home": 1.44,
             "draw": 4.75,
-            "away": 6.0,
+            "away": 6,
             "event_id": 10498395,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/spain/spanish-la-liga/real-madrid-v-athletic-bilbao-10498395"
           },
@@ -23881,8 +24193,8 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 1.44,
-              "X": 4.75,
-              "2": 6.0
+              "2": 6,
+              "X": 4.75
             },
             "Match goals 0.5": {
               "Under": 20.5
@@ -23912,11 +24224,11 @@
               "Under": 1.09
             },
             "Match goals 6.5": {
-              "Over": 11.0,
+              "Over": 11,
               "Under": 1.02
             },
             "Match goals 7.5": {
-              "Over": 21.0
+              "Over": 21
             },
             "Corners 2-Way 4.5": {
               "Under": 18.75
@@ -23962,7 +24274,7 @@
               "Under": 1.05
             },
             "Corners 2-Way 15.5": {
-              "Over": 13.0,
+              "Over": 13,
               "Under": 1.02
             }
           },
@@ -24188,15 +24500,15 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 3.6,
-              "X": 4.2,
-              "2": 1.87
+              "2": 1.87,
+              "X": 4.2
             },
             "Match goals 0.5": {
-              "Under": 23.0
+              "Under": 23
             },
             "Match goals 1.5": {
               "Over": 1.11,
-              "Under": 6.0
+              "Under": 6
             },
             "Match goals 2.5": {
               "Over": 1.38,
@@ -24215,15 +24527,15 @@
               "Under": 1.28
             },
             "Match goals 5.5": {
-              "Over": 6.0,
+              "Over": 6,
               "Under": 1.11
             },
             "Match goals 6.5": {
-              "Over": 10.0,
+              "Over": 10,
               "Under": 1.03
             },
             "Match goals 7.5": {
-              "Over": 17.0
+              "Over": 17
             },
             "Corners 2-Way 4.5": {
               "Under": 19.5
@@ -24568,7 +24880,10 @@
           }
         }
       ],
-      "logo": "https://api.sofascore.app/api/v1/unique-tournament/8/image"
+      "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/leagues/laliga.png",
+      "badge_storage_path": "badges/leagues/laliga.png",
+      "badge_source": "league",
+      "badge_source_url": "https://media.api-sports.io/football/leagues/140.png"
     },
     {
       "id": 35,
@@ -32152,14 +32467,17 @@
           }
         }
       ],
-      "logo": "https://api.sofascore.app/api/v1/unique-tournament/35/image"
+      "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/leagues/bundesliga.png",
+      "badge_storage_path": "badges/leagues/bundesliga.png",
+      "badge_source": "league",
+      "badge_source_url": "https://media.api-sports.io/football/leagues/78.png"
     },
     {
       "id": 23,
       "name": "Serie A",
       "season": "2025/26",
       "round": null,
-      "logo": "https://api.sofascore.app/api/v1/unique-tournament/23/image",
+      "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/leagues/serie-a.png",
       "matches": [
         {
           "id": 13980063,
@@ -34539,8 +34857,8 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 2.75,
-              "X": 3.4,
-              "2": 2.5
+              "2": 2.5,
+              "X": 3.4
             },
             "Match goals 0.5": {
               "Over": 1.02,
@@ -34571,14 +34889,14 @@
               "Under": 1.05
             },
             "Match goals 6.5": {
-              "Over": 13.0
+              "Over": 13
             },
             "Match goals 7.5": {
-              "Over": 51.0
+              "Over": 51
             },
             "Corners 2-Way 4.5": {
               "Over": 1.02,
-              "Under": 16.0
+              "Under": 16
             },
             "Corners 2-Way 5.5": {
               "Over": 1.05,
@@ -34621,7 +34939,7 @@
               "Under": 1.03
             },
             "Corners 2-Way 15.5": {
-              "Over": 17.0
+              "Over": 17
             }
           },
           "corner_odds": {
@@ -34831,7 +35149,7 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 3.0,
+            "home": 3,
             "draw": 3.6,
             "away": 2.2,
             "event_id": 10498411,
@@ -34844,9 +35162,9 @@
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 3.0,
-              "X": 3.6,
-              "2": 2.2
+              "1": 3,
+              "2": 2.2,
+              "X": 3.6
             },
             "Match goals 0.5": {
               "Under": 17.75
@@ -34876,15 +35194,15 @@
               "Under": 1.07
             },
             "Match goals 6.5": {
-              "Over": 12.0,
+              "Over": 12,
               "Under": 1.02
             },
             "Match goals 7.5": {
-              "Over": 34.0
+              "Over": 34
             },
             "Corners 2-Way 4.5": {
               "Over": 1.03,
-              "Under": 12.0
+              "Under": 12
             },
             "Corners 2-Way 5.5": {
               "Over": 1.08,
@@ -34927,7 +35245,7 @@
               "Under": 1.02
             },
             "Corners 2-Way 15.5": {
-              "Over": 26.0
+              "Over": 26
             }
           },
           "corner_odds": {
@@ -35171,7 +35489,7 @@
           "sportsbet_odds": {
             "home": 1.53,
             "draw": 4.2,
-            "away": 6.0,
+            "away": 6,
             "event_id": 10498420,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/italy/italian-serie-a/lazio-v-pisa-10498420"
           },
@@ -35183,8 +35501,8 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 1.53,
-              "X": 4.2,
-              "2": 6.0
+              "2": 6,
+              "X": 4.2
             },
             "Match goals 0.5": {
               "Over": 1.02,
@@ -35192,7 +35510,7 @@
             },
             "Match goals 1.5": {
               "Over": 1.22,
-              "Under": 4.0
+              "Under": 4
             },
             "Match goals 2.5": {
               "Over": 1.78,
@@ -35211,61 +35529,61 @@
               "Under": 1.13
             },
             "Match goals 5.5": {
-              "Over": 10.0,
+              "Over": 10,
               "Under": 1.03
             },
             "Match goals 6.5": {
-              "Over": 17.0
+              "Over": 17
             },
             "Match goals 7.5": {
-              "Over": 81.0
+              "Over": 81
             },
             "Corners 2-Way 4.5": {
               "Over": 1.03,
-              "Under": 10.6
+              "Under": 10.9
             },
             "Corners 2-Way 5.5": {
               "Over": 1.09,
-              "Under": 6.0
+              "Under": 6.05
             },
             "Corners 2-Way 6.5": {
-              "Over": 1.23,
-              "Under": 3.68
+              "Over": 1.22,
+              "Under": 3.76
             },
             "Corners 2-Way 7.5": {
-              "Over": 1.46,
-              "Under": 2.51
+              "Over": 1.45,
+              "Under": 2.55
             },
             "Corners 2-Way 8.5": {
-              "Over": 1.81,
-              "Under": 1.88
+              "Over": 1.79,
+              "Under": 1.91
             },
             "Corners 2-Way 9.5": {
-              "Over": 2.37,
-              "Under": 1.51
+              "Over": 2.33,
+              "Under": 1.53
             },
             "Corners 2-Way 10.5": {
-              "Over": 3.26,
-              "Under": 1.28
+              "Over": 3.2,
+              "Under": 1.29
             },
             "Corners 2-Way 11.5": {
-              "Over": 4.7,
-              "Under": 1.14
+              "Over": 4.6,
+              "Under": 1.15
             },
             "Corners 2-Way 12.5": {
-              "Over": 6.8,
-              "Under": 1.07
+              "Over": 6.65,
+              "Under": 1.08
             },
             "Corners 2-Way 13.5": {
-              "Over": 10.4,
+              "Over": 10.1,
               "Under": 1.03
             },
             "Corners 2-Way 14.5": {
-              "Over": 16.0,
+              "Over": 15.5,
               "Under": 1.02
             },
             "Corners 2-Way 15.5": {
-              "Over": 27.0
+              "Over": 26
             }
           },
           "corner_odds": {
@@ -35496,8 +35814,8 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 2.62,
-              "X": 3.4,
-              "2": 2.62
+              "2": 2.62,
+              "X": 3.4
             },
             "Match goals 0.5": {
               "Over": 1.03,
@@ -35517,21 +35835,21 @@
             },
             "Both teams to score": {
               "Yes": 1.72,
-              "No": 2.0
+              "No": 2
             },
             "Match goals 4.5": {
-              "Over": 6.0,
+              "Over": 6,
               "Under": 1.1
             },
             "Match goals 5.5": {
-              "Over": 12.0,
+              "Over": 12,
               "Under": 1.02
             },
             "Match goals 6.5": {
-              "Over": 34.0
+              "Over": 34
             },
             "Match goals 7.5": {
-              "Over": 81.0
+              "Over": 81
             },
             "Corners 2-Way 4.5": {
               "Over": 1.02,
@@ -35574,11 +35892,11 @@
               "Under": 1.04
             },
             "Corners 2-Way 14.5": {
-              "Over": 15.0,
+              "Over": 15,
               "Under": 1.02
             },
             "Corners 2-Way 15.5": {
-              "Over": 25.0
+              "Over": 25
             }
           },
           "corner_odds": {
@@ -35803,6 +36121,10 @@
               "2": 7.5,
               "X": 4.2
             },
+            "Match goals 0.5": {
+              "Over": 1.03,
+              "Under": 11.3
+            },
             "Match goals 1.5": {
               "Over": 1.25,
               "Under": 3.69
@@ -35811,23 +36133,101 @@
               "Over": 1.88,
               "Under": 1.85
             },
+            "Match goals 3.5": {
+              "Over": 3.32,
+              "Under": 1.3
+            },
             "Both teams to score": {
               "Yes": 2,
               "No": 1.72
             },
+            "Match goals 4.5": {
+              "Over": 6,
+              "Under": 1.1
+            },
+            "Match goals 5.5": {
+              "Over": 11,
+              "Under": 1.02
+            },
+            "Match goals 6.5": {
+              "Over": 34
+            },
+            "Match goals 7.5": {
+              "Over": 81
+            },
+            "Corners 2-Way 4.5": {
+              "Over": 1.02,
+              "Under": 13.75
+            },
+            "Corners 2-Way 5.5": {
+              "Over": 1.06,
+              "Under": 7.5
+            },
+            "Corners 2-Way 6.5": {
+              "Over": 1.15,
+              "Under": 4.55
+            },
+            "Corners 2-Way 7.5": {
+              "Over": 1.32,
+              "Under": 3.06
+            },
             "Corners 2-Way 8.5": {
-              "Over": 1.45,
-              "Under": 2.54
+              "Over": 1.58,
+              "Under": 2.22
+            },
+            "Corners 2-Way 9.5": {
+              "Over": 1.99,
+              "Under": 1.72
+            },
+            "Corners 2-Way 10.5": {
+              "Over": 2.62,
+              "Under": 1.43
+            },
+            "Corners 2-Way 11.5": {
+              "Over": 3.56,
+              "Under": 1.24
+            },
+            "Corners 2-Way 12.5": {
+              "Over": 5,
+              "Under": 1.13
+            },
+            "Corners 2-Way 13.5": {
+              "Over": 7.1,
+              "Under": 1.07
+            },
+            "Corners 2-Way 14.5": {
+              "Over": 10.4,
+              "Under": 1.03
+            },
+            "Corners 2-Way 15.5": {
+              "Over": 15.75,
+              "Under": 1.02
             }
           },
           "corner_odds": {
             "9.5": {
-              "Over": 1.83,
-              "Under": 1.83
+              "Over": 1.99,
+              "Under": 1.72
             },
             "8.5": {
-              "Over": 1.45,
-              "Under": 2.54
+              "Over": 1.58,
+              "Under": 2.22
+            },
+            "7.5": {
+              "Over": 1.32,
+              "Under": 3.06
+            },
+            "10.5": {
+              "Over": 2.62,
+              "Under": 1.43
+            },
+            "11.5": {
+              "Over": 3.56,
+              "Under": 1.24
+            },
+            "12.5": {
+              "Over": 5,
+              "Under": 1.13
             }
           },
           "odds": {
@@ -36038,7 +36438,7 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 5.0,
+            "home": 5,
             "draw": 4.2,
             "away": 1.57,
             "event_id": 10498427,
@@ -36051,7 +36451,7 @@
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 5.5,
+              "1": 5,
               "2": 1.57,
               "X": 4.2
             },
@@ -36060,22 +36460,22 @@
               "Under": 4.25
             },
             "Match goals 2.5": {
-              "Over": 1.7,
-              "Under": 2.08
+              "Over": 1.68,
+              "Under": 2.1
             },
             "Both teams to score": {
               "Yes": 1.72,
               "No": 2
             },
             "Corners 2-Way 8.5": {
-              "Over": 1.83,
-              "Under": 1.87
+              "Over": 1.93,
+              "Under": 1.77
             }
           },
           "corner_odds": {
             "8.5": {
-              "Over": 1.83,
-              "Under": 1.87
+              "Over": 1.93,
+              "Under": 1.77
             }
           },
           "bookmaker_meta": {
@@ -36259,7 +36659,7 @@
           ],
           "sportsbet_odds": {
             "home": 10.5,
-            "draw": 5.0,
+            "draw": 5,
             "away": 1.28,
             "event_id": 10498414,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/italy/italian-serie-a/verona-v-roma-10498414"
@@ -36288,14 +36688,14 @@
               "No": 1.62
             },
             "Corners 2-Way 8.5": {
-              "Over": 1.55,
-              "Under": 2.29
+              "Over": 1.77,
+              "Under": 1.94
             }
           },
           "corner_odds": {
             "8.5": {
-              "Over": 1.55,
-              "Under": 2.29
+              "Over": 1.77,
+              "Under": 1.94
             },
             "9.5": {
               "Over": 1.91,
@@ -36467,6 +36867,10 @@
               "2": 4.75,
               "X": 3.5
             },
+            "Match goals 0.5": {
+              "Over": 1.05,
+              "Under": 8.3
+            },
             "Match goals 1.5": {
               "Over": 1.37,
               "Under": 2.92
@@ -36475,23 +36879,99 @@
               "Over": 2.25,
               "Under": 1.59
             },
+            "Match goals 3.5": {
+              "Over": 4.25,
+              "Under": 1.2
+            },
             "Both teams to score": {
               "Yes": 2.1,
               "No": 1.72
             },
+            "Match goals 4.5": {
+              "Over": 8.5,
+              "Under": 1.05
+            },
+            "Match goals 5.5": {
+              "Over": 14
+            },
+            "Match goals 6.5": {
+              "Over": 67
+            },
+            "Match goals 7.5": {
+              "Over": 101
+            },
+            "Corners 2-Way 4.5": {
+              "Over": 1.02,
+              "Under": 14
+            },
+            "Corners 2-Way 5.5": {
+              "Over": 1.06,
+              "Under": 7.6
+            },
+            "Corners 2-Way 6.5": {
+              "Over": 1.15,
+              "Under": 4.65
+            },
+            "Corners 2-Way 7.5": {
+              "Over": 1.32,
+              "Under": 3.04
+            },
             "Corners 2-Way 8.5": {
-              "Over": 1.47,
-              "Under": 2.5
+              "Over": 1.6,
+              "Under": 2.19
+            },
+            "Corners 2-Way 9.5": {
+              "Over": 2.03,
+              "Under": 1.69
+            },
+            "Corners 2-Way 10.5": {
+              "Over": 2.66,
+              "Under": 1.41
+            },
+            "Corners 2-Way 11.5": {
+              "Over": 3.7,
+              "Under": 1.23
+            },
+            "Corners 2-Way 12.5": {
+              "Over": 5.3,
+              "Under": 1.12
+            },
+            "Corners 2-Way 13.5": {
+              "Over": 7.7,
+              "Under": 1.06
+            },
+            "Corners 2-Way 14.5": {
+              "Over": 12,
+              "Under": 1.03
+            },
+            "Corners 2-Way 15.5": {
+              "Over": 19.25
             }
           },
           "corner_odds": {
             "9.5": {
-              "Over": 1.91,
-              "Under": 1.8
+              "Over": 2.03,
+              "Under": 1.69
             },
             "8.5": {
-              "Over": 1.47,
-              "Under": 2.5
+              "Over": 1.6,
+              "Under": 2.19
+            },
+            "7.5": {
+              "Over": 1.32,
+              "Under": 3.04
+            },
+            "10.5": {
+              "Over": 2.66,
+              "Under": 1.41
+            },
+            "11.5": {
+              "Over": 3.7,
+              "Under": 1.23
+            },
+            "12.5": {
+              "Over": 5.3,
+              "Under": 1.12
             }
           },
           "odds": {
@@ -36692,7 +37172,7 @@
           "sportsbet_odds": {
             "home": 1.25,
             "draw": 5.5,
-            "away": 11.0,
+            "away": 11,
             "event_id": 10498428,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/italy/italian-serie-a/ac-milan-v-cagliari-10498428"
           },
@@ -36707,6 +37187,10 @@
               "2": 11,
               "X": 5.5
             },
+            "Match goals 0.5": {
+              "Over": 1.02,
+              "Under": 14.75
+            },
             "Match goals 1.5": {
               "Over": 1.17,
               "Under": 4.6
@@ -36715,23 +37199,100 @@
               "Over": 1.66,
               "Under": 2.13
             },
+            "Match goals 3.5": {
+              "Over": 2.74,
+              "Under": 1.41
+            },
             "Both teams to score": {
               "Yes": 2.1,
               "No": 1.67
             },
+            "Match goals 4.5": {
+              "Over": 5.2,
+              "Under": 1.14
+            },
+            "Match goals 5.5": {
+              "Over": 9.5,
+              "Under": 1.04
+            },
+            "Match goals 6.5": {
+              "Over": 14
+            },
+            "Match goals 7.5": {
+              "Over": 67
+            },
+            "Corners 2-Way 4.5": {
+              "Over": 1.03,
+              "Under": 10.7
+            },
+            "Corners 2-Way 5.5": {
+              "Over": 1.09,
+              "Under": 6
+            },
+            "Corners 2-Way 6.5": {
+              "Over": 1.2,
+              "Under": 3.8
+            },
+            "Corners 2-Way 7.5": {
+              "Over": 1.44,
+              "Under": 2.58
+            },
             "Corners 2-Way 8.5": {
-              "Over": 1.68,
-              "Under": 2.05
+              "Over": 1.78,
+              "Under": 1.93
+            },
+            "Corners 2-Way 9.5": {
+              "Over": 2.3,
+              "Under": 1.54
+            },
+            "Corners 2-Way 10.5": {
+              "Over": 3.12,
+              "Under": 1.3
+            },
+            "Corners 2-Way 11.5": {
+              "Over": 4.45,
+              "Under": 1.16
+            },
+            "Corners 2-Way 12.5": {
+              "Over": 6.4,
+              "Under": 1.08
+            },
+            "Corners 2-Way 13.5": {
+              "Over": 9.5,
+              "Under": 1.04
+            },
+            "Corners 2-Way 14.5": {
+              "Over": 14.5,
+              "Under": 1.02
+            },
+            "Corners 2-Way 15.5": {
+              "Over": 23
             }
           },
           "corner_odds": {
             "9.5": {
-              "Over": 2.1,
-              "Under": 1.67
+              "Over": 2.3,
+              "Under": 1.54
             },
             "8.5": {
-              "Over": 1.68,
-              "Under": 2.05
+              "Over": 1.78,
+              "Under": 1.93
+            },
+            "7.5": {
+              "Over": 1.44,
+              "Under": 2.58
+            },
+            "10.5": {
+              "Over": 3.12,
+              "Under": 1.3
+            },
+            "11.5": {
+              "Over": 4.45,
+              "Under": 1.16
+            },
+            "12.5": {
+              "Over": 6.4,
+              "Under": 1.08
             }
           },
           "bookmaker_meta": {
@@ -36919,7 +37480,7 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 8.0,
+            "home": 8,
             "draw": 4.5,
             "away": 1.4,
             "event_id": 10498422,
@@ -36949,14 +37510,14 @@
               "No": 1.8
             },
             "Corners 2-Way 8.5": {
-              "Over": 1.65,
-              "Under": 2.1
+              "Over": 1.75,
+              "Under": 1.96
             }
           },
           "corner_odds": {
             "8.5": {
-              "Over": 1.65,
-              "Under": 2.1
+              "Over": 1.75,
+              "Under": 1.96
             }
           },
           "bookmaker_meta": {
@@ -36974,7 +37535,10 @@
             }
           }
         }
-      ]
+      ],
+      "badge_storage_path": "badges/leagues/serie-a.png",
+      "badge_source": "league",
+      "badge_source_url": "https://media.api-sports.io/football/leagues/135.png"
     },
     {
       "id": 34,
@@ -44630,38 +45194,50 @@
           }
         }
       ],
-      "logo": "https://api.sofascore.app/api/v1/unique-tournament/34/image"
+      "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/leagues/ligue-1.png",
+      "badge_storage_path": "badges/leagues/ligue-1.png",
+      "badge_source": "league",
+      "badge_source_url": "https://media.api-sports.io/football/leagues/61.png"
     },
     {
       "id": 17015,
       "name": "UEFA Conference League",
       "season": "2025/26",
       "round": null,
-      "logo": "https://api.sofascore.app/api/v1/unique-tournament/17015/image",
-      "matches": []
+      "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/leagues/uefa-conference-league.png",
+      "matches": [],
+      "badge_storage_path": "badges/leagues/uefa-conference-league.png",
+      "badge_source": "league",
+      "badge_source_url": "https://media.api-sports.io/football/leagues/848.png"
     },
     {
       "id": 325,
       "name": "Brasileirão Betano",
       "season": "2025/26",
       "round": null,
-      "logo": "https://api.sofascore.app/api/v1/unique-tournament/325/image",
-      "matches": []
+      "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/leagues/brasileirao-betano.png",
+      "matches": [],
+      "badge_storage_path": "badges/leagues/brasileirao-betano.png",
+      "badge_source": "league",
+      "badge_source_url": "https://media.api-sports.io/football/leagues/71.png"
     },
     {
       "id": 384,
       "name": "CONMEBOL Libertadores",
       "season": "2025/26",
       "round": null,
-      "logo": "https://api.sofascore.app/api/v1/unique-tournament/384/image",
-      "matches": []
+      "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/leagues/conmebol-libertadores.png",
+      "matches": [],
+      "badge_storage_path": "badges/leagues/conmebol-libertadores.png",
+      "badge_source": "league",
+      "badge_source_url": "https://media.api-sports.io/football/leagues/13.png"
     },
     {
       "id": 136,
       "name": "A-League Men",
       "season": "2025/26",
       "round": null,
-      "logo": "https://api.sofascore.app/api/v1/unique-tournament/136/image",
+      "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/leagues/a-league-men.png",
       "matches": [
         {
           "id": 16114123,
@@ -45078,24 +45654,24 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 2.05,
-              "X": 3.5,
-              "2": 3.6
+              "2": 3.6,
+              "X": 3.5
             },
             "Match goals 0.5": {
               "Over": 1.03,
-              "Under": 10.1
+              "Under": 10.3
             },
             "Match goals 1.5": {
               "Over": 1.3,
               "Under": 3.32
             },
             "Match goals 2.5": {
-              "Over": 1.98,
-              "Under": 1.77
+              "Over": 1.99,
+              "Under": 1.76
             },
             "Match goals 3.5": {
-              "Over": 3.45,
-              "Under": 1.28
+              "Over": 3.66,
+              "Under": 1.25
             },
             "Both teams to score": {
               "Yes": 1.83,
@@ -45106,14 +45682,14 @@
               "Under": 1.08
             },
             "Match goals 5.5": {
-              "Over": 12.0,
+              "Over": 12,
               "Under": 1.02
             },
             "Match goals 6.5": {
-              "Over": 34.0
+              "Over": 34
             },
             "Match goals 7.5": {
-              "Over": 101.0
+              "Over": 101
             }
           },
           "corner_odds": {
@@ -45137,15 +45713,21 @@
             }
           }
         }
-      ]
+      ],
+      "badge_storage_path": "badges/leagues/a-league-men.png",
+      "badge_source": "league",
+      "badge_source_url": "https://media.api-sports.io/football/leagues/188.png"
     },
     {
       "id": 16,
       "name": "FIFA World Cup",
       "season": "2025/26",
       "round": null,
-      "logo": "https://api.sofascore.app/api/v1/unique-tournament/16/image",
-      "matches": []
+      "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/leagues/fifa-world-cup.png",
+      "matches": [],
+      "badge_storage_path": "badges/leagues/fifa-world-cup.png",
+      "badge_source": "league",
+      "badge_source_url": "https://media.api-sports.io/football/leagues/1.png"
     },
     {
       "id": 37,
@@ -54683,14 +55265,17 @@
           }
         }
       ],
-      "logo": "https://api.sofascore.app/api/v1/unique-tournament/37/image"
+      "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/leagues/eredivisie.png",
+      "badge_storage_path": "badges/leagues/eredivisie.png",
+      "badge_source": "league",
+      "badge_source_url": "https://media.api-sports.io/football/leagues/88.png"
     },
     {
       "id": 238,
       "name": "Primeira Liga",
       "season": "2025/26",
       "round": null,
-      "logo": "https://api.sofascore.app/api/v1/unique-tournament/238/image",
+      "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/leagues/primeira-liga.png",
       "matches": [
         {
           "id": 14336196,
@@ -56688,7 +57273,10 @@
             }
           ]
         }
-      ]
+      ],
+      "badge_storage_path": "badges/leagues/primeira-liga.png",
+      "badge_source": "league",
+      "badge_source_url": "https://media.api-sports.io/football/leagues/94.png"
     },
     {
       "id": 242,
@@ -70949,15 +71537,15 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 1.65,
-              "X": 4.2,
-              "2": 4.6
+              "2": 4.6,
+              "X": 4.2
             },
             "Match goals 0.5": {
               "Under": 16.75
             },
             "Match goals 1.5": {
               "Over": 1.15,
-              "Under": 5.0
+              "Under": 5
             },
             "Match goals 2.5": {
               "Over": 1.54,
@@ -70980,14 +71568,14 @@
               "Under": 1.06
             },
             "Match goals 6.5": {
-              "Over": 12.0,
+              "Over": 12,
               "Under": 1.02
             },
             "Match goals 7.5": {
-              "Over": 41.0
+              "Over": 41
             },
             "Corners 2-Way 4.5": {
-              "Under": 21.0
+              "Under": 21
             },
             "Corners 2-Way 5.5": {
               "Over": 1.03,
@@ -71296,8 +71884,8 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 2.2,
-              "X": 3.6,
-              "2": 3.1
+              "2": 3.1,
+              "X": 3.6
             },
             "Match goals 0.5": {
               "Under": 16.75
@@ -71327,14 +71915,14 @@
               "Under": 1.06
             },
             "Match goals 6.5": {
-              "Over": 12.0,
+              "Over": 12,
               "Under": 1.02
             },
             "Match goals 7.5": {
-              "Over": 41.0
+              "Over": 41
             },
             "Corners 2-Way 4.5": {
-              "Under": 21.0
+              "Under": 21
             },
             "Corners 2-Way 5.5": {
               "Over": 1.03,
@@ -71354,7 +71942,7 @@
             },
             "Corners 2-Way 9.5": {
               "Over": 1.72,
-              "Under": 2.0
+              "Under": 2
             },
             "Corners 2-Way 10.5": {
               "Over": 2.19,
@@ -71384,7 +71972,7 @@
           "corner_odds": {
             "9.5": {
               "Over": 1.72,
-              "Under": 2.0
+              "Under": 2
             },
             "7.5": {
               "Over": 1.2,
@@ -71643,12 +72231,12 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 1.87,
-              "X": 3.8,
-              "2": 3.9
+              "2": 3.9,
+              "X": 3.8
             },
             "Match goals 0.5": {
               "Over": 1.02,
-              "Under": 14.0
+              "Under": 14
             },
             "Match goals 1.5": {
               "Over": 1.2,
@@ -71675,14 +72263,14 @@
               "Under": 1.04
             },
             "Match goals 6.5": {
-              "Over": 15.0
+              "Over": 15
             },
             "Match goals 7.5": {
-              "Over": 67.0
+              "Over": 67
             },
             "Corners 2-Way 4.5": {
               "Over": 1.02,
-              "Under": 15.0
+              "Under": 15
             },
             "Corners 2-Way 5.5": {
               "Over": 1.05,
@@ -71725,7 +72313,7 @@
               "Under": 1.03
             },
             "Corners 2-Way 15.5": {
-              "Over": 18.0
+              "Over": 18
             }
           },
           "corner_odds": {
@@ -71984,8 +72572,8 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 1.87,
-              "X": 3.75,
-              "2": 3.9
+              "2": 3.9,
+              "X": 3.75
             },
             "Match goals 0.5": {
               "Over": 1.02,
@@ -71993,14 +72581,14 @@
             },
             "Match goals 1.5": {
               "Over": 1.22,
-              "Under": 4.0
+              "Under": 4
             },
             "Match goals 2.5": {
               "Over": 1.76,
               "Under": 1.98
             },
             "Match goals 3.5": {
-              "Over": 3.0,
+              "Over": 3,
               "Under": 1.36
             },
             "Both teams to score": {
@@ -72016,13 +72604,13 @@
               "Under": 1.04
             },
             "Match goals 6.5": {
-              "Over": 17.0
+              "Over": 17
             },
             "Match goals 7.5": {
-              "Over": 81.0
+              "Over": 81
             },
             "Corners 2-Way 4.5": {
-              "Under": 17.0
+              "Under": 17
             },
             "Corners 2-Way 5.5": {
               "Over": 1.04,
@@ -72363,8 +72951,8 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 1.57,
-              "X": 4.75,
-              "2": 4.6
+              "2": 4.6,
+              "X": 4.75
             },
             "Match goals 1.5": {
               "Over": 1.06,
@@ -72395,7 +72983,7 @@
               "Under": 1.06
             },
             "Match goals 7.5": {
-              "Over": 12.0,
+              "Over": 12,
               "Under": 1.02
             },
             "Corners 2-Way 4.5": {
@@ -72716,8 +73304,8 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 1.44,
-              "X": 4.6,
-              "2": 6.5
+              "2": 6.5,
+              "X": 4.6
             },
             "Match goals 0.5": {
               "Under": 19.5
@@ -72739,7 +73327,7 @@
               "No": 2.25
             },
             "Match goals 4.5": {
-              "Over": 4.0,
+              "Over": 4,
               "Under": 1.22
             },
             "Match goals 5.5": {
@@ -72747,11 +73335,11 @@
               "Under": 1.08
             },
             "Match goals 6.5": {
-              "Over": 12.0,
+              "Over": 12,
               "Under": 1.02
             },
             "Match goals 7.5": {
-              "Over": 34.0
+              "Over": 34
             },
             "Corners 2-Way 4.5": {
               "Over": 1.02,
@@ -72759,7 +73347,7 @@
             },
             "Corners 2-Way 5.5": {
               "Over": 1.05,
-              "Under": 8.0
+              "Under": 8
             },
             "Corners 2-Way 6.5": {
               "Over": 1.14,
@@ -72790,7 +73378,7 @@
               "Under": 1.14
             },
             "Corners 2-Way 13.5": {
-              "Over": 7.0,
+              "Over": 7,
               "Under": 1.07
             },
             "Corners 2-Way 14.5": {
@@ -72798,7 +73386,7 @@
               "Under": 1.03
             },
             "Corners 2-Way 15.5": {
-              "Over": 16.0,
+              "Over": 16,
               "Under": 1.02
             }
           },
@@ -73043,8 +73631,8 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 1.75,
-              "X": 3.75,
-              "2": 4.6
+              "2": 4.6,
+              "X": 3.75
             },
             "Match goals 0.5": {
               "Over": 1.02,
@@ -73075,14 +73663,14 @@
               "Under": 1.04
             },
             "Match goals 6.5": {
-              "Over": 15.0
+              "Over": 15
             },
             "Match goals 7.5": {
-              "Over": 67.0
+              "Over": 67
             },
             "Corners 2-Way 4.5": {
               "Over": 1.02,
-              "Under": 13.0
+              "Under": 13
             },
             "Corners 2-Way 5.5": {
               "Over": 1.07,
@@ -73370,7 +73958,7 @@
             }
           ],
           "sportsbet_odds": {
-            "home": 3.0,
+            "home": 3,
             "draw": 4.2,
             "away": 2.05,
             "event_id": 10494388,
@@ -73383,12 +73971,12 @@
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 3.0,
-              "X": 4.2,
-              "2": 2.05
+              "1": 3,
+              "2": 2.05,
+              "X": 4.2
             },
             "Match goals 0.5": {
-              "Under": 27.0
+              "Under": 27
             },
             "Match goals 1.5": {
               "Over": 1.08,
@@ -73419,7 +74007,7 @@
               "Under": 1.04
             },
             "Match goals 7.5": {
-              "Over": 13.0
+              "Over": 13
             },
             "Corners 2-Way 4.5": {
               "Under": 17.25
@@ -73738,8 +74326,8 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 2.2,
-              "X": 3.8,
-              "2": 2.9
+              "2": 2.9,
+              "X": 3.8
             },
             "Match goals 0.5": {
               "Under": 17.5
@@ -73769,11 +74357,11 @@
               "Under": 1.06
             },
             "Match goals 6.5": {
-              "Over": 12.0,
+              "Over": 12,
               "Under": 1.02
             },
             "Match goals 7.5": {
-              "Over": 41.0
+              "Over": 41
             },
             "Corners 2-Way 4.5": {
               "Under": 19.25
@@ -73803,7 +74391,7 @@
               "Under": 1.57
             },
             "Corners 2-Way 11.5": {
-              "Over": 3.0,
+              "Over": 3,
               "Under": 1.33
             },
             "Corners 2-Way 12.5": {
@@ -73841,7 +74429,7 @@
               "Under": 1.57
             },
             "11.5": {
-              "Over": 3.0,
+              "Over": 3,
               "Under": 1.33
             },
             "12.5": {
@@ -74063,7 +74651,7 @@
           ],
           "sportsbet_odds": {
             "home": 2.38,
-            "draw": 4.0,
+            "draw": 4,
             "away": 2.55,
             "event_id": 10495160,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/portland-timbers-v-san-jose-earthquakes-10495160"
@@ -74076,15 +74664,15 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 2.38,
-              "X": 4.0,
-              "2": 2.55
+              "2": 2.55,
+              "X": 4
             },
             "Match goals 0.5": {
-              "Under": 23.0
+              "Under": 23
             },
             "Match goals 1.5": {
               "Over": 1.1,
-              "Under": 6.0
+              "Under": 6
             },
             "Match goals 2.5": {
               "Over": 1.37,
@@ -74111,10 +74699,10 @@
               "Under": 1.04
             },
             "Match goals 7.5": {
-              "Over": 15.0
+              "Over": 15
             },
             "Corners 2-Way 4.5": {
-              "Under": 25.0
+              "Under": 25
             },
             "Corners 2-Way 5.5": {
               "Over": 1.02,
@@ -74122,7 +74710,7 @@
             },
             "Corners 2-Way 6.5": {
               "Over": 1.07,
-              "Under": 7.0
+              "Under": 7
             },
             "Corners 2-Way 7.5": {
               "Over": 1.16,
@@ -74137,7 +74725,7 @@
               "Under": 2.18
             },
             "Corners 2-Way 10.5": {
-              "Over": 2.0,
+              "Over": 2,
               "Under": 1.72
             },
             "Corners 2-Way 11.5": {
@@ -74149,7 +74737,7 @@
               "Under": 1.24
             },
             "Corners 2-Way 13.5": {
-              "Over": 5.0,
+              "Over": 5,
               "Under": 1.13
             },
             "Corners 2-Way 14.5": {
@@ -74163,7 +74751,7 @@
           },
           "corner_odds": {
             "10.5": {
-              "Over": 2.0,
+              "Over": 2,
               "Under": 1.72
             },
             "7.5": {
@@ -74401,11 +74989,11 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 3.3,
-              "X": 4.1,
-              "2": 1.95
+              "2": 1.95,
+              "X": 4.1
             },
             "Match goals 0.5": {
-              "Under": 22.0
+              "Under": 22
             },
             "Match goals 1.5": {
               "Over": 1.12,
@@ -74428,15 +75016,15 @@
               "Under": 1.28
             },
             "Match goals 5.5": {
-              "Over": 6.0,
+              "Over": 6,
               "Under": 1.1
             },
             "Match goals 6.5": {
-              "Over": 11.0,
+              "Over": 11,
               "Under": 1.03
             },
             "Match goals 7.5": {
-              "Over": 21.0
+              "Over": 21
             },
             "Corners 2-Way 4.5": {
               "Over": 1.02,
@@ -74483,7 +75071,7 @@
               "Under": 1.02
             },
             "Corners 2-Way 15.5": {
-              "Over": 21.0
+              "Over": 21
             }
           },
           "corner_odds": {
@@ -74714,11 +75302,11 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 1.95,
-              "X": 3.75,
-              "2": 3.6
+              "2": 3.6,
+              "X": 3.75
             },
             "Match goals 0.5": {
-              "Under": 19.0
+              "Under": 19
             },
             "Match goals 1.5": {
               "Over": 1.14,
@@ -74737,19 +75325,19 @@
               "No": 2.6
             },
             "Match goals 4.5": {
-              "Over": 4.0,
+              "Over": 4,
               "Under": 1.22
             },
             "Match goals 5.5": {
-              "Over": 7.0,
+              "Over": 7,
               "Under": 1.07
             },
             "Match goals 6.5": {
-              "Over": 12.0,
+              "Over": 12,
               "Under": 1.02
             },
             "Match goals 7.5": {
-              "Over": 34.0
+              "Over": 34
             },
             "Corners 2-Way 4.5": {
               "Under": 20.5
@@ -74783,7 +75371,7 @@
               "Under": 1.35
             },
             "Corners 2-Way 12.5": {
-              "Over": 4.0,
+              "Over": 4,
               "Under": 1.19
             },
             "Corners 2-Way 13.5": {
@@ -74821,7 +75409,7 @@
               "Under": 1.35
             },
             "12.5": {
-              "Over": 4.0,
+              "Over": 4,
               "Under": 1.19
             }
           }
@@ -75046,7 +75634,7 @@
           "sportsbet_odds": {
             "home": 1.44,
             "draw": 4.6,
-            "away": 6.0,
+            "away": 6,
             "event_id": 10495169,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/north-america/usa-major-league-soccer/columbus-v-atlanta-utd-10495169"
           },
@@ -75061,27 +75649,112 @@
               "2": 6,
               "X": 4.6
             },
+            "Match goals 0.5": {
+              "Under": 18.5
+            },
+            "Match goals 1.5": {
+              "Over": 1.14,
+              "Under": 5.2
+            },
             "Match goals 2.5": {
               "Over": 1.5,
               "Under": 2.47
+            },
+            "Match goals 3.5": {
+              "Over": 2.31,
+              "Under": 1.57
             },
             "Both teams to score": {
               "Yes": 1.62,
               "No": 2.2
             },
+            "Match goals 4.5": {
+              "Over": 4.05,
+              "Under": 1.22
+            },
+            "Match goals 5.5": {
+              "Over": 7,
+              "Under": 1.07
+            },
+            "Match goals 6.5": {
+              "Over": 12,
+              "Under": 1.02
+            },
+            "Match goals 7.5": {
+              "Over": 34
+            },
+            "Corners 2-Way 4.5": {
+              "Over": 1.02,
+              "Under": 12.75
+            },
+            "Corners 2-Way 5.5": {
+              "Over": 1.07,
+              "Under": 7.1
+            },
+            "Corners 2-Way 6.5": {
+              "Over": 1.17,
+              "Under": 4.3
+            },
+            "Corners 2-Way 7.5": {
+              "Over": 1.35,
+              "Under": 2.92
+            },
             "Corners 2-Way 8.5": {
               "Over": 1.63,
               "Under": 2.13
+            },
+            "Corners 2-Way 9.5": {
+              "Over": 2.06,
+              "Under": 1.68
+            },
+            "Corners 2-Way 10.5": {
+              "Over": 2.73,
+              "Under": 1.39
+            },
+            "Corners 2-Way 11.5": {
+              "Over": 3.78,
+              "Under": 1.22
+            },
+            "Corners 2-Way 12.5": {
+              "Over": 5.4,
+              "Under": 1.11
+            },
+            "Corners 2-Way 13.5": {
+              "Over": 7.8,
+              "Under": 1.06
+            },
+            "Corners 2-Way 14.5": {
+              "Over": 11.9,
+              "Under": 1.03
+            },
+            "Corners 2-Way 15.5": {
+              "Over": 18.5
             }
           },
           "corner_odds": {
             "9.5": {
-              "Over": 2,
-              "Under": 1.73
+              "Over": 2.06,
+              "Under": 1.68
             },
             "8.5": {
               "Over": 1.63,
               "Under": 2.13
+            },
+            "7.5": {
+              "Over": 1.35,
+              "Under": 2.92
+            },
+            "10.5": {
+              "Over": 2.73,
+              "Under": 1.39
+            },
+            "11.5": {
+              "Over": 3.78,
+              "Under": 1.22
+            },
+            "12.5": {
+              "Over": 5.4,
+              "Under": 1.11
             }
           },
           "bookmaker_meta": {
@@ -75313,27 +75986,109 @@
               "2": 6.5,
               "X": 5.5
             },
+            "Match goals 1.5": {
+              "Over": 1.07,
+              "Under": 7
+            },
             "Match goals 2.5": {
               "Over": 1.3,
               "Under": 3.32
+            },
+            "Match goals 3.5": {
+              "Over": 1.8,
+              "Under": 1.93
             },
             "Both teams to score": {
               "Yes": 1.45,
               "No": 2.5
             },
+            "Match goals 4.5": {
+              "Over": 2.92,
+              "Under": 1.37
+            },
+            "Match goals 5.5": {
+              "Over": 5.2,
+              "Under": 1.14
+            },
+            "Match goals 6.5": {
+              "Over": 8.5,
+              "Under": 1.05
+            },
+            "Match goals 7.5": {
+              "Over": 13
+            },
+            "Corners 2-Way 4.5": {
+              "Over": 1.02,
+              "Under": 13.75
+            },
+            "Corners 2-Way 5.5": {
+              "Over": 1.06,
+              "Under": 7.7
+            },
+            "Corners 2-Way 6.5": {
+              "Over": 1.15,
+              "Under": 4.6
+            },
+            "Corners 2-Way 7.5": {
+              "Over": 1.32,
+              "Under": 3.06
+            },
             "Corners 2-Way 8.5": {
               "Over": 1.58,
               "Under": 2.22
+            },
+            "Corners 2-Way 9.5": {
+              "Over": 1.98,
+              "Under": 1.73
+            },
+            "Corners 2-Way 10.5": {
+              "Over": 2.6,
+              "Under": 1.43
+            },
+            "Corners 2-Way 11.5": {
+              "Over": 3.6,
+              "Under": 1.23
+            },
+            "Corners 2-Way 12.5": {
+              "Over": 5.1,
+              "Under": 1.12
+            },
+            "Corners 2-Way 13.5": {
+              "Over": 7.5,
+              "Under": 1.06
+            },
+            "Corners 2-Way 14.5": {
+              "Over": 11.2,
+              "Under": 1.03
+            },
+            "Corners 2-Way 15.5": {
+              "Over": 17.25
             }
           },
           "corner_odds": {
             "9.5": {
-              "Over": 2,
+              "Over": 1.98,
               "Under": 1.73
             },
             "8.5": {
               "Over": 1.58,
               "Under": 2.22
+            },
+            "7.5": {
+              "Over": 1.32,
+              "Under": 3.06
+            },
+            "10.5": {
+              "Over": 2.6,
+              "Under": 1.43
+            },
+            "11.5": {
+              "Over": 3.6,
+              "Under": 1.23
+            },
+            "12.5": {
+              "Over": 5.1,
+              "Under": 1.12
             }
           }
         },
@@ -75517,27 +76272,112 @@
               "2": 3.8,
               "X": 3.8
             },
+            "Match goals 0.5": {
+              "Over": 1.02,
+              "Under": 14
+            },
+            "Match goals 1.5": {
+              "Over": 1.2,
+              "Under": 4.25
+            },
             "Match goals 2.5": {
               "Over": 1.67,
               "Under": 2.12
+            },
+            "Match goals 3.5": {
+              "Over": 2.79,
+              "Under": 1.4
             },
             "Both teams to score": {
               "Yes": 1.62,
               "No": 2.25
             },
+            "Match goals 4.5": {
+              "Over": 5.2,
+              "Under": 1.14
+            },
+            "Match goals 5.5": {
+              "Over": 9.5,
+              "Under": 1.04
+            },
+            "Match goals 6.5": {
+              "Over": 15
+            },
+            "Match goals 7.5": {
+              "Over": 67
+            },
+            "Corners 2-Way 4.5": {
+              "Under": 17.75
+            },
+            "Corners 2-Way 5.5": {
+              "Over": 1.04,
+              "Under": 9.3
+            },
+            "Corners 2-Way 6.5": {
+              "Over": 1.11,
+              "Under": 5.55
+            },
+            "Corners 2-Way 7.5": {
+              "Over": 1.24,
+              "Under": 3.6
+            },
             "Corners 2-Way 8.5": {
               "Over": 1.46,
               "Under": 2.51
+            },
+            "Corners 2-Way 9.5": {
+              "Over": 1.8,
+              "Under": 1.9
+            },
+            "Corners 2-Way 10.5": {
+              "Over": 2.32,
+              "Under": 1.53
+            },
+            "Corners 2-Way 11.5": {
+              "Over": 3.12,
+              "Under": 1.31
+            },
+            "Corners 2-Way 12.5": {
+              "Over": 4.35,
+              "Under": 1.16
+            },
+            "Corners 2-Way 13.5": {
+              "Over": 6.35,
+              "Under": 1.08
+            },
+            "Corners 2-Way 14.5": {
+              "Over": 9.4,
+              "Under": 1.04
+            },
+            "Corners 2-Way 15.5": {
+              "Over": 14.5,
+              "Under": 1.02
             }
           },
           "corner_odds": {
             "9.5": {
-              "Over": 1.73,
-              "Under": 2
+              "Over": 1.8,
+              "Under": 1.9
             },
             "8.5": {
               "Over": 1.46,
               "Under": 2.51
+            },
+            "7.5": {
+              "Over": 1.24,
+              "Under": 3.6
+            },
+            "10.5": {
+              "Over": 2.32,
+              "Under": 1.53
+            },
+            "11.5": {
+              "Over": 3.12,
+              "Under": 1.31
+            },
+            "12.5": {
+              "Over": 4.35,
+              "Under": 1.16
             }
           },
           "bookmaker_meta": {
@@ -75556,14 +76396,17 @@
           }
         }
       ],
-      "logo": "https://api.sofascore.app/api/v1/unique-tournament/242/image"
+      "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/leagues/mls.png",
+      "badge_storage_path": "badges/leagues/mls.png",
+      "badge_source": "league",
+      "badge_source_url": "https://media.api-sports.io/football/leagues/253.png"
     },
     {
       "id": 36,
       "name": "Scottish Premiership",
       "season": "2025/26",
       "round": null,
-      "logo": "https://api.sofascore.app/api/v1/unique-tournament/36/image",
+      "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/leagues/scottish-premiership.png",
       "matches": [
         {
           "id": 15981436,
@@ -77496,14 +78339,17 @@
             }
           }
         }
-      ]
+      ],
+      "badge_storage_path": "badges/leagues/scottish-premiership.png",
+      "badge_source": "league",
+      "badge_source_url": "https://media.api-sports.io/football/leagues/179.png"
     },
     {
       "id": 196,
       "name": "J1 League",
       "season": "2025/26",
       "round": null,
-      "logo": "https://api.sofascore.app/api/v1/unique-tournament/196/image",
+      "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/leagues/j1-league.png",
       "matches": [
         {
           "id": 15345956,
@@ -81583,7 +82429,10 @@
             }
           }
         }
-      ]
+      ],
+      "badge_storage_path": "badges/leagues/j1-league.png",
+      "badge_source": "league",
+      "badge_source_url": "https://media.api-sports.io/football/leagues/98.png"
     },
     {
       "id": 18,
@@ -81831,7 +82680,10 @@
             "goals": 1,
             "rank": 2,
             "pts": 84,
-            "logo": "https://media.api-sports.io/football/teams/64.png"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/hull.png",
+            "badge_storage_path": "badges/teams/hull.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/64.png"
           },
           "predictions": {
             "winner": {
@@ -82044,7 +82896,10 @@
             "goals": 5,
             "rank": 13,
             "pts": 60,
-            "logo": "https://media.api-sports.io/football/teams/70.png"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/middlesbrough.png",
+            "badge_storage_path": "badges/teams/middlesbrough.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/70.png"
           },
           "away": {
             "name": "Watford",
@@ -83918,7 +84773,10 @@
             "goals": 2,
             "rank": 4,
             "pts": 80,
-            "logo": "https://media.api-sports.io/football/teams/41.png"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/southampton.png",
+            "badge_storage_path": "badges/teams/southampton.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/41.png"
           },
           "away": {
             "name": "Ipswich Town",
@@ -84835,7 +85693,10 @@
             "goals": 2,
             "rank": 6,
             "pts": 73,
-            "logo": "https://media.api-sports.io/football/teams/64.png"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/hull-city.png",
+            "badge_storage_path": "badges/teams/hull-city.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/64.png"
           },
           "away": {
             "name": "Norwich City",
@@ -85740,7 +86601,10 @@
             "goals": 3,
             "rank": 4,
             "pts": 80,
-            "logo": "https://media.api-sports.io/football/teams/41.png"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/southampton.png",
+            "badge_storage_path": "badges/teams/southampton.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/41.png"
           },
           "h2h_streaks": [
             {
@@ -86693,7 +87557,10 @@
             "goals": 2,
             "rank": 5,
             "pts": 80,
-            "logo": "https://media.api-sports.io/football/teams/70.png"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/middlesbrough.png",
+            "badge_storage_path": "badges/teams/middlesbrough.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/70.png"
           },
           "h2h_streaks": [
             {
@@ -86880,7 +87747,10 @@
             "goals": 0,
             "rank": 6,
             "pts": 73,
-            "logo": "https://media.api-sports.io/football/teams/64.png"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/hull-city.png",
+            "badge_storage_path": "badges/teams/hull-city.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/64.png"
           },
           "away": {
             "name": "Millwall",
@@ -87027,7 +87897,10 @@
             "goals": 0,
             "rank": 5,
             "pts": 80,
-            "logo": "https://media.api-sports.io/football/teams/70.png"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/middlesbrough.png",
+            "badge_storage_path": "badges/teams/middlesbrough.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/70.png"
           },
           "away": {
             "name": "Southampton",
@@ -87036,7 +87909,10 @@
             "goals": 0,
             "rank": 4,
             "pts": 80,
-            "logo": "https://media.api-sports.io/football/teams/41.png"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/southampton.png",
+            "badge_storage_path": "badges/teams/southampton.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/41.png"
           },
           "predictions": {
             "winner": {
@@ -87198,7 +88074,10 @@
             "goals": 2,
             "rank": 6,
             "pts": 73,
-            "logo": "https://media.api-sports.io/football/teams/64.png"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/hull-city.png",
+            "badge_storage_path": "badges/teams/hull-city.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/64.png"
           },
           "predictions": {
             "winner": {
@@ -87319,7 +88198,10 @@
             "goals": 2,
             "rank": 4,
             "pts": 80,
-            "logo": "https://media.api-sports.io/football/teams/41.png"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/southampton.png",
+            "badge_storage_path": "badges/teams/southampton.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/41.png"
           },
           "away": {
             "name": "Middlesbrough",
@@ -87328,7 +88210,10 @@
             "goals": 1,
             "rank": 5,
             "pts": 80,
-            "logo": "https://media.api-sports.io/football/teams/70.png"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/middlesbrough.png",
+            "badge_storage_path": "badges/teams/middlesbrough.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/70.png"
           },
           "settled_at": "2026-05-14",
           "odds": {
@@ -87487,17 +88372,23 @@
             "name": "Hull City",
             "short": "Hull",
             "team_id": 96,
-            "logo": "https://media.api-sports.io/football/teams/64.png",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/hull-city.png",
             "rank": 6,
-            "pts": 73
+            "pts": 73,
+            "badge_storage_path": "badges/teams/hull-city.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/64.png"
           },
           "away": {
             "name": "Middlesbrough",
             "short": "Middlesbrough",
             "team_id": 36,
-            "logo": "https://media.api-sports.io/football/teams/70.png",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/middlesbrough.png",
             "rank": 5,
-            "pts": 80
+            "pts": 80,
+            "badge_storage_path": "badges/teams/middlesbrough.png",
+            "badge_source": "provider",
+            "badge_source_url": "https://media.api-sports.io/football/teams/70.png"
           },
           "predictions": {
             "winner": {
@@ -87690,48 +88581,49 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 4.2,
-              "X": 3.5,
-              "2": 1.87
+              "2": 1.87,
+              "X": 3.5
             },
             "Match goals 0.5": {
               "Over": 1.04,
-              "Under": 9.0
+              "Under": 9.6
             },
             "Match goals 1.5": {
-              "Over": 1.34,
-              "Under": 3.11
+              "Over": 1.31,
+              "Under": 3.24
             },
             "Match goals 2.5": {
-              "Over": 2.13,
-              "Under": 1.66
+              "Over": 2.06,
+              "Under": 1.71
             },
             "Match goals 3.5": {
-              "Over": 4.0,
-              "Under": 1.22
+              "Over": 3.78,
+              "Under": 1.25
             },
             "Both teams to score": {
               "Yes": 1.91,
               "No": 1.83
             },
             "Match goals 4.5": {
-              "Over": 7.75,
-              "Under": 1.06
+              "Over": 7.5,
+              "Under": 1.07
             },
             "Match goals 5.5": {
-              "Over": 13.0
+              "Over": 12,
+              "Under": 1.02
             },
             "Match goals 6.5": {
-              "Over": 41.0
+              "Over": 41
             },
             "Match goals 7.5": {
-              "Over": 101.0
+              "Over": 101
             },
             "Corners 2-Way 4.5": {
-              "Under": 32.0
+              "Under": 34
             },
             "Corners 2-Way 5.5": {
               "Over": 1.02,
-              "Under": 15.5
+              "Under": 16.25
             },
             "Corners 2-Way 6.5": {
               "Over": 1.04,
@@ -87739,64 +88631,64 @@
             },
             "Corners 2-Way 7.5": {
               "Over": 1.11,
-              "Under": 5.55
+              "Under": 5.5
             },
             "Corners 2-Way 8.5": {
-              "Over": 1.22,
-              "Under": 3.72
+              "Over": 1.23,
+              "Under": 3.68
             },
             "Corners 2-Way 9.5": {
-              "Over": 1.42,
-              "Under": 2.65
+              "Over": 1.43,
+              "Under": 2.61
             },
             "Corners 2-Way 10.5": {
-              "Over": 1.72,
-              "Under": 2.0
+              "Over": 1.71,
+              "Under": 2
             },
             "Corners 2-Way 11.5": {
-              "Over": 2.14,
-              "Under": 1.63
+              "Over": 2.15,
+              "Under": 1.62
             },
             "Corners 2-Way 12.5": {
               "Over": 2.8,
-              "Under": 1.38
+              "Under": 1.37
             },
             "Corners 2-Way 13.5": {
-              "Over": 3.78,
-              "Under": 1.22
+              "Over": 3.82,
+              "Under": 1.2
             },
             "Corners 2-Way 14.5": {
               "Over": 5.3,
               "Under": 1.11
             },
             "Corners 2-Way 15.5": {
-              "Over": 7.5,
+              "Over": 7.6,
               "Under": 1.06
             },
             "Cards in match 0.5": {
-              "Under": 22.0
+              "Under": 22
             },
             "Cards in match 1.5": {
-              "Under": 11.0
+              "Under": 10
             },
             "Cards in match 2.5": {
               "Over": 1.11,
-              "Under": 5.5
+              "Under": 5.45
             },
             "Cards in match 3.5": {
               "Over": 1.37,
-              "Under": 2.82
+              "Under": 2.8
             },
             "Cards in match 4.5": {
               "Over": 1.92,
               "Under": 1.78
             },
             "Cards in match 5.5": {
-              "Over": 3.0,
+              "Over": 3,
               "Under": 1.33
             },
             "Cards in match 6.5": {
-              "Over": 5.1,
+              "Over": 5.15,
               "Under": 1.12
             }
           },
@@ -87824,7 +88716,7 @@
             },
             "10.5": {
               "Over": 1.72,
-              "Under": 2.0
+              "Under": 2
             },
             "12.5": {
               "Over": 2.8,
@@ -87847,7 +88739,10 @@
           }
         }
       ],
-      "logo": "https://media.api-sports.io/football/leagues/40.png"
+      "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/leagues/championship.png",
+      "badge_storage_path": "badges/leagues/championship.png",
+      "badge_source": "league",
+      "badge_source_url": "https://media.api-sports.io/football/leagues/40.png"
     },
     {
       "id": 24,
@@ -94898,7 +95793,10 @@
           }
         }
       ],
-      "logo": "https://api.sofascore.app/api/v1/unique-tournament/24/image"
+      "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/leagues/league-one.png",
+      "badge_storage_path": "badges/leagues/league-one.png",
+      "badge_source": "league",
+      "badge_source_url": "https://media.api-sports.io/football/leagues/41.png"
     },
     {
       "id": 25,
@@ -100712,14 +101610,17 @@
           }
         }
       ],
-      "logo": "https://api.sofascore.app/api/v1/unique-tournament/25/image"
+      "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/leagues/league-two.png",
+      "badge_storage_path": "badges/leagues/league-two.png",
+      "badge_source": "league",
+      "badge_source_url": "https://media.api-sports.io/football/leagues/42.png"
     },
     {
       "id": 40,
       "name": "Allsvenskan",
       "season": "2025/26",
       "round": null,
-      "logo": "https://api.sofascore.app/api/v1/unique-tournament/40/image",
+      "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/leagues/allsvenskan.png",
       "matches": [
         {
           "id": 15272431,
@@ -101431,8 +102332,8 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 1.4,
-              "X": 4.6,
-              "2": 6.5
+              "2": 6.5,
+              "X": 4.6
             },
             "Match goals 1.5": {
               "Over": 1.14,
@@ -101612,15 +102513,15 @@
           "sportsbet_odds": {
             "home": 1.85,
             "draw": 3.3,
-            "away": 4.0,
+            "away": 4,
             "event_id": 10495407,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/swedish-allsvenskan/kalmar-ff-v-degerfors-10495407"
           },
           "sportsbet_markets": {
             "Full time": {
               "1": 1.85,
-              "X": 3.3,
-              "2": 4.0
+              "2": 4,
+              "X": 3.3
             },
             "Match goals 1.5": {
               "Over": 1.33,
@@ -101807,8 +102708,8 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 2.1,
-              "X": 3.4,
-              "2": 3.1
+              "2": 3.1,
+              "X": 3.4
             },
             "Match goals 1.5": {
               "Over": 1.25,
@@ -101988,15 +102889,15 @@
           "sportsbet_odds": {
             "home": 1.4,
             "draw": 4.33,
-            "away": 6.0,
+            "away": 6,
             "event_id": 10500477,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/swedish-allsvenskan/hammarby-v-aik-10500477"
           },
           "sportsbet_markets": {
             "Full time": {
               "1": 1.4,
-              "X": 4.33,
-              "2": 6.0
+              "2": 6,
+              "X": 4.33
             },
             "Match goals 1.5": {
               "Over": 1.17,
@@ -102008,7 +102909,7 @@
             },
             "Both teams to score": {
               "Yes": 1.72,
-              "No": 2.0
+              "No": 2
             }
           },
           "bookmaker_links": {
@@ -102183,8 +103084,8 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 1.73,
-              "X": 3.7,
-              "2": 4.1
+              "2": 4.1,
+              "X": 3.7
             },
             "Match goals 1.5": {
               "Over": 1.2,
@@ -102363,20 +103264,20 @@
           },
           "sportsbet_odds": {
             "home": 1.57,
-            "draw": 4.0,
-            "away": 5.0,
+            "draw": 4,
+            "away": 5,
             "event_id": 10495693,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/swedish-allsvenskan/malmo-ff-v-vasteras-sk-10495693"
           },
           "sportsbet_markets": {
             "Full time": {
               "1": 1.57,
-              "X": 4.0,
-              "2": 5.0
+              "2": 5,
+              "X": 4
             },
             "Match goals 1.5": {
               "Over": 1.22,
-              "Under": 4.0
+              "Under": 4
             },
             "Match goals 2.5": {
               "Over": 1.73,
@@ -102384,7 +103285,7 @@
             },
             "Both teams to score": {
               "Yes": 1.8,
-              "No": 2.0
+              "No": 2
             }
           },
           "bookmaker_links": {
@@ -102783,14 +103684,17 @@
             }
           }
         }
-      ]
+      ],
+      "badge_storage_path": "badges/leagues/allsvenskan.png",
+      "badge_source": "league",
+      "badge_source_url": "https://media.api-sports.io/football/leagues/113.png"
     },
     {
       "id": 20,
       "name": "Eliteserien",
       "season": "2025/26",
       "round": null,
-      "logo": "https://api.sofascore.app/api/v1/unique-tournament/20/image",
+      "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/leagues/eliteserien.png",
       "matches": [
         {
           "id": "sportsbet:10495000",
@@ -103532,17 +104436,17 @@
             "away": 6
           },
           "sportsbet_odds": {
-            "home": 1.28,
-            "draw": 5.5,
-            "away": 7.0,
+            "home": 1.25,
+            "draw": 5,
+            "away": 8,
             "event_id": 10495050,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/norwegian-eliteserien/bodo-glimt-v-brann-10495050"
           },
           "sportsbet_markets": {
             "Full time": {
-              "1": 1.28,
-              "X": 5.5,
-              "2": 7.0
+              "1": 1.25,
+              "2": 8,
+              "X": 5
             },
             "Match goals 1.5": {
               "Over": 1.06,
@@ -103550,7 +104454,7 @@
             },
             "Match goals 2.5": {
               "Over": 1.25,
-              "Under": 3.69
+              "Under": 3.7
             },
             "Both teams to score": {
               "Yes": 1.45,
@@ -103721,7 +104625,7 @@
           },
           "sportsbet_odds": {
             "home": 6.5,
-            "draw": 5.0,
+            "draw": 5,
             "away": 1.33,
             "event_id": 10495087,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/norwegian-eliteserien/kristiansund-v-viking-10495087"
@@ -104474,7 +105378,7 @@
           "sportsbet_odds": {
             "home": 1.4,
             "draw": 4.5,
-            "away": 6.0,
+            "away": 6,
             "event_id": 10495093,
             "event_url": "https://www.sportsbet.com.au/betting/soccer/rest-of-europe/norwegian-eliteserien/tromso-v-aalesunds-10495093"
           },
@@ -104669,20 +105573,20 @@
           "sportsbet_markets": {
             "Full time": {
               "1": 2.8,
-              "2": 2.1,
-              "X": 3.7
+              "2": 2.15,
+              "X": 3.6
             },
             "Match goals 1.5": {
               "Over": 1.17,
               "Under": 4.65
             },
             "Match goals 2.5": {
-              "Over": 1.57,
-              "Under": 2.31
+              "Over": 1.6,
+              "Under": 2.25
             },
             "Both teams to score": {
-              "Yes": 1.5,
-              "No": 2.5
+              "Yes": 1.53,
+              "No": 2.4
             }
           },
           "bookmaker_links": {
@@ -104893,7 +105797,10 @@
             }
           }
         }
-      ]
+      ],
+      "badge_storage_path": "badges/leagues/eliteserien.png",
+      "badge_source": "league",
+      "badge_source_url": "https://media.api-sports.io/football/leagues/103.png"
     }
   ]
 }

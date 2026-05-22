@@ -325,11 +325,11 @@ export default function AuthGate({ children }) {
       <main className="min-h-screen bg-field px-4 py-8">
         <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-md flex-col justify-center">
           <div className="mb-3">
-            <div className="flex w-full items-center justify-center rounded-lg border border-line bg-white px-4 py-4 shadow-panel">
+            <div className="flex w-full items-center justify-center px-1 py-2">
               <img
                 src="/LVR-LOGO.png"
                 alt="LVRstats.com"
-                className="h-20 w-auto max-w-full object-contain"
+                className="h-24 w-full object-cover object-center"
               />
             </div>
             <div className="mt-3 rounded-lg border border-line bg-white px-4 py-3 text-center shadow-panel">

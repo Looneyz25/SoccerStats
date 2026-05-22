@@ -9,10 +9,11 @@ import { getStorage } from 'firebase-admin/storage';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PROJECT_ID = 'sports-predictions-f91fd';
-const STORAGE_BUCKET = 'sports-predictions-f91fd.firebasestorage.app';
+const STORAGE_BUCKET = process.env.FIREBASE_BADGE_BUCKET || 'lvrstats-badges-sports-predictions-f91fd';
 const DEFAULT_SERVICE_ACCOUNT_PATH = path.join(ROOT, '.secrets', 'firebase-service-account.json');
 const DATA_FILES = ['match_data.json', `predictions_${new Date().toISOString().slice(0, 10)}.json`];
 const FIREBASE_STORAGE_HOST = 'firebasestorage.googleapis.com';
+const GOOGLE_STORAGE_HOST = 'storage.googleapis.com';
 
 const LEAGUE_BADGE_SOURCES = {
   'Premier League': 'https://media.api-sports.io/football/leagues/39.png',
@@ -108,7 +109,8 @@ function sourceKey(value) {
 }
 
 function isFirebaseUrl(value) {
-  return String(value || '').includes(FIREBASE_STORAGE_HOST);
+  const text = String(value || '');
+  return text.includes(FIREBASE_STORAGE_HOST) || text.includes(`${GOOGLE_STORAGE_HOST}/${STORAGE_BUCKET}/`);
 }
 
 function isProviderUrl(value) {
@@ -118,10 +120,9 @@ function isProviderUrl(value) {
 
 function sourceForEntity(kind, entity) {
   const explicit = entity?.badge_source_url || entity?.logo_url || entity?.logo || entity?.badge || entity?.crest;
-  if (isProviderUrl(explicit)) return explicit;
   const name = sourceKey(entity?.name || entity?.league || entity?.short);
-  if (kind === 'leagues') return LEAGUE_BADGE_SOURCES[entity?.name] || LEAGUE_BADGE_SOURCES[entity?.league] || '';
-  if (kind === 'teams') return TEAM_BADGE_SOURCES[name] || '';
+  if (kind === 'leagues') return LEAGUE_BADGE_SOURCES[entity?.name] || LEAGUE_BADGE_SOURCES[entity?.league] || (isProviderUrl(explicit) ? explicit : '');
+  if (kind === 'teams') return TEAM_BADGE_SOURCES[name] || (isProviderUrl(explicit) ? explicit : '');
   return '';
 }
 
@@ -134,8 +135,8 @@ function extensionFor(contentType, sourceUrl) {
   return ext || 'png';
 }
 
-function firebaseDownloadUrl(bucketName, storagePath, token) {
-  return `https://firebasestorage.googleapis.com/v0/b/${bucketName}/o/${encodeURIComponent(storagePath)}?alt=media&token=${token}`;
+function managedStorageUrl(bucketName, storagePath) {
+  return `https://storage.googleapis.com/${bucketName}/${storagePath.split('/').map(encodeURIComponent).join('/')}`;
 }
 
 async function fetchProviderImage(sourceUrl) {
@@ -157,30 +158,45 @@ async function cacheImage(bucket, kind, identity, sourceUrl, sourceName) {
   const { buffer, contentType } = await fetchProviderImage(sourceUrl);
   const ext = extensionFor(contentType, sourceUrl);
   const storagePath = `badges/${kind}/${identity}.${ext}`;
-  const token = randomUUID();
-  await bucket.file(storagePath).save(buffer, {
+  const file = bucket.file(storagePath);
+  await file.save(buffer, {
     resumable: false,
     metadata: {
       contentType,
-      cacheControl: 'public, max-age=2592000',
+      cacheControl: 'public, max-age=31536000, immutable',
       metadata: {
-        firebaseStorageDownloadTokens: token,
+        cacheId: randomUUID(),
         sourceUrl,
         sourceName: sourceName || '',
       },
     },
   });
+  await file.makePublic();
   return {
-    logo: firebaseDownloadUrl(bucket.name, storagePath, token),
+    logo: managedStorageUrl(bucket.name, storagePath),
     badge_storage_path: storagePath,
     badge_source: sourceName || 'provider',
     badge_source_url: sourceUrl,
   };
 }
 
+async function useCachedImage(bucket, entity) {
+  const storagePath = entity?.badge_storage_path;
+  if (!storagePath) return false;
+  const file = bucket.file(storagePath);
+  try {
+    await file.makePublic();
+    entity.logo = managedStorageUrl(bucket.name, storagePath);
+    delete entity.badge_cache_error;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 async function cacheEntity(bucket, kind, entity, identityParts, sourceName) {
   if (!entity || typeof entity !== 'object') return { cached: 0, skipped: 0, failed: 0 };
-  if (entity.badge_storage_path && isFirebaseUrl(entity.logo)) return { cached: 0, skipped: 1, failed: 0 };
+  if (entity.badge_storage_path && await useCachedImage(bucket, entity)) return { cached: 0, skipped: 1, failed: 0 };
   const sourceUrl = sourceForEntity(kind, entity);
   if (!isProviderUrl(sourceUrl)) return { cached: 0, skipped: 1, failed: 0 };
 
@@ -188,6 +204,7 @@ async function cacheEntity(bucket, kind, entity, identityParts, sourceName) {
   if (!identity) return { cached: 0, skipped: 1, failed: 0 };
   try {
     Object.assign(entity, await cacheImage(bucket, kind, identity, sourceUrl, entity.badge_source || sourceName));
+    delete entity.badge_cache_error;
     return { cached: 1, skipped: 0, failed: 0 };
   } catch (error) {
     entity.logo = '';

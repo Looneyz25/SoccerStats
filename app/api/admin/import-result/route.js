@@ -129,10 +129,10 @@ function sidePair(value, homeKeys = ['home'], awayKeys = ['away']) {
   return homeNumber === null || awayNumber === null ? null : { home: homeNumber, away: awayNumber };
 }
 
-function statPair(stats, ...keys) {
+function statPair(stats, homeName, awayName, ...keys) {
   for (const key of keys) {
     const value = stats[key] ?? stats[cleanKey(key)];
-    const pair = sidePair(value);
+    const pair = sidePair(value, ['home', 'homeScore', homeName], ['away', 'awayScore', awayName]);
     if (pair) return pair;
   }
   return null;
@@ -176,17 +176,33 @@ function normalizeImport(raw) {
   const statsRaw = raw.stats || raw.statistics || raw.matchStats || raw.matchOverview || raw.overview || {};
   const stats = Object.fromEntries(Object.entries(statsRaw).map(([key, value]) => [cleanKey(key), value]));
 
-  const corners = statPair(stats, 'corners', 'cornerKicks', 'corner kicks');
-  const fouls = statPair(stats, 'fouls');
-  const shotsOnTarget = statPair(stats, 'shotsOnTarget', 'shots on target', 'shotsOnGoal');
-  const yellowCards = statPair(stats, 'yellowCards', 'yellow cards');
-  const redCards = statPair(stats, 'redCards', 'red cards');
-  const cards = statPair(stats, 'cards', 'totalCards', 'total cards');
+  const corners = statPair(stats, homeName, awayName, 'corners', 'cornerKicks', 'corner kicks');
+  const fouls = statPair(stats, homeName, awayName, 'fouls');
+  const shotsOnTarget = statPair(stats, homeName, awayName, 'shotsOnTarget', 'shots on target', 'shotsOnGoal');
+  const totalShots = statPair(stats, homeName, awayName, 'totalShots', 'total shots');
+  const expectedGoals = statPair(stats, homeName, awayName, 'expectedGoals', 'expected goals', 'xG');
+  const bigChances = statPair(stats, homeName, awayName, 'bigChances', 'big chances');
+  const goalkeeperSaves = statPair(stats, homeName, awayName, 'goalkeeperSaves', 'goalkeeper saves', 'keeperSaves', 'saves');
+  const passes = statPair(stats, homeName, awayName, 'passes');
+  const tackles = statPair(stats, homeName, awayName, 'tackles');
+  const freeKicks = statPair(stats, homeName, awayName, 'freeKicks', 'free kicks');
+  const possession = statPair(stats, homeName, awayName, 'ballPossession', 'ball possession', 'possession');
+  const yellowCards = statPair(stats, homeName, awayName, 'yellowCards', 'yellow cards');
+  const redCards = statPair(stats, homeName, awayName, 'redCards', 'red cards');
+  const cards = statPair(stats, homeName, awayName, 'cards', 'totalCards', 'total cards');
 
   const actuals = { source: 'SofaScore manual import' };
   if (corners) Object.assign(actuals, { home_corners: corners.home, away_corners: corners.away, corners_total: corners.home + corners.away });
   if (fouls) Object.assign(actuals, { home_fouls: fouls.home, away_fouls: fouls.away, fouls_total: fouls.home + fouls.away });
   if (shotsOnTarget) Object.assign(actuals, { home_sot: shotsOnTarget.home, away_sot: shotsOnTarget.away });
+  if (totalShots) Object.assign(actuals, { home_shots: totalShots.home, away_shots: totalShots.away });
+  if (expectedGoals) Object.assign(actuals, { home_xg: expectedGoals.home, away_xg: expectedGoals.away });
+  if (bigChances) Object.assign(actuals, { home_big_chances: bigChances.home, away_big_chances: bigChances.away });
+  if (goalkeeperSaves) Object.assign(actuals, { home_saves: goalkeeperSaves.home, away_saves: goalkeeperSaves.away });
+  if (passes) Object.assign(actuals, { home_passes: passes.home, away_passes: passes.away });
+  if (tackles) Object.assign(actuals, { home_tackles: tackles.home, away_tackles: tackles.away });
+  if (freeKicks) Object.assign(actuals, { home_free_kicks: freeKicks.home, away_free_kicks: freeKicks.away });
+  if (possession) Object.assign(actuals, { home_possession: possession.home, away_possession: possession.away });
   if (cards) {
     Object.assign(actuals, { home_cards: cards.home, away_cards: cards.away, cards_total: cards.home + cards.away });
   } else if (yellowCards || redCards) {

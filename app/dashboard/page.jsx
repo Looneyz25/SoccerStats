@@ -8,7 +8,6 @@ import {
   Activity,
   AlertTriangle,
   ArrowLeft,
-  ArrowUp,
   BarChart3,
   CheckCircle2,
   ChevronLeft,
@@ -18,6 +17,8 @@ import {
   CreditCard,
   Goal,
   GripVertical,
+  Home as HomeIcon,
+  ListFilter,
   Loader2,
   LogOut,
   Mail,
@@ -105,66 +106,17 @@ const SPORTSBET_LEAGUE_SLUGS = {
   Eredivisie: 'rest-of-europe/dutch-eredivisie',
   'Primeira Liga': 'rest-of-europe/portuguese-primeira-liga',
   'UEFA Champions League': 'uefa-competitions/uefa-champions-league',
+  'UEFA Europa League': 'uefa-competitions/uefa-europa-league',
+  'UEFA Conference League': 'uefa-competitions/uefa-europa-conference-league',
   MLS: 'north-america/usa-major-league-soccer',
   'A-League Men': 'australia/australian-a-league-men',
   'Scottish Premiership': 'united-kingdom/scottish-premiership',
   'J1 League': 'asia/japanese-j1-league',
+  'Brasileirão Betano': 'americas/brazilian-serie-a',
+  'CONMEBOL Libertadores': 'americas/conmebol-copa-libertadores',
+  'FIFA World Cup': 'world-cup/mens-world-cup',
   Allsvenskan: 'rest-of-europe/swedish-allsvenskan',
   Eliteserien: 'rest-of-europe/norwegian-eliteserien',
-};
-
-const LEAGUE_LOGOS = {
-  'Premier League': 'https://media.api-sports.io/football/leagues/39.png',
-  Championship: 'https://media.api-sports.io/football/leagues/40.png',
-  'League One': 'https://media.api-sports.io/football/leagues/41.png',
-  'League Two': 'https://media.api-sports.io/football/leagues/42.png',
-  LaLiga: 'https://media.api-sports.io/football/leagues/140.png',
-  'Serie A': 'https://media.api-sports.io/football/leagues/135.png',
-  Bundesliga: 'https://media.api-sports.io/football/leagues/78.png',
-  'Ligue 1': 'https://media.api-sports.io/football/leagues/61.png',
-  Eredivisie: 'https://media.api-sports.io/football/leagues/88.png',
-  'Primeira Liga': 'https://media.api-sports.io/football/leagues/94.png',
-  'UEFA Champions League': 'https://media.api-sports.io/football/leagues/2.png',
-  MLS: 'https://media.api-sports.io/football/leagues/253.png',
-  'A-League Men': 'https://media.api-sports.io/football/leagues/188.png',
-  'Scottish Premiership': 'https://media.api-sports.io/football/leagues/179.png',
-  'J1 League': 'https://media.api-sports.io/football/leagues/98.png',
-  Allsvenskan: 'https://media.api-sports.io/football/leagues/113.png',
-  Eliteserien: 'https://media.api-sports.io/football/leagues/103.png',
-};
-
-const TEAM_LOGOS = {
-  arsenal: 'https://media.api-sports.io/football/teams/42.png',
-  'aston villa': 'https://media.api-sports.io/football/teams/66.png',
-  bournemouth: 'https://media.api-sports.io/football/teams/35.png',
-  'afc bournemouth': 'https://media.api-sports.io/football/teams/35.png',
-  brentford: 'https://media.api-sports.io/football/teams/55.png',
-  brighton: 'https://media.api-sports.io/football/teams/51.png',
-  'brighton & hove albion': 'https://media.api-sports.io/football/teams/51.png',
-  burnley: 'https://media.api-sports.io/football/teams/44.png',
-  chelsea: 'https://media.api-sports.io/football/teams/49.png',
-  'crystal palace': 'https://media.api-sports.io/football/teams/52.png',
-  everton: 'https://media.api-sports.io/football/teams/45.png',
-  fulham: 'https://media.api-sports.io/football/teams/36.png',
-  leeds: 'https://media.api-sports.io/football/teams/63.png',
-  'leeds united': 'https://media.api-sports.io/football/teams/63.png',
-  liverpool: 'https://media.api-sports.io/football/teams/40.png',
-  'liverpool fc': 'https://media.api-sports.io/football/teams/40.png',
-  'manchester city': 'https://media.api-sports.io/football/teams/50.png',
-  'man city': 'https://media.api-sports.io/football/teams/50.png',
-  'manchester united': 'https://media.api-sports.io/football/teams/33.png',
-  'man united': 'https://media.api-sports.io/football/teams/33.png',
-  newcastle: 'https://media.api-sports.io/football/teams/34.png',
-  'newcastle united': 'https://media.api-sports.io/football/teams/34.png',
-  'nottingham forest': 'https://media.api-sports.io/football/teams/65.png',
-  sunderland: 'https://media.api-sports.io/football/teams/746.png',
-  tottenham: 'https://media.api-sports.io/football/teams/47.png',
-  'tottenham hotspur': 'https://media.api-sports.io/football/teams/47.png',
-  'west ham': 'https://media.api-sports.io/football/teams/48.png',
-  'west ham united': 'https://media.api-sports.io/football/teams/48.png',
-  wolves: 'https://media.api-sports.io/football/teams/39.png',
-  wolverhampton: 'https://media.api-sports.io/football/teams/39.png',
-  'wolverhampton wanderers': 'https://media.api-sports.io/football/teams/39.png',
 };
 
 const BOOKMAKERS = {
@@ -282,30 +234,29 @@ function imageValue(...values) {
   return values.find((value) => typeof value === 'string' && value.trim()) || '';
 }
 
-function teamLogoFallback(team) {
-  const names = [team?.name, team?.short].map((value) => String(value || '').trim().toLowerCase()).filter(Boolean);
-  return names.map((name) => TEAM_LOGOS[name]).find(Boolean) || '';
-}
-
 function teamLogo(match, side) {
   const team = match?.[side] || {};
   return imageValue(
-    teamLogoFallback(team),
     team.logo,
+    team.firebase_logo,
+    team.firebaseLogo,
     team.logo_url,
+    team.badge_url,
+    team.badge_download_url,
+    team.badgeDownloadUrl,
     team.crest,
     team.badge,
-    team.team_id ? `https://api.sofascore.app/api/v1/team/${team.team_id}/image` : '',
   );
 }
 
 function leagueLogo(value) {
   return imageValue(
     value?.leagueLogo,
-    LEAGUE_LOGOS[value?.league || value?.name],
     value?.league_logo,
     value?.logo,
     value?.logo_url,
+    value?.badge_download_url,
+    value?.badgeDownloadUrl,
   );
 }
 
@@ -1174,6 +1125,24 @@ function winnerMarketWithGuidance(match, allMatches = []) {
   return withWinnerConfidenceGate(match, guided);
 }
 
+function displayWinnerMarket(match, allMatches = []) {
+  const precomputed = match.display_markets?.winner?.market;
+  if (!precomputed) return winnerMarketWithGuidance(match, allMatches);
+  if (precomputed.guidance?.type !== 'bookmaker_guard') return precomputed;
+  const liveGuided = winnerMarketWithGuidance(match, allMatches);
+  return liveGuided?.type === precomputed.type && liveGuided?.guidance?.type === 'bookmaker_guard'
+    ? precomputed
+    : liveGuided;
+}
+
+function displayWinnerComparison(match, allMatches = [], winner = null) {
+  const precomputed = match.display_markets?.winner;
+  if (precomputed?.market?.type === winner?.type && precomputed?.market?.guidance?.type === winner?.guidance?.type) {
+    return precomputed.comparison || modelVsBookmakerComparison({ ...match, __allMatches: allMatches }, 'winner', winner);
+  }
+  return modelVsBookmakerComparison({ ...match, __allMatches: allMatches }, 'winner', winner);
+}
+
 function winnerModelProbability(match, winner = match.predictions?.winner) {
   const pickType = winner?.type;
   if (!pickType) return null;
@@ -1233,7 +1202,7 @@ function WinnerPredictionMeta({ match, side, modelProbability, winner = match.pr
 }
 
 const MARKET_CONFIG = [
-  { key: 'winner', label: 'Winner', getMarket: (match, allMatches) => winnerMarketWithGuidance(match, allMatches) },
+  { key: 'winner', label: 'Winner', getMarket: (match, allMatches) => displayWinnerMarket(match, allMatches) },
   { key: 'btts', label: 'BTTS' },
   { key: 'ou_goals', label: 'Goals' },
   { key: 'ou_cards', label: 'Cards', getMarket: (match, allMatches) => cardsMarketWithModelProbability(match, allMatches) },
@@ -1242,6 +1211,7 @@ const MARKET_CONFIG = [
 const HEADLINE_STATS_MARKETS = ['winner', 'btts', 'ou_goals', 'ou_cards', 'ou_corners'];
 
 function marketForConfig(config, match, allMatches) {
+  if (config.key === 'winner') return displayWinnerMarket(match, allMatches || match.__allMatches);
   const precomputed = match.display_markets?.[config.key === 'ou_goals' ? 'goals' : config.key === 'ou_cards' ? 'cards' : config.key === 'ou_corners' ? 'corners' : config.key]?.market;
   if (precomputed) return precomputed;
   if (config.getMarket) return config.getMarket(match, allMatches || match.__allMatches);
@@ -1263,7 +1233,9 @@ function marketRowsForMatch(match, allMatches) {
     return {
       ...config,
       market,
-      comparison: match.display_markets?.[precomputedKey]?.comparison || modelVsBookmakerComparison(match, config.key, market),
+      comparison: config.key === 'winner'
+        ? displayWinnerComparison(match, allMatches, market)
+        : match.display_markets?.[precomputedKey]?.comparison || modelVsBookmakerComparison(match, config.key, market),
     };
   }).filter((row) => row.market);
 }
@@ -2407,16 +2379,21 @@ function describeLoadError(err) {
 const LEAGUE_PRIORITY = [
   'Premier League',
   'LaLiga',
-  'Serie A',
   'Bundesliga',
+  'Serie A',
   'Ligue 1',
+  'UEFA Champions League',
+  'UEFA Europa League',
+  'UEFA Conference League',
+  'Brasileirão Betano',
+  'CONMEBOL Libertadores',
+  'A-League Men',
+  'FIFA World Cup',
   'Eredivisie',
   'Primeira Liga',
   'MLS',
-  'A-League Men',
   'Scottish Premiership',
   'J1 League',
-  'UEFA Champions League',
   'Championship',
   'League One',
   'League Two',
@@ -2438,9 +2415,12 @@ function favoriteLeagueRank(league, favoriteLeagues) {
 }
 
 function compareLeagueGroups(a, b, favoriteLeagues) {
+  const leagueCompare = compareLeagues(a.league, b.league);
+  if (leagueSortRank(a.league) < LEAGUE_PRIORITY.length || leagueSortRank(b.league) < LEAGUE_PRIORITY.length) {
+    return leagueCompare;
+  }
   const favoriteCompare = favoriteLeagueRank(a.league, favoriteLeagues) - favoriteLeagueRank(b.league, favoriteLeagues);
-  if (favoriteCompare !== 0) return favoriteCompare;
-  return compareLeagues(a.league, b.league);
+  return favoriteCompare || leagueCompare;
 }
 
 function groupMatchesByLeague(matches, favoriteLeagues = []) {
@@ -2654,15 +2634,15 @@ function streakResultFor(streak, match) {
   return null;
 }
 
-function Stat({ icon: Icon, label, value, tone = 'text-ink', sublabel = '' }) {
+function Stat({ icon: Icon, label, value, tone = 'text-ink', sublabel = '', className = '', featured = false }) {
   return (
-    <div className="min-w-0 border-b border-line bg-white px-3 py-3 text-center sm:border-b-0 sm:border-r sm:px-4 last:border-r-0">
+    <div className={`min-w-0 border-b border-line bg-white px-3 py-3 text-center sm:border-b-0 sm:border-r sm:px-4 last:border-r-0 ${featured ? 'bg-slate-50/70' : ''} ${className}`}>
       <div className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-normal text-slate-500">
         <Icon className="h-4 w-4" aria-hidden="true" />
         <span className="truncate">{label}</span>
       </div>
-      <div className={`mt-1 flex justify-center text-xl font-semibold sm:text-2xl ${tone}`}>{value}</div>
-      {sublabel && <div className="mt-1 text-[11px] font-semibold uppercase text-slate-400">{sublabel}</div>}
+      <div className={`mt-1 flex justify-center ${featured ? 'text-2xl' : 'text-xl'} font-semibold sm:text-2xl ${tone}`}>{value}</div>
+      {sublabel && <div className="mt-1 hidden text-[11px] font-semibold uppercase text-slate-400 sm:block">{sublabel}</div>}
     </div>
   );
 }
@@ -2798,50 +2778,6 @@ function TeamFavoriteButton({ teamName, favoriteTeams = [], onToggleFavoriteTeam
       title={`${isFavorite ? 'Remove from' : 'Add to'} favourite teams`}
     >
       <Star className={`h-4 w-4 ${isFavorite ? 'fill-amber-400' : ''}`} aria-hidden="true" />
-    </button>
-  );
-}
-
-function BackToTopButton() {
-  const [scrollProgress, setScrollProgress] = useState(0);
-
-  useEffect(() => {
-    function updateProgress() {
-      if (typeof window === 'undefined') return;
-      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-      const nextProgress = scrollable > 0 ? window.scrollY / scrollable : 0;
-      setScrollProgress(Math.max(0, Math.min(1, nextProgress)));
-    }
-
-    updateProgress();
-    window.addEventListener('scroll', updateProgress, { passive: true });
-    window.addEventListener('resize', updateProgress);
-    return () => {
-      window.removeEventListener('scroll', updateProgress);
-      window.removeEventListener('resize', updateProgress);
-    };
-  }, []);
-
-  const scrollToTop = useCallback(() => {
-    if (typeof window === 'undefined') return;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, []);
-
-  const progressDegrees = `${Math.round(scrollProgress * 360)}deg`;
-
-  return (
-    <button
-      type="button"
-      onClick={scrollToTop}
-      className="fixed bottom-[calc(env(safe-area-inset-bottom)+1rem)] right-4 z-40 inline-flex h-12 w-12 items-center justify-center rounded-full text-ink shadow-[0_14px_35px_rgba(15,23,42,0.22)] active:scale-95 sm:hidden"
-      style={{
-        background: `conic-gradient(#0078be ${progressDegrees}, #e2e8f0 0deg)`,
-      }}
-      aria-label="Back to top"
-      title="Back to top"
-    >
-      <span className="absolute inset-1 rounded-full bg-white ring-1 ring-white/80" aria-hidden="true" />
-      <ArrowUp className="relative h-5 w-5" aria-hidden="true" />
     </button>
   );
 }
@@ -3096,18 +3032,27 @@ function SettingsView({
   return (
     <main className="min-h-screen bg-field">
       <header className="border-b border-line bg-white">
-        <div className="mx-auto flex max-w-3xl items-start gap-3 px-3 py-3 sm:px-5 sm:py-4">
-          <button
-            type="button"
-            onClick={onBack}
-            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-line text-slate-600 hover:bg-field"
-            aria-label="Back to matches"
-          >
-            <ArrowLeft className="h-5 w-5" aria-hidden="true" />
-          </button>
-          <div className="min-w-0">
-            <h1 className="text-xl font-semibold text-ink">Settings</h1>
-            <p className="mt-1 text-sm text-slate-500">Choose the default bookmaker used across match cards.</p>
+        <div className="mx-auto max-w-3xl px-3 py-3 sm:px-5 sm:py-4">
+          <div className="flex w-full items-center justify-center rounded-lg border border-slate-200 bg-[linear-gradient(135deg,#ffffff_0%,#f8fafc_42%,#e8f5ff_100%)] px-2 py-2 shadow-[0_16px_45px_rgba(15,23,42,0.10)] ring-1 ring-white/80 sm:hidden">
+            <img
+              src="/LVR-LOGO.png"
+              alt="LVRstats.com"
+              className="h-24 w-full object-cover object-center"
+            />
+          </div>
+          <div className="mt-3 flex items-start gap-3 sm:mt-0">
+            <button
+              type="button"
+              onClick={onBack}
+              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-line text-slate-600 hover:bg-field"
+              aria-label="Back to matches"
+            >
+              <ArrowLeft className="h-5 w-5" aria-hidden="true" />
+            </button>
+            <div className="min-w-0">
+              <h1 className="text-xl font-semibold text-ink">Settings</h1>
+              <p className="mt-1 text-sm text-slate-500">Choose the default bookmaker used across match cards.</p>
+            </div>
           </div>
         </div>
       </header>
@@ -3596,19 +3541,21 @@ function ResultsReview({ matches, selectedDate, reviewSummary, activeReviewFilte
       : reviewScope === 'week' && selectedWeek
         ? `${formatDateDMY(selectedWeek)} to ${formatDateDMY(weekEnd)}`
         : 'All time';
-  const rangeTitle = reviewScope === 'date' ? 'Date' : activeScope.label;
+  const insightPrefix = reviewScope === 'date' ? 'Date read' : reviewScope === 'week' ? 'Week read' : 'All-time read';
+  const insight = best && worst
+    ? `${insightPrefix}: ${best.label} is strongest at ${best.hitRate}%; ${worst.label} is weakest at ${worst.hitRate}%.`
+    : best
+      ? `${insightPrefix}: ${best.label} is the strongest market at ${best.hitRate}%.`
+      : '';
 
   return (
     <section className="mt-3 rounded-lg border border-slate-300 bg-white p-3 shadow-panel sm:mt-5 sm:p-4">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-base font-semibold text-ink">Results review</h2>
-          <div className="mt-1 flex flex-wrap items-center gap-1.5 text-xs font-semibold text-slate-500">
-            <span className="rounded-md bg-slate-100 px-2 py-1 text-ink">{rangeTitle}: {rangeLabel}</span>
-            <span>Tracked from {formatDateDMY(PREDICTION_TRACKING_START_DATE)}</span>
-          </div>
+          <p className="mt-1 text-xs font-semibold text-slate-500">Tracked from {formatDateDMY(PREDICTION_TRACKING_START_DATE)}</p>
         </div>
-        <div className="grid shrink-0 grid-cols-3 gap-1 text-xs font-semibold">
+        <div className="grid shrink-0 grid-cols-3 gap-1 text-xs font-semibold sm:min-w-80">
           {scopeOptions.map((option) => {
             const active = reviewScope === option.key;
             return (
@@ -3626,6 +3573,11 @@ function ResultsReview({ matches, selectedDate, reviewSummary, activeReviewFilte
           })}
         </div>
       </div>
+      {insight && (
+        <div className="mt-3 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold leading-5 text-slate-700">
+          {insight}
+        </div>
+      )}
       {(best || worst) && (
         <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs font-semibold">
           {best && <span className="rounded-md border border-emerald-200 bg-emerald-50 px-2 py-1 text-emerald-700">Best {best.label} {best.hitRate}%</span>}
@@ -3637,6 +3589,12 @@ function ResultsReview({ matches, selectedDate, reviewSummary, activeReviewFilte
           {rows.map((row) => {
             const active = activeReviewFilter === row.key;
             const isSuggested = row.key === 'suggested';
+            const rowTone =
+              row.hitRate >= 55
+                ? 'border-emerald-200 bg-emerald-50/45 hover:border-emerald-300'
+                : row.hitRate < 45
+                  ? 'border-red-200 bg-red-50/45 hover:border-red-300'
+                  : 'border-slate-300 bg-field hover:border-slate-400 hover:bg-white';
             return (
               <button
                 key={row.key}
@@ -3644,7 +3602,7 @@ function ResultsReview({ matches, selectedDate, reviewSummary, activeReviewFilte
                 onClick={() => onReviewFilterChange?.(active ? 'all' : row.key)}
                 aria-pressed={active}
                 className={`rounded-md border px-2.5 py-2 text-left transition sm:px-3 ${isSuggested ? 'col-span-2 sm:col-span-2' : ''} ${
-                  active ? 'border-ink bg-white ring-2 ring-ink/15' : 'border-slate-300 bg-field hover:border-slate-400 hover:bg-white'
+                  active ? 'border-ink bg-white ring-2 ring-ink/15' : rowTone
                 }`}
               >
                 <div className="flex items-center justify-between gap-1.5">
@@ -3774,9 +3732,9 @@ function PredictionSummaryCard({ match, allMatches, voteState = null }) {
   const predictions = match.predictions || {};
   const precomputed = match.display_markets || {};
   const confidence = loadMatchConfidence(match, allMatches);
-  const winner = precomputed.winner?.market || winnerMarketWithGuidance(match, allMatches);
+  const winner = displayWinnerMarket(match, allMatches);
   const winnerLowConfidence = Boolean(winner?.lowConfidence);
-  const winnerComparison = winnerLowConfidence ? null : precomputed.winner?.comparison || modelVsBookmakerComparison(matchWithContext, 'winner', winner);
+  const winnerComparison = winnerLowConfidence ? null : displayWinnerComparison(matchWithContext, allMatches, winner);
   const displayBtts = precomputed.btts?.market || displayBttsMarket(predictions.btts, match);
   const bttsComparison = precomputed.btts?.comparison || modelVsBookmakerComparison(match, 'btts', displayBtts);
   const goalsComparison = precomputed.goals?.comparison || modelVsBookmakerComparison(match, 'ou_goals', predictions.ou_goals);
@@ -4292,7 +4250,6 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
 
         <StreakList title="Team streaks" streaks={match.team_streaks} match={match} />
       </div>
-      <BackToTopButton />
     </div>
   );
 }
@@ -4302,7 +4259,7 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
   const odds = displayThreeWayOdds(match);
   const actuals = match.actuals || {};
   const precomputed = match.display_markets || {};
-  const displayWinner = precomputed.winner?.market || winnerMarketWithGuidance(match, allMatches);
+  const displayWinner = displayWinnerMarket(match, allMatches);
   const displayBtts = precomputed.btts?.market || displayBttsMarket(predictions.btts, match);
   const bttsComparison = precomputed.btts?.comparison || modelVsBookmakerComparison(match, 'btts', displayBtts);
   const goalsComparison = precomputed.goals?.comparison || modelVsBookmakerComparison(match, 'ou_goals', predictions.ou_goals);
@@ -4311,7 +4268,9 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
   const cornerMarket = precomputed.corners?.market || cornerMarketFromStreaks(match, allMatches);
   const cornersComparison = precomputed.corners?.comparison || modelVsBookmakerComparison(match, 'ou_corners', cornerMarket);
   const confidence = loadMatchConfidence(match, allMatches);
-  const winnerModelPct = precomputed.winner?.modelProbability ?? winnerModelProbability(match, displayWinner);
+  const winnerModelPct = precomputed.winner?.market?.type === displayWinner?.type
+    ? precomputed.winner?.modelProbability ?? winnerModelProbability(match, displayWinner)
+    : winnerModelProbability(match, displayWinner);
   const edgeBadgeFor = (comparison) =>
     comparison?.badge?.tone === 'positive' && comparison.edgePoints > 0 ? comparison.badge.label : null;
   const isFinished = match.status === 'FT';
@@ -4485,13 +4444,52 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
   );
 }
 
-function LeagueSection({ group, onSelectMatch, bookmakerId, allMatches, isFavorite = false, onToggleFavorite, favoriteTeams = [], onToggleFavoriteTeam }) {
+function MobileBottomNav({
+  active,
+  onDashboard,
+  onMatches,
+  onWatchlist,
+  onSettings,
+}) {
+  const navItems = [
+    { key: 'dashboard', label: 'Dashboard', icon: HomeIcon, onClick: onDashboard },
+    { key: 'matches', label: 'Matches', icon: ListFilter, onClick: onMatches },
+    { key: 'watchlist', label: 'Watchlist', icon: Star, onClick: onWatchlist },
+    { key: 'settings', label: 'Settings', icon: Settings, onClick: onSettings },
+  ];
+
+  return (
+    <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-line bg-white/95 px-2 pb-[calc(env(safe-area-inset-bottom)+0.35rem)] pt-1.5 shadow-[0_-10px_30px_rgba(15,23,42,0.10)] backdrop-blur sm:hidden" aria-label="Mobile app navigation">
+      <div className="mx-auto grid max-w-md grid-cols-4 gap-1">
+        {navItems.map(({ key, label, icon: Icon, onClick }) => {
+          const selected = active === key;
+          return (
+            <button
+              key={key}
+              type="button"
+              onClick={onClick}
+              aria-pressed={selected}
+              className={`flex min-h-14 flex-col items-center justify-center gap-1 rounded-md px-1 text-[11px] font-semibold transition ${
+                selected ? 'bg-ink text-white' : 'text-slate-600 hover:bg-field hover:text-ink'
+              }`}
+            >
+              <Icon className={`h-5 w-5 ${key === 'watchlist' && selected ? 'fill-amber-300 text-amber-300' : ''}`} aria-hidden="true" />
+              <span>{label}</span>
+            </button>
+          );
+        })}
+      </div>
+    </nav>
+  );
+}
+
+function LeagueSection({ group, onSelectMatch, bookmakerId, allMatches, isFavorite = false, onToggleFavorite, favoriteTeams = [], onToggleFavoriteTeam, sectionRef = null, hiddenOnMobile = false }) {
   const isFavoriteTeamGroup = Boolean(group.isFavoriteTeamGroup);
   const finished = group.matches.filter((match) => match.status === 'FT').length;
   const upcoming = group.matches.length - finished;
 
   return (
-    <section className="overflow-hidden rounded-lg border border-line bg-white">
+    <section ref={sectionRef} className={`overflow-hidden rounded-lg border border-line bg-white scroll-mt-4 ${hiddenOnMobile ? 'hidden sm:block' : ''}`}>
       <div className="flex flex-col gap-2 border-b border-line bg-ink px-3 py-3 text-white sm:flex-row sm:items-center sm:justify-between sm:px-4">
         <div className="flex min-w-0 items-center gap-2">
           {isFavoriteTeamGroup ? (
@@ -4559,7 +4557,12 @@ function HomeInner() {
   const [favoriteTeams, setFavoriteTeams] = useState([]);
   const [allTeamOptions, setAllTeamOptions] = useState([]);
   const [isPlatformOwner, setIsPlatformOwner] = useState(false);
+  const [mobileNavActive, setMobileNavActive] = useState('dashboard');
 
+  const dashboardRef = useRef(null);
+  const resultsRef = useRef(null);
+  const matchesRef = useRef(null);
+  const watchlistRef = useRef(null);
   const scrollPositionRef = useRef(0);
   const swipeStartRef = useRef(null);
   const longPressTimerRef = useRef(null);
@@ -4889,6 +4892,23 @@ function HomeInner() {
     router.push(`?${params.toString()}`, { scroll: false });
   }, [router, searchParams]);
 
+  const scrollToMobileSection = useCallback((ref, activeKey) => {
+    setMobileNavActive(activeKey);
+    requestAnimationFrame(() => {
+      ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }, []);
+
+  const openMobileDashboard = useCallback(() => scrollToMobileSection(dashboardRef, 'dashboard'), [scrollToMobileSection]);
+  const openMobileMatches = useCallback(() => scrollToMobileSection(matchesRef, 'matches'), [scrollToMobileSection]);
+  const openMobileWatchlist = useCallback(() => {
+    scrollToMobileSection(watchlistRef.current ? watchlistRef : matchesRef, 'watchlist');
+  }, [scrollToMobileSection]);
+  const openMobileSettings = useCallback(() => {
+    setMobileNavActive('settings');
+    openSettings();
+  }, [openSettings]);
+
   const closeSettings = useCallback(() => {
     const params = new URLSearchParams(searchParams.toString());
     params.delete('view');
@@ -5137,17 +5157,16 @@ function HomeInner() {
   }
 
   return (
-    <main className="min-h-screen bg-field">
+    <main className="min-h-screen bg-field pb-24 sm:pb-0">
       <header className="border-b border-slate-300 bg-white">
         <div className="mx-auto max-w-7xl px-3 py-3 sm:px-6 sm:py-4 lg:px-8">
-          <div className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-[linear-gradient(135deg,#ffffff_0%,#f8fafc_42%,#e8f5ff_100%)] px-3 py-3 shadow-[0_16px_45px_rgba(15,23,42,0.10)] ring-1 ring-white/80 sm:px-5 sm:py-4">
-            <div className="flex min-w-0 items-center gap-3">
-              <div className="relative overflow-hidden rounded-md bg-white/80 px-3 py-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_10px_24px_rgba(15,23,42,0.08)] ring-1 ring-slate-200">
-                <div className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-white/55" />
+          <div className="flex items-center justify-center gap-3 rounded-lg border border-slate-200 bg-[linear-gradient(135deg,#ffffff_0%,#f8fafc_42%,#e8f5ff_100%)] px-2 py-2 shadow-[0_16px_45px_rgba(15,23,42,0.10)] ring-1 ring-white/80 sm:justify-between sm:px-5 sm:py-4">
+            <div className="flex min-w-0 flex-1 items-center justify-center gap-3 sm:justify-start">
+              <div className="flex w-full shrink items-center justify-center sm:w-auto sm:shrink-0">
                 <img
                   src="/LVR-LOGO.png"
                   alt="LVRstats.com"
-                  className="relative h-12 w-auto max-w-[15rem] object-contain sm:h-16 sm:max-w-xs"
+                  className="h-24 w-full object-cover object-center sm:h-16 sm:w-auto sm:max-w-xs sm:object-contain"
                 />
               </div>
               <div className="hidden min-w-0 sm:block">
@@ -5158,7 +5177,7 @@ function HomeInner() {
             <button
               type="button"
               onClick={openSettings}
-              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-white/90 text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_8px_20px_rgba(15,23,42,0.10)] hover:bg-white"
+              className="hidden h-11 w-11 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-white/90 text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_8px_20px_rgba(15,23,42,0.10)] hover:bg-white sm:inline-flex"
               aria-label="Open settings"
               title="Settings"
             >
@@ -5168,17 +5187,19 @@ function HomeInner() {
         </div>
       </header>
 
-      <section className="mx-auto max-w-7xl px-2 py-3 sm:px-6 sm:py-5 lg:px-8">
-        <div className="overflow-hidden rounded-lg border border-line bg-white">
+      <section ref={dashboardRef} className="mx-auto max-w-7xl scroll-mt-4 px-2 py-3 sm:px-6 sm:py-5 lg:px-8">
+        <div className={`${mobileNavActive === 'dashboard' ? 'block' : 'hidden'} overflow-hidden rounded-lg border border-line bg-white sm:block`}>
+          <div className="flex items-center justify-between border-b border-line px-3 py-2 sm:hidden">
+            <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">All-time overview</span>
+            <span className="text-xs font-semibold text-slate-400">{stats.finished} settled</span>
+          </div>
           <div className="grid grid-cols-2 sm:grid-cols-5">
-            <Stat icon={Activity} label="Matches" value={stats.total} sublabel="All time" />
-            <Stat icon={CheckCircle2} label="Finished" value={stats.finished} tone="text-signal" sublabel="All time" />
-            <Stat icon={Clock3} label="Upcoming" value={stats.upcoming} tone="text-blue-700" sublabel="All time" />
-            <Stat icon={Goal} label="Hit Rate" value={`${stats.accuracy}%`} sublabel="All time" />
+            <Stat icon={Goal} label="Hit Rate" value={`${stats.accuracy}%`} sublabel="All time" featured />
             <Stat
               icon={BarChart3}
               label="Odds Hit / Loss"
               sublabel="All time"
+              featured
               value={
                 <span className="flex flex-nowrap items-baseline gap-x-1.5 whitespace-nowrap text-lg sm:gap-x-2 sm:text-2xl">
                   <span className="text-signal">{formatOddsTotal(stats.oddsTotals?.hit)}</span>
@@ -5187,18 +5208,23 @@ function HomeInner() {
                 </span>
               }
             />
+            <Stat icon={CheckCircle2} label="Finished" value={stats.finished} tone="text-signal" sublabel="All time" />
+            <Stat icon={Clock3} label="Upcoming" value={stats.upcoming} tone="text-blue-700" sublabel="All time" />
+            <Stat icon={Activity} label="Matches" value={stats.total} sublabel="All time" className="col-span-2 sm:col-span-1" />
           </div>
         </div>
 
-        <ResultsReview
-          matches={matches}
-          selectedDate={selectedDate}
-          reviewSummary={data?.allTimeSummary?.review}
-          activeReviewFilter={reviewFilter}
-          onReviewFilterChange={handleReviewFilterChange}
-        />
+        <div ref={resultsRef} className={`${mobileNavActive === 'dashboard' || mobileNavActive === 'results' ? 'block' : 'hidden'} scroll-mt-4 sm:block`}>
+          <ResultsReview
+            matches={matches}
+            selectedDate={selectedDate}
+            reviewSummary={data?.allTimeSummary?.review}
+            activeReviewFilter={reviewFilter}
+            onReviewFilterChange={handleReviewFilterChange}
+          />
+        </div>
 
-        <div className="mt-3 rounded-lg border border-line bg-white p-3 sm:hidden">
+        <div className={`${mobileNavActive === 'matches' || mobileNavActive === 'watchlist' ? 'block' : 'hidden'} mt-3 rounded-lg border border-line bg-white p-3 sm:hidden`}>
           <div className="flex items-center justify-between gap-2">
             <button
               type="button"
@@ -5253,7 +5279,7 @@ function HomeInner() {
           </div>
         </div>
 
-        <div className="mt-3 grid gap-2 rounded-lg border border-line bg-white p-3 sm:mt-5 sm:grid-cols-[12rem_10rem_minmax(18rem,1fr)_minmax(16rem,1fr)] sm:items-center sm:gap-3">
+        <div ref={matchesRef} className={`${mobileNavActive === 'matches' || mobileNavActive === 'watchlist' ? 'grid' : 'hidden'} mt-3 scroll-mt-4 gap-2 rounded-lg border border-line bg-white p-3 sm:mt-5 sm:grid sm:grid-cols-[12rem_10rem_minmax(18rem,1fr)_minmax(16rem,1fr)] sm:items-center sm:gap-3`}>
           <select
             value={league}
             onChange={(event) => setLeague(event.target.value)}
@@ -5335,7 +5361,7 @@ function HomeInner() {
         )}
 
         <div
-          className={`date-slide-frame mt-3 sm:mt-5${dragActive ? ' date-slide-grabbing' : ''}`}
+          className={`${mobileNavActive === 'matches' || mobileNavActive === 'watchlist' ? 'block' : 'hidden'} date-slide-frame mt-3 sm:mt-5 sm:block${dragActive ? ' date-slide-grabbing' : ''}`}
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
@@ -5362,19 +5388,32 @@ function HomeInner() {
               onToggleFavorite={handleFavoriteLeagueToggle}
               favoriteTeams={favoriteTeams}
               onToggleFavoriteTeam={handleFavoriteTeamToggle}
+              sectionRef={group.isFavoriteTeamGroup ? watchlistRef : null}
+              hiddenOnMobile={mobileNavActive === 'watchlist' && !group.isFavoriteTeamGroup}
             />
           ))}
 
-          {!error && filtered.length === 0 && (
+          {!error && filtered.length === 0 && mobileNavActive !== 'watchlist' && (
             <div className="rounded-lg border border-line bg-white p-8 text-center text-sm text-slate-500">
               No matches found for the selected filters.
+            </div>
+          )}
+          {!error && mobileNavActive === 'watchlist' && !groupedMatches.some((group) => group.isFavoriteTeamGroup) && (
+            <div className="rounded-lg border border-line bg-white p-8 text-center text-sm text-slate-500 sm:hidden">
+              No favourite-team matches for these filters.
             </div>
           )}
           </div>
         </div>
 
       </section>
-      <BackToTopButton />
+      <MobileBottomNav
+        active={mobileNavActive}
+        onDashboard={openMobileDashboard}
+        onMatches={openMobileMatches}
+        onWatchlist={openMobileWatchlist}
+        onSettings={openMobileSettings}
+      />
     </main>
   );
 }

@@ -109,9 +109,9 @@ async function fetchMatchDataFromFirestoreSdk(date = '') {
     const dateSnap = await getDoc(dateRef);
     if (dateSnap.exists()) {
       const data = dateSnap.data();
-      if (data.format === 'date_doc_v1' && Array.isArray(data.leagues)) {
+      if ((data.format === 'date_doc_v1' || !data.format) && Array.isArray(data.leagues)) {
         const result = {
-          captured_at: data.capturedAt || null,
+          captured_at: data.capturedAt || data.generated_at || null,
           source: data.source || null,
           date: data.date || date,
           availableDates: Array.isArray(data.availableDates) ? data.availableDates : [],

@@ -7,7 +7,7 @@ Source: Sportsbet AU (Win-Draw-Win, 90-min regular time)
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-22 17:56:57 ACST |
+| run_timestamp | 2026-05-22 18:58:48 ACST |
 | timezone | Australia/Adelaide |
 | source | Sportsbet AU |
 | phase1_input_rows | 3 |
