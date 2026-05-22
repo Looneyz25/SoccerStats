@@ -231,6 +231,9 @@ export async function updateUserProfile(uid, profile) {
   const userRef = doc(db, 'users', uid);
   const displayName = String(profile?.displayName || '').trim().slice(0, 80);
   const nickname = String(profile?.nickname || '').trim().slice(0, 40);
+  if (nickname.length < 2) {
+    throw new Error('Set a nickname before saving your profile.');
+  }
   const favoriteTeams = Array.isArray(profile?.favoriteTeams)
     ? [...new Set(profile.favoriteTeams.map((team) => String(team || '').trim()).filter(Boolean))].slice(0, MAX_FAVORITE_TEAMS)
     : [];

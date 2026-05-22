@@ -323,16 +323,16 @@ export default function AuthGate({ children }) {
     const isCreateMode = mode === 'create';
     return (
       <main className="min-h-screen bg-field px-4 py-8">
-        <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-md flex-col justify-center">
+        <div className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-md min-w-0 flex-col justify-center">
           <div className="mb-3">
             <div className="flex w-full items-center justify-center px-1 py-2">
               <img
                 src="/LVR-LOGO.png"
                 alt="LVRstats.com"
-                className="h-24 w-full object-cover object-center"
+                className="h-20 w-full max-w-xs object-contain object-center sm:h-24 sm:max-w-sm"
               />
             </div>
-            <div className="mt-3 rounded-lg border border-line bg-white px-4 py-3 text-center shadow-panel">
+            <div className="mt-3 w-full min-w-0 rounded-lg border border-line bg-white px-4 py-3 text-center shadow-panel">
               <h1 className="text-lg font-semibold leading-6 text-ink">Tired of researching every match?</h1>
               <p className="mt-1 text-sm leading-5 text-slate-600">
                 We do the form, odds, and market checks for you, then show the picks worth reviewing.
@@ -340,7 +340,7 @@ export default function AuthGate({ children }) {
             </div>
           </div>
 
-          <section className="rounded-lg border border-line bg-white p-4 shadow-panel sm:p-5">
+          <section className="w-full min-w-0 rounded-lg border border-line bg-white p-4 shadow-panel sm:p-5">
             <div className="mb-4 grid grid-cols-2 gap-2 rounded-md bg-field p-1">
               <button
                 type="button"
@@ -349,7 +349,7 @@ export default function AuthGate({ children }) {
                   setError('');
                   setMessage('');
                 }}
-                className={`h-10 rounded-md text-sm font-semibold transition ${
+                className={`h-10 min-w-0 rounded-md text-xs font-semibold transition sm:text-sm ${
                   !isCreateMode ? 'bg-white text-ink shadow-sm' : 'text-slate-600 hover:text-ink'
                 }`}
               >
@@ -362,7 +362,7 @@ export default function AuthGate({ children }) {
                   setError('');
                   setMessage('');
                 }}
-                className={`h-10 rounded-md text-sm font-semibold transition ${
+                className={`h-10 min-w-0 rounded-md text-xs font-semibold transition sm:text-sm ${
                   isCreateMode ? 'bg-white text-ink shadow-sm' : 'text-slate-600 hover:text-ink'
                 }`}
               >

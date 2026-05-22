@@ -1,57 +1,57 @@
 {
-  "generated_at": "2026-05-22 18:59:58 ACST",
+  "generated_at": "2026-05-23 04:15:56 ACST",
   "prediction_tracking_start_date": "2026-04-22",
-  "settled_market_rows": 1659,
+  "settled_market_rows": 1664,
   "market_summary": [
     {
       "market": "BTTS",
-      "settled": 419,
+      "settled": 420,
       "hits": 227,
-      "misses": 192,
-      "hit_rate": 0.5418,
+      "misses": 193,
+      "hit_rate": 0.5405,
       "odds_hit": 166.78,
-      "odds_loss": 138.12,
-      "odds_net": 28.66
+      "odds_loss": 140.07,
+      "odds_net": 26.71
     },
     {
       "market": "Cards",
-      "settled": 392,
-      "hits": 234,
+      "settled": 393,
+      "hits": 235,
       "misses": 158,
-      "hit_rate": 0.5969,
+      "hit_rate": 0.598,
       "odds_hit": 148.74,
       "odds_loss": 127.45,
       "odds_net": 21.29
     },
     {
       "market": "Corners",
-      "settled": 10,
-      "hits": 7,
+      "settled": 11,
+      "hits": 8,
       "misses": 3,
-      "hit_rate": 0.7,
+      "hit_rate": 0.7273,
       "odds_hit": 3.27,
       "odds_loss": 1.58,
       "odds_net": 1.69
     },
     {
       "market": "Goals",
-      "settled": 419,
+      "settled": 420,
       "hits": 234,
-      "misses": 185,
-      "hit_rate": 0.5585,
+      "misses": 186,
+      "hit_rate": 0.5571,
       "odds_hit": 171.32,
-      "odds_loss": 146.69,
-      "odds_net": 24.63
+      "odds_loss": 148.89,
+      "odds_net": 22.43
     },
     {
       "market": "Winner",
-      "settled": 419,
-      "hits": 204,
+      "settled": 420,
+      "hits": 205,
       "misses": 215,
-      "hit_rate": 0.4869,
-      "odds_hit": 167.44,
+      "hit_rate": 0.4881,
+      "odds_hit": 169.59,
       "odds_loss": 240.47,
-      "odds_net": -73.03
+      "odds_net": -70.88
     }
   ],
   "league_summary": [
@@ -117,13 +117,13 @@
     },
     {
       "league": "J1 League",
-      "settled": 35,
-      "hits": 22,
-      "misses": 13,
-      "hit_rate": 0.6286,
-      "odds_hit": 22.95,
-      "odds_loss": 14.8,
-      "odds_net": 8.15
+      "settled": 40,
+      "hits": 25,
+      "misses": 15,
+      "hit_rate": 0.625,
+      "odds_hit": 25.1,
+      "odds_loss": 18.95,
+      "odds_net": 6.15
     },
     {
       "league": "LaLiga",
@@ -268,6 +268,14 @@
       "action": "review_weighting"
     },
     {
+      "league": "J1 League",
+      "market": "BTTS",
+      "settled": 10,
+      "hit_rate": 0.4,
+      "odds_net": -2.33,
+      "action": "review_weighting"
+    },
+    {
       "league": "MLS",
       "market": "Winner",
       "settled": 74,
@@ -289,14 +297,6 @@
       "settled": 36,
       "hit_rate": 0.4444,
       "odds_net": -19.22,
-      "action": "review_weighting"
-    },
-    {
-      "league": "J1 League",
-      "market": "BTTS",
-      "settled": 9,
-      "hit_rate": 0.4444,
-      "odds_net": -0.38,
       "action": "review_weighting"
     },
     {

@@ -235,6 +235,15 @@ function cornerBookmakerOdds(match, line, pick) {
   return Number.isFinite(Number(value)) ? Number(value) : undefined;
 }
 
+function withCornerBookmakerOdds(match, market) {
+  if (!market) return market;
+  const line = Number(market.line ?? 10.5);
+  const existingOdds = Number(market.odds);
+  if (Number.isFinite(existingOdds) && existingOdds > 1.01) return { ...market, line };
+  const exactOdds = cornerBookmakerOdds(match, line, market.pick);
+  return Number.isFinite(exactOdds) ? { ...market, line, odds: exactOdds } : { ...market, line };
+}
+
 function exactCardBookmakerOdds(match, line, pick) {
   const prediction = match.predictions?.ou_cards;
   if (Number(prediction?.line) === Number(line) && prediction?.pick === pick) {
@@ -418,11 +427,12 @@ function cardsMarketWithModelProbability(match, allMatches) {
 function cornerMarketFromStreaks(match, allMatches = []) {
   if (match.predictions?.ou_corners) {
     const prediction = match.predictions.ou_corners;
-    return {
+    const market = {
       ...prediction,
       actual: prediction.actual ?? match.actuals?.corners_total,
       result: prediction.result || marketResultFromActual(prediction, match.actuals?.corners_total),
     };
+    return withCornerBookmakerOdds(match, market);
   }
   const available = [
     recentTeamCorners(allMatches, match.home?.team_id, match.id),
@@ -432,7 +442,7 @@ function cornerMarketFromStreaks(match, allMatches = []) {
   const average = available.reduce((sum, item) => sum + item.avg, 0) / available.length;
   const line = 10.5;
   const pick = average >= line ? 'Over' : 'Under';
-  const market = {
+  const market = withCornerBookmakerOdds(match, {
     pick,
     line,
     odds: cornerBookmakerOdds(match, line, pick),
@@ -442,7 +452,7 @@ function cornerMarketFromStreaks(match, allMatches = []) {
     sourceLabel: 'Recent corner average',
     sourceValue: `${average.toFixed(1)} avg`,
     team: 'both',
-  };
+  });
   return { ...market, result: marketResultFromActual(market, market.actual) };
 }
 

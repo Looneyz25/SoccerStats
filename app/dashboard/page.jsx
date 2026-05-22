@@ -514,6 +514,15 @@ function cornerBookmakerOdds(match, line, pick) {
   return Number.isFinite(Number(value)) ? Number(value) : undefined;
 }
 
+function withCornerBookmakerOdds(match, market) {
+  if (!market) return market;
+  const line = Number(market.line ?? 10.5);
+  const existingOdds = Number(market.odds);
+  if (Number.isFinite(existingOdds) && existingOdds > 1.01) return { ...market, line };
+  const exactOdds = cornerBookmakerOdds(match, line, market.pick);
+  return Number.isFinite(exactOdds) ? { ...market, line, odds: exactOdds } : { ...market, line };
+}
+
 function exactCardBookmakerOdds(match, line, pick) {
   const prediction = match.predictions?.ou_cards;
   if (Number(prediction?.line) === Number(line) && prediction?.pick === pick) {
@@ -566,11 +575,12 @@ function oppositeTotalPick(pick) {
 function cornerMarketFromStreaks(match, allMatches = []) {
   if (match.predictions?.ou_corners) {
     const prediction = match.predictions.ou_corners;
-    return {
+    const market = {
       ...prediction,
       actual: prediction.actual ?? match.actuals?.corners_total,
       result: prediction.result || marketResultFromActual(prediction, match.actuals?.corners_total),
     };
+    return withCornerBookmakerOdds(match, market);
   }
   const streaks = [...(match.h2h_streaks || []), ...(match.team_streaks || [])];
   const seen = new Set();
@@ -625,7 +635,7 @@ function cornerMarketFromStreaks(match, allMatches = []) {
       team: 'both',
     };
     return {
-      ...fallback,
+      ...withCornerBookmakerOdds(match, fallback),
       result: marketResultFromActual(fallback, fallback.actual),
     };
   }
@@ -639,7 +649,7 @@ function cornerMarketFromStreaks(match, allMatches = []) {
   const modelSidePick = Number.isFinite(averageProbability) && averageProbability < 0.5 ? oppositeTotalPick(best.pick) : best.pick;
   const modelProbability = modelSidePick === best.pick ? averageProbability : 1 - averageProbability;
   const finalMarket = { pick: modelSidePick, line: best.line };
-  return {
+  const market = {
     pick: modelSidePick,
     line: best.line,
     odds: modelSidePick === best.pick
@@ -660,6 +670,7 @@ function cornerMarketFromStreaks(match, allMatches = []) {
     },
     team: best.team,
   };
+  return withCornerBookmakerOdds(match, market);
 }
 
 function fmtLambda(value) {
@@ -1213,9 +1224,34 @@ const HEADLINE_STATS_MARKETS = ['winner', 'btts', 'ou_goals', 'ou_cards', 'ou_co
 function marketForConfig(config, match, allMatches) {
   if (config.key === 'winner') return displayWinnerMarket(match, allMatches || match.__allMatches);
   const precomputed = match.display_markets?.[config.key === 'ou_goals' ? 'goals' : config.key === 'ou_cards' ? 'cards' : config.key === 'ou_corners' ? 'corners' : config.key]?.market;
-  if (precomputed) return precomputed;
-  if (config.getMarket) return config.getMarket(match, allMatches || match.__allMatches);
+  if (precomputed) return config.key === 'ou_corners' ? withCornerBookmakerOdds(match, precomputed) : precomputed;
+  if (config.getMarket) {
+    const market = config.getMarket(match, allMatches || match.__allMatches);
+    return config.key === 'ou_corners' ? withCornerBookmakerOdds(match, market) : market;
+  }
   return match.predictions?.[config.key];
+}
+
+function comparisonHasBookmakerOdds(comparison) {
+  const value = Number(comparison?.bookmaker?.odds);
+  return Number.isFinite(value) && value > 1.01;
+}
+
+function marketHasBookmakerOdds(market) {
+  const value = Number(market?.odds);
+  return Number.isFinite(value) && value > 1.01;
+}
+
+function comparisonForMarket(match, marketKey, market, precomputedComparison) {
+  const hydratedMarket = marketKey === 'ou_corners' ? withCornerBookmakerOdds(match, market) : market;
+  if (
+    marketKey === 'ou_corners' &&
+    marketHasBookmakerOdds(hydratedMarket) &&
+    !comparisonHasBookmakerOdds(precomputedComparison)
+  ) {
+    return modelVsBookmakerComparison(match, marketKey, hydratedMarket);
+  }
+  return precomputedComparison || modelVsBookmakerComparison(match, marketKey, hydratedMarket);
 }
 
 function headlineStatsMarkets(match) {
@@ -1235,7 +1271,7 @@ function marketRowsForMatch(match, allMatches) {
       market,
       comparison: config.key === 'winner'
         ? displayWinnerComparison(match, allMatches, market)
-        : match.display_markets?.[precomputedKey]?.comparison || modelVsBookmakerComparison(match, config.key, market),
+        : comparisonForMarket(match, config.key, market, match.display_markets?.[precomputedKey]?.comparison),
     };
   }).filter((row) => row.market);
 }
@@ -1248,8 +1284,8 @@ function suggestedPickForMatch(match, allMatches) {
   const goalsComparison = precomputed.goals?.comparison || modelVsBookmakerComparison(match, 'ou_goals', predictions.ou_goals);
   const displayCards = precomputed.cards?.market || cardsMarketWithModelProbability(match, allMatches);
   const cardsComparison = precomputed.cards?.comparison || modelVsBookmakerComparison(match, 'ou_cards', displayCards);
-  const cornerMarket = precomputed.corners?.market || cornerMarketFromStreaks(match, allMatches);
-  const cornersComparison = precomputed.corners?.comparison || modelVsBookmakerComparison(match, 'ou_corners', cornerMarket);
+  const cornerMarket = withCornerBookmakerOdds(match, precomputed.corners?.market || cornerMarketFromStreaks(match, allMatches));
+  const cornersComparison = comparisonForMarket(match, 'ou_corners', cornerMarket, precomputed.corners?.comparison);
 
   return suggestedMarketPick([
     { label: 'BTTS', market: displayBtts, comparison: bttsComparison, modelProbability: precomputed.btts?.modelProbability },
@@ -2466,6 +2502,44 @@ function groupMatchesForDisplay(matches, favoriteLeagues = [], favoriteTeams = [
   ];
 }
 
+function groupFavoriteMatches(matches, favoriteLeagues = [], favoriteTeams = []) {
+  const groups = [];
+  const usedMatchKeys = new Set();
+  const favSet = favoriteTeamSet(favoriteTeams);
+  const favoriteTeamMatches = matches.filter((match) => matchHasFavoriteTeam(match, favSet));
+
+  if (favoriteTeamMatches.length) {
+    favoriteTeamMatches.forEach((match) => usedMatchKeys.add(`${match.league}-${match.id}`));
+    groups.push({
+      league: 'Favourite teams',
+      leagueId: 'favorite-teams',
+      logo: null,
+      matches: favoriteTeamMatches.sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`)),
+      isFavoriteTeamGroup: true,
+      isFavoritesViewGroup: true,
+    });
+  }
+
+  favoriteLeagues.forEach((leagueName) => {
+    const leagueMatches = matches
+      .filter((match) => match.league === leagueName)
+      .filter((match) => !usedMatchKeys.has(`${match.league}-${match.id}`))
+      .sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`));
+    if (!leagueMatches.length) return;
+    leagueMatches.forEach((match) => usedMatchKeys.add(`${match.league}-${match.id}`));
+    groups.push({
+      league: leagueName,
+      leagueId: `favorite-league-${teamPreferenceKey(leagueName)}`,
+      logo: leagueMatches[0]?.leagueLogo || null,
+      matches: leagueMatches,
+      isFavoriteLeagueGroup: true,
+      isFavoritesViewGroup: true,
+    });
+  });
+
+  return groups;
+}
+
 function normalizeAllTimeSummary(summary) {
   if (!summary || typeof summary !== 'object') return null;
   const total = Number(summary.total);
@@ -2951,9 +3025,18 @@ function SettingsView({
   }
 
   async function saveProfile() {
-    setProfileBusy(true);
     setProfileMessage('');
     setProfileError('');
+    const nickname = profileForm.nickname.trim().slice(0, 40);
+    if (!nickname) {
+      setProfileError('Set a nickname before saving. Crowd features use nicknames for privacy.');
+      return;
+    }
+    if (nickname.length < 2) {
+      setProfileError('Nickname must be at least 2 characters.');
+      return;
+    }
+    setProfileBusy(true);
     try {
       const { updateProfile } = await import('firebase/auth');
       const { getFirebaseAuth } = await import('../firebase');
@@ -2963,7 +3046,6 @@ function SettingsView({
       if (!user) throw new Error('Sign in again before updating your profile.');
 
       const displayName = profileForm.displayName.trim().slice(0, 80);
-      const nickname = profileForm.nickname.trim().slice(0, 40);
       const favoriteTeams = [...new Set((profileForm.favoriteTeams || []).map((team) => String(team || '').trim()).filter(Boolean))].slice(0, MAX_FAVORITE_TEAMS);
       await updateProfile(user, { displayName });
       const savedProfile = await updateUserProfile(user.uid, { displayName, nickname, favoriteTeams });
@@ -3030,9 +3112,9 @@ function SettingsView({
   const billingActionLabel = hasStripeSubscription ? 'Manage subscription' : 'Start subscription';
 
   return (
-    <main className="min-h-screen bg-field">
-      <header className="border-b border-line bg-white">
-        <div className="mx-auto max-w-3xl px-3 py-3 sm:px-5 sm:py-4">
+    <main className="min-h-screen bg-field pb-24 sm:pl-20 sm:pb-0 lg:pl-64">
+      <header className="border-b border-line bg-white sm:border-b-0 sm:bg-transparent">
+        <div className="mx-auto max-w-5xl px-3 py-3 sm:px-6 sm:py-5 lg:px-8">
           <div className="flex w-full items-center justify-center rounded-lg border border-slate-200 bg-[linear-gradient(135deg,#ffffff_0%,#f8fafc_42%,#e8f5ff_100%)] px-2 py-2 shadow-[0_16px_45px_rgba(15,23,42,0.10)] ring-1 ring-white/80 sm:hidden">
             <img
               src="/LVR-LOGO.png"
@@ -3040,7 +3122,7 @@ function SettingsView({
               className="h-24 w-full object-cover object-center"
             />
           </div>
-          <div className="mt-3 flex items-start gap-3 sm:mt-0">
+          <div className="mt-3 flex items-start gap-3 rounded-lg border border-slate-300 bg-white p-3 shadow-panel sm:mt-0 sm:p-4">
             <button
               type="button"
               onClick={onBack}
@@ -3057,7 +3139,7 @@ function SettingsView({
         </div>
       </header>
 
-      <section className="mx-auto max-w-3xl px-3 py-4 sm:px-5 sm:py-5">
+      <section className="mx-auto max-w-5xl px-3 py-4 sm:px-6 sm:py-5 lg:px-8">
         <div className="rounded-lg border border-slate-300 bg-white p-4 shadow-panel">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -3131,6 +3213,11 @@ function SettingsView({
                 Profile
               </h2>
               <p className="mt-1 text-sm text-slate-500">Update the name admins see on your account.</p>
+              {!String(profileForm.nickname || '').trim() && (
+                <div className="mt-3 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-800">
+                  Set a nickname before using crowd features. Public vote areas show nicknames only.
+                </div>
+              )}
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <label className="block">
@@ -3144,22 +3231,38 @@ function SettingsView({
                 />
               </label>
               <label className="block">
-                <span className="text-xs font-semibold uppercase text-slate-500">Nickname</span>
+                <span className="text-xs font-semibold uppercase text-slate-500">Nickname required</span>
                 <input
                   value={profileForm.nickname}
                   onChange={(event) => handleProfileField('nickname', event.target.value)}
                   maxLength={40}
+                  required
                   className="mt-1 h-10 w-full rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink outline-none focus:border-slate-400"
-                  placeholder="Optional nickname"
+                  placeholder="Choose a public nickname"
                 />
+                <span className="mt-1 block text-xs font-semibold text-slate-500">Shown instead of your real name in crowd votes.</span>
               </label>
             </div>
-            <div className="rounded-md border border-line bg-field p-3">
-              <div className="flex items-center gap-2 text-xs font-semibold uppercase text-slate-500">
-                <Star className="h-3.5 w-3.5 text-amber-500" aria-hidden="true" />
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div className="text-sm text-slate-500">
+                Signed in as <span className="font-semibold text-ink">{profile?.email || '-'}</span>
+              </div>
+              <button
+                type="button"
+                onClick={saveProfile}
+                disabled={profileBusy}
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-line bg-ink px-3 text-sm font-semibold text-white shadow-panel hover:bg-slate-800 disabled:cursor-wait disabled:opacity-70"
+              >
+                {profileBusy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <UserRound className="h-4 w-4" aria-hidden="true" />}
+                Save profile
+              </button>
+            </div>
+            <div className="rounded-lg border border-line bg-white p-3 shadow-panel">
+              <div className="flex items-center gap-2 text-sm font-semibold text-ink">
+                <Star className="h-4 w-4 text-slate-500" aria-hidden="true" />
                 Favourite leagues
               </div>
-              <div className="mt-2 flex gap-2">
+              <div className="mt-3 flex gap-2">
                 <select
                   value={leagueToAdd}
                   onChange={(event) => setLeagueToAdd(event.target.value)}
@@ -3179,7 +3282,7 @@ function SettingsView({
                   type="button"
                   onClick={addFavoriteLeague}
                   disabled={!leagueToAdd}
-                  className="inline-flex h-10 shrink-0 items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink shadow-panel hover:bg-field disabled:cursor-not-allowed disabled:opacity-40"
+                  className="inline-flex h-10 shrink-0 items-center justify-center rounded-md border border-line bg-field px-4 text-sm font-semibold text-ink shadow-panel hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Add
                 </button>
@@ -3194,7 +3297,7 @@ function SettingsView({
                       onDragEnd={() => setDragLeague('')}
                       onDragOver={(event) => event.preventDefault()}
                       onDrop={() => dropFavoriteLeague(leagueName)}
-                      className={`flex items-center gap-2 rounded-md border bg-white px-2.5 py-2 text-sm shadow-panel ${
+                      className={`flex items-center gap-2 rounded-md border bg-field px-3 py-2 text-sm ${
                         dragLeague === leagueName ? 'border-ink opacity-70' : 'border-line'
                       }`}
                     >
@@ -3205,7 +3308,7 @@ function SettingsView({
                           type="button"
                           onClick={() => moveFavoriteLeague(leagueName, -1)}
                           disabled={index === 0}
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-line bg-white text-slate-600 hover:bg-field disabled:cursor-not-allowed disabled:opacity-35"
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-line bg-white text-slate-600 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-35"
                           aria-label={`Move ${leagueName} up`}
                         >
                           <ChevronUp className="h-4 w-4" aria-hidden="true" />
@@ -3214,7 +3317,7 @@ function SettingsView({
                           type="button"
                           onClick={() => moveFavoriteLeague(leagueName, 1)}
                           disabled={index === favoriteLeagues.length - 1}
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-line bg-white text-slate-600 hover:bg-field disabled:cursor-not-allowed disabled:opacity-35"
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-line bg-white text-slate-600 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-35"
                           aria-label={`Move ${leagueName} down`}
                         >
                           <ChevronDown className="h-4 w-4" aria-hidden="true" />
@@ -3235,12 +3338,12 @@ function SettingsView({
                 <p className="mt-2 text-sm text-slate-500">Favourite leagues appear first on the dashboard. Star a league or add one here.</p>
               )}
             </div>
-            <div className="rounded-md border border-line bg-field p-3">
-              <div className="flex items-center gap-2 text-xs font-semibold uppercase text-slate-500">
-                <Star className="h-3.5 w-3.5 text-amber-500" aria-hidden="true" />
+            <div className="rounded-lg border border-line bg-white p-3 shadow-panel">
+              <div className="flex items-center gap-2 text-sm font-semibold text-ink">
+                <Star className="h-4 w-4 text-slate-500" aria-hidden="true" />
                 Favourite teams
               </div>
-              <div className="mt-2 flex gap-2">
+              <div className="mt-3 flex gap-2">
                 <select
                   value={teamToAdd}
                   onChange={(event) => setTeamToAdd(event.target.value)}
@@ -3260,44 +3363,30 @@ function SettingsView({
                   type="button"
                   onClick={addFavoriteTeam}
                   disabled={!teamToAdd}
-                  className="inline-flex h-10 shrink-0 items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink shadow-panel hover:bg-field disabled:cursor-not-allowed disabled:opacity-40"
+                  className="inline-flex h-10 shrink-0 items-center justify-center rounded-md border border-line bg-field px-4 text-sm font-semibold text-ink shadow-panel hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Add
                 </button>
               </div>
               {(profileForm.favoriteTeams || []).length > 0 ? (
-                <div className="mt-3 flex flex-wrap gap-2">
+                <div className="mt-3 grid gap-2">
                   {profileForm.favoriteTeams.map((team) => (
-                    <span key={teamPreferenceKey(team)} className="inline-flex h-8 max-w-full items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-2.5 text-xs font-semibold text-amber-900">
-                      <span className="truncate">{team}</span>
+                    <div key={teamPreferenceKey(team)} className="flex items-center gap-2 rounded-md border border-line bg-field px-3 py-2 text-sm">
+                      <span className="min-w-0 flex-1 truncate font-semibold text-ink">{team}</span>
                       <button
                         type="button"
                         onClick={() => removeFavoriteTeam(team)}
-                        className="-mr-1 inline-flex h-6 w-6 items-center justify-center rounded-full text-amber-800 hover:bg-amber-100"
+                        className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-line bg-white text-slate-600 hover:bg-red-50 hover:text-miss"
                         aria-label={`Remove ${team} from favourite teams`}
                       >
-                        <XCircle className="h-3.5 w-3.5" aria-hidden="true" />
+                        <XCircle className="h-4 w-4" aria-hidden="true" />
                       </button>
-                    </span>
+                    </div>
                   ))}
                 </div>
               ) : (
                 <p className="mt-2 text-sm text-slate-500">Favourite team matches will appear at the top of the dashboard.</p>
               )}
-            </div>
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="text-sm text-slate-500">
-                Signed in as <span className="font-semibold text-ink">{profile?.email || '-'}</span>
-              </div>
-              <button
-                type="button"
-                onClick={saveProfile}
-                disabled={profileBusy}
-                className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink shadow-panel hover:bg-field disabled:cursor-wait disabled:opacity-70"
-              >
-                {profileBusy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <UserRound className="h-4 w-4" aria-hidden="true" />}
-                Save profile
-              </button>
             </div>
             {profileMessage && (
               <div className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-medium text-signal">
@@ -3505,7 +3594,7 @@ function StreakList({ title, streaks, match }) {
 }
 
 function ResultsReview({ matches, selectedDate, reviewSummary, activeReviewFilter = 'all', onReviewFilterChange }) {
-  const [reviewScope, setReviewScope] = useState('date');
+  const [reviewScope, setReviewScope] = useState('week');
   const selectedWeek = useMemo(() => weekStartMonday(selectedDate), [selectedDate]);
   const rowsForScope = useCallback((scope) => {
     if (scope === 'date' && selectedDate && selectedDate !== 'all') {
@@ -3547,6 +3636,43 @@ function ResultsReview({ matches, selectedDate, reviewSummary, activeReviewFilte
     : best
       ? `${insightPrefix}: ${best.label} is the strongest market at ${best.hitRate}%.`
       : '';
+  const topRows = rows.slice(0, 3);
+  const lowerRows = rows.slice(3);
+  const renderReviewRow = (row) => {
+    const active = activeReviewFilter === row.key;
+    const isSuggested = row.key === 'suggested';
+    const rowTone =
+      row.hitRate >= 55
+        ? 'border-emerald-200 bg-emerald-50/45 hover:border-emerald-300'
+        : row.hitRate < 45
+          ? 'border-red-200 bg-red-50/45 hover:border-red-300'
+          : 'border-slate-300 bg-field hover:border-slate-400 hover:bg-white';
+    return (
+      <button
+        key={row.key}
+        type="button"
+        onClick={() => onReviewFilterChange?.(active ? 'all' : row.key)}
+        aria-pressed={active}
+        className={`rounded-md border px-2.5 py-2 text-left transition sm:px-3 ${
+          active ? 'border-ink bg-white ring-2 ring-ink/15' : rowTone
+        }`}
+      >
+        <div className="flex items-center justify-between gap-1.5">
+          <span className="flex min-w-0 flex-wrap items-center gap-1.5 text-xs font-semibold uppercase text-slate-500">
+            <span>{row.label}</span>
+            {isSuggested && <span className="rounded bg-white px-1.5 py-0.5 text-[10px] text-slate-500 ring-1 ring-slate-200">Primary</span>}
+          </span>
+          <span className={`rounded px-1.5 py-0.5 text-xs font-semibold ${row.hitRate >= 55 ? 'bg-emerald-100 text-emerald-700' : row.hitRate < 45 ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600'}`}>
+            {row.hitRate}%
+          </span>
+        </div>
+        <div className="mt-2 text-sm font-semibold leading-5 text-ink">{row.hits} hit / {row.misses} loss</div>
+        <div className="mt-1 text-xs text-slate-500">
+          Odds {formatOddsTotal(row.oddsHit)} v {formatOddsTotal(row.oddsMiss)}
+        </div>
+      </button>
+    );
+  };
 
   return (
     <section className="mt-3 rounded-lg border border-slate-300 bg-white p-3 shadow-panel sm:mt-5 sm:p-4">
@@ -3585,42 +3711,15 @@ function ResultsReview({ matches, selectedDate, reviewSummary, activeReviewFilte
         </div>
       )}
       {rows.length ? (
-        <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {rows.map((row) => {
-            const active = activeReviewFilter === row.key;
-            const isSuggested = row.key === 'suggested';
-            const rowTone =
-              row.hitRate >= 55
-                ? 'border-emerald-200 bg-emerald-50/45 hover:border-emerald-300'
-                : row.hitRate < 45
-                  ? 'border-red-200 bg-red-50/45 hover:border-red-300'
-                  : 'border-slate-300 bg-field hover:border-slate-400 hover:bg-white';
-            return (
-              <button
-                key={row.key}
-                type="button"
-                onClick={() => onReviewFilterChange?.(active ? 'all' : row.key)}
-                aria-pressed={active}
-                className={`rounded-md border px-2.5 py-2 text-left transition sm:px-3 ${isSuggested ? 'col-span-2 sm:col-span-2' : ''} ${
-                  active ? 'border-ink bg-white ring-2 ring-ink/15' : rowTone
-                }`}
-              >
-                <div className="flex items-center justify-between gap-1.5">
-                  <span className="flex min-w-0 flex-wrap items-center gap-1.5 text-xs font-semibold uppercase text-slate-500">
-                    <span>{row.label}</span>
-                    {isSuggested && <span className="rounded bg-white px-1.5 py-0.5 text-[10px] text-slate-500 ring-1 ring-slate-200">Primary</span>}
-                  </span>
-                  <span className={`rounded px-1.5 py-0.5 text-xs font-semibold ${row.hitRate >= 55 ? 'bg-emerald-100 text-emerald-700' : row.hitRate < 45 ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600'}`}>
-                    {row.hitRate}%
-                  </span>
-                </div>
-                <div className="mt-2 text-sm font-semibold leading-5 text-ink">{row.hits} hit / {row.misses} loss</div>
-                <div className="mt-1 text-xs text-slate-500">
-                  Odds {formatOddsTotal(row.oddsHit)} v {formatOddsTotal(row.oddsMiss)}
-                </div>
-              </button>
-            );
-          })}
+        <div className="mt-3 space-y-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+            {topRows.map(renderReviewRow)}
+          </div>
+          {lowerRows.length > 0 && (
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+              {lowerRows.map(renderReviewRow)}
+            </div>
+          )}
         </div>
       ) : (
         <div className="mt-3 rounded-md border border-slate-300 bg-field px-3 py-3 text-sm text-slate-500">
@@ -3740,8 +3839,8 @@ function PredictionSummaryCard({ match, allMatches, voteState = null }) {
   const goalsComparison = precomputed.goals?.comparison || modelVsBookmakerComparison(match, 'ou_goals', predictions.ou_goals);
   const displayCards = precomputed.cards?.market || cardsMarketWithModelProbability(match, allMatches);
   const cardsComparison = precomputed.cards?.comparison || modelVsBookmakerComparison(match, 'ou_cards', displayCards);
-  const cornerMarket = precomputed.corners?.market || cornerMarketFromStreaks(match, allMatches);
-  const cornersComparison = precomputed.corners?.comparison || modelVsBookmakerComparison(match, 'ou_corners', cornerMarket);
+  const cornerMarket = withCornerBookmakerOdds(match, precomputed.corners?.market || cornerMarketFromStreaks(match, allMatches));
+  const cornersComparison = comparisonForMarket(match, 'ou_corners', cornerMarket, precomputed.corners?.comparison);
 
   const winnerPick = winnerLowConfidence ? 'Low confidence — no Winner pick' : (winner ? formatMarketDetail(winner) : null);
   const winnerText = winnerLowConfidence
@@ -3960,6 +4059,7 @@ function matchVoteErrorMessage(result, fallback = 'Could not load crowd votes ye
   const raw = result?.detail || result?.error || fallback;
   if (raw === 'missing-token' || raw === 'invalid-token') return 'Sign in again before voting.';
   if (raw === 'no-access') return 'Your account needs dashboard access before voting.';
+  if (raw === 'nickname-required') return result?.detail || 'Set a nickname in Settings before saving crowd votes.';
   if (raw === 'match-not-found') return 'Crowd voting could not find this match yet.';
   if (raw === 'voting-closed') return result?.detail || 'Voting is closed for this match.';
   return raw;
@@ -3982,6 +4082,12 @@ function MarketVoteControls({ voteState, marketKey }) {
   const summary = data?.summary || {};
   const selectedValue = data?.myVotes?.[marketKey];
   const locked = Boolean(data?.locked);
+  const voterGroups = market.options
+    .map((option) => ({
+      label: option.label,
+      voters: voteSummaryOption(summary, marketKey, option.value)?.voters || [],
+    }))
+    .filter((group) => group.voters.length > 0);
 
   return (
     <div className="mt-3 rounded-md border border-slate-200 bg-white/75 p-2">
@@ -4014,11 +4120,244 @@ function MarketVoteControls({ voteState, marketKey }) {
           );
         })}
       </div>
+      {voterGroups.length > 0 && (
+        <div className="mt-2 space-y-1.5 border-t border-slate-100 pt-2">
+          {voterGroups.map((group) => (
+            <div key={group.label} className="grid grid-cols-[5.5rem_minmax(0,1fr)] gap-2 text-[11px] leading-5">
+              <span className="truncate font-semibold text-slate-500">{group.label}</span>
+              <span className="flex min-w-0 flex-wrap gap-1">
+                {group.voters.slice(0, 6).map((voter, index) => (
+                  <span
+                    key={`${group.label}-${voter.label}-${index}`}
+                    className={`max-w-28 truncate rounded px-1.5 py-0.5 font-semibold ${
+                      voter.isMe ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'
+                    }`}
+                  >
+                    {voter.isMe ? 'You' : voter.label}
+                  </span>
+                ))}
+                {group.voters.length > 6 && <span className="rounded bg-slate-100 px-1.5 py-0.5 font-semibold text-slate-500">+{group.voters.length - 6}</span>}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
-function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerChange, favoriteTeams = [], onToggleFavoriteTeam, isPlatformOwner = false, onMatchImported }) {
+function VoteLeaderboard({ data, loading, error, bookmakerId }) {
+  const rankedLeaders = (data?.leaders || []).map((leader, index) => ({ ...leader, rank: index + 1 }));
+  const topLeaders = rankedLeaders.slice(0, 5);
+  const myLeader = rankedLeaders.find((leader) => leader.isMe);
+  const popularPicks = data?.popularPicks || [];
+  return (
+    <div className="mt-3 grid gap-3 sm:mt-5 xl:grid-cols-2">
+      <section className="rounded-lg border border-slate-300 bg-white p-3 shadow-panel sm:p-4">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h2 className="text-base font-semibold text-ink">Crowd leaderboard</h2>
+            <p className="mt-1 text-xs font-semibold text-slate-500">
+              {myLeader ? 'Your crowd vote stats' : data ? `${data.totalVoters || 0} voters · ${data.totalVotes || 0} market votes` : 'Live from crowd votes'}
+            </p>
+          </div>
+          {data?.settledVotes > 0 && (
+            <span className="inline-flex w-fit rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-600">
+              {data.settledVotes} settled votes scored
+            </span>
+          )}
+        </div>
+
+        {loading && (
+          <div className="mt-3 flex items-center gap-2 rounded-md border border-slate-200 bg-field px-3 py-3 text-sm font-semibold text-slate-500">
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+            Loading crowd leaderboard
+          </div>
+        )}
+        {!loading && error && (
+          <div className="mt-3 rounded-md border border-red-200 bg-red-50 px-3 py-3 text-sm font-semibold text-red-700">
+            {error}
+          </div>
+        )}
+        {!loading && !error && !topLeaders.length && (
+          <div className="mt-3 rounded-md border border-slate-300 bg-field px-3 py-3 text-sm text-slate-500">
+            No data captured yet.
+          </div>
+        )}
+        {!loading && !error && data && (
+          <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
+            <div className="rounded-md border border-slate-200 bg-field px-2 py-2">
+              <div className="text-base font-semibold text-ink">{data.totalVoters || 0}</div>
+              <div className="font-semibold text-slate-500">Voters</div>
+            </div>
+            <div className="rounded-md border border-slate-200 bg-field px-2 py-2">
+              <div className="text-base font-semibold text-ink">{data.totalVotes || 0}</div>
+              <div className="font-semibold text-slate-500">Market votes</div>
+            </div>
+            <div className="rounded-md border border-slate-200 bg-field px-2 py-2">
+              <div className="text-base font-semibold text-ink">{data.settledVotes || 0}</div>
+              <div className="font-semibold text-slate-500">Settled</div>
+            </div>
+          </div>
+        )}
+        {!loading && !error && topLeaders.length > 0 && (
+          <div className="mt-3">
+            <div className="flex items-center justify-between gap-2">
+              <h3 className="text-sm font-semibold text-ink">Top 5 users</h3>
+              <span className="text-xs font-semibold text-slate-500">{topLeaders.length} ranked</span>
+            </div>
+            <div className="mt-2 overflow-hidden rounded-md border border-slate-200">
+              {topLeaders.map((leader) => (
+                <div
+                  key={`${leader.label}-${leader.rank}`}
+                  className={`grid gap-3 border-b border-slate-200 px-3 py-2.5 last:border-b-0 sm:grid-cols-[minmax(0,1fr)_5.75rem_5.75rem_5.75rem_6.5rem] sm:items-center ${
+                    leader.isMe ? 'bg-emerald-50/80' : 'bg-field'
+                  }`}
+                >
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-xs font-semibold ${
+                      leader.isMe ? 'bg-emerald-100 text-emerald-700' : 'bg-white text-slate-600'
+                    }`}>
+                      #{leader.rank}
+                    </span>
+                    <div className="min-w-0">
+                      <div className="truncate text-sm font-semibold text-ink">{leader.isMe ? 'You' : leader.label}</div>
+                      <div className="text-xs font-semibold text-slate-500">Crowd voter</div>
+                    </div>
+                  </div>
+
+                  <LeaderboardMetric label="Votes" value={leader.votes} />
+                  <LeaderboardMetric label="Matches" value={leader.matchesVoted} />
+                  <LeaderboardMetric label="Hit" value={leader.settled ? `${leader.hits}/${leader.settled}` : '-'} />
+
+                  <div className="sm:text-right">
+                    <span className={`inline-flex rounded px-2.5 py-1 text-xs font-semibold ${
+                      leader.hitRate === null
+                        ? 'bg-slate-100 text-slate-500'
+                        : leader.hitRate >= 55
+                          ? 'bg-emerald-100 text-emerald-700'
+                          : leader.hitRate < 45
+                            ? 'bg-red-100 text-red-700'
+                            : 'bg-slate-100 text-slate-600'
+                    }`}>
+                      {leader.hitRate === null ? 'Pending' : `${leader.hitRate}% hit`}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </section>
+
+      <section className="rounded-lg border border-slate-300 bg-white p-3 shadow-panel sm:p-4">
+        <div className="flex items-center justify-between gap-2">
+          <div>
+            <h2 className="text-base font-semibold text-ink">Markets picked</h2>
+            <p className="mt-1 text-xs font-semibold text-slate-500">Top 5 voted markets</p>
+          </div>
+          {popularPicks.length > 0 && (
+            <span className="shrink-0 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-600">
+              Top {popularPicks.length}
+            </span>
+          )}
+        </div>
+        {loading && (
+          <div className="mt-3 flex items-center gap-2 rounded-md border border-slate-200 bg-field px-3 py-3 text-sm font-semibold text-slate-500">
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+            Loading picked markets
+          </div>
+        )}
+        {!loading && !error && popularPicks.length > 0 && (
+          <div className="mt-3">
+            <div className="flex items-center justify-between gap-2">
+              <h3 className="text-sm font-semibold text-ink">Voted markets</h3>
+              <span className="text-xs font-semibold text-slate-500">Top 5</span>
+            </div>
+            <div className="mt-2 grid gap-2">
+              {popularPicks.map((pick) => (
+                <VotePickRow key={`${pick.matchId}-${pick.market}-${pick.option}`} pick={pick} bookmakerId={bookmakerId}>
+                  <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
+                    <div className="min-w-0 truncate text-sm font-semibold text-ink">{pick.home} v {pick.away}</div>
+                    <span className="shrink-0 rounded bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700">{pick.count} votes</span>
+                  </div>
+                  <div className="mt-1.5 flex min-w-0 flex-wrap items-center gap-1.5 text-xs">
+                    <span className="max-w-36 truncate text-[11px] font-semibold text-slate-500">{pick.league || 'Match'}{pick.date ? ` · ${formatDateDMY(pick.date)}` : ''}</span>
+                    <span className="rounded border border-slate-200 bg-white px-2 py-0.5 font-semibold text-slate-500">{pick.marketLabel}</span>
+                    <span className="rounded border border-emerald-200 bg-emerald-50 px-2 py-0.5 font-semibold text-emerald-700">{pick.optionLabel}</span>
+                    {(pick.voters || []).slice(0, 3).map((voter, index) => (
+                      <span
+                        key={`${pick.matchId}-${pick.market}-${voter.label}-${index}`}
+                        className={`max-w-20 truncate rounded px-1.5 py-0.5 text-[11px] font-semibold ${
+                          voter.isMe ? 'bg-emerald-100 text-emerald-700' : 'bg-white text-slate-500'
+                        }`}
+                      >
+                        {voter.isMe ? 'You' : voter.label}
+                      </span>
+                    ))}
+                    {(pick.voters || []).length > 3 && <span className="rounded bg-white px-1.5 py-0.5 text-[11px] font-semibold text-slate-500">+{pick.voters.length - 3}</span>}
+                  </div>
+                </VotePickRow>
+              ))}
+            </div>
+          </div>
+        )}
+        {!loading && !error && !popularPicks.length && (
+          <div className="mt-3 rounded-md border border-slate-300 bg-field px-3 py-3 text-sm text-slate-500">
+            No voted markets captured yet.
+          </div>
+        )}
+      </section>
+    </div>
+  );
+}
+
+function LeaderboardMetric({ label, value }) {
+  return (
+    <div className="flex items-center justify-between gap-2 rounded bg-white px-2 py-1.5 text-xs sm:block sm:bg-transparent sm:px-0 sm:py-0 sm:text-center">
+      <div className="font-semibold text-ink">{value}</div>
+      <div className="text-slate-500">{label}</div>
+    </div>
+  );
+}
+
+function votePickBookmakerMatch(pick, bookmakerId) {
+  const match = {
+    id: pick?.matchId,
+    date: pick?.date,
+    time: pick?.time,
+    league: pick?.league,
+    home: { name: pick?.home },
+    away: { name: pick?.away },
+    bookmaker_links: pick?.bookmaker_links,
+    bookmaker_urls: pick?.bookmaker_urls,
+    sportsbet_odds: pick?.sportsbet_odds,
+    ladbrokes_odds: pick?.ladbrokes_odds,
+    neds_odds: pick?.neds_odds,
+  };
+  return hasDirectBookmakerMatchLink(match, bookmakerId) ? bookmakerUrl(match, bookmakerId) : '';
+}
+
+function VotePickRow({ pick, bookmakerId, children }) {
+  const href = votePickBookmakerMatch(pick, bookmakerId);
+  const className = `block rounded-md border border-slate-200 bg-field px-3 py-2 text-left transition ${
+    href ? 'hover:border-slate-300 hover:bg-white hover:shadow-sm' : ''
+  }`;
+  if (!href) return <div className={className}>{children}</div>;
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={className}
+      title={`Open ${BOOKMAKERS[bookmakerId]?.name || 'bookmaker'} match page`}
+    >
+      {children}
+    </a>
+  );
+}
+
+function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerChange, favoriteTeams = [], onToggleFavoriteTeam, isPlatformOwner = false, onMatchImported, onVoteSaved }) {
   const predictions = match.predictions || {};
   const odds = displayThreeWayOdds(match);
   const actuals = match.actuals || {};
@@ -4104,13 +4443,14 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
         if (!response.ok) throw new Error(matchVoteErrorMessage(result));
         setVoteData(result);
         setVoteMessage('Vote saved.');
+        onVoteSaved?.();
       } catch (error) {
         setVoteError(error.message || 'Could not save your vote.');
       } finally {
         setVoteBusyKey('');
       }
     },
-    [match.date, match.id],
+    [match.date, match.id, onVoteSaved],
   );
 
   const voteState = useMemo(
@@ -4265,8 +4605,8 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
   const goalsComparison = precomputed.goals?.comparison || modelVsBookmakerComparison(match, 'ou_goals', predictions.ou_goals);
   const displayCards = precomputed.cards?.market || cardsMarketWithModelProbability(match, allMatches);
   const cardsComparison = precomputed.cards?.comparison || modelVsBookmakerComparison(match, 'ou_cards', displayCards);
-  const cornerMarket = precomputed.corners?.market || cornerMarketFromStreaks(match, allMatches);
-  const cornersComparison = precomputed.corners?.comparison || modelVsBookmakerComparison(match, 'ou_corners', cornerMarket);
+  const cornerMarket = withCornerBookmakerOdds(match, precomputed.corners?.market || cornerMarketFromStreaks(match, allMatches));
+  const cornersComparison = comparisonForMarket(match, 'ou_corners', cornerMarket, precomputed.corners?.comparison);
   const confidence = loadMatchConfidence(match, allMatches);
   const winnerModelPct = precomputed.winner?.market?.type === displayWinner?.type
     ? precomputed.winner?.modelProbability ?? winnerModelProbability(match, displayWinner)
@@ -4483,13 +4823,66 @@ function MobileBottomNav({
   );
 }
 
-function LeagueSection({ group, onSelectMatch, bookmakerId, allMatches, isFavorite = false, onToggleFavorite, favoriteTeams = [], onToggleFavoriteTeam, sectionRef = null, hiddenOnMobile = false }) {
+function DesktopSidePanel({
+  active,
+  onDashboard,
+  onMatches,
+  onWatchlist,
+  onSettings,
+}) {
+  const navItems = [
+    { key: 'dashboard', label: 'Dashboard', icon: HomeIcon, onClick: onDashboard },
+    { key: 'matches', label: 'Matches', icon: ListFilter, onClick: onMatches },
+    { key: 'watchlist', label: 'Fav', icon: Star, onClick: onWatchlist },
+    { key: 'settings', label: 'Settings', icon: Settings, onClick: onSettings },
+  ];
+
+  return (
+    <aside className="fixed inset-y-0 left-0 z-40 hidden w-20 border-r border-slate-200 bg-white/95 px-2 py-4 shadow-[12px_0_34px_rgba(15,23,42,0.08)] backdrop-blur sm:flex lg:w-64 lg:px-4">
+      <div className="flex min-h-0 w-full flex-col">
+        <button
+          type="button"
+          onClick={onDashboard}
+          className="flex h-14 items-center justify-center rounded-md border border-slate-200 bg-[linear-gradient(135deg,#ffffff_0%,#f8fafc_55%,#e8f5ff_100%)] px-2 shadow-sm lg:justify-start lg:px-3"
+          aria-label="Open dashboard"
+        >
+          <img src="/LVR-LOGO.png" alt="LVRstats.com" className="h-10 w-10 object-cover object-center lg:h-9 lg:w-auto lg:max-w-40 lg:object-contain" />
+        </button>
+        <nav className="mt-5 flex flex-1 flex-col gap-1" aria-label="Dashboard page navigation">
+          {navItems.map(({ key, label, icon: Icon, onClick }) => {
+            const selected = active === key;
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={onClick}
+                aria-pressed={selected}
+                title={label}
+                className={`inline-flex h-12 items-center justify-center gap-3 rounded-md text-sm font-semibold transition lg:justify-start lg:px-3 ${
+                  selected ? 'bg-ink text-white shadow-sm' : 'text-slate-600 hover:bg-field hover:text-ink'
+                }`}
+              >
+                <Icon className={`h-5 w-5 shrink-0 ${key === 'watchlist' && selected ? 'fill-amber-300 text-amber-300' : ''}`} aria-hidden="true" />
+                <span className="hidden lg:inline">{label}</span>
+              </button>
+            );
+          })}
+        </nav>
+        <div className="hidden rounded-md border border-slate-200 bg-field px-3 py-2 text-xs font-semibold leading-5 text-slate-500 lg:block">
+          Live Firestore data
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+function LeagueSection({ group, onSelectMatch, bookmakerId, allMatches, isFavorite = false, onToggleFavorite, favoriteTeams = [], onToggleFavoriteTeam, sectionRef = null }) {
   const isFavoriteTeamGroup = Boolean(group.isFavoriteTeamGroup);
   const finished = group.matches.filter((match) => match.status === 'FT').length;
   const upcoming = group.matches.length - finished;
 
   return (
-    <section ref={sectionRef} className={`overflow-hidden rounded-lg border border-line bg-white scroll-mt-4 ${hiddenOnMobile ? 'hidden sm:block' : ''}`}>
+    <section ref={sectionRef} className="overflow-hidden rounded-lg border border-line bg-white scroll-mt-4">
       <div className="flex flex-col gap-2 border-b border-line bg-ink px-3 py-3 text-white sm:flex-row sm:items-center sm:justify-between sm:px-4">
         <div className="flex min-w-0 items-center gap-2">
           {isFavoriteTeamGroup ? (
@@ -4522,7 +4915,7 @@ function LeagueSection({ group, onSelectMatch, bookmakerId, allMatches, isFavori
           <span className="rounded-full bg-white/12 px-2.5 py-1">{finished} finished</span>
         </div>
       </div>
-      <div className="grid grid-cols-1 gap-3 bg-field p-2 sm:gap-4 sm:p-4 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3 bg-field p-2 sm:gap-4 sm:p-4 lg:grid-cols-2 2xl:grid-cols-3">
         {group.matches.map((match) => (
           <MatchCard
             key={`${match.league}-${match.id}`}
@@ -4548,8 +4941,8 @@ function HomeInner() {
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
   const [league, setLeague] = useState('all');
-  const [status, setStatus] = useState('all');
-  const [selectedDate, setSelectedDate] = useState('');
+  const [status, setStatus] = useState('upcoming');
+  const [selectedDate, setSelectedDate] = useState('all');
   const [query, setQuery] = useState('');
   const [reviewFilter, setReviewFilter] = useState('all');
   const [bookmakerId, setBookmakerId] = useState('sportsbet');
@@ -4558,6 +4951,10 @@ function HomeInner() {
   const [allTeamOptions, setAllTeamOptions] = useState([]);
   const [isPlatformOwner, setIsPlatformOwner] = useState(false);
   const [mobileNavActive, setMobileNavActive] = useState('dashboard');
+  const [voteLeaderboard, setVoteLeaderboard] = useState(null);
+  const [voteLeaderboardLoading, setVoteLeaderboardLoading] = useState(true);
+  const [voteLeaderboardError, setVoteLeaderboardError] = useState('');
+  const [voteLeaderboardRefreshKey, setVoteLeaderboardRefreshKey] = useState(0);
 
   const dashboardRef = useRef(null);
   const resultsRef = useRef(null);
@@ -4618,7 +5015,7 @@ function HomeInner() {
     } catch {
       setFavoriteLeagues([]);
     }
-  }, []);
+  }, [voteLeaderboardRefreshKey]);
 
   useEffect(() => {
     try {
@@ -4674,6 +5071,40 @@ function HomeInner() {
     loadAllTeamOptions();
     return () => { active = false; };
   }, []);
+
+  useEffect(() => {
+    let active = true;
+    const controller = new AbortController();
+
+    async function loadVoteLeaderboard() {
+      setVoteLeaderboardLoading(true);
+      setVoteLeaderboardError('');
+      try {
+        const { getFirebaseAuth } = await import('../firebase');
+        const token = await getFirebaseAuth().currentUser?.getIdToken();
+        if (!token) throw new Error('Sign in again to load crowd votes.');
+        const response = await fetch('/api/match-votes?scope=leaderboard', {
+          headers: { Authorization: `Bearer ${token}` },
+          cache: 'no-store',
+          signal: controller.signal,
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(matchVoteErrorMessage(result, 'No data captured yet.'));
+        if (active) setVoteLeaderboard(result);
+      } catch (error) {
+        if (error.name === 'AbortError') return;
+        if (active) setVoteLeaderboardError(error.message || 'No data captured yet.');
+      } finally {
+        if (active) setVoteLeaderboardLoading(false);
+      }
+    }
+
+    loadVoteLeaderboard();
+    return () => {
+      active = false;
+      controller.abort();
+    };
+  }, [voteLeaderboardRefreshKey]);
 
   const handleBookmakerChange = useCallback((nextBookmakerId) => {
     const safeBookmakerId = DIRECT_MATCH_BOOKMAKERS.has(nextBookmakerId) ? nextBookmakerId : 'sportsbet';
@@ -4847,6 +5278,9 @@ function HomeInner() {
       setSlideDir(0);
     }
   }, []);
+  const refreshVoteLeaderboard = useCallback(() => {
+    setVoteLeaderboardRefreshKey((key) => key + 1);
+  }, []);
 
   const filtered = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -4866,6 +5300,8 @@ function HomeInner() {
       .sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`));
   }, [league, matches, query, reviewFilter, selectedDate, status]);
   const groupedMatches = useMemo(() => groupMatchesForDisplay(filtered, favoriteLeagues, favoriteTeams), [favoriteLeagues, favoriteTeams, filtered]);
+  const favoriteGroups = useMemo(() => groupFavoriteMatches(filtered, favoriteLeagues, favoriteTeams), [favoriteLeagues, favoriteTeams, filtered]);
+  const displayedGroups = mobileNavActive === 'watchlist' ? favoriteGroups : groupedMatches;
 
   // Look up the selected match across the entire dataset so detail view works
   // even when the current filters would exclude it.
@@ -4892,22 +5328,35 @@ function HomeInner() {
     router.push(`?${params.toString()}`, { scroll: false });
   }, [router, searchParams]);
 
-  const scrollToMobileSection = useCallback((ref, activeKey) => {
+  const scrollToSection = useCallback((ref, activeKey) => {
     setMobileNavActive(activeKey);
     requestAnimationFrame(() => {
       ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   }, []);
 
-  const openMobileDashboard = useCallback(() => scrollToMobileSection(dashboardRef, 'dashboard'), [scrollToMobileSection]);
-  const openMobileMatches = useCallback(() => scrollToMobileSection(matchesRef, 'matches'), [scrollToMobileSection]);
-  const openMobileWatchlist = useCallback(() => {
-    scrollToMobileSection(watchlistRef.current ? watchlistRef : matchesRef, 'watchlist');
-  }, [scrollToMobileSection]);
+  const openDashboardSection = useCallback(() => scrollToSection(dashboardRef, 'dashboard'), [scrollToSection]);
+  const openMatchesSection = useCallback(() => scrollToSection(matchesRef, 'matches'), [scrollToSection]);
+  const openWatchlistSection = useCallback(() => {
+    scrollToSection(watchlistRef.current ? watchlistRef : matchesRef, 'watchlist');
+  }, [scrollToSection]);
   const openMobileSettings = useCallback(() => {
     setMobileNavActive('settings');
     openSettings();
   }, [openSettings]);
+
+  const leaveSettingsForSection = useCallback((activeKey) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete('view');
+    params.delete('match');
+    setMobileNavActive(activeKey);
+    const next = params.toString();
+    router.push(next ? `?${next}` : '/dashboard', { scroll: false });
+  }, [router, searchParams]);
+
+  const settingsNavDashboard = useCallback(() => leaveSettingsForSection('dashboard'), [leaveSettingsForSection]);
+  const settingsNavMatches = useCallback(() => leaveSettingsForSection('matches'), [leaveSettingsForSection]);
+  const settingsNavWatchlist = useCallback(() => leaveSettingsForSection('watchlist'), [leaveSettingsForSection]);
 
   const closeSettings = useCallback(() => {
     const params = new URLSearchParams(searchParams.toString());
@@ -5136,30 +5585,54 @@ function HomeInner() {
         onToggleFavoriteTeam={handleFavoriteTeamToggle}
         isPlatformOwner={isPlatformOwner}
         onMatchImported={refreshMatchData}
+        onVoteSaved={refreshVoteLeaderboard}
       />
     );
   }
 
   if (isSettingsView) {
     return (
-      <SettingsView
-        bookmakerId={bookmakerId}
-        onBookmakerChange={handleBookmakerChange}
-        onBack={closeSettings}
-        leagueOptions={leagues}
-        favoriteLeagues={favoriteLeagues}
-        onFavoriteLeaguesChange={handleFavoriteLeaguesChange}
-        teamOptions={teamOptions}
-        favoriteTeams={favoriteTeams}
-        onFavoriteTeamsChange={handleFavoriteTeamsChange}
-      />
+      <>
+        <DesktopSidePanel
+          active="settings"
+          onDashboard={settingsNavDashboard}
+          onMatches={settingsNavMatches}
+          onWatchlist={settingsNavWatchlist}
+          onSettings={openMobileSettings}
+        />
+        <SettingsView
+          bookmakerId={bookmakerId}
+          onBookmakerChange={handleBookmakerChange}
+          onBack={closeSettings}
+          leagueOptions={leagues}
+          favoriteLeagues={favoriteLeagues}
+          onFavoriteLeaguesChange={handleFavoriteLeaguesChange}
+          teamOptions={teamOptions}
+          favoriteTeams={favoriteTeams}
+          onFavoriteTeamsChange={handleFavoriteTeamsChange}
+        />
+        <MobileBottomNav
+          active="settings"
+          onDashboard={settingsNavDashboard}
+          onMatches={settingsNavMatches}
+          onWatchlist={settingsNavWatchlist}
+          onSettings={openMobileSettings}
+        />
+      </>
     );
   }
 
   return (
-    <main className="min-h-screen bg-field pb-24 sm:pb-0">
-      <header className="border-b border-slate-300 bg-white">
-        <div className="mx-auto max-w-7xl px-3 py-3 sm:px-6 sm:py-4 lg:px-8">
+    <main className="min-h-screen bg-field pb-24 sm:pl-20 sm:pb-0 lg:pl-64">
+      <DesktopSidePanel
+        active={mobileNavActive}
+        onDashboard={openDashboardSection}
+        onMatches={openMatchesSection}
+        onWatchlist={openWatchlistSection}
+        onSettings={openMobileSettings}
+      />
+      <header className="border-b border-slate-300 bg-white sm:hidden">
+        <div className="mx-auto max-w-[112rem] px-3 py-3 sm:px-6 sm:py-4 lg:px-8">
           <div className="flex items-center justify-center gap-3 rounded-lg border border-slate-200 bg-[linear-gradient(135deg,#ffffff_0%,#f8fafc_42%,#e8f5ff_100%)] px-2 py-2 shadow-[0_16px_45px_rgba(15,23,42,0.10)] ring-1 ring-white/80 sm:justify-between sm:px-5 sm:py-4">
             <div className="flex min-w-0 flex-1 items-center justify-center gap-3 sm:justify-start">
               <div className="flex w-full shrink items-center justify-center sm:w-auto sm:shrink-0">
@@ -5174,21 +5647,12 @@ function HomeInner() {
                 <div className="mt-0.5 text-base font-semibold text-ink">Model-backed edges, odds and match signals in one view</div>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={openSettings}
-              className="hidden h-11 w-11 shrink-0 items-center justify-center rounded-md border border-slate-200 bg-white/90 text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_8px_20px_rgba(15,23,42,0.10)] hover:bg-white sm:inline-flex"
-              aria-label="Open settings"
-              title="Settings"
-            >
-              <Settings className="h-5 w-5" aria-hidden="true" />
-            </button>
           </div>
         </div>
       </header>
 
-      <section ref={dashboardRef} className="mx-auto max-w-7xl scroll-mt-4 px-2 py-3 sm:px-6 sm:py-5 lg:px-8">
-        <div className={`${mobileNavActive === 'dashboard' ? 'block' : 'hidden'} overflow-hidden rounded-lg border border-line bg-white sm:block`}>
+      <section ref={dashboardRef} className="mx-auto max-w-[112rem] scroll-mt-4 px-2 py-3 sm:px-6 sm:py-5 lg:px-8">
+        <div className={`${mobileNavActive === 'dashboard' ? 'block' : 'hidden'} overflow-hidden rounded-lg border border-line bg-white`}>
           <div className="flex items-center justify-between border-b border-line px-3 py-2 sm:hidden">
             <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">All-time overview</span>
             <span className="text-xs font-semibold text-slate-400">{stats.finished} settled</span>
@@ -5214,7 +5678,7 @@ function HomeInner() {
           </div>
         </div>
 
-        <div ref={resultsRef} className={`${mobileNavActive === 'dashboard' || mobileNavActive === 'results' ? 'block' : 'hidden'} scroll-mt-4 sm:block`}>
+        <div ref={resultsRef} className={`${mobileNavActive === 'dashboard' || mobileNavActive === 'results' ? 'block' : 'hidden'} scroll-mt-4`}>
           <ResultsReview
             matches={matches}
             selectedDate={selectedDate}
@@ -5222,6 +5686,7 @@ function HomeInner() {
             activeReviewFilter={reviewFilter}
             onReviewFilterChange={handleReviewFilterChange}
           />
+          <VoteLeaderboard data={voteLeaderboard} loading={voteLeaderboardLoading} error={voteLeaderboardError} bookmakerId={bookmakerId} />
         </div>
 
         <div className={`${mobileNavActive === 'matches' || mobileNavActive === 'watchlist' ? 'block' : 'hidden'} mt-3 rounded-lg border border-line bg-white p-3 sm:hidden`}>
@@ -5279,7 +5744,7 @@ function HomeInner() {
           </div>
         </div>
 
-        <div ref={matchesRef} className={`${mobileNavActive === 'matches' || mobileNavActive === 'watchlist' ? 'grid' : 'hidden'} mt-3 scroll-mt-4 gap-2 rounded-lg border border-line bg-white p-3 sm:mt-5 sm:grid sm:grid-cols-[12rem_10rem_minmax(18rem,1fr)_minmax(16rem,1fr)] sm:items-center sm:gap-3`}>
+        <div ref={matchesRef} className={`${mobileNavActive === 'matches' || mobileNavActive === 'watchlist' ? 'grid' : 'hidden'} mt-3 scroll-mt-4 gap-2 rounded-lg border border-line bg-white p-3 sm:mt-5 sm:grid-cols-[12rem_10rem_minmax(18rem,1fr)_minmax(16rem,1fr)] sm:items-center sm:gap-3`}>
           <select
             value={league}
             onChange={(event) => setLeague(event.target.value)}
@@ -5361,7 +5826,7 @@ function HomeInner() {
         )}
 
         <div
-          className={`${mobileNavActive === 'matches' || mobileNavActive === 'watchlist' ? 'block' : 'hidden'} date-slide-frame mt-3 sm:mt-5 sm:block${dragActive ? ' date-slide-grabbing' : ''}`}
+          className={`${mobileNavActive === 'matches' || mobileNavActive === 'watchlist' ? 'block' : 'hidden'} date-slide-frame mt-3 sm:mt-5${dragActive ? ' date-slide-grabbing' : ''}`}
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
@@ -5377,7 +5842,7 @@ function HomeInner() {
             className={`space-y-4 sm:space-y-5 ${slideDir > 0 ? 'date-slide-next' : slideDir < 0 ? 'date-slide-prev' : ''}${dragActive ? ' date-slide-dragging' : ''}${snapBack ? ' date-slide-snapback' : ''}`}
             style={dragActive || snapBack ? { transform: `translateX(${dragOffset}px)` } : undefined}
           >
-          {groupedMatches.map((group) => (
+          {displayedGroups.map((group) => (
             <LeagueSection
               key={group.leagueId || group.league}
               group={group}
@@ -5388,8 +5853,7 @@ function HomeInner() {
               onToggleFavorite={handleFavoriteLeagueToggle}
               favoriteTeams={favoriteTeams}
               onToggleFavoriteTeam={handleFavoriteTeamToggle}
-              sectionRef={group.isFavoriteTeamGroup ? watchlistRef : null}
-              hiddenOnMobile={mobileNavActive === 'watchlist' && !group.isFavoriteTeamGroup}
+              sectionRef={group.isFavoriteTeamGroup || group.isFavoriteLeagueGroup ? watchlistRef : null}
             />
           ))}
 
@@ -5398,9 +5862,9 @@ function HomeInner() {
               No matches found for the selected filters.
             </div>
           )}
-          {!error && mobileNavActive === 'watchlist' && !groupedMatches.some((group) => group.isFavoriteTeamGroup) && (
-            <div className="rounded-lg border border-line bg-white p-8 text-center text-sm text-slate-500 sm:hidden">
-              No favourite-team matches for these filters.
+          {!error && mobileNavActive === 'watchlist' && !favoriteGroups.length && (
+            <div className="rounded-lg border border-line bg-white p-8 text-center text-sm text-slate-500">
+              No favourite matches for these filters. Add favourite teams or leagues in Settings.
             </div>
           )}
           </div>
@@ -5409,9 +5873,9 @@ function HomeInner() {
       </section>
       <MobileBottomNav
         active={mobileNavActive}
-        onDashboard={openMobileDashboard}
-        onMatches={openMobileMatches}
-        onWatchlist={openMobileWatchlist}
+        onDashboard={openDashboardSection}
+        onMatches={openMatchesSection}
+        onWatchlist={openWatchlistSection}
         onSettings={openMobileSettings}
       />
     </main>

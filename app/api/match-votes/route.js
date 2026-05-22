@@ -48,15 +48,31 @@ async function verifyAccess(request) {
   if (!match) throw Object.assign(new Error('missing-token'), { status: 401 });
 
   const decoded = await getAuth(getAdminApp()).verifyIdToken(match[1]);
-  if (decoded.email === OWNER_EMAIL) return { uid: decoded.uid, email: decoded.email || '', allowed: true };
-
   const userSnap = await getFirestore(getAdminApp()).collection('users').doc(decoded.uid).get();
+  const profile = userSnap.exists ? userSnap.data() || {} : {};
+  if (decoded.email === OWNER_EMAIL) {
+    return {
+      uid: decoded.uid,
+      email: decoded.email || '',
+      displayName: profile.displayName || decoded.name || '',
+      nickname: profile.nickname || '',
+      allowed: true,
+      isPlatformOwner: true,
+    };
+  }
   const allowed = Boolean(
     userSnap.exists &&
       (userSnap.get('hasAccess') || userSnap.get('isPlatformOwner') || userSnap.get('manualAccess')),
   );
   if (!allowed) throw Object.assign(new Error('no-access'), { status: 403 });
-  return { uid: decoded.uid, email: decoded.email || '', allowed };
+  return {
+    uid: decoded.uid,
+    email: decoded.email || profile.email || '',
+    displayName: profile.displayName || decoded.name || '',
+    nickname: profile.nickname || '',
+    allowed,
+    isPlatformOwner: Boolean(profile.isPlatformOwner),
+  };
 }
 
 function slugify(value, fallback) {
@@ -194,37 +210,279 @@ async function loadMatch(db, matchId, date) {
 
 async function buildVoteSummary(voteRef, optionsByMarket) {
   const snap = await voteRef.collection('votes').get();
+  return buildVoteSummaryFromDocs(snap.docs, optionsByMarket);
+}
+
+function voterLabel(data, fallbackUid = '') {
+  const nickname = String(data?.nickname || '').trim();
+  if (nickname) return nickname;
+  return fallbackUid ? `Member ${String(fallbackUid).slice(0, 4)}` : 'Member';
+}
+
+async function userDirectory(db, voteDocs, currentUser) {
+  const uids = [...new Set(voteDocs.map((doc) => String(doc.id || doc.data()?.uid || '')).filter(Boolean))];
+  const refs = uids.map((uid) => db.collection('users').doc(uid));
+  const snaps = refs.length ? await db.getAll(...refs) : [];
+  const directory = new Map();
+  snaps.forEach((snap) => {
+    const uid = snap.id;
+    const data = snap.exists ? snap.data() || {} : {};
+    directory.set(uid, {
+      uid,
+      label: voterLabel(data, uid),
+      isMe: uid === currentUser.uid,
+    });
+  });
+  voteDocs.forEach((doc) => {
+    const data = doc.data() || {};
+    const uid = String(doc.id || data.uid || '');
+    if (!uid || directory.has(uid)) return;
+    directory.set(uid, {
+      uid,
+      label: voterLabel(data, uid),
+      isMe: uid === currentUser.uid,
+    });
+  });
+  if (currentUser?.uid && !directory.has(currentUser.uid)) {
+    directory.set(currentUser.uid, {
+      uid: currentUser.uid,
+      label: voterLabel(currentUser, currentUser.uid),
+      isMe: true,
+    });
+  }
+  return directory;
+}
+
+function buildVoteSummaryFromDocs(voteDocs, optionsByMarket, directory = new Map(), currentUid = '') {
   const markets = {};
   Object.entries(optionsByMarket).forEach(([key, config]) => {
     markets[key] = {
       label: config.label,
       total: 0,
-      options: Object.fromEntries(config.options.map((option) => [option.value, { label: option.label, count: 0 }])),
+      options: Object.fromEntries(config.options.map((option) => [option.value, { label: option.label, count: 0, voters: [] }])),
     };
   });
 
-  snap.docs.forEach((doc) => {
-    const votes = doc.data()?.votes || {};
+  voteDocs.forEach((doc) => {
+    const data = doc.data() || {};
+    const uid = String(doc.id || data.uid || '');
+    const voter = directory.get(uid) || { uid, label: voterLabel(data, uid), isMe: uid === currentUid };
+    const votes = data.votes || {};
     Object.entries(votes).forEach(([marketKey, value]) => {
       if (!markets[marketKey]?.options?.[value]) return;
       markets[marketKey].options[value].count += 1;
       markets[marketKey].total += 1;
+      markets[marketKey].options[value].voters.push({
+        label: voter.label,
+        isMe: voter.isMe,
+      });
     });
   });
 
   return {
-    totalUsers: snap.size,
+    totalUsers: voteDocs.length,
     markets,
+  };
+}
+
+function parseNumber(value) {
+  if (typeof value === 'number') return Number.isFinite(value) ? value : null;
+  if (typeof value !== 'string') return null;
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  const parsed = Number(trimmed);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function marketActualResult(match, marketKey, value) {
+  if (!match) return null;
+  const homeGoals = parseNumber(match?.home?.goals);
+  const awayGoals = parseNumber(match?.away?.goals);
+  if (marketKey === 'winner') {
+    if (homeGoals === null || awayGoals === null) return null;
+    const actual = homeGoals > awayGoals ? 'home' : awayGoals > homeGoals ? 'away' : 'draw';
+    return value === actual;
+  }
+  if (marketKey === 'btts') {
+    if (homeGoals === null || awayGoals === null) return null;
+    const actual = homeGoals > 0 && awayGoals > 0 ? 'yes' : 'no';
+    return value === actual;
+  }
+  if (marketKey === 'goals') {
+    if (homeGoals === null || awayGoals === null) return null;
+    const line = Number(marketLine(match, 'goals', 2.5));
+    if (!Number.isFinite(line)) return null;
+    const total = homeGoals + awayGoals;
+    return value === 'over' ? total > line : value === 'under' ? total < line : null;
+  }
+  if (marketKey === 'cards') {
+    const total = parseNumber(match?.actuals?.cards_total);
+    const line = Number(marketLine(match, 'cards', 4.5));
+    if (total === null || !Number.isFinite(line)) return null;
+    return value === 'over' ? total > line : value === 'under' ? total < line : null;
+  }
+  if (marketKey === 'corners') {
+    const total = parseNumber(match?.actuals?.corners_total);
+    const line = Number(marketLine(match, 'corners', 10.5));
+    if (total === null || !Number.isFinite(line)) return null;
+    return value === 'over' ? total > line : value === 'under' ? total < line : null;
+  }
+  return null;
+}
+
+function votePickMatchFields(match) {
+  if (!match) return {};
+  return {
+    bookmaker_links: match.bookmaker_links || null,
+    bookmaker_urls: match.bookmaker_urls || null,
+    sportsbet_odds: match.sportsbet_odds || null,
+    ladbrokes_odds: match.ladbrokes_odds || null,
+    neds_odds: match.neds_odds || null,
+  };
+}
+
+function voteParentId(doc) {
+  return String(doc.ref.parent.parent?.id || '');
+}
+
+function labelFromVoteSummary(parentData, marketKey, value) {
+  const market = parentData?.summary?.markets?.[marketKey];
+  const option = market?.options?.[value];
+  return {
+    marketLabel: market?.label || marketKey.toUpperCase(),
+    optionLabel: option?.label || String(value || '').replace(/^\w/, (letter) => letter.toUpperCase()),
+  };
+}
+
+async function leaderboardPayload(db, user) {
+  const [voteSnap, voteParentsSnap] = await Promise.all([
+    db.collectionGroup('votes').get(),
+    db.collection(VOTE_COLLECTION).get(),
+  ]);
+  const voteParents = new Map(voteParentsSnap.docs.map((doc) => [doc.id, doc.data() || {}]));
+  const voteDocs = voteSnap.docs.filter((doc) => doc.ref.parent.parent?.parent?.id === VOTE_COLLECTION);
+  const directory = await userDirectory(db, voteDocs, user);
+  const rows = new Map();
+  const popularPickRows = new Map();
+  const myPickRows = [];
+  let totalMarketVotes = 0;
+  let settledMarketVotes = 0;
+
+  voteDocs.forEach((doc) => {
+    const data = doc.data() || {};
+    const uid = String(doc.id || data.uid || '');
+    const voter = directory.get(uid) || { uid, label: voterLabel(data, uid), isMe: uid === user.uid };
+    const row = rows.get(uid) || {
+      uid,
+      label: voter.label,
+      isMe: voter.isMe,
+      matchesVoted: 0,
+      votes: 0,
+      settled: 0,
+      hits: 0,
+      lastVoteAt: '',
+    };
+    row.matchesVoted += 1;
+    const parentId = voteParentId(doc);
+    const parentData = voteParents.get(parentId) || {};
+    const myPickMarkets = [];
+    Object.entries(data.votes || {}).forEach(([marketKey, value]) => {
+      row.votes += 1;
+      totalMarketVotes += 1;
+      const { marketLabel, optionLabel } = labelFromVoteSummary(parentData, marketKey, value);
+      const matchId = String(data.matchId || parentData.matchId || parentId);
+      const popularKey = `${matchId}:${marketKey}:${value}`;
+      const popularRow = popularPickRows.get(popularKey) || {
+        matchId,
+        date: data.date || parentData.date || null,
+        time: parentData.time || null,
+        league: data.league || parentData.league || null,
+        home: data.home || parentData.home || 'Home',
+        away: data.away || parentData.away || 'Away',
+        ...votePickMatchFields(parentData),
+        market: marketKey,
+        marketLabel,
+        option: value,
+        optionLabel,
+        count: 0,
+        voters: [],
+      };
+      popularRow.count += 1;
+      popularRow.voters.push({
+        label: voter.isMe ? 'You' : voter.label,
+        isMe: voter.isMe,
+      });
+      popularPickRows.set(popularKey, popularRow);
+      if (uid === user.uid) {
+        myPickMarkets.push({
+          market: marketKey,
+          marketLabel,
+          option: value,
+          optionLabel,
+        });
+      }
+    });
+    const updatedAt = data.updatedAt?.toDate?.()?.toISOString?.() || data.updatedAt || '';
+    if (updatedAt && (!row.lastVoteAt || updatedAt > row.lastVoteAt)) row.lastVoteAt = updatedAt;
+    rows.set(uid, row);
+    if (uid === user.uid && myPickMarkets.length) {
+      myPickRows.push({
+        matchId: String(data.matchId || parentData.matchId || parentId),
+        date: data.date || parentData.date || null,
+        time: parentData.time || null,
+        league: data.league || parentData.league || null,
+        home: data.home || parentData.home || 'Home',
+        away: data.away || parentData.away || 'Away',
+        ...votePickMatchFields(parentData),
+        picks: myPickMarkets,
+        updatedAt,
+      });
+    }
+  });
+
+  const leaders = [...rows.values()]
+    .map((row) => ({
+      label: row.label,
+      isMe: row.isMe,
+      matchesVoted: row.matchesVoted,
+      votes: row.votes,
+      settled: row.settled,
+      hits: row.hits,
+      hitRate: row.settled ? Math.round((row.hits / row.settled) * 100) : null,
+      lastVoteAt: row.lastVoteAt,
+    }))
+    .sort((a, b) => (b.hits - a.hits) || (b.hitRate || 0) - (a.hitRate || 0) || b.votes - a.votes || a.label.localeCompare(b.label))
+    .slice(0, 12);
+  const popularPicks = [...popularPickRows.values()]
+    .map((row) => ({
+      ...row,
+      voters: row.voters.slice(0, 6),
+    }))
+    .sort((a, b) => b.count - a.count || String(a.date || '').localeCompare(String(b.date || '')) || a.home.localeCompare(b.home))
+    .slice(0, 5);
+  const myPicks = myPickRows
+    .sort((a, b) => String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')) || String(a.date || '').localeCompare(String(b.date || '')))
+    .slice(0, 5);
+
+  return {
+    totalVoters: rows.size,
+    totalVotes: totalMarketVotes,
+    settledVotes: settledMarketVotes,
+    leaders,
+    popularPicks,
+    myPicks,
   };
 }
 
 async function responsePayload(db, user, match) {
   const optionsByMarket = voteOptionsForMatch(match);
   const voteRef = db.collection(VOTE_COLLECTION).doc(voteDocId(match));
-  const [userVoteSnap, summary] = await Promise.all([
+  const [userVoteSnap, voteSnap] = await Promise.all([
     voteRef.collection('votes').doc(user.uid).get(),
-    buildVoteSummary(voteRef, optionsByMarket),
+    voteRef.collection('votes').get(),
   ]);
+  const directory = await userDirectory(db, voteSnap.docs, user);
+  const summary = buildVoteSummaryFromDocs(voteSnap.docs, optionsByMarket, directory, user.uid);
   const lock = voteLockState(match);
   return {
     matchId: String(match.id || ''),
@@ -246,6 +504,10 @@ export async function GET(request) {
   }
 
   const db = getFirestore(getAdminApp());
+  if (request.nextUrl.searchParams.get('scope') === 'leaderboard') {
+    return jsonResponse(await leaderboardPayload(db, user));
+  }
+
   const matchId = request.nextUrl.searchParams.get('matchId');
   const date = request.nextUrl.searchParams.get('date');
   const match = await loadMatch(db, matchId, date);
@@ -260,6 +522,9 @@ export async function POST(request) {
     user = await verifyAccess(request);
   } catch (err) {
     return jsonResponse({ error: err.message || 'unauthorized' }, err.status || 401);
+  }
+  if (!String(user.nickname || '').trim()) {
+    return jsonResponse({ error: 'nickname-required', detail: 'Set a nickname in Settings before saving crowd votes.' }, 428);
   }
 
   const body = await request.json().catch(() => ({}));
@@ -286,6 +551,7 @@ export async function POST(request) {
   await userVoteRef.set({
     uid: user.uid,
     email: user.email || null,
+    nickname: user.nickname || null,
     matchId: String(match.id || ''),
     date: match.date || null,
     league: match.league || null,

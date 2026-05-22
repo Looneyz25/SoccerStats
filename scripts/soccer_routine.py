@@ -96,6 +96,7 @@ DEFAULT_PREMATCH_CORNERS_TOTAL = 10.2
 BOOKMAKER_CONTEXT_LAMBDA_CAP = 0.25
 BOOKMAKER_CONTEXT_BTTS_WEIGHT = 0.20
 BOOKMAKER_CONTEXT_CARDS_WEIGHT = 0.25
+INTERNAL_PROFILE_LAMBDA_CAP = 0.18
 TODAY     = datetime.now(ADL).date()
 YESTERDAY = TODAY - timedelta(days=1)
 TOMORROW  = TODAY + timedelta(days=1)
@@ -413,6 +414,29 @@ def short(name):
 
 
 TEAM_LOGO_OVERRIDES = {
+    "asroma": "https://media.api-sports.io/football/teams/497.png",
+    "atalanta": "https://media.api-sports.io/football/teams/499.png",
+    "bologna": "https://media.api-sports.io/football/teams/500.png",
+    "cagliari": "https://media.api-sports.io/football/teams/490.png",
+    "como": "https://media.api-sports.io/football/teams/895.png",
+    "cremonese": "https://media.api-sports.io/football/teams/520.png",
+    "fiorentina": "https://media.api-sports.io/football/teams/502.png",
+    "genoa": "https://media.api-sports.io/football/teams/495.png",
+    "hellasverona": "https://media.api-sports.io/football/teams/504.png",
+    "inter": "https://media.api-sports.io/football/teams/505.png",
+    "intermilan": "https://media.api-sports.io/football/teams/505.png",
+    "juventus": "https://media.api-sports.io/football/teams/496.png",
+    "lazio": "https://media.api-sports.io/football/teams/487.png",
+    "lecce": "https://media.api-sports.io/football/teams/867.png",
+    "milan": "https://media.api-sports.io/football/teams/489.png",
+    "acmilan": "https://media.api-sports.io/football/teams/489.png",
+    "napoli": "https://media.api-sports.io/football/teams/492.png",
+    "parma": "https://media.api-sports.io/football/teams/523.png",
+    "pisa": "https://media.api-sports.io/football/teams/517.png",
+    "sassuolo": "https://media.api-sports.io/football/teams/488.png",
+    "sscnapoli": "https://media.api-sports.io/football/teams/492.png",
+    "torino": "https://media.api-sports.io/football/teams/503.png",
+    "udinese": "https://media.api-sports.io/football/teams/494.png",
     "hull": "https://media.api-sports.io/football/teams/64.png",
     "hullcity": "https://media.api-sports.io/football/teams/64.png",
     "middlesbrough": "https://media.api-sports.io/football/teams/70.png",
@@ -1187,11 +1211,14 @@ def actuals_for(eid):
     out = {}
     s = fetch(f"/api/v1/event/{eid}/statistics"); time.sleep(0.6)
     if s:
+        yellow_home = yellow_away = red_home = red_away = 0
+        card_sides_found = False
         for per in s.get("statistics", []):
             if per.get("period") != "ALL": continue
             for grp in per.get("groups", []):
                 for it in grp.get("statisticsItems", []):
                     k = it.get("key")
+                    nm = (it.get("name") or "").lower()
                     try:
                         h = int(it.get("homeValue") or it.get("home") or 0)
                         a = int(it.get("awayValue") or it.get("away") or 0)
@@ -1199,6 +1226,20 @@ def actuals_for(eid):
                     if k == "cornerKicks": out.update(home_corners=h, away_corners=a, corners_total=h+a)
                     elif k == "fouls":      out.update(home_fouls=h,   away_fouls=a,   fouls_total=h+a)
                     elif k == "shotsOnGoal": out.update(home_sot=h,    away_sot=a)
+                    elif (k == "yellowCards" or "yellow card" in nm) and "second" not in nm:
+                        yellow_home += h
+                        yellow_away += a
+                        card_sides_found = True
+                    elif k == "redCards" or "red card" in nm:
+                        red_home += h
+                        red_away += a
+                        card_sides_found = True
+        if card_sides_found:
+            out.update(
+                home_cards=yellow_home + red_home,
+                away_cards=yellow_away + red_away,
+            )
+            out["cards_total"] = out["home_cards"] + out["away_cards"]
     inc = fetch(f"/api/v1/event/{eid}/incidents"); time.sleep(0.6)
     if inc:
         goals = [i for i in inc.get("incidents", []) if i.get("incidentType") == "goal"]
@@ -1750,6 +1791,169 @@ def market_odds_for_match(match, prefer_original=False):
     return None
 
 
+def match_profile_datetime(match):
+    kickoff = match_kickoff_datetime(match)
+    if kickoff:
+        return kickoff
+    match_date = parse_match_date(match.get("date"))
+    if not match_date:
+        return None
+    return datetime(match_date.year, match_date.month, match_date.day, tzinfo=ADL)
+
+
+def mean(values):
+    values = [float(value) for value in values if isinstance(value, (int, float))]
+    return sum(values) / len(values) if values else None
+
+
+def round_or_none(value, digits=3):
+    return round(value, digits) if isinstance(value, (int, float)) else None
+
+
+def team_recent_profile(all_matches, team_id, current_match_id=None, current_dt=None, venue=None, limit=6):
+    if not team_id or not isinstance(all_matches, list):
+        return {}
+    team_key = str(team_id)
+    rows = []
+    for match in all_matches:
+        if match.get("status") != "FT" or match.get("id") == current_match_id:
+            continue
+        home = match.get("home") or {}
+        away = match.get("away") or {}
+        is_home = str(home.get("team_id")) == team_key
+        is_away = str(away.get("team_id")) == team_key
+        if not is_home and not is_away:
+            continue
+        if venue == "home" and not is_home:
+            continue
+        if venue == "away" and not is_away:
+            continue
+        played_at = match_profile_datetime(match)
+        if current_dt and played_at and played_at >= current_dt:
+            continue
+        home_goals = home.get("goals")
+        away_goals = away.get("goals")
+        if not isinstance(home_goals, (int, float)) or not isinstance(away_goals, (int, float)):
+            continue
+        actuals = match.get("actuals") or {}
+        prefix = "home" if is_home else "away"
+        opp_prefix = "away" if is_home else "home"
+        goals_for = float(home_goals if is_home else away_goals)
+        goals_against = float(away_goals if is_home else home_goals)
+        points = 3 if goals_for > goals_against else 1 if goals_for == goals_against else 0
+        rows.append({
+            "date": match.get("date") or "",
+            "time": match.get("time") or "",
+            "played_at": played_at,
+            "goals_for": goals_for,
+            "goals_against": goals_against,
+            "points": points,
+            "sot_for": actuals.get(f"{prefix}_sot"),
+            "sot_against": actuals.get(f"{opp_prefix}_sot"),
+            "corners_for": actuals.get(f"{prefix}_corners"),
+            "corners_against": actuals.get(f"{opp_prefix}_corners"),
+            "fouls_for": actuals.get(f"{prefix}_fouls"),
+            "fouls_against": actuals.get(f"{opp_prefix}_fouls"),
+            "cards_for": actuals.get(f"{prefix}_cards"),
+            "cards_against": actuals.get(f"{opp_prefix}_cards"),
+        })
+    rows.sort(key=lambda row: (row["date"], row["time"]), reverse=True)
+    rows = rows[:limit]
+    if not rows:
+        return {}
+    most_recent = next((row["played_at"] for row in rows if row.get("played_at")), None)
+    rest_days = None
+    if current_dt and most_recent:
+        rest_days = max(0.0, (current_dt - most_recent).total_seconds() / 86400)
+    profile = {
+        "played": len(rows),
+        "goals_for_pg": round_or_none(mean([row["goals_for"] for row in rows])),
+        "goals_against_pg": round_or_none(mean([row["goals_against"] for row in rows])),
+        "points_per_match": round_or_none(mean([row["points"] for row in rows])),
+        "shots_on_target_for": round_or_none(mean([row["sot_for"] for row in rows])),
+        "shots_on_target_against": round_or_none(mean([row["sot_against"] for row in rows])),
+        "corners_for": round_or_none(mean([row["corners_for"] for row in rows])),
+        "corners_against": round_or_none(mean([row["corners_against"] for row in rows])),
+        "fouls_for": round_or_none(mean([row["fouls_for"] for row in rows])),
+        "fouls_against": round_or_none(mean([row["fouls_against"] for row in rows])),
+        "cards_for": round_or_none(mean([row["cards_for"] for row in rows])),
+        "cards_against": round_or_none(mean([row["cards_against"] for row in rows])),
+        "rest_days": round_or_none(rest_days, 1),
+    }
+    return {key: value for key, value in profile.items() if value is not None}
+
+
+def internal_prediction_context(match, all_matches):
+    if match.get("status") == "FT" or match.get("prediction_locked") or not all_matches:
+        return None
+    current_dt = match_profile_datetime(match)
+    home = match.get("home") or {}
+    away = match.get("away") or {}
+    home_profile = team_recent_profile(all_matches, home.get("team_id"), match.get("id"), current_dt, limit=6)
+    away_profile = team_recent_profile(all_matches, away.get("team_id"), match.get("id"), current_dt, limit=6)
+    home_venue = team_recent_profile(all_matches, home.get("team_id"), match.get("id"), current_dt, venue="home", limit=4)
+    away_venue = team_recent_profile(all_matches, away.get("team_id"), match.get("id"), current_dt, venue="away", limit=4)
+    if home_venue.get("points_per_match") is not None:
+        home_profile["venue_points_per_match"] = home_venue["points_per_match"]
+    if away_venue.get("points_per_match") is not None:
+        away_profile["venue_points_per_match"] = away_venue["points_per_match"]
+
+    expected_corners = mean([
+        home_profile.get("corners_for"),
+        away_profile.get("corners_against"),
+        away_profile.get("corners_for"),
+        home_profile.get("corners_against"),
+    ])
+    expected_cards = mean([
+        home_profile.get("cards_for"),
+        away_profile.get("cards_against"),
+        away_profile.get("cards_for"),
+        home_profile.get("cards_against"),
+    ])
+    expected_fouls = mean([
+        home_profile.get("fouls_for"),
+        away_profile.get("fouls_against"),
+        away_profile.get("fouls_for"),
+        home_profile.get("fouls_against"),
+    ])
+    if not home_profile and not away_profile:
+        return None
+    context = {
+        "source": "internal_predictive_profile",
+        "home": home_profile,
+        "away": away_profile,
+    }
+    if expected_corners is not None:
+        context["corners_avg"] = round(expected_corners, 2)
+    if expected_cards is not None:
+        context["cards_avg"] = round(expected_cards, 2)
+    if expected_fouls is not None:
+        context["fouls_avg"] = round(expected_fouls, 2)
+    return context
+
+
+def merge_prediction_contexts(primary, secondary):
+    if not primary:
+        return secondary
+    if not secondary:
+        return primary
+    merged = dict(primary)
+    merged["source"] = f"{primary.get('source') or primary.get('provider') or 'external_context'}+internal_predictive_profile"
+    for side in ("home", "away"):
+        merged[side] = {**(secondary.get(side) or {}), **(primary.get(side) or {})}
+    for key, value in secondary.items():
+        if key in {"source", "home", "away"}:
+            continue
+        merged.setdefault(key, value)
+    return merged
+
+
+def prediction_context_for_match(match, all_matches=None):
+    external = prediction_market_context(match)
+    internal = internal_prediction_context(match, all_matches or [])
+    return merge_prediction_contexts(external, internal)
+
+
 def context_side(match, side):
     context = match.get("statshub_context") or match.get("bet365_context") or match.get("bookmaker_context") or {}
     side_context = context.get(side) or {}
@@ -1853,6 +2057,57 @@ def market_context_adjustment(context):
         away_delta += bounded(((a_gf_pg + h_ga_pg) / 2.0 - DEFAULT_PREMATCH_TEAM_GOALS) * 0.18, 0.16)
         signals.append("season_goals")
 
+    h_recent_gf = context_number(home, "goals_for_pg")
+    h_recent_ga = context_number(home, "goals_against_pg")
+    a_recent_gf = context_number(away, "goals_for_pg")
+    a_recent_ga = context_number(away, "goals_against_pg")
+    if h_recent_gf is not None and a_recent_ga is not None:
+        home_delta += bounded(((h_recent_gf + a_recent_ga) / 2.0 - DEFAULT_PREMATCH_TEAM_GOALS) * 0.16, 0.14)
+        signals.append("recent_goals")
+    if a_recent_gf is not None and h_recent_ga is not None:
+        away_delta += bounded(((a_recent_gf + h_recent_ga) / 2.0 - DEFAULT_PREMATCH_TEAM_GOALS) * 0.16, 0.14)
+        signals.append("recent_goals")
+
+    h_sot_for = context_number(home, "shots_on_target_for")
+    h_sot_against = context_number(home, "shots_on_target_against")
+    a_sot_for = context_number(away, "shots_on_target_for")
+    a_sot_against = context_number(away, "shots_on_target_against")
+    if h_sot_for is not None and a_sot_against is not None:
+        home_delta += bounded(((h_sot_for + a_sot_against) / 2.0 - 4.2) * 0.045, 0.14)
+        signals.append("shots_on_target")
+    if a_sot_for is not None and h_sot_against is not None:
+        away_delta += bounded(((a_sot_for + h_sot_against) / 2.0 - 4.2) * 0.045, 0.14)
+        signals.append("shots_on_target")
+
+    h_ppg = context_number(home, "points_per_match")
+    a_ppg = context_number(away, "points_per_match")
+    if h_ppg is not None and a_ppg is not None:
+        form_delta = bounded((h_ppg - a_ppg) * 0.055, 0.12)
+        home_delta += form_delta
+        away_delta -= form_delta
+        signals.append("recent_points")
+
+    h_venue_ppg = context_number(home, "venue_points_per_match")
+    a_venue_ppg = context_number(away, "venue_points_per_match")
+    if h_venue_ppg is not None and a_venue_ppg is not None:
+        venue_delta = bounded((h_venue_ppg - a_venue_ppg) * 0.035, 0.08)
+        home_delta += venue_delta
+        away_delta -= venue_delta
+        signals.append("home_away_split")
+
+    h_rest = context_number(home, "rest_days")
+    a_rest = context_number(away, "rest_days")
+    if h_rest is not None and a_rest is not None:
+        if h_rest < 3:
+            home_delta -= bounded((3 - h_rest) * 0.035, 0.10)
+        if a_rest < 3:
+            away_delta -= bounded((3 - a_rest) * 0.035, 0.10)
+        if abs(h_rest - a_rest) >= 2:
+            rest_delta = bounded((h_rest - a_rest) * 0.018, 0.08)
+            home_delta += rest_delta
+            away_delta -= rest_delta
+        signals.append("rest_days")
+
     h_btts = context_number(home, "btts", "both_teams_to_score")
     a_btts = context_number(away, "btts", "both_teams_to_score")
     h_btts_rate = context_ratio(h_btts, home_played)
@@ -1863,6 +2118,11 @@ def market_context_adjustment(context):
         signals.append("season_btts")
 
     cards_total = context_number(context, "cards_avg", "average_cards", "total_cards_avg")
+    if cards_total is None:
+        fouls_total = context_number(context, "fouls_avg", "average_fouls", "total_fouls_avg")
+        if fouls_total is not None:
+            cards_total = max(2.5, min(7.5, fouls_total * 0.19))
+            signals.append("fouls_card_proxy")
     cards_over_prior = None
     if cards_total is not None:
         cards_over_prior = max(0.15, min(0.85, poisson_over_probability(cards_total, 4.5) or 0.5))
@@ -1870,8 +2130,8 @@ def market_context_adjustment(context):
 
     return {
         "source": context.get("source") or "bookmaker_context",
-        "home_lambda": bounded(home_delta, BOOKMAKER_CONTEXT_LAMBDA_CAP),
-        "away_lambda": bounded(away_delta, BOOKMAKER_CONTEXT_LAMBDA_CAP),
+        "home_lambda": bounded(home_delta, max(BOOKMAKER_CONTEXT_LAMBDA_CAP, INTERNAL_PROFILE_LAMBDA_CAP)),
+        "away_lambda": bounded(away_delta, max(BOOKMAKER_CONTEXT_LAMBDA_CAP, INTERNAL_PROFILE_LAMBDA_CAP)),
         "btts_prior": btts_prior,
         "cards_over_prior": cards_over_prior,
         "signals": sorted(set(signals)),
@@ -1930,8 +2190,8 @@ def average_corners_for_scope(matches, fallback=DEFAULT_PREMATCH_CORNERS_TOTAL):
     return max(7.0, min(13.5, sum(values) / len(values)))
 
 
-def context_corner_average(match):
-    context = prediction_market_context(match)
+def context_corner_average(match, all_matches=None):
+    context = prediction_context_for_match(match, all_matches)
     if not context:
         return None
     value = context_number(context, "corners_avg", "average_corners", "total_corners_avg")
@@ -1953,7 +2213,7 @@ def corner_odds_for_prediction(match, line, pick):
 
 def pre_corners_prediction(match, league_matches, all_matches):
     line = 10.5
-    context_avg = context_corner_average(match)
+    context_avg = context_corner_average(match, all_matches)
     league_avg = average_corners_for_scope(league_matches, None)
     avg = context_avg if context_avg is not None else (league_avg if league_avg is not None else average_corners_for_scope(all_matches))
     p_over = poisson_over_probability(avg, line)
@@ -2001,7 +2261,7 @@ def populate_pre_match_predictions(store):
 
             if odds and not all(predictions.get(key) for key in ("winner", "btts", "ou_goals", "ou_cards")):
                 h_att, h_def, a_att, a_def = pre_prediction_form_inputs(match, league_matches, odds)
-                market_context = prediction_market_context(match)
+                market_context = prediction_context_for_match(match, all_matches)
                 fallback = predict_enhanced(
                     h_att,
                     h_def,
@@ -2020,7 +2280,7 @@ def populate_pre_match_predictions(store):
                 fallback_factors.update({
                     "source": "pre_match_prefill",
                     "source_note": (
-                        "Generated before kickoff from available 1X2 odds plus bookmaker/context enrichment."
+                        "Generated before kickoff from available 1X2 odds plus bookmaker/internal context enrichment."
                         if market_context else
                         "Generated before kickoff from available 1X2 odds plus league/global baselines because detailed team context was missing."
                     ),
@@ -2183,6 +2443,7 @@ def prune_stale_pending_matches(store):
 # ----------------------------------------------------------------------------
 def phase_b_forecast(store, seen_ids):
     by_name = {L["name"]: L for L in store["leagues"]}
+    all_matches = [m for league in store.get("leagues", []) for m in league.get("matches", [])]
     added = 0; add_brk = {}
     forecast_days = [(TODAY + timedelta(days=i)).isoformat() for i in range(FIXTURE_LOOKAHEAD_DAYS)]
     for d in forecast_days:
@@ -2210,6 +2471,18 @@ def phase_b_forecast(store, seen_ids):
                 stand = fetch_standings(ut.get("id"), season.get("id"))
                 hr = stand.get(h.get("id"), {})
                 ar = stand.get(a.get("id"), {})
+                ts = ev.get("startTimestamp")
+                temp_match = {
+                    "id": eid,
+                    "date": adl_date(ts) if ts else d,
+                    "time": adl_time(ts) if ts else "00:00",
+                    "status": "upcoming",
+                    "home": team_payload(h),
+                    "away": team_payload(a),
+                }
+                if odds:
+                    temp_match["odds"] = odds
+                market_context = prediction_context_for_match(temp_match, all_matches)
                 pred = predict_enhanced(h_att, h_def, a_att, a_def,
                                         h.get("name",""), a.get("name",""), tstr,
                                         h2h=h2h_history,
@@ -2217,13 +2490,10 @@ def phase_b_forecast(store, seen_ids):
                                         a_rank=ar.get("rank"), a_pts=ar.get("pts"),
                                         h_team_id=h.get("id"), a_team_id=a.get("id"),
                                         league=TOURNAMENTS[utid],
-                                        market_odds=odds)
-                ts = ev.get("startTimestamp")
+                                        market_odds=odds,
+                                        market_context=market_context)
                 rec = {
-                    "id": eid, "date": adl_date(ts) if ts else d, "time": adl_time(ts) if ts else "00:00",
-                    "status": "upcoming",
-                    "home": team_payload(h),
-                    "away": team_payload(a),
+                    **temp_match,
                     "predictions": pred,
                 }
                 if odds: rec["odds"] = odds

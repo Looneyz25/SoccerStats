@@ -10,11 +10,16 @@ const OUT_DIR = path.join(ROOT, 'docs', 'agent-system', 'outputs');
 const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 const argv = process.argv.slice(2);
 const resultsOnly = argv.includes('--results-only') || process.env.SOCCER_DATA_MODE === 'results';
-const runMode = resultsOnly ? 'results-only' : 'full-refresh';
+const topUpOnly = argv.includes('--top-up-only') || process.env.SOCCER_DATA_MODE === 'topup';
+if (resultsOnly && topUpOnly) {
+  console.error('Choose one mode: --results-only or --top-up-only');
+  process.exit(1);
+}
+const runMode = resultsOnly ? 'results-only' : topUpOnly ? 'top-up-only' : 'full-refresh';
 const DEFAULT_ENV = {
   SOCCER_FIXTURE_DAYS: resultsOnly ? '1' : '7',
-  SOCCER_ODDS_BUDGET: resultsOnly ? '80' : '720',
-  SOCCER_SPORTSBET_DEEP_BUDGET: resultsOnly ? '120' : '420',
+  SOCCER_ODDS_BUDGET: resultsOnly ? '80' : topUpOnly ? '320' : '720',
+  SOCCER_SPORTSBET_DEEP_BUDGET: resultsOnly ? '120' : topUpOnly ? '240' : '420',
   SOCCER_RESULT_BUFFER_MINUTES: process.env.SOCCER_RESULT_BUFFER_MINUTES || '150',
   SOCCER_RESULT_LOOKBACK_DAYS: process.env.SOCCER_RESULT_LOOKBACK_DAYS || '3',
 };
@@ -97,7 +102,33 @@ const SEED_NEXT_DAY_STEP = {
   },
 };
 
-const STEPS = resultsOnly ? RESULTS_ONLY_STEPS : FULL_REFRESH_STEPS;
+const TOP_UP_HORIZON_STEP = {
+  id: 'top_up_horizon',
+  label: 'Top up 7-day prediction horizon',
+  command: 'node',
+  args: ['scripts/run-python.js', 'scripts/soccer_routine.py', '--seed-next-day'],
+  env: {
+    SOCCER_FIXTURE_DAYS: '7',
+    SOCCER_ODDS_BUDGET: '320',
+    SOCCER_SPORTSBET_DEEP_BUDGET: '240',
+  },
+};
+
+const TOP_UP_ONLY_STEPS = [
+  TOP_UP_HORIZON_STEP,
+  {
+    id: 'cache_badges',
+    label: 'Cache badges to Firebase Storage',
+    command: 'node',
+    args: ['scripts/cache_badges_to_firebase.mjs'],
+  },
+  {
+    id: 'upload_firestore',
+    label: 'Upload league docs to Firestore',
+    command: 'node',
+    args: ['scripts/upload_match_data_to_firestore.mjs'],
+  },
+];
 
 function nowIso() {
   return new Date().toISOString();
@@ -247,6 +278,16 @@ async function seedDecision() {
   return { shouldSeed: true, reason: `active slate complete; seed ${targetDate}`, targetDate, markerPath };
 }
 
+async function horizonTopUpDecision() {
+  const targetDate = todayInAdelaide();
+  const markerPath = path.join(OUT_DIR, 'result_horizon_top_up_latest.json');
+  const marker = await readJsonSafe(markerPath);
+  if (marker?.targetDate === targetDate) {
+    return { shouldTopUp: false, reason: `7-day horizon already topped up for ${targetDate}`, targetDate };
+  }
+  return { shouldTopUp: true, reason: `no due results; top up 7-day prediction horizon for ${targetDate}`, targetDate, markerPath };
+}
+
 async function markSeeded(targetDate, step) {
   const markerPath = path.join(OUT_DIR, 'result_next_day_seed_latest.json');
   await writeFile(markerPath, `${JSON.stringify({
@@ -255,6 +296,103 @@ async function markSeeded(targetDate, step) {
     stepStatus: step.status,
     stepExitCode: step.exitCode,
   }, null, 2)}\n`, 'utf8');
+}
+
+async function markHorizonTopUp(targetDate, step) {
+  const markerPath = path.join(OUT_DIR, 'result_horizon_top_up_latest.json');
+  await writeFile(markerPath, `${JSON.stringify({
+    targetDate,
+    toppedUpAt: nowIso(),
+    stepStatus: step.status,
+    stepExitCode: step.exitCode,
+  }, null, 2)}\n`, 'utf8');
+}
+
+function parseDueAt(row) {
+  const value = row?.due_at || row?.check_after;
+  if (!value) return null;
+  const timestamp = Date.parse(value);
+  return Number.isFinite(timestamp) ? timestamp : null;
+}
+
+function rowIsDue(row, nowMs = Date.now()) {
+  if (!row || row.status === 'FT') return false;
+  if (row.due_for_check === true) return true;
+  if (row.scope === 'overdue') return true;
+  if (row.date && row.date < todayInAdelaide()) return true;
+  const dueAt = parseDueAt(row);
+  return dueAt !== null && nowMs > dueAt;
+}
+
+function dueRows(schedule, nowMs = Date.now()) {
+  return (schedule?.matches || []).filter((row) => rowIsDue(row, nowMs));
+}
+
+function nextDueRows(schedule, limit = 5, nowMs = Date.now()) {
+  return (schedule?.matches || [])
+    .map((row) => ({ row, dueAt: parseDueAt(row) }))
+    .filter((entry) => entry.dueAt !== null && entry.dueAt > nowMs)
+    .sort((a, b) => a.dueAt - b.dueAt)
+    .slice(0, limit)
+    .map((entry) => entry.row);
+}
+
+function describeMatch(row) {
+  const teams = `${row.home || '?'} vs ${row.away || '?'}`;
+  return `${row.date || '?'} ${row.time || '?'} ${row.league || '?'} ${teams} (${row.result_queue || 'DUE @ unknown'})`;
+}
+
+async function planResultsRun() {
+  const schedulePath = path.join(OUT_DIR, 'result_check_schedule_latest.json');
+  const schedule = await readJsonSafe(schedulePath);
+  if (!schedule) {
+    return {
+      action: 'results',
+      reason: 'no result schedule exists yet; run the results checker to build one',
+      requiredSteps: RESULTS_ONLY_STEPS,
+    };
+  }
+
+  const due = dueRows(schedule);
+  if (due.length) {
+    return {
+      action: 'results',
+      reason: `${due.length} match${due.length === 1 ? '' : 'es'} due for result check`,
+      due: due.slice(0, 8).map(describeMatch),
+      requiredSteps: RESULTS_ONLY_STEPS,
+    };
+  }
+
+  const seed = await seedDecision();
+  if (seed.shouldSeed) {
+    return {
+      action: 'seed-next-day',
+      reason: seed.reason,
+      targetDate: seed.targetDate,
+      requiredSteps: [
+        SEED_NEXT_DAY_STEP,
+        ...RESULTS_ONLY_STEPS.filter((step) => ['cache_badges', 'upload_firestore'].includes(step.id)),
+      ],
+    };
+  }
+
+  const topUp = await horizonTopUpDecision();
+  if (topUp.shouldTopUp) {
+    return {
+      action: 'top-up-horizon',
+      reason: topUp.reason,
+      targetDate: topUp.targetDate,
+      requiredSteps: TOP_UP_ONLY_STEPS,
+    };
+  }
+
+  const nextDue = nextDueRows(schedule).map(describeMatch);
+  return {
+    action: 'skip',
+    reason: topUp.reason,
+    nextDue,
+    requiredSteps: [],
+  };
 }
 
 function countMatches(matchData) {
@@ -359,16 +497,35 @@ function renderMarkdown(log) {
     lines.push(`- Result schedule: \`${log.artifacts.resultSchedulePath}\``);
   }
 
+  if (log.decision) {
+    lines.push('');
+    lines.push('## Routine Decision');
+    lines.push('');
+    lines.push(`- Action: ${log.decision.action}`);
+    lines.push(`- Reason: ${log.decision.reason}`);
+    if (log.decision.targetDate) lines.push(`- Target date: ${log.decision.targetDate}`);
+    if (Array.isArray(log.decision.due) && log.decision.due.length) {
+      log.decision.due.forEach((row) => lines.push(`- Due: ${row}`));
+    }
+    if (Array.isArray(log.decision.nextDue) && log.decision.nextDue.length) {
+      log.decision.nextDue.forEach((row) => lines.push(`- Next due: ${row}`));
+    }
+  }
+
   lines.push('');
   lines.push('## Steps');
   lines.push('');
   lines.push('| Step | Status | Exit | Duration | Last line |');
   lines.push('| --- | --- | --- | --- | --- |');
-  log.steps.forEach((step) => {
-    const duration = `${(step.durationMs / 1000).toFixed(2)}s`;
-    const lastLine = stepLastLine(step).replace(/\|/g, '/').slice(0, 160);
-    lines.push(`| ${step.label} | ${step.status} | ${step.exitCode ?? ''} | ${duration} | ${lastLine} |`);
-  });
+  if (log.steps.length) {
+    log.steps.forEach((step) => {
+      const duration = `${(step.durationMs / 1000).toFixed(2)}s`;
+      const lastLine = stepLastLine(step).replace(/\|/g, '/').slice(0, 160);
+      lines.push(`| ${step.label} | ${step.status} | ${step.exitCode ?? ''} | ${duration} | ${lastLine} |`);
+    });
+  } else {
+    lines.push('| No operation | ok | 0 | 0.00s | Routine decision skipped execution |');
+  }
 
   lines.push('');
   lines.push('## Output Files');
@@ -406,9 +563,29 @@ async function main() {
     `npm_command=${npmCommand}`,
   ];
 
+  const decision = resultsOnly ? await planResultsRun() : topUpOnly ? {
+    action: 'top-up-horizon',
+    reason: 'manual top-up-only mode requested',
+    targetDate: todayInAdelaide(),
+    requiredSteps: TOP_UP_ONLY_STEPS,
+  } : {
+    action: 'full-refresh',
+    reason: 'manual full 7-day refresh requested',
+    requiredSteps: FULL_REFRESH_STEPS,
+  };
+  transcript.push(`decision_action=${decision.action}`);
+  transcript.push(`decision_reason=${decision.reason}`);
+  console.log(`[Routine decision] ${decision.action}: ${decision.reason}`);
+  if (decision.due?.length) {
+    decision.due.forEach((row) => console.log(`  due: ${row}`));
+  }
+  if (decision.nextDue?.length) {
+    decision.nextDue.forEach((row) => console.log(`  next due: ${row}`));
+  }
+
   const steps = [];
-  for (const step of STEPS) {
-    if (resultsOnly && step.id === 'upload_firestore') {
+  for (const step of decision.requiredSteps) {
+    if (resultsOnly && decision.action === 'results' && step.id === 'upload_firestore') {
       const decision = await seedDecision();
       transcript.push('');
       transcript.push(`seed_next_day_decision=${decision.reason}`);
@@ -425,12 +602,18 @@ async function main() {
     }
     const result = await runStep(step, transcript);
     steps.push(result);
+    if (result.status === 'ok' && result.id === 'seed_next_day' && decision.targetDate) {
+      await markSeeded(decision.targetDate, result);
+    }
+    if (result.status === 'ok' && result.id === 'top_up_horizon' && decision.targetDate) {
+      await markHorizonTopUp(decision.targetDate, result);
+    }
     if (result.status !== 'ok') break;
   }
 
   const completedAt = nowIso();
   const artifacts = await collectArtifacts();
-  const requiredStepsOk = STEPS.every((requiredStep) =>
+  const requiredStepsOk = decision.requiredSteps.every((requiredStep) =>
     steps.some((step) => step.id === requiredStep.id && step.status === 'ok'),
   );
   const status = requiredStepsOk && steps.every((step) => step.status === 'ok') ? 'ok' : 'failed';
@@ -441,6 +624,13 @@ async function main() {
     startedAt: started.toISOString(),
     completedAt,
     paths: relativePaths,
+    decision: {
+      action: decision.action,
+      reason: decision.reason,
+      targetDate: decision.targetDate || null,
+      due: decision.due || [],
+      nextDue: decision.nextDue || [],
+    },
     steps,
     artifacts,
   };

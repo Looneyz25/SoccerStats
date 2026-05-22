@@ -46,7 +46,19 @@ For scheduled result checks, use:
 npm.cmd run get:data:results
 ```
 
-This is the smaller automation loop after the initial 7-day pull. It writes `docs/agent-system/outputs/result_check_schedule_latest.md`, checks only unresolved matches whose kickoff time plus the completion buffer has passed, settles/backfills finished matches, prunes stale unresolved matches outside the result lookback window, runs result review/calibration, and uploads Firestore. Each run should reduce the today/overdue remaining count as matches become `FT`. When that count reaches zero, it seeds day+1 once instead of re-running the full 7-day pull.
+This is the smaller automation loop after the initial 7-day pull. It reads `docs/agent-system/outputs/result_check_schedule_latest.json` before running expensive steps:
+
+- Due matches: settle/backfill only unresolved matches whose kickoff time plus the completion buffer has passed, prune stale unresolved rows, run result review/calibration, cache badges, and upload Firestore.
+- Active slate complete: seed day+1 once, cache badges, and upload Firestore.
+- Nothing due: run one 7-day prediction horizon top-up per Adelaide day, then no-op until the next due time.
+
+Each real result run should reduce the today/overdue remaining count as matches become `FT`. No-op runs are successful runs and should write the next due times into the get-data log rather than uploading unchanged dashboard data.
+
+Use the explicit top-up path when the schedule is healthy but future predictions need a light refresh:
+
+```powershell
+npm.cmd run get:data:topup
+```
 
 ## Required Agents
 

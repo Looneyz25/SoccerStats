@@ -57,6 +57,7 @@ Port `3001` is the expected local dashboard port. If startup fails with `EADDRIN
 - Keep bookmaker odds tied to the exact visible side and line. If only the opposite-side price is available, an estimated inverse price may be shown, but it must be labelled as estimated and never treated as a direct bookmaker quote.
 - Apply the same guided two-way total logic to completed matches, results review, hit-rate summaries, and odds hit/loss totals so settled cards/corners are scored against the visible guided side.
 - For winner markets, do not promote a model lean against a major direct 1X2 market disagreement. Only guide the visible winner to the bookmaker-backed side when the bookmaker side is a heavy favourite at 65%+ implied probability and the model is not genuinely overwhelming (about 60%+ with a large model gap). A 51% bookmaker favourite is not enough to override a raw model lean. Apply this before kickoff only; never rescore completed results from new guided-side logic.
+- Future predictions should use the internal predictive profile before relying on external StatsHub/bet365 context. The profile is built from already stored FT rows: recent goals, shots on target, recent points, home/away venue split, rest days, corners, fouls, and cards. It may only adjust upcoming/future predictions; it must not rewrite `FT` or `prediction_locked` rows.
 - On match cards, show the original winner prediction and model percentage on the predicted team card (or the centre draw chip), and highlight that card by hit/miss. Do not render a separate winner market tile. Keep BTTS, goals, cards, and corners as compact one-row market cards.
 - Team logo badges are mandatory. Every match card must render a visible badge for both home and away teams on mobile and desktop; if a verified logo URL is missing or fails, keep the same badge shape and show the team initials fallback instead of removing the badge. Provider badge URLs are source inputs only: cache them into Firebase Storage before upload and store Firebase-owned badge fields in Firestore. Never synthesize a badge URL by mixing provider IDs. SofaScore, Sportsbet, API-Football, and StatsHub/bet365 team IDs are not interchangeable; wrong crests must be stripped before upload.
 - Match cards must always render five market cards below the teams on mobile and desktop: one Suggested pick card, then BTTS, Goals, Cards, and Corners. If a market is missing, keep its card visible with `No pick` instead of hiding the card. This applies to every league, including Serie A.
@@ -83,7 +84,15 @@ This is a data-only operation. It must not commit, push, run a production build,
 ```
 npm.cmd run get:data:results
 ```
-The results path keeps a shrinking result checklist in `docs/agent-system/outputs/result_check_schedule_latest.md`, checks only unresolved matches whose kickoff time plus the completion buffer has passed, settles/backfills finished matches, prunes stale unresolved matches outside the result lookback window, runs result review/calibration, and uploads Firestore. When today/overdue matches remaining reaches zero, it seeds day+1 once instead of pulling the full 7-day window again.
+The results path keeps a shrinking result checklist in `docs/agent-system/outputs/result_check_schedule_latest.md`. It preflights that checklist before doing expensive work:
+- If matches are due, it checks only unresolved matches whose kickoff time plus the completion buffer has passed, settles/backfills finished matches, prunes stale unresolved matches outside the result lookback window, runs result review/calibration, caches badges, and uploads Firestore.
+- If no matches are due and the active slate is complete, it seeds day+1 once, caches badges, and uploads Firestore.
+- If no matches are due and the active slate is not complete, it performs one 7-day prediction horizon top-up per Adelaide day, then later no-op runs only write a log with the next due times.
+
+Use the explicit top-up path when you want the light prediction horizon refresh without running the full phase pipeline:
+```
+npm.cmd run get:data:topup
+```
 
 Use `npm.cmd run data:refresh:local` when Firestore credentials are not available. Do not add proxy/IP rotation to bypass provider controls; prefer API/fallback sources, caching, gentle sleeps, and backoff.
 

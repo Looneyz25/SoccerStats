@@ -53,6 +53,8 @@ Winner probabilities are then blended with the bookmaker market when full home/d
 
 StatsHub/bet365 bookmaker context is future-only. When present on an upcoming row, it may apply small capped adjustments to expected goals, BTTS prior, cards prior, and corners baseline. It must not alter `FT` or `prediction_locked` rows; resulted predictions remain the immutable hit-rate ledger.
 
+Before using any external StatsHub/bet365 context, the routine also builds an internal predictive profile from stored FT matches. This profile is safe because it only uses data already captured in `match_data.json`: recent goals for/against, shots on target for/against, recent points per match, home/away venue split, rest days, corners for/against, fouls, and cards where available. These fields can make capped lambda adjustments, cards priors, and corner baselines for future/upcoming matches only. If source history is thin, keep the prediction but surface weak-data caution rather than hiding the market card.
+
 Draw selection has its own lane because football draws are common but rarely the highest raw probability. Select draw when `p_draw >= 0.28`, home/away probabilities are within 0.15, and the leading home/away side is no more than 0.15 ahead of draw.
 
 Cards use a stricter learned gate because recent resulted data showed Over 4.5 was over-selected. Store both the raw over probability and the chosen-side probability. Only select `Over 4.5` when `over_probability >= 0.68`; otherwise select `Under 4.5`.

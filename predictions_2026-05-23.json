@@ -1,5 +1,5 @@
 {
-  "captured_at": "2026-05-22",
+  "captured_at": "2026-05-23",
   "source": "sofascore.com",
   "leagues": [
     {
@@ -836,7 +836,95 @@
       "season": "2025/26",
       "round": null,
       "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/leagues/uefa-europa-league.png",
-      "matches": [],
+      "matches": [
+        {
+          "id": 15632626,
+          "date": "2026-05-21",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "SC Freiburg",
+            "short": "Freiburg",
+            "team_id": 2538,
+            "logo": "",
+            "goals": 0
+          },
+          "away": {
+            "name": "Aston Villa",
+            "short": "Aston",
+            "team_id": 40,
+            "logo": "",
+            "goals": 3
+          },
+          "settled_at": "2026-05-23",
+          "odds": {
+            "home": 5.5,
+            "draw": 3.9,
+            "away": 1.62
+          },
+          "team_streaks": [
+            {
+              "team": "away",
+              "label": "No losses",
+              "value": "3"
+            },
+            {
+              "team": "home",
+              "label": "Without clean sheet",
+              "value": "9"
+            },
+            {
+              "team": "home",
+              "label": "More than 2.5 goals",
+              "value": "5/6"
+            },
+            {
+              "team": "away",
+              "label": "More than 2.5 goals",
+              "value": "4/5"
+            },
+            {
+              "team": "home",
+              "label": "Both teams scoring",
+              "value": "5/5"
+            },
+            {
+              "team": "away",
+              "label": "Less than 4.5 cards",
+              "value": "9/10"
+            },
+            {
+              "team": "home",
+              "label": "Less than 10.5 corners",
+              "value": "9/10"
+            },
+            {
+              "team": "away",
+              "label": "Less than 10.5 corners",
+              "value": "8/10"
+            }
+          ],
+          "actuals": {
+            "home_corners": 1,
+            "away_corners": 8,
+            "corners_total": 9,
+            "home_fouls": 15,
+            "away_fouls": 15,
+            "fouls_total": 30,
+            "home_sot": 2,
+            "away_sot": 6,
+            "home_cards": 1,
+            "away_cards": 3,
+            "cards_total": 4,
+            "first_to_score": "away",
+            "first_scorer": "Youri Tielemans",
+            "ht_home": 0,
+            "ht_away": 2,
+            "ht_winner": "away"
+          },
+          "prediction_locked": true
+        }
+      ],
       "badge_storage_path": "badges/leagues/uefa-europa-league.png",
       "badge_source": "league",
       "badge_source_url": "https://media.api-sports.io/football/leagues/3.png"
@@ -32549,7 +32637,34 @@
             "ht_home": 0,
             "ht_away": 0,
             "ht_winner": "draw"
-          }
+          },
+          "h2h_streaks": [
+            {
+              "team": "home",
+              "label": "No losses",
+              "value": "3"
+            },
+            {
+              "team": "both",
+              "label": "Without clean sheet",
+              "value": "6"
+            },
+            {
+              "team": "both",
+              "label": "More than 2.5 goals",
+              "value": "4/5"
+            },
+            {
+              "team": "both",
+              "label": "Both teams scoring",
+              "value": "6/6"
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "4/5"
+            }
+          ]
         },
         {
           "id": 16163444,
@@ -45740,7 +45855,1358 @@
       "season": "2025/26",
       "round": null,
       "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/leagues/conmebol-libertadores.png",
-      "matches": [],
+      "matches": [
+        {
+          "id": 15832784,
+          "date": "2026-05-20",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Coquimbo Unido",
+            "short": "Coquimbo",
+            "team_id": 3165,
+            "logo": "",
+            "goals": 3
+          },
+          "away": {
+            "name": "Deportes Tolima",
+            "short": "Tolima",
+            "team_id": 6111,
+            "logo": "",
+            "goals": 0
+          },
+          "settled_at": "2026-05-23",
+          "odds": {
+            "home": 2.25,
+            "draw": 3.0,
+            "away": 3.6
+          },
+          "team_streaks": [
+            {
+              "team": "home",
+              "label": "No losses",
+              "value": "4"
+            },
+            {
+              "team": "home",
+              "label": "More than 2.5 goals",
+              "value": "6/7"
+            },
+            {
+              "team": "away",
+              "label": "Less than 2.5 goals",
+              "value": "4/5"
+            },
+            {
+              "team": "away",
+              "label": "First to score",
+              "value": "5/6"
+            },
+            {
+              "team": "away",
+              "label": "First half winner",
+              "value": "4/5"
+            },
+            {
+              "team": "home",
+              "label": "Less than 10.5 corners",
+              "value": "7/9"
+            }
+          ],
+          "actuals": {
+            "home_corners": 3,
+            "away_corners": 9,
+            "corners_total": 12,
+            "home_fouls": 14,
+            "away_fouls": 8,
+            "fouls_total": 22,
+            "home_sot": 10,
+            "away_sot": 2,
+            "home_cards": 3,
+            "away_cards": 1,
+            "cards_total": 4,
+            "first_to_score": "home",
+            "first_scorer": "Manuel Fernández",
+            "ht_home": 2,
+            "ht_away": 0,
+            "ht_winner": "home"
+          },
+          "prediction_locked": true
+        },
+        {
+          "id": 15832811,
+          "date": "2026-05-20",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Fluminense",
+            "short": "Fluminense",
+            "team_id": 1961,
+            "logo": "",
+            "goals": 2
+          },
+          "away": {
+            "name": "Bolívar",
+            "short": "Bolívar",
+            "team_id": 7059,
+            "logo": "",
+            "goals": 1
+          },
+          "settled_at": "2026-05-23",
+          "odds": {
+            "home": 1.18,
+            "draw": 6.5,
+            "away": 17.0
+          },
+          "team_streaks": [
+            {
+              "team": "home",
+              "label": "No losses",
+              "value": "4"
+            },
+            {
+              "team": "away",
+              "label": "No wins",
+              "value": "4"
+            },
+            {
+              "team": "home",
+              "label": "Without clean sheet",
+              "value": "7"
+            },
+            {
+              "team": "both",
+              "label": "Both teams scoring",
+              "value": "4/5"
+            },
+            {
+              "team": "away",
+              "label": "First half loser",
+              "value": "4/5"
+            },
+            {
+              "team": "home",
+              "label": "More than 4.5 cards",
+              "value": "10/10"
+            },
+            {
+              "team": "home",
+              "label": "Less than 10.5 corners",
+              "value": "10/10"
+            },
+            {
+              "team": "away",
+              "label": "Less than 10.5 corners",
+              "value": "6/8"
+            }
+          ],
+          "actuals": {
+            "home_corners": 5,
+            "away_corners": 1,
+            "corners_total": 6,
+            "home_fouls": 14,
+            "away_fouls": 9,
+            "fouls_total": 23,
+            "home_sot": 8,
+            "away_sot": 2,
+            "home_cards": 5,
+            "away_cards": 2,
+            "cards_total": 7,
+            "first_to_score": "home",
+            "first_scorer": "Luciano Acosta",
+            "ht_home": 1,
+            "ht_away": 1,
+            "ht_winner": "draw"
+          },
+          "prediction_locked": true
+        },
+        {
+          "id": 15832841,
+          "date": "2026-05-20",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Boca Juniors",
+            "short": "Boca",
+            "team_id": 3202,
+            "logo": "",
+            "goals": 1
+          },
+          "away": {
+            "name": "Cruzeiro",
+            "short": "Cruzeiro",
+            "team_id": 1954,
+            "logo": "",
+            "goals": 1
+          },
+          "settled_at": "2026-05-23",
+          "odds": {
+            "home": 1.91,
+            "draw": 3.1,
+            "away": 4.75
+          },
+          "h2h_streaks": [
+            {
+              "team": "both",
+              "label": "Less than 2.5 goals",
+              "value": "4/5"
+            },
+            {
+              "team": "both",
+              "label": "More than 4.5 cards",
+              "value": "4/5"
+            }
+          ],
+          "team_streaks": [
+            {
+              "team": "away",
+              "label": "No losses",
+              "value": "4"
+            },
+            {
+              "team": "home",
+              "label": "Without clean sheet",
+              "value": "4"
+            },
+            {
+              "team": "away",
+              "label": "Less than 2.5 goals",
+              "value": "5/7"
+            },
+            {
+              "team": "both",
+              "label": "More than 4.5 cards",
+              "value": "5/6"
+            },
+            {
+              "team": "home",
+              "label": "Less than 10.5 corners",
+              "value": "9/10"
+            }
+          ],
+          "actuals": {
+            "home_corners": 12,
+            "away_corners": 1,
+            "corners_total": 13,
+            "home_fouls": 14,
+            "away_fouls": 15,
+            "fouls_total": 29,
+            "home_sot": 10,
+            "away_sot": 3,
+            "home_cards": 2,
+            "away_cards": 3,
+            "cards_total": 5,
+            "first_to_score": "home",
+            "first_scorer": "Miguel Merentiel",
+            "ht_home": 1,
+            "ht_away": 0,
+            "ht_winner": "home"
+          },
+          "prediction_locked": true
+        },
+        {
+          "id": 15832826,
+          "date": "2026-05-20",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Independiente Santa Fe",
+            "short": "Santa",
+            "team_id": 6116,
+            "logo": "",
+            "goals": 2
+          },
+          "away": {
+            "name": "Club Atlético Platense",
+            "short": "Platense",
+            "team_id": 36837,
+            "logo": "",
+            "goals": 1
+          },
+          "settled_at": "2026-05-23",
+          "odds": {
+            "home": 2.1,
+            "draw": 3.2,
+            "away": 3.8
+          },
+          "team_streaks": [
+            {
+              "team": "home",
+              "label": "No losses",
+              "value": "5"
+            },
+            {
+              "team": "away",
+              "label": "Less than 2.5 goals",
+              "value": "4/5"
+            },
+            {
+              "team": "home",
+              "label": "Both teams scoring",
+              "value": "6/7"
+            },
+            {
+              "team": "away",
+              "label": "More than 4.5 cards",
+              "value": "6/7"
+            },
+            {
+              "team": "home",
+              "label": "Less than 10.5 corners",
+              "value": "8/8"
+            },
+            {
+              "team": "away",
+              "label": "Less than 10.5 corners",
+              "value": "8/10"
+            }
+          ],
+          "actuals": {
+            "home_corners": 5,
+            "away_corners": 3,
+            "corners_total": 8,
+            "home_fouls": 13,
+            "away_fouls": 10,
+            "fouls_total": 23,
+            "home_sot": 4,
+            "away_sot": 2,
+            "home_cards": 5,
+            "away_cards": 3,
+            "cards_total": 8,
+            "first_to_score": "home",
+            "first_scorer": "Ivan Scarpeta",
+            "ht_home": 0,
+            "ht_away": 0,
+            "ht_winner": "draw"
+          },
+          "prediction_locked": true
+        },
+        {
+          "id": 15832833,
+          "date": "2026-05-20",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Club Always Ready",
+            "short": "Always",
+            "team_id": 268083,
+            "logo": "",
+            "goals": 1
+          },
+          "away": {
+            "name": "Mirassol",
+            "short": "Mirassol",
+            "team_id": 21982,
+            "logo": "",
+            "goals": 2
+          },
+          "settled_at": "2026-05-23",
+          "odds": {
+            "home": 5.5,
+            "draw": 4.1,
+            "away": 1.6
+          },
+          "team_streaks": [
+            {
+              "team": "away",
+              "label": "Without clean sheet",
+              "value": "3"
+            },
+            {
+              "team": "away",
+              "label": "Both teams scoring",
+              "value": "4/5"
+            },
+            {
+              "team": "away",
+              "label": "First to score",
+              "value": "5/6"
+            },
+            {
+              "team": "home",
+              "label": "More than 4.5 cards",
+              "value": "7/9"
+            },
+            {
+              "team": "away",
+              "label": "Less than 10.5 corners",
+              "value": "4/5"
+            }
+          ],
+          "actuals": {
+            "home_corners": 3,
+            "away_corners": 3,
+            "corners_total": 6,
+            "home_fouls": 18,
+            "away_fouls": 9,
+            "fouls_total": 27,
+            "home_sot": 2,
+            "away_sot": 4,
+            "home_cards": 4,
+            "away_cards": 5,
+            "cards_total": 9,
+            "first_to_score": "away",
+            "first_scorer": "Shaylon",
+            "ht_home": 0,
+            "ht_away": 1,
+            "ht_winner": "away"
+          },
+          "prediction_locked": true
+        },
+        {
+          "id": 15832838,
+          "date": "2026-05-20",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Rosario Central",
+            "short": "Rosario",
+            "team_id": 3217,
+            "logo": "",
+            "goals": 4
+          },
+          "away": {
+            "name": "Universidad Central",
+            "short": "UCV",
+            "team_id": 249952,
+            "logo": "",
+            "goals": 0
+          },
+          "settled_at": "2026-05-23",
+          "odds": {
+            "home": 1.2,
+            "draw": 6.5,
+            "away": 15.0
+          },
+          "team_streaks": [
+            {
+              "team": "away",
+              "label": "No losses",
+              "value": "5"
+            },
+            {
+              "team": "home",
+              "label": "Without clean sheet",
+              "value": "3"
+            },
+            {
+              "team": "both",
+              "label": "Less than 2.5 goals",
+              "value": "4/5"
+            },
+            {
+              "team": "home",
+              "label": "More than 4.5 cards",
+              "value": "5/7"
+            },
+            {
+              "team": "away",
+              "label": "More than 4.5 cards",
+              "value": "7/8"
+            },
+            {
+              "team": "home",
+              "label": "Less than 10.5 corners",
+              "value": "7/9"
+            },
+            {
+              "team": "away",
+              "label": "Less than 10.5 corners",
+              "value": "6/8"
+            }
+          ],
+          "actuals": {
+            "home_corners": 4,
+            "away_corners": 0,
+            "corners_total": 4,
+            "home_fouls": 16,
+            "away_fouls": 9,
+            "fouls_total": 25,
+            "home_sot": 6,
+            "away_sot": 1,
+            "home_cards": 2,
+            "away_cards": 3,
+            "cards_total": 5,
+            "first_to_score": "home",
+            "first_scorer": "Alejo Véliz",
+            "ht_home": 2,
+            "ht_away": 0,
+            "ht_winner": "home"
+          },
+          "prediction_locked": true
+        },
+        {
+          "id": 15832837,
+          "date": "2026-05-20",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Independiente del Valle",
+            "short": "Ind.",
+            "team_id": 39723,
+            "logo": "",
+            "goals": 4
+          },
+          "away": {
+            "name": "Libertad",
+            "short": "Libertad",
+            "team_id": 5996,
+            "logo": "",
+            "goals": 1
+          },
+          "settled_at": "2026-05-23",
+          "odds": {
+            "home": 1.19,
+            "draw": 6.25,
+            "away": 11.0
+          },
+          "team_streaks": [
+            {
+              "team": "home",
+              "label": "Wins",
+              "value": "3"
+            },
+            {
+              "team": "home",
+              "label": "No goals conceded",
+              "value": "3"
+            },
+            {
+              "team": "both",
+              "label": "More than 2.5 goals",
+              "value": "5/7"
+            },
+            {
+              "team": "home",
+              "label": "First to score",
+              "value": "5/6"
+            },
+            {
+              "team": "home",
+              "label": "First half winner",
+              "value": "4/5"
+            },
+            {
+              "team": "home",
+              "label": "Less than 10.5 corners",
+              "value": "5/7"
+            },
+            {
+              "team": "away",
+              "label": "Less than 10.5 corners",
+              "value": "8/10"
+            }
+          ],
+          "actuals": {
+            "home_corners": 8,
+            "away_corners": 4,
+            "corners_total": 12,
+            "home_fouls": 4,
+            "away_fouls": 9,
+            "fouls_total": 13,
+            "home_sot": 8,
+            "away_sot": 4,
+            "home_cards": 0,
+            "away_cards": 1,
+            "cards_total": 1,
+            "first_to_score": "home",
+            "first_scorer": "Junior Sornoza",
+            "ht_home": 2,
+            "ht_away": 1,
+            "ht_winner": "home"
+          },
+          "prediction_locked": true
+        },
+        {
+          "id": 15832764,
+          "date": "2026-05-21",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Flamengo",
+            "short": "Flamengo",
+            "team_id": 5981,
+            "logo": "",
+            "goals": 1
+          },
+          "away": {
+            "name": "Estudiantes de La Plata",
+            "short": "Estudiantes",
+            "team_id": 3206,
+            "logo": "",
+            "goals": 0
+          },
+          "settled_at": "2026-05-23",
+          "odds": {
+            "home": 1.55,
+            "draw": 3.8,
+            "away": 7.0
+          },
+          "h2h_streaks": [
+            {
+              "team": "home",
+              "label": "Without clean sheet",
+              "value": "3"
+            }
+          ],
+          "team_streaks": [
+            {
+              "team": "home",
+              "label": "Less than 2.5 goals",
+              "value": "4/5"
+            },
+            {
+              "team": "away",
+              "label": "Less than 2.5 goals",
+              "value": "6/6"
+            },
+            {
+              "team": "home",
+              "label": "First to score",
+              "value": "7/9"
+            },
+            {
+              "team": "home",
+              "label": "More than 4.5 cards",
+              "value": "4/5"
+            },
+            {
+              "team": "home",
+              "label": "Less than 10.5 corners",
+              "value": "7/9"
+            },
+            {
+              "team": "away",
+              "label": "Less than 10.5 corners",
+              "value": "9/10"
+            }
+          ],
+          "actuals": {
+            "home_corners": 3,
+            "away_corners": 5,
+            "corners_total": 8,
+            "home_fouls": 9,
+            "away_fouls": 13,
+            "fouls_total": 22,
+            "home_sot": 4,
+            "away_sot": 1,
+            "home_cards": 2,
+            "away_cards": 5,
+            "cards_total": 7,
+            "first_to_score": "home",
+            "first_scorer": "Pedro",
+            "ht_home": 0,
+            "ht_away": 0,
+            "ht_winner": "draw"
+          },
+          "prediction_locked": true
+        },
+        {
+          "id": 15832765,
+          "date": "2026-05-21",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Cusco FC",
+            "short": "Cusco",
+            "team_id": 63760,
+            "logo": "",
+            "goals": 2
+          },
+          "away": {
+            "name": "Independiente Medellín",
+            "short": "Ind.",
+            "team_id": 6115,
+            "logo": "",
+            "goals": 3
+          },
+          "settled_at": "2026-05-23",
+          "odds": {
+            "home": 2.55,
+            "draw": 3.4,
+            "away": 2.7
+          },
+          "team_streaks": [
+            {
+              "team": "home",
+              "label": "No wins",
+              "value": "5"
+            },
+            {
+              "team": "home",
+              "label": "Without clean sheet",
+              "value": "6"
+            },
+            {
+              "team": "home",
+              "label": "Less than 2.5 goals",
+              "value": "4/5"
+            },
+            {
+              "team": "away",
+              "label": "Less than 2.5 goals",
+              "value": "6/7"
+            },
+            {
+              "team": "away",
+              "label": "First to score",
+              "value": "5/7"
+            },
+            {
+              "team": "away",
+              "label": "More than 4.5 cards",
+              "value": "6/7"
+            },
+            {
+              "team": "home",
+              "label": "Less than 10.5 corners",
+              "value": "9/9"
+            },
+            {
+              "team": "away",
+              "label": "Less than 10.5 corners",
+              "value": "6/8"
+            }
+          ],
+          "actuals": {
+            "home_corners": 9,
+            "away_corners": 3,
+            "corners_total": 12,
+            "home_fouls": 9,
+            "away_fouls": 10,
+            "fouls_total": 19,
+            "home_sot": 6,
+            "away_sot": 5,
+            "home_cards": 1,
+            "away_cards": 3,
+            "cards_total": 4,
+            "first_to_score": "away",
+            "first_scorer": "Francisco Fydriszewski",
+            "ht_home": 0,
+            "ht_away": 1,
+            "ht_winner": "away"
+          },
+          "prediction_locked": true
+        },
+        {
+          "id": 15832783,
+          "date": "2026-05-21",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Nacional",
+            "short": "Nacional",
+            "team_id": 3230,
+            "logo": "",
+            "goals": 0
+          },
+          "away": {
+            "name": "Universitario de Deportes",
+            "short": "Universitario",
+            "team_id": 2305,
+            "logo": "",
+            "goals": 0
+          },
+          "settled_at": "2026-05-23",
+          "odds": {
+            "home": 1.9,
+            "draw": 3.4,
+            "away": 4.33
+          },
+          "team_streaks": [
+            {
+              "team": "away",
+              "label": "No wins",
+              "value": "3"
+            },
+            {
+              "team": "home",
+              "label": "More than 2.5 goals",
+              "value": "9/9"
+            },
+            {
+              "team": "away",
+              "label": "More than 2.5 goals",
+              "value": "6/8"
+            },
+            {
+              "team": "home",
+              "label": "Both teams scoring",
+              "value": "8/10"
+            },
+            {
+              "team": "away",
+              "label": "Both teams scoring",
+              "value": "6/8"
+            },
+            {
+              "team": "home",
+              "label": "More than 4.5 cards",
+              "value": "7/9"
+            }
+          ],
+          "actuals": {
+            "home_corners": 7,
+            "away_corners": 5,
+            "corners_total": 12,
+            "home_fouls": 6,
+            "away_fouls": 4,
+            "fouls_total": 10,
+            "home_sot": 4,
+            "away_sot": 3,
+            "home_cards": 0,
+            "away_cards": 1,
+            "cards_total": 1,
+            "ht_home": 0,
+            "ht_away": 0,
+            "ht_winner": "draw"
+          },
+          "prediction_locked": true
+        },
+        {
+          "id": 15832827,
+          "date": "2026-05-21",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Palmeiras",
+            "short": "Palmeiras",
+            "team_id": 1963,
+            "logo": "",
+            "goals": 0
+          },
+          "away": {
+            "name": "Cerro Porteño",
+            "short": "Cerro",
+            "team_id": 5991,
+            "logo": "",
+            "goals": 1
+          },
+          "settled_at": "2026-05-23",
+          "odds": {
+            "home": 1.3,
+            "draw": 5.25,
+            "away": 10.0
+          },
+          "h2h_streaks": [
+            {
+              "team": "home",
+              "label": "No losses",
+              "value": "7"
+            },
+            {
+              "team": "away",
+              "label": "Without clean sheet",
+              "value": "7"
+            },
+            {
+              "team": "home",
+              "label": "First to score",
+              "value": "6/7"
+            },
+            {
+              "team": "home",
+              "label": "First half winner",
+              "value": "5/6"
+            },
+            {
+              "team": "both",
+              "label": "Less than 10.5 corners",
+              "value": "4/5"
+            }
+          ],
+          "team_streaks": [
+            {
+              "team": "home",
+              "label": "No losses",
+              "value": "17"
+            },
+            {
+              "team": "home",
+              "label": "Without clean sheet",
+              "value": "3"
+            },
+            {
+              "team": "home",
+              "label": "Less than 2.5 goals",
+              "value": "6/7"
+            },
+            {
+              "team": "away",
+              "label": "Less than 2.5 goals",
+              "value": "8/10"
+            },
+            {
+              "team": "home",
+              "label": "Both teams scoring",
+              "value": "5/6"
+            },
+            {
+              "team": "home",
+              "label": "Less than 4.5 cards",
+              "value": "6/7"
+            },
+            {
+              "team": "away",
+              "label": "Less than 4.5 cards",
+              "value": "5/5"
+            },
+            {
+              "team": "home",
+              "label": "More than 10.5 corners",
+              "value": "8/10"
+            },
+            {
+              "team": "away",
+              "label": "Less than 10.5 corners",
+              "value": "4/5"
+            }
+          ],
+          "actuals": {
+            "home_corners": 6,
+            "away_corners": 3,
+            "corners_total": 9,
+            "home_fouls": 17,
+            "away_fouls": 10,
+            "fouls_total": 27,
+            "home_sot": 5,
+            "away_sot": 2,
+            "home_cards": 3,
+            "away_cards": 3,
+            "cards_total": 6,
+            "first_to_score": "away",
+            "first_scorer": "Pablo Vegetti",
+            "ht_home": 0,
+            "ht_away": 0,
+            "ht_winner": "draw"
+          },
+          "prediction_locked": true
+        },
+        {
+          "id": 15832828,
+          "date": "2026-05-21",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Junior Barranquilla",
+            "short": "Junior",
+            "team_id": 6105,
+            "logo": "",
+            "goals": 3
+          },
+          "away": {
+            "name": "Club Sporting Cristal",
+            "short": "Sporting",
+            "team_id": 2302,
+            "logo": "",
+            "goals": 2
+          },
+          "settled_at": "2026-05-23",
+          "odds": {
+            "home": 1.91,
+            "draw": 3.4,
+            "away": 4.0
+          },
+          "team_streaks": [
+            {
+              "team": "home",
+              "label": "No losses",
+              "value": "3"
+            },
+            {
+              "team": "away",
+              "label": "No wins",
+              "value": "4"
+            },
+            {
+              "team": "away",
+              "label": "Without clean sheet",
+              "value": "4"
+            },
+            {
+              "team": "home",
+              "label": "Less than 2.5 goals",
+              "value": "7/9"
+            },
+            {
+              "team": "away",
+              "label": "First to score",
+              "value": "4/5"
+            },
+            {
+              "team": "away",
+              "label": "Less than 10.5 corners",
+              "value": "5/7"
+            }
+          ],
+          "actuals": {
+            "home_corners": 4,
+            "away_corners": 6,
+            "corners_total": 10,
+            "home_fouls": 13,
+            "away_fouls": 10,
+            "fouls_total": 23,
+            "home_sot": 7,
+            "away_sot": 5,
+            "home_cards": 2,
+            "away_cards": 1,
+            "cards_total": 3,
+            "first_to_score": "home",
+            "first_scorer": "Luis Muriel",
+            "ht_home": 3,
+            "ht_away": 1,
+            "ht_winner": "home"
+          },
+          "prediction_locked": true
+        },
+        {
+          "id": 15832832,
+          "date": "2026-05-21",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "LDU",
+            "short": "LDU",
+            "team_id": 5257,
+            "logo": "",
+            "goals": 2
+          },
+          "away": {
+            "name": "CA Lanús",
+            "short": "Lanús",
+            "team_id": 3218,
+            "logo": "",
+            "goals": 0
+          },
+          "settled_at": "2026-05-23",
+          "odds": {
+            "home": 1.85,
+            "draw": 3.4,
+            "away": 4.33
+          },
+          "h2h_streaks": [
+            {
+              "team": "away",
+              "label": "Wins",
+              "value": "3"
+            },
+            {
+              "team": "away",
+              "label": "No losses",
+              "value": "4"
+            },
+            {
+              "team": "home",
+              "label": "Without clean sheet",
+              "value": "4"
+            }
+          ],
+          "team_streaks": [
+            {
+              "team": "away",
+              "label": "No wins",
+              "value": "3"
+            },
+            {
+              "team": "away",
+              "label": "No goals scored",
+              "value": "3"
+            },
+            {
+              "team": "home",
+              "label": "Without clean sheet",
+              "value": "3"
+            },
+            {
+              "team": "home",
+              "label": "Less than 2.5 goals",
+              "value": "8/10"
+            },
+            {
+              "team": "away",
+              "label": "Less than 2.5 goals",
+              "value": "9/10"
+            },
+            {
+              "team": "home",
+              "label": "More than 4.5 cards",
+              "value": "4/5"
+            },
+            {
+              "team": "away",
+              "label": "More than 4.5 cards",
+              "value": "7/9"
+            },
+            {
+              "team": "away",
+              "label": "Less than 10.5 corners",
+              "value": "5/6"
+            }
+          ],
+          "actuals": {
+            "home_corners": 5,
+            "away_corners": 1,
+            "corners_total": 6,
+            "home_fouls": 16,
+            "away_fouls": 7,
+            "fouls_total": 23,
+            "home_sot": 3,
+            "away_sot": 0,
+            "home_cards": 3,
+            "away_cards": 3,
+            "cards_total": 6,
+            "first_to_score": "home",
+            "first_scorer": "Felipe Peña Biafore",
+            "ht_home": 0,
+            "ht_away": 0,
+            "ht_winner": "draw"
+          },
+          "prediction_locked": true
+        },
+        {
+          "id": 15832812,
+          "date": "2026-05-22",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Deportivo La Guaira",
+            "short": "La Guaira",
+            "team_id": 36437,
+            "logo": "",
+            "goals": 2
+          },
+          "away": {
+            "name": "Independiente Rivadavia",
+            "short": "Ind.",
+            "team_id": 36842,
+            "logo": "",
+            "goals": 4
+          },
+          "settled_at": "2026-05-23",
+          "odds": {
+            "home": 4.1,
+            "draw": 3.3,
+            "away": 1.95
+          },
+          "team_streaks": [
+            {
+              "team": "home",
+              "label": "No losses",
+              "value": "5"
+            },
+            {
+              "team": "home",
+              "label": "No wins",
+              "value": "6"
+            },
+            {
+              "team": "away",
+              "label": "No wins",
+              "value": "3"
+            },
+            {
+              "team": "away",
+              "label": "Without clean sheet",
+              "value": "5"
+            },
+            {
+              "team": "home",
+              "label": "Less than 2.5 goals",
+              "value": "5/5"
+            },
+            {
+              "team": "home",
+              "label": "Both teams scoring",
+              "value": "5/6"
+            },
+            {
+              "team": "away",
+              "label": "Both teams scoring",
+              "value": "5/5"
+            },
+            {
+              "team": "home",
+              "label": "More than 4.5 cards",
+              "value": "5/5"
+            },
+            {
+              "team": "away",
+              "label": "Less than 10.5 corners",
+              "value": "8/10"
+            }
+          ],
+          "actuals": {
+            "home_corners": 7,
+            "away_corners": 3,
+            "corners_total": 10,
+            "home_fouls": 9,
+            "away_fouls": 15,
+            "fouls_total": 24,
+            "home_sot": 5,
+            "away_sot": 7,
+            "home_cards": 3,
+            "away_cards": 2,
+            "cards_total": 5,
+            "first_to_score": "away",
+            "first_scorer": "Alex Arce",
+            "ht_home": 1,
+            "ht_away": 2,
+            "ht_winner": "away"
+          },
+          "prediction_locked": true
+        },
+        {
+          "id": 15832842,
+          "date": "2026-05-22",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Universidad Católica",
+            "short": "Universidad",
+            "team_id": 3151,
+            "logo": "",
+            "goals": 2
+          },
+          "away": {
+            "name": "Barcelona SC Guayaquil",
+            "short": "Barcelona",
+            "team_id": 5250,
+            "logo": "",
+            "goals": 0
+          },
+          "settled_at": "2026-05-23",
+          "odds": {
+            "home": 1.7,
+            "draw": 3.6,
+            "away": 5.25
+          },
+          "team_streaks": [
+            {
+              "team": "home",
+              "label": "No losses",
+              "value": "5"
+            },
+            {
+              "team": "away",
+              "label": "First to score",
+              "value": "4/5"
+            },
+            {
+              "team": "home",
+              "label": "First half winner",
+              "value": "4/5"
+            },
+            {
+              "team": "home",
+              "label": "More than 4.5 cards",
+              "value": "9/10"
+            },
+            {
+              "team": "home",
+              "label": "Less than 10.5 corners",
+              "value": "9/10"
+            },
+            {
+              "team": "away",
+              "label": "Less than 10.5 corners",
+              "value": "5/5"
+            }
+          ],
+          "actuals": {
+            "home_corners": 9,
+            "away_corners": 1,
+            "corners_total": 10,
+            "home_fouls": 6,
+            "away_fouls": 7,
+            "fouls_total": 13,
+            "home_sot": 9,
+            "away_sot": 0,
+            "home_cards": 0,
+            "away_cards": 4,
+            "cards_total": 4,
+            "first_to_score": "home",
+            "first_scorer": "Fernando Zampedri",
+            "ht_home": 0,
+            "ht_away": 0,
+            "ht_winner": "draw"
+          },
+          "prediction_locked": true
+        },
+        {
+          "id": 15832825,
+          "date": "2026-05-22",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Peñarol",
+            "short": "Peñarol",
+            "team_id": 3227,
+            "logo": "",
+            "goals": 1
+          },
+          "away": {
+            "name": "Corinthians",
+            "short": "Corinthians",
+            "team_id": 1957,
+            "logo": "",
+            "goals": 1
+          },
+          "settled_at": "2026-05-23",
+          "odds": {
+            "home": 2.4,
+            "draw": 2.9,
+            "away": 3.3
+          },
+          "team_streaks": [
+            {
+              "team": "home",
+              "label": "No losses",
+              "value": "4"
+            },
+            {
+              "team": "home",
+              "label": "Without clean sheet",
+              "value": "10"
+            },
+            {
+              "team": "both",
+              "label": "Both teams scoring",
+              "value": "4/5"
+            },
+            {
+              "team": "home",
+              "label": "More than 4.5 cards",
+              "value": "8/10"
+            },
+            {
+              "team": "home",
+              "label": "Less than 10.5 corners",
+              "value": "7/8"
+            },
+            {
+              "team": "away",
+              "label": "Less than 10.5 corners",
+              "value": "5/6"
+            }
+          ],
+          "actuals": {
+            "home_corners": 3,
+            "away_corners": 5,
+            "corners_total": 8,
+            "home_fouls": 5,
+            "away_fouls": 6,
+            "fouls_total": 11,
+            "home_sot": 3,
+            "away_sot": 8,
+            "first_to_score": "home",
+            "first_scorer": "Maximiliano Olivera",
+            "ht_home": 1,
+            "ht_away": 0,
+            "ht_winner": "home"
+          },
+          "prediction_locked": true
+        }
+      ],
       "badge_storage_path": "badges/leagues/conmebol-libertadores.png",
       "badge_source": "league",
       "badge_source_url": "https://media.api-sports.io/football/leagues/13.png"
@@ -81229,15 +82695,16 @@
         {
           "id": 15345966,
           "date": "2026-05-22",
-          "time": "20:00",
-          "status": "upcoming",
+          "time": "FT",
+          "status": "FT",
           "home": {
             "name": "Machida Zelvia",
             "short": "Machida",
             "team_id": 44409,
             "logo": "",
             "rank": 3,
-            "pts": 34
+            "pts": 34,
+            "goals": 1
           },
           "away": {
             "name": "Urawa Red Diamonds",
@@ -81245,7 +82712,8 @@
             "team_id": 3145,
             "logo": "",
             "rank": 6,
-            "pts": 25
+            "pts": 25,
+            "goals": 0
           },
           "predictions": {
             "winner": {
@@ -81275,20 +82743,25 @@
                 "draw": 0.2032,
                 "away": 0.3302
               },
-              "odds": 2.15
+              "odds": 2.15,
+              "result": "hit"
             },
             "btts": {
               "pick": "Yes",
               "probability": 0.8333,
               "raw_probability": 0.8333,
-              "odds": 1.95
+              "odds": 1.95,
+              "actual_btts": false,
+              "result": "miss"
             },
             "ou_goals": {
               "pick": "Over",
               "line": 2.5,
               "probability": 0.8629,
               "raw_probability": 0.8629,
-              "odds": 2.2
+              "odds": 2.2,
+              "actual": 1,
+              "result": "miss"
             },
             "ou_cards": {
               "pick": "Under",
@@ -81304,7 +82777,9 @@
               },
               "over_probability": 0.25,
               "raw_over_probability": 0.25,
-              "over_threshold": 0.68
+              "over_threshold": 0.68,
+              "actual": 1,
+              "result": "hit"
             },
             "factors": {
               "lambda_home": 2.666,
@@ -81337,7 +82812,9 @@
               "model_average_total": 9.11,
               "sourceLabel": "Pre-match corners baseline",
               "sourceValue": "9.1 avg",
-              "team": "both"
+              "team": "both",
+              "actual": 8,
+              "result": "hit"
             }
           },
           "h2h_streaks": [
@@ -81417,6 +82894,27 @@
               "event_id": "c3153e8a-2736-4a40-8382-99fa9c3fc9c1",
               "event_name": "Machida Zelvia vs Urawa Red Diamonds"
             }
+          },
+          "settled_at": "2026-05-23",
+          "prediction_locked": true,
+          "prediction_locked_at": "2026-05-23T04:14:08.718734+09:30",
+          "actuals": {
+            "home_corners": 5,
+            "away_corners": 3,
+            "corners_total": 8,
+            "home_fouls": 8,
+            "away_fouls": 10,
+            "fouls_total": 18,
+            "home_sot": 4,
+            "away_sot": 4,
+            "home_cards": 0,
+            "away_cards": 1,
+            "cards_total": 1,
+            "first_to_score": "home",
+            "first_scorer": "Erik",
+            "ht_home": 1,
+            "ht_away": 0,
+            "ht_winner": "home"
           }
         },
         {
@@ -102968,6 +104466,100 @@
           }
         },
         {
+          "id": 15272487,
+          "date": "2026-05-21",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "GAIS",
+            "short": "GAIS",
+            "team_id": 1786,
+            "logo": "",
+            "goals": 2
+          },
+          "away": {
+            "name": "Hammarby IF",
+            "short": "Hammarby",
+            "team_id": 1758,
+            "logo": "",
+            "goals": 0
+          },
+          "settled_at": "2026-05-23",
+          "odds": {
+            "home": 3.1,
+            "draw": 3.4,
+            "away": 2.2
+          },
+          "h2h_streaks": [
+            {
+              "team": "home",
+              "label": "No losses",
+              "value": "7"
+            },
+            {
+              "team": "both",
+              "label": "More than 4.5 cards",
+              "value": "4/5"
+            },
+            {
+              "team": "both",
+              "label": "More than 10.5 corners",
+              "value": "4/5"
+            }
+          ],
+          "team_streaks": [
+            {
+              "team": "home",
+              "label": "No losses",
+              "value": "5"
+            },
+            {
+              "team": "away",
+              "label": "Both teams scoring",
+              "value": "5/7"
+            },
+            {
+              "team": "home",
+              "label": "Less than 4.5 cards",
+              "value": "5/5"
+            },
+            {
+              "team": "away",
+              "label": "Less than 4.5 cards",
+              "value": "4/5"
+            },
+            {
+              "team": "home",
+              "label": "Less than 10.5 corners",
+              "value": "6/6"
+            },
+            {
+              "team": "away",
+              "label": "Less than 10.5 corners",
+              "value": "5/6"
+            }
+          ],
+          "actuals": {
+            "home_corners": 2,
+            "away_corners": 3,
+            "corners_total": 5,
+            "home_fouls": 16,
+            "away_fouls": 11,
+            "fouls_total": 27,
+            "home_sot": 7,
+            "away_sot": 3,
+            "home_cards": 2,
+            "away_cards": 3,
+            "cards_total": 5,
+            "first_to_score": "home",
+            "first_scorer": "Rasmus Niklasson",
+            "ht_home": 1,
+            "ht_away": 0,
+            "ht_winner": "home"
+          },
+          "prediction_locked": true
+        },
+        {
           "id": "sportsbet:10495548",
           "date": "2026-05-22",
           "time": "FT",
@@ -103196,6 +104788,120 @@
             "sportsbet:10495548",
             "flashscore:zHabevSa"
           ]
+        },
+        {
+          "id": 15272473,
+          "date": "2026-05-22",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "IF Elfsborg",
+            "short": "Elfsborg",
+            "team_id": 1762,
+            "logo": "",
+            "goals": 1
+          },
+          "away": {
+            "name": "Mjällby AIF",
+            "short": "Mjällby",
+            "team_id": 1783,
+            "logo": "",
+            "goals": 1
+          },
+          "settled_at": "2026-05-23",
+          "odds": {
+            "home": 2.15,
+            "draw": 3.3,
+            "away": 3.25
+          },
+          "h2h_streaks": [
+            {
+              "team": "away",
+              "label": "No losses",
+              "value": "4"
+            },
+            {
+              "team": "home",
+              "label": "Without clean sheet",
+              "value": "5"
+            },
+            {
+              "team": "both",
+              "label": "Less than 2.5 goals",
+              "value": "7/9"
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "5/6"
+            },
+            {
+              "team": "both",
+              "label": "More than 10.5 corners",
+              "value": "7/8"
+            }
+          ],
+          "team_streaks": [
+            {
+              "team": "home",
+              "label": "No losses",
+              "value": "3"
+            },
+            {
+              "team": "away",
+              "label": "Without clean sheet",
+              "value": "4"
+            },
+            {
+              "team": "home",
+              "label": "Both teams scoring",
+              "value": "4/5"
+            },
+            {
+              "team": "home",
+              "label": "First to score",
+              "value": "7/9"
+            },
+            {
+              "team": "away",
+              "label": "First to score",
+              "value": "4/5"
+            },
+            {
+              "team": "away",
+              "label": "Less than 4.5 cards",
+              "value": "5/7"
+            },
+            {
+              "team": "home",
+              "label": "Less than 10.5 corners",
+              "value": "5/6"
+            },
+            {
+              "team": "away",
+              "label": "Less than 10.5 corners",
+              "value": "5/7"
+            }
+          ],
+          "actuals": {
+            "home_corners": 4,
+            "away_corners": 3,
+            "corners_total": 7,
+            "home_fouls": 10,
+            "away_fouls": 11,
+            "fouls_total": 21,
+            "home_sot": 4,
+            "away_sot": 3,
+            "home_cards": 1,
+            "away_cards": 3,
+            "cards_total": 4,
+            "first_to_score": "home",
+            "first_scorer": "Leo Östman",
+            "ht_home": 1,
+            "ht_away": 0,
+            "ht_winner": "home"
+          },
+          "prediction_locked": true
         },
         {
           "id": "sportsbet:10500468",
@@ -105369,6 +107075,353 @@
             "ht_away": 2,
             "ht_winner": "away"
           }
+        },
+        {
+          "id": 16091962,
+          "date": "2026-05-21",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "IK Start",
+            "short": "IK Start",
+            "team_id": 667,
+            "logo": "",
+            "goals": 1
+          },
+          "away": {
+            "name": "Bodø/Glimt",
+            "short": "Bodø/Glimt",
+            "team_id": 656,
+            "logo": "",
+            "goals": 4
+          },
+          "settled_at": "2026-05-23",
+          "odds": {
+            "home": 8.0,
+            "draw": 6.0,
+            "away": 1.29
+          },
+          "h2h_streaks": [
+            {
+              "team": "away",
+              "label": "No losses",
+              "value": "4"
+            },
+            {
+              "team": "home",
+              "label": "Without clean sheet",
+              "value": "6"
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "5/6"
+            },
+            {
+              "team": "both",
+              "label": "More than 10.5 corners",
+              "value": "4/5"
+            }
+          ],
+          "team_streaks": [
+            {
+              "team": "home",
+              "label": "No wins",
+              "value": "13"
+            },
+            {
+              "team": "home",
+              "label": "Without clean sheet",
+              "value": "13"
+            },
+            {
+              "team": "home",
+              "label": "Both teams scoring",
+              "value": "6/7"
+            },
+            {
+              "team": "away",
+              "label": "First to score",
+              "value": "4/5"
+            },
+            {
+              "team": "away",
+              "label": "Less than 4.5 cards",
+              "value": "9/9"
+            },
+            {
+              "team": "away",
+              "label": "More than 10.5 corners",
+              "value": "5/7"
+            },
+            {
+              "team": "home",
+              "label": "Less than 10.5 corners",
+              "value": "5/7"
+            }
+          ],
+          "actuals": {
+            "home_corners": 1,
+            "away_corners": 5,
+            "corners_total": 6,
+            "home_fouls": 7,
+            "away_fouls": 9,
+            "fouls_total": 16,
+            "home_sot": 2,
+            "away_sot": 8,
+            "home_cards": 1,
+            "away_cards": 0,
+            "cards_total": 1,
+            "first_to_score": "away",
+            "first_scorer": "Fredrik Sjøvold",
+            "ht_home": 1,
+            "ht_away": 2,
+            "ht_winner": "away"
+          },
+          "prediction_locked": true
+        },
+        {
+          "id": 15882341,
+          "date": "2026-05-21",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Lillestrøm SK",
+            "short": "Lillestrøm",
+            "team_id": 664,
+            "logo": "",
+            "goals": 1
+          },
+          "away": {
+            "name": "Kristiansund BK",
+            "short": "Kristiansund",
+            "team_id": 957,
+            "logo": "",
+            "goals": 2
+          },
+          "settled_at": "2026-05-23",
+          "odds": {
+            "home": 1.42,
+            "draw": 5.0,
+            "away": 6.25
+          },
+          "h2h_streaks": [
+            {
+              "team": "away",
+              "label": "Without clean sheet",
+              "value": "5"
+            },
+            {
+              "team": "both",
+              "label": "Both teams scoring",
+              "value": "4/5"
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "5/5"
+            },
+            {
+              "team": "both",
+              "label": "More than 10.5 corners",
+              "value": "5/7"
+            }
+          ],
+          "team_streaks": [
+            {
+              "team": "away",
+              "label": "No wins",
+              "value": "4"
+            },
+            {
+              "team": "away",
+              "label": "Without clean sheet",
+              "value": "4"
+            },
+            {
+              "team": "away",
+              "label": "Less than 2.5 goals",
+              "value": "6/6"
+            },
+            {
+              "team": "away",
+              "label": "Less than 4.5 cards",
+              "value": "7/8"
+            },
+            {
+              "team": "home",
+              "label": "Less than 10.5 corners",
+              "value": "8/10"
+            },
+            {
+              "team": "away",
+              "label": "Less than 10.5 corners",
+              "value": "5/7"
+            }
+          ],
+          "actuals": {
+            "home_corners": 8,
+            "away_corners": 3,
+            "corners_total": 11,
+            "home_fouls": 9,
+            "away_fouls": 18,
+            "fouls_total": 27,
+            "home_sot": 5,
+            "away_sot": 5,
+            "home_cards": 5,
+            "away_cards": 5,
+            "cards_total": 10,
+            "first_to_score": "away",
+            "first_scorer": "Adrian Kurd Rønning",
+            "ht_home": 0,
+            "ht_away": 1,
+            "ht_winner": "away"
+          },
+          "prediction_locked": true
+        },
+        {
+          "id": 16097542,
+          "date": "2026-05-21",
+          "time": "FT",
+          "status": "FT",
+          "home": {
+            "name": "Aalesunds FK",
+            "short": "Aalesund",
+            "team_id": 677,
+            "logo": "",
+            "goals": 2
+          },
+          "away": {
+            "name": "SK Brann",
+            "short": "Brann",
+            "team_id": 1159,
+            "logo": "",
+            "goals": 1
+          },
+          "settled_at": "2026-05-23",
+          "odds": {
+            "home": 3.1,
+            "draw": 3.9,
+            "away": 2.05
+          },
+          "h2h_streaks": [
+            {
+              "team": "away",
+              "label": "Wins",
+              "value": "7"
+            },
+            {
+              "team": "away",
+              "label": "No losses",
+              "value": "8"
+            },
+            {
+              "team": "home",
+              "label": "Without clean sheet",
+              "value": "17"
+            },
+            {
+              "team": "away",
+              "label": "Without clean sheet",
+              "value": "4"
+            },
+            {
+              "team": "both",
+              "label": "More than 2.5 goals",
+              "value": "5/5"
+            },
+            {
+              "team": "both",
+              "label": "Both teams scoring",
+              "value": "8/10"
+            },
+            {
+              "team": "away",
+              "label": "First to score",
+              "value": "5/7"
+            },
+            {
+              "team": "both",
+              "label": "Less than 4.5 cards",
+              "value": "8/9"
+            },
+            {
+              "team": "both",
+              "label": "More than 10.5 corners",
+              "value": "5/6"
+            }
+          ],
+          "team_streaks": [
+            {
+              "team": "home",
+              "label": "Without clean sheet",
+              "value": "16"
+            },
+            {
+              "team": "away",
+              "label": "Without clean sheet",
+              "value": "3"
+            },
+            {
+              "team": "home",
+              "label": "More than 2.5 goals",
+              "value": "5/7"
+            },
+            {
+              "team": "away",
+              "label": "More than 2.5 goals",
+              "value": "6/7"
+            },
+            {
+              "team": "home",
+              "label": "Both teams scoring",
+              "value": "8/10"
+            },
+            {
+              "team": "away",
+              "label": "Both teams scoring",
+              "value": "6/7"
+            },
+            {
+              "team": "home",
+              "label": "First to concede",
+              "value": "6/6"
+            },
+            {
+              "team": "away",
+              "label": "First half winner",
+              "value": "5/6"
+            },
+            {
+              "team": "away",
+              "label": "Less than 4.5 cards",
+              "value": "5/6"
+            },
+            {
+              "team": "home",
+              "label": "More than 10.5 corners",
+              "value": "5/6"
+            }
+          ],
+          "actuals": {
+            "home_corners": 4,
+            "away_corners": 7,
+            "corners_total": 11,
+            "home_fouls": 17,
+            "away_fouls": 15,
+            "fouls_total": 32,
+            "home_sot": 5,
+            "away_sot": 4,
+            "home_cards": 1,
+            "away_cards": 3,
+            "cards_total": 4,
+            "first_to_score": "home",
+            "first_scorer": "Marcus Haagensen Reed",
+            "ht_home": 1,
+            "ht_away": 0,
+            "ht_winner": "home"
+          },
+          "prediction_locked": true
         },
         {
           "id": "sportsbet:10495050",
