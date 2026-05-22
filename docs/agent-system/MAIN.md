@@ -101,8 +101,11 @@ Phase 1 must produce `docs/agent-system/outputs/Phase1_Fixture_Slate.xlsx` with 
 - Official hit-rate tracking starts from `2026-04-22`; earlier resulted rows are dev-mode calibration history and should not drive public/model baseline rates.
 - Use API-Football as the primary fixture/status/source-of-truth for Phase 1.
 - Daily fixture collection should cover today plus the next 6 Adelaide-local days by default.
-- Use Sportsbet as the only Phase 2 odds source until a second odds provider is deliberately added.
+- Use Sportsbet as the primary Phase 2 odds source. Use Sportradar StatsHub's bet365 view as the conservative validation/context fallback when Sportsbet or phase rows are missing odds, scores, cards, corners, or table/form context.
+- Do not hammer bet365/StatsHub. Fetch cache-first, page-level only, with gentle sleeps and backoff; avoid account login, automated betting flows, and high-frequency detail-page crawling.
 - New leagues use the same fetch-and-predict routine as existing leagues. Missing league-specific detail is a caution signal, not a reason to skip predictions.
+- Keep the top-competition league shard first: UEFA Champions League, UEFA Europa League, Premier League, LaLiga, Bundesliga, Serie A, Ligue 1, UEFA Conference League, Brasileirão Betano, CONMEBOL Libertadores, A-League Men, and FIFA World Cup should be collected, sorted, and uploaded ahead of long-tail leagues.
+- For speed, prefer split runs over one monolithic loop: result-only checks run from the due-time queue, full fixture discovery runs on the 7-day window, and deeper odds/context enrichment can run as a smaller next-48-hours pass after the core slate is uploaded.
 - Treat TheSportsDB and Flashscore as fallback score sources, not primary model inputs.
 - Treat Understat xG as high-value enrichment when matched, but do not block analysis if unavailable.
 - Never claim certainty. Use probability, fair odds, market odds, edge, and confidence.
@@ -115,6 +118,9 @@ Phase 1 must produce `docs/agent-system/outputs/Phase1_Fixture_Slate.xlsx` with 
 - The dashboard headline hit rate should summarize stored settled prediction markets from `2026-04-22` onward, before later display-only guidance rewrites. Use the original prediction snapshot for public model performance.
 - For winner markets, apply a conservative market guard: do not keep a model side when direct 1X2 bookmaker odds are heavily against it. A 25+ implied-probability-point disagreement or roughly 3x+ price ratio should guide the visible pick to the bookmaker favourite unless model support is overwhelming. Display and settle the guided winner side.
 - Match-card display should place the original winner prediction and model percentage on the predicted team card, or on the centre draw chip for draw picks, and highlight that card by hit/miss. Match cards must always show five market cards below the teams on mobile and desktop: Suggested pick, BTTS, Goals, Cards, and Corners. If a market is missing, keep the card visible with `No pick` instead of hiding it. This applies to every league, including Serie A.
+- Every team on every match card must render a visible badge. Provider images from API-Football, Sportsbet, SofaScore, or StatsHub/bet365 are source inputs only; before upload, cache the image into Firebase Storage and store the Firebase-owned `logo` URL plus `badge_storage_path`, `badge_source`, and `badge_source_url`. If a provider badge is missing or cannot be cached, render the standard initials badge in the same circle. Never hotlink provider badge URLs in dashboard data.
+- Never synthesize a badge URL by mixing provider IDs. A SofaScore team ID is not an API-Football team ID, a Sportsbet ID is not a SofaScore ID, and a StatsHub/bet365 ID is not interchangeable with either. Wrong crests are a data-quality failure and must be stripped before upload.
+- League badges follow the same rule: cache verified league badges into Firebase Storage, or use initials/no image. Do not point a SofaScore tournament ID at an API-Football league image path unless that exact mapping has been verified and cached.
 
 ## Agent Definition Files
 

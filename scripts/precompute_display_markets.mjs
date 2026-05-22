@@ -1,4 +1,5 @@
 const WINNER_CONFIDENCE_THRESHOLD = 0.40;
+const BOOKMAKER_WINNER_GUARD_THRESHOLD = 0.65;
 const PREDICTION_TRACKING_START_DATE = '2026-04-22';
 
 function round(value, digits = 4) {
@@ -336,13 +337,18 @@ function winnerMarketWithGuidance(match, allMatches = []) {
     ? bookmakerForm.pointsPerMatch - pickedForm.pointsPerMatch
     : 0;
   const noExactH2h = Number(match.predictions?.factors?.h2h_n || 0) === 0;
+  const bookmakerGuardEligible = bookmakerSide.probability >= BOOKMAKER_WINNER_GUARD_THRESHOLD;
   const strongMarketDisagreement = bookProbabilityGap >= 0.18 || oddsRatio >= 2;
   const majorMarketDisagreement = bookProbabilityGap >= 0.25 || oddsRatio >= 3;
   const modelIsNotClear = !Number.isFinite(selectedModel) || selectedModel < 0.5 || modelLead <= 0.1;
   const modelCanOverrideBookmaker = Number.isFinite(selectedModel) && selectedModel >= 0.6 && modelLead >= 0.18;
   const contextSupportsBookmaker = pickedNoWins || bookmakerFormEdge >= 0.35 || noExactH2h;
 
-  if (modelCanOverrideBookmaker || !(majorMarketDisagreement || (strongMarketDisagreement && modelIsNotClear && contextSupportsBookmaker))) {
+  if (
+    !bookmakerGuardEligible ||
+    modelCanOverrideBookmaker ||
+    !(majorMarketDisagreement || (strongMarketDisagreement && modelIsNotClear && contextSupportsBookmaker))
+  ) {
     return withWinnerConfidenceGate(match, market);
   }
 

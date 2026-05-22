@@ -6,11 +6,11 @@ Timezone: Australia/Adelaide
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-22 04:29:40 ACST |
+| run_timestamp | 2026-05-22 17:57:58 ACST |
 | bankroll | 1000.0 |
 | kelly_fraction | 0.25 |
 | min_edge | 0.05 |
-| model_calibration | 2026-05-22 03:28:55 ACST |
+| model_calibration | 2026-05-22 17:25:45 ACST |
 | min_price | 1.3 |
 | max_stake_pct | 0.02 |
 | max_exposure_pct | 0.1 |
@@ -20,11 +20,13 @@ Timezone: Australia/Adelaide
 | bets | 0 |
 | leans | 0 |
 | no_value | 0 |
-| upstream_blocked | 1 |
+| upstream_blocked | 3 |
 | next_action | No bets today; revisit on next data refresh. |
 
 ## Picks
 
 | Date | League | Match | Pick | Side | Market | Model p | Edge | Stake | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-22 | Allsvenskan | Elfsborg vs Mjallby |  |  |  |  |  |  | upstream_blocked |
+| 2026-05-22 | J1 League | Machida vs Urawa |  |  |  |  |  |  | upstream_blocked |
+| 2026-05-23 | Allsvenskan | Djurgarden vs Brommapojkarna |  |  |  |  |  |  | upstream_blocked |
+| 2026-05-23 | Serie A | Fiorentina vs Atalanta |  |  |  |  |  |  | upstream_blocked |

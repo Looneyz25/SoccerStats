@@ -93,6 +93,9 @@ DRAW_MAX_FAVOURITE_GAP = 0.15
 CARDS_OVER_THRESHOLD = 0.68
 DEFAULT_PREMATCH_TEAM_GOALS = 1.35
 DEFAULT_PREMATCH_CORNERS_TOTAL = 10.2
+BOOKMAKER_CONTEXT_LAMBDA_CAP = 0.25
+BOOKMAKER_CONTEXT_BTTS_WEIGHT = 0.20
+BOOKMAKER_CONTEXT_CARDS_WEIGHT = 0.25
 TODAY     = datetime.now(ADL).date()
 YESTERDAY = TODAY - timedelta(days=1)
 TOMORROW  = TODAY + timedelta(days=1)
@@ -102,15 +105,20 @@ RESULT_LOOKBACK_DAYS = max(1, int(os.environ.get("SOCCER_RESULT_LOOKBACK_DAYS", 
 
 TOURNAMENTS = {
     7:   "UEFA Champions League",
+    679: "UEFA Europa League",
     17:  "Premier League",
     8:   "LaLiga",
-    23:  "Serie A",
     35:  "Bundesliga",
+    23:  "Serie A",
     34:  "Ligue 1",
+    17015: "UEFA Conference League",
+    325: "Brasileirão Betano",
+    384: "CONMEBOL Libertadores",
+    136: "A-League Men",
+    16:  "FIFA World Cup",
     37:  "Eredivisie",
     238: "Primeira Liga",
     242: "MLS",
-    136: "A-League Men",
     36:  "Scottish Premiership",
     196: "J1 League",
     18:  "Championship",
@@ -119,8 +127,10 @@ TOURNAMENTS = {
     40:  "Allsvenskan",
     20:  "Eliteserien",
 }
-ORDER = ["Premier League","LaLiga","Bundesliga","Ligue 1","UEFA Champions League",
-         "Serie A","Eredivisie","Primeira Liga","MLS","A-League Men",
+ORDER = ["UEFA Champions League","UEFA Europa League","Premier League","LaLiga",
+         "Bundesliga","Serie A","Ligue 1","UEFA Conference League",
+         "Brasileirão Betano","CONMEBOL Libertadores","A-League Men","FIFA World Cup",
+         "Eredivisie","Primeira Liga","MLS",
          "Scottish Premiership","J1 League","Championship","League One","League Two",
          "Allsvenskan","Eliteserien"]
 
@@ -402,20 +412,76 @@ def short(name):
     return name
 
 
-def sofascore_team_logo(team_id):
-    """Return a stable team badge URL to persist into match_data/Firestore.
+TEAM_LOGO_OVERRIDES = {
+    "hull": "https://media.api-sports.io/football/teams/64.png",
+    "hullcity": "https://media.api-sports.io/football/teams/64.png",
+    "middlesbrough": "https://media.api-sports.io/football/teams/70.png",
+    "middlesbroughfc": "https://media.api-sports.io/football/teams/70.png",
+    "southampton": "https://media.api-sports.io/football/teams/41.png",
+    "southamptonfc": "https://media.api-sports.io/football/teams/41.png",
+}
 
-    SofaScore team image endpoints are currently hotlink-blocked (403) in the
-    dashboard. For numeric team IDs, prefer API-Sports PNG badges which render
-    reliably in-browser. Non-numeric synthetic IDs (for fallback fixtures) skip
-    logo assignment so the UI initials fallback is used.
+LEAGUE_LOGO_OVERRIDES = {
+    "Premier League": "https://media.api-sports.io/football/leagues/39.png",
+    "Championship": "https://media.api-sports.io/football/leagues/40.png",
+    "Championship, Promotion Playoffs": "https://media.api-sports.io/football/leagues/40.png",
+    "League One": "https://media.api-sports.io/football/leagues/41.png",
+    "League Two": "https://media.api-sports.io/football/leagues/42.png",
+    "LaLiga": "https://media.api-sports.io/football/leagues/140.png",
+    "Serie A": "https://media.api-sports.io/football/leagues/135.png",
+    "Bundesliga": "https://media.api-sports.io/football/leagues/78.png",
+    "Ligue 1": "https://media.api-sports.io/football/leagues/61.png",
+    "Eredivisie": "https://media.api-sports.io/football/leagues/88.png",
+    "Primeira Liga": "https://media.api-sports.io/football/leagues/94.png",
+    "UEFA Champions League": "https://media.api-sports.io/football/leagues/2.png",
+    "UEFA Europa League": "https://media.api-sports.io/football/leagues/3.png",
+    "UEFA Conference League": "https://media.api-sports.io/football/leagues/848.png",
+    "MLS": "https://media.api-sports.io/football/leagues/253.png",
+    "A-League Men": "https://media.api-sports.io/football/leagues/188.png",
+    "Scottish Premiership": "https://media.api-sports.io/football/leagues/179.png",
+    "J1 League": "https://media.api-sports.io/football/leagues/98.png",
+    "Brasileirão Betano": "https://media.api-sports.io/football/leagues/71.png",
+    "CONMEBOL Libertadores": "https://media.api-sports.io/football/leagues/13.png",
+    "FIFA World Cup": "https://media.api-sports.io/football/leagues/1.png",
+    "Allsvenskan": "https://media.api-sports.io/football/leagues/113.png",
+    "Eliteserien": "https://media.api-sports.io/football/leagues/103.png",
+}
+
+
+def logo_key(name):
+    plain = unicodedata.normalize("NFKD", name or "").encode("ascii", "ignore").decode("ascii")
+    return re.sub(r"[^a-z0-9]", "", plain.lower())
+
+
+def stable_league_logo(league_name, unique_tournament_id=None):
+    override = LEAGUE_LOGO_OVERRIDES.get(league_name or "")
+    if override:
+        return override
+    return f"https://api.sofascore.app/api/v1/unique-tournament/{unique_tournament_id}/image" if unique_tournament_id else ""
+
+
+def verified_team_logo(team_name=None, existing_logo=None, badge_source=None):
+    """Return a verified team badge URL.
+
+    Provider IDs are not interchangeable. In particular, a SofaScore numeric
+    team ID must never be turned into a media.api-sports.io URL unless a
+    curated team-name override verifies that mapping. When no verified image is
+    available, return empty and let the dashboard render its initials badge.
     """
-    if team_id in (None, ""):
+    override = TEAM_LOGO_OVERRIDES.get(logo_key(team_name))
+    if override:
+        return override
+    logo = existing_logo if isinstance(existing_logo, str) else ""
+    source = (badge_source or "").lower()
+    if "api.sofascore.app/api/v1/team/" in logo:
         return ""
-    team_id_str = str(team_id).strip()
-    if not team_id_str.isdigit():
+    if "media.api-sports.io/football/teams/" in logo and source != "api-football":
         return ""
-    return f"https://media.api-sports.io/football/teams/{team_id_str}.png"
+    return logo.strip()
+
+
+def sofascore_team_logo(team_id, team_name=None):
+    return verified_team_logo(team_name)
 
 
 def sofascore_league_logo(unique_tournament_id):
@@ -427,7 +493,7 @@ def team_payload(team, score=None):
         "name": team.get("name", ""),
         "short": short(team.get("shortName") or team.get("name", "")),
         "team_id": team.get("id"),
-        "logo": sofascore_team_logo(team.get("id")),
+        "logo": verified_team_logo(team.get("name", "")),
     }
     if score is not None:
         payload["goals"] = score
@@ -437,10 +503,19 @@ def team_payload(team, score=None):
 def normalize_team_logo_payload(team):
     if not isinstance(team, dict):
         return
-    stable_logo = sofascore_team_logo(team.get("team_id"))
+    if isinstance(team.get("logo"), str) and "firebasestorage.googleapis.com" in team.get("logo", ""):
+        return
+    stable_logo = verified_team_logo(
+        team.get("name") or team.get("short"),
+        team.get("logo") or team.get("logo_url"),
+        team.get("badge_source"),
+    )
     if stable_logo:
         team["logo"] = stable_logo
-    elif isinstance(team.get("logo"), str) and "api.sofascore.app/api/v1/team/" in team.get("logo", ""):
+    elif isinstance(team.get("logo"), str) and (
+        "api.sofascore.app/api/v1/team/" in team.get("logo", "")
+        or "media.api-sports.io/football/teams/" in team.get("logo", "")
+    ):
         team["logo"] = ""
 
 
@@ -482,7 +557,7 @@ def phase_0_validate(store):
     for canon in TOURNAMENTS.values():
         if canon not in by_name:
             league_id = next(k for k, v in TOURNAMENTS.items() if v == canon)
-            new_lg = {"id": league_id, "name": canon, "season": "2025/26", "round": None, "logo": sofascore_league_logo(league_id), "matches": []}
+            new_lg = {"id": league_id, "name": canon, "season": "2025/26", "round": None, "logo": stable_league_logo(canon, league_id), "matches": []}
             store["leagues"].append(new_lg)
             by_name[canon] = new_lg
 
@@ -530,7 +605,7 @@ def phase_0_validate(store):
             target_league = by_name.get(correct)
             if target_league is not None:
                 target_league["id"] = utid
-                target_league["logo"] = sofascore_league_logo(utid)
+                target_league["logo"] = stable_league_logo(correct, utid)
             ts = e.get("startTimestamp")
             if ts:
                 new_d = adl_date(ts); new_t = "FT" if m.get("status") == "FT" else adl_time(ts)
@@ -538,10 +613,12 @@ def phase_0_validate(store):
                     m["date"] = new_d; m["time"] = new_t; re_dated += 1
             h = e.get("homeTeam") or {}
             a = e.get("awayTeam") or {}
-            if h.get("id"):
-                m.setdefault("home", {})["logo"] = sofascore_team_logo(h.get("id"))
-            if a.get("id"):
-                m.setdefault("away", {})["logo"] = sofascore_team_logo(a.get("id"))
+            home_logo = verified_team_logo(h.get("name"), m.get("home", {}).get("logo"))
+            away_logo = verified_team_logo(a.get("name"), m.get("away", {}).get("logo"))
+            if home_logo:
+                m.setdefault("home", {})["logo"] = home_logo
+            if away_logo:
+                m.setdefault("away", {})["logo"] = away_logo
             if correct != L["name"]:
                 by_name[correct]["matches"].append(m); moved += 1
             else:
@@ -595,7 +672,12 @@ FLASH_LEAGUE_ALIASES = {
     "Scottish Premiership": ("scotland", {"premiership", "scottish premiership"}),
     "J1 League": ("japan", {"j1 league"}),
     "UEFA Champions League": ("europe", {"champions league"}),
+    "UEFA Europa League": ("europe", {"europa league"}),
+    "UEFA Conference League": ("europe", {"conference league", "europa conference league"}),
     "MLS": ("usa", {"mls", "major league soccer"}),
+    "Brasileirão Betano": ("brazil", {"brasileirao betano", "brasileirão betano", "serie a betano", "serie a"}),
+    "CONMEBOL Libertadores": ("south america", {"conmebol libertadores", "copa libertadores", "libertadores"}),
+    "FIFA World Cup": ("world", {"world cup", "world championship", "men's world cup", "mens world cup"}),
     "Allsvenskan": ("sweden", {"allsvenskan"}),
     "Eliteserien": ("norway", {"eliteserien"}),
 }
@@ -1451,7 +1533,8 @@ def compute_team_elo(store):
 
 def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
                      h2h=None, h_rank=None, h_pts=None, a_rank=None, a_pts=None,
-                     h_team_id=None, a_team_id=None, league=None, market_odds=None):
+                     h_team_id=None, a_team_id=None, league=None, market_odds=None,
+                     market_context=None):
     """Poisson prediction enhanced with H2H, Elo, and Dixon-Coles correction.
 
     Lambda construction:
@@ -1503,10 +1586,11 @@ def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
     elo_bump = max(-ELO_LAMBDA_CAP, min(ELO_LAMBDA_CAP, elo_diff / ELO_LAMBDA_SCALE))
     elo_adj_h = elo_bump
     elo_adj_a = -elo_bump
+    context_adj = market_context_adjustment(market_context)
 
     # Final lambdas
-    lh = max(0.20, base_h + 0.20 + h2h_delta_h + elo_adj_h)
-    la = max(0.20, base_a - 0.05 + h2h_delta_a + elo_adj_a)
+    lh = max(0.20, base_h + 0.20 + h2h_delta_h + elo_adj_h + context_adj["home_lambda"])
+    la = max(0.20, base_a - 0.05 + h2h_delta_a + elo_adj_a + context_adj["away_lambda"])
 
     pmf = lambda k, l: math.exp(-l) * (l ** k) / math.factorial(k)
     grid = [[pmf(i, lh) * pmf(j, la) for j in range(7)] for i in range(7)]
@@ -1554,6 +1638,11 @@ def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
     # BTTS / OU goals are now derived from the Dixon-Coles-corrected grid so
     # the low-score adjustment flows through to all markets, not just 1X2.
     p_btts_yes = sum(grid[i][j] for i in range(7) for j in range(7) if i > 0 and j > 0)
+    if context_adj.get("btts_prior") is not None:
+        p_btts_yes = (
+            p_btts_yes * (1 - BOOKMAKER_CONTEXT_BTTS_WEIGHT)
+            + context_adj["btts_prior"] * BOOKMAKER_CONTEXT_BTTS_WEIGHT
+        )
     btts_cal = calibration_adjustment(league, "btts")
     p_btts_yes_cal = shrink_probability(p_btts_yes, btts_cal["trust_factor"], 0.5)
     btts_pick = "Yes" if p_btts_yes_cal > BTTS_YES_THRESHOLD else "No"
@@ -1586,6 +1675,11 @@ def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
     over = sum(1 for s in (streaks or []) if "more than 4.5 cards" in (s.get("label") or "").lower())
     under = sum(1 for s in (streaks or []) if "less than 4.5 cards" in (s.get("label") or "").lower())
     card_raw_over_probability = (over + 1) / (over + under + 2)
+    if context_adj.get("cards_over_prior") is not None:
+        card_raw_over_probability = (
+            card_raw_over_probability * (1 - BOOKMAKER_CONTEXT_CARDS_WEIGHT)
+            + context_adj["cards_over_prior"] * BOOKMAKER_CONTEXT_CARDS_WEIGHT
+        )
     cards_cal = calibration_adjustment(league, "ou_cards")
     card_over_probability = shrink_probability(card_raw_over_probability, cards_cal["trust_factor"], 0.5)
     cards_pick = "Over" if card_over_probability >= CARDS_OVER_THRESHOLD else "Under"
@@ -1624,6 +1718,10 @@ def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
         "cards_over_threshold": CARDS_OVER_THRESHOLD,
         "cards_over_streaks": over,
         "cards_under_streaks": under,
+        "bookmaker_context_source": context_adj.get("source") or "",
+        "bookmaker_context_home_lambda": round(context_adj["home_lambda"], 3),
+        "bookmaker_context_away_lambda": round(context_adj["away_lambda"], 3),
+        "bookmaker_context_signals": context_adj.get("signals") or [],
         "model_calibration": _MODEL_CALIBRATION.get("generated_at", "") if _MODEL_CALIBRATION else "",
     }
     return {"winner": w, "btts": btts, "ou_goals": ou_goals, "ou_cards": cards,
@@ -1650,6 +1748,134 @@ def market_odds_for_match(match, prefer_original=False):
         if has_real_three_way_odds(odds):
             return {side: float(odds[side]) for side in ("home", "draw", "away")}
     return None
+
+
+def context_side(match, side):
+    context = match.get("statshub_context") or match.get("bet365_context") or match.get("bookmaker_context") or {}
+    side_context = context.get(side) or {}
+    team = match.get(side) or {}
+    merged = dict(side_context)
+    for key, value in team.items():
+        if key not in merged and value not in (None, "", [], {}):
+            merged[key] = value
+    return merged
+
+
+def context_number(payload, *keys):
+    for key in keys:
+        value = to_float(payload.get(key))
+        if value is not None:
+            return value
+    return None
+
+
+def context_ratio(numerator, denominator):
+    if numerator is None or denominator is None or denominator <= 0:
+        return None
+    return numerator / denominator
+
+
+def bounded(value, limit):
+    return max(-limit, min(limit, value))
+
+
+def prediction_market_context(match):
+    """Return future-only bookmaker/stat context for the predictor.
+
+    Resulted rows are intentionally excluded so new context can never rewrite
+    the historical pick ledger.
+    """
+    if match.get("status") == "FT" or match.get("prediction_locked"):
+        return None
+    context = match.get("statshub_context") or match.get("bet365_context") or match.get("bookmaker_context")
+    home = context_side(match, "home")
+    away = context_side(match, "away")
+    if not context and not any(key in home or key in away for key in ("rank", "pts", "overall_form", "overall_form_score")):
+        return None
+    payload = {
+        "source": (context or {}).get("source") or (context or {}).get("provider") or "bookmaker_context",
+        "home": home,
+        "away": away,
+    }
+    for key in ("cards_avg", "average_cards", "total_cards_avg", "corners_avg", "average_corners", "total_corners_avg"):
+        if (context or {}).get(key) is not None:
+            payload[key] = (context or {}).get(key)
+    return payload
+
+
+def market_context_adjustment(context):
+    empty = {
+        "source": "",
+        "home_lambda": 0.0,
+        "away_lambda": 0.0,
+        "btts_prior": None,
+        "cards_over_prior": None,
+        "signals": [],
+    }
+    if not context:
+        return empty
+
+    home = context.get("home") or {}
+    away = context.get("away") or {}
+    signals = []
+    home_delta = away_delta = 0.0
+
+    home_form = context_number(home, "overall_form", "overall_form_score", "form_score")
+    away_form = context_number(away, "overall_form", "overall_form_score", "form_score")
+    if home_form is not None and away_form is not None:
+        form_delta = bounded((home_form - away_form) / 100.0 * 0.30, BOOKMAKER_CONTEXT_LAMBDA_CAP)
+        home_delta += form_delta
+        away_delta -= form_delta
+        signals.append("overall_form")
+
+    home_rank = context_number(home, "rank", "league_position", "position")
+    away_rank = context_number(away, "rank", "league_position", "position")
+    if home_rank is not None and away_rank is not None and home_rank > 0 and away_rank > 0:
+        rank_delta = bounded((away_rank - home_rank) * 0.025, 0.18)
+        home_delta += rank_delta
+        away_delta -= rank_delta
+        signals.append("league_position")
+
+    home_played = context_number(home, "played", "matches_played", "p")
+    away_played = context_number(away, "played", "matches_played", "p")
+    home_gf = context_number(home, "goals_for", "gf")
+    away_gf = context_number(away, "goals_for", "gf")
+    home_ga = context_number(home, "goals_against", "ga")
+    away_ga = context_number(away, "goals_against", "ga")
+    h_gf_pg = context_ratio(home_gf, home_played)
+    a_gf_pg = context_ratio(away_gf, away_played)
+    h_ga_pg = context_ratio(home_ga, home_played)
+    a_ga_pg = context_ratio(away_ga, away_played)
+    if h_gf_pg is not None and a_ga_pg is not None:
+        home_delta += bounded(((h_gf_pg + a_ga_pg) / 2.0 - DEFAULT_PREMATCH_TEAM_GOALS) * 0.18, 0.16)
+        signals.append("season_goals")
+    if a_gf_pg is not None and h_ga_pg is not None:
+        away_delta += bounded(((a_gf_pg + h_ga_pg) / 2.0 - DEFAULT_PREMATCH_TEAM_GOALS) * 0.18, 0.16)
+        signals.append("season_goals")
+
+    h_btts = context_number(home, "btts", "both_teams_to_score")
+    a_btts = context_number(away, "btts", "both_teams_to_score")
+    h_btts_rate = context_ratio(h_btts, home_played)
+    a_btts_rate = context_ratio(a_btts, away_played)
+    btts_prior = None
+    if h_btts_rate is not None and a_btts_rate is not None:
+        btts_prior = max(0.25, min(0.75, (h_btts_rate + a_btts_rate) / 2.0))
+        signals.append("season_btts")
+
+    cards_total = context_number(context, "cards_avg", "average_cards", "total_cards_avg")
+    cards_over_prior = None
+    if cards_total is not None:
+        cards_over_prior = max(0.15, min(0.85, poisson_over_probability(cards_total, 4.5) or 0.5))
+        signals.append("cards_average")
+
+    return {
+        "source": context.get("source") or "bookmaker_context",
+        "home_lambda": bounded(home_delta, BOOKMAKER_CONTEXT_LAMBDA_CAP),
+        "away_lambda": bounded(away_delta, BOOKMAKER_CONTEXT_LAMBDA_CAP),
+        "btts_prior": btts_prior,
+        "cards_over_prior": cards_over_prior,
+        "signals": sorted(set(signals)),
+    }
 
 
 def league_goal_baseline(matches):
@@ -1704,6 +1930,16 @@ def average_corners_for_scope(matches, fallback=DEFAULT_PREMATCH_CORNERS_TOTAL):
     return max(7.0, min(13.5, sum(values) / len(values)))
 
 
+def context_corner_average(match):
+    context = prediction_market_context(match)
+    if not context:
+        return None
+    value = context_number(context, "corners_avg", "average_corners", "total_corners_avg")
+    if value is None:
+        return None
+    return max(7.0, min(13.5, value))
+
+
 def corner_odds_for_prediction(match, line, pick):
     odds_by_line = match.get("corner_odds") or {}
     prices = odds_by_line.get(str(line)) or odds_by_line.get(f"{float(line):.1f}") or {}
@@ -1717,8 +1953,9 @@ def corner_odds_for_prediction(match, line, pick):
 
 def pre_corners_prediction(match, league_matches, all_matches):
     line = 10.5
+    context_avg = context_corner_average(match)
     league_avg = average_corners_for_scope(league_matches, None)
-    avg = league_avg if league_avg is not None else average_corners_for_scope(all_matches)
+    avg = context_avg if context_avg is not None else (league_avg if league_avg is not None else average_corners_for_scope(all_matches))
     p_over = poisson_over_probability(avg, line)
     if p_over is None:
         p_over = 0.5
@@ -1730,7 +1967,7 @@ def pre_corners_prediction(match, league_matches, all_matches):
         "probability": round(probability, 4),
         "model_probability": round(probability, 4),
         "model_average_total": round(avg, 2),
-        "sourceLabel": "Pre-match corners baseline",
+        "sourceLabel": "Bookmaker context corners" if context_avg is not None else "Pre-match corners baseline",
         "sourceValue": f"{avg:.1f} avg",
         "team": "both",
     }
@@ -1764,6 +2001,7 @@ def populate_pre_match_predictions(store):
 
             if odds and not all(predictions.get(key) for key in ("winner", "btts", "ou_goals", "ou_cards")):
                 h_att, h_def, a_att, a_def = pre_prediction_form_inputs(match, league_matches, odds)
+                market_context = prediction_market_context(match)
                 fallback = predict_enhanced(
                     h_att,
                     h_def,
@@ -1776,12 +2014,17 @@ def populate_pre_match_predictions(store):
                     a_team_id=(match.get("away") or {}).get("team_id"),
                     league=league_name,
                     market_odds=odds,
+                    market_context=market_context,
                 )
                 fallback_factors = fallback.get("factors") or {}
                 fallback_factors.update({
                     "source": "pre_match_prefill",
-                    "source_note": "Generated before kickoff from available 1X2 odds plus league/global baselines because detailed team context was missing.",
-                    "data_quality": "Data weak",
+                    "source_note": (
+                        "Generated before kickoff from available 1X2 odds plus bookmaker/context enrichment."
+                        if market_context else
+                        "Generated before kickoff from available 1X2 odds plus league/global baselines because detailed team context was missing."
+                    ),
+                    "data_quality": "Data usable" if market_context else "Data weak",
                 })
                 fallback["factors"] = {**fallback_factors, **(predictions.get("factors") or {})}
                 for key in ("winner", "btts", "ou_goals", "ou_cards"):
@@ -2061,7 +2304,7 @@ def parse_decimal(value):
     return number if math.isfinite(number) and number > 1 else None
 
 
-def phase_fixture_team(name, team_id=None, logo=None):
+def phase_fixture_team(name, team_id=None, logo=None, source=None):
     payload = {
         "name": name or "",
         "short": name or "",
@@ -2070,6 +2313,12 @@ def phase_fixture_team(name, team_id=None, logo=None):
         payload["team_id"] = team_id
     if logo:
         payload["logo"] = logo
+        payload["badge_source_url"] = logo
+        source_lower = (source or "").lower()
+        if source_lower == "api-football" or "media.api-sports.io/football/teams/" in str(logo):
+            payload["badge_source"] = "api-football"
+        elif "r2.thesportsdb.com" in str(logo):
+            payload["badge_source"] = "thesportsdb"
     return payload
 
 
@@ -2102,15 +2351,95 @@ def phase_fixture_exists(league, row):
     return False
 
 
+def match_prediction_count(match):
+    predictions = match.get("predictions") or {}
+    return sum(
+        1
+        for key in ("winner", "btts", "ou_goals", "ou_cards", "ou_corners")
+        if predictions.get(key)
+    )
+
+
+def match_quality_score(match):
+    """Prefer the record that can actually drive the dashboard card."""
+    score = 0
+    if match.get("status") == "FT":
+        score += 120
+    if match.get("prediction_locked"):
+        score += 20
+    if has_real_three_way_odds(match.get("sportsbet_odds") or {}):
+        score += 55
+    if has_real_three_way_odds(match.get("odds") or {}):
+        score += 45
+    if match.get("sportsbet_markets"):
+        score += 30
+    score += match_prediction_count(match) * 25
+    if (match.get("home") or {}).get("goals") is not None and (match.get("away") or {}).get("goals") is not None:
+        score += 25
+    if (match.get("home") or {}).get("logo"):
+        score += 3
+    if (match.get("away") or {}).get("logo"):
+        score += 3
+    if match.get("source") == "Sportsbet":
+        score += 5
+    if match.get("status") == "upcoming" and match.get("time") == "FT":
+        score -= 60
+    return score
+
+
+def merge_missing_dict(target, source):
+    changed = False
+    if not isinstance(target, dict) or not isinstance(source, dict):
+        return changed
+    for key, value in source.items():
+        if value in (None, "", [], {}):
+            continue
+        if key not in target or target.get(key) in (None, "", [], {}):
+            target[key] = value
+            changed = True
+    return changed
+
+
+def merge_duplicate_match(existing, incoming):
+    winner, loser = (incoming, existing) if match_quality_score(incoming) > match_quality_score(existing) else (existing, incoming)
+    merged = dict(winner)
+    for key, value in loser.items():
+        if key in ("home", "away", "predictions"):
+            continue
+        if value in (None, "", [], {}):
+            continue
+        if key not in merged or merged.get(key) in (None, "", [], {}):
+            merged[key] = value
+    merged["home"] = dict(merged.get("home") or {})
+    merged["away"] = dict(merged.get("away") or {})
+    merge_missing_dict(merged["home"], loser.get("home") or {})
+    merge_missing_dict(merged["away"], loser.get("away") or {})
+    merged["predictions"] = dict(merged.get("predictions") or {})
+    for key, value in (loser.get("predictions") or {}).items():
+        if value and not merged["predictions"].get(key):
+            merged["predictions"][key] = value
+    ids = []
+    for source in (winner, loser):
+        source_id = source.get("id")
+        if source_id and source_id not in ids:
+            ids.append(source_id)
+    if len(ids) > 1:
+        merged["merged_source_ids"] = ids
+    if loser.get("status") == "FT" and merged.get("status") != "FT":
+        merged["status"] = "FT"
+        merged["time"] = "FT"
+    return merged
+
+
 def dedupe_phase_fixture_matches(store):
     removed = 0
     for league in store.get("leagues", []):
         keep = []
         for match in league.get("matches", []):
-            duplicate = False
-            for existing in keep:
+            duplicate_index = None
+            for idx, existing in enumerate(keep):
                 if match.get("id") and existing.get("id") and str(match.get("id")) == str(existing.get("id")):
-                    duplicate = True
+                    duplicate_index = idx
                     break
                 if (
                     match.get("date") == existing.get("date")
@@ -2118,9 +2447,10 @@ def dedupe_phase_fixture_matches(store):
                     and team_names_match((match.get("home") or {}).get("name") or "", (existing.get("home") or {}).get("name") or "")
                     and team_names_match((match.get("away") or {}).get("name") or "", (existing.get("away") or {}).get("name") or "")
                 ):
-                    duplicate = True
+                    duplicate_index = idx
                     break
-            if duplicate:
+            if duplicate_index is not None:
+                keep[duplicate_index] = merge_duplicate_match(keep[duplicate_index], match)
                 removed += 1
                 continue
             keep.append(match)
@@ -2138,8 +2468,8 @@ def phase_fixture_record(row):
         "source_status": row.get("source_health") or "",
         "phase_status": row.get("phase2_status") or row.get("phase1_status") or "fixture_only",
         "phase_notes": row.get("phase2_notes") or row.get("phase1_notes") or "",
-        "home": phase_fixture_team(row.get("home"), row.get("home_team_id"), row.get("home_logo")),
-        "away": phase_fixture_team(row.get("away"), row.get("away_team_id"), row.get("away_logo")),
+        "home": phase_fixture_team(row.get("home"), row.get("home_team_id"), row.get("home_logo"), row.get("source")),
+        "away": phase_fixture_team(row.get("away"), row.get("away_team_id"), row.get("away_logo"), row.get("source")),
         "predictions": {},
     }
     record.update(phase_fixture_odds_payload(row))
@@ -2282,7 +2612,12 @@ def entain_fixture_rows():
         "Bundesliga": ("german bundesliga", "german bundesliga men's"),
         "Ligue 1": ("french ligue 1",),
         "UEFA Champions League": ("uefa champions league",),
+        "UEFA Europa League": ("uefa europa league",),
+        "UEFA Conference League": ("uefa europa conference league", "uefa conference league"),
         "Serie A": ("italian serie a",),
+        "Brasileirão Betano": ("brazilian serie a",),
+        "CONMEBOL Libertadores": ("conmebol copa libertadores", "copa libertadores"),
+        "FIFA World Cup": ("men's world cup", "mens world cup", "world cup"),
         "Eredivisie": ("dutch eredivisie",),
         "Primeira Liga": ("portuguese primeira liga", "portugal primeira liga"),
         "MLS": ("us major league soccer",),
@@ -2400,7 +2735,7 @@ def promote_phase_fixtures_to_store(store=None):
         league = by_name.get(league_name)
         if not league:
             league_id = next(k for k, v in TOURNAMENTS.items() if v == league_name)
-            league = {"id": league_id, "name": league_name, "season": "2025/26", "round": None, "logo": sofascore_league_logo(league_id), "matches": []}
+            league = {"id": league_id, "name": league_name, "season": "2025/26", "round": None, "logo": stable_league_logo(league_name, league_id), "matches": []}
             store.setdefault("leagues", []).append(league)
             by_name[league_name] = league
         merged = {**row, **(odds_by_event.get(row.get("event_id")) or {})}

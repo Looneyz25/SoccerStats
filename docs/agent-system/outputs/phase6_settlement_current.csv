@@ -1,2 +1,4 @@
 run_timestamp,event_id,league,date,time,home,away,top_side,top_market_odds,top_p,top_edge,top_stake,phase5_status,actual_status,actual_home_score,actual_away_score,actual_outcome,phase6_status,realized_return,phase6_notes
-2026-05-22 04:29:40 ACST,flashscore:zHabevSa,Allsvenskan,2026-05-22,FT,Elfsborg,Mjallby,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-22 17:57:58 ACST,flashscore:fXvLSp0T,J1 League,2026-05-22,20:00,Machida,Urawa,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-22 17:57:58 ACST,flashscore:l6SULOIj,Allsvenskan,2026-05-23,02:30,Djurgarden,Brommapojkarna,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).
+2026-05-22 17:57:58 ACST,flashscore:ln2VQVwR,Serie A,2026-05-23,04:15,Fiorentina,Atalanta,,,,,,upstream_blocked,,,,,skipped,0.0,No recommendation (phase5_status=upstream_blocked).

@@ -51,6 +51,8 @@ Outputs derived from the scoreline grid:
 
 Winner probabilities are then blended with the bookmaker market when full home/draw/away odds exist. Convert bookmaker prices to no-vig probabilities, then use a 60% internal model / 40% bookmaker blend. This keeps the model from fighting high-signal market consensus while still allowing the football model to create value differences.
 
+StatsHub/bet365 bookmaker context is future-only. When present on an upcoming row, it may apply small capped adjustments to expected goals, BTTS prior, cards prior, and corners baseline. It must not alter `FT` or `prediction_locked` rows; resulted predictions remain the immutable hit-rate ledger.
+
 Draw selection has its own lane because football draws are common but rarely the highest raw probability. Select draw when `p_draw >= 0.28`, home/away probabilities are within 0.15, and the leading home/away side is no more than 0.15 ahead of draw.
 
 Cards use a stricter learned gate because recent resulted data showed Over 4.5 was over-selected. Store both the raw over probability and the chosen-side probability. Only select `Over 4.5` when `over_probability >= 0.68`; otherwise select `Under 4.5`.

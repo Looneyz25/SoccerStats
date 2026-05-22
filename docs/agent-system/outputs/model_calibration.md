@@ -1,27 +1,27 @@
 # Model Calibration
 
-Generated: 2026-05-22 04:29:50 ACST
+Generated: 2026-05-22 17:58:11 ACST
 Mode: conservative_auto_learning
 
 ## Market Adjustments
 
 | Market | Settled | Hit Rate | Trust Factor | Min Edge Delta | Reason |
 | --- | ---: | ---: | ---: | ---: | --- |
-| BTTS | 414 | 54.8% | 0.9535 | 0.0181 | BTTS below 60% target over 414 settled markets. |
-| Cards | 387 | 59.4% | 0.9949 | 0.002 | Cards below 60% target over 387 settled markets. |
-| Goals | 414 | 56.0% | 0.9644 | 0.0139 | Goals below 60% target over 414 settled markets. |
-| Winner | 414 | 48.8% | 0.8991 | 0.0392 | Winner below 60% target over 414 settled markets. |
+| BTTS | 419 | 54.2% | 0.9476 | 0.0204 | BTTS below 60% target over 419 settled markets. |
+| Cards | 392 | 59.7% | 0.9972 | 0.0011 | Cards below 60% target over 392 settled markets. |
+| Goals | 419 | 55.9% | 0.9627 | 0.0145 | Goals below 60% target over 419 settled markets. |
+| Winner | 419 | 48.7% | 0.8982 | 0.0396 | Winner below 60% target over 419 settled markets. |
 
 ## League Market Adjustments
 
 | League | Market | Settled | Hit Rate | Trust Factor | Min Edge Delta | Reason |
 | --- | --- | ---: | ---: | ---: | ---: | --- |
+| Bundesliga | Winner | 37 | 35.1% | 0.9172 | 0.0322 | Bundesliga Winner weak spot from result review. |
 | League One | BTTS | 31 | 35.5% | 0.9316 | 0.0266 | League One BTTS weak spot from result review. |
-| Bundesliga | Winner | 36 | 36.1% | 0.9226 | 0.0301 | Bundesliga Winner weak spot from result review. |
 | MLS | Winner | 74 | 40.5% | 0.8704 | 0.0504 | MLS Winner weak spot from result review. |
 | LaLiga | Winner | 50 | 42.0% | 0.919 | 0.0315 | LaLiga Winner weak spot from result review. |
-| Bundesliga | Cards | 35 | 42.9% | 0.946 | 0.021 | Bundesliga Cards weak spot from result review. |
-| Eredivisie | Goals | 44 | 47.7% | 0.9514 | 0.0189 | Eredivisie Goals weak spot from result review. |
+| Bundesliga | Cards | 36 | 44.4% | 0.9496 | 0.0196 | Bundesliga Cards weak spot from result review. |
+| Eredivisie | Goals | 46 | 45.6% | 0.9406 | 0.0231 | Eredivisie Goals weak spot from result review. |
 | Premier League | Winner | 40 | 50.0% | 0.964 | 0.014 | Premier League Winner weak spot from result review. |
 | Ligue 1 | Goals | 39 | 51.3% | 0.9694 | 0.0119 | Ligue 1 Goals weak spot from result review. |
 

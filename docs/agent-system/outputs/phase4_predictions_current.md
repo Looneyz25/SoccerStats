@@ -7,18 +7,20 @@ Model: capped Poisson grid, last-5 form, +0.20 home advantage
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-22 04:29:40 ACST |
+| run_timestamp | 2026-05-22 17:57:58 ACST |
 | model | capped Poisson 7x7, last-5 form, home advantage +0.20 |
-| model_calibration | 2026-05-22 03:28:55 ACST |
-| phase3_input_rows | 1 |
-| phase4_total_rows | 1 |
+| model_calibration | 2026-05-22 17:25:45 ACST |
+| phase3_input_rows | 3 |
+| phase4_total_rows | 3 |
 | ready_for_phase_5 | 0 |
 | model_only | 0 |
-| upstream_blocked | 1 |
+| upstream_blocked | 3 |
 | next_action | No ready predictions; check Phase 2/3 outputs. |
 
 ## Predictions
 
 | Date | League | Match | λH | λA | pH | pD | pA | pick | fH/mH | fD/mD | fA/mA | edgeH | edgeD | edgeA | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-22 | Allsvenskan | Elfsborg vs Mjallby |  |  |  |  |  |  | / | / | / |  |  |  | upstream_blocked |
+| 2026-05-22 | J1 League | Machida vs Urawa |  |  |  |  |  |  | / | / | / |  |  |  | upstream_blocked |
+| 2026-05-23 | Allsvenskan | Djurgarden vs Brommapojkarna |  |  |  |  |  |  | / | / | / |  |  |  | upstream_blocked |
+| 2026-05-23 | Serie A | Fiorentina vs Atalanta |  |  |  |  |  |  | / | / | / |  |  |  | upstream_blocked |

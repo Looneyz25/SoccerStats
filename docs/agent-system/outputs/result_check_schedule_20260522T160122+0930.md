@@ -1,20 +1,20 @@
 # Result Check Schedule
 
-Generated: 2026-05-22T17:25:45.331971+09:30
+Generated: 2026-05-22T16:01:22.778478+09:30
 Completion buffer: 150 minutes after kickoff
 Due now: 0
-Remaining today/overdue: 1
+Remaining today/overdue: 2
 Tomorrow visible: 10
 
 ## This Run
 
-- Settled: 0
+- Settled: 3
 - Flashscore settled: 0
-- LiveScore settled: 0
+- LiveScore settled: 3
 - Due skipped / awaiting source: 0
-- Not due yet: 83
+- Not due yet: 84
 - Backfilled finished: 0
-- Enriched FT: 7
+- Enriched FT: 8
 - Pruned stale unresolved: 0
 
 ## Match Checks
@@ -22,6 +22,7 @@ Tomorrow visible: 10
 | Scope | Queue | Date | Kickoff | Due time | League | Match | Result queue |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | today | no | 2026-05-22 | 20:00 | 22:30 | J1 League | Machida Zelvia vs Urawa Red Diamonds | DUE @ 22:30 |
+| today | no | 2026-05-22 | FT | - | Allsvenskan | Elfsborg vs Mjallby | DUE @ unknown |
 | tomorrow | no | 2026-05-23 | 02:30 | 05:00 | Allsvenskan | Djurgardens vs Brommapojkarna | DUE @ 05:00 |
 | tomorrow | no | 2026-05-23 | 04:15 | 06:45 | Serie A | Fiorentina vs Atalanta | DUE @ 06:45 |
 | tomorrow | no | 2026-05-23 | 14:30 | 17:00 | J1 League | Avispa Fukuoka vs Vissel Kobe | DUE @ 17:00 |

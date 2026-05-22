@@ -33,6 +33,12 @@ const FULL_REFRESH_STEPS = [
     args: ['scripts/run-python.js', 'scripts/soccer_phases_routine.py'],
   },
   {
+    id: 'cache_badges',
+    label: 'Cache badges to Firebase Storage',
+    command: 'node',
+    args: ['scripts/cache_badges_to_firebase.mjs'],
+  },
+  {
     id: 'upload_firestore',
     label: 'Upload league docs to Firestore',
     command: 'node',
@@ -64,6 +70,12 @@ const RESULTS_ONLY_STEPS = [
     label: 'Run model calibration',
     command: 'node',
     args: ['scripts/run-python.js', 'scripts/soccer_model_calibration_agent.py'],
+  },
+  {
+    id: 'cache_badges',
+    label: 'Cache badges to Firebase Storage',
+    command: 'node',
+    args: ['scripts/cache_badges_to_firebase.mjs'],
   },
   {
     id: 'upload_firestore',

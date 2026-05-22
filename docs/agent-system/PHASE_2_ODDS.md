@@ -23,9 +23,17 @@ Phase 2 only consumes rows whose `phase1_status = ready_for_phase_2`. All other 
 | Priority | Source | Endpoint | Use |
 | --- | --- | --- | --- |
 | 1 | Sportsbet AU | `https://www.sportsbet.com.au/betting/soccer/{league_slug}` (`window.__PRELOADED_STATE__`) | Primary WDW (1X2) odds for 90-minute regular time |
-| 2 | Sportsbet AU event page | `/betting/soccer/{league_slug}/{event_slug}` | Optional re-fetch when a specific fixture is missing |
+| 2 | Sportradar StatsHub bet365 view | `https://statshub.sportradar.com/bet365/en/sport/1` and linked tournament/match pages | Conservative validation and fallback for missing 1X2 odds, FT/HT scores, cards, corners, scorers, referee, venue, table/form context |
+| 3 | Sportsbet AU event page | `/betting/soccer/{league_slug}/{event_slug}` | Optional re-fetch when a specific fixture is missing |
 
-Sportsbet pages are scraped with `curl_cffi` browser impersonation. No additional bookmakers are added in Phase 2; second-source coverage is a future phase.
+Sportsbet pages are scraped with `curl_cffi` browser impersonation. StatsHub/bet365 is allowed only as a low-frequency validation/context fallback, not as a high-volume crawler.
+
+StatsHub/bet365 access rules:
+- Cache-first: reuse the current run's league/day page before any refetch.
+- Fetch league/day pages before match-detail pages; only open a detail page when a fixture is missing context needed for settlement or a market card.
+- Use gentle sleeps, exponential backoff, and stop on repeated non-200/blocked responses.
+- Do not log in, bypass provider controls, automate bet placement, or add proxy/IP rotation.
+- Keep direct bookmaker prices tied to the exact visible market side and line.
 
 Markets matched: `Win-Draw-Win`, `Match Result`, `1X2`. Extra-time and anytime/specials markets are excluded.
 

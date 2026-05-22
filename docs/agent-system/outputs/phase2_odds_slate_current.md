@@ -7,13 +7,13 @@ Source: Sportsbet AU (Win-Draw-Win, 90-min regular time)
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-22 04:29:27 ACST |
+| run_timestamp | 2026-05-22 17:56:57 ACST |
 | timezone | Australia/Adelaide |
 | source | Sportsbet AU |
-| phase1_input_rows | 1 |
-| phase1_ready_rows | 1 |
-| phase2_total_rows | 1 |
-| ready_for_phase_3 | 0 |
+| phase1_input_rows | 3 |
+| phase1_ready_rows | 3 |
+| phase2_total_rows | 3 |
+| ready_for_phase_3 | 2 |
 | unmatched_market | 1 |
 | partial_market | 0 |
 | implausible_overround | 0 |
@@ -27,9 +27,13 @@ Source: Sportsbet AU (Win-Draw-Win, 90-min regular time)
 | League | Endpoint | HTTP | Events | WDW Markets | Health | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
 | Allsvenskan | /betting/soccer/rest-of-europe/swedish-allsvenskan | 200 | 8 | 8 | healthy |  |
+| J1 League | /betting/soccer/asia/japanese-j1-league | 200 | 8 | 8 | healthy |  |
+| Serie A | /betting/soccer/italy/italian-serie-a | 200 | 10 | 10 | healthy |  |
 
 ## Odds
 
 | Date | Time | League | Home | Away | H | D | A | Overround | Match | Phase 2 Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-22 | FT | Allsvenskan | Elfsborg | Mjallby |  |  |  |  | none:0.0 | unmatched_market |
+| 2026-05-22 | 20:00 | J1 League | Machida | Urawa |  |  |  |  | none:0.0 | unmatched_market |
+| 2026-05-23 | 02:30 | Allsvenskan | Djurgarden | Brommapojkarna | 1.4 | 4.6 | 6.5 | 1.0855 | substring:0.955 | ready_for_phase_3 |
+| 2026-05-23 | 04:15 | Serie A | Fiorentina | Atalanta | 2.75 | 3.4 | 2.5 | 1.0577 | exact:1.0 | ready_for_phase_3 |

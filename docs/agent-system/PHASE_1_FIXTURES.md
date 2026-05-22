@@ -16,21 +16,28 @@ The table below is the active fixture allow-list. When a new league is added her
 
 | Legacy League ID | League |
 | --- | --- |
+| 7 | UEFA Champions League |
+| 679 | UEFA Europa League |
 | 17 | Premier League |
 | 8 | LaLiga |
-| 23 | Serie A |
 | 35 | Bundesliga |
+| 23 | Serie A |
 | 34 | Ligue 1 |
-| 7 | UEFA Champions League |
+| 17015 | UEFA Conference League |
+| 325 | Brasileirão Betano |
+| 384 | CONMEBOL Libertadores |
+| 136 | A-League Men |
+| 16 | FIFA World Cup |
 | 37 | Eredivisie |
 | 238 | Primeira Liga |
 | 242 | MLS |
-| 136 | A-League Men |
 | 36 | Scottish Premiership |
 | 196 | J1 League |
 | 18 | Championship |
 | 24 | League One |
 | 25 | League Two |
+| 40 | Allsvenskan |
+| 20 | Eliteserien |
 
 ## Endpoint Priority
 
@@ -134,6 +141,8 @@ Every Phase 1 fixture row must include:
 | `missing_fields` | Lists missing event/team/date/status fields |
 | `phase1_status` | Gate for whether the fixture can move to Phase 2 |
 | `phase1_notes` | Short explanation for blocked or unusual rows |
+
+Badge fields are strict source-owned data. `home_logo`, `away_logo`, and `league_logo` may come from API-Football, Sportsbet, SofaScore, or StatsHub/bet365 only when that provider supplied or verified the image for the same team/league identity. Provider URLs are temporary source inputs only; the upload path must cache them into Firebase Storage and write Firebase-owned badge fields to Firestore. Do not manufacture `media.api-sports.io` image URLs from SofaScore, Sportsbet, Flashscore, or StatsHub IDs. If a provider badge is missing or blocked, leave the image URL empty and let the dashboard render the initials badge; never ship or hotlink a wrong crest.
 
 ## Phase 1 Status Values
 

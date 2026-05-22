@@ -1,2 +1,4 @@
 run_timestamp,league,event_id,date,time,home,away,home_form_n,away_form_n,lambda_home,lambda_away,p_home,p_draw,p_away,p_btts,p_over25,model_pick,fair_home,fair_draw,fair_away,market_home,market_draw,market_away,market_implied_home,market_implied_draw,market_implied_away,edge_home,edge_draw,edge_away,phase4_status,phase4_notes
-2026-05-22 04:29:40 ACST,Allsvenskan,flashscore:zHabevSa,2026-05-22,FT,Elfsborg,Mjallby,,,,,,,,,,,,,,,,,,,,,,,upstream_blocked,Phase 3 status was upstream_blocked.
+2026-05-22 17:57:58 ACST,J1 League,flashscore:fXvLSp0T,2026-05-22,20:00,Machida,Urawa,,,,,,,,,,,,,,,,,,,,,,,upstream_blocked,Phase 3 status was upstream_blocked.
+2026-05-22 17:57:58 ACST,Allsvenskan,flashscore:l6SULOIj,2026-05-23,02:30,Djurgarden,Brommapojkarna,,,,,,,,,,,,,,,,,,,,,,,upstream_blocked,Phase 3 status was team_unresolved.
+2026-05-22 17:57:58 ACST,Serie A,flashscore:ln2VQVwR,2026-05-23,04:15,Fiorentina,Atalanta,,,,,,,,,,,,,,,,,,,,,,,upstream_blocked,Phase 3 status was team_unresolved.

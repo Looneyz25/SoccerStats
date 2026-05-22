@@ -61,16 +61,21 @@ LAST_FLASHSCORE_FEED_URL = FLASHSCORE_FEED_URL
 
 # API-Football league IDs. The legacy IDs match the existing project league IDs.
 LEAGUES = [
+    {"legacy_id": 7, "api_id": 2, "season": 2025, "name": "UEFA Champions League"},
+    {"legacy_id": 679, "api_id": 3, "season": 2025, "name": "UEFA Europa League"},
     {"legacy_id": 17, "api_id": 39, "season": 2025, "name": "Premier League"},
     {"legacy_id": 8, "api_id": 140, "season": 2025, "name": "LaLiga"},
-    {"legacy_id": 23, "api_id": 135, "season": 2025, "name": "Serie A"},
     {"legacy_id": 35, "api_id": 78, "season": 2025, "name": "Bundesliga"},
+    {"legacy_id": 23, "api_id": 135, "season": 2025, "name": "Serie A"},
     {"legacy_id": 34, "api_id": 61, "season": 2025, "name": "Ligue 1"},
-    {"legacy_id": 7, "api_id": 2, "season": 2025, "name": "UEFA Champions League"},
+    {"legacy_id": 17015, "api_id": 848, "season": 2025, "name": "UEFA Conference League"},
+    {"legacy_id": 325, "api_id": 71, "season": 2026, "name": "Brasileirão Betano"},
+    {"legacy_id": 384, "api_id": 13, "season": 2026, "name": "CONMEBOL Libertadores"},
+    {"legacy_id": 136, "api_id": 188, "season": 2025, "name": "A-League Men"},
+    {"legacy_id": 16, "api_id": 1, "season": 2026, "name": "FIFA World Cup"},
     {"legacy_id": 37, "api_id": 88, "season": 2025, "name": "Eredivisie"},
     {"legacy_id": 238, "api_id": 94, "season": 2025, "name": "Primeira Liga"},
     {"legacy_id": 242, "api_id": 253, "season": 2026, "name": "MLS"},
-    {"legacy_id": 136, "api_id": 188, "season": 2025, "name": "A-League Men"},
     {"legacy_id": 36, "api_id": 179, "season": 2025, "name": "Scottish Premiership"},
     {"legacy_id": 196, "api_id": 98, "season": 2026, "name": "J1 League"},
     {"legacy_id": 18, "api_id": 40, "season": 2025, "name": "Championship"},
@@ -97,6 +102,7 @@ THESPORTSDB_LEAGUES = {
     "Eredivisie": "4337",
     "MLS": "4346",
     "UEFA Champions League": "4480",
+    "UEFA Europa League": "4481",
     "Allsvenskan": "4339",
     "Eliteserien": "4396",
 }
@@ -116,6 +122,11 @@ THESPORTSDB_LEAGUE_HINTS = {
     "Scottish Premiership": ("scottish premiership", "premiership"),
     "J1 League": ("japanese j1 league", "j1 league"),
     "UEFA Champions League": ("uefa champions league", "champions league"),
+    "UEFA Europa League": ("uefa europa league", "europa league"),
+    "UEFA Conference League": ("uefa europa conference league", "uefa conference league", "conference league"),
+    "Brasileirão Betano": ("brasileirao betano", "brasileirão betano", "brazilian serie a", "campeonato brasileiro"),
+    "CONMEBOL Libertadores": ("conmebol libertadores", "copa libertadores", "libertadores"),
+    "FIFA World Cup": ("fifa world cup", "men's world cup", "world cup", "world championship"),
     "MLS": ("american major league soccer", "major league soccer", "mls"),
     "Allsvenskan": ("swedish allsvenskan", "allsvenskan"),
     "Eliteserien": ("norwegian eliteserien", "eliteserien"),
@@ -140,7 +151,12 @@ FLASHSCORE_LEAGUE_NAMES = {
     "Scottish Premiership": ("scotland", {"premiership", "scottish premiership"}),
     "J1 League": ("japan", {"j1 league"}),
     "UEFA Champions League": ("europe", {"champions league"}),
+    "UEFA Europa League": ("europe", {"europa league"}),
+    "UEFA Conference League": ("europe", {"conference league", "europa conference league"}),
     "MLS": ("usa", {"mls", "major league soccer"}),
+    "Brasileirão Betano": ("brazil", {"brasileirao betano", "brasileirão betano", "serie a betano", "serie a"}),
+    "CONMEBOL Libertadores": ("south america", {"conmebol libertadores", "copa libertadores", "libertadores"}),
+    "FIFA World Cup": ("world", {"world cup", "world championship", "men's world cup", "mens world cup"}),
     "Allsvenskan": ("sweden", {"allsvenskan"}),
     "Eliteserien": ("norway", {"eliteserien"}),
 }
@@ -152,7 +168,7 @@ LEAGUE_EXCLUSION_TOKENS = (
     "youth", "academy", "premier league 2", "primavera", "regionalliga",
     "oberliga", "ekstraklasa", "premier league cup", "fa cup", "efl cup",
     "copa del rey", "dfb pokal", "coupe de france", "knvb", "us open cup",
-    "leagues cup", "concacaf", "conference league",
+    "leagues cup", "concacaf",
 )
 
 # Marker patterns Flashscore uses for women's teams in event names.

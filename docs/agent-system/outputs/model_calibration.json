@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-22 04:29:50 ACST",
+  "generated_at": "2026-05-22 17:58:11 ACST",
   "source": "docs\\agent-system\\outputs\\model_result_review_summary.json",
   "mode": "conservative_auto_learning",
   "rules": {
@@ -13,38 +13,49 @@
   "market_adjustments": {
     "btts": {
       "market": "BTTS",
-      "settled": 414,
-      "hit_rate": 0.5483,
-      "trust_factor": 0.9535,
-      "min_edge_delta": 0.0181,
-      "reason": "BTTS below 60% target over 414 settled markets."
+      "settled": 419,
+      "hit_rate": 0.5418,
+      "trust_factor": 0.9476,
+      "min_edge_delta": 0.0204,
+      "reason": "BTTS below 60% target over 419 settled markets."
     },
     "ou_cards": {
       "market": "Cards",
-      "settled": 387,
-      "hit_rate": 0.5943,
-      "trust_factor": 0.9949,
-      "min_edge_delta": 0.002,
-      "reason": "Cards below 60% target over 387 settled markets."
+      "settled": 392,
+      "hit_rate": 0.5969,
+      "trust_factor": 0.9972,
+      "min_edge_delta": 0.0011,
+      "reason": "Cards below 60% target over 392 settled markets."
     },
     "ou_goals": {
       "market": "Goals",
-      "settled": 414,
-      "hit_rate": 0.5604,
-      "trust_factor": 0.9644,
-      "min_edge_delta": 0.0139,
-      "reason": "Goals below 60% target over 414 settled markets."
+      "settled": 419,
+      "hit_rate": 0.5585,
+      "trust_factor": 0.9627,
+      "min_edge_delta": 0.0145,
+      "reason": "Goals below 60% target over 419 settled markets."
     },
     "winner": {
       "market": "Winner",
-      "settled": 414,
-      "hit_rate": 0.4879,
-      "trust_factor": 0.8991,
-      "min_edge_delta": 0.0392,
-      "reason": "Winner below 60% target over 414 settled markets."
+      "settled": 419,
+      "hit_rate": 0.4869,
+      "trust_factor": 0.8982,
+      "min_edge_delta": 0.0396,
+      "reason": "Winner below 60% target over 419 settled markets."
     }
   },
   "league_market_adjustments": {
+    "Bundesliga|winner": {
+      "league": "Bundesliga",
+      "market": "Winner",
+      "market_key": "winner",
+      "settled": 37,
+      "hit_rate": 0.3514,
+      "odds_net": -9.2,
+      "trust_factor": 0.9172,
+      "min_edge_delta": 0.0322,
+      "reason": "Bundesliga Winner weak spot from result review."
+    },
     "League One|btts": {
       "league": "League One",
       "market": "BTTS",
@@ -55,17 +66,6 @@
       "trust_factor": 0.9316,
       "min_edge_delta": 0.0266,
       "reason": "League One BTTS weak spot from result review."
-    },
-    "Bundesliga|winner": {
-      "league": "Bundesliga",
-      "market": "Winner",
-      "market_key": "winner",
-      "settled": 36,
-      "hit_rate": 0.3611,
-      "odds_net": -7.47,
-      "trust_factor": 0.9226,
-      "min_edge_delta": 0.0301,
-      "reason": "Bundesliga Winner weak spot from result review."
     },
     "MLS|winner": {
       "league": "MLS",
@@ -93,22 +93,22 @@
       "league": "Bundesliga",
       "market": "Cards",
       "market_key": "ou_cards",
-      "settled": 35,
-      "hit_rate": 0.4286,
-      "odds_net": -20.89,
-      "trust_factor": 0.946,
-      "min_edge_delta": 0.021,
+      "settled": 36,
+      "hit_rate": 0.4444,
+      "odds_net": -19.22,
+      "trust_factor": 0.9496,
+      "min_edge_delta": 0.0196,
       "reason": "Bundesliga Cards weak spot from result review."
     },
     "Eredivisie|ou_goals": {
       "league": "Eredivisie",
       "market": "Goals",
       "market_key": "ou_goals",
-      "settled": 44,
-      "hit_rate": 0.4773,
-      "odds_net": -6.03,
-      "trust_factor": 0.9514,
-      "min_edge_delta": 0.0189,
+      "settled": 46,
+      "hit_rate": 0.4565,
+      "odds_net": -9.13,
+      "trust_factor": 0.9406,
+      "min_edge_delta": 0.0231,
       "reason": "Eredivisie Goals weak spot from result review."
     },
     "Premier League|winner": {

@@ -6,18 +6,18 @@ Timezone: Australia/Adelaide
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-22 04:29:40 ACST |
+| run_timestamp | 2026-05-22 17:57:58 ACST |
 | sofa_health | healthy |
 | flashscore_health | healthy |
 | flashscore_note |  |
-| phase5_input_rows | 1 |
+| phase5_input_rows | 3 |
 | rows_settled_this_run | 0 |
 | won_this_run | 0 |
 | lost_this_run | 0 |
 | pending | 0 |
 | void | 0 |
 | not_found | 0 |
-| skipped | 1 |
+| skipped | 3 |
 
 ## History Summary
 
@@ -36,4 +36,6 @@ Timezone: Australia/Adelaide
 
 | Date | Match | Pick | Odds | Stake | Actual | Outcome | Status | Return |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-22 | Elfsborg vs Mjallby |  |  |  |  |  | skipped | 0.0 |
+| 2026-05-22 | Machida vs Urawa |  |  |  |  |  | skipped | 0.0 |
+| 2026-05-23 | Djurgarden vs Brommapojkarna |  |  |  |  |  | skipped | 0.0 |
+| 2026-05-23 | Fiorentina vs Atalanta |  |  |  |  |  | skipped | 0.0 |
