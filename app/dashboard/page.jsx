@@ -23,6 +23,7 @@ import {
   LogOut,
   Mail,
   MapPin,
+  ExternalLink,
   Settings,
   ShieldCheck,
   Star,
@@ -317,7 +318,7 @@ function resultIcon(result) {
 }
 
 function marketPillClass(result) {
-  if (result === 'hit') return 'border-emerald-400 bg-emerald-200 shadow-panel';
+  if (result === 'hit') return 'result-hit-row';
   if (result === 'miss') return 'border-red-400 bg-red-100 shadow-panel';
   if (result === 'pass') return 'border-slate-300 bg-slate-100 shadow-panel';
   return 'border-slate-300 bg-white shadow-panel';
@@ -341,7 +342,7 @@ function visibleResultLabel(result) {
 }
 
 function streakCardClass(result) {
-  if (result === 'hit') return 'border-emerald-400 bg-emerald-200 shadow-panel';
+  if (result === 'hit') return 'result-hit-row';
   if (result === 'miss') return 'border-red-400 bg-red-100 shadow-panel';
   return 'border-slate-300 bg-white shadow-panel';
 }
@@ -1062,18 +1063,26 @@ function sideHasNoWinsStreak(match, side, minimum = 5) {
 
 function withWinnerConfidenceGate(match, market) {
   if (!market?.type) return market;
-  if (match.status === 'FT') return market;
   const odds = winnerGuidanceOdds(match);
   const noVig = bookmakerNoVigProbability(odds, market.type);
   if (!Number.isFinite(noVig)) return market;
   if (noVig >= WINNER_CONFIDENCE_THRESHOLD) return market;
-  return { ...market, lowConfidence: true, lowConfidenceProb: noVig };
+  const gated = {
+    ...market,
+    lowConfidence: true,
+    lowConfidenceProb: noVig,
+    predictedType: market.type,
+    predictedPick: market.pick || market.type,
+    predictedResult: market.result,
+  };
+  return gated;
 }
 
 function winnerMarketWithGuidance(match, allMatches = []) {
   const market = match.predictions?.winner;
   if (!market?.type) return market || null;
-  if (match.status === 'FT') return market;
+  const confidenceGated = withWinnerConfidenceGate(match, market);
+  if (match.status === 'FT') return confidenceGated;
   const rows = winnerProbabilityBreakdown(match);
   const selected = rows?.find((row) => row.key === market.type);
   const selectedModel = selected?.model;
@@ -1163,7 +1172,6 @@ function winnerModelProbability(match, winner = match.predictions?.winner) {
 }
 
 function winnerPredictionSide(match, winner = match.predictions?.winner) {
-  if (winner?.lowConfidence) return null;
   const side = winner?.type;
   return side === 'home' || side === 'away' || side === 'draw' ? side : null;
 }
@@ -1184,15 +1192,6 @@ function winnerPredictionScoreClass(match, winner = match.predictions?.winner) {
 }
 
 function WinnerPredictionMeta({ match, side, modelProbability, winner = match.predictions?.winner }) {
-  if (winner?.lowConfidence && side === 'home') {
-    return (
-      <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs">
-        <span className="inline-flex h-7 items-center rounded-md bg-slate-100 px-2 font-semibold text-slate-500">
-          Low confidence — no Winner pick
-        </span>
-      </div>
-    );
-  }
   if (!winner || winnerPredictionSide(match, winner) !== side) {
     return <div className="mt-2 h-7" aria-hidden="true" />;
   }
@@ -1201,6 +1200,7 @@ function WinnerPredictionMeta({ match, side, modelProbability, winner = match.pr
   return (
     <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs">
       <span className="inline-flex h-7 items-center rounded-md bg-white/70 px-2 font-semibold text-slate-700">{predictionLabel}</span>
+      {winner.lowConfidence && <span className="inline-flex h-7 items-center rounded-md bg-amber-100 px-2 font-semibold text-amber-700">Caution</span>}
       {modelText && <span className="inline-flex h-7 items-center rounded-md bg-white/70 px-2 font-semibold text-slate-700">Model {modelText}</span>}
       {winner.result && (
         <span className={`inline-flex h-7 items-center gap-1 rounded-md font-semibold leading-none ${visibleResultLabel(winner.result) ? 'px-2' : 'px-1.5'} ${resultBadgeClass(winner.result)}`}>
@@ -3518,7 +3518,7 @@ function comparisonOddsText(value) {
 }
 
 function summaryRowClass(result) {
-  if (result === 'hit') return 'border border-emerald-300 border-l-4 border-l-emerald-600 bg-emerald-100 shadow-panel';
+  if (result === 'hit') return 'result-hit-row border-l-4 border-l-emerald-600';
   if (result === 'miss') return 'border border-red-300 border-l-4 border-l-red-600 bg-red-50/50 shadow-panel';
   return 'border border-slate-300 border-l-4 border-l-slate-500 bg-slate-50 shadow-panel';
 }
@@ -3657,7 +3657,7 @@ function ResultsReview({
     const isSuggested = row.key === 'suggested';
     const rowTone =
       row.hitRate >= 55
-        ? 'border-emerald-300 bg-emerald-100 hover:border-emerald-400'
+        ? 'result-hit-row hover:border-emerald-500'
         : row.hitRate < 45
           ? 'border-red-200 bg-red-50/45 hover:border-red-300'
           : 'border-slate-300 bg-field hover:border-slate-400 hover:bg-white';
@@ -3874,7 +3874,7 @@ function PredictionSummaryCard({ match, allMatches, voteState = null }) {
   const confidence = loadMatchConfidence(match, allMatches);
   const winner = displayWinnerMarket(match, allMatches);
   const winnerLowConfidence = Boolean(winner?.lowConfidence);
-  const winnerComparison = winnerLowConfidence ? null : displayWinnerComparison(matchWithContext, allMatches, winner);
+  const winnerComparison = displayWinnerComparison(matchWithContext, allMatches, winner);
   const displayBtts = precomputed.btts?.market || displayBttsMarket(predictions.btts, match);
   const bttsComparison = precomputed.btts?.comparison || modelVsBookmakerComparison(match, 'btts', displayBtts);
   const goalsComparison = precomputed.goals?.comparison || modelVsBookmakerComparison(match, 'ou_goals', predictions.ou_goals);
@@ -3883,14 +3883,32 @@ function PredictionSummaryCard({ match, allMatches, voteState = null }) {
   const cornerMarket = withCornerBookmakerOdds(match, precomputed.corners?.market || cornerMarketFromStreaks(match, allMatches));
   const cornersComparison = comparisonForMarket(match, 'ou_corners', cornerMarket, precomputed.corners?.comparison);
 
-  const winnerPick = winnerLowConfidence ? 'Low confidence — no Winner pick' : (winner ? formatMarketDetail(winner) : null);
+  const winnerPick = winner ? formatMarketDetail(winner) : null;
+  const rawWinner = predictions.winner;
+  const predictedWinnerType = winner?.predictedType || rawWinner?.type;
+  const predictedWinnerName = predictedWinnerType === 'draw' ? 'Draw' : teamNameForCopy(teamNameForSide(predictedWinnerType, match));
+  const actualWinnerType = Number(match.home?.goals) > Number(match.away?.goals)
+    ? 'home'
+    : Number(match.away?.goals) > Number(match.home?.goals)
+      ? 'away'
+      : Number.isFinite(Number(match.home?.goals)) && Number.isFinite(Number(match.away?.goals))
+        ? 'draw'
+        : null;
+  const actualWinnerName = actualWinnerType === 'draw' ? 'Draw' : actualWinnerType ? teamNameForCopy(teamNameForSide(actualWinnerType, match)) : null;
+  const rawWinnerResult = winner?.predictedResult || rawWinner?.result;
+  const lowConfidenceWinnerText = [
+    `Caution: this Winner prediction is outside the stronger market-confidence band because the bookmaker no-vig probability is below ${Math.round(WINNER_CONFIDENCE_THRESHOLD * 100)}%. Treat it as a weaker winner call, not the suggested best pick.`,
+    match.status === 'FT' && rawWinner?.type && actualWinnerName && rawWinnerResult
+      ? `Predicted: ${predictedWinnerName}; result: ${actualWinnerName}; model ${rawWinnerResult}.`
+      : null,
+  ].filter(Boolean).join(' ');
   const winnerText = winnerLowConfidence
-    ? `Bookmaker no-vig probability for every side is below ${Math.round(WINNER_CONFIDENCE_THRESHOLD * 100)}%; outside the band where our backtest shows real edge.`
+    ? lowConfidenceWinnerText
     : winnerRationale(match, allMatches, winner);
   const expectationSummary = matchExpectationSummary(match, allMatches);
 
   const lines = [
-    { label: 'Winner', voteKey: 'winner', pick: winnerPick, text: winnerText, comparison: winnerComparison, result: winnerLowConfidence ? null : winner?.result },
+    { label: 'Winner', voteKey: 'winner', pick: winnerPick, text: winnerText, comparison: winnerComparison, result: winner?.result },
     { label: 'BTTS', voteKey: 'btts', pick: displayBtts ? formatMarketDetail(displayBtts) : null, text: bttsRationale(match), comparison: bttsComparison, result: displayBtts?.result },
     { label: 'Goals', voteKey: 'goals', pick: predictions.ou_goals ? formatMarketDetail(predictions.ou_goals) : null, text: goalsRationale(match, allMatches), comparison: goalsComparison, result: predictions.ou_goals?.result },
     { label: 'Cards', voteKey: 'cards', pick: displayCards ? formatMarketDetail(displayCards) : null, text: cardsRationale(match, allMatches), comparison: cardsComparison, result: displayCards?.result },
@@ -4187,11 +4205,14 @@ function MarketVoteControls({ voteState, marketKey }) {
   );
 }
 
-function VoteLeaderboard({ data, loading, error, bookmakerId }) {
+function VoteLeaderboard({ data, loading, error, bookmakerId, onFollowUser, followBusyUid = '', followError = '' }) {
   const rankedLeaders = (data?.leaders || []).map((leader, index) => ({ ...leader, rank: index + 1 }));
   const topLeaders = rankedLeaders.slice(0, 5);
   const myLeader = rankedLeaders.find((leader) => leader.isMe);
   const popularPicks = data?.popularPicks || [];
+  const followingPicks = data?.followingPicks || [];
+  const openPicks = popularPicks.filter((pick) => !pick.result);
+  const resultedPicks = popularPicks.filter((pick) => pick.result);
   return (
     <div className="mt-3 grid gap-3 sm:mt-5 xl:grid-cols-2">
       <section className="rounded-lg border border-slate-300 bg-white p-3 shadow-panel sm:p-4">
@@ -4218,6 +4239,11 @@ function VoteLeaderboard({ data, loading, error, bookmakerId }) {
         {!loading && error && (
           <div className="mt-3 rounded-md border border-red-200 bg-red-50 px-3 py-3 text-sm font-semibold text-red-700">
             {error}
+          </div>
+        )}
+        {!loading && !error && followError && (
+          <div className="mt-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700">
+            {followError}
           </div>
         )}
         {!loading && !error && !topLeaders.length && (
@@ -4250,9 +4276,9 @@ function VoteLeaderboard({ data, loading, error, bookmakerId }) {
             <div className="mt-2 overflow-hidden rounded-md border border-slate-200">
               {topLeaders.map((leader) => (
                 <div
-                  key={`${leader.label}-${leader.rank}`}
-                  className={`grid gap-3 border-b border-slate-200 px-3 py-2.5 last:border-b-0 sm:grid-cols-[minmax(0,1fr)_5.75rem_5.75rem_5.75rem_6.5rem] sm:items-center ${
-                    leader.isMe ? 'bg-emerald-50/80' : 'bg-field'
+                  key={`${leader.uid || leader.label}-${leader.rank}`}
+                  className={`grid gap-3 border-b border-slate-200 px-3 py-2.5 last:border-b-0 sm:grid-cols-[minmax(0,1fr)_5.75rem_5.75rem_5.75rem_5.75rem_6.5rem_6.5rem] sm:items-center ${
+                    leader.settled && leader.hits === leader.settled ? 'result-hit-row' : leader.isMe ? 'bg-emerald-50/80' : 'bg-field'
                   }`}
                 >
                   <div className="flex min-w-0 items-center gap-3">
@@ -4269,9 +4295,10 @@ function VoteLeaderboard({ data, loading, error, bookmakerId }) {
 
                   <LeaderboardMetric label="Votes" value={leader.votes} />
                   <LeaderboardMetric label="Matches" value={leader.matchesVoted} />
+                  <LeaderboardMetric label="Followers" value={leader.followerCount || 0} />
                   <LeaderboardMetric label="Hit" value={leader.settled ? `${leader.hits}/${leader.settled}` : '-'} />
 
-                  <div className="sm:text-right">
+                  <div className="flex items-center justify-between gap-2 sm:block sm:text-right">
                     <span className={`inline-flex rounded px-2.5 py-1 text-xs font-semibold ${
                       leader.hitRate === null
                         ? 'bg-slate-100 text-slate-500'
@@ -4283,6 +4310,20 @@ function VoteLeaderboard({ data, loading, error, bookmakerId }) {
                     }`}>
                       {leader.hitRate === null ? 'Pending' : `${leader.hitRate}% hit`}
                     </span>
+                    {!leader.isMe && leader.uid && (
+                      <button
+                        type="button"
+                        disabled={followBusyUid === leader.uid}
+                        onClick={() => onFollowUser?.(leader.uid, !leader.isFollowing)}
+                        className={`mt-0 inline-flex h-8 items-center justify-center rounded-md border px-2.5 text-xs font-semibold transition sm:mt-2 sm:w-full ${
+                          leader.isFollowing
+                            ? 'border-slate-300 bg-white text-slate-600 hover:bg-slate-50'
+                            : 'border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                        } disabled:cursor-wait disabled:opacity-60`}
+                      >
+                        {followBusyUid === leader.uid ? 'Saving...' : leader.isFollowing ? 'Following' : 'Follow'}
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
@@ -4294,12 +4335,44 @@ function VoteLeaderboard({ data, loading, error, bookmakerId }) {
       <section className="rounded-lg border border-slate-300 bg-white p-3 shadow-panel sm:p-4">
         <div className="flex items-center justify-between gap-2">
           <div>
-            <h2 className="text-base font-semibold text-ink">Markets picked</h2>
-            <p className="mt-1 text-xs font-semibold text-slate-500">Top 5 voted markets</p>
+            <h2 className="text-base font-semibold text-ink">Following picks</h2>
+            <p className="mt-1 text-xs font-semibold text-slate-500">
+              {data?.followingCount ? `${data.followingCount} followed users` : 'Follow leaderboard users to track picks'}
+            </p>
           </div>
-          {popularPicks.length > 0 && (
+          {followingPicks.length > 0 && (
             <span className="shrink-0 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-600">
-              Top {popularPicks.length}
+              {followingPicks.length} picks
+            </span>
+          )}
+        </div>
+        {loading && (
+          <div className="mt-3 flex items-center gap-2 rounded-md border border-slate-200 bg-field px-3 py-3 text-sm font-semibold text-slate-500">
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+            Loading followed picks
+          </div>
+        )}
+        {!loading && !error && followingPicks.length > 0 && (
+          <div className="mt-3 grid gap-2">
+            {followingPicks.map((pick, index) => <VotePickSummaryRow key={`${pick.matchId}-${pick.market}-${pick.option}-${index}`} pick={pick} bookmakerId={bookmakerId} />)}
+          </div>
+        )}
+        {!loading && !error && !followingPicks.length && (
+          <div className="mt-3 rounded-md border border-slate-300 bg-field px-3 py-3 text-sm text-slate-500">
+            No followed picks yet.
+          </div>
+        )}
+      </section>
+
+      <section className="rounded-lg border border-slate-300 bg-white p-3 shadow-panel sm:p-4">
+        <div className="flex items-center justify-between gap-2">
+          <div>
+            <h2 className="text-base font-semibold text-ink">Markets picked</h2>
+            <p className="mt-1 text-xs font-semibold text-slate-500">Open voted markets</p>
+          </div>
+          {openPicks.length > 0 && (
+            <span className="shrink-0 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-600">
+              Top {openPicks.length}
             </span>
           )}
         </div>
@@ -4309,47 +4382,94 @@ function VoteLeaderboard({ data, loading, error, bookmakerId }) {
             Loading picked markets
           </div>
         )}
-        {!loading && !error && popularPicks.length > 0 && (
+        {!loading && !error && openPicks.length > 0 && (
           <div className="mt-3">
             <div className="flex items-center justify-between gap-2">
               <h3 className="text-sm font-semibold text-ink">Voted markets</h3>
-              <span className="text-xs font-semibold text-slate-500">Top 5</span>
+              <span className="text-xs font-semibold text-slate-500">Open</span>
             </div>
             <div className="mt-2 grid gap-2">
-              {popularPicks.map((pick) => (
-                <VotePickRow key={`${pick.matchId}-${pick.market}-${pick.option}`} pick={pick} bookmakerId={bookmakerId}>
-                  <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
-                    <div className="min-w-0 truncate text-sm font-semibold text-ink">{pick.home} v {pick.away}</div>
-                    <span className="shrink-0 rounded bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700">{pick.count} votes</span>
-                  </div>
-                  <div className="mt-1.5 flex min-w-0 flex-wrap items-center gap-1.5 text-xs">
-                    <span className="max-w-36 truncate text-[11px] font-semibold text-slate-500">{pick.league || 'Match'}{pick.date ? ` · ${formatDateDMY(pick.date)}` : ''}</span>
-                    <span className="rounded border border-slate-200 bg-white px-2 py-0.5 font-semibold text-slate-500">{pick.marketLabel}</span>
-                    <span className="rounded border border-emerald-200 bg-emerald-50 px-2 py-0.5 font-semibold text-emerald-700">{pick.optionLabel}</span>
-                    {(pick.voters || []).slice(0, 3).map((voter, index) => (
-                      <span
-                        key={`${pick.matchId}-${pick.market}-${voter.label}-${index}`}
-                        className={`max-w-20 truncate rounded px-1.5 py-0.5 text-[11px] font-semibold ${
-                          voter.isMe ? 'bg-emerald-100 text-emerald-700' : 'bg-white text-slate-500'
-                        }`}
-                      >
-                        {voter.isMe ? 'You' : voter.label}
-                      </span>
-                    ))}
-                    {(pick.voters || []).length > 3 && <span className="rounded bg-white px-1.5 py-0.5 text-[11px] font-semibold text-slate-500">+{pick.voters.length - 3}</span>}
-                  </div>
-                </VotePickRow>
-              ))}
+              {openPicks.map((pick) => <VotePickSummaryRow key={`${pick.matchId}-${pick.market}-${pick.option}`} pick={pick} bookmakerId={bookmakerId} />)}
             </div>
           </div>
         )}
-        {!loading && !error && !popularPicks.length && (
+        {!loading && !error && !openPicks.length && (
           <div className="mt-3 rounded-md border border-slate-300 bg-field px-3 py-3 text-sm text-slate-500">
-            No voted markets captured yet.
+            No open voted markets captured yet.
+          </div>
+        )}
+      </section>
+
+      <section className="rounded-lg border border-slate-300 bg-white p-3 shadow-panel sm:p-4">
+        <div className="flex items-center justify-between gap-2">
+          <div>
+            <h2 className="text-base font-semibold text-ink">Resulted Picks</h2>
+            <p className="mt-1 text-xs font-semibold text-slate-500">Completed voted markets</p>
+          </div>
+          {resultedPicks.length > 0 && (
+            <span className="shrink-0 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-600">
+              {resultedPicks.length} settled
+            </span>
+          )}
+        </div>
+        {loading && (
+          <div className="mt-3 flex items-center gap-2 rounded-md border border-slate-200 bg-field px-3 py-3 text-sm font-semibold text-slate-500">
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+            Loading resulted picks
+          </div>
+        )}
+        {!loading && !error && resultedPicks.length > 0 && (
+          <div className="mt-3 grid gap-2">
+            {resultedPicks.map((pick) => <VotePickSummaryRow key={`${pick.matchId}-${pick.market}-${pick.option}`} pick={pick} bookmakerId={bookmakerId} />)}
+          </div>
+        )}
+        {!loading && !error && !resultedPicks.length && (
+          <div className="mt-3 rounded-md border border-slate-300 bg-field px-3 py-3 text-sm text-slate-500">
+            No resulted crowd picks yet.
           </div>
         )}
       </section>
     </div>
+  );
+}
+
+function VotePickSummaryRow({ pick, bookmakerId }) {
+  const href = votePickBookmakerMatch(pick, bookmakerId);
+  return (
+    <VotePickRow pick={pick} bookmakerId={bookmakerId}>
+      <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
+        <div className="min-w-0 truncate text-sm font-semibold text-ink">{pick.home} v {pick.away}</div>
+        <span className="shrink-0 rounded bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700">{pick.count} votes</span>
+      </div>
+      <div className="mt-1.5 flex min-w-0 flex-wrap items-center gap-1.5 text-xs">
+        <span className="max-w-36 truncate text-[11px] font-semibold text-slate-500">{pick.league || 'Match'}{pick.date ? ` · ${formatDateDMY(pick.date)}` : ''}</span>
+        <span className="rounded border border-slate-200 bg-white px-2 py-0.5 font-semibold text-slate-500">{pick.marketLabel}</span>
+        <span className="rounded border border-emerald-200 bg-emerald-50 px-2 py-0.5 font-semibold text-emerald-700">{pick.optionLabel}</span>
+        {href && (
+          <span className="inline-flex items-center gap-1 rounded border border-blue-200 bg-blue-50 px-2 py-0.5 text-[11px] font-semibold text-blue-700">
+            <ExternalLink className="h-3 w-3" aria-hidden="true" />
+            <span>{BOOKMAKERS[bookmakerId]?.name || 'Bookmaker'}</span>
+          </span>
+        )}
+        {pick.result && (
+          <span className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[11px] font-semibold ${resultBadgeClass(pick.result)}`}>
+            {resultIcon(pick.result)}
+            <span>{pick.result}</span>
+          </span>
+        )}
+        {(pick.voters || []).slice(0, 3).map((voter, index) => (
+          <span
+            key={`${pick.matchId}-${pick.market}-${voter.label}-${index}`}
+            className={`max-w-20 truncate rounded px-1.5 py-0.5 text-[11px] font-semibold ${
+              voter.isMe ? 'bg-emerald-100 text-emerald-700' : 'bg-white text-slate-500'
+            }`}
+          >
+            {voter.isMe ? 'You' : voter.label}
+          </span>
+        ))}
+        {(pick.voters || []).length > 3 && <span className="rounded bg-white px-1.5 py-0.5 text-[11px] font-semibold text-slate-500">+{pick.voters.length - 3}</span>}
+      </div>
+    </VotePickRow>
   );
 }
 
@@ -4381,8 +4501,13 @@ function votePickBookmakerMatch(pick, bookmakerId) {
 
 function VotePickRow({ pick, bookmakerId, children }) {
   const href = votePickBookmakerMatch(pick, bookmakerId);
-  const className = `block rounded-md border border-slate-200 bg-field px-3 py-2 text-left transition ${
-    href ? 'hover:border-slate-300 hover:bg-white hover:shadow-sm' : ''
+  const resultClass = pick?.result === 'hit'
+    ? 'result-hit-row'
+    : pick?.result === 'miss'
+      ? 'border-red-300 bg-red-50'
+      : 'border-slate-200 bg-field';
+  const className = `block rounded-md border px-3 py-2 text-left transition ${resultClass} ${
+    href && !pick?.result ? 'hover:border-slate-300 hover:bg-white hover:shadow-sm' : ''
   }`;
   if (!href) return <div className={className}>{children}</div>;
   return (
@@ -4641,6 +4766,7 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
   const actuals = match.actuals || {};
   const precomputed = match.display_markets || {};
   const displayWinner = displayWinnerMarket(match, allMatches);
+  const predictedWinnerSide = winnerPredictionSide(match, displayWinner);
   const displayBtts = precomputed.btts?.market || displayBttsMarket(predictions.btts, match);
   const bttsComparison = precomputed.btts?.comparison || modelVsBookmakerComparison(match, 'btts', displayBtts);
   const goalsComparison = precomputed.goals?.comparison || modelVsBookmakerComparison(match, 'ou_goals', predictions.ou_goals);
@@ -4712,7 +4838,7 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
             </div>
             <WinnerPredictionMeta match={match} side="away" modelProbability={winnerModelPct} winner={displayWinner} />
           </div>
-          {winnerPredictionSide(match, displayWinner) === 'draw' && (
+          {predictedWinnerSide === 'draw' && (
             <div className={`rounded-md border px-2.5 py-2 text-center font-semibold ${winnerPredictionScoreClass(match, displayWinner)}`}>
               <div>{match.status === 'FT' ? `${match.home?.goals ?? '-'}-${match.away?.goals ?? '-'}` : 'Draw'}</div>
               <WinnerPredictionMeta match={match} side="draw" modelProbability={winnerModelPct} winner={displayWinner} />
@@ -4720,7 +4846,7 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
           )}
         </div>
 
-        <div className="hidden items-stretch gap-2 sm:grid sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] sm:gap-3">
+        <div className="hidden items-stretch gap-2 sm:grid sm:grid-cols-[minmax(0,1fr)_3rem_minmax(0,1fr)] sm:gap-3">
           <div className={`flex min-h-[5.75rem] min-w-0 flex-col justify-between rounded-md border px-2.5 py-2 text-left ${winnerPredictionCardClass(match, 'home', displayWinner)}`}>
             <div className="flex min-w-0 items-center justify-between gap-2">
               <div className="flex min-w-0 items-center gap-2">
@@ -4733,7 +4859,7 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
             </div>
             <WinnerPredictionMeta match={match} side="home" modelProbability={winnerModelPct} winner={displayWinner} />
           </div>
-          <div className={`self-center justify-self-center text-center font-semibold ${winnerPredictionScoreClass(match, displayWinner)}`}>
+          <div className={`self-center justify-self-center text-center font-semibold ${match.status === 'FT' ? 'rounded-md bg-ink px-3 py-2 text-sm text-white' : 'text-xs text-slate-400'}`}>
             <div>
               {match.status === 'FT' ? (
                 `${match.home?.goals ?? '-'}-${match.away?.goals ?? '-'}`
@@ -4743,9 +4869,6 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
                 </span>
               )}
             </div>
-            {winnerPredictionSide(match, displayWinner) === 'draw' && (
-              <WinnerPredictionMeta match={match} side="draw" modelProbability={winnerModelPct} winner={displayWinner} />
-            )}
           </div>
           <div className={`flex min-h-[5.75rem] min-w-0 flex-col justify-between rounded-md border px-2.5 py-2 text-left ${winnerPredictionCardClass(match, 'away', displayWinner)}`}>
             <div className="flex min-w-0 items-center justify-between gap-2">
@@ -4759,6 +4882,11 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
             </div>
             <WinnerPredictionMeta match={match} side="away" modelProbability={winnerModelPct} winner={displayWinner} />
           </div>
+          {predictedWinnerSide === 'draw' && (
+            <div className={`col-span-3 text-center font-semibold ${winnerPredictionScoreClass(match, displayWinner)}`}>
+              <WinnerPredictionMeta match={match} side="draw" modelProbability={winnerModelPct} winner={displayWinner} />
+            </div>
+          )}
         </div>
 
         <div className={`mt-3 rounded-md border px-3 py-2 ${compactPick ? marketPillClass(compactPick.market?.result) : 'border-slate-200 bg-slate-50 text-slate-400'}`}>
@@ -4996,6 +5124,8 @@ function HomeInner() {
   const [voteLeaderboardLoading, setVoteLeaderboardLoading] = useState(true);
   const [voteLeaderboardError, setVoteLeaderboardError] = useState('');
   const [voteLeaderboardRefreshKey, setVoteLeaderboardRefreshKey] = useState(0);
+  const [followBusyUid, setFollowBusyUid] = useState('');
+  const [followError, setFollowError] = useState('');
 
   const dashboardRef = useRef(null);
   const resultsRef = useRef(null);
@@ -5151,6 +5281,38 @@ function HomeInner() {
     const safeBookmakerId = DIRECT_MATCH_BOOKMAKERS.has(nextBookmakerId) ? nextBookmakerId : 'sportsbet';
     setBookmakerId(safeBookmakerId);
     window.localStorage.setItem('preferredBookmaker', safeBookmakerId);
+  }, []);
+
+  const handleFollowUser = useCallback(async (targetUid, shouldFollow) => {
+    const cleanTargetUid = String(targetUid || '').trim();
+    if (!cleanTargetUid) return;
+    setFollowBusyUid(cleanTargetUid);
+    setFollowError('');
+    try {
+      const { getFirebaseAuth } = await import('../firebase');
+      const token = await getFirebaseAuth().currentUser?.getIdToken();
+      if (!token) throw new Error('Sign in again to follow users.');
+      const response = await fetch('/api/match-votes', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        cache: 'no-store',
+        body: JSON.stringify({
+          action: shouldFollow ? 'followUser' : 'unfollowUser',
+          targetUid: cleanTargetUid,
+        }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(matchVoteErrorMessage(result, shouldFollow ? 'Could not follow this user.' : 'Could not unfollow this user.'));
+      setVoteLeaderboard(result);
+      setVoteLeaderboardRefreshKey((value) => value + 1);
+    } catch (error) {
+      setFollowError(error.message || 'Could not update following.');
+    } finally {
+      setFollowBusyUid('');
+    }
   }, []);
 
   const refreshMatchData = useCallback(async (dateOverride = selectedDate) => {
@@ -5752,7 +5914,15 @@ function HomeInner() {
             onMoveDate={moveReviewDate}
             canMovePreviousDate={canMoveReviewDatePrevious}
           />
-          <VoteLeaderboard data={voteLeaderboard} loading={voteLeaderboardLoading} error={voteLeaderboardError} bookmakerId={bookmakerId} />
+          <VoteLeaderboard
+            data={voteLeaderboard}
+            loading={voteLeaderboardLoading}
+            error={voteLeaderboardError}
+            bookmakerId={bookmakerId}
+            onFollowUser={handleFollowUser}
+            followBusyUid={followBusyUid}
+            followError={followError}
+          />
         </div>
 
         <div className={`${mobileNavActive === 'matches' || mobileNavActive === 'watchlist' ? 'block' : 'hidden'} mt-3 rounded-lg border border-line bg-white p-3 sm:hidden`}>

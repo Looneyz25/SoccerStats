@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-23 17:29:48 ACST",
+  "generated_at": "2026-05-24 02:58:42 ACST",
   "source": "docs\\agent-system\\outputs\\model_result_review_summary.json",
   "mode": "conservative_auto_learning",
   "rules": {
@@ -13,27 +13,27 @@
   "market_adjustments": {
     "btts": {
       "market": "BTTS",
-      "settled": 426,
-      "hit_rate": 0.5399,
-      "trust_factor": 0.9459,
-      "min_edge_delta": 0.021,
-      "reason": "BTTS below 60% target over 426 settled markets."
+      "settled": 433,
+      "hit_rate": 0.5358,
+      "trust_factor": 0.9422,
+      "min_edge_delta": 0.0225,
+      "reason": "BTTS below 60% target over 433 settled markets."
     },
     "ou_goals": {
       "market": "Goals",
-      "settled": 426,
-      "hit_rate": 0.5587,
-      "trust_factor": 0.9628,
-      "min_edge_delta": 0.0145,
-      "reason": "Goals below 60% target over 426 settled markets."
+      "settled": 433,
+      "hit_rate": 0.5543,
+      "trust_factor": 0.9589,
+      "min_edge_delta": 0.016,
+      "reason": "Goals below 60% target over 433 settled markets."
     },
     "winner": {
       "market": "Winner",
-      "settled": 426,
-      "hit_rate": 0.4812,
-      "trust_factor": 0.8931,
-      "min_edge_delta": 0.04,
-      "reason": "Winner below 60% target over 426 settled markets."
+      "settled": 433,
+      "hit_rate": 0.4873,
+      "trust_factor": 0.8986,
+      "min_edge_delta": 0.0394,
+      "reason": "Winner below 60% target over 433 settled markets."
     }
   },
   "league_market_adjustments": {
@@ -102,17 +102,6 @@
       "trust_factor": 0.9406,
       "min_edge_delta": 0.0231,
       "reason": "Eredivisie Goals weak spot from result review."
-    },
-    "Premier League|winner": {
-      "league": "Premier League",
-      "market": "Winner",
-      "market_key": "winner",
-      "settled": 40,
-      "hit_rate": 0.5,
-      "odds_net": -12.84,
-      "trust_factor": 0.964,
-      "min_edge_delta": 0.014,
-      "reason": "Premier League Winner weak spot from result review."
     }
   },
   "notes": [

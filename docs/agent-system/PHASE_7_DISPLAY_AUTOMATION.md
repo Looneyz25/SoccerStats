@@ -54,6 +54,18 @@ This is the smaller automation loop after the initial 7-day pull. It reads `docs
 
 Each real result run should reduce the today/overdue remaining count as matches become `FT`. No-op runs are successful runs and should write the next due times into the get-data log rather than uploading unchanged dashboard data.
 
+### Timeout and Upload Recovery
+
+If `npm.cmd run get:data:results` times out, do not assume the data failed. First inspect the live process list for `soccer_routine|soccer_|get-data-with-log|upload_match_data|cache_badges|run-python.js`, then re-read `result_check_schedule_latest.md` and the newest get-data artifacts. A run can settle results and refresh the schedule before the wrapper writes its final markdown log.
+
+When settlement/review has updated `match_data.json` but the process is stuck in `scripts/upload_match_data_to_firestore.mjs`, stop only the stuck routine/upload processes and rerun:
+
+```powershell
+node scripts/upload_match_data_to_firestore.mjs
+```
+
+The Firestore uploader should stay on REST-backed small batch commits with retry. This avoids the observed BulkWriter/gRPC `DEADLINE_EXCEEDED` and idle-upload failure mode while still publishing the same league docs, date docs, metadata doc, and fast dashboard doc.
+
 Use the explicit top-up path when the schedule is healthy but future predictions need a light refresh:
 
 ```powershell

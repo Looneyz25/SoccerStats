@@ -312,16 +312,25 @@ function winnerProbabilityBreakdown(match) {
 }
 
 function withWinnerConfidenceGate(match, market) {
-  if (!market?.type || match.status === 'FT') return market;
+  if (!market?.type) return market;
   const noVig = bookmakerNoVigProbability(displayThreeWayOdds(match), market.type);
   if (!Number.isFinite(noVig) || noVig >= WINNER_CONFIDENCE_THRESHOLD) return market;
-  return { ...market, lowConfidence: true, lowConfidenceProb: round(noVig) };
+  const gated = {
+    ...market,
+    lowConfidence: true,
+    lowConfidenceProb: round(noVig),
+    predictedType: market.type,
+    predictedPick: market.pick || market.type,
+    predictedResult: market.result,
+  };
+  return gated;
 }
 
 function winnerMarketWithGuidance(match, allMatches = []) {
   const market = match.predictions?.winner;
   if (!market?.type) return market || null;
-  if (match.status === 'FT') return market;
+  const confidenceGated = withWinnerConfidenceGate(match, market);
+  if (match.status === 'FT') return confidenceGated;
   const rows = winnerProbabilityBreakdown(match);
   const selected = rows?.find((row) => row.key === market.type);
   const selectedModel = selected?.model;

@@ -1,79 +1,79 @@
 {
-  "generated_at": "2026-05-23 17:29:47 ACST",
+  "generated_at": "2026-05-24 02:58:41 ACST",
   "prediction_tracking_start_date": "2026-04-22",
-  "settled_market_rows": 1695,
+  "settled_market_rows": 1730,
   "market_summary": [
     {
       "market": "BTTS",
-      "settled": 426,
-      "hits": 230,
-      "misses": 196,
-      "hit_rate": 0.5399,
-      "odds_hit": 168.48,
-      "odds_loss": 146.67,
-      "odds_net": 21.81
+      "settled": 433,
+      "hits": 232,
+      "misses": 201,
+      "hit_rate": 0.5358,
+      "odds_hit": 172.38,
+      "odds_loss": 155.65,
+      "odds_net": 16.73
     },
     {
       "market": "Cards",
-      "settled": 399,
-      "hits": 241,
-      "misses": 158,
-      "hit_rate": 0.604,
-      "odds_hit": 150.47,
-      "odds_loss": 127.45,
-      "odds_net": 23.02
+      "settled": 406,
+      "hits": 246,
+      "misses": 160,
+      "hit_rate": 0.6059,
+      "odds_hit": 152.25,
+      "odds_loss": 129.28,
+      "odds_net": 22.97
     },
     {
       "market": "Corners",
-      "settled": 18,
-      "hits": 14,
-      "misses": 4,
-      "hit_rate": 0.7778,
+      "settled": 25,
+      "hits": 17,
+      "misses": 8,
+      "hit_rate": 0.68,
       "odds_hit": 4.69,
-      "odds_loss": 1.58,
-      "odds_net": 3.11
+      "odds_loss": 5.31,
+      "odds_net": -0.62
     },
     {
       "market": "Goals",
-      "settled": 426,
-      "hits": 238,
-      "misses": 188,
-      "hit_rate": 0.5587,
-      "odds_hit": 175.16,
-      "odds_loss": 153.66,
-      "odds_net": 21.5
+      "settled": 433,
+      "hits": 240,
+      "misses": 193,
+      "hit_rate": 0.5543,
+      "odds_hit": 178.77,
+      "odds_loss": 163.25,
+      "odds_net": 15.52
     },
     {
       "market": "Winner",
-      "settled": 426,
-      "hits": 205,
-      "misses": 221,
-      "hit_rate": 0.4812,
-      "odds_hit": 169.59,
-      "odds_loss": 255.11,
-      "odds_net": -85.52
+      "settled": 433,
+      "hits": 211,
+      "misses": 222,
+      "hit_rate": 0.4873,
+      "odds_hit": 183.68,
+      "odds_loss": 258.86,
+      "odds_net": -75.18
     }
   ],
   "league_summary": [
     {
       "league": "A-League Men",
-      "settled": 4,
-      "hits": 1,
-      "misses": 3,
-      "hit_rate": 0.25,
-      "odds_hit": 0,
-      "odds_loss": 0,
-      "odds_net": 0
+      "settled": 9,
+      "hits": 2,
+      "misses": 7,
+      "hit_rate": 0.2222,
+      "odds_hit": 2.0,
+      "odds_loss": 7.53,
+      "odds_net": -5.53
     },
     {
       "league": "Allsvenskan",
-      "settled": 25,
-      "hits": 17,
-      "misses": 8,
-      "hit_rate": 0.68,
-      "odds_hit": 5.03,
-      "odds_loss": 9.04,
-      "odds_net": -4.01
+      "settled": 35,
+      "hits": 23,
+      "misses": 12,
+      "hit_rate": 0.6571,
+      "odds_hit": 13.01,
+      "odds_loss": 12.51,
+      "odds_net": 0.5
     },
     {
       "league": "Bundesliga",
@@ -87,13 +87,13 @@
     },
     {
       "league": "Championship",
-      "settled": 109,
-      "hits": 68,
-      "misses": 41,
-      "hit_rate": 0.6239,
-      "odds_hit": 0,
+      "settled": 114,
+      "hits": 72,
+      "misses": 42,
+      "hit_rate": 0.6316,
+      "odds_hit": 9.51,
       "odds_loss": 12.14,
-      "odds_net": -12.14
+      "odds_net": -2.63
     },
     {
       "league": "Eliteserien",
@@ -117,13 +117,13 @@
     },
     {
       "league": "J1 League",
-      "settled": 51,
-      "hits": 32,
-      "misses": 19,
-      "hit_rate": 0.6275,
-      "odds_hit": 28.47,
-      "odds_loss": 32.55,
-      "odds_net": -4.08
+      "settled": 66,
+      "hits": 39,
+      "misses": 27,
+      "hit_rate": 0.5909,
+      "odds_hit": 32.36,
+      "odds_loss": 49.43,
+      "odds_net": -17.07
     },
     {
       "league": "LaLiga",
@@ -228,19 +228,19 @@
   ],
   "weak_spots": [
     {
-      "league": "Allsvenskan",
-      "market": "Winner",
-      "settled": 5,
-      "hit_rate": 0.2,
-      "odds_net": 0.54,
-      "action": "review_weighting"
-    },
-    {
       "league": "Serie A",
       "market": "Winner",
       "settled": 11,
       "hit_rate": 0.2727,
       "odds_net": -15.04,
+      "action": "review_weighting"
+    },
+    {
+      "league": "J1 League",
+      "market": "BTTS",
+      "settled": 15,
+      "hit_rate": 0.3333,
+      "odds_net": -8.23,
       "action": "review_weighting"
     },
     {
@@ -276,6 +276,14 @@
       "action": "review_weighting"
     },
     {
+      "league": "J1 League",
+      "market": "Goals",
+      "settled": 15,
+      "hit_rate": 0.4,
+      "odds_net": -5.8,
+      "action": "review_weighting"
+    },
+    {
       "league": "MLS",
       "market": "Winner",
       "settled": 74,
@@ -284,19 +292,19 @@
       "action": "review_weighting"
     },
     {
-      "league": "J1 League",
-      "market": "BTTS",
-      "settled": 12,
-      "hit_rate": 0.4167,
-      "odds_net": -2.83,
-      "action": "review_weighting"
-    },
-    {
       "league": "LaLiga",
       "market": "Winner",
       "settled": 50,
       "hit_rate": 0.42,
       "odds_net": -28.66,
+      "action": "review_weighting"
+    },
+    {
+      "league": "Allsvenskan",
+      "market": "Winner",
+      "settled": 7,
+      "hit_rate": 0.4286,
+      "odds_net": 4.54,
       "action": "review_weighting"
     },
     {
@@ -314,20 +322,12 @@
       "hit_rate": 0.4565,
       "odds_net": -9.13,
       "action": "review_weighting"
-    },
-    {
-      "league": "Premier League",
-      "market": "Winner",
-      "settled": 40,
-      "hit_rate": 0.5,
-      "odds_net": -12.84,
-      "action": "review_weighting"
     }
   ],
   "recommendations": [
     "Persist model probabilities per market in match_data.json so the review agent can compare confidence bands to actual hit rate.",
     "Inspect high-edge misses before raising thresholds; they are the cleanest overconfidence signal.",
-    "First targeted review: Allsvenskan Winner (5 settled, 20.0% hit rate)."
+    "First targeted review: Serie A Winner (11 settled, 27.3% hit rate)."
   ],
   "outputs": {
     "csv": "docs\\agent-system\\outputs\\model_result_review_current.csv",

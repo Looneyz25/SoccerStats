@@ -61,6 +61,7 @@ Port `3001` is the expected local dashboard port. If startup fails with `EADDRIN
 - On match cards, show the original winner prediction and model percentage on the predicted team card (or the centre draw chip), and highlight that card by hit/miss. Do not render a separate winner market tile. Keep BTTS, goals, cards, and corners as compact one-row market cards.
 - Team logo badges are mandatory. Every match card must render a visible badge for both home and away teams on mobile and desktop; if a verified logo URL is missing or fails, keep the same badge shape and show the team initials fallback instead of removing the badge. Provider badge URLs are source inputs only: cache them into Firebase Storage before upload and store Firebase-owned badge fields in Firestore. Never synthesize a badge URL by mixing provider IDs. SofaScore, Sportsbet, API-Football, and StatsHub/bet365 team IDs are not interchangeable; wrong crests must be stripped before upload.
 - Match cards must always render five market cards below the teams on mobile and desktop: one Suggested pick card, then BTTS, Goals, Cards, and Corners. If a market is missing, keep its card visible with `No pick` instead of hiding the card. This applies to every league, including Serie A.
+- Hit result rows must use the global `.result-hit-row` treatment, which is `bg-emerald-200` with an emerald border. Do not introduce softer one-off hit row backgrounds like `bg-emerald-50` or `bg-emerald-100`; reserve those lighter greens for neutral success messages, selected controls, or small badges only.
 
 ## Deploy
 
@@ -108,6 +109,8 @@ Use `npm.cmd run data:refresh:local` when Firestore credentials are not availabl
 npm.cmd run get:data
 ```
 Then report whether Firestore upload succeeded. Do not stage, commit, push, or deploy for a data-only refresh unless the user explicitly asks. If credentials are missing, tell the user to place the service account at `.secrets/firebase-service-account.json` and run again; do not ask customers or browser clients to write Firestore data.
+
+**Result-run failure handling** — after `get:data:results`, do not trust a stale `get_data_latest.md` if the wrapper timed out. Re-read `result_check_schedule_latest.md`, inspect live processes matching `soccer_routine|soccer_|get-data-with-log|upload_match_data|cache_badges|run-python.js`, and check whether `match_data.json` was updated. If settlement/review finished but Firestore upload stalls in `upload_match_data_to_firestore.mjs`, stop only the stuck routine/upload processes, then rerun `node scripts/upload_match_data_to_firestore.mjs`. The uploader must use REST-backed small batch commits with retry; avoid returning to BulkWriter/gRPC for this path unless it has been proven stable again. After fallback upload, report that the generated result data was published and note the original wrapper timeout.
 
 **Static Hosting fallback** (secondary, `out/` dir):
 ```

@@ -668,6 +668,7 @@ def settle(m, e):
     actual = "home" if hs > as_ else ("away" if as_ > hs else "draw")
     if pred.get("winner"):
         pred["winner"]["result"] = "hit" if pred["winner"].get("type") == actual else "miss"
+        pred["winner"].pop("picked", None)
     abtts = (hs > 0 and as_ > 0)
     if pred.get("btts"):
         pred["btts"]["actual_btts"] = abtts
@@ -2316,6 +2317,7 @@ def settle_generated_prediction_markets(match):
     actual_winner = "home" if home_goals > away_goals else ("away" if away_goals > home_goals else "draw")
     if predictions.get("winner"):
         predictions["winner"]["result"] = "hit" if predictions["winner"].get("type") == actual_winner else "miss"
+        predictions["winner"].pop("picked", None)
     if predictions.get("btts"):
         actual_btts = home_goals > 0 and away_goals > 0
         predictions["btts"]["actual_btts"] = actual_btts

@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .result-hit-row {
+    @apply border-emerald-400 bg-emerald-200 shadow-panel;
+  }
+}
+
 :root {
   color-scheme: light;
   background: #f7f9fb;

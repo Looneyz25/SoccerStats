@@ -274,6 +274,13 @@ function settleTotalMarket(market, actual) {
   return next;
 }
 
+function settleWinnerMarket(match, winner, actualWinner) {
+  const next = { ...winner };
+  next.result = next.type === actualWinner ? 'hit' : 'miss';
+  delete next.picked;
+  return next;
+}
+
 function applyResultToMatch(match, item, actor) {
   const homeGoals = item.score.home;
   const awayGoals = item.score.away;
@@ -281,10 +288,7 @@ function applyResultToMatch(match, item, actor) {
   const predictions = { ...(match.predictions || {}) };
 
   if (predictions.winner) {
-    predictions.winner = {
-      ...predictions.winner,
-      result: predictions.winner.type === actualWinner ? 'hit' : 'miss',
-    };
+    predictions.winner = settleWinnerMarket(match, predictions.winner, actualWinner);
   }
   if (predictions.btts) {
     const actualBtts = homeGoals > 0 && awayGoals > 0;

@@ -355,15 +355,25 @@ function labelFromVoteSummary(parentData, marketKey, value) {
 }
 
 async function leaderboardPayload(db, user) {
-  const [voteSnap, voteParentsSnap] = await Promise.all([
+  const [voteSnap, voteParentsSnap, followingSnap] = await Promise.all([
     db.collectionGroup('votes').get(),
     db.collection(VOTE_COLLECTION).get(),
+    db.collection('users').doc(user.uid).collection('following').get(),
   ]);
   const voteParents = new Map(voteParentsSnap.docs.map((doc) => [doc.id, doc.data() || {}]));
+  const following = new Map(followingSnap.docs.map((doc) => [doc.id, doc.data() || {}]));
+  const followingUids = new Set(following.keys());
   const voteDocs = voteSnap.docs.filter((doc) => doc.ref.parent.parent?.parent?.id === VOTE_COLLECTION);
   const directory = await userDirectory(db, voteDocs, user);
+  const matchLookup = new Map(await Promise.all(
+    [...voteParents.entries()].map(async ([parentId, parentData]) => [
+      parentId,
+      await loadMatch(db, parentData.matchId || parentId, parentData.date),
+    ]),
+  ));
   const rows = new Map();
   const popularPickRows = new Map();
+  const followingPickRows = [];
   const myPickRows = [];
   let totalMarketVotes = 0;
   let settledMarketVotes = 0;
@@ -385,12 +395,20 @@ async function leaderboardPayload(db, user) {
     row.matchesVoted += 1;
     const parentId = voteParentId(doc);
     const parentData = voteParents.get(parentId) || {};
+    const liveMatch = matchLookup.get(parentId);
+    const pickMatchFields = votePickMatchFields(liveMatch || parentData);
     const myPickMarkets = [];
     Object.entries(data.votes || {}).forEach(([marketKey, value]) => {
       row.votes += 1;
       totalMarketVotes += 1;
       const { marketLabel, optionLabel } = labelFromVoteSummary(parentData, marketKey, value);
       const matchId = String(data.matchId || parentData.matchId || parentId);
+      const actualResult = marketActualResult(matchLookup.get(parentId), marketKey, value);
+      if (actualResult !== null) {
+        row.settled += 1;
+        settledMarketVotes += 1;
+        if (actualResult) row.hits += 1;
+      }
       const popularKey = `${matchId}:${marketKey}:${value}`;
       const popularRow = popularPickRows.get(popularKey) || {
         matchId,
@@ -399,20 +417,43 @@ async function leaderboardPayload(db, user) {
         league: data.league || parentData.league || null,
         home: data.home || parentData.home || 'Home',
         away: data.away || parentData.away || 'Away',
-        ...votePickMatchFields(parentData),
+        ...pickMatchFields,
         market: marketKey,
         marketLabel,
         option: value,
         optionLabel,
         count: 0,
         voters: [],
+        result: actualResult === null ? null : actualResult ? 'hit' : 'miss',
       };
+      if (popularRow.result === null && actualResult !== null) {
+        popularRow.result = actualResult ? 'hit' : 'miss';
+      }
       popularRow.count += 1;
       popularRow.voters.push({
         label: voter.isMe ? 'You' : voter.label,
         isMe: voter.isMe,
       });
       popularPickRows.set(popularKey, popularRow);
+      if (followingUids.has(uid)) {
+        followingPickRows.push({
+          matchId,
+          date: data.date || parentData.date || null,
+          time: parentData.time || null,
+          league: data.league || parentData.league || null,
+          home: data.home || parentData.home || 'Home',
+          away: data.away || parentData.away || 'Away',
+          ...pickMatchFields,
+          market: marketKey,
+          marketLabel,
+          option: value,
+          optionLabel,
+          count: 1,
+          voters: [{ label: voter.label, isMe: false }],
+          result: actualResult === null ? null : actualResult ? 'hit' : 'miss',
+          updatedAt: data.updatedAt?.toDate?.()?.toISOString?.() || data.updatedAt || '',
+        });
+      }
       if (uid === user.uid) {
         myPickMarkets.push({
           market: marketKey,
@@ -433,17 +474,19 @@ async function leaderboardPayload(db, user) {
         league: data.league || parentData.league || null,
         home: data.home || parentData.home || 'Home',
         away: data.away || parentData.away || 'Away',
-        ...votePickMatchFields(parentData),
+        ...pickMatchFields,
         picks: myPickMarkets,
         updatedAt,
       });
     }
   });
 
-  const leaders = [...rows.values()]
+  const sortedLeaders = [...rows.values()]
     .map((row) => ({
+      uid: row.uid,
       label: row.label,
       isMe: row.isMe,
+      isFollowing: followingUids.has(row.uid),
       matchesVoted: row.matchesVoted,
       votes: row.votes,
       settled: row.settled,
@@ -453,6 +496,17 @@ async function leaderboardPayload(db, user) {
     }))
     .sort((a, b) => (b.hits - a.hits) || (b.hitRate || 0) - (a.hitRate || 0) || b.votes - a.votes || a.label.localeCompare(b.label))
     .slice(0, 12);
+  const followerCounts = await Promise.all(
+    sortedLeaders.map(async (leader) => {
+      const snap = await db.collection('users').doc(leader.uid).collection('followers').get();
+      return [leader.uid, snap.size];
+    }),
+  );
+  const followerCountByUid = new Map(followerCounts);
+  const leaders = sortedLeaders.map((leader) => ({
+    ...leader,
+    followerCount: followerCountByUid.get(leader.uid) || 0,
+  }));
   const popularPicks = [...popularPickRows.values()]
     .map((row) => ({
       ...row,
@@ -463,15 +517,52 @@ async function leaderboardPayload(db, user) {
   const myPicks = myPickRows
     .sort((a, b) => String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')) || String(a.date || '').localeCompare(String(b.date || '')))
     .slice(0, 5);
+  const followingPicks = followingPickRows
+    .sort((a, b) => Number(Boolean(a.result)) - Number(Boolean(b.result)) || String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')) || String(a.date || '').localeCompare(String(b.date || '')))
+    .slice(0, 10);
 
   return {
     totalVoters: rows.size,
     totalVotes: totalMarketVotes,
     settledVotes: settledMarketVotes,
+    followingCount: following.size,
     leaders,
     popularPicks,
     myPicks,
+    followingPicks,
   };
+}
+
+async function setFollowState(db, user, targetUid, shouldFollow) {
+  const cleanTargetUid = String(targetUid || '').trim();
+  if (!cleanTargetUid) return jsonResponse({ error: 'missing-target' }, 400);
+  if (cleanTargetUid === user.uid) return jsonResponse({ error: 'cannot-follow-self' }, 400);
+
+  const targetSnap = await db.collection('users').doc(cleanTargetUid).get();
+  if (!targetSnap.exists) return jsonResponse({ error: 'user-not-found' }, 404);
+  const targetProfile = targetSnap.data() || {};
+  const meRef = db.collection('users').doc(user.uid).collection('following').doc(cleanTargetUid);
+  const targetRef = db.collection('users').doc(cleanTargetUid).collection('followers').doc(user.uid);
+
+  if (!shouldFollow) {
+    await Promise.all([meRef.delete(), targetRef.delete()]);
+    return jsonResponse(await leaderboardPayload(db, user));
+  }
+
+  const now = FieldValue.serverTimestamp();
+  await Promise.all([
+    meRef.set({
+      targetUid: cleanTargetUid,
+      nickname: voterLabel(targetProfile, cleanTargetUid),
+      followedAt: now,
+    }, { merge: true }),
+    targetRef.set({
+      uid: user.uid,
+      nickname: voterLabel(user, user.uid),
+      followedAt: now,
+    }, { merge: true }),
+  ]);
+  return jsonResponse(await leaderboardPayload(db, user));
 }
 
 async function responsePayload(db, user, match) {
@@ -523,12 +614,19 @@ export async function POST(request) {
   } catch (err) {
     return jsonResponse({ error: err.message || 'unauthorized' }, err.status || 401);
   }
+  const body = await request.json().catch(() => ({}));
+  const db = getFirestore(getAdminApp());
+  if (body.action === 'followUser') {
+    return setFollowState(db, user, body.targetUid, true);
+  }
+  if (body.action === 'unfollowUser') {
+    return setFollowState(db, user, body.targetUid, false);
+  }
+
   if (!String(user.nickname || '').trim()) {
     return jsonResponse({ error: 'nickname-required', detail: 'Set a nickname in Settings before saving crowd votes.' }, 428);
   }
 
-  const body = await request.json().catch(() => ({}));
-  const db = getFirestore(getAdminApp());
   const match = await loadMatch(db, body.matchId, body.date);
   if (!match) return jsonResponse({ error: 'match-not-found' }, 404);
 
@@ -570,6 +668,7 @@ export async function POST(request) {
     away: match.away?.name || null,
     cutoffAt: lock.cutoffAt,
     cutoffMinutes: VOTE_CUTOFF_MINUTES,
+    ...votePickMatchFields(match),
     summary,
     updatedAt: FieldValue.serverTimestamp(),
   }, { merge: true });

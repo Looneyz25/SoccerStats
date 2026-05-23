@@ -4,7 +4,7 @@ import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 import { cert, getApps, initializeApp, applicationDefault } from 'firebase-admin/app';
-import { getFirestore, FieldValue } from 'firebase-admin/firestore';
+import { initializeFirestore, getFirestore, FieldValue } from 'firebase-admin/firestore';
 import { precomputeDisplayData } from './precompute_display_markets.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -13,6 +13,7 @@ const DOC_ID = 'match_data';
 const FAST_DOC_ID = 'match_data_fast';
 const MANUAL_IMPORTS_COLLECTION = 'manualResultImports';
 const DEFAULT_SERVICE_ACCOUNT_PATH = path.join(ROOT, '.secrets', 'firebase-service-account.json');
+const FIRESTORE_UPLOAD_BATCH_SIZE = Number(process.env.FIRESTORE_UPLOAD_BATCH_SIZE || 5);
 
 function slugify(value, fallback) {
   const slug = String(value || '')
@@ -62,6 +63,13 @@ function findManualImportTarget(leagues, item) {
   return best;
 }
 
+function settleWinnerMarket(match, winner, actualWinner) {
+  const next = { ...winner };
+  next.result = next.type === actualWinner ? 'hit' : 'miss';
+  delete next.picked;
+  return next;
+}
+
 function settleTotalMarket(market, actual) {
   if (!market || actual === null || actual === undefined) return market;
   const line = Number(market.line);
@@ -81,10 +89,7 @@ function applyManualResult(match, item) {
   const predictions = { ...(match.predictions || {}) };
 
   if (predictions.winner) {
-    predictions.winner = {
-      ...predictions.winner,
-      result: predictions.winner.type === actualWinner ? 'hit' : 'miss',
-    };
+    predictions.winner = settleWinnerMarket(match, predictions.winner, actualWinner);
   }
   if (predictions.btts) {
     const actualBtts = homeGoals > 0 && awayGoals > 0;
@@ -434,6 +439,38 @@ function credentialOptions() {
   };
 }
 
+async function commitBatchWithRetry(batch, index) {
+  const maxAttempts = 3;
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      await batch.commit();
+      console.log(`Committed Firestore upload batch ${index}`);
+      return;
+    } catch (error) {
+      const message = error?.message || String(error);
+      console.warn(`Firestore upload batch ${index} attempt ${attempt} failed: ${message}`);
+      if (attempt === maxAttempts) throw error;
+      await new Promise((resolve) => setTimeout(resolve, attempt * 2000));
+    }
+  }
+}
+
+async function commitUploadOperations(db, operations) {
+  const batchSize = Number.isFinite(FIRESTORE_UPLOAD_BATCH_SIZE) && FIRESTORE_UPLOAD_BATCH_SIZE > 0
+    ? Math.min(Math.floor(FIRESTORE_UPLOAD_BATCH_SIZE), 400)
+    : 5;
+  let batchIndex = 0;
+  for (let index = 0; index < operations.length; index += batchSize) {
+    const batch = db.batch();
+    for (const operation of operations.slice(index, index + batchSize)) {
+      if (operation.type === 'delete') batch.delete(operation.ref);
+      if (operation.type === 'set') batch.set(operation.ref, operation.payload);
+    }
+    batchIndex += 1;
+    await commitBatchWithRetry(batch, batchIndex);
+  }
+}
+
 async function main() {
   loadLocalCredentials();
 
@@ -450,7 +487,12 @@ async function main() {
     initializeApp(credentialOptions());
   }
 
-  const db = getFirestore();
+  let db;
+  try {
+    db = initializeFirestore(getApps()[0], { preferRest: true });
+  } catch {
+    db = getFirestore();
+  }
   const dataPath = path.join(ROOT, 'match_data.json');
   const raw = await readFile(dataPath, 'utf8');
   const sourceData = JSON.parse(raw);
@@ -472,30 +514,16 @@ async function main() {
   const existingChunks = await chunksRef.listDocuments();
   const existingLeagues = await leaguesRef.listDocuments();
   const existingDates = await datesRef.listDocuments();
-  const writer = db.bulkWriter({
-    throttling: {
-      initialOpsPerSecond: 10,
-      maxOpsPerSecond: 25,
-    },
-  });
-  writer.onWriteError((error) => {
-    const retryableCodes = new Set([4, 10, 13, 14]);
-    if (retryableCodes.has(error.code) && error.failedAttempts < 5) {
-      console.warn(`Retrying Firestore ${error.operationType} ${error.documentRef.path} after ${error.message}`);
-      return true;
-    }
-    console.error(`Firestore ${error.operationType} failed for ${error.documentRef.path}: ${error.message}`);
-    return false;
-  });
+  const operations = [];
 
   for (const ref of existingChunks) {
-    writer.delete(ref);
+    operations.push({ type: 'delete', ref });
   }
 
   const targetLeagueIds = new Set(leagues.map((league, index) => slugify(league.id || league.name, String(index).padStart(2, '0'))));
   leagues.forEach((league, index) => {
     const id = slugify(league.id || league.name, String(index).padStart(2, '0'));
-    writer.set(leaguesRef.doc(id), firestoreSafe({
+    operations.push({ type: 'set', ref: leaguesRef.doc(id), payload: firestoreSafe({
       index,
       id: league.id ?? id,
       name: league.name || id,
@@ -505,7 +533,7 @@ async function main() {
       matchCount: Array.isArray(league.matches) ? league.matches.length : 0,
       matches: Array.isArray(league.matches) ? league.matches : [],
       updatedAt: FieldValue.serverTimestamp(),
-    }));
+    }) });
   });
 
   const dateBuckets = new Map();
@@ -531,17 +559,17 @@ async function main() {
 
   const targetDateIds = new Set([...dateBuckets.keys()].map((date) => slugify(date, 'unknown')));
   for (const ref of existingLeagues) {
-    if (!targetLeagueIds.has(ref.id)) writer.delete(ref);
+    if (!targetLeagueIds.has(ref.id)) operations.push({ type: 'delete', ref });
   }
 
   for (const ref of existingDates) {
-    if (!targetDateIds.has(ref.id)) writer.delete(ref);
+    if (!targetDateIds.has(ref.id)) operations.push({ type: 'delete', ref });
   }
 
   const availableDates = [...dateBuckets.keys()].filter((date) => date !== 'unknown').sort();
   for (const [date, leaguesByDate] of dateBuckets.entries()) {
     const dateLeagues = [...leaguesByDate.values()];
-    writer.set(datesRef.doc(slugify(date, 'unknown')), firestoreSafe({
+    operations.push({ type: 'set', ref: datesRef.doc(slugify(date, 'unknown')), payload: firestoreSafe({
       format: 'date_doc_v1',
       date,
       capturedAt: parsed.captured_at || null,
@@ -551,10 +579,10 @@ async function main() {
       matchCount: dateLeagues.reduce((sum, league) => sum + league.matches.length, 0),
       leagues: dateLeagues,
       updatedAt: FieldValue.serverTimestamp(),
-    }));
+    }) });
   }
 
-  writer.set(metaRef, {
+  operations.push({ type: 'set', ref: metaRef, payload: {
     format: 'league_docs_v1',
     capturedAt: parsed.captured_at || null,
     source: parsed.source || null,
@@ -565,12 +593,12 @@ async function main() {
     dateDocCount: dateBuckets.size,
     byteLength: Buffer.byteLength(raw),
     updatedAt: FieldValue.serverTimestamp(),
-  });
+  } });
 
   const { payload: fastPayload, cutoff: fastCutoff, byteLength: fastByteLength, days: fastDays, overflow: fastOverflow } = selectFastPayload(leagues, parsed, allTimeSummary, availableDates);
-  writer.set(fastRef, fastPayload);
+  operations.push({ type: 'set', ref: fastRef, payload: fastPayload });
 
-  await writer.close();
+  await commitUploadOperations(db, operations);
   console.log(`Uploaded ${dataPath} to Firestore dashboardData/${DOC_ID} as ${leagues.length} league docs and ${dateBuckets.size} date docs.`);
   if (fastOverflow) {
     console.log(`Uploaded fast dashboard doc dashboardData/${FAST_DOC_ID} as metadata-only fallback (${(fastByteLength / 1024).toFixed(1)} KB); app will use date/league docs.`);
