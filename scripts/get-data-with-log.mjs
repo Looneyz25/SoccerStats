@@ -1,5 +1,5 @@
 import { spawn } from 'node:child_process';
-import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
@@ -7,15 +7,27 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT_DIR = path.join(ROOT, 'docs', 'agent-system', 'outputs');
+const PENDING_UPLOAD_PATH = path.join(OUT_DIR, 'result_pending_upload_latest.json');
 const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 const argv = process.argv.slice(2);
 const resultsOnly = argv.includes('--results-only') || process.env.SOCCER_DATA_MODE === 'results';
 const topUpOnly = argv.includes('--top-up-only') || process.env.SOCCER_DATA_MODE === 'topup';
+const sourceArg = argv.find((arg) => arg.startsWith('--source='));
+const sourceMode = sourceArg ? sourceArg.slice('--source='.length).trim().toLowerCase() : '';
+const validSourceModes = new Set(['sportsbet', 'bet365']);
 if (resultsOnly && topUpOnly) {
   console.error('Choose one mode: --results-only or --top-up-only');
   process.exit(1);
 }
-const runMode = resultsOnly ? 'results-only' : topUpOnly ? 'top-up-only' : 'full-refresh';
+if (sourceMode && !validSourceModes.has(sourceMode)) {
+  console.error(`Unknown source mode: ${sourceMode}. Expected one of: ${Array.from(validSourceModes).join(', ')}`);
+  process.exit(1);
+}
+if (sourceMode && (resultsOnly || topUpOnly)) {
+  console.error('Choose either --source=<source>, --results-only, or --top-up-only');
+  process.exit(1);
+}
+const runMode = sourceMode ? `source-${sourceMode}` : resultsOnly ? 'results-only' : topUpOnly ? 'top-up-only' : 'full-refresh';
 const DEFAULT_ENV = {
   SOCCER_FIXTURE_DAYS: resultsOnly ? '1' : '7',
   SOCCER_ODDS_BUDGET: resultsOnly ? '80' : topUpOnly ? '320' : '720',
@@ -128,6 +140,100 @@ const TOP_UP_ONLY_STEPS = [
     command: 'node',
     args: ['scripts/upload_match_data_to_firestore.mjs'],
   },
+];
+
+const UPLOAD_RETRY_STEPS = [
+  {
+    id: 'cache_badges',
+    label: 'Cache badges to Firebase Storage',
+    command: 'node',
+    args: ['scripts/cache_badges_to_firebase.mjs'],
+  },
+  {
+    id: 'upload_firestore',
+    label: 'Upload league docs to Firestore',
+    command: 'node',
+    args: ['scripts/upload_match_data_to_firestore.mjs'],
+  },
+];
+
+const SPORTSBET_SOURCE_STEPS = [
+  {
+    id: 'refresh_sportsbet_odds',
+    label: 'Refresh Sportsbet odds and markets',
+    command: 'node',
+    args: ['scripts/run-python.js', 'scripts/soccer_fetch_sportsbet.py'],
+    env: {
+      SOCCER_SPORTSBET_DEEP_BUDGET: process.env.SOCCER_SPORTSBET_DEEP_BUDGET || '360',
+    },
+  },
+  {
+    id: 'refresh_bookmaker_links',
+    label: 'Refresh direct bookmaker links',
+    command: 'node',
+    args: ['scripts/run-python.js', 'scripts/soccer_fetch_bookmaker_links.py'],
+  },
+  {
+    id: 'refresh_prediction_odds',
+    label: 'Refresh visible prediction odds',
+    command: 'node',
+    args: ['scripts/run-python.js', 'scripts/soccer_fetch_pred_odds.py'],
+    env: {
+      SOCCER_ODDS_BUDGET: process.env.SOCCER_ODDS_BUDGET || '360',
+    },
+  },
+  {
+    id: 'cache_badges',
+    label: 'Cache badges to Firebase Storage',
+    command: 'node',
+    args: ['scripts/cache_badges_to_firebase.mjs'],
+  },
+  {
+    id: 'upload_firestore',
+    label: 'Upload league docs to Firestore',
+    command: 'node',
+    args: ['scripts/upload_match_data_to_firestore.mjs'],
+  },
+];
+
+const BET365_SOURCE_STEPS = [
+  {
+    id: 'merge_bet365_context',
+    label: 'Merge bet365 context cache',
+    command: 'node',
+    args: ['scripts/merge_bet365_context.mjs'],
+  },
+  {
+    id: 'cache_badges',
+    label: 'Cache badges to Firebase Storage',
+    command: 'node',
+    args: ['scripts/cache_badges_to_firebase.mjs'],
+  },
+  {
+    id: 'upload_firestore',
+    label: 'Upload league docs to Firestore',
+    command: 'node',
+    args: ['scripts/upload_match_data_to_firestore.mjs'],
+  },
+];
+
+const DATA_MUTATION_STEP_IDS = new Set([
+  'settle_due_results',
+  'seed_next_day',
+  'top_up_horizon',
+  'run_result_review',
+  'run_model_calibration',
+  'refresh_sportsbet_odds',
+  'refresh_bookmaker_links',
+  'refresh_prediction_odds',
+  'merge_bet365_context',
+]);
+
+const BET365_CONTEXT_INPUTS = [
+  path.join(ROOT, 'docs', 'agent-system', 'inputs', 'bet365_context.json'),
+  path.join(ROOT, 'docs', 'agent-system', 'inputs', 'statshub_context.json'),
+  path.join(ROOT, 'docs', 'agent-system', 'outputs', 'bet365_context_latest.json'),
+  path.join(ROOT, 'docs', 'agent-system', 'outputs', 'statshub_context_latest.json'),
 ];
 
 function nowIso() {
@@ -308,6 +414,36 @@ async function markHorizonTopUp(targetDate, step) {
   }, null, 2)}\n`, 'utf8');
 }
 
+async function markPendingUpload(log, reason) {
+  await writeFile(PENDING_UPLOAD_PATH, `${JSON.stringify({
+    reason,
+    runId: log.runId,
+    mode: log.mode,
+    decision: log.decision?.action || null,
+    markedAt: nowIso(),
+    steps: log.steps.map((step) => ({
+      id: step.id,
+      status: step.status,
+      exitCode: step.exitCode,
+    })),
+  }, null, 2)}\n`, 'utf8');
+}
+
+async function clearPendingUpload() {
+  if (!existsSync(PENDING_UPLOAD_PATH)) return;
+  await rm(PENDING_UPLOAD_PATH, { force: true });
+}
+
+async function pendingUploadDecision() {
+  const pending = await readJsonSafe(PENDING_UPLOAD_PATH);
+  if (!pending) return { shouldRetryUpload: false };
+  return {
+    shouldRetryUpload: true,
+    reason: `previous local data run needs Firestore upload retry (${pending.reason || 'upload did not complete'})`,
+    pending,
+  };
+}
+
 function parseDueAt(row) {
   const value = row?.due_at || row?.check_after;
   if (!value) return null;
@@ -363,6 +499,15 @@ async function planResultsRun() {
     };
   }
 
+  const pendingUpload = await pendingUploadDecision();
+  if (pendingUpload.shouldRetryUpload) {
+    return {
+      action: 'retry-upload',
+      reason: pendingUpload.reason,
+      requiredSteps: UPLOAD_RETRY_STEPS,
+    };
+  }
+
   const seed = await seedDecision();
   if (seed.shouldSeed) {
     return {
@@ -393,6 +538,36 @@ async function planResultsRun() {
     nextDue,
     requiredSteps: [],
   };
+}
+
+function bet365ContextInputPath() {
+  return BET365_CONTEXT_INPUTS.find((candidate) => existsSync(candidate)) || null;
+}
+
+function planSourceRun(source) {
+  if (source === 'sportsbet') {
+    return {
+      action: 'source-sportsbet',
+      reason: 'manual Sportsbet-only odds/market enrichment requested',
+      requiredSteps: SPORTSBET_SOURCE_STEPS,
+    };
+  }
+  if (source === 'bet365') {
+    const inputPath = bet365ContextInputPath();
+    if (!inputPath) {
+      return {
+        action: 'source-bet365-skip',
+        reason: 'no bet365/StatsHub context cache found to merge',
+        requiredSteps: [],
+      };
+    }
+    return {
+      action: 'source-bet365',
+      reason: `manual bet365/StatsHub cache merge requested from ${path.relative(ROOT, inputPath)}`,
+      requiredSteps: BET365_SOURCE_STEPS,
+    };
+  }
+  throw new Error(`Unsupported source mode: ${source}`);
 }
 
 function countMatches(matchData) {
@@ -563,7 +738,7 @@ async function main() {
     `npm_command=${npmCommand}`,
   ];
 
-  const decision = resultsOnly ? await planResultsRun() : topUpOnly ? {
+  const decision = sourceMode ? planSourceRun(sourceMode) : resultsOnly ? await planResultsRun() : topUpOnly ? {
     action: 'top-up-horizon',
     reason: 'manual top-up-only mode requested',
     targetDate: todayInAdelaide(),
@@ -617,6 +792,8 @@ async function main() {
     steps.some((step) => step.id === requiredStep.id && step.status === 'ok'),
   );
   const status = requiredStepsOk && steps.every((step) => step.status === 'ok') ? 'ok' : 'failed';
+  const uploadOk = steps.some((step) => step.id === 'upload_firestore' && step.status === 'ok');
+  const localDataChanged = steps.some((step) => DATA_MUTATION_STEP_IDS.has(step.id) && step.status === 'ok');
   const log = {
     runId,
     mode: runMode,
@@ -634,6 +811,12 @@ async function main() {
     steps,
     artifacts,
   };
+
+  if (uploadOk) {
+    await clearPendingUpload();
+  } else if (localDataChanged) {
+    await markPendingUpload(log, status === 'ok' ? 'upload step was not run after local data changed' : 'upload step failed after local data changed');
+  }
 
   transcript.push('');
   transcript.push(`completed_at=${completedAt}`);

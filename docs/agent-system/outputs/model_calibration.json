@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-23 04:15:56 ACST",
+  "generated_at": "2026-05-23 17:29:48 ACST",
   "source": "docs\\agent-system\\outputs\\model_result_review_summary.json",
   "mode": "conservative_auto_learning",
   "rules": {
@@ -13,35 +13,27 @@
   "market_adjustments": {
     "btts": {
       "market": "BTTS",
-      "settled": 420,
-      "hit_rate": 0.5405,
-      "trust_factor": 0.9465,
-      "min_edge_delta": 0.0208,
-      "reason": "BTTS below 60% target over 420 settled markets."
-    },
-    "ou_cards": {
-      "market": "Cards",
-      "settled": 393,
-      "hit_rate": 0.598,
-      "trust_factor": 0.9982,
-      "min_edge_delta": 0.0007,
-      "reason": "Cards below 60% target over 393 settled markets."
+      "settled": 426,
+      "hit_rate": 0.5399,
+      "trust_factor": 0.9459,
+      "min_edge_delta": 0.021,
+      "reason": "BTTS below 60% target over 426 settled markets."
     },
     "ou_goals": {
       "market": "Goals",
-      "settled": 420,
-      "hit_rate": 0.5571,
-      "trust_factor": 0.9614,
-      "min_edge_delta": 0.015,
-      "reason": "Goals below 60% target over 420 settled markets."
+      "settled": 426,
+      "hit_rate": 0.5587,
+      "trust_factor": 0.9628,
+      "min_edge_delta": 0.0145,
+      "reason": "Goals below 60% target over 426 settled markets."
     },
     "winner": {
       "market": "Winner",
-      "settled": 420,
-      "hit_rate": 0.4881,
-      "trust_factor": 0.8993,
-      "min_edge_delta": 0.0392,
-      "reason": "Winner below 60% target over 420 settled markets."
+      "settled": 426,
+      "hit_rate": 0.4812,
+      "trust_factor": 0.8931,
+      "min_edge_delta": 0.04,
+      "reason": "Winner below 60% target over 426 settled markets."
     }
   },
   "league_market_adjustments": {
@@ -121,17 +113,6 @@
       "trust_factor": 0.964,
       "min_edge_delta": 0.014,
       "reason": "Premier League Winner weak spot from result review."
-    },
-    "Ligue 1|ou_goals": {
-      "league": "Ligue 1",
-      "market": "Goals",
-      "market_key": "ou_goals",
-      "settled": 39,
-      "hit_rate": 0.5128,
-      "odds_net": -7.83,
-      "trust_factor": 0.9694,
-      "min_edge_delta": 0.0119,
-      "reason": "Ligue 1 Goals weak spot from result review."
     }
   },
   "notes": [

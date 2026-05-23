@@ -343,21 +343,68 @@ function buildFastLeagues(leagues, cutoffIso) {
 const FIRESTORE_DOC_SAFE_BYTES = 900_000;
 const FAST_DOC_WINDOW_DAYS = [14, 7, 3, 1];
 
-function selectFastLeagues(leagues) {
+function fastDocPayload({ parsed, allTimeSummary, availableDates, fastLeagues, fastCutoff, fastDays, fastByteLength }) {
+  return firestoreSafe({
+    format: 'single_doc_v1',
+    capturedAt: parsed.captured_at || null,
+    source: parsed.source || null,
+    availableDates,
+    allTimeSummary,
+    leagueCount: fastLeagues.length,
+    matchCount: fastLeagues.reduce((sum, league) => sum + league.matches.length, 0),
+    byteLength: fastByteLength,
+    fastWindowDays: fastDays,
+    fastWindowStart: fastCutoff,
+    leagues: fastLeagues,
+    updatedAt: FieldValue.serverTimestamp(),
+  });
+}
+
+function selectFastPayload(leagues, parsed, allTimeSummary, availableDates) {
   const today = adelaideTodayIso();
   for (const days of FAST_DOC_WINDOW_DAYS) {
     const cutoff = isoMinusDays(today, days);
     const fastLeagues = buildFastLeagues(leagues, cutoff);
-    const byteLength = Buffer.byteLength(JSON.stringify({ leagues: fastLeagues }));
+    const fastByteLength = Buffer.byteLength(JSON.stringify({ leagues: fastLeagues }));
+    const payload = fastDocPayload({ parsed, allTimeSummary, availableDates, fastLeagues, fastCutoff: cutoff, fastDays: days, fastByteLength });
+    const byteLength = Buffer.byteLength(JSON.stringify(payload));
     if (byteLength <= FIRESTORE_DOC_SAFE_BYTES) {
-      return { fastLeagues, cutoff, byteLength, days };
+      return { payload, cutoff, byteLength, days, matchCount: payload.matchCount, overflow: false };
     }
     console.warn(`Fast doc payload ${(byteLength / 1024).toFixed(1)} KB at ${days}d window, retrying with smaller window`);
   }
-  // Fall back to the current Adelaide date only if every finished window is too big.
+
   const fastLeagues = buildFastLeagues(leagues, today);
-  const byteLength = Buffer.byteLength(JSON.stringify({ leagues: fastLeagues }));
-  return { fastLeagues, cutoff: today, byteLength, days: 0 };
+  const fastByteLength = Buffer.byteLength(JSON.stringify({ leagues: fastLeagues }));
+  const todayPayload = fastDocPayload({ parsed, allTimeSummary, availableDates, fastLeagues, fastCutoff: today, fastDays: 0, fastByteLength });
+  const todayByteLength = Buffer.byteLength(JSON.stringify(todayPayload));
+  if (todayByteLength <= FIRESTORE_DOC_SAFE_BYTES) {
+    return { payload: todayPayload, cutoff: today, byteLength: todayByteLength, days: 0, matchCount: todayPayload.matchCount, overflow: false };
+  }
+
+  console.warn(`Fast doc payload ${(todayByteLength / 1024).toFixed(1)} KB at 0d window; writing metadata-only fallback`);
+  const overflowPayload = firestoreSafe({
+    format: 'fast_doc_unavailable_v1',
+    capturedAt: parsed.captured_at || null,
+    source: parsed.source || null,
+    availableDates,
+    allTimeSummary,
+    leagueCount: 0,
+    matchCount: 0,
+    byteLength: todayByteLength,
+    fastWindowDays: 0,
+    fastWindowStart: today,
+    overflow: true,
+    updatedAt: FieldValue.serverTimestamp(),
+  });
+  return {
+    payload: overflowPayload,
+    cutoff: today,
+    byteLength: Buffer.byteLength(JSON.stringify(overflowPayload)),
+    days: 0,
+    matchCount: 0,
+    overflow: true,
+  };
 }
 
 function firestoreSafe(value) {
@@ -520,25 +567,16 @@ async function main() {
     updatedAt: FieldValue.serverTimestamp(),
   });
 
-  const { fastLeagues, cutoff: fastCutoff, byteLength: fastByteLength, days: fastDays } = selectFastLeagues(leagues);
-  writer.set(fastRef, firestoreSafe({
-    format: 'single_doc_v1',
-    capturedAt: parsed.captured_at || null,
-    source: parsed.source || null,
-    availableDates,
-    allTimeSummary,
-    leagueCount: fastLeagues.length,
-    matchCount: fastLeagues.reduce((sum, league) => sum + league.matches.length, 0),
-    byteLength: fastByteLength,
-    fastWindowDays: fastDays,
-    fastWindowStart: fastCutoff,
-    leagues: fastLeagues,
-    updatedAt: FieldValue.serverTimestamp(),
-  }));
+  const { payload: fastPayload, cutoff: fastCutoff, byteLength: fastByteLength, days: fastDays, overflow: fastOverflow } = selectFastPayload(leagues, parsed, allTimeSummary, availableDates);
+  writer.set(fastRef, fastPayload);
 
   await writer.close();
   console.log(`Uploaded ${dataPath} to Firestore dashboardData/${DOC_ID} as ${leagues.length} league docs and ${dateBuckets.size} date docs.`);
-  console.log(`Uploaded fast dashboard doc dashboardData/${FAST_DOC_ID} (${fastDays}-day window from ${fastCutoff}, ${(fastByteLength / 1024).toFixed(1)} KB).`);
+  if (fastOverflow) {
+    console.log(`Uploaded fast dashboard doc dashboardData/${FAST_DOC_ID} as metadata-only fallback (${(fastByteLength / 1024).toFixed(1)} KB); app will use date/league docs.`);
+  } else {
+    console.log(`Uploaded fast dashboard doc dashboardData/${FAST_DOC_ID} (${fastDays}-day window from ${fastCutoff}, ${(fastByteLength / 1024).toFixed(1)} KB).`);
+  }
 }
 
 main().catch((error) => {

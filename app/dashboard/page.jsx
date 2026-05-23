@@ -317,7 +317,7 @@ function resultIcon(result) {
 }
 
 function marketPillClass(result) {
-  if (result === 'hit') return 'border-emerald-400 bg-emerald-100 shadow-panel';
+  if (result === 'hit') return 'border-emerald-400 bg-emerald-200 shadow-panel';
   if (result === 'miss') return 'border-red-400 bg-red-100 shadow-panel';
   if (result === 'pass') return 'border-slate-300 bg-slate-100 shadow-panel';
   return 'border-slate-300 bg-white shadow-panel';
@@ -330,7 +330,7 @@ function marketValueClass(result) {
 }
 
 function resultBadgeClass(result) {
-  if (result === 'hit') return 'bg-emerald-100 text-emerald-700';
+  if (result === 'hit') return 'bg-emerald-200 text-emerald-800';
   if (result === 'miss') return 'bg-red-100 text-red-700';
   return 'bg-slate-200 text-slate-600';
 }
@@ -341,7 +341,7 @@ function visibleResultLabel(result) {
 }
 
 function streakCardClass(result) {
-  if (result === 'hit') return 'border-emerald-400 bg-emerald-100 shadow-panel';
+  if (result === 'hit') return 'border-emerald-400 bg-emerald-200 shadow-panel';
   if (result === 'miss') return 'border-red-400 bg-red-100 shadow-panel';
   return 'border-slate-300 bg-white shadow-panel';
 }
@@ -1171,14 +1171,14 @@ function winnerPredictionSide(match, winner = match.predictions?.winner) {
 function winnerPredictionCardClass(match, side, winner = match.predictions?.winner) {
   const predictedSide = winnerPredictionSide(match, winner);
   if (predictedSide !== side) return 'border-line bg-field/60';
-  if (winner?.result === 'hit') return 'border-emerald-400 bg-emerald-50 ring-1 ring-emerald-500';
+  if (winner?.result === 'hit') return 'border-emerald-400 bg-emerald-200 ring-1 ring-emerald-500';
   if (winner?.result === 'miss') return 'border-red-300 bg-red-50 ring-1 ring-red-300';
   return 'border-amber-300 bg-amber-50';
 }
 
 function winnerPredictionScoreClass(match, winner = match.predictions?.winner) {
   if (winnerPredictionSide(match, winner) !== 'draw') return match.status === 'FT' ? 'rounded-md bg-ink px-3 py-2 text-sm text-white' : 'text-xs text-slate-400';
-  if (winner?.result === 'hit') return 'rounded-md border border-emerald-400 bg-emerald-50 px-3 py-2 text-sm text-emerald-900 ring-1 ring-emerald-500';
+  if (winner?.result === 'hit') return 'rounded-md border border-emerald-400 bg-emerald-200 px-3 py-2 text-sm text-emerald-900 ring-1 ring-emerald-500';
   if (winner?.result === 'miss') return 'rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-800 ring-1 ring-red-300';
   return 'rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-800';
 }
@@ -3518,7 +3518,7 @@ function comparisonOddsText(value) {
 }
 
 function summaryRowClass(result) {
-  if (result === 'hit') return 'border border-emerald-300 border-l-4 border-l-emerald-600 bg-emerald-50/50 shadow-panel';
+  if (result === 'hit') return 'border border-emerald-300 border-l-4 border-l-emerald-600 bg-emerald-100 shadow-panel';
   if (result === 'miss') return 'border border-red-300 border-l-4 border-l-red-600 bg-red-50/50 shadow-panel';
   return 'border border-slate-300 border-l-4 border-l-slate-500 bg-slate-50 shadow-panel';
 }
@@ -3593,21 +3593,35 @@ function StreakList({ title, streaks, match }) {
   );
 }
 
-function ResultsReview({ matches, selectedDate, reviewSummary, activeReviewFilter = 'all', onReviewFilterChange }) {
+function ResultsReview({
+  matches,
+  selectedDate,
+  reviewSummary,
+  activeReviewFilter = 'all',
+  onReviewFilterChange,
+  onSelectToday,
+  onMoveDate,
+  canMovePreviousDate = true,
+}) {
   const [reviewScope, setReviewScope] = useState('week');
-  const selectedWeek = useMemo(() => weekStartMonday(selectedDate), [selectedDate]);
+  const effectiveSelectedDate = selectedDate && selectedDate !== 'all' ? selectedDate : localTodayDate();
+  const selectedWeek = useMemo(() => weekStartMonday(effectiveSelectedDate), [effectiveSelectedDate]);
   const rowsForScope = useCallback((scope) => {
-    if (scope === 'date' && selectedDate && selectedDate !== 'all') {
-      return reviewSummary?.byDate?.[selectedDate] || summarizeResultsByMarket(trackedFinishedMatches(matches).filter((match) => match.date === selectedDate), matches).filter((row) => row.total > 0);
-    }
-    if (scope === 'week' && selectedWeek) {
-      return reviewSummary?.byWeek?.[selectedWeek] || summarizeResultsByMarket(
-        trackedFinishedMatches(matches).filter((match) => weekStartMonday(match.date) === selectedWeek),
+    const tracked = trackedFinishedMatches(matches);
+    if (scope === 'date') {
+      return summarizeResultsByMarket(
+        tracked.filter((match) => match.date === effectiveSelectedDate),
         matches,
       ).filter((row) => row.total > 0);
     }
-    return reviewSummary?.all || summarizeResultsByMarket(trackedFinishedMatches(matches), matches).filter((row) => row.total > 0);
-  }, [matches, reviewSummary, selectedDate, selectedWeek]);
+    if (scope === 'week') {
+      return summarizeResultsByMarket(
+        tracked.filter((match) => weekStartMonday(match.date) === selectedWeek),
+        matches,
+      ).filter((row) => row.total > 0);
+    }
+    return reviewSummary?.all || summarizeResultsByMarket(tracked, matches).filter((row) => row.total > 0);
+  }, [effectiveSelectedDate, matches, reviewSummary, selectedWeek]);
   const scopeRows = {
     date: rowsForScope('date'),
     week: rowsForScope('week'),
@@ -3618,7 +3632,7 @@ function ResultsReview({ matches, selectedDate, reviewSummary, activeReviewFilte
   const best = [...rows].sort((a, b) => b.hitRate - a.hitRate)[0];
   const worst = [...rows].sort((a, b) => a.hitRate - b.hitRate)[0];
   const scopeOptions = [
-    { key: 'date', label: selectedDate && selectedDate !== 'all' ? formatDateDMY(selectedDate) : 'Selected date' },
+    { key: 'date', label: formatDateDMY(effectiveSelectedDate) },
     { key: 'week', label: 'This week' },
     { key: 'all', label: 'All time' },
   ];
@@ -3626,7 +3640,7 @@ function ResultsReview({ matches, selectedDate, reviewSummary, activeReviewFilte
   const weekEnd = selectedWeek ? addDaysToIsoDate(selectedWeek, 6) : '';
   const rangeLabel =
     reviewScope === 'date'
-      ? selectedDate && selectedDate !== 'all' ? formatDateDMY(selectedDate) : 'Selected date'
+      ? formatDateDMY(effectiveSelectedDate)
       : reviewScope === 'week' && selectedWeek
         ? `${formatDateDMY(selectedWeek)} to ${formatDateDMY(weekEnd)}`
         : 'All time';
@@ -3643,7 +3657,7 @@ function ResultsReview({ matches, selectedDate, reviewSummary, activeReviewFilte
     const isSuggested = row.key === 'suggested';
     const rowTone =
       row.hitRate >= 55
-        ? 'border-emerald-200 bg-emerald-50/45 hover:border-emerald-300'
+        ? 'border-emerald-300 bg-emerald-100 hover:border-emerald-400'
         : row.hitRate < 45
           ? 'border-red-200 bg-red-50/45 hover:border-red-300'
           : 'border-slate-300 bg-field hover:border-slate-400 hover:bg-white';
@@ -3662,7 +3676,7 @@ function ResultsReview({ matches, selectedDate, reviewSummary, activeReviewFilte
             <span>{row.label}</span>
             {isSuggested && <span className="rounded bg-white px-1.5 py-0.5 text-[10px] text-slate-500 ring-1 ring-slate-200">Primary</span>}
           </span>
-          <span className={`rounded px-1.5 py-0.5 text-xs font-semibold ${row.hitRate >= 55 ? 'bg-emerald-100 text-emerald-700' : row.hitRate < 45 ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600'}`}>
+          <span className={`rounded px-1.5 py-0.5 text-xs font-semibold ${row.hitRate >= 55 ? 'bg-emerald-200 text-emerald-800' : row.hitRate < 45 ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600'}`}>
             {row.hitRate}%
           </span>
         </div>
@@ -3681,7 +3695,33 @@ function ResultsReview({ matches, selectedDate, reviewSummary, activeReviewFilte
           <h2 className="text-base font-semibold text-ink">Results review</h2>
           <p className="mt-1 text-xs font-semibold text-slate-500">Tracked from {formatDateDMY(PREDICTION_TRACKING_START_DATE)}</p>
         </div>
-        <div className="grid shrink-0 grid-cols-3 gap-1 text-xs font-semibold sm:min-w-80">
+        <div className="flex shrink-0 flex-col gap-2 sm:min-w-[26rem]">
+          <div className="grid grid-cols-[2.5rem_minmax(0,1fr)] gap-1 text-xs font-semibold">
+            <button
+              type="button"
+              onClick={() => {
+                setReviewScope('date');
+                onMoveDate?.(-1);
+              }}
+              disabled={!canMovePreviousDate}
+              className="inline-flex h-9 items-center justify-center rounded-md border border-slate-300 bg-white text-slate-700 transition hover:bg-field disabled:cursor-not-allowed disabled:opacity-40"
+              aria-label="Previous results day"
+              title="Previous day"
+            >
+              <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setReviewScope('date');
+                onSelectToday?.();
+              }}
+              className="h-9 rounded-md border border-slate-300 bg-white px-3 text-slate-700 transition hover:bg-field"
+            >
+              Today
+            </button>
+          </div>
+          <div className="grid grid-cols-3 gap-1 text-xs font-semibold">
           {scopeOptions.map((option) => {
             const active = reviewScope === option.key;
             return (
@@ -3697,6 +3737,7 @@ function ResultsReview({ matches, selectedDate, reviewSummary, activeReviewFilte
               </button>
             );
           })}
+          </div>
         </div>
       </div>
       {insight && (
@@ -3706,7 +3747,7 @@ function ResultsReview({ matches, selectedDate, reviewSummary, activeReviewFilte
       )}
       {(best || worst) && (
         <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs font-semibold">
-          {best && <span className="rounded-md border border-emerald-200 bg-emerald-50 px-2 py-1 text-emerald-700">Best {best.label} {best.hitRate}%</span>}
+          {best && <span className="rounded-md border border-emerald-300 bg-emerald-100 px-2 py-1 text-emerald-800">Best {best.label} {best.hitRate}%</span>}
           {worst && <span className="rounded-md border border-red-200 bg-red-50 px-2 py-1 text-red-700">Weakest {worst.label} {worst.hitRate}%</span>}
         </div>
       )}
@@ -4974,15 +5015,15 @@ function HomeInner() {
     let cancelled = false;
     const initialDate = localTodayDate();
 
-    setSelectedDate((current) => current || initialDate);
-    const cached = readMatchDataCache(initialDate) || readMatchDataCache();
+    setSelectedDate((current) => current || 'all');
+    const cached = readMatchDataCache() || readMatchDataCache(initialDate);
     const hasCache = Boolean(cached && Array.isArray(cached.leagues) && cached.leagues.length);
     if (hasCache) {
       setData(cached);
       setError('');
     }
 
-    loadMatchDataWithRetry(initialDate)
+    loadMatchDataWithRetry('')
       .then((nextData) => {
         if (cancelled) return;
         setData(nextData);
@@ -5247,6 +5288,10 @@ function HomeInner() {
   }, []);
 
   const [slideDir, setSlideDir] = useState(0);
+  const selectAllDates = useCallback(() => {
+    setSlideDir(0);
+    setSelectedDate('all');
+  }, []);
   const selectToday = useCallback(() => {
     if (todayDateIndex === -1) return;
     const nextDirection = selectedDateIndex === -1 ? 0 : todayDateIndex > selectedDateIndex ? 1 : todayDateIndex < selectedDateIndex ? -1 : 0;
@@ -5268,6 +5313,24 @@ function HomeInner() {
       setSelectedDate(dateOptions[nextIndex]);
     },
     [dateOptions, selectedDateIndex],
+  );
+
+  const reviewDate = selectedDate && selectedDate !== 'all' ? selectedDate : todayDate;
+  const reviewDateIndex = dateOptions.indexOf(reviewDate);
+  const canMoveReviewDatePrevious = dateOptions.length > 0 && (reviewDateIndex === -1 || reviewDateIndex > 0);
+  const moveReviewDate = useCallback(
+    (direction) => {
+      if (!dateOptions.length) return;
+      const anchor = selectedDate && selectedDate !== 'all' ? selectedDate : todayDate;
+      const anchorIndex = dateOptions.indexOf(anchor);
+      const safeAnchorIndex = anchorIndex === -1
+        ? (direction < 0 ? dateOptions.length - 1 : 0)
+        : anchorIndex;
+      const nextIndex = Math.min(Math.max(safeAnchorIndex + direction, 0), dateOptions.length - 1);
+      setSlideDir(direction > 0 ? 1 : -1);
+      setSelectedDate(dateOptions[nextIndex]);
+    },
+    [dateOptions, selectedDate, todayDate],
   );
 
   const handleReviewFilterChange = useCallback((nextFilter) => {
@@ -5685,6 +5748,9 @@ function HomeInner() {
             reviewSummary={data?.allTimeSummary?.review}
             activeReviewFilter={reviewFilter}
             onReviewFilterChange={handleReviewFilterChange}
+            onSelectToday={selectToday}
+            onMoveDate={moveReviewDate}
+            canMovePreviousDate={canMoveReviewDatePrevious}
           />
           <VoteLeaderboard data={voteLeaderboard} loading={voteLeaderboardLoading} error={voteLeaderboardError} bookmakerId={bookmakerId} />
         </div>
@@ -5720,6 +5786,24 @@ function HomeInner() {
               aria-label="Next match date"
             >
               <ChevronRight className="h-5 w-5" aria-hidden="true" />
+            </button>
+          </div>
+          <div className="mt-3 flex items-center justify-center gap-2">
+            <button
+              type="button"
+              onClick={selectAllDates}
+              disabled={selectedDate === 'all'}
+              className="inline-flex h-9 shrink-0 items-center rounded-full border border-line bg-white px-4 text-sm font-semibold text-slate-700 transition hover:bg-field disabled:border-ink disabled:bg-ink disabled:text-white disabled:opacity-100"
+            >
+              All dates
+            </button>
+            <button
+              type="button"
+              onClick={selectToday}
+              disabled={selectedDate === todayDate}
+              className="inline-flex h-9 shrink-0 items-center rounded-full border border-line bg-white px-4 text-sm font-semibold text-slate-700 transition hover:bg-field disabled:border-ink disabled:bg-ink disabled:text-white disabled:opacity-100"
+            >
+              Today
             </button>
           </div>
           <div className="mt-3 flex items-center justify-center gap-2 overflow-x-auto sm:justify-start">
@@ -5769,6 +5853,15 @@ function HomeInner() {
             <option value="all">All statuses</option>
           </select>
           <div className="hidden min-w-0 flex-nowrap items-center gap-1.5 rounded-md border border-line bg-field p-1 sm:flex">
+            <button
+              type="button"
+              onClick={selectAllDates}
+              disabled={selectedDate === 'all'}
+              className="inline-flex h-9 shrink-0 items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-slate-700 hover:bg-white/80 disabled:border-ink disabled:bg-ink disabled:text-white disabled:opacity-100"
+              aria-label="Show all match dates"
+            >
+              All dates
+            </button>
             <button
               type="button"
               onClick={selectToday}

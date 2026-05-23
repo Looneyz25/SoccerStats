@@ -94,6 +94,13 @@ Use the explicit top-up path when you want the light prediction horizon refresh 
 npm.cmd run get:data:topup
 ```
 
+Use source-specific enrichment paths when only one provider lane needs updating after the core slate exists:
+```
+npm.cmd run get:data:sportsbet
+npm.cmd run get:data:bet365
+```
+`get:data:sportsbet` refreshes Sportsbet 1X2/deep markets, visible prediction odds, badges, and Firestore upload without rebuilding the full fixture slate. `get:data:bet365` is intentionally cache-first: it merges a local `docs/agent-system/inputs/bet365_context.json` or `statshub_context.json` into future unlocked matches, then caches badges and uploads. Do not turn bet365 into a high-frequency scraper; use it as conservative context/fallback data.
+
 Use `npm.cmd run data:refresh:local` when Firestore credentials are not available. Do not add proxy/IP rotation to bypass provider controls; prefer API/fallback sources, caching, gentle sleeps, and backoff.
 
 **Prompt shortcut** — when the user says `get data`, `update data`, `refresh data`, `get latest data`, or similar, treat it as a request to run the full Firestore publish path from `C:\Betting\Soccer Stats`:

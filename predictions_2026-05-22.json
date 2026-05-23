@@ -104774,7 +104774,11 @@
             "name": "Lillestrom",
             "short": "Lillestrom",
             "team_id": "sportsbet:10495000:home",
-            "goals": 1
+            "goals": 1,
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/lillestr-m-sk.png",
+            "badge_storage_path": "badges/teams/lillestr-m-sk.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://r2.thesportsdb.com/images/media/team/badge/txpuvv1448823342.png"
           },
           "away": {
             "name": "Kristiansund",
@@ -105212,7 +105216,11 @@
           "away": {
             "name": "Bodo/Glimt",
             "short": "Bodo/Glimt",
-            "goals": 4
+            "goals": 4,
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/bod-glimt.png",
+            "badge_storage_path": "badges/teams/bod-glimt.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://r2.thesportsdb.com/images/media/team/badge/uqpwwx1449165943.png"
           },
           "predictions": {
             "winner": {
@@ -105382,7 +105390,11 @@
           "home": {
             "name": "Bodo Glimt",
             "short": "Bodo Glimt",
-            "team_id": "sportsbet:10495050:home"
+            "team_id": "sportsbet:10495050:home",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/bod-glimt.png",
+            "badge_storage_path": "badges/teams/bod-glimt.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://r2.thesportsdb.com/images/media/team/badge/uqpwwx1449165943.png"
           },
           "away": {
             "name": "Brann",
@@ -106535,7 +106547,11 @@
           "away": {
             "name": "Lillestrom",
             "short": "Lillestrom",
-            "team_id": "sportsbet:10495094:away"
+            "team_id": "sportsbet:10495094:away",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/lillestr-m-sk.png",
+            "badge_storage_path": "badges/teams/lillestr-m-sk.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://r2.thesportsdb.com/images/media/team/badge/txpuvv1448823342.png"
           },
           "predictions": {
             "winner": {

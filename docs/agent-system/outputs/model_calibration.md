@@ -1,16 +1,15 @@
 # Model Calibration
 
-Generated: 2026-05-23 04:15:56 ACST
+Generated: 2026-05-23 17:29:48 ACST
 Mode: conservative_auto_learning
 
 ## Market Adjustments
 
 | Market | Settled | Hit Rate | Trust Factor | Min Edge Delta | Reason |
 | --- | ---: | ---: | ---: | ---: | --- |
-| BTTS | 420 | 54.0% | 0.9465 | 0.0208 | BTTS below 60% target over 420 settled markets. |
-| Cards | 393 | 59.8% | 0.9982 | 0.0007 | Cards below 60% target over 393 settled markets. |
-| Goals | 420 | 55.7% | 0.9614 | 0.015 | Goals below 60% target over 420 settled markets. |
-| Winner | 420 | 48.8% | 0.8993 | 0.0392 | Winner below 60% target over 420 settled markets. |
+| BTTS | 426 | 54.0% | 0.9459 | 0.021 | BTTS below 60% target over 426 settled markets. |
+| Goals | 426 | 55.9% | 0.9628 | 0.0145 | Goals below 60% target over 426 settled markets. |
+| Winner | 426 | 48.1% | 0.8931 | 0.04 | Winner below 60% target over 426 settled markets. |
 
 ## League Market Adjustments
 
@@ -23,7 +22,6 @@ Mode: conservative_auto_learning
 | Bundesliga | Cards | 36 | 44.4% | 0.9496 | 0.0196 | Bundesliga Cards weak spot from result review. |
 | Eredivisie | Goals | 46 | 45.6% | 0.9406 | 0.0231 | Eredivisie Goals weak spot from result review. |
 | Premier League | Winner | 40 | 50.0% | 0.964 | 0.014 | Premier League Winner weak spot from result review. |
-| Ligue 1 | Goals | 39 | 51.3% | 0.9694 | 0.0119 | Ligue 1 Goals weak spot from result review. |
 
 ## Notes
 

@@ -85,6 +85,8 @@ async function loadFastDoc() {
   if (!snap.exists) throw new Error('match_data_fast missing');
   const fast = snap.data() || {};
   if (fast.format !== 'single_doc_v1' || !Array.isArray(fast.leagues)) {
+    const fallback = await loadDefaultDateDoc();
+    if (fallback) return fallback;
     throw new Error('match_data_fast format unexpected');
   }
   let allTimeSummary = fast.allTimeSummary || null;
@@ -141,6 +143,33 @@ async function loadAllTimeSummary() {
   const metaSnap = await db.collection(META_DOC_PATH[0]).doc(META_DOC_PATH[1]).get();
   const metaSummary = metaSnap.exists ? metaSnap.data()?.allTimeSummary : null;
   return metaSummary || summarizeAllTime(await loadLeagueDocs());
+}
+
+function adelaideTodayIso() {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Australia/Adelaide',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(new Date());
+  const byType = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${byType.year}-${byType.month}-${byType.day}`;
+}
+
+async function loadDefaultDateDoc() {
+  const db = getFirestore(getAdminApp());
+  const metaSnap = await db.collection(META_DOC_PATH[0]).doc(META_DOC_PATH[1]).get();
+  const availableDates = Array.isArray(metaSnap.data()?.availableDates) ? metaSnap.data().availableDates : [];
+  const today = adelaideTodayIso();
+  const candidates = [today, ...availableDates.slice().sort((a, b) => b.localeCompare(a))];
+  const seen = new Set();
+  for (const candidate of candidates) {
+    if (seen.has(candidate)) continue;
+    seen.add(candidate);
+    const payload = await loadDateDoc(candidate);
+    if (payload) return payload;
+  }
+  return null;
 }
 
 async function loadDateDoc(date) {

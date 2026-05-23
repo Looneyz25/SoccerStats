@@ -1,30 +1,26 @@
 # Result Check Schedule
 
-Generated: 2026-05-23T04:15:56.120265+09:30
+Generated: 2026-05-23T17:29:47.717450+09:30
 Completion buffer: 150 minutes after kickoff
 Due now: 0
-Remaining today/overdue: 10
-Tomorrow visible: 35
+Remaining today/overdue: 6
+Tomorrow visible: 41
 
 ## This Run
 
-- Settled: 1
+- Settled: 2
 - Flashscore settled: 0
 - LiveScore settled: 0
 - Due skipped / awaiting source: 0
-- Not due yet: 80
-- Backfilled finished: 22
-- Enriched FT: 30
+- Not due yet: 111
+- Backfilled finished: 0
+- Enriched FT: 18
 - Pruned stale unresolved: 0
 
 ## Match Checks
 
 | Scope | Queue | Date | Kickoff | Due time | League | Match | Result queue |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| today | no | 2026-05-23 | 02:30 | 05:00 | Allsvenskan | Djurgardens vs Brommapojkarna | DUE @ 05:00 |
-| today | no | 2026-05-23 | 04:15 | 06:45 | Serie A | Fiorentina vs Atalanta | DUE @ 06:45 |
-| today | no | 2026-05-23 | 14:30 | 17:00 | J1 League | Avispa Fukuoka vs Vissel Kobe | DUE @ 17:00 |
-| today | no | 2026-05-23 | 14:30 | 17:00 | J1 League | Sanfrecce Hiroshima vs Nagoya Grampus | DUE @ 17:00 |
 | today | no | 2026-05-23 | 17:40 | 20:10 | A-League Men | Auckland FC vs Sydney FC | DUE @ 20:10 |
 | today | no | 2026-05-23 | 18:00 | 20:30 | J1 League | Kashima Antlers vs FC Tokyo | DUE @ 20:30 |
 | today | no | 2026-05-23 | 18:30 | 21:00 | J1 League | Kashiwa Reysol vs JEF United Chiba | DUE @ 21:00 |
@@ -45,10 +41,15 @@ Tomorrow visible: 35
 | tomorrow | no | 2026-05-24 | 04:30 | 07:00 | LaLiga | Real Betis vs Levante UD | DUE @ 07:00 |
 | tomorrow | no | 2026-05-24 | 04:30 | 07:00 | LaLiga | Real Madrid vs Athletic Club | DUE @ 07:00 |
 | tomorrow | no | 2026-05-24 | 04:30 | 07:00 | LaLiga | Valencia vs FC Barcelona | DUE @ 07:00 |
+| tomorrow | no | 2026-05-24 | 05:30 | 08:00 | Brasileirão Betano | São Paulo vs Botafogo | DUE @ 08:00 |
+| tomorrow | no | 2026-05-24 | 05:30 | 08:00 | Brasileirão Betano | Vitória vs Internacional | DUE @ 08:00 |
 | tomorrow | no | 2026-05-24 | 06:00 | 08:30 | MLS | Minnesota United vs Real Salt Lake | DUE @ 08:30 |
+| tomorrow | no | 2026-05-24 | 07:30 | 10:00 | Brasileirão Betano | Grêmio vs Santos | DUE @ 10:00 |
+| tomorrow | no | 2026-05-24 | 07:30 | 10:00 | Brasileirão Betano | Mirassol vs Fluminense | DUE @ 10:00 |
 | tomorrow | no | 2026-05-24 | 09:00 | 11:30 | MLS | Charlotte FC vs New England Revolution | DUE @ 11:30 |
 | tomorrow | no | 2026-05-24 | 09:00 | 11:30 | MLS | DC United vs CF Montréal | DUE @ 11:30 |
 | tomorrow | no | 2026-05-24 | 09:00 | 11:30 | MLS | FC Cincinnati vs Orlando City SC | DUE @ 11:30 |
+| tomorrow | no | 2026-05-24 | 09:30 | 12:00 | Brasileirão Betano | Flamengo vs Palmeiras | DUE @ 12:00 |
 | tomorrow | no | 2026-05-24 | 10:00 | 12:30 | MLS | Chicago Fire vs Toronto FC | DUE @ 12:30 |
 | tomorrow | no | 2026-05-24 | 10:00 | 12:30 | MLS | Nashville SC vs New York City FC | DUE @ 12:30 |
 | tomorrow | no | 2026-05-24 | 10:00 | 12:30 | MLS | Sporting Kansas City vs New York Red Bulls | DUE @ 12:30 |
@@ -60,6 +61,7 @@ Tomorrow visible: 35
 | tomorrow | no | 2026-05-24 | 14:30 | 17:00 | J1 League | Mito Hollyhock vs Kawasaki Frontale | DUE @ 17:00 |
 | tomorrow | no | 2026-05-24 | 14:30 | 17:00 | J1 League | Tokyo Verdy vs Yokohama F. Marinos | DUE @ 17:00 |
 | tomorrow | no | 2026-05-24 | 17:30 | 20:00 | J1 League | Shimizu S-Pulse vs Gamba Osaka | DUE @ 20:00 |
+| tomorrow | no | 2026-05-24 | 19:45 | 22:15 | Eredivisie | AFC Ajax vs FC Utrecht | DUE @ 22:15 |
 | tomorrow | no | 2026-05-24 | 21:30 | 00:00 | Allsvenskan | Hammarby vs AIK | DUE @ 00:00 |
 | tomorrow | no | 2026-05-24 | 21:30 | 00:00 | Allsvenskan | Sirius vs GAIS | DUE @ 00:00 |
 | tomorrow | no | 2026-05-24 | 21:30 | 00:00 | League One | Stockport County vs Bolton Wanderers | DUE @ 00:00 |
