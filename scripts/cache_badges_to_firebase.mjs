@@ -12,11 +12,21 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PROJECT_ID = 'sports-predictions-f91fd';
 const STORAGE_BUCKET = process.env.FIREBASE_BADGE_BUCKET || 'lvrstats-badges-sports-predictions-f91fd';
 const DEFAULT_SERVICE_ACCOUNT_PATH = path.join(ROOT, '.secrets', 'firebase-service-account.json');
-const DATA_FILES = ['match_data.json', `predictions_${new Date().toISOString().slice(0, 10)}.json`];
+const DATA_FILES = (process.env.BADGE_DATA_FILES || `match_data.json,predictions_${new Date().toISOString().slice(0, 10)}.json`)
+  .split(',')
+  .map((value) => value.trim())
+  .filter(Boolean);
+const TARGET_TEAM_KEYS = new Set(
+  (process.env.BADGE_TARGET_TEAMS || '')
+    .split(',')
+    .flatMap((value) => sourceKeysForTeamName(value))
+    .filter(Boolean),
+);
 const FIREBASE_STORAGE_HOST = 'firebasestorage.googleapis.com';
 const GOOGLE_STORAGE_HOST = 'storage.googleapis.com';
 const THESPORTSDB_KEY = process.env.THESPORTSDB_KEY || process.env.THESPORTSDB_API_KEY || '123';
 const THESPORTSDB_BASE = `https://www.thesportsdb.com/api/v1/json/${THESPORTSDB_KEY}`;
+const FETCH_TIMEOUT_MS = Number(process.env.BADGE_FETCH_TIMEOUT_MS || 12000);
 
 const LEAGUE_BADGE_SOURCES = {
   'Premier League': 'https://media.api-sports.io/football/leagues/39.png',
@@ -86,6 +96,13 @@ const TEAM_BADGE_SOURCES = {
   'man city': 'https://media.api-sports.io/football/teams/50.png',
   'manchester united': 'https://media.api-sports.io/football/teams/33.png',
   'man united': 'https://media.api-sports.io/football/teams/33.png',
+  flamengo: 'https://media.api-sports.io/football/teams/127.png',
+  fluminense: 'https://media.api-sports.io/football/teams/124.png',
+  gremio: 'https://media.api-sports.io/football/teams/130.png',
+  'grêmio': 'https://media.api-sports.io/football/teams/130.png',
+  internacional: 'https://media.api-sports.io/football/teams/119.png',
+  mallorca: 'https://media.api-sports.io/football/teams/798.png',
+  mirassol: 'https://media.api-sports.io/football/teams/7848.png',
   napoli: 'https://media.api-sports.io/football/teams/492.png',
   newcastle: 'https://media.api-sports.io/football/teams/34.png',
   'newcastle united': 'https://media.api-sports.io/football/teams/34.png',
@@ -94,6 +111,9 @@ const TEAM_BADGE_SOURCES = {
   orgryte: 'https://r2.thesportsdb.com/images/media/team/badge/ssprqx1473540098.png/medium',
   parma: 'https://media.api-sports.io/football/teams/523.png',
   pisa: 'https://media.api-sports.io/football/teams/517.png',
+  palmeiras: 'https://media.api-sports.io/football/teams/121.png',
+  'real sociedad': 'https://media.api-sports.io/football/teams/548.png',
+  santos: 'https://media.api-sports.io/football/teams/128.png',
   sassuolo: 'https://media.api-sports.io/football/teams/488.png',
   'sanfrecce hiroshima': 'https://r2.thesportsdb.com/images/media/team/badge/gsgkxj1590068965.png/medium',
   'ssc napoli': 'https://media.api-sports.io/football/teams/492.png',
@@ -105,6 +125,8 @@ const TEAM_BADGE_SOURCES = {
   'v-varen nagasaki': 'https://r2.thesportsdb.com/images/media/team/badge/m2heet1734627248.png/medium',
   'v varen nagasaki': 'https://r2.thesportsdb.com/images/media/team/badge/m2heet1734627248.png/medium',
   'vissel kobe': 'https://r2.thesportsdb.com/images/media/team/badge/2axjch1578239819.png/medium',
+  'vitória': 'https://media.api-sports.io/football/teams/136.png',
+  vitoria: 'https://media.api-sports.io/football/teams/136.png',
   'west ham': 'https://media.api-sports.io/football/teams/48.png',
   'west ham united': 'https://media.api-sports.io/football/teams/48.png',
   wolves: 'https://media.api-sports.io/football/teams/39.png',
@@ -136,7 +158,18 @@ const THESPORTSDB_LEAGUES = {
   'Primeira Liga': 'Portuguese Primeira Liga',
   'Scottish Premiership': 'Scottish Premier League',
   'Serie A': 'Italian Serie A',
+  'Brasileirão Betano': 'Brazilian Serie A',
 };
+
+async function fetchWithTimeout(url, options = {}) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timeout);
+  }
+}
 
 function credentialOptions() {
   if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
@@ -203,6 +236,14 @@ function isProviderUrl(value) {
   return /^https?:\/\//i.test(text) && !isFirebaseUrl(text);
 }
 
+function sourceNameForUrl(sourceUrl, fallback = 'provider') {
+  const text = String(sourceUrl || '').toLowerCase();
+  if (text.includes('media.api-sports.io/football/')) return 'api-football';
+  if (text.includes('r2.thesportsdb.com') || text.includes('thesportsdb.com')) return 'thesportsdb';
+  if (text.includes('sofascore')) return 'sofascore';
+  return fallback;
+}
+
 function rosterSourceForTeam(teamSources, leagueName, teamName) {
   const leagueMap = teamSources.byLeague.get(leagueName) || new Map();
   for (const key of sourceKeysForTeamName(teamName)) {
@@ -231,7 +272,7 @@ function sourceForEntity(kind, entity, teamSources, leagueName = '') {
 
 async function fetchTheSportsDbLeagueTeams(leagueName) {
   const url = `${THESPORTSDB_BASE}/search_all_teams.php?l=${encodeURIComponent(leagueName)}`;
-  const response = await fetch(url, {
+  const response = await fetchWithTimeout(url, {
     headers: {
       'user-agent': 'Mozilla/5.0 LVRstats badge cache',
       accept: 'application/json',
@@ -244,7 +285,7 @@ async function fetchTheSportsDbLeagueTeams(leagueName) {
 
 async function fetchTheSportsDbTeamByName(teamName) {
   const url = `${THESPORTSDB_BASE}/searchteams.php?t=${encodeURIComponent(teamName)}`;
-  const response = await fetch(url, {
+  const response = await fetchWithTimeout(url, {
     headers: {
       'user-agent': 'Mozilla/5.0 LVRstats badge cache',
       accept: 'application/json',
@@ -328,7 +369,7 @@ function managedStorageUrl(bucketName, storagePath) {
 }
 
 async function fetchProviderImage(sourceUrl) {
-  const response = await fetch(sourceUrl, {
+  const response = await fetchWithTimeout(sourceUrl, {
     headers: {
       'user-agent': 'Mozilla/5.0 LVRstats badge cache',
       accept: 'image/avif,image/webp,image/png,image/svg+xml,image/*,*/*;q=0.8',
@@ -456,7 +497,7 @@ async function cacheEntity(bucket, db, registryCache, teamSources, kind, entity,
   const identity = cleanKey(identityParts.filter(Boolean).join('-'));
   if (!identity) return { cached: 0, skipped: 1, failed: 0 };
   try {
-    Object.assign(entity, await cacheImage(bucket, kind, identity, sourceUrl, entity.badge_source || sourceName));
+    Object.assign(entity, await cacheImage(bucket, kind, identity, sourceUrl, sourceNameForUrl(sourceUrl, entity.badge_source || sourceName)));
     await writeRegistryBadge(db, registryCache, kind, entity, identityParts);
     delete entity.badge_cache_error;
     return { cached: 1, skipped: 0, failed: 0 };
@@ -484,12 +525,19 @@ async function processFile(bucket, db, registryCache, fileName) {
   }
 
   const counts = { cached: 0, skipped: 0, failed: 0 };
-  const teamSources = await loadTeamSources(data.leagues || []);
+  const hasTargetTeams = TARGET_TEAM_KEYS.size > 0;
+  const teamSources = hasTargetTeams ? { byLeague: new Map(), byName: new Map() } : await loadTeamSources(data.leagues || []);
   for (const league of data.leagues || []) {
-    addCounts(counts, await cacheEntity(bucket, db, registryCache, teamSources, 'leagues', league, [league.name || league.id], 'league', league.name));
+    if (!hasTargetTeams) {
+      addCounts(counts, await cacheEntity(bucket, db, registryCache, teamSources, 'leagues', league, [league.name || league.id], 'league', league.name));
+    }
     for (const match of league.matches || []) {
-      addCounts(counts, await cacheEntity(bucket, db, registryCache, teamSources, 'teams', match.home, [match.home?.team_id, match.home?.name].filter(Boolean), match.home?.badge_source || 'thesportsdb', league.name));
-      addCounts(counts, await cacheEntity(bucket, db, registryCache, teamSources, 'teams', match.away, [match.away?.team_id, match.away?.name].filter(Boolean), match.away?.badge_source || 'thesportsdb', league.name));
+      if (!hasTargetTeams || sourceKeysForTeamName(match.home?.name || match.home?.short).some((key) => TARGET_TEAM_KEYS.has(key))) {
+        addCounts(counts, await cacheEntity(bucket, db, registryCache, teamSources, 'teams', match.home, [match.home?.team_id, match.home?.name].filter(Boolean), match.home?.badge_source || 'thesportsdb', league.name));
+      }
+      if (!hasTargetTeams || sourceKeysForTeamName(match.away?.name || match.away?.short).some((key) => TARGET_TEAM_KEYS.has(key))) {
+        addCounts(counts, await cacheEntity(bucket, db, registryCache, teamSources, 'teams', match.away, [match.away?.team_id, match.away?.name].filter(Boolean), match.away?.badge_source || 'thesportsdb', league.name));
+      }
     }
   }
 

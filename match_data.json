@@ -12443,8 +12443,10 @@
             "rank": 5,
             "pts": 49,
             "goals": 1,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2816-real-betis.png",
+            "badge_storage_path": "badges/teams/2816-real-betis.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2816/image"
           },
           "away": {
             "name": "Real Madrid",
@@ -12453,8 +12455,10 @@
             "rank": 2,
             "pts": 83,
             "goals": 1,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2829-real-madrid.png",
+            "badge_storage_path": "badges/teams/2829-real-madrid.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2829/image"
           },
           "odds": {
             "home": 3.7,
@@ -12655,8 +12659,10 @@
             "short": "Mallorca",
             "team_id": 2799,
             "goals": 1,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2799-mallorca.png",
+            "badge_storage_path": "badges/teams/2799-mallorca.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://media.api-sports.io/football/teams/798.png"
           },
           "predictions": {
             "winner": {
@@ -13113,8 +13119,10 @@
             "goals": 3,
             "rank": 8,
             "pts": 47,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2818-rayo-vallecano.png",
+            "badge_storage_path": "badges/teams/2818-rayo-vallecano.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2818/image"
           },
           "away": {
             "name": "Real Sociedad",
@@ -13123,8 +13131,10 @@
             "goals": 3,
             "rank": 10,
             "pts": 45,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2824-real-sociedad.png",
+            "badge_storage_path": "badges/teams/2824-real-sociedad.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://media.api-sports.io/football/teams/548.png"
           },
           "odds": {
             "home": 2.88,
@@ -13323,8 +13333,10 @@
             "goals": 1,
             "rank": 20,
             "pts": 29,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2851-real-oviedo.png",
+            "badge_storage_path": "badges/teams/2851-real-oviedo.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2851/image"
           },
           "away": {
             "name": "Elche",
@@ -13534,8 +13546,10 @@
             "goals": 2,
             "rank": 9,
             "pts": 46,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2828-valencia.png",
+            "badge_storage_path": "badges/teams/2828-valencia.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2828/image"
           },
           "away": {
             "name": "Girona",
@@ -13957,8 +13971,10 @@
             "goals": 2,
             "rank": 16,
             "pts": 42,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2820-osasuna.png",
+            "badge_storage_path": "badges/teams/2820-osasuna.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2820/image"
           },
           "away": {
             "name": "Sevilla",
@@ -13967,8 +13983,10 @@
             "goals": 1,
             "rank": 13,
             "pts": 43,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2833-sevilla.png",
+            "badge_storage_path": "badges/teams/2833-sevilla.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2833/image"
           },
           "odds": {
             "home": 2,
@@ -14215,8 +14233,10 @@
             "goals": 2,
             "rank": 3,
             "pts": 69,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2819-villarreal.png",
+            "badge_storage_path": "badges/teams/2819-villarreal.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2819/image"
           },
           "away": {
             "name": "Celta Vigo",
@@ -14710,8 +14730,10 @@
             "goals": 5,
             "rank": 3,
             "pts": 69,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2819-villarreal.png",
+            "badge_storage_path": "badges/teams/2819-villarreal.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2819/image"
           },
           "away": {
             "name": "Levante UD",
@@ -14962,8 +14984,10 @@
             "goals": 0,
             "rank": 9,
             "pts": 46,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2828-valencia.png",
+            "badge_storage_path": "badges/teams/2828-valencia.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2828/image"
           },
           "away": {
             "name": "Atlético Madrid",
@@ -15222,8 +15246,10 @@
             "goals": 1,
             "rank": 19,
             "pts": 39,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2799-mallorca.png",
+            "badge_storage_path": "badges/teams/2799-mallorca.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://media.api-sports.io/football/teams/798.png"
           },
           "odds": {
             "home": 2,
@@ -15646,8 +15672,10 @@
             "goals": 1,
             "rank": 16,
             "pts": 42,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2820-osasuna.png",
+            "badge_storage_path": "badges/teams/2820-osasuna.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2820/image"
           },
           "away": {
             "name": "FC Barcelona",
@@ -16200,8 +16228,10 @@
             "goals": 2,
             "rank": 8,
             "pts": 47,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2818-rayo-vallecano.png",
+            "badge_storage_path": "badges/teams/2818-rayo-vallecano.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2818/image"
           },
           "predictions": {
             "winner": {
@@ -16415,8 +16445,10 @@
             "goals": 0,
             "rank": 20,
             "pts": 29,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2851-real-oviedo.png",
+            "badge_storage_path": "badges/teams/2851-real-oviedo.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2851/image"
           },
           "predictions": {
             "winner": {
@@ -16618,8 +16650,10 @@
             "goals": 2,
             "rank": 2,
             "pts": 83,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2829-real-madrid.png",
+            "badge_storage_path": "badges/teams/2829-real-madrid.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2829/image"
           },
           "predictions": {
             "winner": {
@@ -16840,8 +16874,10 @@
             "goals": 0,
             "rank": 10,
             "pts": 45,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2824-real-sociedad.png",
+            "badge_storage_path": "badges/teams/2824-real-sociedad.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://media.api-sports.io/football/teams/548.png"
           },
           "predictions": {
             "winner": {
@@ -17057,8 +17093,10 @@
             "goals": 2,
             "rank": 16,
             "pts": 42,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2820-osasuna.png",
+            "badge_storage_path": "badges/teams/2820-osasuna.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2820/image"
           },
           "predictions": {
             "winner": {
@@ -17540,8 +17578,10 @@
             "goals": 1,
             "rank": 19,
             "pts": 39,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2799-mallorca.png",
+            "badge_storage_path": "badges/teams/2799-mallorca.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://media.api-sports.io/football/teams/798.png"
           },
           "away": {
             "name": "Villarreal",
@@ -17723,8 +17763,10 @@
             "goals": 1,
             "rank": 9,
             "pts": 46,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2828-valencia.png",
+            "badge_storage_path": "badges/teams/2828-valencia.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2828/image"
           },
           "predictions": {
             "winner": {
@@ -18004,8 +18046,10 @@
             "goals": 2,
             "rank": 10,
             "pts": 45,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2824-real-sociedad.png",
+            "badge_storage_path": "badges/teams/2824-real-sociedad.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://media.api-sports.io/football/teams/548.png"
           },
           "away": {
             "name": "Real Betis",
@@ -18330,8 +18374,10 @@
             "goals": 0,
             "rank": 2,
             "pts": 83,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2829-real-madrid.png",
+            "badge_storage_path": "badges/teams/2829-real-madrid.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2829/image"
           },
           "predictions": {
             "winner": {
@@ -19040,8 +19086,10 @@
             "goals": 1,
             "rank": 16,
             "pts": 42,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2820-osasuna.png",
+            "badge_storage_path": "badges/teams/2820-osasuna.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2820/image"
           },
           "away": {
             "name": "Atlético Madrid",
@@ -19686,8 +19734,10 @@
             "goals": 1,
             "rank": 19,
             "pts": 39,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2799-mallorca.png",
+            "badge_storage_path": "badges/teams/2799-mallorca.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://media.api-sports.io/football/teams/798.png"
           },
           "predictions": {
             "winner": {
@@ -19993,8 +20043,10 @@
             "rank": 10,
             "pts": 45,
             "goals": 1,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2824-real-sociedad.png",
+            "badge_storage_path": "badges/teams/2824-real-sociedad.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://media.api-sports.io/football/teams/548.png"
           },
           "predictions": {
             "winner": {
@@ -21224,9 +21276,11 @@
             "team_id": 2826,
             "rank": 19,
             "pts": 39,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2799-mallorca.png",
             "goals": 0,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/2799-mallorca.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://media.api-sports.io/football/teams/798.png"
           },
           "predictions": {
             "winner": {
@@ -21719,9 +21773,11 @@
             "team_id": 2824,
             "rank": 10,
             "pts": 45,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2824-real-sociedad.png",
             "goals": 3,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/2824-real-sociedad.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://media.api-sports.io/football/teams/548.png"
           },
           "away": {
             "name": "Valencia",
@@ -22718,10 +22774,12 @@
             "name": "Real Sociedad",
             "short": "Real",
             "team_id": 2824,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2824-real-sociedad.png",
             "rank": 10,
             "pts": 45,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/2824-real-sociedad.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://media.api-sports.io/football/teams/548.png"
           },
           "predictions": {
             "winner": {
@@ -23725,10 +23783,12 @@
             "name": "Mallorca",
             "short": "Mallorca",
             "team_id": 2826,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2799-mallorca.png",
             "rank": 19,
             "pts": 39,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/2799-mallorca.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://media.api-sports.io/football/teams/798.png"
           },
           "away": {
             "name": "Real Oviedo",
@@ -25390,8 +25450,10 @@
             "rank": 3,
             "pts": 59,
             "goals": 3,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/36360-rb-leipzig.png",
+            "badge_storage_path": "badges/teams/36360-rb-leipzig.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/36360/image"
           },
           "away": {
             "name": "Union Berlin",
@@ -26126,8 +26188,10 @@
             "goals": 3,
             "rank": 10,
             "pts": 40,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2556-mainz-05.png",
+            "badge_storage_path": "badges/teams/2556-mainz-05.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2556/image"
           },
           "away": {
             "name": "Bayern",
@@ -26642,8 +26706,10 @@
             "short": "Gladbach",
             "team_id": 2546,
             "goals": 0,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2546-m-gladbach.png",
+            "badge_storage_path": "badges/teams/2546-m-gladbach.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2546/image"
           },
           "predictions": {
             "winner": {
@@ -26869,8 +26935,10 @@
             "goals": 1,
             "rank": 4,
             "pts": 62,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2677-vfb-stuttgart.png",
+            "badge_storage_path": "badges/teams/2677-vfb-stuttgart.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2677/image"
           },
           "away": {
             "name": "SV Werder Bremen",
@@ -26879,8 +26947,10 @@
             "goals": 1,
             "rank": 15,
             "pts": 32,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2534-sv-werder-bremen.png",
+            "badge_storage_path": "badges/teams/2534-sv-werder-bremen.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2534/image"
           },
           "odds": {
             "home": 1.53,
@@ -27526,8 +27596,10 @@
             "goals": 2,
             "rank": 11,
             "pts": 39,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2547-1-fc-union-berlin.png",
+            "badge_storage_path": "badges/teams/2547-1-fc-union-berlin.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2547/image"
           },
           "away": {
             "name": "1. FC Köln",
@@ -28087,8 +28159,10 @@
             "goals": 3,
             "rank": 17,
             "pts": 26,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/5885-1-fc-heidenheim.png",
+            "badge_storage_path": "badges/teams/5885-1-fc-heidenheim.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/5885/image"
           },
           "odds": {
             "home": 1.22,
@@ -28551,8 +28625,10 @@
             "goals": 3,
             "rank": 5,
             "pts": 61,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2569-tsg-hoffenheim.png",
+            "badge_storage_path": "badges/teams/2569-tsg-hoffenheim.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2569/image"
           },
           "away": {
             "name": "VfB Stuttgart",
@@ -28795,8 +28871,10 @@
             "goals": 1,
             "rank": 3,
             "pts": 65,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/36360-rb-leipzig.png",
+            "badge_storage_path": "badges/teams/36360-rb-leipzig.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/36360/image"
           },
           "odds": {
             "home": 2,
@@ -29020,8 +29098,10 @@
             "goals": 2,
             "rank": 10,
             "pts": 40,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2556-1-fsv-mainz-05.png",
+            "badge_storage_path": "badges/teams/2556-1-fsv-mainz-05.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2556/image"
           },
           "predictions": {
             "winner": {
@@ -29255,8 +29335,10 @@
             "goals": 1,
             "rank": 12,
             "pts": 38,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2527-borussia-m-gladbach.png",
+            "badge_storage_path": "badges/teams/2527-borussia-m-gladbach.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2527/image"
           },
           "away": {
             "name": "Borussia Dortmund",
@@ -29449,8 +29531,10 @@
             "goals": 1,
             "rank": 16,
             "pts": 29,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2524-vfl-wolfsburg.webp",
+            "badge_storage_path": "badges/teams/2524-vfl-wolfsburg.webp",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2524/image"
           },
           "predictions": {
             "winner": {
@@ -29849,8 +29933,10 @@
             "goals": 1,
             "rank": 12,
             "pts": 38,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2527-borussia-m-gladbach.png",
+            "badge_storage_path": "badges/teams/2527-borussia-m-gladbach.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2527/image"
           },
           "predictions": {
             "winner": {
@@ -30740,8 +30826,10 @@
             "goals": 0,
             "rank": 16,
             "pts": 29,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2524-vfl-wolfsburg.webp",
+            "badge_storage_path": "badges/teams/2524-vfl-wolfsburg.webp",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2524/image"
           },
           "away": {
             "name": "FC Bayern München",
@@ -30957,8 +31045,10 @@
             "goals": 3,
             "rank": 17,
             "pts": 26,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/5885-1-fc-heidenheim.png",
+            "badge_storage_path": "badges/teams/5885-1-fc-heidenheim.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/5885/image"
           },
           "predictions": {
             "winner": {
@@ -31139,8 +31229,10 @@
             "goals": 3,
             "rank": 11,
             "pts": 39,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2547-1-fc-union-berlin.png",
+            "badge_storage_path": "badges/teams/2547-1-fc-union-berlin.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2547/image"
           },
           "predictions": {
             "winner": {
@@ -31485,8 +31577,10 @@
             "rank": 11,
             "pts": 39,
             "goals": 4,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2547-1-fc-union-berlin.png",
+            "badge_storage_path": "badges/teams/2547-1-fc-union-berlin.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2547/image"
           },
           "away": {
             "name": "FC Augsburg",
@@ -31828,8 +31922,10 @@
             "rank": 12,
             "pts": 38,
             "goals": 4,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2527-borussia-m-gladbach.png",
+            "badge_storage_path": "badges/teams/2527-borussia-m-gladbach.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2527/image"
           },
           "away": {
             "name": "TSG Hoffenheim",
@@ -32770,9 +32866,11 @@
             "name": "SC Paderborn 07",
             "short": "Paderborn",
             "team_id": 2561,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2561-sc-paderborn-07.png",
             "goals": 0,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/2561-sc-paderborn-07.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2561/image"
           },
           "predictions": {
             "winner": {
@@ -38882,8 +38980,10 @@
             "goals": 3,
             "rank": 8,
             "pts": 53,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/1659-rc-strasbourg.png",
+            "badge_storage_path": "badges/teams/1659-rc-strasbourg.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/1659/image"
           },
           "odds": {
             "home": 1.95,
@@ -39310,8 +39410,10 @@
             "goals": 2,
             "rank": 10,
             "pts": 44,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/1681-toulouse.webp",
+            "badge_storage_path": "badges/teams/1681-toulouse.webp",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/1681/image"
           },
           "away": {
             "name": "AS Monaco",
@@ -39812,8 +39914,10 @@
             "goals": 0,
             "rank": 11,
             "pts": 44,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/6070-paris-fc.png",
+            "badge_storage_path": "badges/teams/6070-paris-fc.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/6070/image"
           },
           "away": {
             "name": "Lille",
@@ -40083,8 +40187,10 @@
             "goals": 2,
             "rank": 6,
             "pts": 59,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/1658-stade-rennais.png",
+            "badge_storage_path": "badges/teams/1658-stade-rennais.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/1658/image"
           },
           "away": {
             "name": "Nantes",
@@ -40093,8 +40199,10 @@
             "goals": 1,
             "rank": 17,
             "pts": 23,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/1647-nantes.png",
+            "badge_storage_path": "badges/teams/1647-nantes.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/1647/image"
           },
           "odds": {
             "home": 1.42,
@@ -40339,8 +40447,10 @@
             "goals": 1,
             "rank": 16,
             "pts": 32,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/1661-nice.png",
+            "badge_storage_path": "badges/teams/1661-nice.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/1661/image"
           },
           "odds": {
             "home": 1.5,
@@ -41960,8 +42070,10 @@
             "goals": 4,
             "rank": 11,
             "pts": 44,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/6070-paris-fc.png",
+            "badge_storage_path": "badges/teams/6070-paris-fc.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/6070/image"
           },
           "away": {
             "name": "Stade Brestois",
@@ -41970,8 +42082,10 @@
             "goals": 0,
             "rank": 12,
             "pts": 39,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/1715-stade-brestois.png",
+            "badge_storage_path": "badges/teams/1715-stade-brestois.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/1715/image"
           },
           "predictions": {
             "winner": {
@@ -42197,8 +42311,10 @@
             "goals": 2,
             "rank": 10,
             "pts": 44,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/1681-toulouse.webp",
+            "badge_storage_path": "badges/teams/1681-toulouse.webp",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/1681/image"
           },
           "predictions": {
             "winner": {
@@ -42461,8 +42577,10 @@
             "goals": 2,
             "rank": 6,
             "pts": 59,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/1658-stade-rennais.png",
+            "badge_storage_path": "badges/teams/1658-stade-rennais.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/1658/image"
           },
           "predictions": {
             "winner": {
@@ -43823,8 +43941,10 @@
             "goals": 2,
             "rank": 6,
             "pts": 59,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/1658-stade-rennais.png",
+            "badge_storage_path": "badges/teams/1658-stade-rennais.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/1658/image"
           },
           "away": {
             "name": "Paris FC",
@@ -43954,8 +44074,10 @@
             "goals": 2,
             "rank": 10,
             "pts": 44,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/1681-toulouse.webp",
+            "badge_storage_path": "badges/teams/1681-toulouse.webp",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/1681/image"
           },
           "away": {
             "name": "Olympique Lyonnais",
@@ -44135,8 +44257,10 @@
             "short": "Rodez",
             "team_id": 6925,
             "goals": 3,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/6925-rodez-af.png",
+            "badge_storage_path": "badges/teams/6925-rodez-af.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/6925/image"
           },
           "settled_at": "2026-05-14",
           "odds": {
@@ -44587,8 +44711,10 @@
             "short": "Saint-Étienne",
             "team_id": 1678,
             "goals": 7,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/1678-saint-etienne.png",
+            "badge_storage_path": "badges/teams/1678-saint-etienne.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/1678/image"
           },
           "away": {
             "name": "Rodez AF",
@@ -44728,9 +44854,11 @@
             "team_id": 1658,
             "rank": 6,
             "pts": 59,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/1658-stade-rennais.png",
             "goals": 1,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/1658-stade-rennais.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/1658/image"
           },
           "predictions": {
             "winner": {
@@ -46112,9 +46240,11 @@
             "team_id": 1681,
             "rank": 10,
             "pts": 44,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/1681-toulouse.webp",
             "goals": 0,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/1681-toulouse.webp",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/1681/image"
           },
           "predictions": {
             "winner": {
@@ -46949,10 +47079,12 @@
             "name": "Botafogo",
             "short": "Botafogo",
             "team_id": 1958,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/1958-botafogo.png",
             "rank": 9,
             "pts": 21,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/1958-botafogo.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/1958/image"
           },
           "odds": {
             "home": 1.86,
@@ -47265,19 +47397,23 @@
             "name": "Vitória",
             "short": "Vitória",
             "team_id": 1962,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/1962-vitoria.png",
             "rank": 14,
             "pts": 19,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/1962-vitoria.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://media.api-sports.io/football/teams/136.png"
           },
           "away": {
             "name": "Internacional",
             "short": "Internacional",
             "team_id": 1966,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/1966-internacional.webp",
             "rank": 11,
             "pts": 21,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/1966-internacional.webp",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/1966/image"
           },
           "odds": {
             "home": 3,
@@ -47595,19 +47731,23 @@
             "name": "Grêmio",
             "short": "Grêmio",
             "team_id": 5926,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/5926-gremio.png",
             "rank": 15,
             "pts": 18,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/5926-gremio.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://media.api-sports.io/football/teams/130.png"
           },
           "away": {
             "name": "Santos",
             "short": "Santos",
             "team_id": 1968,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/1968-santos.webp",
             "rank": 16,
             "pts": 18,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/1968-santos.webp",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/1968/image"
           },
           "odds": {
             "home": 2.15,
@@ -47923,19 +48063,23 @@
             "name": "Mirassol",
             "short": "Mirassol",
             "team_id": 21982,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/21982-mirassol.png",
             "rank": 19,
             "pts": 13,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/21982-mirassol.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/21982/image"
           },
           "away": {
             "name": "Fluminense",
             "short": "Fluminense",
             "team_id": 1961,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/1961-fluminense.webp",
             "rank": 3,
             "pts": 30,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/1961-fluminense.webp",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/1961/image"
           },
           "odds": {
             "home": 2.57,
@@ -48259,19 +48403,23 @@
             "name": "Flamengo",
             "short": "Flamengo",
             "team_id": 5981,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/5981-flamengo.png",
             "rank": 2,
             "pts": 31,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/5981-flamengo.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/5981/image"
           },
           "away": {
             "name": "Palmeiras",
             "short": "Palmeiras",
             "team_id": 1963,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/1963-palmeiras.webp",
             "rank": 1,
             "pts": 35,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/1963-palmeiras.webp",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/1963/image"
           },
           "odds": {
             "home": 1.79,
@@ -48613,19 +48761,23 @@
             "name": "Cruzeiro",
             "short": "Cruzeiro",
             "team_id": 1954,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/1954-cruzeiro.png",
             "rank": 13,
             "pts": 20,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/1954-cruzeiro.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/1954/image"
           },
           "away": {
             "name": "Chapecoense",
             "short": "Chapecoense",
             "team_id": 21845,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/21845-chapecoense.png",
             "rank": 20,
             "pts": 9,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/21845-chapecoense.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://r2.thesportsdb.com/images/media/team/badge/wy0e1i1765900601.png"
           },
           "odds": {
             "home": 1.33,
@@ -48950,10 +49102,12 @@
             "name": "Remo",
             "short": "Remo",
             "team_id": 2012,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2012-remo.webp",
             "rank": 18,
             "pts": 15,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/2012-remo.webp",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2012/image"
           },
           "away": {
             "name": "Athletico",
@@ -49259,19 +49413,23 @@
             "name": "Corinthians",
             "short": "Corinthians",
             "team_id": 1957,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/1957-corinthians.webp",
             "rank": 17,
             "pts": 18,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/1957-corinthians.webp",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/1957/image"
           },
           "away": {
             "name": "Atlético Mineiro",
             "short": "Atlético-MG",
             "team_id": 1977,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/1977-atletico-mineiro.png",
             "rank": 10,
             "pts": 21,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/1977-atletico-mineiro.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/1977/image"
           },
           "odds": {
             "home": 1.76,
@@ -49474,10 +49632,12 @@
             "name": "Red Bull Bragantino",
             "short": "RB Bragantino",
             "team_id": 1999,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/1999-red-bull-bragantino.png",
             "rank": 6,
             "pts": 23,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/1999-red-bull-bragantino.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/1999/image"
           },
           "odds": {
             "home": 1.96,
@@ -49687,19 +49847,23 @@
             "name": "Coritiba",
             "short": "Coritiba",
             "team_id": 1982,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/1982-coritiba.png",
             "rank": 7,
             "pts": 23,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/1982-coritiba.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://r2.thesportsdb.com/images/media/team/badge/ywwsyu1473538050.png"
           },
           "away": {
             "name": "Bahia",
             "short": "Bahia",
             "team_id": 1955,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/1955-bahia.png",
             "rank": 8,
             "pts": 23,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/1955-bahia.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/1955/image"
           },
           "odds": {
             "home": 2.65,
@@ -49952,21 +50116,25 @@
             "name": "Coquimbo Unido",
             "short": "Coquimbo",
             "team_id": 3165,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/3165-coquimbo-unido.png",
             "goals": 3,
             "rank": 1,
             "pts": 10,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/3165-coquimbo-unido.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/3165/image"
           },
           "away": {
             "name": "Deportes Tolima",
             "short": "Tolima",
             "team_id": 6111,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/6111-deportes-tolima.png",
             "goals": 0,
             "rank": 2,
             "pts": 7,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/6111-deportes-tolima.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/6111/image"
           },
           "settled_at": "2026-05-23",
           "odds": {
@@ -50130,11 +50298,13 @@
             "name": "Boca Juniors",
             "short": "Boca",
             "team_id": 3202,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/3202-boca-juniors.webp",
             "goals": 1,
             "rank": 3,
             "pts": 7,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/3202-boca-juniors.webp",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/3202/image"
           },
           "away": {
             "name": "Cruzeiro",
@@ -50222,21 +50392,25 @@
             "name": "Independiente Santa Fe",
             "short": "Santa",
             "team_id": 6116,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/6116-independiente-santa-fe.png",
             "goals": 2,
             "rank": 3,
             "pts": 5,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/6116-independiente-santa-fe.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/6116/image"
           },
           "away": {
             "name": "Club Atlético Platense",
             "short": "Platense",
             "team_id": 36837,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/36837-club-atletico-platense.webp",
             "goals": 1,
             "rank": 2,
             "pts": 7,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/36837-club-atletico-platense.webp",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/36837/image"
           },
           "settled_at": "2026-05-23",
           "odds": {
@@ -50305,11 +50479,13 @@
             "name": "Club Always Ready",
             "short": "Always",
             "team_id": 268083,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/268083-club-always-ready.png",
             "goals": 1,
             "rank": 4,
             "pts": 3,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/268083-club-always-ready.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/268083/image"
           },
           "away": {
             "name": "Mirassol",
@@ -50385,21 +50561,25 @@
             "name": "Rosario Central",
             "short": "Rosario",
             "team_id": 3217,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/3217-rosario-central.webp",
             "goals": 4,
             "rank": 1,
             "pts": 13,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/3217-rosario-central.webp",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/3217/image"
           },
           "away": {
             "name": "Universidad Central",
             "short": "UCV",
             "team_id": 249952,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/249952-universidad-central.webp",
             "goals": 0,
             "rank": 3,
             "pts": 6,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/249952-universidad-central.webp",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/249952/image"
           },
           "settled_at": "2026-05-23",
           "odds": {
@@ -50473,21 +50653,25 @@
             "name": "Independiente del Valle",
             "short": "Ind.",
             "team_id": 39723,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/39723-independiente-del-valle.webp",
             "goals": 4,
             "rank": 2,
             "pts": 10,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/39723-independiente-del-valle.webp",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/39723/image"
           },
           "away": {
             "name": "Libertad",
             "short": "Libertad",
             "team_id": 5996,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/5996-libertad.png",
             "goals": 1,
             "rank": 4,
             "pts": 0,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/5996-libertad.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/5996/image"
           },
           "settled_at": "2026-05-23",
           "odds": {
@@ -50573,11 +50757,13 @@
             "name": "Estudiantes de La Plata",
             "short": "Estudiantes",
             "team_id": 3206,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/3206-estudiantes-de-la-plata.webp",
             "goals": 0,
             "rank": 3,
             "pts": 6,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/3206-estudiantes-de-la-plata.webp",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/3206/image"
           },
           "settled_at": "2026-05-23",
           "odds": {
@@ -50653,21 +50839,25 @@
             "name": "Cusco FC",
             "short": "Cusco",
             "team_id": 63760,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/63760-cusco-fc.png",
             "goals": 2,
             "rank": 4,
             "pts": 1,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/63760-cusco-fc.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/63760/image"
           },
           "away": {
             "name": "Independiente Medellín",
             "short": "Ind.",
             "team_id": 6115,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/6115-independiente-medellin.png",
             "goals": 3,
             "rank": 2,
             "pts": 7,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/6115-independiente-medellin.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/6115/image"
           },
           "settled_at": "2026-05-23",
           "odds": {
@@ -50746,11 +50936,13 @@
             "name": "Nacional",
             "short": "Nacional",
             "team_id": 3230,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/3230-nacional.png",
             "goals": 0,
             "rank": 4,
             "pts": 5,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/3230-nacional.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/3230/image"
           },
           "away": {
             "name": "Universitario de Deportes",
@@ -50839,11 +51031,13 @@
             "name": "Cerro Porteño",
             "short": "Cerro",
             "team_id": 5991,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/5991-cerro-porteno.png",
             "goals": 1,
             "rank": 1,
             "pts": 10,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/5991-cerro-porteno.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/5991/image"
           },
           "settled_at": "2026-05-23",
           "odds": {
@@ -50954,21 +51148,25 @@
             "name": "Junior Barranquilla",
             "short": "Junior",
             "team_id": 6105,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/6105-junior-barranquilla.png",
             "goals": 3,
             "rank": 4,
             "pts": 4,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/6105-junior-barranquilla.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/6105/image"
           },
           "away": {
             "name": "Club Sporting Cristal",
             "short": "Sporting",
             "team_id": 2302,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2302-club-sporting-cristal.png",
             "goals": 2,
             "rank": 3,
             "pts": 6,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/2302-club-sporting-cristal.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2302/image"
           },
           "settled_at": "2026-05-23",
           "odds": {
@@ -51037,21 +51235,25 @@
             "name": "LDU",
             "short": "LDU",
             "team_id": 5257,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/5257-ldu.png",
             "goals": 2,
             "rank": 2,
             "pts": 9,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/5257-ldu.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/5257/image"
           },
           "away": {
             "name": "CA Lanús",
             "short": "Lanús",
             "team_id": 3218,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/3218-ca-lanus.png",
             "goals": 0,
             "rank": 3,
             "pts": 6,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/3218-ca-lanus.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/3218/image"
           },
           "settled_at": "2026-05-23",
           "odds": {
@@ -51147,21 +51349,25 @@
             "name": "Deportivo La Guaira",
             "short": "La Guaira",
             "team_id": 36437,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/36437-deportivo-la-guaira.png",
             "goals": 2,
             "rank": 4,
             "pts": 3,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/36437-deportivo-la-guaira.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/36437/image"
           },
           "away": {
             "name": "Independiente Rivadavia",
             "short": "Ind.",
             "team_id": 36842,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/36842-independiente-rivadavia.png",
             "goals": 4,
             "rank": 1,
             "pts": 13,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/36842-independiente-rivadavia.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/36842/image"
           },
           "settled_at": "2026-05-23",
           "odds": {
@@ -51245,21 +51451,25 @@
             "name": "Universidad Católica",
             "short": "Universidad",
             "team_id": 3151,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/3151-universidad-catolica.png",
             "goals": 2,
             "rank": 1,
             "pts": 10,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/3151-universidad-catolica.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/3151/image"
           },
           "away": {
             "name": "Barcelona SC Guayaquil",
             "short": "Barcelona",
             "team_id": 5250,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/5250-barcelona-sc-guayaquil.png",
             "goals": 0,
             "rank": 4,
             "pts": 3,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/5250-barcelona-sc-guayaquil.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/5250/image"
           },
           "settled_at": "2026-05-23",
           "odds": {
@@ -51410,10 +51620,12 @@
             "name": "CA Lanús",
             "short": "Lanús",
             "team_id": 3218,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/3218-ca-lanus.png",
             "rank": 3,
             "pts": 6,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/3218-ca-lanus.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/3218/image"
           },
           "away": {
             "name": "Mirassol",
@@ -51671,10 +51883,12 @@
             "name": "Club Always Ready",
             "short": "Always",
             "team_id": 268083,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/268083-club-always-ready.png",
             "rank": 4,
             "pts": 3,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/268083-club-always-ready.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/268083/image"
           },
           "odds": {
             "home": 1.36,
@@ -51893,10 +52107,12 @@
             "name": "Independiente Medellín",
             "short": "Ind.",
             "team_id": 6115,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/6115-independiente-medellin.png",
             "rank": 2,
             "pts": 7,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/6115-independiente-medellin.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/6115/image"
           },
           "odds": {
             "home": 1.6,
@@ -52336,10 +52552,12 @@
             "name": "Nacional",
             "short": "Nacional",
             "team_id": 3230,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/3230-nacional.png",
             "rank": 4,
             "pts": 5,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/3230-nacional.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/3230/image"
           },
           "away": {
             "name": "Coquimbo Unido",
@@ -52774,10 +52992,12 @@
             "name": "Independiente del Valle",
             "short": "Ind.",
             "team_id": 39723,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/39723-independiente-del-valle.webp",
             "rank": 2,
             "pts": 10,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/39723-independiente-del-valle.webp",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/39723/image"
           },
           "away": {
             "name": "Rosario Central",
@@ -52982,10 +53202,12 @@
             "name": "Libertad",
             "short": "Libertad",
             "team_id": 5996,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/5996-libertad.png",
             "rank": 4,
             "pts": 0,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/5996-libertad.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/5996/image"
           },
           "away": {
             "name": "Universidad Central",
@@ -53407,10 +53629,12 @@
             "name": "Deportivo La Guaira",
             "short": "La Guaira",
             "team_id": 36437,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/36437-deportivo-la-guaira.png",
             "rank": 4,
             "pts": 3,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/36437-deportivo-la-guaira.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/36437/image"
           },
           "odds": {
             "home": 1.14,
@@ -54076,10 +54300,12 @@
             "name": "Cerro Porteño",
             "short": "Cerro",
             "team_id": 5991,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/5991-cerro-porteno.png",
             "rank": 1,
             "pts": 10,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/5991-cerro-porteno.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/5991/image"
           },
           "away": {
             "name": "Club Sporting Cristal",
@@ -54301,10 +54527,12 @@
             "name": "Junior Barranquilla",
             "short": "Junior",
             "team_id": 6105,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/6105-junior-barranquilla.png",
             "rank": 4,
             "pts": 4,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/6105-junior-barranquilla.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/6105/image"
           },
           "odds": {
             "home": 1.25,
@@ -54546,10 +54774,12 @@
             "name": "Universidad Católica",
             "short": "Universidad",
             "team_id": 3151,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/3151-universidad-catolica.png",
             "rank": 1,
             "pts": 10,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/3151-universidad-catolica.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/3151/image"
           },
           "odds": {
             "home": 1.42,
@@ -56497,8 +56727,10 @@
             "goals": 0,
             "rank": 17,
             "pts": 29,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2947-nac-breda.png",
+            "badge_storage_path": "badges/teams/2947-nac-breda.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2947/image"
           },
           "away": {
             "name": "AFC Ajax",
@@ -56703,8 +56935,10 @@
             "goals": 1,
             "rank": 4,
             "pts": 58,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2955-fc-twente.png",
+            "badge_storage_path": "badges/teams/2955-fc-twente.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2955/image"
           },
           "away": {
             "name": "NEC Nijmegen",
@@ -56713,8 +56947,10 @@
             "goals": 1,
             "rank": 3,
             "pts": 59,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2962-nec-nijmegen.png",
+            "badge_storage_path": "badges/teams/2962-nec-nijmegen.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2962/image"
           },
           "settled_at": "2026-04-27",
           "odds": {
@@ -56979,8 +57215,10 @@
             "short": "RKC Waalwijk",
             "team_id": 2956,
             "goals": 1,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2956-rkc-waalwijk.png",
+            "badge_storage_path": "badges/teams/2956-rkc-waalwijk.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2956/image"
           },
           "predictions": {
             "winner": {
@@ -57204,16 +57442,20 @@
             "short": "Den Bosch",
             "team_id": 2963,
             "goals": 2,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2963-fc-den-bosch.png",
+            "badge_storage_path": "badges/teams/2963-fc-den-bosch.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2963/image"
           },
           "away": {
             "name": "Almere City FC",
             "short": "Almere City",
             "team_id": 2990,
             "goals": 3,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2990-almere-city-fc.png",
+            "badge_storage_path": "badges/teams/2990-almere-city-fc.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2990/image"
           },
           "predictions": {
             "winner": {
@@ -57490,8 +57732,10 @@
             "short": "Den Bosch",
             "team_id": 2963,
             "goals": 0,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2963-fc-den-bosch.png",
+            "badge_storage_path": "badges/teams/2963-fc-den-bosch.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2963/image"
           },
           "predictions": {
             "winner": {
@@ -58487,8 +58731,10 @@
             "goals": 1,
             "rank": 14,
             "pts": 37,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2972-sc-telstar.png",
+            "badge_storage_path": "badges/teams/2972-sc-telstar.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2972/image"
           },
           "h2h_streaks": [
             {
@@ -59777,8 +60023,10 @@
             "goals": 2,
             "rank": 4,
             "pts": 58,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2955-fc-twente.png",
+            "badge_storage_path": "badges/teams/2955-fc-twente.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2955/image"
           },
           "predictions": {
             "winner": {
@@ -59997,8 +60245,10 @@
             "goals": 2,
             "rank": 10,
             "pts": 43,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2960-sparta-rotterdam.png",
+            "badge_storage_path": "badges/teams/2960-sparta-rotterdam.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2960/image"
           },
           "away": {
             "name": "Go Ahead Eagles",
@@ -60214,8 +60464,10 @@
             "short": "Willem",
             "team_id": 2961,
             "goals": 1,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2961-willem-ii-tilburg.png",
+            "badge_storage_path": "badges/teams/2961-willem-ii-tilburg.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2961/image"
           },
           "predictions": {
             "winner": {
@@ -60393,8 +60645,10 @@
             "short": "De Graafschap",
             "team_id": 2949,
             "goals": 1,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2949-de-graafschap.png",
+            "badge_storage_path": "badges/teams/2949-de-graafschap.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2949/image"
           },
           "predictions": {
             "winner": {
@@ -60680,8 +60934,10 @@
             "short": "De Graafschap",
             "team_id": 2949,
             "goals": 2,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2949-de-graafschap.png",
+            "badge_storage_path": "badges/teams/2949-de-graafschap.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2949/image"
           },
           "away": {
             "name": "Almere City FC",
@@ -61271,8 +61527,10 @@
             "goals": 4,
             "rank": 4,
             "pts": 58,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2955-fc-twente.png",
+            "badge_storage_path": "badges/teams/2955-fc-twente.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2955/image"
           },
           "away": {
             "name": "Sparta Rotterdam",
@@ -62104,8 +62362,10 @@
             "goals": 3,
             "rank": 14,
             "pts": 37,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2972-sc-telstar.png",
+            "badge_storage_path": "badges/teams/2972-sc-telstar.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2972/image"
           },
           "away": {
             "name": "Heracles Almelo",
@@ -62770,9 +63030,11 @@
             "team_id": 2972,
             "rank": 14,
             "pts": 37,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2972-sc-telstar.png",
             "goals": 2,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/2972-sc-telstar.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2972/image"
           },
           "predictions": {
             "winner": {
@@ -65665,11 +65927,13 @@
             "name": "Moreirense",
             "short": "Moreirense",
             "team_id": 3014,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/3014-moreirense.png",
             "goals": 0,
             "rank": 7,
             "pts": 43,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/3014-moreirense.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/3014/image"
           },
           "away": {
             "name": "AVS - Futebol SAD",
@@ -65847,11 +66111,13 @@
             "name": "CD Nacional",
             "short": "Nacional",
             "team_id": 3013,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/3013-cd-nacional.png",
             "goals": 2,
             "rank": 14,
             "pts": 34,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/3013-cd-nacional.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/3013/image"
           },
           "away": {
             "name": "Vitória SC",
@@ -66373,11 +66639,13 @@
             "name": "Sporting Braga",
             "short": "Braga",
             "team_id": 2999,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2999-sporting-braga.webp",
             "goals": 2,
             "rank": 4,
             "pts": 59,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/2999-sporting-braga.webp",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2999/image"
           },
           "away": {
             "name": "CF Estrela Amadora",
@@ -66965,11 +67233,13 @@
             "name": "Gil Vicente",
             "short": "Gil Vicente",
             "team_id": 3010,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/3010-gil-vicente.png",
             "goals": 0,
             "rank": 6,
             "pts": 50,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/3010-gil-vicente.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/3010/image"
           },
           "settled_at": "2026-05-17",
           "odds": {
@@ -67557,8 +67827,10 @@
             "goals": 0,
             "rank": 30,
             "pts": 7,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/39833-philadelphia-union.png",
+            "badge_storage_path": "badges/teams/39833-philadelphia-union.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/39833/image"
           },
           "odds": {
             "home": 1.86,
@@ -67800,8 +68072,10 @@
             "goals": 2,
             "rank": 22,
             "pts": 14,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/52237-orlando-city-sc.png",
+            "badge_storage_path": "badges/teams/52237-orlando-city-sc.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/52237/image"
           },
           "odds": {
             "home": 1.76,
@@ -67988,8 +68262,10 @@
             "goals": 0,
             "rank": 15,
             "pts": 19,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2506-new-york-red-bulls.png",
+            "badge_storage_path": "badges/teams/2506-new-york-red-bulls.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2506/image"
           },
           "odds": {
             "home": 1.62,
@@ -68297,8 +68573,10 @@
             "goals": 1,
             "rank": 4,
             "pts": 28,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/337602-inter-miami-cf.png",
+            "badge_storage_path": "badges/teams/337602-inter-miami-cf.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/337602/image"
           },
           "away": {
             "name": "New England Revolution",
@@ -68307,8 +68585,10 @@
             "goals": 1,
             "rank": 6,
             "pts": 25,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2511-new-england-revolution.png",
+            "badge_storage_path": "badges/teams/2511-new-england-revolution.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2511/image"
           },
           "odds": {
             "home": 1.3,
@@ -68549,8 +68829,10 @@
             "goals": 2,
             "rank": 4,
             "pts": 24,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/22009-seattle-sounders-fc.png",
+            "badge_storage_path": "badges/teams/22009-seattle-sounders-fc.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/22009/image"
           },
           "away": {
             "name": "FC Dallas",
@@ -68723,8 +69005,10 @@
             "goals": 3,
             "rank": 1,
             "pts": 29,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/22010-vancouver-whitecaps.png",
+            "badge_storage_path": "badges/teams/22010-vancouver-whitecaps.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/22010/image"
           },
           "away": {
             "name": "Colorado Rapids",
@@ -69215,8 +69499,10 @@
             "goals": 0,
             "rank": 15,
             "pts": 11,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2509-sporting-kansas-city.png",
+            "badge_storage_path": "badges/teams/2509-sporting-kansas-city.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2509/image"
           },
           "odds": {
             "home": 1.25,
@@ -69479,8 +69765,10 @@
             "goals": 4,
             "rank": 1,
             "pts": 30,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/337612-nashville-sc.png",
+            "badge_storage_path": "badges/teams/337612-nashville-sc.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/337612/image"
           },
           "away": {
             "name": "Charlotte FC",
@@ -69722,8 +70010,10 @@
             "goals": 2,
             "rank": 14,
             "pts": 13,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/407803-st-louis-city.png",
+            "badge_storage_path": "badges/teams/407803-st-louis-city.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/407803/image"
           },
           "away": {
             "name": "San Jose Earthquakes",
@@ -69732,8 +70022,10 @@
             "goals": 3,
             "rank": 2,
             "pts": 29,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/21825-san-jose-earthquakes.png",
+            "badge_storage_path": "badges/teams/21825-san-jose-earthquakes.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/21825/image"
           },
           "odds": {
             "home": 2.55,
@@ -69930,8 +70222,10 @@
             "goals": 1,
             "rank": 10,
             "pts": 17,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/1043961-san-diego-fc.png",
+            "badge_storage_path": "badges/teams/1043961-san-diego-fc.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/1043961/image"
           },
           "away": {
             "name": "Portland Timbers",
@@ -69940,8 +70234,10 @@
             "goals": 2,
             "rank": 12,
             "pts": 14,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/22007-portland-timbers.png",
+            "badge_storage_path": "badges/teams/22007-portland-timbers.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/22007/image"
           },
           "odds": {
             "home": 1.66,
@@ -70240,8 +70536,10 @@
             "goals": 1,
             "rank": 23,
             "pts": 14,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/7080-toronto-fc.png",
+            "badge_storage_path": "badges/teams/7080-toronto-fc.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/7080/image"
           },
           "away": {
             "name": "Atlanta United",
@@ -70535,8 +70833,10 @@
             "goals": 0,
             "rank": 13,
             "pts": 19,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/187643-new-york-city-fc.png",
+            "badge_storage_path": "badges/teams/187643-new-york-city-fc.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/187643/image"
           },
           "settled_at": "2026-04-27",
           "odds": {
@@ -70784,8 +71084,10 @@
             "goals": 1,
             "rank": 7,
             "pts": 21,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/274650-los-angeles-fc.png",
+            "badge_storage_path": "badges/teams/274650-los-angeles-fc.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/274650/image"
           },
           "settled_at": "2026-04-27",
           "odds": {
@@ -70987,8 +71289,10 @@
             "goals": 2,
             "rank": 9,
             "pts": 19,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2513-la-galaxy.png",
+            "badge_storage_path": "badges/teams/2513-la-galaxy.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2513/image"
           },
           "away": {
             "name": "Real Salt Lake",
@@ -70997,8 +71301,10 @@
             "goals": 1,
             "rank": 3,
             "pts": 25,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/5133-real-salt-lake.png",
+            "badge_storage_path": "badges/teams/5133-real-salt-lake.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/5133/image"
           },
           "odds": {
             "home": 2.2,
@@ -71262,8 +71568,10 @@
             "goals": 1,
             "rank": 2,
             "pts": 29,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/21825-san-jose-earthquakes.png",
+            "badge_storage_path": "badges/teams/21825-san-jose-earthquakes.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/21825/image"
           },
           "odds": {
             "home": 2.55,
@@ -71528,8 +71836,10 @@
             "goals": 1,
             "rank": 4,
             "pts": 24,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/22009-seattle-sounders-fc.png",
+            "badge_storage_path": "badges/teams/22009-seattle-sounders-fc.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/22009/image"
           },
           "odds": {
             "home": 5.5,
@@ -71781,8 +72091,10 @@
             "goals": 0,
             "rank": 12,
             "pts": 14,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/22007-portland-timbers.png",
+            "badge_storage_path": "badges/teams/22007-portland-timbers.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/22007/image"
           },
           "odds": {
             "home": 1.46,
@@ -72024,8 +72336,10 @@
             "goals": 4,
             "rank": 22,
             "pts": 14,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/52237-orlando-city-sc.png",
+            "badge_storage_path": "badges/teams/52237-orlando-city-sc.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/52237/image"
           },
           "odds": {
             "home": 1.3,
@@ -72934,8 +73248,10 @@
             "goals": 0,
             "rank": 15,
             "pts": 19,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2506-new-york-red-bulls.png",
+            "badge_storage_path": "badges/teams/2506-new-york-red-bulls.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2506/image"
           },
           "away": {
             "name": "FC Dallas",
@@ -73187,8 +73503,10 @@
             "goals": 0,
             "rank": 30,
             "pts": 7,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/39833-philadelphia-union.png",
+            "badge_storage_path": "badges/teams/39833-philadelphia-union.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/39833/image"
           },
           "away": {
             "name": "Nashville SC",
@@ -73964,8 +74282,10 @@
             "goals": 2,
             "rank": 10,
             "pts": 17,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/1043961-san-diego-fc.png",
+            "badge_storage_path": "badges/teams/1043961-san-diego-fc.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/1043961/image"
           },
           "away": {
             "name": "Los Angeles FC",
@@ -74210,8 +74530,10 @@
             "goals": 1,
             "rank": 9,
             "pts": 19,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2513-la-galaxy.png",
+            "badge_storage_path": "badges/teams/2513-la-galaxy.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2513/image"
           },
           "away": {
             "name": "Vancouver Whitecaps",
@@ -74490,8 +74812,10 @@
             "goals": 0,
             "rank": 14,
             "pts": 13,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/407803-st-louis-city.png",
+            "badge_storage_path": "badges/teams/407803-st-louis-city.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/407803/image"
           },
           "predictions": {
             "winner": {
@@ -75135,8 +75459,10 @@
             "goals": 3,
             "rank": 15,
             "pts": 19,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2506-new-york-red-bulls.png",
+            "badge_storage_path": "badges/teams/2506-new-york-red-bulls.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2506/image"
           },
           "predictions": {
             "winner": {
@@ -75320,8 +75646,10 @@
             "goals": 0,
             "rank": 22,
             "pts": 14,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/52237-orlando-city-sc.png",
+            "badge_storage_path": "badges/teams/52237-orlando-city-sc.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/52237/image"
           },
           "predictions": {
             "winner": {
@@ -75478,8 +75806,10 @@
             "goals": 2,
             "rank": 9,
             "pts": 19,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2513-la-galaxy.png",
+            "badge_storage_path": "badges/teams/2513-la-galaxy.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2513/image"
           },
           "predictions": {
             "winner": {
@@ -75816,8 +76146,10 @@
             "goals": 1,
             "rank": 30,
             "pts": 7,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/39833-philadelphia-union.png",
+            "badge_storage_path": "badges/teams/39833-philadelphia-union.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/39833/image"
           },
           "predictions": {
             "winner": {
@@ -76246,8 +76578,10 @@
             "goals": 1,
             "rank": 14,
             "pts": 13,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/407803-st-louis-city.png",
+            "badge_storage_path": "badges/teams/407803-st-louis-city.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/407803/image"
           },
           "predictions": {
             "winner": {
@@ -76558,8 +76892,10 @@
             "goals": 1,
             "rank": 2,
             "pts": 29,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/21825-san-jose-earthquakes.png",
+            "badge_storage_path": "badges/teams/21825-san-jose-earthquakes.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/21825/image"
           },
           "away": {
             "name": "Vancouver Whitecaps",
@@ -76734,8 +77070,10 @@
             "goals": 1,
             "rank": 10,
             "pts": 17,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/1043961-san-diego-fc.png",
+            "badge_storage_path": "badges/teams/1043961-san-diego-fc.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/1043961/image"
           },
           "predictions": {
             "winner": {
@@ -78075,8 +78413,10 @@
             "goals": 3,
             "rank": 15,
             "pts": 19,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2506-new-york-red-bulls.png",
+            "badge_storage_path": "badges/teams/2506-new-york-red-bulls.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2506/image"
           },
           "away": {
             "name": "Columbus Crew",
@@ -78245,8 +78585,10 @@
             "goals": 4,
             "rank": 22,
             "pts": 14,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/52237-orlando-city-sc.png",
+            "badge_storage_path": "badges/teams/52237-orlando-city-sc.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/52237/image"
           },
           "away": {
             "name": "Philadelphia Union",
@@ -78682,8 +79024,10 @@
             "goals": 1,
             "rank": 9,
             "pts": 19,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2513-la-galaxy.png",
+            "badge_storage_path": "badges/teams/2513-la-galaxy.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2513/image"
           },
           "predictions": {
             "winner": {
@@ -79343,8 +79687,10 @@
             "goals": 2,
             "rank": 2,
             "pts": 29,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/21825-san-jose-earthquakes.png",
+            "badge_storage_path": "badges/teams/21825-san-jose-earthquakes.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/21825/image"
           },
           "predictions": {
             "winner": {
@@ -80290,9 +80636,11 @@
             "team_id": 52237,
             "rank": 22,
             "pts": 14,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/52237-orlando-city-sc.png",
             "goals": 1,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/52237-orlando-city-sc.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/52237/image"
           },
           "away": {
             "name": "Atlanta United",
@@ -83348,10 +83696,12 @@
             "name": "Orlando City SC",
             "short": "Orlando",
             "team_id": 52237,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/52237-orlando-city-sc.png",
             "rank": 22,
             "pts": 14,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/52237-orlando-city-sc.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/52237/image"
           },
           "predictions": {
             "winner": {
@@ -87705,17 +88055,21 @@
             "name": "Partick Thistle",
             "short": "Partick",
             "team_id": 2358,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2358-partick-thistle.png",
             "goals": 2,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/2358-partick-thistle.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2358/image"
           },
           "away": {
             "name": "Dunfermline Athletic",
             "short": "Dunfermline",
             "team_id": 2350,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2350-dunfermline-athletic.png",
             "goals": 1,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/2350-dunfermline-athletic.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2350/image"
           },
           "settled_at": "2026-05-17",
           "odds": {
@@ -88398,11 +88752,13 @@
             "name": "St. Mirren",
             "short": "St Mirren",
             "team_id": 2359,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2359-st-mirren.png",
             "rank": 5,
             "pts": 34,
             "goals": 1,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/2359-st-mirren.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2359/image"
           },
           "away": {
             "name": "Dundee United",
@@ -88616,9 +88972,11 @@
             "name": "Partick Thistle",
             "short": "Partick",
             "team_id": 2358,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2358-partick-thistle.png",
             "goals": 1,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/2358-partick-thistle.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2358/image"
           },
           "away": {
             "name": "St. Mirren",
@@ -88878,8 +89236,10 @@
             "name": "Partick Thistle",
             "short": "Partick",
             "team_id": 2358,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2358-partick-thistle.png",
+            "badge_storage_path": "badges/teams/2358-partick-thistle.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2358/image"
           },
           "predictions": {
             "winner": {
@@ -89127,11 +89487,13 @@
             "name": "Tokyo Verdy",
             "short": "Tokyo",
             "team_id": 3139,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/3139-tokyo-verdy.png",
             "goals": 1,
             "rank": 4,
             "pts": 28,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/3139-tokyo-verdy.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/3139/image"
           },
           "settled_at": "2026-05-17",
           "odds": {
@@ -89301,11 +89663,13 @@
             "name": "Urawa Red Diamonds",
             "short": "Urawa",
             "team_id": 3145,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/3145-urawa-red-diamonds.png",
             "goals": 9,
             "rank": 5,
             "pts": 25,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/3145-urawa-red-diamonds.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/3145/image"
           },
           "away": {
             "name": "FC Tokyo",
@@ -89483,11 +89847,13 @@
             "name": "Yokohama F. Marinos",
             "short": "Yokohama",
             "team_id": 3137,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/3137-yokohama-f-marinos.png",
             "goals": 0,
             "rank": 9,
             "pts": 17,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/3137-yokohama-f-marinos.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/3137/image"
           },
           "away": {
             "name": "Kashiwa Reysol",
@@ -93028,10 +93394,12 @@
             "name": "Tokyo Verdy",
             "short": "Tokyo",
             "team_id": 3139,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/3139-tokyo-verdy.png",
             "rank": 4,
             "pts": 28,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/3139-tokyo-verdy.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/3139/image"
           },
           "away": {
             "name": "Yokohama F. Marinos",
@@ -93452,8 +93820,10 @@
             "short": "Millwall",
             "team_id": 55,
             "goals": 1,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/25-millwall.webp",
+            "badge_storage_path": "badges/teams/25-millwall.webp",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/25/image"
           },
           "odds": {
             "home": 4,
@@ -93666,8 +94036,10 @@
             "short": "Charlton",
             "team_id": 72,
             "goals": 2,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/72-charlton.png",
+            "badge_storage_path": "badges/teams/72-charlton.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/72/image"
           },
           "away": {
             "name": "Hull",
@@ -94122,8 +94494,10 @@
             "goals": 0,
             "rank": 11,
             "pts": 64,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/74-west-brom.png",
+            "badge_storage_path": "badges/teams/74-west-brom.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/74/image"
           },
           "away": {
             "name": "Ipswich",
@@ -94357,8 +94731,10 @@
             "short": "Birmingham",
             "team_id": 22,
             "goals": 2,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/22-birmingham.png",
+            "badge_storage_path": "badges/teams/22-birmingham.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/22/image"
           },
           "away": {
             "name": "Bristol City",
@@ -94582,8 +94958,10 @@
             "short": "Swansea",
             "team_id": 28,
             "goals": 1,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/28-swansea.png",
+            "badge_storage_path": "badges/teams/28-swansea.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/28/image"
           },
           "predictions": {
             "winner": {
@@ -94771,8 +95149,10 @@
             "short": "Sheff Wed",
             "team_id": 26,
             "goals": 1,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/26-sheffield-wed.png",
+            "badge_storage_path": "badges/teams/26-sheffield-wed.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/26/image"
           },
           "predictions": {
             "winner": {
@@ -95184,8 +95564,10 @@
             "goals": 3,
             "rank": 14,
             "pts": 60,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/21-preston-north-end.png",
+            "badge_storage_path": "badges/teams/21-preston-north-end.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/21/image"
           },
           "settled_at": "2026-04-27",
           "odds": {
@@ -95377,8 +95759,10 @@
             "goals": 3,
             "rank": 18,
             "pts": 55,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/2-portsmouth.png",
+            "badge_storage_path": "badges/teams/2-portsmouth.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/2/image"
           },
           "settled_at": "2026-04-27",
           "odds": {
@@ -97194,8 +97578,10 @@
             "goals": 0,
             "rank": 22,
             "pts": 47,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/95-oxford-united.png",
+            "badge_storage_path": "badges/teams/95-oxford-united.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/95/image"
           },
           "h2h_streaks": [
             {
@@ -97643,8 +98029,10 @@
             "goals": 1,
             "rank": 14,
             "pts": 60,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/21-preston-north-end.png",
+            "badge_storage_path": "badges/teams/21-preston-north-end.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/21/image"
           },
           "away": {
             "name": "Southampton",
@@ -97903,8 +98291,10 @@
             "goals": 1,
             "rank": 21,
             "pts": 51,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/8-west-bromwich-albion.png",
+            "badge_storage_path": "badges/teams/8-west-bromwich-albion.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/8/image"
           },
           "h2h_streaks": [
             {
@@ -99831,8 +100221,10 @@
             "goals": 1,
             "rank": 14,
             "pts": 60,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/84-doncaster-rovers.png",
+            "badge_storage_path": "badges/teams/84-doncaster-rovers.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/84/image"
           },
           "away": {
             "name": "Stevenage",
@@ -99841,8 +100233,10 @@
             "goals": 1,
             "rank": 6,
             "pts": 75,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/133-stevenage.png",
+            "badge_storage_path": "badges/teams/133-stevenage.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/133/image"
           },
           "settled_at": "2026-04-27",
           "odds": {
@@ -100033,8 +100427,10 @@
             "goals": 3,
             "rank": 3,
             "pts": 77,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/10-stockport-county.png",
+            "badge_storage_path": "badges/teams/10-stockport-county.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/10/image"
           },
           "away": {
             "name": "Peterborough United",
@@ -100043,8 +100439,10 @@
             "goals": 1,
             "rank": 18,
             "pts": 53,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/54-peterborough-united.png",
+            "badge_storage_path": "badges/teams/54-peterborough-united.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/54/image"
           },
           "settled_at": "2026-04-27",
           "odds": {
@@ -100255,8 +100653,10 @@
             "goals": 1,
             "rank": 13,
             "pts": 60,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/67-blackpool.webp",
+            "badge_storage_path": "badges/teams/67-blackpool.webp",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/67/image"
           },
           "away": {
             "name": "Leyton Orient",
@@ -100265,8 +100665,10 @@
             "goals": 0,
             "rank": 20,
             "pts": 52,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/83-leyton-orient.png",
+            "badge_storage_path": "badges/teams/83-leyton-orient.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/83/image"
           },
           "settled_at": "2026-04-27",
           "odds": {
@@ -100446,8 +100848,10 @@
             "goals": 1,
             "rank": 4,
             "pts": 77,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/22-bradford-city.png",
+            "badge_storage_path": "badges/teams/22-bradford-city.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/22/image"
           },
           "away": {
             "name": "Bolton Wanderers",
@@ -100456,8 +100860,10 @@
             "goals": 1,
             "rank": 5,
             "pts": 75,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/5-bolton-wanderers.png",
+            "badge_storage_path": "badges/teams/5-bolton-wanderers.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/5/image"
           },
           "settled_at": "2026-04-27",
           "odds": {
@@ -100716,8 +101122,10 @@
             "goals": 1,
             "rank": 17,
             "pts": 54,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/134-burton-albion.png",
+            "badge_storage_path": "badges/teams/134-burton-albion.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/134/image"
           },
           "away": {
             "name": "Exeter City",
@@ -100910,8 +101318,10 @@
             "goals": 5,
             "rank": 2,
             "pts": 91,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/61-cardiff-city.png",
+            "badge_storage_path": "badges/teams/61-cardiff-city.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/61/image"
           },
           "away": {
             "name": "Northampton Town",
@@ -100920,8 +101330,10 @@
             "goals": 1,
             "rank": 24,
             "pts": 35,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/57-northampton-town.png",
+            "badge_storage_path": "badges/teams/57-northampton-town.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/57/image"
           },
           "settled_at": "2026-04-27",
           "odds": {
@@ -101164,8 +101576,10 @@
             "goals": 1,
             "rank": 9,
             "pts": 67,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/59-huddersfield-town.png",
+            "badge_storage_path": "badges/teams/59-huddersfield-town.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/59/image"
           },
           "away": {
             "name": "Mansfield Town",
@@ -101174,8 +101588,10 @@
             "goals": 4,
             "rank": 10,
             "pts": 65,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/70-mansfield-town.png",
+            "badge_storage_path": "badges/teams/70-mansfield-town.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/70/image"
           },
           "settled_at": "2026-04-27",
           "odds": {
@@ -101407,8 +101823,10 @@
             "goals": 4,
             "rank": 1,
             "pts": 103,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/92-lincoln-city.png",
+            "badge_storage_path": "badges/teams/92-lincoln-city.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/92/image"
           },
           "away": {
             "name": "Wycombe Wanderers",
@@ -101417,8 +101835,10 @@
             "goals": 3,
             "rank": 11,
             "pts": 63,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/62-wycombe-wanderers.png",
+            "badge_storage_path": "badges/teams/62-wycombe-wanderers.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/62/image"
           },
           "settled_at": "2026-04-27",
           "odds": {
@@ -101641,8 +102061,10 @@
             "goals": 2,
             "rank": 7,
             "pts": 74,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/72-luton-town.png",
+            "badge_storage_path": "badges/teams/72-luton-town.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/72/image"
           },
           "away": {
             "name": "Barnsley",
@@ -101651,8 +102073,10 @@
             "goals": 1,
             "rank": 15,
             "pts": 59,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/23-barnsley.png",
+            "badge_storage_path": "badges/teams/23-barnsley.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/23/image"
           },
           "settled_at": "2026-04-27",
           "odds": {
@@ -101863,8 +102287,10 @@
             "goals": 2,
             "rank": 8,
             "pts": 73,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/71-plymouth-argyle.png",
+            "badge_storage_path": "badges/teams/71-plymouth-argyle.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/71/image"
           },
           "away": {
             "name": "Port Vale",
@@ -101873,8 +102299,10 @@
             "goals": 1,
             "rank": 22,
             "pts": 42,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/55-port-vale.png",
+            "badge_storage_path": "badges/teams/55-port-vale.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/55/image"
           },
           "settled_at": "2026-04-27",
           "odds": {
@@ -102066,8 +102494,10 @@
             "goals": 1,
             "rank": 23,
             "pts": 41,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/13-rotherham-united.png",
+            "badge_storage_path": "badges/teams/13-rotherham-united.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/13/image"
           },
           "away": {
             "name": "Reading",
@@ -102297,8 +102727,10 @@
             "goals": 0,
             "rank": 16,
             "pts": 56,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/49-wigan-athletic.png",
+            "badge_storage_path": "badges/teams/49-wigan-athletic.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/49/image"
           },
           "away": {
             "name": "AFC Wimbledon",
@@ -102307,8 +102739,10 @@
             "goals": 1,
             "rank": 19,
             "pts": 53,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/23957-afc-wimbledon.png",
+            "badge_storage_path": "badges/teams/23957-afc-wimbledon.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/23957/image"
           },
           "settled_at": "2026-04-27",
           "odds": {
@@ -102520,8 +102954,10 @@
             "goals": 1,
             "rank": 15,
             "pts": 59,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/23-barnsley.png",
+            "badge_storage_path": "badges/teams/23-barnsley.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/23/image"
           },
           "predictions": {
             "winner": {
@@ -102777,8 +103213,10 @@
             "goals": 0,
             "rank": 10,
             "pts": 65,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/70-mansfield-town.png",
+            "badge_storage_path": "badges/teams/70-mansfield-town.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/70/image"
           },
           "predictions": {
             "winner": {
@@ -103011,8 +103449,10 @@
             "goals": 2,
             "rank": 22,
             "pts": 42,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/55-port-vale.png",
+            "badge_storage_path": "badges/teams/55-port-vale.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/55/image"
           },
           "predictions": {
             "winner": {
@@ -103227,8 +103667,10 @@
             "goals": 4,
             "rank": 9,
             "pts": 67,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/59-huddersfield-town.png",
+            "badge_storage_path": "badges/teams/59-huddersfield-town.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/59/image"
           },
           "predictions": {
             "winner": {
@@ -103637,8 +104079,10 @@
             "goals": 2,
             "rank": 5,
             "pts": 75,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/5-bolton-wanderers.png",
+            "badge_storage_path": "badges/teams/5-bolton-wanderers.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/5/image"
           },
           "away": {
             "name": "Luton Town",
@@ -104098,8 +104542,10 @@
             "goals": 2,
             "rank": 20,
             "pts": 52,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/83-leyton-orient.png",
+            "badge_storage_path": "badges/teams/83-leyton-orient.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/83/image"
           },
           "away": {
             "name": "Burton Albion",
@@ -104313,8 +104759,10 @@
             "goals": 5,
             "rank": 10,
             "pts": 65,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/70-mansfield-town.png",
+            "badge_storage_path": "badges/teams/70-mansfield-town.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/70/image"
           },
           "away": {
             "name": "Cardiff City",
@@ -104559,8 +105007,10 @@
             "goals": 3,
             "rank": 8,
             "pts": 73,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/71-plymouth-argyle.png",
+            "badge_storage_path": "badges/teams/71-plymouth-argyle.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/71/image"
           },
           "predictions": {
             "winner": {
@@ -105094,8 +105544,10 @@
             "goals": 0,
             "rank": 22,
             "pts": 42,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/55-port-vale.png",
+            "badge_storage_path": "badges/teams/55-port-vale.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/55/image"
           },
           "away": {
             "name": "Lincoln City",
@@ -105575,8 +106027,10 @@
             "goals": 1,
             "rank": 6,
             "pts": 75,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/133-stevenage.png",
+            "badge_storage_path": "badges/teams/133-stevenage.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/133/image"
           },
           "away": {
             "name": "Wigan Athletic",
@@ -105778,8 +106232,10 @@
             "goals": 3,
             "rank": 11,
             "pts": 63,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/62-wycombe-wanderers.png",
+            "badge_storage_path": "badges/teams/62-wycombe-wanderers.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/62/image"
           },
           "away": {
             "name": "Rotherham United",
@@ -106004,8 +106460,10 @@
             "goals": 0,
             "rank": 6,
             "pts": 75,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/133-stevenage.png",
+            "badge_storage_path": "badges/teams/133-stevenage.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/133/image"
           },
           "away": {
             "name": "Stockport County",
@@ -106338,8 +106796,10 @@
             "goals": 0,
             "rank": 6,
             "pts": 75,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/133-stevenage.png",
+            "badge_storage_path": "badges/teams/133-stevenage.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/133/image"
           },
           "predictions": {
             "winner": {
@@ -107005,8 +107465,10 @@
             "goals": 4,
             "rank": 7,
             "pts": 78,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/18-grimsby-town.webp",
+            "badge_storage_path": "badges/teams/18-grimsby-town.webp",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/18/image"
           },
           "away": {
             "name": "Swindon Town",
@@ -107015,8 +107477,10 @@
             "goals": 0,
             "rank": 9,
             "pts": 75,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/53-swindon-town.png",
+            "badge_storage_path": "badges/teams/53-swindon-town.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/53/image"
           },
           "settled_at": "2026-04-27",
           "odds": {
@@ -107260,8 +107724,10 @@
             "goals": 0,
             "rank": 21,
             "pts": 41,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/51-tranmere-rovers.png",
+            "badge_storage_path": "badges/teams/51-tranmere-rovers.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/51/image"
           },
           "settled_at": "2026-04-27",
           "odds": {
@@ -107462,8 +107928,10 @@
             "goals": 3,
             "rank": 16,
             "pts": 53,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/187-accrington-stanley.png",
+            "badge_storage_path": "badges/teams/187-accrington-stanley.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/187/image"
           },
           "away": {
             "name": "Crawley Town",
@@ -107675,8 +108143,10 @@
             "goals": 6,
             "rank": 8,
             "pts": 76,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/77-barnet.png",
+            "badge_storage_path": "badges/teams/77-barnet.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/77/image"
           },
           "away": {
             "name": "Gillingham",
@@ -107685,8 +108155,10 @@
             "goals": 2,
             "rank": 17,
             "pts": 53,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/20-gillingham.png",
+            "badge_storage_path": "badges/teams/20-gillingham.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/20/image"
           },
           "settled_at": "2026-04-27",
           "odds": {
@@ -107919,8 +108391,10 @@
             "goals": 0,
             "rank": 18,
             "pts": 52,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/69-cheltenham-town.png",
+            "badge_storage_path": "badges/teams/69-cheltenham-town.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/69/image"
           },
           "settled_at": "2026-04-27",
           "odds": {
@@ -108100,8 +108574,10 @@
             "goals": 3,
             "rank": 3,
             "pts": 82,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/63-cambridge-united.png",
+            "badge_storage_path": "badges/teams/63-cambridge-united.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/63/image"
           },
           "away": {
             "name": "Barrow AFC",
@@ -108110,8 +108586,10 @@
             "goals": 0,
             "rank": 24,
             "pts": 36,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/97-barrow-afc.png",
+            "badge_storage_path": "badges/teams/97-barrow-afc.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/97/image"
           },
           "settled_at": "2026-04-27",
           "odds": {
@@ -108324,8 +108802,10 @@
             "goals": 2,
             "rank": 6,
             "pts": 79,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/68-chesterfield.png",
+            "badge_storage_path": "badges/teams/68-chesterfield.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/68/image"
           },
           "away": {
             "name": "Crewe Alexandra",
@@ -108334,8 +108814,10 @@
             "goals": 0,
             "rank": 11,
             "pts": 67,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/19-crewe-alexandra.png",
+            "badge_storage_path": "badges/teams/19-crewe-alexandra.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/19/image"
           },
           "settled_at": "2026-04-27",
           "odds": {
@@ -108569,8 +109051,10 @@
             "goals": 0,
             "rank": 12,
             "pts": 66,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/66-colchester-united.png",
+            "badge_storage_path": "badges/teams/66-colchester-united.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/66/image"
           },
           "away": {
             "name": "Notts County",
@@ -108579,8 +109063,10 @@
             "goals": 1,
             "rank": 5,
             "pts": 80,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/56-notts-county.png",
+            "badge_storage_path": "badges/teams/56-notts-county.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/56/image"
           },
           "settled_at": "2026-04-27",
           "odds": {
@@ -108772,8 +109258,10 @@
             "goals": 3,
             "rank": 20,
             "pts": 43,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/79-newport-county.png",
+            "badge_storage_path": "badges/teams/79-newport-county.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/79/image"
           },
           "away": {
             "name": "Oldham Athletic",
@@ -108782,8 +109270,10 @@
             "goals": 2,
             "rank": 10,
             "pts": 68,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/65-oldham-athletic.png",
+            "badge_storage_path": "badges/teams/65-oldham-athletic.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/65/image"
           },
           "settled_at": "2026-04-27",
           "odds": {
@@ -109006,8 +109496,10 @@
             "goals": 2,
             "rank": 19,
             "pts": 49,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/82-shrewsbury-town.png",
+            "badge_storage_path": "badges/teams/82-shrewsbury-town.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/82/image"
           },
           "away": {
             "name": "Fleetwood Town",
@@ -109016,8 +109508,10 @@
             "goals": 2,
             "rank": 15,
             "pts": 61,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/23959-fleetwood-town.png",
+            "badge_storage_path": "badges/teams/23959-fleetwood-town.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/23959/image"
           },
           "settled_at": "2026-04-27",
           "odds": {
@@ -109221,8 +109715,10 @@
             "goals": 0,
             "rank": 13,
             "pts": 65,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/26-walsall.png",
+            "badge_storage_path": "badges/teams/26-walsall.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/26/image"
           },
           "away": {
             "name": "Harrogate Town",
@@ -109231,8 +109727,10 @@
             "goals": 2,
             "rank": 23,
             "pts": 39,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/159-harrogate-town.png",
+            "badge_storage_path": "badges/teams/159-harrogate-town.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/159/image"
           },
           "settled_at": "2026-04-27",
           "odds": {
@@ -109446,8 +109944,10 @@
             "goals": 2,
             "rank": 20,
             "pts": 43,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/79-newport-county.png",
+            "badge_storage_path": "badges/teams/79-newport-county.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/79/image"
           },
           "predictions": {
             "winner": {
@@ -109627,8 +110127,10 @@
             "goals": 3,
             "rank": 1,
             "pts": 87,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/180-bromley.png",
+            "badge_storage_path": "badges/teams/180-bromley.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/180/image"
           },
           "away": {
             "name": "Walsall",
@@ -109832,8 +110334,10 @@
             "goals": 1,
             "rank": 18,
             "pts": 52,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/69-cheltenham-town.png",
+            "badge_storage_path": "badges/teams/69-cheltenham-town.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/69/image"
           },
           "away": {
             "name": "Colchester United",
@@ -110036,8 +110540,10 @@
             "goals": 0,
             "rank": 4,
             "pts": 81,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/37998-salford-city.png",
+            "badge_storage_path": "badges/teams/37998-salford-city.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/37998/image"
           },
           "predictions": {
             "winner": {
@@ -110273,8 +110779,10 @@
             "goals": 0,
             "rank": 3,
             "pts": 82,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/63-cambridge-united.png",
+            "badge_storage_path": "badges/teams/63-cambridge-united.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/63/image"
           },
           "predictions": {
             "winner": {
@@ -110696,8 +111204,10 @@
             "goals": 0,
             "rank": 19,
             "pts": 49,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/82-shrewsbury-town.png",
+            "badge_storage_path": "badges/teams/82-shrewsbury-town.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/82/image"
           },
           "predictions": {
             "winner": {
@@ -110920,8 +111430,10 @@
             "goals": 2,
             "rank": 8,
             "pts": 76,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/77-barnet.png",
+            "badge_storage_path": "badges/teams/77-barnet.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/77/image"
           },
           "predictions": {
             "winner": {
@@ -111380,8 +111892,10 @@
             "goals": 0,
             "rank": 16,
             "pts": 53,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/187-accrington-stanley.png",
+            "badge_storage_path": "badges/teams/187-accrington-stanley.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/187/image"
           },
           "predictions": {
             "winner": {
@@ -111643,8 +112157,10 @@
             "goals": 2,
             "rank": 6,
             "pts": 79,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/68-chesterfield.png",
+            "badge_storage_path": "badges/teams/68-chesterfield.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/68/image"
           },
           "predictions": {
             "winner": {
@@ -111888,8 +112404,10 @@
             "goals": 1,
             "rank": 7,
             "pts": 78,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/18-grimsby-town.webp",
+            "badge_storage_path": "badges/teams/18-grimsby-town.webp",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/18/image"
           },
           "predictions": {
             "winner": {
@@ -112112,8 +112630,10 @@
             "goals": 2,
             "rank": 4,
             "pts": 81,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/37998-salford-city.png",
+            "badge_storage_path": "badges/teams/37998-salford-city.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/37998/image"
           },
           "predictions": {
             "winner": {
@@ -112389,8 +112909,10 @@
             "rank": 4,
             "pts": 81,
             "goals": 2,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/37998-salford-city.png",
+            "badge_storage_path": "badges/teams/37998-salford-city.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/37998/image"
           },
           "away": {
             "name": "Grimsby Town",
@@ -117593,9 +118115,11 @@
             "name": "IK Start",
             "short": "IK Start",
             "team_id": 667,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/667-ik-start.png",
             "goals": 1,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/667-ik-start.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/667/image"
           },
           "away": {
             "name": "Bodø/Glimt",
@@ -118859,7 +119383,11 @@
             "short": "Kfum Oslo",
             "team_id": "sportsbet:10495091:home",
             "rank": 14,
-            "pts": 8
+            "pts": 8,
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/786-kfum-oslo.png",
+            "badge_storage_path": "badges/teams/786-kfum-oslo.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/786/image"
           },
           "away": {
             "name": "Rosenborg",
@@ -120611,10 +121139,12 @@
             "name": "KFUM Oslo",
             "short": "KFUM",
             "team_id": 786,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/786-kfum-oslo.png",
             "rank": 14,
             "pts": 8,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/786-kfum-oslo.png",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/786/image"
           },
           "away": {
             "name": "Tromsø IL",
@@ -120799,10 +121329,12 @@
             "name": "Rosenborg BK",
             "short": "Rosenborg",
             "team_id": 1161,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/1161-rosenborg-bk.webp",
             "rank": 15,
             "pts": 8,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/1161-rosenborg-bk.webp",
+            "badge_source": "thesportsdb",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/1161/image"
           },
           "away": {
             "name": "Bodø/Glimt",
