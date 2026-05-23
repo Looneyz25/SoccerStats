@@ -1,28 +1,132 @@
 {
-  "runId": "20260523T090046Z",
+  "runId": "20260523T075918Z",
   "mode": "results-only",
   "status": "ok",
-  "startedAt": "2026-05-23T09:00:46.008Z",
-  "completedAt": "2026-05-23T09:00:46.021Z",
+  "startedAt": "2026-05-23T07:59:18.901Z",
+  "completedAt": "2026-05-23T08:18:31.694Z",
   "paths": {
-    "json": "docs\\agent-system\\outputs\\get_data_20260523T090046Z.json",
-    "markdown": "docs\\agent-system\\outputs\\get_data_20260523T090046Z.md",
-    "transcript": "docs\\agent-system\\outputs\\get_data_20260523T090046Z.log"
+    "json": "docs\\agent-system\\outputs\\get_data_20260523T075918Z.json",
+    "markdown": "docs\\agent-system\\outputs\\get_data_20260523T075918Z.md",
+    "transcript": "docs\\agent-system\\outputs\\get_data_20260523T075918Z.log"
   },
   "decision": {
-    "action": "skip",
-    "reason": "7-day horizon already topped up for 2026-05-23",
+    "action": "results",
+    "reason": "2 matches due for result check",
     "targetDate": null,
-    "due": [],
-    "nextDue": [
-      "2026-05-23 17:40 A-League Men Auckland FC vs Sydney FC (DUE @ 20:10)",
-      "2026-05-23 18:00 J1 League Kashima Antlers vs FC Tokyo (DUE @ 20:30)",
-      "2026-05-23 18:30 J1 League Kashiwa Reysol vs JEF United Chiba (DUE @ 21:00)",
-      "2026-05-23 19:30 J1 League Kyoto Sanga FC vs V-Varen Nagasaki (DUE @ 22:00)",
-      "2026-05-23 22:30 Allsvenskan Kalmar FF vs Degerfors (DUE @ 01:00)"
-    ]
+    "due": [
+      "2026-05-23 14:30 J1 League Avispa Fukuoka vs Vissel Kobe (DUE @ 17:00)",
+      "2026-05-23 14:30 J1 League Sanfrecce Hiroshima vs Nagoya Grampus (DUE @ 17:00)"
+    ],
+    "nextDue": []
   },
-  "steps": [],
+  "steps": [
+    {
+      "id": "apply_manual_result_imports",
+      "label": "Apply manual result imports",
+      "command": "node",
+      "args": [
+        "scripts/apply_manual_result_imports.mjs"
+      ],
+      "status": "ok",
+      "exitCode": 0,
+      "startedAt": "2026-05-23T07:59:18.913Z",
+      "completedAt": "2026-05-23T07:59:20.821Z",
+      "durationMs": 1908,
+      "stdout": "Manual result imports reapplied to match_data.json: 3/3\n",
+      "stderr": "",
+      "stdoutTail": "Manual result imports reapplied to match_data.json: 3/3\n",
+      "stderrTail": ""
+    },
+    {
+      "id": "settle_due_results",
+      "label": "Settle due results",
+      "command": "node",
+      "args": [
+        "scripts/run-python.js",
+        "scripts/soccer_routine.py",
+        "--results-only"
+      ],
+      "status": "ok",
+      "exitCode": 0,
+      "startedAt": "2026-05-23T07:59:20.821Z",
+      "completedAt": "2026-05-23T07:59:47.748Z",
+      "durationMs": 26927,
+      "stdout": "=== soccer_routine.py results-only � 2026-05-23 (Adelaide) ===\r\n  result_check_buffer_minutes=150\r\n  result_backfill_dates=2026-05-20, 2026-05-21, 2026-05-22, 2026-05-23\r\n  due_for_result_check=2\r\n\r\n[Results A] settle due pending matches\r\n  settled=2  skipped=0  not_due=111  flashscore_settled=0  livescore_settled=0\r\n\r\n[Results B] backfill finished + enrich recent FT\r\n  added=0  enriched=18\r\n\r\n[Results B.5] today new-league calibration exception\r\n  created=0  settled_matches=0\r\n\r\n[Results C] protect resulted predictions\r\n  protected=450\r\n\r\n[Results D] prune stale unresolved matches\r\n  pruned=0\r\n  result_schedule=docs\\agent-system\\outputs\\result_check_schedule_20260523T172947+0930.md\r\n\r\n=== TOTAL: 561  FT: 450  upcoming: 111  | winner hit: 205  miss: 221  pending: 135 ===\r\n",
+      "stderr": "",
+      "stdoutTail": "=== soccer_routine.py results-only � 2026-05-23 (Adelaide) ===\r\n  result_check_buffer_minutes=150\r\n  result_backfill_dates=2026-05-20, 2026-05-21, 2026-05-22, 2026-05-23\r\n  due_for_result_check=2\r\n\r\n[Results A] settle due pending matches\r\n  settled=2  skipped=0  not_due=111  flashscore_settled=0  livescore_settled=0\r\n\r\n[Results B] backfill finished + enrich recent FT\r\n  added=0  enriched=18\r\n\r\n[Results B.5] today new-league calibration exception\r\n  created=0  settled_matches=0\r\n\r\n[Results C] protect resulted predictions\r\n  protected=450\r\n\r\n[Results D] prune stale unresolved matches\r\n  pruned=0\r\n  result_schedule=docs\\agent-system\\outputs\\result_check_schedule_20260523T172947+0930.md\r\n\r\n=== TOTAL: 561  FT: 450  upcoming: 111  | winner hit: 205  miss: 221  pending: 135 ===\r\n",
+      "stderrTail": ""
+    },
+    {
+      "id": "run_result_review",
+      "label": "Run result review",
+      "command": "node",
+      "args": [
+        "scripts/run-python.js",
+        "scripts/soccer_result_review_agent.py"
+      ],
+      "status": "ok",
+      "exitCode": 0,
+      "startedAt": "2026-05-23T07:59:47.748Z",
+      "completedAt": "2026-05-23T07:59:47.911Z",
+      "durationMs": 163,
+      "stdout": "Result review written: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_result_review_current.md\r\nCSV: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_result_review_current.csv\r\nsettled_market_rows=1695 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the review agent can compare confidence bands to actual hit rate.\r\n",
+      "stderr": "",
+      "stdoutTail": "Result review written: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_result_review_current.md\r\nCSV: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_result_review_current.csv\r\nsettled_market_rows=1695 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the review agent can compare confidence bands to actual hit rate.\r\n",
+      "stderrTail": ""
+    },
+    {
+      "id": "run_model_calibration",
+      "label": "Run model calibration",
+      "command": "node",
+      "args": [
+        "scripts/run-python.js",
+        "scripts/soccer_model_calibration_agent.py"
+      ],
+      "status": "ok",
+      "exitCode": 0,
+      "startedAt": "2026-05-23T07:59:47.911Z",
+      "completedAt": "2026-05-23T07:59:48.034Z",
+      "durationMs": 124,
+      "stdout": "Model calibration written: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_calibration.json\r\nMarkdown: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_calibration.md\r\nmarket_adjustments=3 league_market_adjustments=7\r\n",
+      "stderr": "",
+      "stdoutTail": "Model calibration written: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_calibration.json\r\nMarkdown: C:\\Betting\\Soccer Stats\\docs\\agent-system\\outputs\\model_calibration.md\r\nmarket_adjustments=3 league_market_adjustments=7\r\n",
+      "stderrTail": ""
+    },
+    {
+      "id": "cache_badges",
+      "label": "Cache badges to Firebase Storage",
+      "command": "node",
+      "args": [
+        "scripts/cache_badges_to_firebase.mjs"
+      ],
+      "status": "ok",
+      "exitCode": 0,
+      "startedAt": "2026-05-23T07:59:48.035Z",
+      "completedAt": "2026-05-23T08:07:46.416Z",
+      "durationMs": 478381,
+      "stdout": "match_data.json: cached=0 skipped=1144 failed=0\npredictions_2026-05-23.json: cached=0 skipped=1144 failed=0\n",
+      "stderr": "",
+      "stdoutTail": "match_data.json: cached=0 skipped=1144 failed=0\npredictions_2026-05-23.json: cached=0 skipped=1144 failed=0\n",
+      "stderrTail": ""
+    },
+    {
+      "id": "upload_firestore",
+      "label": "Upload league docs to Firestore",
+      "command": "node",
+      "args": [
+        "scripts/upload_match_data_to_firestore.mjs"
+      ],
+      "status": "ok",
+      "exitCode": 0,
+      "startedAt": "2026-05-23T08:07:46.416Z",
+      "completedAt": "2026-05-23T08:18:31.694Z",
+      "durationMs": 645278,
+      "stdout": "Manual result imports reapplied: 3/3\nUploaded C:\\Betting\\Soccer Stats\\match_data.json to Firestore dashboardData/match_data as 22 league docs and 36 date docs.\nUploaded fast dashboard doc dashboardData/match_data_fast as metadata-only fallback (25.0 KB); app will use date/league docs.\n",
+      "stderr": "Fast doc payload 3333.2 KB at 14d window, retrying with smaller window\nFast doc payload 2487.2 KB at 7d window, retrying with smaller window\nFast doc payload 1549.3 KB at 3d window, retrying with smaller window\nFast doc payload 1405.1 KB at 1d window, retrying with smaller window\nFast doc payload 1318.6 KB at 0d window; writing metadata-only fallback\n(node:26224) TimeoutNegativeWarning: -1 is a negative number.\nTimeout duration was set to 1.\n(Use `node --trace-warnings ...` to show where the warning was created)\n",
+      "stdoutTail": "Manual result imports reapplied: 3/3\nUploaded C:\\Betting\\Soccer Stats\\match_data.json to Firestore dashboardData/match_data as 22 league docs and 36 date docs.\nUploaded fast dashboard doc dashboardData/match_data_fast as metadata-only fallback (25.0 KB); app will use date/league docs.\n",
+      "stderrTail": "Fast doc payload 3333.2 KB at 14d window, retrying with smaller window\nFast doc payload 2487.2 KB at 7d window, retrying with smaller window\nFast doc payload 1549.3 KB at 3d window, retrying with smaller window\nFast doc payload 1405.1 KB at 1d window, retrying with smaller window\nFast doc payload 1318.6 KB at 0d window; writing metadata-only fallback\n(node:26224) TimeoutNegativeWarning: -1 is a negative number.\nTimeout duration was set to 1.\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+    }
+  ],
   "artifacts": {
     "matchData": {
       "firestoreFormat": "league_docs_v1",
@@ -30,7 +134,7 @@
       "source": "sofascore.com",
       "leagueCount": 22,
       "matchCount": 561,
-      "largestLeagueDocBytes": 295276,
+      "largestLeagueDocBytes": 275316,
       "statusCounts": {
         "FT": 450,
         "upcoming": 111

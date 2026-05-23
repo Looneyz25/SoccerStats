@@ -1,26 +1,20 @@
 {
-  "runId": "20260523T090046Z",
-  "mode": "results-only",
+  "runId": "20260523T081341Z",
+  "mode": "source-bet365",
   "status": "ok",
-  "startedAt": "2026-05-23T09:00:46.008Z",
-  "completedAt": "2026-05-23T09:00:46.021Z",
+  "startedAt": "2026-05-23T08:13:41.207Z",
+  "completedAt": "2026-05-23T08:13:41.208Z",
   "paths": {
-    "json": "docs\\agent-system\\outputs\\get_data_20260523T090046Z.json",
-    "markdown": "docs\\agent-system\\outputs\\get_data_20260523T090046Z.md",
-    "transcript": "docs\\agent-system\\outputs\\get_data_20260523T090046Z.log"
+    "json": "docs\\agent-system\\outputs\\get_data_20260523T081341Z.json",
+    "markdown": "docs\\agent-system\\outputs\\get_data_20260523T081341Z.md",
+    "transcript": "docs\\agent-system\\outputs\\get_data_20260523T081341Z.log"
   },
   "decision": {
-    "action": "skip",
-    "reason": "7-day horizon already topped up for 2026-05-23",
+    "action": "source-bet365-skip",
+    "reason": "no bet365/StatsHub context cache found to merge",
     "targetDate": null,
     "due": [],
-    "nextDue": [
-      "2026-05-23 17:40 A-League Men Auckland FC vs Sydney FC (DUE @ 20:10)",
-      "2026-05-23 18:00 J1 League Kashima Antlers vs FC Tokyo (DUE @ 20:30)",
-      "2026-05-23 18:30 J1 League Kashiwa Reysol vs JEF United Chiba (DUE @ 21:00)",
-      "2026-05-23 19:30 J1 League Kyoto Sanga FC vs V-Varen Nagasaki (DUE @ 22:00)",
-      "2026-05-23 22:30 Allsvenskan Kalmar FF vs Degerfors (DUE @ 01:00)"
-    ]
+    "nextDue": []
   },
   "steps": [],
   "artifacts": {
@@ -30,7 +24,7 @@
       "source": "sofascore.com",
       "leagueCount": 22,
       "matchCount": 561,
-      "largestLeagueDocBytes": 295276,
+      "largestLeagueDocBytes": 275316,
       "statusCounts": {
         "FT": 450,
         "upcoming": 111

@@ -182,6 +182,17 @@ function registryDocId(kind, entity, identityParts) {
   return cleanKey([kind, name].filter(Boolean).join('-'));
 }
 
+function registryDocIds(kind, entity, identityParts) {
+  const set = new Set();
+  for (const part of identityParts || []) {
+    const docId = registryDocId(kind, entity, [part]);
+    if (docId) set.add(docId);
+  }
+  const combined = registryDocId(kind, entity, identityParts || []);
+  if (combined) set.add(combined);
+  return [...set];
+}
+
 function isFirebaseUrl(value) {
   const text = String(value || '');
   return text.includes(FIREBASE_STORAGE_HOST) || text.includes(`${GOOGLE_STORAGE_HOST}/${STORAGE_BUCKET}/`);
@@ -205,7 +216,16 @@ function sourceForEntity(kind, entity, teamSources, leagueName = '') {
   const explicit = entity?.badge_source_url || entity?.logo_url || entity?.logo || entity?.badge || entity?.crest;
   const name = sourceKey(entity?.name || entity?.league || entity?.short);
   if (kind === 'leagues') return LEAGUE_BADGE_SOURCES[entity?.name] || LEAGUE_BADGE_SOURCES[entity?.league] || (isProviderUrl(explicit) ? explicit : '');
-  if (kind === 'teams') return TEAM_BADGE_SOURCES[name] || rosterSourceForTeam(teamSources, leagueName, entity?.name || entity?.short) || (isProviderUrl(explicit) ? explicit : '');
+  if (kind === 'teams') {
+    const curated = TEAM_BADGE_SOURCES[name] || rosterSourceForTeam(teamSources, leagueName, entity?.name || entity?.short) || (isProviderUrl(explicit) ? explicit : '');
+    if (curated) return curated;
+    // Safe fallback: use SofaScore team image URL only as an input source, then cache to Firebase.
+    const rawTeamId = entity?.team_id;
+    if ((typeof rawTeamId === 'number' || /^\d+$/.test(String(rawTeamId || ''))) && Number(rawTeamId) > 0) {
+      return `https://api.sofascore.app/api/v1/team/${Number(rawTeamId)}/image`;
+    }
+    return '';
+  }
   return '';
 }
 
@@ -218,6 +238,19 @@ async function fetchTheSportsDbLeagueTeams(leagueName) {
     },
   });
   if (!response.ok) throw new Error(`TheSportsDB ${leagueName} HTTP ${response.status}`);
+  const payload = await response.json();
+  return Array.isArray(payload.teams) ? payload.teams : [];
+}
+
+async function fetchTheSportsDbTeamByName(teamName) {
+  const url = `${THESPORTSDB_BASE}/searchteams.php?t=${encodeURIComponent(teamName)}`;
+  const response = await fetch(url, {
+    headers: {
+      'user-agent': 'Mozilla/5.0 LVRstats badge cache',
+      accept: 'application/json',
+    },
+  });
+  if (!response.ok) throw new Error(`TheSportsDB team ${teamName} HTTP ${response.status}`);
   const payload = await response.json();
   return Array.isArray(payload.teams) ? payload.teams : [];
 }
@@ -252,6 +285,33 @@ async function loadTeamSources(leagues) {
     }
   }
   return { byLeague, byName };
+}
+
+async function resolveTeamSource(teamName, teamSources) {
+  for (const key of sourceKeysForTeamName(teamName)) {
+    if (teamSources.byName.has(key)) return teamSources.byName.get(key);
+  }
+  try {
+    const teams = await fetchTheSportsDbTeamByName(teamName);
+    for (const team of teams) {
+      const sourceUrl = team.strBadge || team.strTeamBadge || team.strLogo;
+      if (!team.strTeam || !isProviderUrl(sourceUrl)) continue;
+      for (const key of sourceKeysForTeamName(team.strTeam)) {
+        teamSources.byName.set(key, sourceUrl);
+      }
+      for (const alias of String(team.strTeamAlternate || '').split(',')) {
+        for (const key of sourceKeysForTeamName(alias)) {
+          teamSources.byName.set(key, sourceUrl);
+        }
+      }
+    }
+    for (const key of sourceKeysForTeamName(teamName)) {
+      if (teamSources.byName.has(key)) return teamSources.byName.get(key);
+    }
+  } catch (error) {
+    console.warn(`TheSportsDB direct badge lookup skipped for ${teamName}: ${error.message}`);
+  }
+  return '';
 }
 
 function extensionFor(contentType, sourceUrl) {
@@ -309,44 +369,47 @@ async function cacheImage(bucket, kind, identity, sourceUrl, sourceName) {
 }
 
 async function applyRegistryBadge(db, registryCache, kind, entity, identityParts) {
-  const docId = registryDocId(kind, entity, identityParts);
-  if (!docId) return false;
-  if (registryCache.has(docId)) {
-    const data = registryCache.get(docId);
-    if (!data) return false;
-    entity.logo = data.logo;
+  const docIds = registryDocIds(kind, entity, identityParts);
+  if (!docIds.length) return false;
+  for (const docId of docIds) {
+    if (registryCache.has(docId)) {
+      const data = registryCache.get(docId);
+      if (!data) continue;
+      entity.logo = data.logo;
+      entity.badge_storage_path = data.storagePath || data.badge_storage_path || entity.badge_storage_path;
+      entity.badge_source = data.source || data.badge_source || entity.badge_source || 'registry';
+      entity.badge_source_url = data.sourceUrl || data.badge_source_url || entity.badge_source_url;
+      delete entity.badge_cache_error;
+      return true;
+    }
+    const snapshot = await db.collection('badgeRegistry').doc(docId).get();
+    if (!snapshot.exists) {
+      registryCache.set(docId, null);
+      continue;
+    }
+    const data = snapshot.data() || {};
+    const logo = data.logo || data.badge_download_url || data.badgeDownloadUrl;
+    if (!isFirebaseUrl(logo)) {
+      registryCache.set(docId, null);
+      continue;
+    }
+    entity.logo = logo;
     entity.badge_storage_path = data.storagePath || data.badge_storage_path || entity.badge_storage_path;
     entity.badge_source = data.source || data.badge_source || entity.badge_source || 'registry';
     entity.badge_source_url = data.sourceUrl || data.badge_source_url || entity.badge_source_url;
     delete entity.badge_cache_error;
+    registryCache.set(docId, {
+      ...data,
+      logo,
+    });
     return true;
   }
-  const snapshot = await db.collection('badgeRegistry').doc(docId).get();
-  if (!snapshot.exists) {
-    registryCache.set(docId, null);
-    return false;
-  }
-  const data = snapshot.data() || {};
-  const logo = data.logo || data.badge_download_url || data.badgeDownloadUrl;
-  if (!isFirebaseUrl(logo)) {
-    registryCache.set(docId, null);
-    return false;
-  }
-  entity.logo = logo;
-  entity.badge_storage_path = data.storagePath || data.badge_storage_path || entity.badge_storage_path;
-  entity.badge_source = data.source || data.badge_source || entity.badge_source || 'registry';
-  entity.badge_source_url = data.sourceUrl || data.badge_source_url || entity.badge_source_url;
-  delete entity.badge_cache_error;
-  registryCache.set(docId, {
-    ...data,
-    logo,
-  });
-  return true;
+  return false;
 }
 
 async function writeRegistryBadge(db, registryCache, kind, entity, identityParts) {
-  const docId = registryDocId(kind, entity, identityParts);
-  if (!docId || !isFirebaseUrl(entity?.logo)) return;
+  const docIds = registryDocIds(kind, entity, identityParts);
+  if (!docIds.length || !isFirebaseUrl(entity?.logo)) return;
   const data = {
     kind,
     name: entity.name || entity.league || entity.short || identityParts.find(Boolean) || docId,
@@ -357,8 +420,10 @@ async function writeRegistryBadge(db, registryCache, kind, entity, identityParts
     verified: true,
     updatedAt: FieldValue.serverTimestamp(),
   };
-  await db.collection('badgeRegistry').doc(docId).set(data, { merge: true });
-  registryCache.set(docId, data);
+  for (const docId of docIds) {
+    await db.collection('badgeRegistry').doc(docId).set(data, { merge: true });
+    registryCache.set(docId, data);
+  }
 }
 
 async function useCachedImage(bucket, entity) {
@@ -382,7 +447,10 @@ async function cacheEntity(bucket, db, registryCache, teamSources, kind, entity,
     return { cached: 0, skipped: 1, failed: 0 };
   }
   if (await applyRegistryBadge(db, registryCache, kind, entity, identityParts)) return { cached: 0, skipped: 1, failed: 0 };
-  const sourceUrl = sourceForEntity(kind, entity, teamSources, leagueName);
+  let sourceUrl = sourceForEntity(kind, entity, teamSources, leagueName);
+  if (!isProviderUrl(sourceUrl) && kind === 'teams' && (entity?.name || entity?.short)) {
+    sourceUrl = await resolveTeamSource(entity?.name || entity?.short, teamSources);
+  }
   if (!isProviderUrl(sourceUrl)) return { cached: 0, skipped: 1, failed: 0 };
 
   const identity = cleanKey(identityParts.filter(Boolean).join('-'));
@@ -420,8 +488,8 @@ async function processFile(bucket, db, registryCache, fileName) {
   for (const league of data.leagues || []) {
     addCounts(counts, await cacheEntity(bucket, db, registryCache, teamSources, 'leagues', league, [league.name || league.id], 'league', league.name));
     for (const match of league.matches || []) {
-      addCounts(counts, await cacheEntity(bucket, db, registryCache, teamSources, 'teams', match.home, [match.home?.name || match.home?.team_id], match.home?.badge_source || 'thesportsdb', league.name));
-      addCounts(counts, await cacheEntity(bucket, db, registryCache, teamSources, 'teams', match.away, [match.away?.name || match.away?.team_id], match.away?.badge_source || 'thesportsdb', league.name));
+      addCounts(counts, await cacheEntity(bucket, db, registryCache, teamSources, 'teams', match.home, [match.home?.team_id, match.home?.name].filter(Boolean), match.home?.badge_source || 'thesportsdb', league.name));
+      addCounts(counts, await cacheEntity(bucket, db, registryCache, teamSources, 'teams', match.away, [match.away?.team_id, match.away?.name].filter(Boolean), match.away?.badge_source || 'thesportsdb', league.name));
     }
   }
 

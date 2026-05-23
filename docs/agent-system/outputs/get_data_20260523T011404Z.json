@@ -1,13 +1,13 @@
 {
-  "runId": "20260523T090046Z",
+  "runId": "20260523T011404Z",
   "mode": "results-only",
   "status": "ok",
-  "startedAt": "2026-05-23T09:00:46.008Z",
-  "completedAt": "2026-05-23T09:00:46.021Z",
+  "startedAt": "2026-05-23T01:14:04.683Z",
+  "completedAt": "2026-05-23T01:14:04.695Z",
   "paths": {
-    "json": "docs\\agent-system\\outputs\\get_data_20260523T090046Z.json",
-    "markdown": "docs\\agent-system\\outputs\\get_data_20260523T090046Z.md",
-    "transcript": "docs\\agent-system\\outputs\\get_data_20260523T090046Z.log"
+    "json": "docs\\agent-system\\outputs\\get_data_20260523T011404Z.json",
+    "markdown": "docs\\agent-system\\outputs\\get_data_20260523T011404Z.md",
+    "transcript": "docs\\agent-system\\outputs\\get_data_20260523T011404Z.log"
   },
   "decision": {
     "action": "skip",
@@ -15,11 +15,11 @@
     "targetDate": null,
     "due": [],
     "nextDue": [
+      "2026-05-23 14:30 J1 League Avispa Fukuoka vs Vissel Kobe (DUE @ 17:00)",
+      "2026-05-23 14:30 J1 League Sanfrecce Hiroshima vs Nagoya Grampus (DUE @ 17:00)",
       "2026-05-23 17:40 A-League Men Auckland FC vs Sydney FC (DUE @ 20:10)",
       "2026-05-23 18:00 J1 League Kashima Antlers vs FC Tokyo (DUE @ 20:30)",
-      "2026-05-23 18:30 J1 League Kashiwa Reysol vs JEF United Chiba (DUE @ 21:00)",
-      "2026-05-23 19:30 J1 League Kyoto Sanga FC vs V-Varen Nagasaki (DUE @ 22:00)",
-      "2026-05-23 22:30 Allsvenskan Kalmar FF vs Degerfors (DUE @ 01:00)"
+      "2026-05-23 18:30 J1 League Kashiwa Reysol vs JEF United Chiba (DUE @ 21:00)"
     ]
   },
   "steps": [],
@@ -30,10 +30,10 @@
       "source": "sofascore.com",
       "leagueCount": 22,
       "matchCount": 561,
-      "largestLeagueDocBytes": 295276,
+      "largestLeagueDocBytes": 275316,
       "statusCounts": {
-        "FT": 450,
-        "upcoming": 111
+        "FT": 448,
+        "upcoming": 113
       },
       "dateWindow": {
         "start": "2026-04-22",
@@ -41,29 +41,60 @@
       }
     },
     "resultSchedule": {
-      "generated_at": "2026-05-23T17:29:47.717450+09:30",
+      "generated_at": "2026-05-23T07:04:38.882103+09:30",
       "result_check_buffer_minutes": 150,
       "result_lookback_days": 3,
       "due_count": 0,
-      "remaining_count": 6,
+      "remaining_count": 8,
       "tomorrow_count": 41,
       "phase_summary": {
         "settled": [
-          "J1 League: Avispa Fukuoka 0-1 Vissel Kobe",
-          "J1 League: Sanfrecce Hiroshima 4-2 Nagoya Grampus"
+          "Serie A: Fiorentina 1-1 Atalanta",
+          "J1 League: Machida 1-0 Urawa [LiveScore due time]",
+          "Allsvenskan: Djurgarden 1-2 Brommapojkarna [LiveScore due time]"
         ],
         "flashscore_settled": 0,
-        "livescore_settled": 0,
+        "livescore_settled": 2,
         "skipped": 0,
-        "not_due": 111,
-        "backfilled": 0,
-        "enriched": 18,
-        "calibration_created": 0,
-        "calibration_settled_matches": 0,
-        "protected": 450,
+        "not_due": 113,
+        "backfilled": 6,
+        "enriched": 23,
+        "calibration_created": 6,
+        "calibration_settled_matches": 1,
+        "protected": 448,
         "pruned": []
       },
       "matches": [
+        {
+          "scope": "today",
+          "league": "J1 League",
+          "date": "2026-05-23",
+          "time": "14:30",
+          "home": "Avispa Fukuoka",
+          "away": "Vissel Kobe",
+          "status": "upcoming",
+          "kickoff_at": "2026-05-23T14:30:00+09:30",
+          "due_at": "2026-05-23T17:00:00+09:30",
+          "check_after": "2026-05-23T17:00:00+09:30",
+          "result_queue": "DUE @ 17:00",
+          "due_for_check": false,
+          "event_id": 15345881
+        },
+        {
+          "scope": "today",
+          "league": "J1 League",
+          "date": "2026-05-23",
+          "time": "14:30",
+          "home": "Sanfrecce Hiroshima",
+          "away": "Nagoya Grampus",
+          "status": "upcoming",
+          "kickoff_at": "2026-05-23T14:30:00+09:30",
+          "due_at": "2026-05-23T17:00:00+09:30",
+          "check_after": "2026-05-23T17:00:00+09:30",
+          "result_queue": "DUE @ 17:00",
+          "due_for_check": false,
+          "event_id": 15345880
+        },
         {
           "scope": "today",
           "league": "A-League Men",
