@@ -40,8 +40,10 @@ const FAVORITE_LEAGUES_STORAGE_KEY = 'favoriteLeagues';
 const FAVORITE_TEAMS_STORAGE_KEY = 'favoriteTeams';
 const MAX_FAVORITE_TEAMS = 100;
 const PREDICTION_TRACKING_START_DATE = '2026-04-22';
+const DRAW_NO_BET_TRACKING_START_DATE = '2026-05-25';
 const WINNER_CONFIDENCE_THRESHOLD = 0.40;
 const BOOKMAKER_WINNER_GUARD_THRESHOLD = 0.65;
+const GENERIC_CORNER_PROBABILITY_CAP = 0.72;
 const RESULT_IMPORT_TIMEOUT_MS = 30000;
 
 async function loadMatchData(date = '') {
@@ -425,6 +427,96 @@ function formatMarketDetail(market) {
   return market.line ? `${market.pick} ${market.line}` : market.pick || '-';
 }
 
+function doubleChanceResultFromActual(match, type) {
+  const actual = winnerActualType(match);
+  if (!actual || !type) return undefined;
+  return String(type).split('_').includes(actual) ? 'hit' : 'miss';
+}
+
+function doubleChanceMarket(match) {
+  const precomputed = match.display_markets?.double_chance?.market;
+  if (precomputed) return precomputed;
+  const rows = match.display_summary?.winnerBreakdown || winnerProbabilityBreakdown(match);
+  if (!Array.isArray(rows) || rows.length < 3) return null;
+  const ranked = [...rows]
+    .filter((row) => ['home', 'draw', 'away'].includes(row.key) && Number.isFinite(Number(row.model)))
+    .sort((a, b) => Number(b.model) - Number(a.model));
+  if (ranked.length < 2) return null;
+  const selected = ranked.slice(0, 2).sort((a, b) => ['home', 'draw', 'away'].indexOf(a.key) - ['home', 'draw', 'away'].indexOf(b.key));
+  const type = selected.map((row) => row.key).join('_');
+  const probability = selected.reduce((sum, row) => sum + Number(row.model || 0), 0);
+  return {
+    pick: selected.map((row) => teamNameForSide(row.key, match)).join(' or '),
+    type,
+    probability: Number(probability.toFixed(4)),
+    model_probability: Number(probability.toFixed(4)),
+    sourceLabel: '1X2 model safety',
+    result: doubleChanceResultFromActual(match, type),
+  };
+}
+
+function drawNoBetResultFromActual(match, type) {
+  const actual = winnerActualType(match);
+  if (!actual || !type) return undefined;
+  if (actual === 'draw') return 'pass';
+  return actual === type ? 'hit' : 'miss';
+}
+
+function drawNoBetOdds(match, type) {
+  if (!type || type === 'draw') return null;
+  const pickKey = type === 'home' ? '1' : '2';
+  const teamName = teamNameForSide(type, match);
+  const markets = match?.sportsbet_markets || {};
+  const direct = markets['Draw No Bet'] || markets['Draw no bet'] || markets['Draw No Bet 90 Minutes'] || {};
+  const directPrice = direct[pickKey] ?? direct[teamName] ?? direct[String(teamName || '').replace(/\s+FC$/i, '')];
+  if (Number.isFinite(Number(directPrice)) && Number(directPrice) > 1.01) {
+    return { odds: Number(directPrice), estimated: false };
+  }
+
+  const noVig = bookmakerNoVigProbability(displayThreeWayOdds(match));
+  const sideProbability = Number(noVig?.[type]);
+  const oppositeProbability = Number(noVig?.[oppositeSide(type)]);
+  if (Number.isFinite(sideProbability) && Number.isFinite(oppositeProbability) && sideProbability > 0 && oppositeProbability > 0) {
+    return {
+      odds: Number(((sideProbability + oppositeProbability) / sideProbability).toFixed(2)),
+      estimated: true,
+    };
+  }
+  return null;
+}
+
+function drawNoBetMarket(match) {
+  const precomputed = match.display_markets?.draw_no_bet?.market;
+  if (precomputed) return precomputed;
+  const rows = match.display_summary?.winnerBreakdown || winnerProbabilityBreakdown(match);
+  if (!Array.isArray(rows) || rows.length < 3) return null;
+  const byKey = Object.fromEntries(rows.map((row) => [row.key, Number(row.model)]));
+  const teamRows = rows
+    .filter((row) => ['home', 'away'].includes(row.key) && Number.isFinite(Number(row.model)))
+    .sort((a, b) => Number(b.model) - Number(a.model));
+  if (!teamRows.length) return null;
+  const selected = teamRows[0];
+  const sideProbability = Number(byKey[selected.key]);
+  const oppositeProbability = Number(byKey[oppositeSide(selected.key)]);
+  const drawProbability = Number(byKey.draw);
+  const denominator = sideProbability + oppositeProbability;
+  if (!Number.isFinite(denominator) || denominator <= 0) return null;
+  const conditionalProbability = sideProbability / denominator;
+  const odds = drawNoBetOdds(match, selected.key);
+  return {
+    pick: `${teamNameForSide(selected.key, match)} DNB`,
+    type: selected.key,
+    probability: Number(conditionalProbability.toFixed(4)),
+    model_probability: Number(conditionalProbability.toFixed(4)),
+    win_probability: Number(sideProbability.toFixed(4)),
+    draw_push_probability: Number.isFinite(drawProbability) ? Number(drawProbability.toFixed(4)) : undefined,
+    odds: odds?.odds,
+    odds_estimated: odds?.estimated || undefined,
+    sourceLabel: odds?.estimated ? '1X2 estimated DNB' : odds?.odds ? 'Draw no bet odds' : '1X2 model safety',
+    result: String(match.date || '') >= DRAW_NO_BET_TRACKING_START_DATE ? drawNoBetResultFromActual(match, selected.key) : undefined,
+  };
+}
+
 function displayBttsMarket(market, match = null) {
   if (!market) return null;
   if (match?.status === 'FT') return market;
@@ -524,6 +616,28 @@ function withCornerBookmakerOdds(match, market) {
   return Number.isFinite(exactOdds) ? { ...market, line, odds: exactOdds } : { ...market, line };
 }
 
+function hasDirectCornerContext(match, market) {
+  const line = Number(market?.line ?? 10.5);
+  const lineKey = String(line);
+  return Boolean(
+    match.corner_odds?.[lineKey] ||
+    match.corner_odds?.[line.toFixed(1)] ||
+    market?.sourceLabel === 'Bookmaker context corners'
+  );
+}
+
+function capGenericCornerMarket(match, market) {
+  if (!market || match.status === 'FT' || hasDirectCornerContext(match, market)) return market;
+  const probability = Number(market.model_probability ?? market.probability);
+  if (!Number.isFinite(probability) || probability <= GENERIC_CORNER_PROBABILITY_CAP) return market;
+  return {
+    ...market,
+    probability: GENERIC_CORNER_PROBABILITY_CAP,
+    model_probability: GENERIC_CORNER_PROBABILITY_CAP,
+    generic_probability_cap: GENERIC_CORNER_PROBABILITY_CAP,
+  };
+}
+
 function exactCardBookmakerOdds(match, line, pick) {
   const prediction = match.predictions?.ou_cards;
   if (Number(prediction?.line) === Number(line) && prediction?.pick === pick) {
@@ -576,11 +690,11 @@ function oppositeTotalPick(pick) {
 function cornerMarketFromStreaks(match, allMatches = []) {
   if (match.predictions?.ou_corners) {
     const prediction = match.predictions.ou_corners;
-    const market = {
+    const market = capGenericCornerMarket(match, {
       ...prediction,
       actual: prediction.actual ?? match.actuals?.corners_total,
       result: prediction.result || marketResultFromActual(prediction, match.actuals?.corners_total),
-    };
+    });
     return withCornerBookmakerOdds(match, market);
   }
   const streaks = [...(match.h2h_streaks || []), ...(match.team_streaks || [])];
@@ -807,7 +921,7 @@ function poissonMarketProbabilities(lh, la, rho = 0, line = 2.5) {
   return { home, draw, away, bttsYes, overGoals };
 }
 
-function comparisonFromPrices({ title, modelProb, marketOdds, fallbackLabel = null, marketOddsEstimated = false }) {
+function comparisonFromPrices({ title, modelProb, marketOdds, fallbackLabel = null, marketOddsEstimated = false, noOddsNote = null }) {
   const bookmakerLabel = marketOddsEstimated ? 'Book est.' : 'Bookmaker';
   if (!Number.isFinite(modelProb)) {
     const marketPrice = fmtPrice(marketOdds);
@@ -836,9 +950,9 @@ function comparisonFromPrices({ title, modelProb, marketOdds, fallbackLabel = nu
       model: { odds: modelPrice, probability: fmtPct(modelProb) },
       edgePoints: 0,
       modelEdge: 0,
-      note: isModelSuggestion
+      note: noOddsNote || (isModelSuggestion
         ? 'Our model likes this from recent totals, but bookmaker odds are not available.'
-        : 'Our model has a price from recent totals, but bookmaker odds are not available.',
+        : 'Our model has a price from recent totals, but bookmaker odds are not available.'),
     };
   }
 
@@ -966,6 +1080,27 @@ function modelVsBookmakerComparison(match, marketKey, market) {
       modelProb: modelProbabilityForMarket(market),
       marketOdds: Number(market.odds),
       fallbackLabel: 'Trend pick',
+    });
+  }
+
+  if (marketKey === 'double_chance') {
+    return comparisonFromPrices({
+      title: 'Double Chance',
+      modelProb: modelProbabilityForMarket(market),
+      marketOdds: Number(market.odds),
+      fallbackLabel: 'Model safety',
+      noOddsNote: 'Our model likes this safer 1X2 angle, but bookmaker double-chance odds are not available.',
+    });
+  }
+
+  if (marketKey === 'draw_no_bet') {
+    return comparisonFromPrices({
+      title: 'Draw No Bet',
+      modelProb: modelProbabilityForMarket(market),
+      marketOdds: Number(market.odds),
+      marketOddsEstimated: Boolean(market.odds_estimated),
+      fallbackLabel: 'DNB safety',
+      noOddsNote: 'Our model likes this Draw No Bet side, but bookmaker DNB odds are not available.',
     });
   }
 
@@ -1214,6 +1349,7 @@ function WinnerPredictionMeta({ match, side, modelProbability, winner = match.pr
 
 const MARKET_CONFIG = [
   { key: 'winner', label: 'Winner', getMarket: (match, allMatches) => displayWinnerMarket(match, allMatches) },
+  { key: 'draw_no_bet', label: 'Draw No Bet', getMarket: (match) => drawNoBetMarket(match) },
   { key: 'btts', label: 'BTTS' },
   { key: 'ou_goals', label: 'Goals' },
   { key: 'ou_cards', label: 'Cards', getMarket: (match, allMatches) => cardsMarketWithModelProbability(match, allMatches) },
@@ -1223,8 +1359,9 @@ const HEADLINE_STATS_MARKETS = ['winner', 'btts', 'ou_goals', 'ou_cards', 'ou_co
 
 function marketForConfig(config, match, allMatches) {
   if (config.key === 'winner') return displayWinnerMarket(match, allMatches || match.__allMatches);
+  if (config.key === 'draw_no_bet') return drawNoBetMarket(match);
   const precomputed = match.display_markets?.[config.key === 'ou_goals' ? 'goals' : config.key === 'ou_cards' ? 'cards' : config.key === 'ou_corners' ? 'corners' : config.key]?.market;
-  if (precomputed) return config.key === 'ou_corners' ? withCornerBookmakerOdds(match, precomputed) : precomputed;
+  if (precomputed) return config.key === 'ou_corners' ? withCornerBookmakerOdds(match, capGenericCornerMarket(match, precomputed)) : precomputed;
   if (config.getMarket) {
     const market = config.getMarket(match, allMatches || match.__allMatches);
     return config.key === 'ou_corners' ? withCornerBookmakerOdds(match, market) : market;
@@ -1246,8 +1383,8 @@ function comparisonForMarket(match, marketKey, market, precomputedComparison) {
   const hydratedMarket = marketKey === 'ou_corners' ? withCornerBookmakerOdds(match, market) : market;
   if (
     marketKey === 'ou_corners' &&
-    marketHasBookmakerOdds(hydratedMarket) &&
-    !comparisonHasBookmakerOdds(precomputedComparison)
+    ((marketHasBookmakerOdds(hydratedMarket) && !comparisonHasBookmakerOdds(precomputedComparison)) ||
+      hydratedMarket?.generic_probability_cap)
   ) {
     return modelVsBookmakerComparison(match, marketKey, hydratedMarket);
   }
@@ -1255,7 +1392,6 @@ function comparisonForMarket(match, marketKey, market, precomputedComparison) {
 }
 
 function headlineStatsMarkets(match) {
-  if (Array.isArray(match.display_summary?.headlineMarkets)) return match.display_summary.headlineMarkets;
   if (match.status !== 'FT' || String(match.date || '') < PREDICTION_TRACKING_START_DATE) return [];
   return HEADLINE_STATS_MARKETS
     .map((key) => match.predictions?.[key])
@@ -1279,20 +1415,71 @@ function marketRowsForMatch(match, allMatches) {
 function suggestedPickForMatch(match, allMatches) {
   const predictions = match.predictions || {};
   const precomputed = match.display_markets || {};
+  const displayWinner = displayWinnerMarket(match, allMatches);
+  const winnerComparison = precomputed.winner?.comparison || displayWinnerComparison(match, allMatches, displayWinner);
   const displayBtts = precomputed.btts?.market || displayBttsMarket(predictions.btts, match);
   const bttsComparison = precomputed.btts?.comparison || modelVsBookmakerComparison(match, 'btts', displayBtts);
   const goalsComparison = precomputed.goals?.comparison || modelVsBookmakerComparison(match, 'ou_goals', predictions.ou_goals);
   const displayCards = precomputed.cards?.market || cardsMarketWithModelProbability(match, allMatches);
   const cardsComparison = precomputed.cards?.comparison || modelVsBookmakerComparison(match, 'ou_cards', displayCards);
-  const cornerMarket = withCornerBookmakerOdds(match, precomputed.corners?.market || cornerMarketFromStreaks(match, allMatches));
+  const cornerMarket = withCornerBookmakerOdds(match, capGenericCornerMarket(match, precomputed.corners?.market || cornerMarketFromStreaks(match, allMatches)));
   const cornersComparison = comparisonForMarket(match, 'ou_corners', cornerMarket, precomputed.corners?.comparison);
 
   return suggestedMarketPick([
+    { label: 'Winner', market: displayWinner, comparison: winnerComparison, modelProbability: precomputed.winner?.modelProbability ?? winnerModelProbability(match, displayWinner) },
     { label: 'BTTS', market: displayBtts, comparison: bttsComparison, modelProbability: precomputed.btts?.modelProbability },
     { label: 'Goals', market: predictions.ou_goals, comparison: goalsComparison, modelProbability: precomputed.goals?.modelProbability },
     { label: 'Cards', market: displayCards, comparison: cardsComparison, modelProbability: precomputed.cards?.modelProbability },
-    { label: 'Corners', market: cornerMarket, comparison: cornersComparison, modelProbability: precomputed.corners?.modelProbability },
+    match.status !== 'FT' || predictions.ou_corners
+      ? { label: 'Corners', market: cornerMarket, comparison: cornersComparison, modelProbability: precomputed.corners?.modelProbability }
+      : null,
   ]);
+}
+
+function secondaryMarketScore(row) {
+  if (!row?.market) return -Infinity;
+  const modelProbability = Number(row.modelProbability ?? modelProbabilityForMarket(row.market));
+  const edge = Number(row.comparison?.modelEdge || 0);
+  const hasPositiveEdge = row.comparison?.badge?.tone === 'positive' && edge > 0;
+  const hasOdds = marketHasBookmakerOdds(row.market) || comparisonHasBookmakerOdds(row.comparison);
+  return edge + (Number.isFinite(modelProbability) ? modelProbability / 10 : 0) + (hasPositiveEdge ? 0.05 : 0) + (hasOdds ? 0.02 : -0.04);
+}
+
+function secondaryTipRowsForMatch({ compactPick, displayBtts, bttsComparison, goalsMarket, goalsComparison, displayCards, cardsComparison, cornerMarket, cornersComparison, drawNoBet, drawNoBetComparison }) {
+  const compactLabel = String(compactPick?.label || '').toLowerCase();
+  const drawNoBetRow = drawNoBet
+    ? {
+      key: 'draw_no_bet',
+      label: 'Draw No Bet',
+      market: drawNoBet,
+      comparison: drawNoBetComparison,
+      modelProbability: modelProbabilityForMarket(drawNoBet),
+    }
+    : null;
+  const rows = [
+    { key: 'btts', label: 'BTTS', market: displayBtts, comparison: bttsComparison },
+    { key: 'goals', label: 'Goals', market: goalsMarket, comparison: goalsComparison },
+    { key: 'cards', label: 'Cards', market: displayCards, comparison: cardsComparison },
+    { key: 'corners', label: 'Corners', market: cornerMarket, comparison: cornersComparison },
+  ];
+
+  const availableRows = rows.filter((row) => row.market && !(compactLabel && row.label.toLowerCase() === compactLabel));
+  const selectedKeys = new Set(
+    [...availableRows]
+      .sort((a, b) => secondaryMarketScore(b) - secondaryMarketScore(a))
+      .slice(0, drawNoBetRow ? 3 : 4)
+      .map((row) => row.key),
+  );
+  const resolved = [
+    ...(drawNoBetRow ? [drawNoBetRow] : []),
+    ...rows.filter((row) => selectedKeys.has(row.key)),
+  ];
+
+  return resolved.map((row) => ({
+    ...row,
+    modelProbability: row.modelProbability ?? modelProbabilityForMarket(row.market),
+    edgeBadge: row.comparison?.badge?.tone === 'positive' && row.comparison.edgePoints > 0 ? row.comparison.badge.label : null,
+  }));
 }
 
 function positiveEdgesForMatch(match, allMatches) {
@@ -1341,7 +1528,7 @@ function confidenceForMatch(match, allMatches) {
   const quality = dataQualityForMatch(match);
 
   if (!edges.length) {
-    return { label: 'Avoid picking a winner', tone: 'warning', reason: 'Our model does not see better odds than the bookmaker', edge: 0, quality };
+    return { label: 'Winner caution', tone: 'warning', reason: 'Winner is predicted, but the model does not see enough value over the bookmaker.', edge: 0, quality };
   }
   if (bestEdge >= 0.05 && quality.score >= 3) {
     return { label: 'Strong edge', tone: 'positive', reason: `${edges[0].label} ${edges[0].comparison.badge.label}`, edge: bestEdge, quality };
@@ -1354,7 +1541,7 @@ function confidenceForMatch(match, allMatches) {
 
 function normalizeConfidenceLabel(confidence) {
   if (!confidence) return confidence;
-  if (confidence.label === 'Avoid') return { ...confidence, label: 'Avoid picking a winner' };
+  if (confidence.label === 'Avoid' || confidence.label === 'Avoid picking a winner') return { ...confidence, label: 'Winner caution' };
   return confidence;
 }
 
@@ -2754,13 +2941,20 @@ function suggestedMarketPick(candidates, isFinished = false) {
       modelEdge: Number(item.comparison?.modelEdge || 0),
       modelProbability: Number(item.modelProbability ?? modelProbabilityForMarket(item.market)),
     }))
+    .map((item) => {
+      if (item.label !== 'Winner') return { ...item, suggestionScore: item.modelEdge };
+      const strongModel = Number.isFinite(item.modelProbability) && item.modelProbability >= 0.6;
+      const hasBookmakerConflict = item.market?.lowConfidence || item.market?.guidance?.type === 'bookmaker_guard' || item.comparison?.badge?.tone === 'warning';
+      if (!strongModel || hasBookmakerConflict) return { ...item, suggestionScore: item.modelEdge - 0.12 };
+      return { ...item, suggestionScore: item.modelEdge + 0.015 };
+    })
     .sort((a, b) => {
       if (isFinished) {
         const resultRank = (item) => item.market?.result === 'hit' ? 2 : item.market?.result === 'miss' ? 0 : 1;
         const resultDiff = resultRank(b) - resultRank(a);
         if (resultDiff) return resultDiff;
       }
-      const edgeDiff = b.modelEdge - a.modelEdge;
+      const edgeDiff = b.suggestionScore - a.suggestionScore;
       if (edgeDiff) return edgeDiff;
       const probDiff = (Number.isFinite(b.modelProbability) ? b.modelProbability : 0) - (Number.isFinite(a.modelProbability) ? a.modelProbability : 0);
       if (probDiff) return probDiff;
@@ -3875,12 +4069,14 @@ function PredictionSummaryCard({ match, allMatches, voteState = null }) {
   const winner = displayWinnerMarket(match, allMatches);
   const winnerLowConfidence = Boolean(winner?.lowConfidence);
   const winnerComparison = displayWinnerComparison(matchWithContext, allMatches, winner);
+  const drawNoBet = drawNoBetMarket(match);
+  const drawNoBetComparison = precomputed.draw_no_bet?.comparison || modelVsBookmakerComparison(match, 'draw_no_bet', drawNoBet);
   const displayBtts = precomputed.btts?.market || displayBttsMarket(predictions.btts, match);
   const bttsComparison = precomputed.btts?.comparison || modelVsBookmakerComparison(match, 'btts', displayBtts);
   const goalsComparison = precomputed.goals?.comparison || modelVsBookmakerComparison(match, 'ou_goals', predictions.ou_goals);
   const displayCards = precomputed.cards?.market || cardsMarketWithModelProbability(match, allMatches);
   const cardsComparison = precomputed.cards?.comparison || modelVsBookmakerComparison(match, 'ou_cards', displayCards);
-  const cornerMarket = withCornerBookmakerOdds(match, precomputed.corners?.market || cornerMarketFromStreaks(match, allMatches));
+  const cornerMarket = withCornerBookmakerOdds(match, capGenericCornerMarket(match, precomputed.corners?.market || cornerMarketFromStreaks(match, allMatches)));
   const cornersComparison = comparisonForMarket(match, 'ou_corners', cornerMarket, precomputed.corners?.comparison);
 
   const winnerPick = winner ? formatMarketDetail(winner) : null;
@@ -3905,10 +4101,14 @@ function PredictionSummaryCard({ match, allMatches, voteState = null }) {
   const winnerText = winnerLowConfidence
     ? lowConfidenceWinnerText
     : winnerRationale(match, allMatches, winner);
+  const drawNoBetText = drawNoBet
+    ? `${teamNameForSide(drawNoBet.type, match)} is the safer side if you want a team angle: a win cashes, a draw returns. The model has it around ${fmtPct(modelProbabilityForMarket(drawNoBet)) || '-'} once the draw is removed${fmtPct(Number(drawNoBet.draw_push_probability)) ? `, with about ${fmtPct(Number(drawNoBet.draw_push_probability))} draw-push risk` : ''}.`
+    : '';
   const expectationSummary = matchExpectationSummary(match, allMatches);
 
   const lines = [
     { label: 'Winner', voteKey: 'winner', pick: winnerPick, text: winnerText, comparison: winnerComparison, result: winner?.result },
+    { label: 'Draw No Bet', pick: drawNoBet ? formatMarketDetail(drawNoBet) : null, text: drawNoBetText, comparison: drawNoBetComparison, result: drawNoBet?.result },
     { label: 'BTTS', voteKey: 'btts', pick: displayBtts ? formatMarketDetail(displayBtts) : null, text: bttsRationale(match), comparison: bttsComparison, result: displayBtts?.result },
     { label: 'Goals', voteKey: 'goals', pick: predictions.ou_goals ? formatMarketDetail(predictions.ou_goals) : null, text: goalsRationale(match, allMatches), comparison: goalsComparison, result: predictions.ou_goals?.result },
     { label: 'Cards', voteKey: 'cards', pick: displayCards ? formatMarketDetail(displayCards) : null, text: cardsRationale(match, allMatches), comparison: cardsComparison, result: displayCards?.result },
@@ -4772,8 +4972,10 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
   const goalsComparison = precomputed.goals?.comparison || modelVsBookmakerComparison(match, 'ou_goals', predictions.ou_goals);
   const displayCards = precomputed.cards?.market || cardsMarketWithModelProbability(match, allMatches);
   const cardsComparison = precomputed.cards?.comparison || modelVsBookmakerComparison(match, 'ou_cards', displayCards);
-  const cornerMarket = withCornerBookmakerOdds(match, precomputed.corners?.market || cornerMarketFromStreaks(match, allMatches));
+  const cornerMarket = withCornerBookmakerOdds(match, capGenericCornerMarket(match, precomputed.corners?.market || cornerMarketFromStreaks(match, allMatches)));
   const cornersComparison = comparisonForMarket(match, 'ou_corners', cornerMarket, precomputed.corners?.comparison);
+  const drawNoBet = drawNoBetMarket(match);
+  const drawNoBetComparison = precomputed.draw_no_bet?.comparison || modelVsBookmakerComparison(match, 'draw_no_bet', drawNoBet);
   const confidence = loadMatchConfidence(match, allMatches);
   const winnerModelPct = precomputed.winner?.market?.type === displayWinner?.type
     ? precomputed.winner?.modelProbability ?? winnerModelProbability(match, displayWinner)
@@ -4782,6 +4984,19 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
     comparison?.badge?.tone === 'positive' && comparison.edgePoints > 0 ? comparison.badge.label : null;
   const isFinished = match.status === 'FT';
   const compactPick = suggestedPickForMatch(match, allMatches);
+  const secondaryTips = secondaryTipRowsForMatch({
+    compactPick,
+    displayBtts,
+    bttsComparison,
+    goalsMarket: predictions.ou_goals,
+    goalsComparison,
+    displayCards,
+    cardsComparison,
+    cornerMarket,
+    cornersComparison,
+    drawNoBet,
+    drawNoBetComparison,
+  });
   const openMatch = () => onSelect(match);
   const handleCardKeyDown = (event) => {
     if (event.key !== 'Enter' && event.key !== ' ') return;
@@ -4914,10 +5129,15 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
           </div>
 
         <div className="mt-4 grid grid-cols-2 gap-2">
-          <MarketPill label="BTTS" market={displayBtts} edgeBadge={edgeBadgeFor(bttsComparison)} />
-          <MarketPill label="Goals" market={predictions.ou_goals} edgeBadge={edgeBadgeFor(goalsComparison)} />
-          <MarketPill label="Cards" market={displayCards} edgeBadge={edgeBadgeFor(cardsComparison)} />
-          <MarketPill label="Corners" market={cornerMarket} edgeBadge={edgeBadgeFor(cornersComparison)} />
+          {secondaryTips.map((row, index) => (
+            <MarketPill
+              key={`${row.key}-${index}`}
+              label={row.label}
+              market={row.market}
+              edgeBadge={row.edgeBadge}
+              modelProbability={row.modelProbability}
+            />
+          ))}
         </div>
 
         <div className="mt-3 grid grid-cols-3 gap-1 rounded-md bg-field p-2 text-center sm:mt-4 sm:gap-2">

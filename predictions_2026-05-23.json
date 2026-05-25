@@ -71088,8 +71088,10 @@
             "goals": 0,
             "rank": 8,
             "pts": 21,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/41618-minnesota-united.png",
+            "badge_storage_path": "badges/teams/41618-minnesota-united.png",
+            "badge_source": "sofascore",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/41618/image"
           },
           "away": {
             "name": "Los Angeles FC",
@@ -72797,8 +72799,10 @@
             "goals": 3,
             "rank": 8,
             "pts": 21,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/41618-minnesota-united.png",
+            "badge_storage_path": "badges/teams/41618-minnesota-united.png",
+            "badge_source": "sofascore",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/41618/image"
           },
           "odds": {
             "home": 1.68,
@@ -77404,8 +77408,10 @@
             "goals": 2,
             "rank": 8,
             "pts": 21,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/41618-minnesota-united.png",
+            "badge_storage_path": "badges/teams/41618-minnesota-united.png",
+            "badge_source": "sofascore",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/41618/image"
           },
           "away": {
             "name": "Austin FC",
@@ -78884,8 +78890,10 @@
             "goals": 0,
             "rank": 8,
             "pts": 21,
-            "logo": "",
-            "badge_cache_error": "HTTP 403"
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/41618-minnesota-united.png",
+            "badge_storage_path": "badges/teams/41618-minnesota-united.png",
+            "badge_source": "sofascore",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/41618/image"
           },
           "away": {
             "name": "Colorado Rapids",
@@ -80371,9 +80379,11 @@
             "team_id": 41618,
             "rank": 8,
             "pts": 21,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/41618-minnesota-united.png",
             "goals": 1,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/41618-minnesota-united.png",
+            "badge_source": "sofascore",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/41618/image"
           },
           "predictions": {
             "winner": {
@@ -82643,10 +82653,12 @@
             "name": "Minnesota United",
             "short": "Minnesota",
             "team_id": 41618,
-            "logo": "",
+            "logo": "https://storage.googleapis.com/lvrstats-badges-sports-predictions-f91fd/badges/teams/41618-minnesota-united.png",
             "rank": 8,
             "pts": 21,
-            "badge_cache_error": "HTTP 403"
+            "badge_storage_path": "badges/teams/41618-minnesota-united.png",
+            "badge_source": "sofascore",
+            "badge_source_url": "https://api.sofascore.app/api/v1/team/41618/image"
           },
           "away": {
             "name": "Real Salt Lake",

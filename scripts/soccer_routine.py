@@ -93,10 +93,20 @@ DRAW_MAX_FAVOURITE_GAP = 0.15
 CARDS_OVER_THRESHOLD = 0.68
 DEFAULT_PREMATCH_TEAM_GOALS = 1.35
 DEFAULT_PREMATCH_CORNERS_TOTAL = 10.2
+GENERIC_CORNER_PROBABILITY_CAP = 0.72
 BOOKMAKER_CONTEXT_LAMBDA_CAP = 0.25
 BOOKMAKER_CONTEXT_BTTS_WEIGHT = 0.20
 BOOKMAKER_CONTEXT_CARDS_WEIGHT = 0.25
 INTERNAL_PROFILE_LAMBDA_CAP = 0.18
+LEAGUE_GOAL_PROFILES = {
+    "J1 League": {
+        "over25_scale": 0.82,
+        "over25_cap": 0.68,
+        "btts_yes_scale": 0.88,
+        "btts_yes_cap": 0.64,
+        "reason": "J1 League low-goal profile: recent review showed over-goals confidence running too hot.",
+    },
+}
 TODAY     = datetime.now(ADL).date()
 YESTERDAY = TODAY - timedelta(days=1)
 TOMORROW  = TODAY + timedelta(days=1)
@@ -173,6 +183,28 @@ def calibration_adjustment(league, market_key):
 
 def shrink_probability(probability, trust_factor, neutral):
     return neutral + ((probability - neutral) * trust_factor)
+
+
+def league_goal_profile_adjustment(league, p_over_25, p_btts_yes):
+    profile = LEAGUE_GOAL_PROFILES.get(league)
+    if not profile:
+        return p_over_25, p_btts_yes, None
+    adjusted_over = p_over_25
+    adjusted_btts = p_btts_yes
+    if adjusted_over is not None:
+        adjusted_over = max(0.0, min(1.0, adjusted_over * profile.get("over25_scale", 1.0)))
+        adjusted_over = min(adjusted_over, profile.get("over25_cap", 1.0))
+    if adjusted_btts is not None:
+        adjusted_btts = max(0.0, min(1.0, adjusted_btts * profile.get("btts_yes_scale", 1.0)))
+        adjusted_btts = min(adjusted_btts, profile.get("btts_yes_cap", 1.0))
+    return adjusted_over, adjusted_btts, {
+        "league": league,
+        "over25_scale": profile.get("over25_scale", 1.0),
+        "over25_cap": profile.get("over25_cap", 1.0),
+        "btts_yes_scale": profile.get("btts_yes_scale", 1.0),
+        "btts_yes_cap": profile.get("btts_yes_cap", 1.0),
+        "reason": profile.get("reason", "League goal profile adjustment."),
+    }
 
 
 def normalize_three_way(home, draw, away):
@@ -1680,11 +1712,14 @@ def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
     # BTTS / OU goals are now derived from the Dixon-Coles-corrected grid so
     # the low-score adjustment flows through to all markets, not just 1X2.
     p_btts_yes = sum(grid[i][j] for i in range(7) for j in range(7) if i > 0 and j > 0)
+    p_under_25 = sum(grid[i][j] for i in range(7) for j in range(7) if i + j < 3)
+    p_over_25 = 1 - p_under_25
     if context_adj.get("btts_prior") is not None:
         p_btts_yes = (
             p_btts_yes * (1 - BOOKMAKER_CONTEXT_BTTS_WEIGHT)
             + context_adj["btts_prior"] * BOOKMAKER_CONTEXT_BTTS_WEIGHT
         )
+    p_over_25, p_btts_yes, league_goal_profile = league_goal_profile_adjustment(league, p_over_25, p_btts_yes)
     btts_cal = calibration_adjustment(league, "btts")
     p_btts_yes_cal = shrink_probability(p_btts_yes, btts_cal["trust_factor"], 0.5)
     btts_pick = "Yes" if p_btts_yes_cal > BTTS_YES_THRESHOLD else "No"
@@ -1697,9 +1732,9 @@ def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
     }
     if btts_cal["sources"]:
         btts["calibration"] = btts_cal
+    if league_goal_profile:
+        btts["league_goal_profile"] = league_goal_profile
 
-    p_under_25 = sum(grid[i][j] for i in range(7) for j in range(7) if i + j < 3)
-    p_over_25 = 1 - p_under_25
     goals_cal = calibration_adjustment(league, "ou_goals")
     p_over_25_cal = shrink_probability(p_over_25, goals_cal["trust_factor"], 0.5)
     goals_pick = "Over" if p_over_25_cal >= 0.55 else "Under"
@@ -1713,6 +1748,8 @@ def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
     }
     if goals_cal["sources"]:
         ou_goals["calibration"] = goals_cal
+    if league_goal_profile:
+        ou_goals["league_goal_profile"] = league_goal_profile
 
     over = sum(1 for s in (streaks or []) if "more than 4.5 cards" in (s.get("label") or "").lower())
     under = sum(1 for s in (streaks or []) if "less than 4.5 cards" in (s.get("label") or "").lower())
@@ -1764,6 +1801,7 @@ def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
         "bookmaker_context_home_lambda": round(context_adj["home_lambda"], 3),
         "bookmaker_context_away_lambda": round(context_adj["away_lambda"], 3),
         "bookmaker_context_signals": context_adj.get("signals") or [],
+        "league_goal_profile": league_goal_profile or {},
         "model_calibration": _MODEL_CALIBRATION.get("generated_at", "") if _MODEL_CALIBRATION else "",
     }
     return {"winner": w, "btts": btts, "ou_goals": ou_goals, "ou_cards": cards,
@@ -2222,6 +2260,10 @@ def pre_corners_prediction(match, league_matches, all_matches):
         p_over = 0.5
     pick = "Over" if p_over >= 0.53 else "Under"
     probability = p_over if pick == "Over" else 1 - p_over
+    direct_context = context_avg is not None or corner_odds_for_prediction(match, line, pick)
+    probability_cap = None if direct_context else GENERIC_CORNER_PROBABILITY_CAP
+    if probability_cap is not None and probability > probability_cap:
+        probability = probability_cap
     market = {
         "pick": pick,
         "line": line,
@@ -2232,6 +2274,8 @@ def pre_corners_prediction(match, league_matches, all_matches):
         "sourceValue": f"{avg:.1f} avg",
         "team": "both",
     }
+    if probability_cap is not None:
+        market["generic_probability_cap"] = probability_cap
     odds = corner_odds_for_prediction(match, line, pick)
     if odds:
         market["odds"] = odds

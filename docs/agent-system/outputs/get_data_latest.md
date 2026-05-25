@@ -1,47 +1,50 @@
 # Get Data Run Log
 
-Run ID: 20260523T090046Z
+Run ID: 20260525T021341Z
 Mode: results-only
-Started: 2026-05-23T09:00:46.008Z
-Completed: 2026-05-23T09:00:46.021Z
+Started: 2026-05-25T02:13:41.309Z
+Completed: 2026-05-25T02:30:52.707Z
 Status: ok
 
 ## Firestore
 
-- Upload status: not_run
-- Last line: n/a
+- Upload status: ok
+- Last line: Uploaded fast dashboard doc dashboardData/match_data_fast as metadata-only fallback (27.2 KB); app will use date/league docs.
 - Firestore format: league_docs_v1
-- Captured at: 2026-05-23
+- Captured at: 2026-05-25
 - Source: sofascore.com
 - Leagues: 22
-- Matches: 561
-- Largest league doc: 295276 bytes
-- Date window: 2026-04-22 to 2026-05-30
-- Status counts: FT=450, upcoming=111
-- Result due now: 0
-- Result remaining tracked: 6
+- Matches: 578
+- Largest league doc: 318435 bytes
+- Date window: 2026-04-22 to 2026-05-31
+- Status counts: FT=527, upcoming=51
+- Result due now: 1
+- Result remaining tracked: 4
 - Result schedule: `docs\agent-system\outputs\result_check_schedule_latest.md`
 
 ## Routine Decision
 
-- Action: skip
-- Reason: 7-day horizon already topped up for 2026-05-23
-- Next due: 2026-05-23 17:40 A-League Men Auckland FC vs Sydney FC (DUE @ 20:10)
-- Next due: 2026-05-23 18:00 J1 League Kashima Antlers vs FC Tokyo (DUE @ 20:30)
-- Next due: 2026-05-23 18:30 J1 League Kashiwa Reysol vs JEF United Chiba (DUE @ 21:00)
-- Next due: 2026-05-23 19:30 J1 League Kyoto Sanga FC vs V-Varen Nagasaki (DUE @ 22:00)
-- Next due: 2026-05-23 22:30 Allsvenskan Kalmar FF vs Degerfors (DUE @ 01:00)
+- Action: results
+- Reason: 3 matches due for result check
+- Due: 2026-05-24 21:30 League One Stockport County vs Bolton Wanderers (DUE @ 00:00)
+- Due: 2026-05-25 08:30 MLS Inter Miami CF vs Philadelphia Union (DUE @ 11:00)
+- Due: 2026-05-25 09:00 Brasileirão Betano Vasco da Gama vs Red Bull Bragantino (DUE @ 11:30)
 
 ## Steps
 
 | Step | Status | Exit | Duration | Last line |
 | --- | --- | --- | --- | --- |
-| No operation | ok | 0 | 0.00s | Routine decision skipped execution |
+| Apply manual result imports | ok | 0 | 1.72s | Manual result imports reapplied to match_data.json: 3/3 |
+| Settle due results | ok | 0 | 21.44s | === TOTAL: 578  FT: 527  upcoming: 51  / winner hit: 247  miss: 251  pending: 80 === |
+| Run result review | ok | 0 | 0.16s | settled_market_rows=2052 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the review agent can compare confidence bands to  |
+| Run model calibration | ok | 0 | 0.11s | market_adjustments=3 league_market_adjustments=6 |
+| Cache badges to Firebase Storage | ok | 0 | 805.73s | predictions_2026-05-25.json: cached=0 skipped=1077 failed=101 |
+| Upload league docs to Firestore | ok | 0 | 202.21s | Uploaded fast dashboard doc dashboardData/match_data_fast as metadata-only fallback (27.2 KB); app will use date/league docs. |
 
 ## Output Files
 
 - JSON log: `docs\agent-system\outputs\get_data_latest.json`
-- Transcript: `docs\agent-system\outputs\get_data_20260523T090046Z.log`
+- Transcript: `docs\agent-system\outputs\get_data_20260525T021341Z.log`
 - Phase run log: `docs\agent-system\outputs\Phase7_Run_Log.json`
 - Phase daily summary: `docs\agent-system\outputs\Phase7_Daily_Summary.md`
 

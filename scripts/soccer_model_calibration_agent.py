@@ -28,6 +28,7 @@ MARKET_KEYS = {
     "BTTS": "btts",
     "Goals": "ou_goals",
     "Cards": "ou_cards",
+    "Corners": "ou_corners",
 }
 
 MIN_MARKET_SAMPLE = 50

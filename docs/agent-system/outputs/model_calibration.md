@@ -1,26 +1,26 @@
 # Model Calibration
 
-Generated: 2026-05-24 02:58:42 ACST
+Generated: 2026-05-25 12:45:18 ACST
 Mode: conservative_auto_learning
 
 ## Market Adjustments
 
 | Market | Settled | Hit Rate | Trust Factor | Min Edge Delta | Reason |
 | --- | ---: | ---: | ---: | ---: | --- |
-| BTTS | 433 | 53.6% | 0.9422 | 0.0225 | BTTS below 60% target over 433 settled markets. |
-| Goals | 433 | 55.4% | 0.9589 | 0.016 | Goals below 60% target over 433 settled markets. |
-| Winner | 433 | 48.7% | 0.8986 | 0.0394 | Winner below 60% target over 433 settled markets. |
+| BTTS | 498 | 54.4% | 0.9498 | 0.0195 | BTTS below 60% target over 498 settled markets. |
+| Goals | 498 | 55.2% | 0.957 | 0.0167 | Goals below 60% target over 498 settled markets. |
+| Winner | 498 | 49.6% | 0.9064 | 0.0364 | Winner below 60% target over 498 settled markets. |
 
 ## League Market Adjustments
 
 | League | Market | Settled | Hit Rate | Trust Factor | Min Edge Delta | Reason |
 | --- | --- | ---: | ---: | ---: | ---: | --- |
+| Serie A | Winner | 21 | 33.3% | 0.94 | 0.0233 | Serie A Winner weak spot from result review. |
 | Bundesliga | Winner | 37 | 35.1% | 0.9172 | 0.0322 | Bundesliga Winner weak spot from result review. |
-| League One | BTTS | 31 | 35.5% | 0.9316 | 0.0266 | League One BTTS weak spot from result review. |
-| MLS | Winner | 74 | 40.5% | 0.8704 | 0.0504 | MLS Winner weak spot from result review. |
-| LaLiga | Winner | 50 | 42.0% | 0.919 | 0.0315 | LaLiga Winner weak spot from result review. |
+| League One | BTTS | 32 | 37.5% | 0.9352 | 0.0252 | League One BTTS weak spot from result review. |
+| LaLiga | Winner | 60 | 43.3% | 0.91 | 0.035 | LaLiga Winner weak spot from result review. |
+| MLS | Winner | 88 | 44.3% | 0.8758 | 0.0483 | MLS Winner weak spot from result review. |
 | Bundesliga | Cards | 36 | 44.4% | 0.9496 | 0.0196 | Bundesliga Cards weak spot from result review. |
-| Eredivisie | Goals | 46 | 45.6% | 0.9406 | 0.0231 | Eredivisie Goals weak spot from result review. |
 
 ## Notes
 

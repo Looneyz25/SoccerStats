@@ -138,6 +138,7 @@ def extract_event_markets(ev, markets, outcomes):
     Returns {market_key: {choice: decimal_price}} with keys:
         "Full time"          -> {"1","X","2"}
         "Both teams to score"-> {"Yes","No"}
+        "Draw No Bet"        -> {"1","2"}
         "Match goals 2.5"    -> {"Over","Under"}
         "Cards in match 4.5" -> {"Over","Under"}
         "Corners 2-Way 9.5"  -> {"Over","Under"}
@@ -172,6 +173,12 @@ def extract_event_markets(ev, markets, outcomes):
                 continue
             if label in ("Yes", "No"):
                 choices[label] = price
+            if name.lower() in ("draw no bet", "draw no bet 90 minutes"):
+                if rt == "H":
+                    choices["1"] = price
+                elif rt == "A":
+                    choices["2"] = price
+                continue
         if not choices:
             continue
         if name in ("Win-Draw-Win", "Match Result", "1X2"):
@@ -180,6 +187,10 @@ def extract_event_markets(ev, markets, outcomes):
             continue
         if name == "Both Teams To Score":
             out["Both teams to score"] = choices
+            continue
+        if name.lower() in ("draw no bet", "draw no bet 90 minutes"):
+            if "1" in choices and "2" in choices:
+                out["Draw No Bet"] = choices
             continue
         m_goals = _GOALS_MARKET_RE.match(name)
         if m_goals:

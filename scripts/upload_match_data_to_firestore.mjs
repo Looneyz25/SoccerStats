@@ -14,6 +14,7 @@ const FAST_DOC_ID = 'match_data_fast';
 const MANUAL_IMPORTS_COLLECTION = 'manualResultImports';
 const DEFAULT_SERVICE_ACCOUNT_PATH = path.join(ROOT, '.secrets', 'firebase-service-account.json');
 const FIRESTORE_UPLOAD_BATCH_SIZE = Number(process.env.FIRESTORE_UPLOAD_BATCH_SIZE || 5);
+const DRAW_NO_BET_TRACKING_START_DATE = '2026-05-25';
 
 function slugify(value, fallback) {
   const slug = String(value || '')
@@ -260,10 +261,11 @@ function summarizeReviewRows(matches) {
   const configs = [
     { key: 'suggested', label: 'Suggested pick', getMarket: (match) => match.display_summary?.compactMarket?.market },
     { key: 'winner', label: 'Winner', getMarket: (match) => match.display_markets?.winner?.market || match.predictions?.winner },
+    { key: 'draw_no_bet', label: 'Draw No Bet', getMarket: (match) => String(match.date || '') >= DRAW_NO_BET_TRACKING_START_DATE ? match.display_markets?.draw_no_bet?.market : null },
     { key: 'btts', label: 'BTTS', getMarket: (match) => match.display_markets?.btts?.market || match.predictions?.btts },
     { key: 'goals', label: 'Goals', getMarket: (match) => match.display_markets?.goals?.market || match.predictions?.ou_goals },
     { key: 'cards', label: 'Cards', getMarket: (match) => match.display_markets?.cards?.market || match.predictions?.ou_cards },
-    { key: 'corners', label: 'Corners', getMarket: (match) => match.display_markets?.corners?.market || match.predictions?.ou_corners },
+    { key: 'corners', label: 'Corners', getMarket: (match) => match.predictions?.ou_corners },
   ];
 
   return configs.map((config) => {
