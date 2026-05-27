@@ -93,7 +93,7 @@ DRAW_MAX_FAVOURITE_GAP = 0.15
 CARDS_OVER_THRESHOLD = 0.68
 DEFAULT_PREMATCH_TEAM_GOALS = 1.35
 DEFAULT_PREMATCH_CORNERS_TOTAL = 10.2
-GENERIC_CORNER_PROBABILITY_CAP = 0.72
+CORNER_MODEL_PROBABILITY_CAP = 0.72
 BOOKMAKER_CONTEXT_LAMBDA_CAP = 0.25
 BOOKMAKER_CONTEXT_BTTS_WEIGHT = 0.20
 BOOKMAKER_CONTEXT_CARDS_WEIGHT = 0.25
@@ -2232,11 +2232,11 @@ def average_corners_for_scope(matches, fallback=DEFAULT_PREMATCH_CORNERS_TOTAL):
 def context_corner_average(match, all_matches=None):
     context = prediction_context_for_match(match, all_matches)
     if not context:
-        return None
+        return None, None
     value = context_number(context, "corners_avg", "average_corners", "total_corners_avg")
     if value is None:
-        return None
-    return max(7.0, min(13.5, value))
+        return None, context
+    return max(7.0, min(13.5, value)), context
 
 
 def corner_odds_for_prediction(match, line, pick):
@@ -2252,7 +2252,7 @@ def corner_odds_for_prediction(match, line, pick):
 
 def pre_corners_prediction(match, league_matches, all_matches):
     line = 10.5
-    context_avg = context_corner_average(match, all_matches)
+    context_avg, context = context_corner_average(match, all_matches)
     league_avg = average_corners_for_scope(league_matches, None)
     avg = context_avg if context_avg is not None else (league_avg if league_avg is not None else average_corners_for_scope(all_matches))
     p_over = poisson_over_probability(avg, line)
@@ -2260,22 +2260,21 @@ def pre_corners_prediction(match, league_matches, all_matches):
         p_over = 0.5
     pick = "Over" if p_over >= 0.53 else "Under"
     probability = p_over if pick == "Over" else 1 - p_over
-    direct_context = context_avg is not None or corner_odds_for_prediction(match, line, pick)
-    probability_cap = None if direct_context else GENERIC_CORNER_PROBABILITY_CAP
-    if probability_cap is not None and probability > probability_cap:
-        probability = probability_cap
+    if probability > CORNER_MODEL_PROBABILITY_CAP:
+        probability = CORNER_MODEL_PROBABILITY_CAP
+    context_source = (context or {}).get("source") or ""
+    source_label = "Bookmaker context corners" if context_source and context_source != "internal_predictive_profile" else "Pre-match corners baseline"
     market = {
         "pick": pick,
         "line": line,
         "probability": round(probability, 4),
         "model_probability": round(probability, 4),
         "model_average_total": round(avg, 2),
-        "sourceLabel": "Bookmaker context corners" if context_avg is not None else "Pre-match corners baseline",
+        "sourceLabel": source_label,
         "sourceValue": f"{avg:.1f} avg",
         "team": "both",
+        "model_probability_cap": CORNER_MODEL_PROBABILITY_CAP,
     }
-    if probability_cap is not None:
-        market["generic_probability_cap"] = probability_cap
     odds = corner_odds_for_prediction(match, line, pick)
     if odds:
         market["odds"] = odds

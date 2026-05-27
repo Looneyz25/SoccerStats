@@ -43,7 +43,7 @@ const PREDICTION_TRACKING_START_DATE = '2026-04-22';
 const DRAW_NO_BET_TRACKING_START_DATE = '2026-05-25';
 const WINNER_CONFIDENCE_THRESHOLD = 0.40;
 const BOOKMAKER_WINNER_GUARD_THRESHOLD = 0.65;
-const GENERIC_CORNER_PROBABILITY_CAP = 0.72;
+const CORNER_MODEL_PROBABILITY_CAP = 0.72;
 const RESULT_IMPORT_TIMEOUT_MS = 30000;
 
 async function loadMatchData(date = '') {
@@ -627,14 +627,14 @@ function hasDirectCornerContext(match, market) {
 }
 
 function capGenericCornerMarket(match, market) {
-  if (!market || match.status === 'FT' || hasDirectCornerContext(match, market)) return market;
+  if (!market || match.status === 'FT') return market;
   const probability = Number(market.model_probability ?? market.probability);
-  if (!Number.isFinite(probability) || probability <= GENERIC_CORNER_PROBABILITY_CAP) return market;
+  if (!Number.isFinite(probability) || probability <= CORNER_MODEL_PROBABILITY_CAP) return market;
   return {
     ...market,
-    probability: GENERIC_CORNER_PROBABILITY_CAP,
-    model_probability: GENERIC_CORNER_PROBABILITY_CAP,
-    generic_probability_cap: GENERIC_CORNER_PROBABILITY_CAP,
+    probability: CORNER_MODEL_PROBABILITY_CAP,
+    model_probability: CORNER_MODEL_PROBABILITY_CAP,
+    model_probability_cap: CORNER_MODEL_PROBABILITY_CAP,
   };
 }
 
@@ -1384,7 +1384,7 @@ function comparisonForMarket(match, marketKey, market, precomputedComparison) {
   if (
     marketKey === 'ou_corners' &&
     ((marketHasBookmakerOdds(hydratedMarket) && !comparisonHasBookmakerOdds(precomputedComparison)) ||
-      hydratedMarket?.generic_probability_cap)
+      hydratedMarket?.model_probability_cap)
   ) {
     return modelVsBookmakerComparison(match, marketKey, hydratedMarket);
   }

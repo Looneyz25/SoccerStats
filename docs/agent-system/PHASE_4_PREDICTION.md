@@ -59,6 +59,8 @@ Draw selection has its own lane because football draws are common but rarely the
 
 Cards use a stricter learned gate because recent resulted data showed Over 4.5 was over-selected. Store both the raw over probability and the chosen-side probability. Only select `Over 4.5` when `over_probability >= 0.68`; otherwise select `Under 4.5`.
 
+Corners are high-variance and must not show false certainty. Normal pre-match corner totals are capped at `72%` model probability in both generated data and dashboard fallback rendering. Internal recent-average context can shape the baseline, but it is not bookmaker-backed confidence. Do not show `80%`/`90%` corner certainty unless the corner model is replaced with a separately calibrated, market-specific model and that rule is documented here.
+
 ## Required Agents
 
 | Agent | Role In Phase 4 |
