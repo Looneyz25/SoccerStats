@@ -55,6 +55,8 @@ StatsHub/bet365 bookmaker context is future-only. When present on an upcoming ro
 
 Before using any external StatsHub/bet365 context, the routine also builds an internal predictive profile from stored FT matches. This profile is safe because it only uses data already captured in `match_data.json`: recent goals for/against, shots on target for/against, recent points per match, home/away venue split, rest days, corners for/against, fouls, and cards where available. These fields can make capped lambda adjustments, cards priors, and corner baselines for future/upcoming matches only. If source history is thin, keep the prediction but surface weak-data caution rather than hiding the market card.
 
+League goal profiles may dampen BTTS Yes and Over 2.5 when recent settled review shows persistent low-scoring behaviour. Current conservative profiles include J1 League and CONMEBOL Libertadores. These profiles only affect future/upcoming rows; they must never rewrite `FT` or `prediction_locked` predictions.
+
 Draw selection has its own lane because football draws are common but rarely the highest raw probability. Select draw when `p_draw >= 0.28`, home/away probabilities are within 0.15, and the leading home/away side is no more than 0.15 ahead of draw.
 
 Cards use a stricter learned gate because recent resulted data showed Over 4.5 was over-selected. Store both the raw over probability and the chosen-side probability. Only select `Over 4.5` when `over_probability >= 0.68`; otherwise select `Under 4.5`.

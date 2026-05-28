@@ -106,6 +106,13 @@ LEAGUE_GOAL_PROFILES = {
         "btts_yes_cap": 0.64,
         "reason": "J1 League low-goal profile: recent review showed over-goals confidence running too hot.",
     },
+    "CONMEBOL Libertadores": {
+        "over25_scale": 0.78,
+        "over25_cap": 0.62,
+        "btts_yes_scale": 0.75,
+        "btts_yes_cap": 0.58,
+        "reason": "CONMEBOL Libertadores low-goal profile: recent settled matches strongly favour Under 2.5 and BTTS No.",
+    },
 }
 TODAY     = datetime.now(ADL).date()
 YESTERDAY = TODAY - timedelta(days=1)
@@ -2281,6 +2288,91 @@ def pre_corners_prediction(match, league_matches, all_matches):
     return market
 
 
+def probability_for_yes_or_over(market, positive_pick):
+    if not market:
+        return None
+    raw = to_float(market.get("raw_probability"))
+    chosen = to_float(market.get("probability"))
+    if raw is None:
+        raw = chosen
+    if raw is None:
+        return None
+    return max(0.0, min(1.0, raw if market.get("pick") == positive_pick else 1 - raw))
+
+
+def apply_league_goal_profile_to_existing_predictions(match, league_name):
+    if league_name not in LEAGUE_GOAL_PROFILES:
+        return False
+    if match.get("status") == "FT" or match.get("prediction_locked"):
+        return False
+
+    predictions = match.get("predictions") or {}
+    btts = predictions.get("btts")
+    goals = predictions.get("ou_goals")
+    if not isinstance(btts, dict) or not isinstance(goals, dict):
+        return False
+    if btts.get("league_goal_profile") or goals.get("league_goal_profile"):
+        return False
+
+    p_btts_yes = probability_for_yes_or_over(btts, "Yes")
+    p_over_25 = probability_for_yes_or_over(goals, "Over")
+    if p_btts_yes is None and p_over_25 is None:
+        return False
+
+    adjusted_over, adjusted_btts, profile = league_goal_profile_adjustment(league_name, p_over_25, p_btts_yes)
+    if not profile:
+        return False
+
+    changed = False
+    if adjusted_btts is not None:
+        btts_pick = "Yes" if adjusted_btts > BTTS_YES_THRESHOLD else "No"
+        btts_probability = adjusted_btts if btts_pick == "Yes" else 1 - adjusted_btts
+        if btts.get("pick") != btts_pick or round(to_float(btts.get("probability")) or 0.0, 4) != round(btts_probability, 4):
+            btts.update({
+                "pick": btts_pick,
+                "probability": round(btts_probability, 4),
+                "raw_probability": round(adjusted_btts if btts_pick == "Yes" else 1 - adjusted_btts, 4),
+                "league_goal_profile": profile,
+            })
+            changed = True
+
+    if adjusted_over is not None:
+        goals_pick = "Over" if adjusted_over >= 0.55 else "Under"
+        goals_probability = adjusted_over if goals_pick == "Over" else 1 - adjusted_over
+        if goals.get("pick") != goals_pick or round(to_float(goals.get("probability")) or 0.0, 4) != round(goals_probability, 4):
+            goals.update({
+                "pick": goals_pick,
+                "line": goals.get("line", 2.5),
+                "probability": round(goals_probability, 4),
+                "raw_probability": round(adjusted_over if goals_pick == "Over" else 1 - adjusted_over, 4),
+                "league_goal_profile": profile,
+            })
+            changed = True
+
+    if changed:
+        factors = predictions.setdefault("factors", {})
+        factors["league_goal_profile"] = profile
+    return changed
+
+
+def apply_corner_probability_cap_to_existing_prediction(match):
+    if match.get("status") == "FT" or match.get("prediction_locked"):
+        return False
+    predictions = match.get("predictions") or {}
+    corners = predictions.get("ou_corners")
+    if not isinstance(corners, dict):
+        return False
+    probability = to_float(corners.get("model_probability"))
+    if probability is None:
+        probability = to_float(corners.get("probability"))
+    if probability is None or probability <= CORNER_MODEL_PROBABILITY_CAP:
+        return False
+    corners["probability"] = CORNER_MODEL_PROBABILITY_CAP
+    corners["model_probability"] = CORNER_MODEL_PROBABILITY_CAP
+    corners["model_probability_cap"] = CORNER_MODEL_PROBABILITY_CAP
+    return True
+
+
 def populate_pre_match_predictions(store):
     """Fill missing pre-kickoff prediction objects before odds/display upload.
 
@@ -2290,6 +2382,8 @@ def populate_pre_match_predictions(store):
     all_matches = [m for league in store.get("leagues", []) for m in league.get("matches", [])]
     created = 0
     corner_created = 0
+    profiled = 0
+    corner_capped = 0
     by_league = {}
     for league in store.get("leagues", []):
         league_name = league.get("name") or ""
@@ -2339,6 +2433,10 @@ def populate_pre_match_predictions(store):
             if not predictions.get("ou_corners"):
                 predictions["ou_corners"] = pre_corners_prediction(match, league_matches, all_matches)
                 corner_created += 1
+            if apply_league_goal_profile_to_existing_predictions(match, league_name):
+                profiled += 1
+            if apply_corner_probability_cap_to_existing_prediction(match):
+                corner_capped += 1
 
             after_keys = {key for key, value in predictions.items() if value}
             delta = len(after_keys - before_keys)
@@ -2346,9 +2444,15 @@ def populate_pre_match_predictions(store):
                 created += delta
                 by_league[league_name] = by_league.get(league_name, 0) + delta
 
-    if created:
+    if created or profiled or corner_capped:
         save_store(store)
-    return {"created": created, "corner_created": corner_created, "by_league": by_league}
+    return {
+        "created": created,
+        "corner_created": corner_created,
+        "profiled": profiled,
+        "corner_capped": corner_capped,
+        "by_league": by_league,
+    }
 
 
 def settle_generated_prediction_markets(match):
@@ -3091,7 +3195,10 @@ def run_dashboard_enrichment_helpers():
     print("\n[Phase B.5b] pre-match prediction prefill")
     store = load_store()
     pre = populate_pre_match_predictions(store)
-    print(f"  created={pre['created']}  corners={pre['corner_created']}")
+    print(
+        f"  created={pre['created']}  corners={pre['corner_created']}  "
+        f"profiled={pre.get('profiled', 0)}  corner_capped={pre.get('corner_capped', 0)}"
+    )
     if pre["by_league"]:
         for league_name, count in sorted(pre["by_league"].items()):
             print(f"  + {league_name}: {count}")
