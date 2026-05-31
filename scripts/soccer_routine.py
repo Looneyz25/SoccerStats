@@ -94,6 +94,7 @@ CARDS_OVER_THRESHOLD = 0.68
 DEFAULT_PREMATCH_TEAM_GOALS = 1.35
 DEFAULT_PREMATCH_CORNERS_TOTAL = 10.2
 CORNER_MODEL_PROBABILITY_CAP = 0.72
+NO_SPORTSBET_CORNER_PROBABILITY_CAP = 0.55
 BOOKMAKER_CONTEXT_LAMBDA_CAP = 0.25
 BOOKMAKER_CONTEXT_BTTS_WEIGHT = 0.20
 BOOKMAKER_CONTEXT_CARDS_WEIGHT = 0.25
@@ -778,6 +779,8 @@ TEAM_NAME_STOPWORDS = {
 
 TEAM_WORD_ALIASES = {
     "rennais": "rennes",
+    "st": "saint",
+    "ste": "sainte",
     "utd": "united",
 }
 
@@ -2267,8 +2270,12 @@ def pre_corners_prediction(match, league_matches, all_matches):
         p_over = 0.5
     pick = "Over" if p_over >= 0.53 else "Under"
     probability = p_over if pick == "Over" else 1 - p_over
-    if probability > CORNER_MODEL_PROBABILITY_CAP:
-        probability = CORNER_MODEL_PROBABILITY_CAP
+    odds = corner_odds_for_prediction(match, line, pick)
+    if odds:
+        if probability > CORNER_MODEL_PROBABILITY_CAP:
+            probability = CORNER_MODEL_PROBABILITY_CAP
+    elif probability > NO_SPORTSBET_CORNER_PROBABILITY_CAP:
+        probability = NO_SPORTSBET_CORNER_PROBABILITY_CAP
     context_source = (context or {}).get("source") or ""
     source_label = "Bookmaker context corners" if context_source and context_source != "internal_predictive_profile" else "Pre-match corners baseline"
     market = {
@@ -2282,9 +2289,15 @@ def pre_corners_prediction(match, league_matches, all_matches):
         "team": "both",
         "model_probability_cap": CORNER_MODEL_PROBABILITY_CAP,
     }
-    odds = corner_odds_for_prediction(match, line, pick)
     if odds:
         market["odds"] = odds
+    else:
+        market.update({
+            "confidence_hidden": True,
+            "confidence_reason": "No Sportsbet corner odds for this side/line.",
+            "no_sportsbet_corner_odds": True,
+            "no_odds_probability_cap": NO_SPORTSBET_CORNER_PROBABILITY_CAP,
+        })
     return market
 
 
@@ -2362,15 +2375,33 @@ def apply_corner_probability_cap_to_existing_prediction(match):
     corners = predictions.get("ou_corners")
     if not isinstance(corners, dict):
         return False
+    odds = corner_odds_for_prediction(match, corners.get("line", 10.5), corners.get("pick"))
     probability = to_float(corners.get("model_probability"))
     if probability is None:
         probability = to_float(corners.get("probability"))
-    if probability is None or probability <= CORNER_MODEL_PROBABILITY_CAP:
+    if probability is None:
         return False
-    corners["probability"] = CORNER_MODEL_PROBABILITY_CAP
-    corners["model_probability"] = CORNER_MODEL_PROBABILITY_CAP
-    corners["model_probability_cap"] = CORNER_MODEL_PROBABILITY_CAP
-    return True
+
+    cap = CORNER_MODEL_PROBABILITY_CAP if odds else NO_SPORTSBET_CORNER_PROBABILITY_CAP
+    changed = False
+    if probability > cap:
+        corners["probability"] = cap
+        corners["model_probability"] = cap
+        changed = True
+    if odds:
+        corners["model_probability_cap"] = CORNER_MODEL_PROBABILITY_CAP
+        for key in ("confidence_hidden", "confidence_reason", "no_sportsbet_corner_odds", "no_odds_probability_cap"):
+            if key in corners:
+                corners.pop(key, None)
+                changed = True
+    else:
+        corners["confidence_hidden"] = True
+        corners["confidence_reason"] = "No Sportsbet corner odds for this side/line."
+        corners["no_sportsbet_corner_odds"] = True
+        corners["no_odds_probability_cap"] = NO_SPORTSBET_CORNER_PROBABILITY_CAP
+        changed = True
+    corners["model_probability_cap"] = cap
+    return changed
 
 
 def populate_pre_match_predictions(store):

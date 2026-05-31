@@ -44,6 +44,7 @@ const DRAW_NO_BET_TRACKING_START_DATE = '2026-05-25';
 const WINNER_CONFIDENCE_THRESHOLD = 0.40;
 const BOOKMAKER_WINNER_GUARD_THRESHOLD = 0.65;
 const CORNER_MODEL_PROBABILITY_CAP = 0.72;
+const NO_ODDS_CORNER_PROBABILITY_CAP = 0.55;
 const RESULT_IMPORT_TIMEOUT_MS = 30000;
 
 async function loadMatchData(date = '') {
@@ -617,21 +618,32 @@ function withCornerBookmakerOdds(match, market) {
 }
 
 function hasDirectCornerContext(match, market) {
-  const line = Number(market?.line ?? 10.5);
-  const lineKey = String(line);
-  return Boolean(
-    match.corner_odds?.[lineKey] ||
-    match.corner_odds?.[line.toFixed(1)] ||
-    market?.sourceLabel === 'Bookmaker context corners'
-  );
+  const withOdds = withCornerBookmakerOdds(match, market);
+  const odds = Number(withOdds?.odds);
+  return Number.isFinite(odds) && odds > 1.01;
 }
 
 function capGenericCornerMarket(match, market) {
   if (!market || match.status === 'FT') return market;
   const probability = Number(market.model_probability ?? market.probability);
-  if (!Number.isFinite(probability) || probability <= CORNER_MODEL_PROBABILITY_CAP) return market;
+  const withOdds = withCornerBookmakerOdds(match, market);
+  if (!hasDirectCornerContext(match, withOdds)) {
+    const cappedProbability = Number.isFinite(probability) ? Math.min(probability, NO_ODDS_CORNER_PROBABILITY_CAP) : null;
+    return {
+      ...withOdds,
+      probability: Number.isFinite(cappedProbability) ? cappedProbability : null,
+      model_probability: null,
+      confidence_hidden: true,
+      confidence_reason: 'No Sportsbet corner odds for this side/line.',
+      no_sportsbet_corner_odds: true,
+      no_odds_probability_cap: Number.isFinite(cappedProbability) && cappedProbability < probability
+        ? NO_ODDS_CORNER_PROBABILITY_CAP
+        : withOdds.no_odds_probability_cap ?? null,
+    };
+  }
+  if (!Number.isFinite(probability) || probability <= CORNER_MODEL_PROBABILITY_CAP) return withOdds;
   return {
-    ...market,
+    ...withOdds,
     probability: CORNER_MODEL_PROBABILITY_CAP,
     model_probability: CORNER_MODEL_PROBABILITY_CAP,
     model_probability_cap: CORNER_MODEL_PROBABILITY_CAP,
@@ -932,7 +944,7 @@ function comparisonFromPrices({ title, modelProb, marketOdds, fallbackLabel = nu
       model: { odds: fallbackLabel || 'Trend pick', probability: '-' },
       edgePoints: 0,
       modelEdge: 0,
-      note: 'This pick comes from recent trends, so treat the bookmaker odds as a guide only.',
+      note: noOddsNote || 'This pick comes from recent trends, so treat the bookmaker odds as a guide only.',
     };
   }
 
@@ -1075,11 +1087,13 @@ function modelVsBookmakerComparison(match, marketKey, market) {
 
   if (marketKey === 'ou_corners') {
     const line = market.line ?? 10.5;
+    const hasOdds = hasDirectCornerContext(match, market);
     return comparisonFromPrices({
       title: `${market.pick || 'Corners'} ${line} Corners`,
-      modelProb: modelProbabilityForMarket(market),
-      marketOdds: Number(market.odds),
-      fallbackLabel: 'Trend pick',
+      modelProb: hasOdds && !market.confidence_hidden ? modelProbabilityForMarket(market) : NaN,
+      marketOdds: hasOdds ? Number(market.odds) : NaN,
+      fallbackLabel: hasOdds ? 'Trend pick' : 'No corner odds',
+      noOddsNote: 'No Sportsbet corner price is available for this side/line, so no confidence is shown.',
     });
   }
 
@@ -1380,7 +1394,13 @@ function marketHasBookmakerOdds(market) {
 }
 
 function comparisonForMarket(match, marketKey, market, precomputedComparison) {
-  const hydratedMarket = marketKey === 'ou_corners' ? withCornerBookmakerOdds(match, market) : market;
+  const hydratedMarket = marketKey === 'ou_corners' ? capGenericCornerMarket(match, withCornerBookmakerOdds(match, market)) : market;
+  if (
+    marketKey === 'ou_corners' &&
+    hydratedMarket?.confidence_hidden
+  ) {
+    return precomputedComparison || modelVsBookmakerComparison(match, marketKey, hydratedMarket);
+  }
   if (
     marketKey === 'ou_corners' &&
     ((marketHasBookmakerOdds(hydratedMarket) && !comparisonHasBookmakerOdds(precomputedComparison)) ||
@@ -1442,7 +1462,8 @@ function secondaryMarketScore(row) {
   const edge = Number(row.comparison?.modelEdge || 0);
   const hasPositiveEdge = row.comparison?.badge?.tone === 'positive' && edge > 0;
   const hasOdds = marketHasBookmakerOdds(row.market) || comparisonHasBookmakerOdds(row.comparison);
-  return edge + (Number.isFinite(modelProbability) ? modelProbability / 10 : 0) + (hasPositiveEdge ? 0.05 : 0) + (hasOdds ? 0.02 : -0.04);
+  const hiddenConfidencePenalty = row.market?.confidence_hidden ? -0.08 : 0;
+  return edge + (Number.isFinite(modelProbability) ? modelProbability / 10 : 0) + (hasPositiveEdge ? 0.05 : 0) + (hasOdds ? 0.02 : -0.04) + hiddenConfidencePenalty;
 }
 
 function secondaryTipRowsForMatch({ compactPick, displayBtts, bttsComparison, goalsMarket, goalsComparison, displayCards, cardsComparison, cornerMarket, cornersComparison, drawNoBet, drawNoBetComparison }) {
@@ -1477,8 +1498,8 @@ function secondaryTipRowsForMatch({ compactPick, displayBtts, bttsComparison, go
 
   return resolved.map((row) => ({
     ...row,
-    modelProbability: row.modelProbability ?? modelProbabilityForMarket(row.market),
-    edgeBadge: row.comparison?.badge?.tone === 'positive' && row.comparison.edgePoints > 0 ? row.comparison.badge.label : null,
+    modelProbability: row.market?.confidence_hidden ? null : row.modelProbability ?? modelProbabilityForMarket(row.market),
+    edgeBadge: !row.market?.confidence_hidden && row.comparison?.badge?.tone === 'positive' && row.comparison.edgePoints > 0 ? row.comparison.badge.label : null,
   }));
 }
 
@@ -2942,6 +2963,7 @@ function suggestedMarketPick(candidates, isFinished = false) {
       modelProbability: Number(item.modelProbability ?? modelProbabilityForMarket(item.market)),
     }))
     .map((item) => {
+      if (item.market?.confidence_hidden) return { ...item, suggestionScore: item.modelEdge - 0.08 };
       if (item.label !== 'Winner') return { ...item, suggestionScore: item.modelEdge };
       const strongModel = Number.isFinite(item.modelProbability) && item.modelProbability >= 0.6;
       const hasBookmakerConflict = item.market?.lowConfidence || item.market?.guidance?.type === 'bookmaker_guard' || item.comparison?.badge?.tone === 'warning';
