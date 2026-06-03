@@ -738,6 +738,26 @@ function marketEntry(match, allMatches, key, title, market) {
   };
 }
 
+function marketHasBookmakerOdds(market) {
+  const value = Number(market?.odds);
+  return Number.isFinite(value) && value > 1.01;
+}
+
+function displayableMarketForKey(match, key, market) {
+  if (!market) return false;
+  if (['winner', 'draw_no_bet', 'btts', 'ou_goals', 'double_chance'].includes(key)) return true;
+  if (match.status === 'FT' && ['hit', 'miss', 'pass'].includes(market.result)) return true;
+  if (key === 'ou_cards') return marketHasBookmakerOdds(market);
+  if (key === 'ou_corners') return hasDirectCornerOdds(match, market);
+  return true;
+}
+
+function marketEntryIfDisplayable(match, allMatches, key, title, market) {
+  return displayableMarketForKey(match, key, market)
+    ? marketEntry(match, allMatches, key, title, market)
+    : null;
+}
+
 function suggestedMarketPick(candidates, isFinished = false) {
   const available = candidates.filter((item) => item?.market);
   if (!available.length) return null;
@@ -843,16 +863,17 @@ function precomputeMatch(match, allMatches) {
   const doubleChance = doubleChanceMarket(match);
   const drawNoBet = drawNoBetMarket(match);
   const displayMarkets = {
-    winner: marketEntry(match, allMatches, 'winner', 'Winner', winner),
-    btts: marketEntry(match, allMatches, 'btts', 'BTTS', btts),
-    goals: marketEntry(match, allMatches, 'ou_goals', 'Goals', goals),
-    cards: marketEntry(match, allMatches, 'ou_cards', 'Cards', cards),
-    corners: marketEntry(match, allMatches, 'ou_corners', 'Corners', corners),
-    double_chance: marketEntry(match, allMatches, 'double_chance', 'Double chance', doubleChance),
-    draw_no_bet: marketEntry(match, allMatches, 'draw_no_bet', 'Draw No Bet', drawNoBet),
+    winner: marketEntryIfDisplayable(match, allMatches, 'winner', 'Winner', winner),
+    btts: marketEntryIfDisplayable(match, allMatches, 'btts', 'BTTS', btts),
+    goals: marketEntryIfDisplayable(match, allMatches, 'ou_goals', 'Goals', goals),
+    cards: marketEntryIfDisplayable(match, allMatches, 'ou_cards', 'Cards', cards),
+    corners: marketEntryIfDisplayable(match, allMatches, 'ou_corners', 'Corners', corners),
+    double_chance: marketEntryIfDisplayable(match, allMatches, 'double_chance', 'Double chance', doubleChance),
+    draw_no_bet: marketEntryIfDisplayable(match, allMatches, 'draw_no_bet', 'Draw No Bet', drawNoBet),
   };
   const compactMarket = suggestedMarketPick([
     displayMarkets.winner,
+    displayMarkets.draw_no_bet,
     displayMarkets.btts,
     displayMarkets.goals,
     displayMarkets.cards,

@@ -14,6 +14,7 @@ import csv
 import html
 import json
 import os
+import re
 import time
 import urllib.parse
 import urllib.request
@@ -176,6 +177,7 @@ LEAGUE_EXCLUSION_TOKENS = (
 
 # Marker patterns Flashscore uses for women's teams in event names.
 WOMEN_TEAM_MARKERS = (" w", " (w)", "(w)")
+YOUTH_TEAM_RE = re.compile(r"\b(?:u|under\s*)(?:17|18|19|20|21|23)\b", re.I)
 
 HEADERS = [
     "run_timestamp",
@@ -437,6 +439,21 @@ def is_women_team(name):
     return any(marker in lower for marker in WOMEN_TEAM_MARKERS)
 
 
+def is_youth_or_reserve_team(name):
+    lower = (name or "").strip().lower()
+    if not lower:
+        return False
+    return bool(YOUTH_TEAM_RE.search(lower)) or any(
+        token in lower for token in ("youth", "academy", "reserve", "reserves")
+    )
+
+
+def is_excluded_fixture(league_name, home, away):
+    if league_name != "International Friendly Games":
+        return False
+    return is_youth_or_reserve_team(home) or is_youth_or_reserve_team(away)
+
+
 def rows_from_flashscore(start_date, days, run_ts):
     try:
         raw = fetch_flashscore_feed()
@@ -461,6 +478,7 @@ def rows_from_flashscore(start_date, days, run_ts):
     league_hit = 0
     out_of_window = 0
     skipped_women = 0
+    skipped_youth = 0
     league_counter = Counter()
     sample_leagues = []
     seen_pairs = set()
@@ -478,6 +496,9 @@ def rows_from_flashscore(start_date, days, run_ts):
         league_hit += 1
         if is_women_team(event.get("home")) or is_women_team(event.get("away")):
             skipped_women += 1
+            continue
+        if is_excluded_fixture(league["name"], event.get("home"), event.get("away")):
+            skipped_youth += 1
             continue
         local_date, local_time, utc_ts = parse_source_datetime(None, event.get("ts"))
         if local_date not in allowed_dates:
@@ -512,7 +533,8 @@ def rows_from_flashscore(start_date, days, run_ts):
 
     diag = (
         f"events={len(events)} league_hit={league_hit} "
-        f"skipped_women={skipped_women} out_of_window={out_of_window} matched={matched} "
+        f"skipped_women={skipped_women} skipped_youth={skipped_youth} "
+        f"out_of_window={out_of_window} matched={matched} "
         f"by_league={dict(league_counter)} sample_leagues={sample_leagues}"
     )
     print(f"[flashscore] {diag}")
@@ -573,6 +595,8 @@ def rows_from_api(start_date, days, run_ts, key):
                 )
                 api_id = api_league.get("id") or league["api_id"]
                 canonical = LEAGUE_BY_API.get(api_id, league)
+                if is_excluded_fixture(canonical["name"], home.get("name", ""), away.get("name", "")):
+                    continue
                 status_text = short_status(fixture.get("status"))
                 row = {
                     "run_timestamp": run_ts,

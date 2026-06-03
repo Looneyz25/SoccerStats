@@ -63,6 +63,7 @@ MODEL_CALIBRATION = ROOT / "docs" / "agent-system" / "outputs" / "model_calibrat
 PHASE1_FIXTURE_SLATE = OUT_DIR / "phase1_fixture_slate_current.csv"
 PHASE2_ODDS_SLATE = OUT_DIR / "phase2_odds_slate_current.csv"
 PHASE_FIXTURE_FALLBACK_LEAGUES = {"Allsvenskan", "Eliteserien"}
+YOUTH_TEAM_RE = re.compile(r"\b(?:u|under\s*)(?:17|18|19|20|21|23)\b", re.I)
 
 # --- Model tuning constants ---------------------------------------------------
 # Dixon-Coles (1997) low-score correction. Negative rho lifts 0-0 and 1-1
@@ -585,6 +586,24 @@ def normalize_team_logo_payload(team):
         team["logo"] = ""
 
 
+def is_youth_or_reserve_team_name(name):
+    lower = (name or "").strip().lower()
+    if not lower:
+        return False
+    return bool(YOUTH_TEAM_RE.search(lower)) or any(
+        token in lower for token in ("youth", "academy", "reserve", "reserves")
+    )
+
+
+def is_excluded_fixture_for_league(league_name, home_name, away_name):
+    if league_name != "International Friendly Games":
+        return False
+    return (
+        is_youth_or_reserve_team_name(home_name)
+        or is_youth_or_reserve_team_name(away_name)
+    )
+
+
 def load_store():
     if STORE.exists():
         return json.loads(STORE.read_text(encoding="utf-8"))
@@ -633,7 +652,7 @@ def phase_0_validate(store):
 
     # Per-match validation + re-date. Cache the event fetch for later phases.
     # Parallelized to fit within tight runtime budgets.
-    drops_no_id = 0; drops_foreign = 0; moved = 0; re_dated = 0
+    drops_no_id = 0; drops_foreign = 0; drops_excluded = 0; moved = 0; re_dated = 0
     cache = {}
     from concurrent.futures import ThreadPoolExecutor, as_completed
     all_eids = []
@@ -656,6 +675,11 @@ def phase_0_validate(store):
     for L in list(store["leagues"]):
         keep = []
         for m in L["matches"]:
+            home_name = (m.get("home") or {}).get("name") or ""
+            away_name = (m.get("away") or {}).get("name") or ""
+            if is_excluded_fixture_for_league(L.get("name"), home_name, away_name):
+                drops_excluded += 1
+                continue
             eid = m.get("id")
             if not eid:
                 drops_no_id += 1; continue
@@ -692,6 +716,7 @@ def phase_0_validate(store):
         L["matches"] = keep
 
     return {"dedupe": drops_dupe, "no_id": drops_no_id, "foreign": drops_foreign,
+            "excluded": drops_excluded,
             "moved": moved, "re_dated": re_dated, "cache": cache}
 
 
@@ -2427,12 +2452,13 @@ def populate_pre_match_predictions(store):
                 continue
             predictions = match.setdefault("predictions", {})
             odds = market_odds_for_match(match)
+            model_seed_odds = odds or {"home": 3.0, "draw": 3.2, "away": 3.0}
             h_name = (match.get("home") or {}).get("name") or "Home"
             a_name = (match.get("away") or {}).get("name") or "Away"
             before_keys = {key for key, value in predictions.items() if value}
 
-            if odds and not all(predictions.get(key) for key in ("winner", "btts", "ou_goals", "ou_cards")):
-                h_att, h_def, a_att, a_def = pre_prediction_form_inputs(match, league_matches, odds)
+            if not all(predictions.get(key) for key in ("winner", "btts", "ou_goals", "ou_cards")):
+                h_att, h_def, a_att, a_def = pre_prediction_form_inputs(match, league_matches, model_seed_odds)
                 market_context = prediction_context_for_match(match, all_matches)
                 fallback = predict_enhanced(
                     h_att,
@@ -2445,7 +2471,7 @@ def populate_pre_match_predictions(store):
                     h_team_id=(match.get("home") or {}).get("team_id"),
                     a_team_id=(match.get("away") or {}).get("team_id"),
                     league=league_name,
-                    market_odds=odds,
+                    market_odds=model_seed_odds,
                     market_context=market_context,
                 )
                 fallback_factors = fallback.get("factors") or {}
@@ -2453,11 +2479,21 @@ def populate_pre_match_predictions(store):
                     "source": "pre_match_prefill",
                     "source_note": (
                         "Generated before kickoff from available 1X2 odds plus bookmaker/internal context enrichment."
-                        if market_context else
+                        if odds and market_context else
                         "Generated before kickoff from available 1X2 odds plus league/global baselines because detailed team context was missing."
+                        if odds else
+                        "Generated before kickoff from model baselines because bookmaker 1X2 odds were unavailable."
                     ),
-                    "data_quality": "Data usable" if market_context else "Data weak",
+                    "data_quality": (
+                        "Data usable"
+                        if odds and market_context else
+                        "Data weak"
+                    ),
+                    "bookmaker_odds_available": bool(odds),
+                    "model_seed_odds": None if odds else model_seed_odds,
                 })
+                if not odds:
+                    fallback_factors["caution"] = "Bookmaker market unavailable; use model-only predictions carefully."
                 fallback["factors"] = {**fallback_factors, **(predictions.get("factors") or {})}
                 for key in ("winner", "btts", "ou_goals", "ou_cards"):
                     if not predictions.get(key) and fallback.get(key):
@@ -3182,6 +3218,8 @@ def promote_phase_fixtures_to_store(store=None):
         league_name = row.get("league")
         if league_name not in TOURNAMENTS.values():
             continue
+        if is_excluded_fixture_for_league(league_name, row.get("home") or "", row.get("away") or ""):
+            continue
         if row.get("phase1_status") and row.get("phase1_status") != "ready_for_phase_2":
             continue
         if not (row.get("event_id") and row.get("date") and row.get("time") and row.get("home") and row.get("away")):
@@ -3292,7 +3330,10 @@ def run_full_refresh():
     # Phase 0
     print("\n[Phase 0] validate + dedupe + re-date")
     p0 = phase_0_validate(store)
-    print(f"  dedupe={p0['dedupe']}  no_id={p0['no_id']}  foreign={p0['foreign']}  moved={p0['moved']}  re_dated={p0['re_dated']}")
+    print(
+        f"  dedupe={p0['dedupe']}  no_id={p0['no_id']}  foreign={p0['foreign']}  "
+        f"excluded={p0.get('excluded', 0)}  moved={p0['moved']}  re_dated={p0['re_dated']}"
+    )
     seen_ids = {m["id"] for L in store["leagues"] for m in L["matches"] if m.get("id")}
 
     # Phase A
