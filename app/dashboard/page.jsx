@@ -119,6 +119,7 @@ const SPORTSBET_LEAGUE_SLUGS = {
   'Brasileirão Betano': 'americas/brazilian-serie-a',
   'CONMEBOL Libertadores': 'americas/conmebol-copa-libertadores',
   'FIFA World Cup': 'world-cup/mens-world-cup',
+  'International Friendly Games': 'international-soccer/international-friendlies',
   Allsvenskan: 'rest-of-europe/swedish-allsvenskan',
   Eliteserien: 'rest-of-europe/norwegian-eliteserien',
 };
@@ -2633,6 +2634,7 @@ const LEAGUE_PRIORITY = [
   'CONMEBOL Libertadores',
   'A-League Men',
   'FIFA World Cup',
+  'International Friendly Games',
   'Eredivisie',
   'Primeira Liga',
   'MLS',

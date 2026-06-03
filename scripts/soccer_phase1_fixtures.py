@@ -73,6 +73,7 @@ LEAGUES = [
     {"legacy_id": 384, "api_id": 13, "season": 2026, "name": "CONMEBOL Libertadores"},
     {"legacy_id": 136, "api_id": 188, "season": 2025, "name": "A-League Men"},
     {"legacy_id": 16, "api_id": 1, "season": 2026, "name": "FIFA World Cup"},
+    {"legacy_id": 10, "api_id": 10, "season": 2026, "name": "International Friendly Games"},
     {"legacy_id": 37, "api_id": 88, "season": 2025, "name": "Eredivisie"},
     {"legacy_id": 238, "api_id": 94, "season": 2025, "name": "Primeira Liga"},
     {"legacy_id": 242, "api_id": 253, "season": 2026, "name": "MLS"},
@@ -127,6 +128,7 @@ THESPORTSDB_LEAGUE_HINTS = {
     "Brasileirão Betano": ("brasileirao betano", "brasileirão betano", "brazilian serie a", "campeonato brasileiro"),
     "CONMEBOL Libertadores": ("conmebol libertadores", "copa libertadores", "libertadores"),
     "FIFA World Cup": ("fifa world cup", "men's world cup", "world cup", "world championship"),
+    "International Friendly Games": ("international friendly games", "international friendlies", "friendly international", "friendlies"),
     "MLS": ("american major league soccer", "major league soccer", "mls"),
     "Allsvenskan": ("swedish allsvenskan", "allsvenskan"),
     "Eliteserien": ("norwegian eliteserien", "eliteserien"),
@@ -157,6 +159,7 @@ FLASHSCORE_LEAGUE_NAMES = {
     "Brasileirão Betano": ("brazil", {"brasileirao betano", "brasileirão betano", "serie a betano", "serie a"}),
     "CONMEBOL Libertadores": ("south america", {"conmebol libertadores", "copa libertadores", "libertadores"}),
     "FIFA World Cup": ("world", {"world cup", "world championship", "men's world cup", "mens world cup"}),
+    "International Friendly Games": ("", {"international friendlies", "friendly international", "friendlies", "friendly games"}),
     "Allsvenskan": ("sweden", {"allsvenskan"}),
     "Eliteserien": ("norway", {"eliteserien"}),
 }

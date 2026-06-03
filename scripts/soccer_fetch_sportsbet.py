@@ -44,6 +44,7 @@ LEAGUE_PAGES = {
     "Brasileirão Betano":     "americas/brazilian-serie-a",
     "CONMEBOL Libertadores":  "americas/conmebol-copa-libertadores",
     "FIFA World Cup":         "world-cup/mens-world-cup",
+    "International Friendly Games": "international-soccer/international-friendlies",
     "Allsvenskan":            "rest-of-europe/swedish-allsvenskan",
     "Eliteserien":            "rest-of-europe/norwegian-eliteserien",
 }

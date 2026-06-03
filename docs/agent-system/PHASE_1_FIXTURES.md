@@ -28,6 +28,7 @@ The table below is the active fixture allow-list. When a new league is added her
 | 384 | CONMEBOL Libertadores |
 | 136 | A-League Men |
 | 16 | FIFA World Cup |
+| 10 | International Friendly Games |
 | 37 | Eredivisie |
 | 238 | Primeira Liga |
 | 242 | MLS |

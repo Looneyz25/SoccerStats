@@ -65,6 +65,7 @@ LEAGUE_COUNTRY_HINT = {
     "Ligue 1": "france",
     "Eredivisie": "netherlands",
     "UEFA Champions League": "europe",
+    "International Friendly Games": "world",
     "MLS": "united states",
     "Allsvenskan": "sweden",
     "Eliteserien": "norway",

@@ -66,6 +66,7 @@ Every listed league must have a Sportsbet slug or an explicit documented source 
 | Eredivisie | `rest-of-europe/dutch-eredivisie` |
 | Primeira Liga | `rest-of-europe/portuguese-primeira-liga` |
 | UEFA Champions League | `uefa-competitions/uefa-champions-league` |
+| International Friendly Games | `international-soccer/international-friendlies` |
 | MLS | `north-america/usa-major-league-soccer` |
 | A-League Men | `australia/australian-a-league-men` |
 | Scottish Premiership | `united-kingdom/scottish-premiership` |

@@ -56,6 +56,7 @@ LEAGUE_HINTS = {
     "Brasileirão Betano":     ["brasileirao betano", "brasileirão betano", "brazilian serie a", "campeonato brasileiro"],
     "CONMEBOL Libertadores":  ["conmebol libertadores", "copa libertadores", "libertadores"],
     "FIFA World Cup":         ["fifa world cup", "men's world cup", "world cup", "world championship"],
+    "International Friendly Games": ["international friendly games", "international friendlies", "friendly international", "friendlies"],
     "MLS":                    ["american major league soccer", "major league soccer", "mls"],
 }
 

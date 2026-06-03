@@ -50,6 +50,7 @@ const LEAGUE_BADGE_SOURCES = {
   'Brasileirão Betano': 'https://media.api-sports.io/football/leagues/71.png',
   'CONMEBOL Libertadores': 'https://media.api-sports.io/football/leagues/13.png',
   'FIFA World Cup': 'https://media.api-sports.io/football/leagues/1.png',
+  'International Friendly Games': 'https://media.api-sports.io/football/leagues/10.png',
   Allsvenskan: 'https://media.api-sports.io/football/leagues/113.png',
   Eliteserien: 'https://media.api-sports.io/football/leagues/103.png',
 };

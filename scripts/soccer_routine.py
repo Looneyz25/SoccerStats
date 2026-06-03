@@ -135,6 +135,7 @@ TOURNAMENTS = {
     384: "CONMEBOL Libertadores",
     136: "A-League Men",
     16:  "FIFA World Cup",
+    10:  "International Friendly Games",
     37:  "Eredivisie",
     238: "Primeira Liga",
     242: "MLS",
@@ -149,7 +150,7 @@ TOURNAMENTS = {
 ORDER = ["UEFA Champions League","UEFA Europa League","Premier League","LaLiga",
          "Bundesliga","Serie A","Ligue 1","UEFA Conference League",
          "Brasileirão Betano","CONMEBOL Libertadores","A-League Men","FIFA World Cup",
-         "Eredivisie","Primeira Liga","MLS",
+         "International Friendly Games","Eredivisie","Primeira Liga","MLS",
          "Scottish Premiership","J1 League","Championship","League One","League Two",
          "Allsvenskan","Eliteserien"]
 
@@ -507,6 +508,7 @@ LEAGUE_LOGO_OVERRIDES = {
     "Brasileirão Betano": "https://media.api-sports.io/football/leagues/71.png",
     "CONMEBOL Libertadores": "https://media.api-sports.io/football/leagues/13.png",
     "FIFA World Cup": "https://media.api-sports.io/football/leagues/1.png",
+    "International Friendly Games": "https://media.api-sports.io/football/leagues/10.png",
     "Allsvenskan": "https://media.api-sports.io/football/leagues/113.png",
     "Eliteserien": "https://media.api-sports.io/football/leagues/103.png",
 }
@@ -743,6 +745,7 @@ FLASH_LEAGUE_ALIASES = {
     "Brasileirão Betano": ("brazil", {"brasileirao betano", "brasileirão betano", "serie a betano", "serie a"}),
     "CONMEBOL Libertadores": ("south america", {"conmebol libertadores", "copa libertadores", "libertadores"}),
     "FIFA World Cup": ("world", {"world cup", "world championship", "men's world cup", "mens world cup"}),
+    "International Friendly Games": ("", {"international friendlies", "friendly international", "friendlies", "friendly games"}),
     "Allsvenskan": ("sweden", {"allsvenskan"}),
     "Eliteserien": ("norway", {"eliteserien"}),
 }
@@ -3068,6 +3071,7 @@ def entain_fixture_rows():
         "Brasileirão Betano": ("brazilian serie a",),
         "CONMEBOL Libertadores": ("conmebol copa libertadores", "copa libertadores"),
         "FIFA World Cup": ("men's world cup", "mens world cup", "world cup"),
+        "International Friendly Games": ("international friendlies", "friendly international", "international friendly games"),
         "Eredivisie": ("dutch eredivisie",),
         "Primeira Liga": ("portuguese primeira liga", "portugal primeira liga"),
         "MLS": ("us major league soccer",),
