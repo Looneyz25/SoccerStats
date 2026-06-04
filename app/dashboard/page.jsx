@@ -4117,6 +4117,8 @@ function PredictionSummaryCard({ match, allMatches, voteState = null }) {
   const cardsComparison = precomputed.cards?.comparison || modelVsBookmakerComparison(match, 'ou_cards', displayCards);
   const cornerMarket = withCornerBookmakerOdds(match, capGenericCornerMarket(match, precomputed.corners?.market || cornerMarketFromStreaks(match, allMatches)));
   const cornersComparison = comparisonForMarket(match, 'ou_corners', cornerMarket, precomputed.corners?.comparison);
+  const displayableCards = displayableMarketForKey(match, 'ou_cards', displayCards) ? displayCards : null;
+  const displayableCorners = displayableMarketForKey(match, 'ou_corners', cornerMarket) ? cornerMarket : null;
 
   const winnerPick = winner ? formatMarketDetail(winner) : null;
   const rawWinner = predictions.winner;
