@@ -3,6 +3,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
 import { randomUUID } from 'node:crypto';
+import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { cert, getApps, initializeApp, applicationDefault } from 'firebase-admin/app';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
@@ -27,6 +28,7 @@ const GOOGLE_STORAGE_HOST = 'storage.googleapis.com';
 const THESPORTSDB_KEY = process.env.THESPORTSDB_KEY || process.env.THESPORTSDB_API_KEY || '123';
 const THESPORTSDB_BASE = `https://www.thesportsdb.com/api/v1/json/${THESPORTSDB_KEY}`;
 const FETCH_TIMEOUT_MS = Number(process.env.BADGE_FETCH_TIMEOUT_MS || 12000);
+const PYTHON_BIN = process.env.PYTHON_BIN || path.join(ROOT, '.venv-local', 'Scripts', 'python.exe');
 
 const LEAGUE_BADGE_SOURCES = {
   'Premier League': 'https://media.api-sports.io/football/leagues/39.png',
@@ -245,6 +247,13 @@ function sourceNameForUrl(sourceUrl, fallback = 'provider') {
   return fallback;
 }
 
+function normalizedProviderImageUrl(sourceUrl) {
+  return String(sourceUrl || '').replace(
+    /^https:\/\/api\.sofascore\.(?:app|com)\/api\/v1\/(team|unique-tournament)\/(\d+)\/image$/i,
+    'https://img.sofascore.com/api/v1/$1/$2/image',
+  );
+}
+
 function rosterSourceForTeam(teamSources, leagueName, teamName) {
   const leagueMap = teamSources.byLeague.get(leagueName) || new Map();
   for (const key of sourceKeysForTeamName(teamName)) {
@@ -264,7 +273,7 @@ function sourceForEntity(kind, entity, teamSources, leagueName = '') {
     // Safe fallback: use SofaScore team image URL only as an input source, then cache to Firebase.
     const rawTeamId = entity?.team_id;
     if ((typeof rawTeamId === 'number' || /^\d+$/.test(String(rawTeamId || ''))) && Number(rawTeamId) > 0) {
-      return `https://api.sofascore.app/api/v1/team/${Number(rawTeamId)}/image`;
+      return `https://img.sofascore.com/api/v1/team/${Number(rawTeamId)}/image`;
     }
     return '';
   }
@@ -370,6 +379,9 @@ function managedStorageUrl(bucketName, storagePath) {
 }
 
 async function fetchProviderImage(sourceUrl) {
+  if (/^https:\/\/img\.sofascore\.com\/api\/v1\/(?:team|unique-tournament)\/\d+\/image$/i.test(sourceUrl)) {
+    return fetchSofaScoreImage(sourceUrl);
+  }
   const response = await fetchWithTimeout(sourceUrl, {
     headers: {
       'user-agent': 'Mozilla/5.0 LVRstats badge cache',
@@ -384,9 +396,51 @@ async function fetchProviderImage(sourceUrl) {
   return { buffer, contentType };
 }
 
+function fetchSofaScoreImage(sourceUrl) {
+  if (!existsSync(PYTHON_BIN)) {
+    throw new Error(`SofaScore badge helper missing: ${PYTHON_BIN}`);
+  }
+  const script = `
+import base64
+import json
+import sys
+from curl_cffi import requests
+
+url = sys.argv[1]
+response = requests.get(url, impersonate="chrome120", timeout=20)
+content_type = response.headers.get("content-type") or "image/png"
+if response.status_code < 200 or response.status_code >= 300:
+    raise RuntimeError(f"HTTP {response.status_code}")
+if not content_type.startswith("image/"):
+    raise RuntimeError(f"not image: {content_type}")
+if not response.content:
+    raise RuntimeError("empty image")
+print(json.dumps({
+    "contentType": content_type,
+    "base64": base64.b64encode(response.content).decode("ascii"),
+}))
+`;
+  const result = spawnSync(PYTHON_BIN, ['-c', script, sourceUrl], {
+    cwd: ROOT,
+    encoding: 'utf8',
+    timeout: FETCH_TIMEOUT_MS + 10000,
+    maxBuffer: 10 * 1024 * 1024,
+  });
+  if (result.status !== 0) {
+    const message = (result.stderr || result.stdout || '').trim() || `exit ${result.status}`;
+    throw new Error(message.split(/\r?\n/).slice(-1)[0]);
+  }
+  const payload = JSON.parse(result.stdout);
+  return {
+    buffer: Buffer.from(payload.base64, 'base64'),
+    contentType: payload.contentType || 'image/png',
+  };
+}
+
 async function cacheImage(bucket, kind, identity, sourceUrl, sourceName) {
-  const { buffer, contentType } = await fetchProviderImage(sourceUrl);
-  const ext = extensionFor(contentType, sourceUrl);
+  const normalizedSourceUrl = normalizedProviderImageUrl(sourceUrl);
+  const { buffer, contentType } = await fetchProviderImage(normalizedSourceUrl);
+  const ext = extensionFor(contentType, normalizedSourceUrl);
   const storagePath = `badges/${kind}/${identity}.${ext}`;
   const file = bucket.file(storagePath);
   await file.save(buffer, {
@@ -396,7 +450,7 @@ async function cacheImage(bucket, kind, identity, sourceUrl, sourceName) {
       cacheControl: 'public, max-age=31536000, immutable',
       metadata: {
         cacheId: randomUUID(),
-        sourceUrl,
+        sourceUrl: normalizedSourceUrl,
         sourceName: sourceName || '',
       },
     },
@@ -406,7 +460,7 @@ async function cacheImage(bucket, kind, identity, sourceUrl, sourceName) {
     logo: managedStorageUrl(bucket.name, storagePath),
     badge_storage_path: storagePath,
     badge_source: sourceName || 'provider',
-    badge_source_url: sourceUrl,
+    badge_source_url: normalizedSourceUrl,
   };
 }
 

@@ -525,7 +525,7 @@ def stable_league_logo(league_name, unique_tournament_id=None):
     override = LEAGUE_LOGO_OVERRIDES.get(league_name or "")
     if override:
         return override
-    return f"https://api.sofascore.app/api/v1/unique-tournament/{unique_tournament_id}/image" if unique_tournament_id else ""
+    return f"https://img.sofascore.com/api/v1/unique-tournament/{unique_tournament_id}/image" if unique_tournament_id else ""
 
 
 def verified_team_logo(team_name=None, existing_logo=None, badge_source=None):
@@ -553,7 +553,7 @@ def sofascore_team_logo(team_id, team_name=None):
 
 
 def sofascore_league_logo(unique_tournament_id):
-    return f"https://api.sofascore.app/api/v1/unique-tournament/{unique_tournament_id}/image" if unique_tournament_id else ""
+    return f"https://img.sofascore.com/api/v1/unique-tournament/{unique_tournament_id}/image" if unique_tournament_id else ""
 
 
 def team_payload(team, score=None):
@@ -1341,15 +1341,18 @@ def phase_a5_backfill_enrich(store, seen_ids, backfill_dates=None, recent_only=F
             if (ev.get("status") or {}).get("type") != "finished": continue
             ts = ev.get("startTimestamp")
             h = ev.get("homeTeam") or {}; a = ev.get("awayTeam") or {}
+            league_name = TOURNAMENTS[utid]
+            if is_excluded_fixture_for_league(league_name, h.get("name", ""), a.get("name", "")):
+                continue
             rec = {
                 "id": eid, "date": adl_date(ts) if ts else d, "time": "FT", "status": "FT",
                 "home": team_payload(h, (ev.get("homeScore") or {}).get("current")),
                 "away": team_payload(a, (ev.get("awayScore") or {}).get("current")),
                 "settled_at": TODAY.isoformat(),
             }
-            by_name[TOURNAMENTS[utid]]["matches"].append(rec)
+            by_name[league_name]["matches"].append(rec)
             seen_ids.add(eid); added += 1
-            add_brk[TOURNAMENTS[utid]] = add_brk.get(TOURNAMENTS[utid], 0) + 1
+            add_brk[league_name] = add_brk.get(league_name, 0) + 1
 
     # Enrich every FT match (new or existing) with odds + streaks + actuals
     enriched = 0
@@ -2681,6 +2684,9 @@ def phase_b_forecast(store, seen_ids):
                 sp = fetch(f"/api/v1/event/{eid}/team-streaks"); time.sleep(0.6)
                 h2h, tstr = parse_streaks_payload(sp) if sp else ([], [])
                 h = ev.get("homeTeam") or {}; a = ev.get("awayTeam") or {}
+                league_name = TOURNAMENTS[utid]
+                if is_excluded_fixture_for_league(league_name, h.get("name", ""), a.get("name", "")):
+                    continue
                 h_att, h_def = fetch_form(h.get("id"))
                 a_att, a_def = fetch_form(a.get("id"))
                 # NEW: H2H + standings inputs for the enhanced predictor
@@ -2709,7 +2715,7 @@ def phase_b_forecast(store, seen_ids):
                                         h_rank=hr.get("rank"), h_pts=hr.get("pts"),
                                         a_rank=ar.get("rank"), a_pts=ar.get("pts"),
                                         h_team_id=h.get("id"), a_team_id=a.get("id"),
-                                        league=TOURNAMENTS[utid],
+                                        league=league_name,
                                         market_odds=odds,
                                         market_context=market_context)
                 rec = {
@@ -2721,9 +2727,9 @@ def phase_b_forecast(store, seen_ids):
                 if h2h_history: rec["h2h_history"] = h2h_history
                 if h2h_duel: rec["h2h_duel"] = h2h_duel
                 if tstr: rec["team_streaks"] = tstr
-                by_name[TOURNAMENTS[utid]]["matches"].append(rec)
+                by_name[league_name]["matches"].append(rec)
                 seen_ids.add(eid); added += 1
-                add_brk[TOURNAMENTS[utid]] = add_brk.get(TOURNAMENTS[utid], 0) + 1
+                add_brk[league_name] = add_brk.get(league_name, 0) + 1
             except Exception:
                 pass
     return {"added": added, "add_brk": add_brk}
