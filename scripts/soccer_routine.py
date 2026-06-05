@@ -62,7 +62,7 @@ OUT_DIR = ROOT / "docs" / "agent-system" / "outputs"
 MODEL_CALIBRATION = ROOT / "docs" / "agent-system" / "outputs" / "model_calibration.json"
 PHASE1_FIXTURE_SLATE = OUT_DIR / "phase1_fixture_slate_current.csv"
 PHASE2_ODDS_SLATE = OUT_DIR / "phase2_odds_slate_current.csv"
-PHASE_FIXTURE_FALLBACK_LEAGUES = {"Allsvenskan", "Eliteserien"}
+PHASE_FIXTURE_FALLBACK_LEAGUES = {"Allsvenskan", "Eliteserien", "International Friendly Games"}
 YOUTH_TEAM_RE = re.compile(r"\b(?:u|under\s*)(?:17|18|19|20|21|23)\b", re.I)
 
 # --- Model tuning constants ---------------------------------------------------
@@ -137,6 +137,7 @@ TOURNAMENTS = {
     136: "A-League Men",
     16:  "FIFA World Cup",
     10:  "International Friendly Games",
+    851: "International Friendly Games",
     37:  "Eredivisie",
     238: "Primeira Liga",
     242: "MLS",
@@ -2793,6 +2794,14 @@ def parse_decimal(value):
     return number if math.isfinite(number) and number > 1 else None
 
 
+def parse_optional_int(value):
+    try:
+        number = int(value)
+    except (TypeError, ValueError):
+        return None
+    return number
+
+
 def phase_fixture_team(name, team_id=None, logo=None, source=None):
     payload = {
         "name": name or "",
@@ -2948,11 +2957,14 @@ def dedupe_phase_fixture_matches(store):
 
 
 def phase_fixture_record(row):
+    status = row.get("status") or "upcoming"
+    home_goals = parse_optional_int(row.get("home_goals"))
+    away_goals = parse_optional_int(row.get("away_goals"))
     record = {
         "id": row.get("event_id"),
         "date": row.get("date"),
-        "time": row.get("time"),
-        "status": "upcoming",
+        "time": "FT" if status == "FT" else row.get("time"),
+        "status": "FT" if status == "FT" else "upcoming",
         "source": row.get("source") or "Phase pipeline",
         "source_status": row.get("source_health") or "",
         "phase_status": row.get("phase2_status") or row.get("phase1_status") or "fixture_only",
@@ -2961,6 +2973,10 @@ def phase_fixture_record(row):
         "away": phase_fixture_team(row.get("away"), row.get("away_team_id"), row.get("away_logo"), row.get("source")),
         "predictions": {},
     }
+    if status == "FT" and home_goals is not None and away_goals is not None:
+        record["home"]["goals"] = home_goals
+        record["away"]["goals"] = away_goals
+        record["settled_at"] = TODAY.isoformat()
     record.update(phase_fixture_odds_payload(row))
     return record
 

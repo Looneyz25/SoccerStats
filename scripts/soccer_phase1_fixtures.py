@@ -14,6 +14,7 @@ import csv
 import html
 import json
 import os
+import random
 import re
 import time
 import urllib.parse
@@ -23,6 +24,11 @@ from collections import Counter, defaultdict
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from xml.sax.saxutils import escape
+
+try:
+    from curl_cffi import requests as cffi_requests
+except ImportError:
+    cffi_requests = None
 
 try:
     from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
@@ -45,6 +51,9 @@ API_KEY_ENV = ("API_FOOTBALL_KEY", "APISPORTS_KEY")
 THESPORTSDB_KEY_ENV = ("THESPORTSDB_KEY", "THESPORTSDB_API_KEY")
 THESPORTSDB_DEFAULT_KEY = "123"
 THESPORTSDB_BASE = "https://www.thesportsdb.com/api/v1/json"
+SOFASCORE_BASE = "https://api.sofascore.com/api/v1"
+SOFASCORE_INT_FRIENDLY_TOURNAMENT_ID = 851
+SOFASCORE_INT_FRIENDLY_SEASON_ID = 87155
 LOCAL_TZ = "Australia/Adelaide"
 DEFAULT_FLASHSCORE_FEED_URLS = (
     "https://www.flashscore.com.au/x/feed/f_1_0_3_en-au_1",
@@ -178,6 +187,7 @@ LEAGUE_EXCLUSION_TOKENS = (
 # Marker patterns Flashscore uses for women's teams in event names.
 WOMEN_TEAM_MARKERS = (" w", " (w)", "(w)")
 YOUTH_TEAM_RE = re.compile(r"\b(?:u|under\s*)(?:17|18|19|20|21|23)\b", re.I)
+SOFASCORE_PROFILES = ("chrome120", "chrome124", "chrome131", "chrome116", "edge101", "safari17_0")
 
 HEADERS = [
     "run_timestamp",
@@ -196,9 +206,11 @@ HEADERS = [
     "home",
     "home_team_id",
     "home_logo",
+    "home_goals",
     "away",
     "away_team_id",
     "away_logo",
+    "away_goals",
     "is_duplicate",
     "is_stale",
     "missing_fields",
@@ -548,6 +560,126 @@ def rows_from_flashscore(start_date, days, run_ts):
         "source_health": health,
         "records": matched,
         "notes": combined_notes,
+    }]
+
+
+def sofascore_fetch(path):
+    if not cffi_requests:
+        return None
+    url = SOFASCORE_BASE + path
+    for attempt in range(3):
+        try:
+            response = cffi_requests.get(
+                url,
+                impersonate=random.choice(SOFASCORE_PROFILES),
+                timeout=20,
+            )
+            if response.status_code in (403, 404):
+                return None
+            response.raise_for_status()
+            return response.json()
+        except Exception:
+            if attempt == 2:
+                return None
+            time.sleep(1.0 + attempt)
+    return None
+
+
+def sofascore_status(status):
+    status_type = ((status or {}).get("type") or "").lower()
+    status_code = (status or {}).get("code")
+    if status_type == "finished" or status_code in (100, 110, 120):
+        return "FT"
+    if status_type in ("canceled", "cancelled", "postponed", "interrupted") or status_code in (60, 70):
+        return "postponed_or_cancelled"
+    if status_type in ("inprogress", "live"):
+        return "live"
+    if status_type in ("notstarted", "not_started"):
+        return "upcoming"
+    return "unresolved"
+
+
+def rows_from_sofascore_int_friendlies(start_date, days, run_ts):
+    league = LEAGUE_BY_NAME["International Friendly Games"]
+    allowed_dates = set(iso_date_range(start_date, days))
+    rows = []
+    seen = set()
+    endpoints = []
+    blocked = False
+    for direction in ("last", "next"):
+        for page in range(4):
+            path = (
+                f"/unique-tournament/{SOFASCORE_INT_FRIENDLY_TOURNAMENT_ID}"
+                f"/season/{SOFASCORE_INT_FRIENDLY_SEASON_ID}/events/{direction}/{page}"
+            )
+            endpoints.append(path)
+            payload = sofascore_fetch(path)
+            if payload is None:
+                blocked = True
+                continue
+            events = payload.get("events") or []
+            if not events:
+                continue
+            for event in events:
+                event_id = event.get("id")
+                if not event_id or event_id in seen:
+                    continue
+                ts = event.get("startTimestamp")
+                if not ts:
+                    continue
+                local_date, local_time, utc_ts = parse_source_datetime(None, ts)
+                if local_date not in allowed_dates:
+                    continue
+                home = event.get("homeTeam") or {}
+                away = event.get("awayTeam") or {}
+                home_name = home.get("name") or home.get("shortName") or ""
+                away_name = away.get("name") or away.get("shortName") or ""
+                if is_women_team(home_name) or is_women_team(away_name):
+                    continue
+                if is_excluded_fixture(league["name"], home_name, away_name):
+                    continue
+                seen.add(event_id)
+                status_text = sofascore_status(event.get("status"))
+                home_score = event.get("homeScore") or {}
+                away_score = event.get("awayScore") or {}
+                rows.append({
+                    "run_timestamp": run_ts,
+                    "source": "SofaScore",
+                    "source_health": "healthy",
+                    "league_id": league["legacy_id"],
+                    "api_league_id": SOFASCORE_INT_FRIENDLY_TOURNAMENT_ID,
+                    "league": league["name"],
+                    "league_logo": f"https://api.sofascore.app/api/v1/unique-tournament/{SOFASCORE_INT_FRIENDLY_TOURNAMENT_ID}/image",
+                    "event_id": str(event_id),
+                    "date": local_date,
+                    "time": "FT" if status_text == "FT" else local_time,
+                    "timezone": LOCAL_TZ,
+                    "utc_timestamp": utc_ts,
+                    "status": status_text,
+                    "home": home_name,
+                    "home_team_id": str(home.get("id") or provider_team_id("sofascore", home_name)),
+                    "home_logo": f"https://api.sofascore.app/api/v1/team/{home.get('id')}/image" if home.get("id") else "",
+                    "home_goals": home_score.get("normaltime", home_score.get("current", "")) if status_text == "FT" else "",
+                    "away": away_name,
+                    "away_team_id": str(away.get("id") or provider_team_id("sofascore", away_name)),
+                    "away_logo": f"https://api.sofascore.app/api/v1/team/{away.get('id')}/image" if away.get("id") else "",
+                    "away_goals": away_score.get("normaltime", away_score.get("current", "")) if status_text == "FT" else "",
+                    "is_duplicate": "no",
+                    "is_stale": "no",
+                    "missing_fields": "",
+                    "phase1_status": "",
+                    "phase1_notes": "Primary SofaScore tournament fixture feed.",
+                })
+    health = "healthy" if rows else ("blocked" if blocked else "degraded")
+    return rows, [{
+        "run_timestamp": run_ts,
+        "source": "SofaScore",
+        "endpoint": f"unique-tournament/{SOFASCORE_INT_FRIENDLY_TOURNAMENT_ID}/season/{SOFASCORE_INT_FRIENDLY_SEASON_ID}",
+        "date": f"{min(allowed_dates)} to {max(allowed_dates)}" if allowed_dates else "",
+        "league": "International Friendly Games",
+        "source_health": health,
+        "records": len(rows),
+        "notes": f"Primary tournament feed from sofascore.com; pages checked={len(endpoints)}.",
     }]
 
 
@@ -1065,6 +1197,13 @@ def main():
             rows = fallback_rows
             health_rows.extend(fallback_health)
             source_mode = "local fallback"
+
+    sofascore_rows, sofascore_health = rows_from_sofascore_int_friendlies(start_date, args.days, run_ts)
+    health_rows.extend(sofascore_health)
+    if sofascore_rows:
+        rows = [row for row in rows if row.get("league") != "International Friendly Games"]
+        rows.extend(sofascore_rows)
+        source_mode = f"{source_mode} + SofaScore friendlies"
 
     rows = finalize_rows(rows, start_date)
     ready = [r for r in rows if r["phase1_status"] == READY]
