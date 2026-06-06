@@ -88,6 +88,14 @@ function ownerImportErrorMessage(result, fallback = 'Result import failed.') {
   return raw;
 }
 
+function arrayValue(value) {
+  return Array.isArray(value) ? value : [];
+}
+
+function textValue(value, fallback = '') {
+  return typeof value === 'string' ? value : fallback;
+}
+
 async function loadMatchDataWithRetry(date = '', retries = 1, retryDelayMs = 1200) {
   try {
     return await loadMatchData(date);
@@ -386,7 +394,7 @@ function h2hWinnerTrendBias(trend) {
 }
 
 function teamNameForCopy(name) {
-  return (name || '').replace(/^\d+\.\s+/, '');
+  return String(name || '').replace(/^\d+\.\s+/, '');
 }
 
 function formatPlainNumber(value) {
@@ -2591,14 +2599,15 @@ function defaultMatchDate(dates, capturedAt) {
 }
 
 function flattenMatches(data) {
-  return (data?.leagues || []).flatMap((league) =>
-    (league.matches || []).map((match) => ({
+  return arrayValue(data?.leagues).flatMap((league) => {
+    const leagueName = textValue(league?.name, 'Unknown league');
+    return arrayValue(league?.matches).map((match) => ({
       ...match,
-      league: league.name,
-      leagueId: league.id,
+      league: leagueName,
+      leagueId: league?.id || leagueName,
       leagueLogo: leagueLogo(league),
-    })),
-  );
+    }));
+  });
 }
 
 function teamPreferenceKey(value) {
@@ -2620,10 +2629,10 @@ function matchHasFavoriteTeam(match, favoriteSet) {
 
 function teamOptionsFromMatches(matches) {
   const teams = new Map();
-  matches.forEach((match) => {
+  arrayValue(matches).forEach((match) => {
     [match.home?.name, match.away?.name].forEach((name) => {
       const key = teamPreferenceKey(name);
-      if (key && !teams.has(key)) teams.set(key, name);
+      if (key && !teams.has(key)) teams.set(key, String(name || '').trim());
     });
   });
   return [...teams.values()].sort((a, b) => a.localeCompare(b));
@@ -2666,8 +2675,10 @@ function leagueSortRank(league) {
 }
 
 function compareLeagues(a, b) {
-  const rankCompare = leagueSortRank(a) - leagueSortRank(b);
-  return rankCompare || a.localeCompare(b);
+  const left = textValue(a, 'Unknown league');
+  const right = textValue(b, 'Unknown league');
+  const rankCompare = leagueSortRank(left) - leagueSortRank(right);
+  return rankCompare || left.localeCompare(right);
 }
 
 function favoriteLeagueRank(league, favoriteLeagues) {
@@ -2687,17 +2698,18 @@ function compareLeagueGroups(a, b, favoriteLeagues) {
 function groupMatchesByLeague(matches, favoriteLeagues = []) {
   const grouped = new Map();
 
-  matches.forEach((match) => {
-    if (!grouped.has(match.league)) {
-      grouped.set(match.league, {
-        league: match.league,
+  arrayValue(matches).forEach((match) => {
+    const leagueName = textValue(match?.league, 'Unknown league');
+    if (!grouped.has(leagueName)) {
+      grouped.set(leagueName, {
+        league: leagueName,
         leagueId: match.leagueId,
         logo: match.leagueLogo,
         matches: [],
       });
     }
 
-    grouped.get(match.league).matches.push(match);
+    grouped.get(leagueName).matches.push(match);
   });
 
   return [...grouped.values()]

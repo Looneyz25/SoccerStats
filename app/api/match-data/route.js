@@ -233,7 +233,7 @@ export async function GET(request) {
         status: 200,
         headers: {
           'Content-Type': 'application/json',
-          'Cache-Control': 'private, max-age=300, stale-while-revalidate=600',
+          'Cache-Control': 'no-store',
         },
       });
     }
@@ -252,7 +252,7 @@ export async function GET(request) {
     status: 200,
     headers: {
       'Content-Type': 'application/json',
-      'Cache-Control': 'private, max-age=30, stale-while-revalidate=600',
+      'Cache-Control': 'no-store',
     },
   });
 }
