@@ -5432,8 +5432,8 @@ function HomeInner() {
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
   const [league, setLeague] = useState('all');
-  const [status, setStatus] = useState('upcoming');
-  const [selectedDate, setSelectedDate] = useState('all');
+  const [status, setStatus] = useState('all');
+  const [selectedDate, setSelectedDate] = useState(() => localTodayDate());
   const [query, setQuery] = useState('');
   const [reviewFilter, setReviewFilter] = useState('all');
   const [bookmakerId, setBookmakerId] = useState('sportsbet');
@@ -5467,15 +5467,15 @@ function HomeInner() {
     let cancelled = false;
     const initialDate = localTodayDate();
 
-    setSelectedDate((current) => current || 'all');
-    const cached = readMatchDataCache() || readMatchDataCache(initialDate);
+    setSelectedDate((current) => current || initialDate);
+    const cached = readMatchDataCache(initialDate) || readMatchDataCache();
     const hasCache = Boolean(cached && Array.isArray(cached.leagues) && cached.leagues.length);
     if (hasCache) {
       setData(cached);
       setError('');
     }
 
-    loadMatchDataWithRetry('')
+    loadMatchDataWithRetry(initialDate)
       .then((nextData) => {
         if (cancelled) return;
         setData(nextData);
