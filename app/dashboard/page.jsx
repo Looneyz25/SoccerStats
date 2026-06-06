@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Component, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import AuthGate from '../auth-gate';
 import { loadMatchDataFromFirestore, readMatchDataCache } from '../firestore-data';
@@ -94,6 +94,53 @@ function arrayValue(value) {
 
 function textValue(value, fallback = '') {
   return typeof value === 'string' ? value : fallback;
+}
+
+class DashboardErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { error };
+  }
+
+  componentDidCatch(error, info) {
+    // Keep the real stack visible in DevTools while avoiding the generic Next.js blank screen.
+    console.error('Dashboard render error:', error, info);
+  }
+
+  render() {
+    if (!this.state.error) return this.props.children;
+    const message = this.state.error instanceof Error && this.state.error.message
+      ? this.state.error.message
+      : 'The dashboard hit a render error.';
+    return (
+      <main className="min-h-screen bg-field px-4 py-10 text-ink">
+        <section className="mx-auto max-w-xl rounded-lg border border-red-200 bg-white p-5 shadow-panel">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-red-600" aria-hidden="true" />
+            <div>
+              <h1 className="text-lg font-semibold">Dashboard could not render</h1>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Refresh the dashboard. If it happens again, send the console line that starts with
+                <span className="font-semibold text-ink"> Dashboard render error</span>.
+              </p>
+              <p className="mt-3 rounded-md bg-red-50 px-3 py-2 text-xs font-semibold text-red-700">{message}</p>
+              <button
+                type="button"
+                onClick={() => window.location.reload()}
+                className="mt-4 inline-flex h-10 items-center rounded-md bg-ink px-4 text-sm font-semibold text-white"
+              >
+                Refresh dashboard
+              </button>
+            </div>
+          </div>
+        </section>
+      </main>
+    );
+  }
 }
 
 async function loadMatchDataWithRetry(date = '', retries = 1, retryDelayMs = 1200) {
@@ -1315,7 +1362,7 @@ function displayWinnerMarket(match, allMatches = []) {
 
 function displayWinnerComparison(match, allMatches = [], winner = null) {
   const precomputed = match.display_markets?.winner;
-  if (precomputed?.market?.type === winner?.type && precomputed?.market?.guidance?.type === winner?.guidance?.type) {
+  if (precomputed?.comparison && precomputed?.market?.type === winner?.type && precomputed?.market?.guidance?.type === winner?.guidance?.type) {
     return precomputed.comparison || modelVsBookmakerComparison({ ...match, __allMatches: allMatches }, 'winner', winner);
   }
   return modelVsBookmakerComparison({ ...match, __allMatches: allMatches }, 'winner', winner);
@@ -6423,9 +6470,11 @@ function HomeInner() {
 export default function Home() {
   return (
     <AuthGate>
-      <Suspense fallback={<main className="min-h-screen bg-field" />}>
-        <HomeInner />
-      </Suspense>
+      <DashboardErrorBoundary>
+        <Suspense fallback={<main className="min-h-screen bg-field" />}>
+          <HomeInner />
+        </Suspense>
+      </DashboardErrorBoundary>
     </AuthGate>
   );
 }
