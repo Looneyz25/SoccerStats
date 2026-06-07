@@ -1326,16 +1326,152 @@ def actuals_for(eid):
     return out
 
 
+def swap_match_actual_sides(actuals):
+    swapped = {}
+    for key, value in (actuals or {}).items():
+        if key.startswith("home_"):
+            swapped["away_" + key[5:]] = value
+        elif key.startswith("away_"):
+            swapped["home_" + key[5:]] = value
+        elif key == "first_to_score":
+            swapped[key] = "away" if value == "home" else ("home" if value == "away" else value)
+        elif key == "ht_winner":
+            swapped[key] = "away" if value == "home" else ("home" if value == "away" else value)
+        elif key == "ht_home":
+            swapped["ht_away"] = value
+        elif key == "ht_away":
+            swapped["ht_home"] = value
+        else:
+            swapped[key] = value
+    return swapped
+
+
+def finished_result_matches_pending(pending, finished):
+    if pending.get("status") == "FT" or finished.get("status") != "FT":
+        return None
+    now = datetime.now(ADL)
+    if not match_due_for_result_check(pending, now):
+        return None
+    pending_date = parse_match_date(pending.get("date"))
+    finished_date = parse_match_date(finished.get("date"))
+    if not pending_date or not finished_date or abs((pending_date - finished_date).days) > 1:
+        return None
+    ph = (pending.get("home") or {}).get("name") or ""
+    pa = (pending.get("away") or {}).get("name") or ""
+    fh = (finished.get("home") or {}).get("name") or ""
+    fa = (finished.get("away") or {}).get("name") or ""
+    if team_names_match(ph, fh) and team_names_match(pa, fa):
+        return "same"
+    if team_names_match(ph, fa) and team_names_match(pa, fh):
+        return "reversed"
+    return None
+
+
+def reconcile_finished_backfill_results(store):
+    """Merge finished source rows into unresolved predicted fixtures.
+
+    Some fallback/bookmaker fixture rows do not share a provider event id with
+    SofaScore. If SofaScore later backfills the finished event as a separate FT
+    row, keep the original predicted fixture and move only the final result into
+    it so public hit-rate accounting uses the real pre-match card.
+    """
+    merged = []
+    for league in store.get("leagues", []):
+        matches = league.get("matches") or []
+        remove_indexes = set()
+        for pending_idx, pending in enumerate(matches):
+            if pending.get("status") == "FT":
+                continue
+            for finished_idx, finished in enumerate(matches):
+                if pending_idx == finished_idx or finished_idx in remove_indexes:
+                    continue
+                orientation = finished_result_matches_pending(pending, finished)
+                if not orientation:
+                    continue
+                finished_home = finished.get("home") or {}
+                finished_away = finished.get("away") or {}
+                if orientation == "reversed":
+                    home_goals = finished_away.get("goals")
+                    away_goals = finished_home.get("goals")
+                    actuals = swap_match_actual_sides(finished.get("actuals") or {})
+                else:
+                    home_goals = finished_home.get("goals")
+                    away_goals = finished_away.get("goals")
+                    actuals = finished.get("actuals") or {}
+                if not isinstance(home_goals, (int, float)) or not isinstance(away_goals, (int, float)):
+                    continue
+                pending["status"] = "FT"
+                pending["time"] = "FT"
+                pending.setdefault("home", {})["goals"] = home_goals
+                pending.setdefault("away", {})["goals"] = away_goals
+                pending["settled_at"] = TODAY.isoformat()
+                pending["prediction_locked"] = True
+                pending["prediction_locked_at"] = datetime.now(ADL).isoformat()
+                pending["settled_source"] = "SofaScoreBackfillMerge"
+                pending["sofascore_result_id"] = finished.get("id")
+                source_ids = [source_id for source_id in (pending.get("id"), finished.get("id")) if source_id]
+                if len(source_ids) > 1:
+                    pending["merged_source_ids"] = source_ids
+                if actuals:
+                    pending["actuals"] = {**(pending.get("actuals") or {}), **actuals}
+                settle_generated_prediction_markets(pending)
+                remove_indexes.add(finished_idx)
+                merged.append(f"{league.get('name')}: {pending['home']['name']} {home_goals}-{away_goals} {pending['away']['name']}")
+                break
+        if remove_indexes:
+            league["matches"] = [m for idx, m in enumerate(matches) if idx not in remove_indexes]
+    return merged
+
+
+def remove_backfill_duplicate_result_shells(store):
+    removed = []
+    for league in store.get("leagues", []):
+        matches = league.get("matches") or []
+        claimed_result_ids = {}
+        for owner_idx, match in enumerate(matches):
+            result_id = match.get("sofascore_result_id")
+            if result_id:
+                claimed_result_ids[str(result_id)] = owner_idx
+            for result_id in match.get("merged_source_ids") or []:
+                claimed_result_ids.setdefault(str(result_id), owner_idx)
+        keep = []
+        for idx, match in enumerate(matches):
+            match_id = match.get("id")
+            if (
+                match.get("status") == "FT"
+                and match_id is not None
+                and str(match_id) in claimed_result_ids
+                and claimed_result_ids[str(match_id)] != idx
+            ):
+                removed.append(f"{league.get('name')}: {(match.get('home') or {}).get('name')} vs {(match.get('away') or {}).get('name')}")
+                continue
+            keep.append(match)
+        league["matches"] = keep
+    return removed
+
+
 def phase_a5_backfill_enrich(store, seen_ids, backfill_dates=None, recent_only=False):
     """Add finished-but-untracked + enrich every FT record."""
     by_name = {L["name"]: L for L in store["leagues"]}
+    seen_ids = set(seen_ids or [])
+    for league in store.get("leagues", []):
+        for match in league.get("matches", []):
+            if match.get("id"):
+                seen_ids.add(match.get("id"))
+                seen_ids.add(str(match.get("id")))
+            if match.get("sofascore_result_id"):
+                seen_ids.add(match.get("sofascore_result_id"))
+                seen_ids.add(str(match.get("sofascore_result_id")))
+            for merged_id in match.get("merged_source_ids") or []:
+                seen_ids.add(merged_id)
+                seen_ids.add(str(merged_id))
     added = 0; add_brk = {}
     for d in (backfill_dates or (YESTERDAY.isoformat(), TODAY.isoformat())):
         data = fetch(f"/api/v1/sport/football/scheduled-events/{d}"); time.sleep(0.6)
         if not data: continue
         for ev in data.get("events", []):
             eid = ev.get("id")
-            if not eid or eid in seen_ids: continue
+            if not eid or eid in seen_ids or str(eid) in seen_ids: continue
             utid = ((ev.get("tournament") or {}).get("uniqueTournament") or {}).get("id")
             if utid not in TOURNAMENTS: continue
             if (ev.get("status") or {}).get("type") != "finished": continue
@@ -1388,7 +1524,9 @@ def phase_a5_backfill_enrich(store, seen_ids, backfill_dates=None, recent_only=F
                     m["actuals"] = {**actuals, **fallback_actuals}
             settle_stat_markets(m)
             enriched += 1
-    return {"added": added, "add_brk": add_brk, "enriched": enriched}
+    merged = reconcile_finished_backfill_results(store)
+    removed_shells = remove_backfill_duplicate_result_shells(store)
+    return {"added": added, "add_brk": add_brk, "enriched": enriched, "merged": merged, "removed_result_shells": removed_shells}
 
 
 # ----------------------------------------------------------------------------
@@ -3366,7 +3504,7 @@ def run_full_refresh():
     # Phase A.5
     print("\n[Phase A.5] backfill finished + enrich")
     pa5 = phase_a5_backfill_enrich(store, seen_ids)
-    print(f"  added={pa5['added']}  enriched={pa5['enriched']}")
+    print(f"  added={pa5['added']}  enriched={pa5['enriched']}  merged={len(pa5.get('merged', []))}  removed_shells={len(pa5.get('removed_result_shells', []))}")
 
     # Phase A.7 — rebuild team Elo from full FT history (deterministic).
     # Runs before retro + forecast so both phases consume up-to-date ratings.
@@ -3436,7 +3574,7 @@ def run_results_only():
         backfill_dates=result_backfill_dates(),
         recent_only=True,
     )
-    print(f"  added={pa5['added']}  enriched={pa5['enriched']}")
+    print(f"  added={pa5['added']}  enriched={pa5['enriched']}  merged={len(pa5.get('merged', []))}  removed_shells={len(pa5.get('removed_result_shells', []))}")
 
     print("\n[Results B.5] today new-league calibration exception")
     cal = populate_today_new_league_calibration_predictions(store)
@@ -3455,13 +3593,16 @@ def run_results_only():
 
     sort_store(store)
     save_store(store)
+    merged_results = pa5.get("merged", [])
     schedule_paths = write_result_schedule_log(store, {
-        "settled": pa["settled"],
+        "settled": pa["settled"] + [f"{row} [SofaScore backfill merge]" for row in merged_results],
         "flashscore_settled": pa.get("flashscore_settled", 0),
         "livescore_settled": pa.get("livescore_settled", 0),
-        "skipped": pa.get("skipped", 0),
+        "skipped": max(0, pa.get("skipped", 0) - len(merged_results)),
         "not_due": pa.get("not_due", 0),
         "backfilled": pa5["added"],
+        "merged_backfill_results": merged_results,
+        "removed_result_shells": pa5.get("removed_result_shells", []),
         "enriched": pa5["enriched"],
         "calibration_created": cal["created"],
         "calibration_settled_matches": cal["settled_matches"],
