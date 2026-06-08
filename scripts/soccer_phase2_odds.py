@@ -416,10 +416,24 @@ def best_match(fixture, candidates):
             cand["home"], cand["away"],
         )
         if score > best_score:
-            best = cand
+            best = {**cand, "reversed": False}
             best_score = score
             best_method = method
+        reverse_score, reverse_method = pair_match_score(
+            fixture["home"], fixture["away"],
+            cand["away"], cand["home"],
+        )
+        if reverse_score > best_score:
+            best = {**cand, "reversed": True}
+            best_score = reverse_score
+            best_method = f"reversed:{reverse_method}"
     return best, best_score, best_method
+
+
+def fixture_side_odds(match):
+    if match.get("reversed"):
+        return match.get("away_odds"), match.get("draw_odds"), match.get("home_odds")
+    return match.get("home_odds"), match.get("draw_odds"), match.get("away_odds")
 
 
 def implied_and_fair(home, draw, away):
@@ -713,14 +727,15 @@ def main():
         out["match_score"] = score
         out["match_method"] = method
         if match:
+            home_odds, draw_odds, away_odds = fixture_side_odds(match)
             out["odds_source"] = "Sportsbet"
             out["sportsbet_event_id"] = match.get("event_id", "")
             out["sportsbet_home_name"] = match.get("home", "")
             out["sportsbet_away_name"] = match.get("away", "")
-            out["home_odds"] = match.get("home_odds")
-            out["draw_odds"] = match.get("draw_odds")
-            out["away_odds"] = match.get("away_odds")
-            implied, overround = implied_and_fair(match.get("home_odds"), match.get("draw_odds"), match.get("away_odds"))
+            out["home_odds"] = home_odds
+            out["draw_odds"] = draw_odds
+            out["away_odds"] = away_odds
+            implied, overround = implied_and_fair(home_odds, draw_odds, away_odds)
             out.update(implied)
             if overround is not None:
                 out["overround"] = overround

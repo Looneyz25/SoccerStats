@@ -248,31 +248,42 @@ function AdminDashboard() {
       }
       await loadGroupConfig();
 
-      setMatchDataLoading(true);
-      setMatchDataError('');
-      let usersList = await getAllUsers();
-      const stripeUsers = usersList.filter((user) => user.stripeCustomerId);
-      if (stripeUsers.length) {
-        setSyncingStripe(true);
-        await Promise.all(stripeUsers.map((user) => syncStripeUser(user.uid)));
-        usersList = await getAllUsers();
-      }
+      const usersList = await getAllUsers();
       setUsers(usersList);
       if (!selectedUid && usersList.length) {
         setSelectedUid(usersList[0].uid);
       }
-      try {
-        setMatchData(await loadMatchDataFromFirestore());
-      } catch (matchErr) {
-        console.error(matchErr);
-        setMatchDataError(matchErr?.message || 'Failed to load dashboard data.');
+      setLoading(false);
+
+      const stripeUsers = usersList.filter((user) => user.stripeCustomerId);
+      if (stripeUsers.length) {
+        setSyncingStripe(true);
+        Promise.allSettled(stripeUsers.map((user) => syncStripeUser(user.uid)))
+          .then(async (results) => {
+            const failed = results.filter((result) => result.status === 'rejected');
+            if (failed.length) {
+              console.warn('Some admin Stripe syncs failed:', failed);
+            }
+            setUsers(await getAllUsers());
+          })
+          .catch((syncErr) => {
+            console.error(syncErr);
+          })
+          .finally(() => setSyncingStripe(false));
       }
+
+      setMatchDataLoading(true);
+      setMatchDataError('');
+      loadMatchDataFromFirestore()
+        .then((data) => setMatchData(data))
+        .catch((matchErr) => {
+          console.error(matchErr);
+          setMatchDataError(matchErr?.message || 'Failed to load dashboard data.');
+        })
+        .finally(() => setMatchDataLoading(false));
     } catch (err) {
       console.error(err);
       setError(err?.message || 'Failed to load users.');
-    } finally {
-      setSyncingStripe(false);
-      setMatchDataLoading(false);
       setLoading(false);
     }
   }

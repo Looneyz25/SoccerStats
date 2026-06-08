@@ -284,11 +284,36 @@ def extract_odds(data, league_slug=None):
 
 def find_match(idx, home, away):
     nh, na = norm(home), norm(away)
-    if (nh, na) in idx: return idx[(nh, na)]
+    if (nh, na) in idx:
+        return {**idx[(nh, na)], "reversed": False}
+    if (na, nh) in idx:
+        return {**idx[(na, nh)], "reversed": True}
     for v in idx.values():
         if names_match(home, v["home_name"]) and names_match(away, v["away_name"]):
-            return v
+            return {**v, "reversed": False}
+        if names_match(home, v["away_name"]) and names_match(away, v["home_name"]):
+            return {**v, "reversed": True}
     return None
+
+def fixture_side_odds(hit):
+    if hit.get("reversed"):
+        return hit["away"], hit["draw"], hit["home"]
+    return hit["home"], hit["draw"], hit["away"]
+
+def markets_for_fixture(markets_dict, reversed_fixture=False):
+    if not reversed_fixture:
+        return markets_dict
+    out = {}
+    for key, choices in (markets_dict or {}).items():
+        if key in ("Full time", "Draw No Bet") and isinstance(choices, dict):
+            flipped = dict(choices)
+            if "1" in choices or "2" in choices:
+                flipped["1"] = choices.get("2")
+                flipped["2"] = choices.get("1")
+            out[key] = {k: v for k, v in flipped.items() if v is not None}
+        else:
+            out[key] = choices
+    return out
 
 def main():
     store = json.loads(STORE_PATH.read_text(encoding="utf-8"))
@@ -314,9 +339,13 @@ def main():
             if m.get("status") == "FT": continue
             hit = find_match(idx, m["home"]["name"], m["away"]["name"])
             if hit:
-                m["sportsbet_odds"] = {"home": hit["home"], "draw": hit["draw"],
-                                       "away": hit["away"], "event_id": hit["event_id"],
-                                       "event_url": hit.get("event_url")}
+                home_odds, draw_odds, away_odds = fixture_side_odds(hit)
+                m["sportsbet_odds"] = {"home": home_odds, "draw": draw_odds,
+                                       "away": away_odds, "event_id": hit["event_id"],
+                                       "event_url": hit.get("event_url"),
+                                       "event_name": f"{hit.get('home_name')} vs {hit.get('away_name')}"}
+                if hit.get("reversed"):
+                    m["sportsbet_odds"]["reversed_fixture"] = True
                 matched += 1
                 if hit.get("event_url"):
                     deep_targets.append(m)
@@ -336,7 +365,10 @@ def main():
         time.sleep(0.8)
         if not markets_dict:
             continue
-        m["sportsbet_markets"] = markets_dict
+        m["sportsbet_markets"] = markets_for_fixture(
+            markets_dict,
+            bool((m.get("sportsbet_odds") or {}).get("reversed_fixture"))
+        )
         deep_hits += 1
 
     STORE_PATH.write_text(json.dumps(store, indent=2, ensure_ascii=False), encoding="utf-8")
