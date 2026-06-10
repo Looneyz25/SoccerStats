@@ -3368,7 +3368,9 @@ def promote_phase_fixtures_to_store(store=None):
     phase2_rows = read_phase_csv(PHASE2_ODDS_SLATE)
     phase1_rows = read_phase_csv(PHASE1_FIXTURE_SLATE)
     odds_by_event = {row.get("event_id"): row for row in phase2_rows if row.get("event_id")}
-    rows = list(phase2_rows or phase1_rows)
+    phase2_event_ids = {row.get("event_id") for row in phase2_rows if row.get("event_id")}
+    rows = list(phase2_rows)
+    rows.extend(row for row in phase1_rows if row.get("event_id") not in phase2_event_ids)
     rows.extend(sportsbet_fixture_rows())
     rows.extend(entain_fixture_rows())
     by_name = {league.get("name"): league for league in store.get("leagues", [])}

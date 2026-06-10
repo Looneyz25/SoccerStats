@@ -533,7 +533,7 @@ async function main() {
       round: league.round ?? null,
       logo: league.logo || null,
       matchCount: Array.isArray(league.matches) ? league.matches.length : 0,
-      matches: Array.isArray(league.matches) ? league.matches : [],
+      matches: Array.isArray(league.matches) ? league.matches.map(slimMatch) : [],
       updatedAt: FieldValue.serverTimestamp(),
     }) });
   });
