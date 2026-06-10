@@ -44,22 +44,28 @@ The table below is the active fixture allow-list. When a new league is added her
 
 | Priority | Source | Endpoint | Use |
 | --- | --- | --- | --- |
-| 1 | API-Football | `/fixtures?date={YYYY-MM-DD}&timezone=Australia/Adelaide` or date-range equivalent | Primary daily fixture discovery, status, teams, league, score |
-| 2 | API-Football | `/fixtures?id={fixture_id}&timezone=Australia/Adelaide` | Validate fixture status, teams, league, timestamp, score |
+| 1 | SofaScore | `/api/v1/unique-tournament/{unique_tournament_id}/season/{season_id}/events/{last,next}/{page}` | Primary daily fixture discovery, status, teams, league, score |
+| 2 | API-Football | `/fixtures?date={YYYY-MM-DD}&timezone=Australia/Adelaide` or date-range equivalent | Fallback fixture discovery when SofaScore is blocked or empty |
 | 3 | Flashscore | `https://2.flashscore.ninja/2/x/feed/f_1_0_3_en-uk_1` | Keyless fallback fixture/status source |
 | 4 | TheSportsDB | `/api/v1/json/{key}/eventsday.php?d={YYYY-MM-DD}&l={league_id}` | Free v1 API fallback fixture/status source |
 | 5 | TheSportsDB | `/api/v1/json/{key}/eventsday.php?d={YYYY-MM-DD}&s=Soccer` | Last-resort global soccer sample |
 
-Do not use Sportsbet or Understat to discover fixtures. They are later-phase sources. SofaScore is no longer a required Phase 1 source because it is blocked.
+Do not use Sportsbet or Understat to discover fixtures. They are later-phase sources. SofaScore is the primary Phase 1 source and must run through the smart-mimic `curl_cffi` request path.
+
+## SofaScore Configuration
+
+Phase 1 uses the configured SofaScore unique tournament and season IDs in `scripts/soccer_phase1_fixtures.py`. These IDs are provider-owned and must not be mixed with API-Football, Sportsbet, Flashscore, or StatsHub/bet365 IDs.
+
+`SOCCER_SOFASCORE_EVENT_PAGES` may increase the number of `last` and `next` event pages checked per tournament. The default is `4`, which means eight event pages per league.
 
 ## API-Football Configuration
 
-Phase 1 expects one of these environment variables:
+API-Football is fallback-only. If SofaScore returns no usable rows, Phase 1 can use one of these environment variables:
 
 - `API_FOOTBALL_KEY`
 - `APISPORTS_KEY`
 
-If neither variable is set, the Phase 1 script tries the keyless Flashscore feed, then TheSportsDB, then current `match_data.json`. Local fallback rows are marked as fallback data. Past fallback rows become `needs_settlement`; future fallback rows become `source_unverified` until a live source validates them.
+If SofaScore returns no usable rows and neither variable is set, the Phase 1 script tries the keyless Flashscore feed, then TheSportsDB, then current `match_data.json`. Local fallback rows are marked as fallback data. Past fallback rows become `needs_settlement`; future fallback rows become `source_unverified` until a live source validates them.
 
 ## TheSportsDB Configuration
 
@@ -90,11 +96,11 @@ All other agents wait until Phase 1 returns a validated slate.
 ## Workflow
 
 1. Data Source Analyst reads `scripts/soccer_routine.py` and confirms current fixture endpoints.
-2. Data Source Analyst checks latest run logs for endpoint failures, especially API-Football auth, rate-limit, timeout, or empty fixture responses.
+2. Data Source Analyst checks latest run logs for endpoint failures, especially SofaScore block/empty responses, API-Football fallback auth, rate-limit, timeout, or empty fixture responses.
 3. Fixture Collector reads current `match_data.json` and latest snapshot to establish the existing slate.
 4. Fixture Collector gathers scheduled events for the date window requested by the prompt. Default window is today and tomorrow in Australia/Adelaide.
 5. Fixture Collector filters events to the listed league IDs only.
-6. Fixture Collector validates each candidate with API-Football fixture-by-ID when available.
+6. Fixture Collector preserves the source's event ID and provider-owned team IDs; API-Football fixture-by-ID validation is fallback-only when SofaScore is unavailable.
 7. Fixture Collector normalizes:
    - `id`
    - `date`
@@ -211,8 +217,8 @@ Optional dated CSV or Markdown snapshots may be created for audit history, but t
 Date window: YYYY-MM-DD to YYYY-MM-DD, Australia/Adelaide
 
 Source health:
-- API-Football fixtures: healthy/degraded/blocked
-- API-Football fixture validation: healthy/degraded/blocked
+- SofaScore fixtures: healthy/degraded/blocked
+- API-Football fallback: not used/healthy/degraded/blocked
 - Fallback scores: not used/used
 
 Coverage:

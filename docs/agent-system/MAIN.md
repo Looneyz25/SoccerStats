@@ -80,7 +80,7 @@ Before Firestore upload, the run should flag any new-league match that has valid
 
 Phase specs:
 
-- [Phase 1 Fixture Collection](PHASE_1_FIXTURES.md) — Flashscore-keyless fixtures, optional API-Football
+- [Phase 1 Fixture Collection](PHASE_1_FIXTURES.md) — SofaScore-primary fixtures with API-Football/Flashscore/TheSportsDB fallback
 - [Phase 2 Odds Collection](PHASE_2_ODDS.md) — Sportsbet AU WDW via smart-mimic session
 - [Phase 3 Team Context](PHASE_3_TEAM_CONTEXT.md) — SofaScore form, streaks, recent H2H
 - [Phase 4 Prediction](PHASE_4_PREDICTION.md) — Poisson grid + fair odds + edge vs market
@@ -99,7 +99,7 @@ Phase 1 must produce `docs/agent-system/outputs/Phase1_Fixture_Slate.xlsx` with 
 - Prefer current local `match_data.json` for the app state, then dated `predictions_YYYY-MM-DD.json` snapshots for history.
 - Hard truth rule: once a match is resulted, never amend its prediction pick, probabilities, factors, or model logic snapshot. Settlement may only add final scores, actuals, and hit/miss fields. Retro/post-result predictions must be excluded from hit-rate summaries.
 - Official hit-rate tracking starts from `2026-04-22`; earlier resulted rows are dev-mode calibration history and should not drive public/model baseline rates.
-- Use API-Football as the primary fixture/status/source-of-truth for Phase 1.
+- Use SofaScore as the primary fixture/status/source-of-truth for Phase 1. API-Football, Flashscore, TheSportsDB, and local rows are fallback-only paths.
 - Daily fixture collection should cover today plus the next 6 Adelaide-local days by default.
 - Use Sportsbet as the primary Phase 2 odds source. Use Sportradar StatsHub's bet365 view as the conservative validation/context fallback when Sportsbet or phase rows are missing odds, scores, cards, corners, or table/form context.
 - Do not hammer bet365/StatsHub. Fetch cache-first, page-level only, with gentle sleeps and backoff; avoid account login, automated betting flows, and high-frequency detail-page crawling.

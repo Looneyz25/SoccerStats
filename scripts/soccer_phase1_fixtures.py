@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Phase 1 fixture collection.
 
-Builds the Phase 1 handoff workbook from API-Football when an API key is
-available, with current match_data.json as a local fallback. All displayed
+Builds the Phase 1 handoff workbook from SofaScore first, with API-Football,
+Flashscore, TheSportsDB, and current match_data.json as fallbacks. All displayed
 fixture dates/times are stored in Australia/Adelaide local time.
 
 Environment:
-    API_FOOTBALL_KEY or APISPORTS_KEY
+    API_FOOTBALL_KEY or APISPORTS_KEY (fallback)
     THESPORTSDB_KEY or THESPORTSDB_API_KEY (optional; defaults to free v1 key 123)
 """
 import argparse
@@ -69,31 +69,33 @@ FLASHSCORE_FEED_URLS = tuple(
 FLASHSCORE_FEED_URL = FLASHSCORE_FEED_URLS[0]
 LAST_FLASHSCORE_FEED_URL = FLASHSCORE_FEED_URL
 
-# API-Football league IDs. The legacy IDs match the existing project league IDs.
+# Provider IDs. The legacy IDs match the existing project league IDs; most
+# SofaScore unique tournament IDs happen to match those legacy IDs, except
+# International Friendly Games.
 LEAGUES = [
-    {"legacy_id": 7, "api_id": 2, "season": 2025, "name": "UEFA Champions League"},
-    {"legacy_id": 679, "api_id": 3, "season": 2025, "name": "UEFA Europa League"},
-    {"legacy_id": 17, "api_id": 39, "season": 2025, "name": "Premier League"},
-    {"legacy_id": 8, "api_id": 140, "season": 2025, "name": "LaLiga"},
-    {"legacy_id": 35, "api_id": 78, "season": 2025, "name": "Bundesliga"},
-    {"legacy_id": 23, "api_id": 135, "season": 2025, "name": "Serie A"},
-    {"legacy_id": 34, "api_id": 61, "season": 2025, "name": "Ligue 1"},
-    {"legacy_id": 17015, "api_id": 848, "season": 2025, "name": "UEFA Conference League"},
-    {"legacy_id": 325, "api_id": 71, "season": 2026, "name": "Brasileirão Betano"},
-    {"legacy_id": 384, "api_id": 13, "season": 2026, "name": "CONMEBOL Libertadores"},
-    {"legacy_id": 136, "api_id": 188, "season": 2025, "name": "A-League Men"},
-    {"legacy_id": 16, "api_id": 1, "season": 2026, "name": "FIFA World Cup"},
-    {"legacy_id": 10, "api_id": 10, "season": 2026, "name": "International Friendly Games"},
-    {"legacy_id": 37, "api_id": 88, "season": 2025, "name": "Eredivisie"},
-    {"legacy_id": 238, "api_id": 94, "season": 2025, "name": "Primeira Liga"},
-    {"legacy_id": 242, "api_id": 253, "season": 2026, "name": "MLS"},
-    {"legacy_id": 36, "api_id": 179, "season": 2025, "name": "Scottish Premiership"},
-    {"legacy_id": 196, "api_id": 98, "season": 2026, "name": "J1 League"},
-    {"legacy_id": 18, "api_id": 40, "season": 2025, "name": "Championship"},
-    {"legacy_id": 24, "api_id": 41, "season": 2025, "name": "League One"},
-    {"legacy_id": 25, "api_id": 42, "season": 2025, "name": "League Two"},
-    {"legacy_id": 40, "api_id": 113, "season": 2026, "name": "Allsvenskan"},
-    {"legacy_id": 20, "api_id": 103, "season": 2026, "name": "Eliteserien"},
+    {"legacy_id": 7, "api_id": 2, "season": 2025, "sofa_id": 7, "sofa_season_id": 76953, "name": "UEFA Champions League"},
+    {"legacy_id": 679, "api_id": 3, "season": 2025, "sofa_id": 679, "sofa_season_id": 76984, "name": "UEFA Europa League"},
+    {"legacy_id": 17, "api_id": 39, "season": 2025, "sofa_id": 17, "sofa_season_id": 76986, "name": "Premier League"},
+    {"legacy_id": 8, "api_id": 140, "season": 2025, "sofa_id": 8, "sofa_season_id": 77559, "name": "LaLiga"},
+    {"legacy_id": 35, "api_id": 78, "season": 2025, "sofa_id": 35, "sofa_season_id": 77333, "name": "Bundesliga"},
+    {"legacy_id": 23, "api_id": 135, "season": 2025, "sofa_id": 23, "sofa_season_id": 76457, "name": "Serie A"},
+    {"legacy_id": 34, "api_id": 61, "season": 2025, "sofa_id": 34, "sofa_season_id": 77356, "name": "Ligue 1"},
+    {"legacy_id": 17015, "api_id": 848, "season": 2025, "sofa_id": 17015, "sofa_season_id": 76960, "name": "UEFA Conference League"},
+    {"legacy_id": 325, "api_id": 71, "season": 2026, "sofa_id": 325, "sofa_season_id": 87678, "name": "Brasileirão Betano"},
+    {"legacy_id": 384, "api_id": 13, "season": 2026, "sofa_id": 384, "sofa_season_id": 87760, "name": "CONMEBOL Libertadores"},
+    {"legacy_id": 136, "api_id": 188, "season": 2025, "sofa_id": 136, "sofa_season_id": 82603, "name": "A-League Men"},
+    {"legacy_id": 16, "api_id": 1, "season": 2026, "sofa_id": 16, "sofa_season_id": 58210, "name": "FIFA World Cup"},
+    {"legacy_id": 10, "api_id": 10, "season": 2026, "sofa_id": 851, "sofa_season_id": 87155, "name": "International Friendly Games"},
+    {"legacy_id": 37, "api_id": 88, "season": 2025, "sofa_id": 37, "sofa_season_id": 77012, "name": "Eredivisie"},
+    {"legacy_id": 238, "api_id": 94, "season": 2025, "sofa_id": 238, "sofa_season_id": 77806, "name": "Primeira Liga"},
+    {"legacy_id": 242, "api_id": 253, "season": 2026, "sofa_id": 242, "sofa_season_id": 86668, "name": "MLS"},
+    {"legacy_id": 36, "api_id": 179, "season": 2025, "sofa_id": 36, "sofa_season_id": 77128, "name": "Scottish Premiership"},
+    {"legacy_id": 196, "api_id": 98, "season": 2026, "sofa_id": 196, "sofa_season_id": 87931, "name": "J1 League"},
+    {"legacy_id": 18, "api_id": 40, "season": 2025, "sofa_id": 18, "sofa_season_id": 77347, "name": "Championship"},
+    {"legacy_id": 24, "api_id": 41, "season": 2025, "sofa_id": 24, "sofa_season_id": 77352, "name": "League One"},
+    {"legacy_id": 25, "api_id": 42, "season": 2025, "sofa_id": 25, "sofa_season_id": 77351, "name": "League Two"},
+    {"legacy_id": 40, "api_id": 113, "season": 2026, "sofa_id": 40, "sofa_season_id": 87925, "name": "Allsvenskan"},
+    {"legacy_id": 20, "api_id": 103, "season": 2026, "sofa_id": 20, "sofa_season_id": 87809, "name": "Eliteserien"},
 ]
 
 LEAGUE_BY_API = {x["api_id"]: x for x in LEAGUES}
@@ -188,6 +190,7 @@ LEAGUE_EXCLUSION_TOKENS = (
 WOMEN_TEAM_MARKERS = (" w", " (w)", "(w)")
 YOUTH_TEAM_RE = re.compile(r"\b(?:u|under\s*)(?:17|18|19|20|21|23)\b", re.I)
 SOFASCORE_PROFILES = ("chrome120", "chrome124", "chrome131", "chrome116", "edge101", "safari17_0")
+SOFASCORE_EVENTS_PAGES = int(os.environ.get("SOCCER_SOFASCORE_EVENT_PAGES", "4"))
 
 HEADERS = [
     "run_timestamp",
@@ -599,24 +602,46 @@ def sofascore_status(status):
     return "unresolved"
 
 
-def rows_from_sofascore_int_friendlies(start_date, days, run_ts):
-    league = LEAGUE_BY_NAME["International Friendly Games"]
+def sofa_team_id(team):
+    team_id = team.get("id")
+    if team_id:
+        return str(team_id)
+    return provider_team_id("sofascore", team.get("name") or team.get("shortName") or "")
+
+
+def rows_from_sofascore_league(league, start_date, days, run_ts):
+    sofa_id = league.get("sofa_id")
+    sofa_season_id = league.get("sofa_season_id")
+    if not sofa_id or not sofa_season_id:
+        return [], [{
+            "run_timestamp": run_ts,
+            "source": "SofaScore",
+            "endpoint": "unique-tournament season config",
+            "date": "",
+            "league": league["name"],
+            "source_health": "blocked",
+            "records": 0,
+            "notes": "Missing SofaScore unique tournament or season ID.",
+        }]
+
     allowed_dates = set(iso_date_range(start_date, days))
     rows = []
     seen = set()
     endpoints = []
     blocked = False
+    successful = False
     for direction in ("last", "next"):
-        for page in range(4):
+        for page in range(SOFASCORE_EVENTS_PAGES):
             path = (
-                f"/unique-tournament/{SOFASCORE_INT_FRIENDLY_TOURNAMENT_ID}"
-                f"/season/{SOFASCORE_INT_FRIENDLY_SEASON_ID}/events/{direction}/{page}"
+                f"/unique-tournament/{sofa_id}"
+                f"/season/{sofa_season_id}/events/{direction}/{page}"
             )
             endpoints.append(path)
             payload = sofascore_fetch(path)
             if payload is None:
                 blocked = True
                 continue
+            successful = True
             events = payload.get("events") or []
             if not events:
                 continue
@@ -647,9 +672,9 @@ def rows_from_sofascore_int_friendlies(start_date, days, run_ts):
                     "source": "SofaScore",
                     "source_health": "healthy",
                     "league_id": league["legacy_id"],
-                    "api_league_id": SOFASCORE_INT_FRIENDLY_TOURNAMENT_ID,
+                    "api_league_id": sofa_id,
                     "league": league["name"],
-                    "league_logo": f"https://img.sofascore.com/api/v1/unique-tournament/{SOFASCORE_INT_FRIENDLY_TOURNAMENT_ID}/image",
+                    "league_logo": f"https://img.sofascore.com/api/v1/unique-tournament/{sofa_id}/image",
                     "event_id": str(event_id),
                     "date": local_date,
                     "time": "FT" if status_text == "FT" else local_time,
@@ -657,11 +682,11 @@ def rows_from_sofascore_int_friendlies(start_date, days, run_ts):
                     "utc_timestamp": utc_ts,
                     "status": status_text,
                     "home": home_name,
-                    "home_team_id": str(home.get("id") or provider_team_id("sofascore", home_name)),
+                    "home_team_id": sofa_team_id(home),
                     "home_logo": f"https://img.sofascore.com/api/v1/team/{home.get('id')}/image" if home.get("id") else "",
                     "home_goals": home_score.get("normaltime", home_score.get("current", "")) if status_text == "FT" else "",
                     "away": away_name,
-                    "away_team_id": str(away.get("id") or provider_team_id("sofascore", away_name)),
+                    "away_team_id": sofa_team_id(away),
                     "away_logo": f"https://img.sofascore.com/api/v1/team/{away.get('id')}/image" if away.get("id") else "",
                     "away_goals": away_score.get("normaltime", away_score.get("current", "")) if status_text == "FT" else "",
                     "is_duplicate": "no",
@@ -670,17 +695,40 @@ def rows_from_sofascore_int_friendlies(start_date, days, run_ts):
                     "phase1_status": "",
                     "phase1_notes": "Primary SofaScore tournament fixture feed.",
                 })
-    health = "healthy" if rows else ("blocked" if blocked else "degraded")
+    health = "healthy" if successful else ("blocked" if blocked else "degraded")
     return rows, [{
         "run_timestamp": run_ts,
         "source": "SofaScore",
-        "endpoint": f"unique-tournament/{SOFASCORE_INT_FRIENDLY_TOURNAMENT_ID}/season/{SOFASCORE_INT_FRIENDLY_SEASON_ID}",
+        "endpoint": f"unique-tournament/{sofa_id}/season/{sofa_season_id}",
         "date": f"{min(allowed_dates)} to {max(allowed_dates)}" if allowed_dates else "",
-        "league": "International Friendly Games",
+        "league": league["name"],
         "source_health": health,
         "records": len(rows),
         "notes": f"Primary tournament feed from sofascore.com; pages checked={len(endpoints)}.",
     }]
+
+
+def rows_from_sofascore(start_date, days, run_ts):
+    rows = []
+    health_rows = []
+    if not cffi_requests:
+        return rows, [{
+            "run_timestamp": run_ts,
+            "source": "SofaScore",
+            "endpoint": "curl_cffi",
+            "date": f"{start_date.isoformat()} to {(start_date + timedelta(days=days-1)).isoformat()}",
+            "league": "all",
+            "source_health": "blocked",
+            "records": 0,
+            "notes": "curl_cffi is not installed; cannot use SofaScore smart-mimic requests.",
+        }]
+
+    for league in LEAGUES:
+        league_rows, league_health = rows_from_sofascore_league(league, start_date, days, run_ts)
+        rows.extend(league_rows)
+        health_rows.extend(league_health)
+        time.sleep(0.15 + random.random() * 0.25)
+    return rows, health_rows
 
 
 def rows_from_api(start_date, days, run_ts, key):
@@ -1050,12 +1098,12 @@ def league_summary(rows):
     return out
 
 
-def run_notes(rows, health_rows, start_date, days, used_api):
+def run_notes(rows, health_rows, start_date, days, source_mode):
     counts = Counter(r.get("phase1_status", "") for r in rows)
     notes = [
         {"item": "date_window", "value": f"{start_date.isoformat()} to {(start_date + timedelta(days=days-1)).isoformat()}"},
         {"item": "timezone", "value": LOCAL_TZ},
-        {"item": "source_mode", "value": "API-Football" if used_api else "local fallback"},
+        {"item": "source_mode", "value": source_mode},
         {"item": "total_fixtures", "value": len(rows)},
         {"item": "ready_for_phase_2", "value": counts.get(READY, 0)},
         {"item": "needs_settlement", "value": counts.get("needs_settlement", 0)},
@@ -1063,8 +1111,8 @@ def run_notes(rows, health_rows, start_date, days, used_api):
     ]
     bad_sources = [h for h in health_rows if h.get("source_health") != "healthy"]
     notes.append({"item": "source_issues", "value": len(bad_sources)})
-    if not used_api:
-        notes.append({"item": "next_action", "value": "Set API_FOOTBALL_KEY/APISPORTS_KEY for richer Phase 1 collection; TheSportsDB free API is available as fallback."})
+    if source_mode != "SofaScore":
+        notes.append({"item": "next_action", "value": "Review SofaScore Source Health; API-Football, Flashscore, TheSportsDB, and local data are fallback-only paths."})
     elif bad_sources:
         notes.append({"item": "next_action", "value": "Review Source Health sheet before Phase 2."})
     else:
@@ -1179,41 +1227,37 @@ def main():
     run_ts = now_adelaide().strftime("%Y-%m-%d %H:%M:%S %Z")
     key = api_key()
 
-    if key:
-        rows, health_rows = rows_from_api(start_date, args.days, run_ts, key)
-        used_api = True
-        source_mode = "API-Football"
-    else:
-        rows, health_rows = rows_from_flashscore(start_date, args.days, run_ts)
-        used_api = False
-        source_mode = "Flashscore"
+    rows, health_rows = rows_from_sofascore(start_date, args.days, run_ts)
+    source_mode = "SofaScore"
+
+    if not rows and key:
+        api_rows, api_health = rows_from_api(start_date, args.days, run_ts, key)
+        rows = api_rows
+        health_rows.extend(api_health)
+        source_mode = "API-Football fallback"
+
+    if not rows:
+        flash_rows, flash_health = rows_from_flashscore(start_date, args.days, run_ts)
+        rows = flash_rows
+        health_rows.extend(flash_health)
+        source_mode = "Flashscore fallback"
         if not rows:
             tsdb_rows, tsdb_health = rows_from_thesportsdb(start_date, args.days, run_ts)
             rows = tsdb_rows
             health_rows.extend(tsdb_health)
-            source_mode = "TheSportsDB"
+            source_mode = "TheSportsDB fallback"
         if not rows:
             fallback_rows, fallback_health = rows_from_store(run_ts)
             rows = fallback_rows
             health_rows.extend(fallback_health)
             source_mode = "local fallback"
 
-    sofascore_rows, sofascore_health = rows_from_sofascore_int_friendlies(start_date, args.days, run_ts)
-    health_rows.extend(sofascore_health)
-    if sofascore_rows:
-        rows = [row for row in rows if row.get("league") != "International Friendly Games"]
-        rows.extend(sofascore_rows)
-        source_mode = f"{source_mode} + SofaScore friendlies"
-
     rows = finalize_rows(rows, start_date)
     ready = [r for r in rows if r["phase1_status"] == READY]
     needs_settlement = [r for r in rows if r["phase1_status"] == "needs_settlement"]
     blocked = [r for r in rows if r["phase1_status"] not in (READY, "needs_settlement")]
     summary = league_summary(rows)
-    notes = run_notes(rows, health_rows, start_date, args.days, used_api)
-    for note in notes:
-        if note["item"] == "source_mode":
-            note["value"] = source_mode
+    notes = run_notes(rows, health_rows, start_date, args.days, source_mode)
 
     write_csv(rows)
     write_md(rows, health_rows, notes)

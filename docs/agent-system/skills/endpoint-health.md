@@ -13,15 +13,16 @@ Use to inspect data-source reliability and coverage.
 
 Use these checks before Fixture Collector builds the slate:
 
-1. Confirm `scripts/soccer_routine.py` uses API-Football fixtures for fixture discovery.
+1. Confirm `scripts/soccer_phase1_fixtures.py` uses SofaScore fixtures for fixture discovery.
 2. Confirm the listed league IDs match `PHASE_1_FIXTURES.md`.
-3. Check the latest log for API-Football auth, rate-limit, timeout, or empty response clues.
+3. Check the latest log for SofaScore block/empty responses and fallback API-Football auth, rate-limit, timeout, or empty response clues.
 4. Confirm whether fallback score sources are needed for stale/past fixtures.
 5. Mark odds and xG sources as out of scope for fixture discovery.
 
 ## Key Checks
 
-- API-Football auth/rate-limit/timeout/empty fixture response.
+- SofaScore block/empty responses.
+- API-Football fallback auth/rate-limit/timeout/empty fixture response.
 - Sportsbet unmatched events.
 - Understat zero-match extraction.
 - TheSportsDB/Flashscore fallback not consumed by settlement.
