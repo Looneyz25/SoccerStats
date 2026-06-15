@@ -4043,6 +4043,181 @@ def run_full_refresh():
     print_final_tally(store)
 
 
+# ----------------------------------------------------------------------------
+# Live in-play + fast full-time confirmation.
+#
+# The 180-minute result-check buffer is deliberately late so we never settle a
+# match by due-time before it is really finished. But it left finished matches
+# showing "upcoming" for up to an hour, and the recurring "stuck upcoming" bug.
+# The live pass closes that gap WITHOUT premature settlement: it reads the current
+# state from SofaScore -> LiveScore -> Flashscore for any started match and either
+# (a) shows the in-play score (status "live"), or (b) settles the moment a source
+# CONFIRMS full time — never by due-time. Matches still upcoming long past their
+# expected finish are recorded so the no-touch controller can raise a notification.
+LIVE_LOOKBACK_HOURS = max(1, int(os.environ.get("SOCCER_LIVE_LOOKBACK_HOURS", "6")))
+EARLY_FT_CONFIRM_MINUTES = max(95, int(os.environ.get("SOCCER_EARLY_FT_MINUTES", "100")))
+STUCK_UPCOMING_MINUTES = max(EARLY_FT_CONFIRM_MINUTES, int(os.environ.get("SOCCER_STUCK_UPCOMING_MINUTES", "150")))
+LIVE_STUCK_MARKER = OUT_DIR / "live_stuck_latest.json"
+
+
+def minutes_since_kickoff(match, now=None):
+    kickoff = match_kickoff_datetime(match)
+    if not kickoff:
+        return None
+    now = now or datetime.now(ADL)
+    return (now - kickoff).total_seconds() / 60.0
+
+
+def sofascore_state(eid):
+    """Return (kind, home, away, minute) from SofaScore for an event id, or None.
+    kind is 'ft', 'live' or 'upcoming'."""
+    if not is_sofascore_event_id(eid):
+        return None
+    ev = fetch(f"/api/v1/event/{eid}")
+    e = (ev.get("event") or ev) if ev else None
+    if not e:
+        return None
+    stype = (e.get("status") or {}).get("type")
+    hs = (e.get("homeScore") or {}).get("current")
+    as_ = (e.get("awayScore") or {}).get("current")
+    minute = (e.get("status") or {}).get("description")
+    if stype == "finished":
+        return ("ft", hs, as_, None)
+    if stype == "inprogress":
+        return ("live", hs, as_, minute)
+    return ("upcoming", hs, as_, None)
+
+
+def livescore_state_for_match(league_name, match):
+    """Return (kind, home, away, minute) from the LiveScore date payload, or None."""
+    found = find_livescore_event(league_name, match)
+    if not found:
+        return None
+    _stage, event = found
+    try:
+        h = int(event.get("Tr1"))
+        a = int(event.get("Tr2"))
+    except (TypeError, ValueError):
+        return None
+    eps = str(event.get("Eps") or "").strip()
+    if eps.upper() in ("FT", "AET", "AP", "AET-P"):
+        return ("ft", h, a, eps)
+    return ("live", h, a, eps)
+
+
+def apply_live_state(match, home, away, minute):
+    if home is None or away is None:
+        return False
+    match["status"] = "live"
+    match["time"] = "LIVE"
+    match.setdefault("home", {})["goals"] = home
+    match.setdefault("away", {})["goals"] = away
+    if minute:
+        match["live_minute"] = str(minute)
+    match["live_updated_at"] = datetime.now(ADL).isoformat()
+    return True
+
+
+def settle_confirmed_ft(match, league_name, home, away, source):
+    """Settle a match whose full time has been confirmed by a real source."""
+    if not settle(match, {"homeScore": {"current": home}, "awayScore": {"current": away}}):
+        return False
+    match["settled_source"] = match.get("settled_source") or source
+    match.pop("live_minute", None)
+    if is_sofascore_event_id(match.get("id")):
+        act = actuals_for(match.get("id"), league_name, match)
+        if act:
+            match["actuals"] = {**(match.get("actuals") or {}), **act}
+    settle_stat_markets(match)
+    return True
+
+
+def update_live_and_settle(store):
+    """For every started, not-yet-closed match in the live window: show the in-play
+    score, or settle on confirmed full time. Record matches stuck upcoming past their
+    expected finish. Never settles by due-time (that stays the job of the 180m path)."""
+    now = datetime.now(ADL)
+    live_set = []
+    settled = []
+    stuck = []
+    flash_events = None
+    for L in store.get("leagues", []):
+        for m in L.get("matches", []):
+            if match_closed_for_result_check(m):
+                continue
+            mins = minutes_since_kickoff(m, now)
+            if mins is None or mins < 0 or mins > LIVE_LOOKBACK_HOURS * 60:
+                continue
+            league_name = L.get("name", "")
+            label = f"{league_name}: {(m.get('home') or {}).get('name')} vs {(m.get('away') or {}).get('name')}"
+            eid = m.get("id")
+
+            state = sofascore_state(eid)
+            source = "SofaScore FT" if state else None
+            if (not state or state[0] == "upcoming"):
+                ls = livescore_state_for_match(league_name, m)
+                if ls:
+                    state = ls
+                    source = "LiveScore FT"
+            # Flashscore confirms full time once a match should be over.
+            if (not state or state[0] != "ft") and mins >= EARLY_FT_CONFIRM_MINUTES:
+                if flash_events is None:
+                    flash_events, _src = load_flashscore_result_events()
+                fres = flashscore_result_for_match(flash_events or [], league_name, m)
+                if fres and fres.get("home_score") is not None and settle_from_flashscore(m, fres):
+                    if is_sofascore_event_id(eid):
+                        act = actuals_for(eid, league_name, m)
+                        if act:
+                            m["actuals"] = {**(m.get("actuals") or {}), **act}
+                    settle_stat_markets(m)
+                    settled.append(f"{label} {m['home']['goals']}-{m['away']['goals']} [Flashscore FT]")
+                    continue
+
+            if not state:
+                if mins >= STUCK_UPCOMING_MINUTES:
+                    stuck.append({"label": label, "minutes_since_kickoff": round(mins), "id": eid,
+                                  "date": m.get("date"), "time": m.get("time"), "status": m.get("status")})
+                continue
+
+            kind, h, a, minute = state
+            if kind == "ft":
+                if settle_confirmed_ft(m, league_name, h, a, source or "confirmed FT"):
+                    settled.append(f"{label} {h}-{a} [confirmed FT]")
+            elif kind == "live":
+                if apply_live_state(m, h, a, minute):
+                    live_set.append(f"{label} {h}-{a} ({minute or 'live'})")
+            elif mins >= STUCK_UPCOMING_MINUTES:
+                stuck.append({"label": label, "minutes_since_kickoff": round(mins), "id": eid,
+                              "date": m.get("date"), "time": m.get("time"), "status": m.get("status")})
+    return {"live": live_set, "settled": settled, "stuck": stuck}
+
+
+def write_live_stuck_marker(stuck):
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    LIVE_STUCK_MARKER.write_text(json.dumps({
+        "generated_at": datetime.now(ADL).isoformat(),
+        "stuck_count": len(stuck),
+        "matches": stuck,
+    }, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def run_live_update():
+    print(f"=== soccer_routine.py live — {datetime.now(ADL).strftime('%Y-%m-%d %H:%M')} (Adelaide) ===")
+    store = load_store()
+    res = update_live_and_settle(store)
+    print(f"  live={len(res['live'])} settled={len(res['settled'])} stuck={len(res['stuck'])}")
+    for row in res["live"]:
+        print(f"  live: {row}")
+    for row in res["settled"]:
+        print(f"  settled: {row}")
+    for row in res["stuck"]:
+        print(f"  STUCK upcoming past expected finish: {row['label']} (+{row['minutes_since_kickoff']}m)")
+    sort_store(store)
+    save_store(store)
+    write_live_stuck_marker(res["stuck"])
+    print_final_tally(store)
+
+
 def run_results_only():
     print(f"=== soccer_routine.py results-only — {TODAY.isoformat()} (Adelaide) ===")
     print(f"  result_check_buffer_minutes={RESULT_CHECK_BUFFER_MINUTES}")
@@ -4147,8 +4322,11 @@ def main():
     parser = argparse.ArgumentParser(description="Run Soccer Stats data routine.")
     parser.add_argument("--results-only", action="store_true", help="Only check due matches for results, enrich recent FT records, and save match_data.json.")
     parser.add_argument("--seed-next-day", action="store_true", help="Lightly seed the current/tomorrow fixture window after a slate has finished.")
+    parser.add_argument("--live", action="store_true", help="Update in-play scores and confirm full time early for started matches; never settles by due-time.")
     args = parser.parse_args()
-    if args.seed_next_day:
+    if args.live:
+        run_live_update()
+    elif args.seed_next_day:
         run_seed_next_day()
     elif args.results_only:
         run_results_only()
