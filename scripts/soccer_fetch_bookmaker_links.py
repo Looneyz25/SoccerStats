@@ -11,6 +11,7 @@ from __future__ import annotations
 import argparse
 import html
 import json
+import os
 import pathlib
 import random
 import re
@@ -35,6 +36,19 @@ except Exception:  # pragma: no cover - depends on local optional dependency
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 STORE_PATH = ROOT / "match_data.json"
+
+
+def fixture_target_dates() -> set[str]:
+    dates = set()
+    for item in os.environ.get("SOCCER_FIXTURE_DATES", "").split(","):
+        item = item.strip()
+        if re.fullmatch(r"\d{4}-\d{2}-\d{2}", item):
+            dates.add(item)
+    return dates
+
+
+def match_in_target_dates(match: dict, target_dates: set[str]) -> bool:
+    return not target_dates or match.get("date") in target_dates
 
 BOOKMAKERS = {
     "ladbrokes": {
@@ -82,6 +96,10 @@ GENERIC_PATHS = {
 }
 
 ABBREV = {
+    # National sides whose name differs from the bookmaker feed (e.g. our store's
+    # "Cabo Verde"/"Côte d'Ivoire" vs the feed's "Cape Verde"/"Ivory Coast").
+    "caboverde": "capeverde",
+    "cotedivoire": "ivorycoast",
     "wolves": "wolverhampton",
     "manutd": "manchesterunited",
     "manunited": "manchesterunited",
@@ -301,15 +319,18 @@ def match_link(candidates: Iterable[CandidateLink], home: str, away: str) -> str
     return None
 
 
-def iter_matches(store: dict) -> Iterable[tuple[dict, dict]]:
+def iter_matches(store: dict, target_dates: set[str] | None = None) -> Iterable[tuple[dict, dict]]:
+    target_dates = target_dates or set()
     for league in store.get("leagues", []):
         for match in league.get("matches", []):
+            if not match_in_target_dates(match, target_dates):
+                continue
             yield league, match
 
 
-def mirror_sportsbet_links(store: dict) -> int:
+def mirror_sportsbet_links(store: dict, target_dates: set[str]) -> int:
     mirrored = 0
-    for _, match in iter_matches(store):
+    for _, match in iter_matches(store, target_dates):
         event_url = ((match.get("sportsbet_odds") or {}).get("event_url") or "").strip()
         if not event_url:
             continue
@@ -373,9 +394,9 @@ def entain_match_score(match: dict, event: dict) -> int:
     return score
 
 
-def clear_entain_links(store: dict) -> int:
+def clear_entain_links(store: dict, target_dates: set[str]) -> int:
     removed = 0
-    for _, match in iter_matches(store):
+    for _, match in iter_matches(store, target_dates):
         links = match.get("bookmaker_links") or {}
         meta = match.get("bookmaker_meta") or {}
         for bookmaker_id in ENTAIN_BOOKMAKERS:
@@ -391,9 +412,9 @@ def clear_entain_links(store: dict) -> int:
     return removed
 
 
-def clear_non_direct_bookmaker_links(store: dict) -> int:
+def clear_non_direct_bookmaker_links(store: dict, target_dates: set[str]) -> int:
     removed = 0
-    for _, match in iter_matches(store):
+    for _, match in iter_matches(store, target_dates):
         links = match.get("bookmaker_links") or {}
         meta = match.get("bookmaker_meta") or {}
         for bookmaker_id in NON_DIRECT_BOOKMAKERS:
@@ -408,9 +429,9 @@ def clear_non_direct_bookmaker_links(store: dict) -> int:
     return removed
 
 
-def enrich_entain_links(store: dict, dry_run: bool) -> dict[str, int]:
+def enrich_entain_links(store: dict, dry_run: bool, target_dates: set[str]) -> dict[str, int]:
     counts = {bookmaker_id: 0 for bookmaker_id in ENTAIN_BOOKMAKERS}
-    matches = [match for _, match in iter_matches(store)]
+    matches = [match for _, match in iter_matches(store, target_dates)]
 
     for bookmaker_id, config in ENTAIN_BOOKMAKERS.items():
         print(f"[{bookmaker_id}] scanning event-request API")
@@ -444,9 +465,9 @@ def enrich_entain_links(store: dict, dry_run: bool) -> dict[str, int]:
     return counts
 
 
-def scrape_bookmaker_links(store: dict, dry_run: bool) -> dict[str, int]:
+def scrape_bookmaker_links(store: dict, dry_run: bool, target_dates: set[str]) -> dict[str, int]:
     counts = {bookmaker_id: 0 for bookmaker_id in BOOKMAKERS}
-    matches = [match for _, match in iter_matches(store)]
+    matches = [match for _, match in iter_matches(store, target_dates)]
 
     for bookmaker_id, config in BOOKMAKERS.items():
         print(f"[{bookmaker_id}] scanning public soccer/sports pages")
@@ -489,11 +510,14 @@ def main() -> int:
     args = parser.parse_args()
 
     store = json.loads(STORE_PATH.read_text(encoding="utf-8"))
-    sportsbet_count = mirror_sportsbet_links(store)
-    entain_removed = 0 if args.dry_run else clear_entain_links(store)
-    non_direct_removed = 0 if args.dry_run else clear_non_direct_bookmaker_links(store)
-    entain_counts = enrich_entain_links(store, dry_run=args.dry_run)
-    counts = scrape_bookmaker_links(store, dry_run=args.dry_run)
+    target_dates = fixture_target_dates()
+    if target_dates:
+        print(f"[target] dates: {','.join(sorted(target_dates))}")
+    sportsbet_count = mirror_sportsbet_links(store, target_dates)
+    entain_removed = 0 if args.dry_run else clear_entain_links(store, target_dates)
+    non_direct_removed = 0 if args.dry_run else clear_non_direct_bookmaker_links(store, target_dates)
+    entain_counts = enrich_entain_links(store, dry_run=args.dry_run, target_dates=target_dates)
+    counts = scrape_bookmaker_links(store, dry_run=args.dry_run, target_dates=target_dates)
 
     if not args.dry_run:
         STORE_PATH.write_text(json.dumps(store, indent=2, ensure_ascii=False), encoding="utf-8")

@@ -23,6 +23,19 @@ def _profile(): return random.choice(_PROFILES)
 FOLDER = pathlib.Path(__file__).resolve().parent.parent
 STORE_PATH = FOLDER / "match_data.json"
 
+
+def fixture_target_dates():
+    dates = []
+    for item in os.environ.get("SOCCER_FIXTURE_DATES", "").split(","):
+        item = item.strip()
+        if re.fullmatch(r"\d{4}-\d{2}-\d{2}", item):
+            dates.append(item)
+    return set(dates)
+
+
+def match_in_target_dates(match, target_dates):
+    return not target_dates or match.get("date") in target_dates
+
 LEAGUE_PAGES = {
     "Premier League":         "united-kingdom/english-premier-league",
     "Championship":           "united-kingdom/english-championship",
@@ -50,6 +63,11 @@ LEAGUE_PAGES = {
 }
 
 ABBREV = {
+    # National sides whose name differs from the bookmaker feed (e.g. our store's
+    # "Cabo Verde"/"Côte d'Ivoire" vs Sportsbet's "Cape Verde"/"Ivory Coast"),
+    # which otherwise leaves the fixture with no attached odds.
+    "caboverde": "capeverde",
+    "cotedivoire": "ivorycoast",
     "wolves": "wolverhampton",
     "manutd": "manchesterunited", "manunited": "manchesterunited",
     "mancity": "manchestercity",
@@ -105,13 +123,28 @@ def fetch_page_data(slug):
         r = requests.get(url, impersonate=_profile(), timeout=20)
         if r.status_code != 200: return None
         html = r.text
-        start = html.find('window.__PRELOADED_STATE__ = ')
-        if start == -1: return None
-        start += len('window.__PRELOADED_STATE__ = ')
-        end = html.find('window.__APOLLO_STATE__', start)
-        return json.loads(html[start:end].rstrip().rstrip(';').rstrip())
+        return preloaded_state_from_html(html)
     except Exception as e:
         print("ERR", slug, ":", e)
+        return None
+
+def preloaded_state_from_html(html):
+    start = html.find('window.__PRELOADED_STATE__ = ')
+    if start == -1:
+        return None
+    start += len('window.__PRELOADED_STATE__ = ')
+    end = html.find('window.__APOLLO_STATE__', start)
+    if end == -1:
+        return None
+    return json.loads(html[start:end].rstrip().rstrip(';').rstrip())
+
+def fetch_event_page_data(event_url):
+    try:
+        r = requests.get(event_url, impersonate=_profile(), timeout=20)
+        if r.status_code != 200:
+            return None
+        return preloaded_state_from_html(r.text)
+    except Exception:
         return None
 
 def to_decimal(num, den):
@@ -210,23 +243,17 @@ def extract_event_markets(ev, markets, outcomes):
 
 def fetch_event_markets(event_url):
     """Fetch a single event page and return its normalized market dict."""
-    try:
-        r = requests.get(event_url, impersonate=_profile(), timeout=20)
-        if r.status_code != 200:
-            return {}
-        html = r.text
-        start = html.find('window.__PRELOADED_STATE__ = ')
-        if start == -1:
-            return {}
-        start += len('window.__PRELOADED_STATE__ = ')
-        end = html.find('window.__APOLLO_STATE__', start)
-        data = json.loads(html[start:end].rstrip().rstrip(';').rstrip())
-    except Exception:
+    data = fetch_event_page_data(event_url)
+    if not data:
         return {}
     sb = (data.get("entities") or {}).get("sportsbook") or {}
     events = sb.get("events", {})
     markets = sb.get("markets", {})
     outcomes = sb.get("outcomes", {})
+    event_id = sportsbet_event_id_from_url(event_url)
+    if event_id:
+        ev = find_event(data, event_id=event_id)
+        return extract_event_markets(ev, markets, outcomes) if ev else {}
     best = {}
     for ev in events.values():
         if not ev.get("marketIds"):
@@ -235,6 +262,76 @@ def fetch_event_markets(event_url):
         if len(markets_for_ev) > len(best):
             best = markets_for_ev
     return best
+
+SPORTSBET_TERMINAL_STATUS_WORDS = ("postponed", "cancelled", "canceled", "abandoned")
+
+def sportsbet_event_id_from_url(event_url):
+    m = re.search(r"-(\d+)(?:[/?#].*)?$", event_url or "")
+    return m.group(1) if m else None
+
+def find_event(data, event_id=None, home=None, away=None):
+    sb = ((data or {}).get("entities") or {}).get("sportsbook") or {}
+    events = sb.get("events", {})
+    if event_id:
+        event = events.get(str(event_id))
+        if not event and str(event_id).isdigit():
+            event = events.get(int(event_id))
+        if event:
+            return event
+        for ev in events.values():
+            if str(ev.get("id") or "") == str(event_id):
+                return ev
+    if home and away:
+        for ev in events.values():
+            if names_match(home, ev.get("participant1")) and names_match(away, ev.get("participant2")):
+                return ev
+            if names_match(home, ev.get("participant2")) and names_match(away, ev.get("participant1")):
+                return ev
+    return None
+
+def _terminal_status_text(value):
+    if isinstance(value, str):
+        lowered = value.lower()
+        if any(word in lowered for word in SPORTSBET_TERMINAL_STATUS_WORDS):
+            return value.strip()
+        return None
+    if isinstance(value, dict):
+        for key, child in value.items():
+            key_text = str(key).lower()
+            child_hit = _terminal_status_text(child)
+            if child_hit:
+                return child_hit
+            if any(word in key_text for word in SPORTSBET_TERMINAL_STATUS_WORDS) and child:
+                return str(key)
+    if isinstance(value, list):
+        for child in value:
+            child_hit = _terminal_status_text(child)
+            if child_hit:
+                return child_hit
+    return None
+
+def event_terminal_status(event):
+    text = _terminal_status_text(event or {})
+    if not text:
+        return None
+    lowered = text.lower()
+    state = "postponed" if "postpon" in lowered else "cancelled"
+    return {"status": state, "status_text": text, "event": event}
+
+def fetch_event_status(event_url=None, event_id=None, league_slug=None, home=None, away=None):
+    event_id = event_id or sportsbet_event_id_from_url(event_url)
+    for data in (
+        fetch_event_page_data(event_url) if event_url else None,
+        fetch_page_data(league_slug) if league_slug else None,
+    ):
+        if not data:
+            continue
+        event = find_event(data, event_id=event_id, home=home, away=away)
+        status = event_terminal_status(event)
+        if status:
+            status["event_id"] = event_id or (event or {}).get("id")
+            return status
+    return None
 
 def extract_odds(data, league_slug=None):
     """Extract Win-Draw-Win (90-min regular time) prices for every event on the league page."""
@@ -317,6 +414,9 @@ def markets_for_fixture(markets_dict, reversed_fixture=False):
 
 def main():
     store = json.loads(STORE_PATH.read_text(encoding="utf-8"))
+    target_dates = fixture_target_dates()
+    if target_dates:
+        print("target_dates=" + ",".join(sorted(target_dates)))
     matched = 0
     no_match = []
     cache = {}
@@ -337,6 +437,7 @@ def main():
         if not idx: continue
         for m in L["matches"]:
             if m.get("status") == "FT": continue
+            if not match_in_target_dates(m, target_dates): continue
             hit = find_match(idx, m["home"]["name"], m["away"]["name"])
             if hit:
                 home_odds, draw_odds, away_odds = fixture_side_odds(hit)
