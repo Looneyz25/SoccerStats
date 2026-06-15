@@ -366,8 +366,25 @@ function LeagueBadge({ src, name }) {
 
 function statusClass(status) {
   if (status === 'FT') return 'bg-signal/10 text-signal ring-signal/20';
+  if (status === 'live') return 'bg-red-50 text-red-600 ring-red-200';
   if (status === 'upcoming') return 'bg-blue-50 text-blue-700 ring-blue-200';
   return 'bg-warning/10 text-warning ring-warning/20';
+}
+
+// A match with a real in-play or final score (status "live" or "FT") shows its
+// scoreline; everything else stays a prediction. Live matches keep predictions
+// ungraded because every settlement check keys off status === 'FT'.
+function hasScoreline(match) {
+  return match?.status === 'FT' || match?.status === 'live';
+}
+
+function statusBadgeLabel(match) {
+  if (match?.status === 'live') return match.live_minute ? `LIVE ${match.live_minute}` : 'LIVE';
+  return match?.status;
+}
+
+function scorelineText(match) {
+  return `${match?.home?.goals ?? '-'}-${match?.away?.goals ?? '-'}`;
 }
 
 function resultIcon(result) {
@@ -479,6 +496,23 @@ function formatOddsTotal(value) {
   return Number(value || 0).toFixed(1);
 }
 
+function pricedMarketOdds(market) {
+  if (market?.odds_estimated) return null;
+  const odds = Number(market?.odds);
+  return Number.isFinite(odds) && odds > 1 ? odds : null;
+}
+
+function marketReturnTotals(markets) {
+  return (markets || []).reduce((totals, market) => {
+    const odds = pricedMarketOdds(market);
+    if (!odds) return totals;
+    if (market.result === 'hit') totals.hit += odds;
+    if (market.result === 'miss') totals.loss += 1;
+    totals.priced += 1;
+    return totals;
+  }, { hit: 0, loss: 0, priced: 0 });
+}
+
 function formatMarketDetail(market) {
   if (!market) return '-';
   return market.line ? `${market.pick} ${market.line}` : market.pick || '-';
@@ -492,7 +526,12 @@ function doubleChanceResultFromActual(match, type) {
 
 function doubleChanceMarket(match) {
   const precomputed = match.display_markets?.double_chance?.market;
-  if (precomputed) return precomputed;
+  if (precomputed) {
+    return {
+      ...precomputed,
+      result: precomputed.result || doubleChanceResultFromActual(match, precomputed.type),
+    };
+  }
   const rows = match.display_summary?.winnerBreakdown || winnerProbabilityBreakdown(match);
   if (!Array.isArray(rows) || rows.length < 3) return null;
   const ranked = [...rows]
@@ -544,7 +583,12 @@ function drawNoBetOdds(match, type) {
 
 function drawNoBetMarket(match) {
   const precomputed = match.display_markets?.draw_no_bet?.market;
-  if (precomputed) return precomputed;
+  if (precomputed) {
+    return {
+      ...precomputed,
+      result: precomputed.result || (String(match.date || '') >= DRAW_NO_BET_TRACKING_START_DATE ? drawNoBetResultFromActual(match, precomputed.type) : undefined),
+    };
+  }
   const rows = match.display_summary?.winnerBreakdown || winnerProbabilityBreakdown(match);
   if (!Array.isArray(rows) || rows.length < 3) return null;
   const byKey = Object.fromEntries(rows.map((row) => [row.key, Number(row.model)]));
@@ -2851,17 +2895,11 @@ function summarize(matches, allTimeSummary = null) {
 
   const total = matches.length;
   const finished = matches.filter((m) => m.status === 'FT').length;
-  const upcoming = total - finished;
+  const upcoming = matches.filter((m) => m.status === 'upcoming').length;
   const settledMarkets = matches.flatMap(headlineStatsMarkets);
   const hits = settledMarkets.filter((market) => market.result === 'hit').length;
   const accuracy = settledMarkets.length ? Math.round((hits / settledMarkets.length) * 100) : 0;
-  const oddsTotals = settledMarkets.reduce((totals, market) => {
-    const odds = Number(market?.odds);
-    if (!Number.isFinite(odds)) return totals;
-    if (market.result === 'hit') totals.hit += odds;
-    if (market.result === 'miss') totals.loss += odds;
-    return totals;
-  }, { hit: 0, loss: 0 });
+  const oddsTotals = marketReturnTotals(settledMarkets);
 
   return { total, finished, upcoming, accuracy, oddsTotals };
 }
@@ -2879,11 +2917,16 @@ function summarizeResultsByMarket(matches, allMatches = matches) {
     hits: suggestedHits.length,
     misses: suggestedMisses.length,
     hitRate: suggestedSettled.length ? Math.round((suggestedHits.length / suggestedSettled.length) * 100) : 0,
-    oddsHit: suggestedHits.reduce((sum, market) => sum + (Number(market.odds) || 0), 0),
-    oddsMiss: suggestedMisses.reduce((sum, market) => sum + (Number(market.odds) || 0), 0),
+    ...marketReturnTotals(suggestedSettled),
     net: 0,
   };
+  suggestedRow.oddsHit = suggestedRow.hit;
+  suggestedRow.oddsMiss = suggestedRow.loss;
+  suggestedRow.oddsPriced = suggestedRow.priced;
   suggestedRow.net = suggestedRow.oddsHit - suggestedRow.oddsMiss;
+  delete suggestedRow.hit;
+  delete suggestedRow.loss;
+  delete suggestedRow.priced;
 
   return [suggestedRow, ...MARKET_CONFIG.map((config) => {
     const settled = matches
@@ -2891,17 +2934,17 @@ function summarizeResultsByMarket(matches, allMatches = matches) {
       .filter((market) => market?.result === 'hit' || market?.result === 'miss');
     const hits = settled.filter((market) => market.result === 'hit');
     const misses = settled.filter((market) => market.result === 'miss');
-    const oddsHit = hits.reduce((sum, market) => sum + (Number(market.odds) || 0), 0);
-    const oddsMiss = misses.reduce((sum, market) => sum + (Number(market.odds) || 0), 0);
+    const oddsTotals = marketReturnTotals(settled);
     return {
       ...config,
       total: settled.length,
       hits: hits.length,
       misses: misses.length,
       hitRate: settled.length ? Math.round((hits.length / settled.length) * 100) : 0,
-      oddsHit,
-      oddsMiss,
-      net: oddsHit - oddsMiss,
+      oddsHit: oddsTotals.hit,
+      oddsMiss: oddsTotals.loss,
+      oddsPriced: oddsTotals.priced,
+      net: oddsTotals.hit - oddsTotals.loss,
     };
   })];
 }
@@ -3947,6 +3990,7 @@ function ResultsReview({
   const renderReviewRow = (row) => {
     const active = activeReviewFilter === row.key;
     const isSuggested = row.key === 'suggested';
+    const hasPricedOdds = Number(row.oddsPriced || 0) > 0 || Number(row.oddsHit || 0) > 0 || Number(row.oddsMiss || 0) > 0;
     const rowTone =
       row.hitRate >= 55
         ? 'result-hit-row hover:border-emerald-500'
@@ -3974,7 +4018,9 @@ function ResultsReview({
         </div>
         <div className="mt-2 text-sm font-semibold leading-5 text-ink">{row.hits} hit / {row.misses} loss</div>
         <div className="mt-1 text-xs text-slate-500">
-          Odds {formatOddsTotal(row.oddsHit)} v {formatOddsTotal(row.oddsMiss)}
+          {hasPricedOdds
+            ? <>Priced odds {formatOddsTotal(row.oddsHit)} v {formatOddsTotal(row.oddsMiss)}</>
+            : <>Odds not available</>}
         </div>
       </button>
     );
@@ -4957,7 +5003,7 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
               <span className="truncate">{match.league}</span>
               <span>{matchDisplayDate(match)}</span>
               <span>{matchDisplayTime(match)}</span>
-              <span className={`rounded-full px-2 py-1 ring-1 ${statusClass(match.status)}`}>{match.status}</span>
+              <span className={`rounded-full px-2 py-1 ring-1 ${statusClass(match.status)}`}>{statusBadgeLabel(match)}</span>
             </div>
             <h2 className="mt-1.5 text-base font-semibold leading-snug text-ink sm:text-xl">
               {match.home?.name} vs {match.away?.name}
@@ -4976,12 +5022,12 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
             </div>
             <div className="mt-1 text-xs text-slate-500">Rank {match.home?.rank ?? '-'} · {match.home?.pts ?? '-'} pts</div>
           </div>
-          {match.status === 'FT' && (
-            <div className="justify-self-center rounded-md bg-ink px-3 py-1.5 text-center text-sm font-semibold text-white shadow-panel sm:px-3 sm:py-3 sm:text-base">
-              {match.home?.goals ?? '-'}-{match.away?.goals ?? '-'}
+          {hasScoreline(match) && (
+            <div className={`justify-self-center rounded-md px-3 py-1.5 text-center text-sm font-semibold text-white shadow-panel sm:px-3 sm:py-3 sm:text-base ${match.status === 'live' ? 'bg-red-600' : 'bg-ink'}`}>
+              {scorelineText(match)}
             </div>
           )}
-          {match.status !== 'FT' && <div className="hidden sm:block" />}
+          {!hasScoreline(match) && <div className="hidden sm:block" />}
           <div className="min-w-0 rounded-md border border-slate-300 bg-white px-3 py-2.5 text-center shadow-panel sm:py-3 sm:text-left">
             <div className="flex min-w-0 items-center justify-center gap-2 sm:justify-start">
               <TeamBadge src={teamLogo(match, 'away')} name={match.away?.name} />
@@ -5124,7 +5170,7 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
             <span className="truncate">{matchDisplayTime(match)}</span>
           </span>
           <span className={`shrink-0 rounded-full px-2 py-1 text-xs font-semibold ring-1 ${statusClass(match.status)}`}>
-            {match.status}
+            {statusBadgeLabel(match)}
           </span>
         </div>
       </div>
@@ -5157,7 +5203,7 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
           </div>
           {predictedWinnerSide === 'draw' && (
             <div className={`rounded-md border px-2.5 py-2 text-center font-semibold ${winnerPredictionScoreClass(match, displayWinner)}`}>
-              <div>{match.status === 'FT' ? `${match.home?.goals ?? '-'}-${match.away?.goals ?? '-'}` : 'Draw'}</div>
+              <div>{hasScoreline(match) ? scorelineText(match) : 'Draw'}</div>
               <WinnerPredictionMeta match={match} side="draw" modelProbability={winnerModelPct} winner={displayWinner} />
             </div>
           )}
@@ -5176,10 +5222,10 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
             </div>
             <WinnerPredictionMeta match={match} side="home" modelProbability={winnerModelPct} winner={displayWinner} />
           </div>
-          <div className={`self-center justify-self-center text-center font-semibold ${match.status === 'FT' ? 'rounded-md bg-ink px-3 py-2 text-sm text-white' : 'text-xs text-slate-400'}`}>
+          <div className={`self-center justify-self-center text-center font-semibold ${hasScoreline(match) ? `rounded-md px-3 py-2 text-sm text-white ${match.status === 'live' ? 'bg-red-600' : 'bg-ink'}` : 'text-xs text-slate-400'}`}>
             <div>
-              {match.status === 'FT' ? (
-                `${match.home?.goals ?? '-'}-${match.away?.goals ?? '-'}`
+              {hasScoreline(match) ? (
+                scorelineText(match)
               ) : (
                 <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-line bg-field text-[11px] uppercase shadow-sm">
                   v
@@ -5370,7 +5416,7 @@ function DesktopSidePanel({
 function LeagueSection({ group, onSelectMatch, bookmakerId, allMatches, isFavorite = false, onToggleFavorite, favoriteTeams = [], onToggleFavoriteTeam, sectionRef = null }) {
   const isFavoriteTeamGroup = Boolean(group.isFavoriteTeamGroup);
   const finished = group.matches.filter((match) => match.status === 'FT').length;
-  const upcoming = group.matches.length - finished;
+  const upcoming = group.matches.filter((match) => match.status === 'upcoming').length;
 
   return (
     <section ref={sectionRef} className="overflow-hidden rounded-lg border border-line bg-white scroll-mt-4">
