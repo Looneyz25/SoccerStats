@@ -62,12 +62,24 @@ npx firebase-tools deploy --only functions --project sports-predictions-f91fd
 ```
 npm.cmd run data:refresh
 ```
+`data:refresh` / `get:data` is the full slate builder. For scheduled result checks, use the minimal progress-aware path:
+```
+npm.cmd run get:data:results
+```
+The results path reads `docs/agent-system/outputs/routine_progress_latest.{md,json}` and `result_check_schedule_latest.md`. Every automation pass must read `docs/agent-system/outputs/routine_progress_latest.md` as step 1 and use it as the current stage marker before deciding anything else. After progress is read, check the schedule only to confirm timed `DUE @` rows. Each wrapper stage must update `routine_progress_latest.{md,json}` before it starts and after it completes, so the markdown always shows the live stage/status during long settlement, badge, upload, skip, and intervention steps. If a match is pending past expected finish, run only the results path; if that match is still pending after the result check, stop with `agent_intervention_required` before badge caching or Firestore upload so the agent can manually investigate or import the result. If no matches are pending past expected finish and the +6-day forecast is collected, the routine ends as a no-op. If the +6-day forecast is missing, run only `npm.cmd run get:data:topup` unless an agent check finds broken base data. The progress markdown must list latest / last day collected, +6 forecast coverage, pending/resulted counts, pending rows past expected finish, and tracked matches using only `pending` or `resulted`.
+
 Use `npm.cmd run data:refresh:local` when Firestore credentials are not available. Do not add proxy/IP rotation to bypass provider controls; prefer API/fallback sources, caching, gentle sleeps, and backoff.
 
 **Static Hosting fallback** (secondary, `out/` dir):
 ```
 npm run build && npx firebase-tools deploy --only hosting --project sports-predictions-f91fd
 ```
+
+**No-touch routine** (unattended; Task Scheduler job `SoccerStats NoTouch` runs it every 15 min):
+```
+run_notouch.bat
+```
+This is the unified controller — the older `Soccer Stats Data Refresh` (run_daily.bat) task is disabled in favour of it. It launches hidden via `scripts/run-hidden.vbs` (no console window) in the logged-on user session so desktop toasts can show. Stages: (1) `soccer_routine.py --live` updates in-play scores and settles on **confirmed** full time (SofaScore→LiveScore→Flashscore, never by due-time); (2) `npm.cmd run get:data:results` settles due matches, backfills cards/corners (retrying, never voiding), tops up the forecast, and uploads; (3) forecast safety net runs `get:data:topup` if the 7-day horizon is short; (4) fires `scripts/notify-toast.ps1` when a match is stuck `upcoming` past its expected finish. It self-skips in ~1s when idle. The controller filename must not contain `soccer_` — the overlap guard `scripts/soccer-active-workers.ps1` matches that token and would skip forever. Live tunables: `SOCCER_LIVE_LOOKBACK_HOURS` (6), `SOCCER_EARLY_FT_MINUTES` (100), `SOCCER_STUCK_UPCOMING_MINUTES` (150). The dashboard renders a `live` status (red LIVE badge + scoreline); the in-play data uploads regardless of whether the UI is deployed.
 
 ## Stripe Architecture
 
