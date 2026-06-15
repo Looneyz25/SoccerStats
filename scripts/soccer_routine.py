@@ -64,6 +64,7 @@ PHASE1_FIXTURE_SLATE = OUT_DIR / "phase1_fixture_slate_current.csv"
 PHASE2_ODDS_SLATE = OUT_DIR / "phase2_odds_slate_current.csv"
 PHASE_FIXTURE_FALLBACK_LEAGUES = {"Allsvenskan", "Eliteserien", "International Friendly Games"}
 YOUTH_TEAM_RE = re.compile(r"\b(?:u|under\s*)(?:17|18|19|20|21|23)\b", re.I)
+BOOKMAKER_MATCH_ID_PREFIXES = ("sportsbet:", "ladbrokes:", "neds:", "tab:", "bet365:")
 
 # --- Model tuning constants ---------------------------------------------------
 # Dixon-Coles (1997) low-score correction. Negative rho lifts 0-0 and 1-1
@@ -120,8 +121,34 @@ TODAY     = datetime.now(ADL).date()
 YESTERDAY = TODAY - timedelta(days=1)
 TOMORROW  = TODAY + timedelta(days=1)
 FIXTURE_LOOKAHEAD_DAYS = max(1, int(os.environ.get("SOCCER_FIXTURE_DAYS", "7")))
-RESULT_CHECK_BUFFER_MINUTES = max(150, int(os.environ.get("SOCCER_RESULT_BUFFER_MINUTES", "150")))
+RESULT_CHECK_BUFFER_MINUTES = max(180, int(os.environ.get("SOCCER_RESULT_BUFFER_MINUTES", "180")))
 RESULT_LOOKBACK_DAYS = max(1, int(os.environ.get("SOCCER_RESULT_LOOKBACK_DAYS", "3")))
+TOP_UP_TARGETED = os.environ.get("SOCCER_TOP_UP_TARGETED") == "1"
+
+
+def fixture_target_dates():
+    configured = [
+        item.strip()
+        for item in os.environ.get("SOCCER_FIXTURE_DATES", "").split(",")
+        if item.strip()
+    ]
+    if configured:
+        valid = []
+        for item in configured:
+            if re.fullmatch(r"\d{4}-\d{2}-\d{2}", item):
+                valid.append(item)
+        return sorted(set(valid))
+    return [(TODAY + timedelta(days=i)).isoformat() for i in range(FIXTURE_LOOKAHEAD_DAYS)]
+
+
+def fixture_target_date_range():
+    dates = fixture_target_dates()
+    if not dates:
+        start = TODAY
+        return start, start, 1
+    start = date.fromisoformat(dates[0])
+    end = date.fromisoformat(dates[-1])
+    return start, end, max(1, (end - start).days + 1)
 
 TOURNAMENTS = {
     7:   "UEFA Champions League",
@@ -323,14 +350,47 @@ def result_due_label(due_at):
     return f"DUE @ {due_at.strftime('%H:%M')}"
 
 
+def match_closed_for_result_check(match):
+    return str(match.get("status") or "").lower() in {
+        "ft",
+        "postponed_or_cancelled",
+        "postponed",
+        "cancelled",
+        "canceled",
+        "abandoned",
+        "suspended",
+    }
+
+
 def match_due_for_result_check(match, now=None):
-    if match.get("status") == "FT":
+    if match_closed_for_result_check(match):
         return False
     due_at = result_due_datetime(match)
     if not due_at:
         return False
     now = now or datetime.now(ADL)
     return now > due_at
+
+
+def due_result_targets(store, now=None):
+    now = now or datetime.now(ADL)
+    targets = []
+    for league in store.get("leagues", []):
+        for match in league.get("matches", []):
+            event_id = match.get("id")
+            if not event_id:
+                continue
+            if match_due_for_result_check(match, now):
+                targets.append({"league": league, "match": match, "event_id": event_id})
+    return targets
+
+
+def is_sofascore_event_id(event_id):
+    return isinstance(event_id, int) or (isinstance(event_id, str) and event_id.isdigit())
+
+
+def is_bookmaker_fixture_id(event_id):
+    return isinstance(event_id, str) and event_id.lower().startswith(BOOKMAKER_MATCH_ID_PREFIXES)
 
 
 def result_backfill_dates():
@@ -350,7 +410,7 @@ def result_schedule_rows(store):
     rows = []
     for league in store.get("leagues", []):
         for match in league.get("matches", []):
-            if match.get("status") == "FT":
+            if match_closed_for_result_check(match):
                 continue
             kickoff = match_kickoff_datetime(match)
             due_at = result_due_datetime(match)
@@ -422,6 +482,7 @@ def write_result_schedule_log(store, phase_summary):
         f"- Settled: {len(phase_summary.get('settled', []))}",
         f"- Flashscore settled: {phase_summary.get('flashscore_settled', 0)}",
         f"- LiveScore settled: {phase_summary.get('livescore_settled', 0)}",
+        f"- Closed / voided: {phase_summary.get('closed', 0)}",
         f"- Due skipped / awaiting source: {phase_summary.get('skipped', 0)}",
         f"- Not due yet: {phase_summary.get('not_due', 0)}",
         f"- Backfilled finished: {phase_summary.get('backfilled', 0)}",
@@ -611,6 +672,19 @@ def load_store():
     return {"captured_at": TODAY.isoformat(), "source": "sofascore.com + sportsbet.com.au", "leagues": []}
 
 
+def prune_bookmaker_fixture_matches(store):
+    removed = 0
+    for league in store.get("leagues", []):
+        keep = []
+        for match in league.get("matches", []):
+            if is_bookmaker_fixture_id(match.get("id")):
+                removed += 1
+                continue
+            keep.append(match)
+        league["matches"] = keep
+    return removed
+
+
 def save_store(store):
     store["captured_at"] = TODAY.isoformat()
     STORE.write_text(json.dumps(store, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -621,6 +695,7 @@ def save_store(store):
 # ----------------------------------------------------------------------------
 def phase_0_validate(store):
     """Dedupe + strict tournament-ID validation + Adelaide-local re-date."""
+    drops_bookmaker = prune_bookmaker_fixture_matches(store)
     seen = {}
     drops_dupe = 0
     for L in store["leagues"]:
@@ -684,6 +759,8 @@ def phase_0_validate(store):
             eid = m.get("id")
             if not eid:
                 drops_no_id += 1; continue
+            if not is_sofascore_event_id(eid):
+                drops_foreign += 1; continue
             ev = cache.get(eid)
             if ev is None:
                 # network blip — keep the match, will be re-validated on next run
@@ -717,6 +794,7 @@ def phase_0_validate(store):
         L["matches"] = keep
 
     return {"dedupe": drops_dupe, "no_id": drops_no_id, "foreign": drops_foreign,
+            "bookmaker": drops_bookmaker,
             "excluded": drops_excluded,
             "moved": moved, "re_dated": re_dated, "cache": cache}
 
@@ -885,6 +963,27 @@ def load_flashscore_finished_events():
         return [], ""
 
 
+def load_flashscore_result_events():
+    try:
+        import soccer_phase1_fixtures as flashsource
+        raw = flashsource.fetch_flashscore_feed()
+        events = flashsource.parse_flashscore_feed(raw)
+        result_events = []
+        for event in events:
+            status_text = flashsource.flashscore_status(event.get("status"))
+            has_score = event.get("home_score") not in ("", None) and event.get("away_score") not in ("", None)
+            if status_text == "FT" and has_score:
+                result_events.append(event)
+            elif status_text == "postponed_or_cancelled" or (status_text == "FT" and not has_score):
+                event = dict(event)
+                event["status_text"] = "postponed_or_cancelled"
+                result_events.append(event)
+        return result_events, getattr(flashsource, "LAST_FLASHSCORE_FEED_URL", "")
+    except Exception as exc:
+        print(f"  flashscore_fallback_error={exc}")
+        return [], ""
+
+
 def flashscore_result_for_match(events, league_name, match):
     match_date = str(match.get("date") or "")
     home_name = (match.get("home") or {}).get("name", "")
@@ -905,6 +1004,13 @@ def flashscore_result_for_match(events, league_name, match):
             continue
         if not team_names_match(away_name, event.get("away")):
             continue
+        if event.get("status_text") == "postponed_or_cancelled":
+            return {
+                "event": event,
+                "home_score": None,
+                "away_score": None,
+                "status": "postponed_or_cancelled",
+            }
         try:
             home_score = int(event.get("home_score"))
             away_score = int(event.get("away_score"))
@@ -937,6 +1043,104 @@ def settle_from_flashscore(match, result):
     return True
 
 
+def close_from_flashscore(match, result):
+    event = result["event"]
+    match["status"] = "postponed_or_cancelled"
+    match["time"] = "Cancelled"
+    match["settled_at"] = TODAY.isoformat()
+    match["prediction_locked"] = True
+    match["prediction_locked_at"] = datetime.now(ADL).isoformat()
+    match["settled_source"] = "Flashscore"
+    match["void_reason"] = "Fixture postponed/cancelled by source before result settlement."
+    match["flashscore_score"] = {
+        "home": None,
+        "away": None,
+        "status": "postponed_or_cancelled",
+        "source_match_id": event.get("id"),
+        "fetched_at": TODAY.isoformat(),
+    }
+    for market in (match.get("predictions") or {}).values():
+        if isinstance(market, dict) and market.get("result") not in ("hit", "miss"):
+            market["result"] = "void"
+    return True
+
+
+def sportsbet_event_id_for_match(match):
+    odds = match.get("sportsbet_odds") or {}
+    event_id = odds.get("event_id") or odds.get("id")
+    if event_id:
+        return str(event_id).replace("sportsbet:", "")
+    match_id = match.get("id")
+    if isinstance(match_id, str) and match_id.startswith("sportsbet:"):
+        return match_id.split(":", 1)[1]
+    return None
+
+
+def sportsbet_result_for_match(league_name, match):
+    odds = match.get("sportsbet_odds") or {}
+    event_url = odds.get("event_url") or odds.get("url")
+    event_id = sportsbet_event_id_for_match(match)
+    home_name = (match.get("home") or {}).get("name")
+    away_name = (match.get("away") or {}).get("name")
+    try:
+        import soccer_fetch_sportsbet as sportsbet
+    except Exception:
+        return None
+
+    status = None
+    explicit_status = (
+        odds.get("status")
+        or odds.get("status_text")
+        or odds.get("display_status")
+        or odds.get("event_status")
+    )
+    if explicit_status:
+        status = sportsbet.event_terminal_status({"status": explicit_status})
+    if not status:
+        status = sportsbet.fetch_event_status(
+            event_url=event_url,
+            event_id=event_id,
+            league_slug=sportsbet.LEAGUE_PAGES.get(league_name),
+            home=home_name,
+            away=away_name,
+        )
+    if not status:
+        return None
+
+    return {
+        "event": status.get("event") or {"id": event_id},
+        "status": "postponed_or_cancelled",
+        "state": status.get("status"),
+        "status_text": status.get("status_text") or status.get("status") or "postponed/cancelled",
+        "source_match_id": status.get("event_id") or event_id,
+    }
+
+
+def close_from_sportsbet(match, result):
+    status_text = str(result.get("status_text") or "postponed/cancelled")
+    display_state = "Postponed" if "postpon" in status_text.lower() else "Cancelled"
+    match["status"] = "postponed_or_cancelled"
+    match["time"] = display_state
+    match["settled_at"] = TODAY.isoformat()
+    match["prediction_locked"] = True
+    match["prediction_locked_at"] = datetime.now(ADL).isoformat()
+    match["settled_source"] = "Sportsbet"
+    match["void_reason"] = "Fixture postponed/cancelled by Sportsbet before result settlement."
+    match["sportsbet_score"] = {
+        "home": None,
+        "away": None,
+        "status": "postponed_or_cancelled",
+        "state": result.get("state"),
+        "status_text": status_text,
+        "source_match_id": result.get("source_match_id"),
+        "fetched_at": TODAY.isoformat(),
+    }
+    for market in (match.get("predictions") or {}).values():
+        if isinstance(market, dict) and market.get("result") not in ("hit", "miss"):
+            market["result"] = "void"
+    return True
+
+
 def cards_count(eid):
     s = fetch(f"/api/v1/event/{eid}/statistics"); time.sleep(0.6)
     if not s: return None
@@ -956,13 +1160,13 @@ def cards_count(eid):
 
 
 def phase_a_settle(store, cache, due_only=False):
-    settled = []; skipped = 0; not_due = 0; flashscore_settled = 0; livescore_settled = 0
+    settled = []; skipped = 0; not_due = 0; flashscore_settled = 0; livescore_settled = 0; closed = 0
     flashscore_events = None
     flashscore_source = ""
     now = datetime.now(ADL)
     for L in store["leagues"]:
         for m in L["matches"]:
-            if m.get("status") == "FT": continue
+            if match_closed_for_result_check(m): continue
             eid = m.get("id")
             if not eid: continue
             due_for_check = match_due_for_result_check(m, now)
@@ -984,8 +1188,15 @@ def phase_a_settle(store, cache, due_only=False):
                         source_note = " [SofaScore due time]"
 
             if not settled_this:
+                result = sportsbet_result_for_match(L.get("name", ""), m)
+                if result and close_from_sportsbet(m, result):
+                    settled_this = True
+                    closed += 1
+                    source_note = f" [Sportsbet {result.get('state') or 'closed'}]"
+
+            if not settled_this:
                 if flashscore_events is None:
-                    flashscore_events, flashscore_source = load_flashscore_finished_events()
+                    flashscore_events, flashscore_source = load_flashscore_result_events()
                     if flashscore_source:
                         print(f"  flashscore_fallback_source={flashscore_source}")
                 result = flashscore_result_for_match(flashscore_events, L.get("name", ""), m)
@@ -993,6 +1204,10 @@ def phase_a_settle(store, cache, due_only=False):
                     settled_this = True
                     flashscore_settled += 1
                     source_note = " [Flashscore]"
+                elif result and result.get("status") == "postponed_or_cancelled" and close_from_flashscore(m, result):
+                    settled_this = True
+                    closed += 1
+                    source_note = " [Flashscore cancelled]"
 
             if not settled_this and due_for_check:
                 result = livescore_result_for_match(L.get("name", ""), m)
@@ -1005,22 +1220,107 @@ def phase_a_settle(store, cache, due_only=False):
                 skipped += 1
                 continue
 
-            # also try cards
-            c = (m.get("predictions") or {}).get("ou_cards") or {}
-            if c.get("pick"):
-                cards = cards_count(eid)
-                if cards is not None:
-                    line = float(c.get("line", 4.5))
-                    c["actual"] = cards
-                    c["result"] = ("hit" if (c["pick"] == "Over" and cards > line) or
-                                   (c["pick"] == "Under" and cards < line) else "miss")
-            settled.append(f"{L['name']}: {m['home']['name']} {m['home']['goals']}-{m['away']['goals']} {m['away']['name']}{source_note}")
+            if is_sofascore_event_id(eid):
+                act = actuals_for(eid, L.get("name", ""), m)
+                if act:
+                    m["actuals"] = {**(m.get("actuals") or {}), **act}
+                settle_stat_markets(m)
+            if m.get("status") == "postponed_or_cancelled":
+                settled.append(f"{L['name']}: {m['home']['name']} vs {m['away']['name']} cancelled{source_note}")
+            else:
+                settled.append(f"{L['name']}: {m['home']['name']} {m['home']['goals']}-{m['away']['goals']} {m['away']['name']}{source_note}")
     return {
         "settled": settled,
         "skipped": skipped,
         "not_due": not_due,
         "flashscore_settled": flashscore_settled,
         "livescore_settled": livescore_settled,
+        "closed": closed,
+    }
+
+
+def settle_due_matches_by_sofascore_id(targets):
+    """Settle only the currently due match cards by direct SofaScore event id."""
+    settled = []
+    skipped = 0
+    flashscore_settled = 0
+    livescore_settled = 0
+    closed = 0
+    flashscore_events = None
+    flashscore_source = ""
+
+    for target in targets:
+        L = target["league"]
+        m = target["match"]
+        eid = target["event_id"]
+        sofa_event_id = is_sofascore_event_id(eid)
+        if not sofa_event_id:
+            m["result_check_note"] = f"Non-SofaScore event id {eid}; skipped SofaScore quick fetch."
+        ev = fetch(f"/api/v1/event/{eid}") if sofa_event_id else None
+        e = (ev.get("event") or ev) if ev else None
+        is_finished = bool(e and (e.get("status") or {}).get("type") == "finished")
+
+        settled_this = False
+        source_note = ""
+        if e and settle(m, e):
+            settled_this = True
+            if not is_finished:
+                m["settled_source"] = "SofaScoreDueTime"
+                m["settled_by_due_time"] = True
+                source_note = " [SofaScore due time]"
+            else:
+                m["settled_source"] = "SofaScore"
+
+        if not settled_this:
+            result = sportsbet_result_for_match(L.get("name", ""), m)
+            if result and close_from_sportsbet(m, result):
+                settled_this = True
+                closed += 1
+                source_note = f" [Sportsbet {result.get('state') or 'closed'}]"
+
+        if not settled_this:
+            if flashscore_events is None:
+                flashscore_events, flashscore_source = load_flashscore_result_events()
+                if flashscore_source:
+                    print(f"  flashscore_fallback_source={flashscore_source}")
+            result = flashscore_result_for_match(flashscore_events, L.get("name", ""), m)
+            if result and settle_from_flashscore(m, result):
+                settled_this = True
+                flashscore_settled += 1
+                source_note = " [Flashscore]"
+            elif result and result.get("status") == "postponed_or_cancelled" and close_from_flashscore(m, result):
+                settled_this = True
+                closed += 1
+                source_note = " [Flashscore cancelled]"
+
+        if not settled_this:
+            result = livescore_result_for_match(L.get("name", ""), m)
+            if result and settle_from_livescore(m, result):
+                settled_this = True
+                livescore_settled += 1
+                source_note = " [LiveScore due time]"
+
+        if not settled_this:
+            skipped += 1
+            continue
+
+        if sofa_event_id:
+            act = actuals_for(eid, L.get("name", ""), m)
+            if act:
+                m["actuals"] = {**(m.get("actuals") or {}), **act}
+            settle_stat_markets(m)
+        if m.get("status") == "postponed_or_cancelled":
+            settled.append(f"{L['name']}: {m['home']['name']} vs {m['away']['name']} cancelled{source_note}")
+        else:
+            settled.append(f"{L['name']}: {m['home']['name']} {m['home']['goals']}-{m['away']['goals']} {m['away']['name']}{source_note}")
+
+    return {
+        "settled": settled,
+        "skipped": skipped,
+        "not_due": 0,
+        "flashscore_settled": flashscore_settled,
+        "livescore_settled": livescore_settled,
+        "closed": closed,
     }
 
 
@@ -1118,16 +1418,30 @@ def find_livescore_event(league_name, match):
     payload = livescore_date_payload(match.get("date"), livescore_tz_offset_for(match))
     if not payload:
         return None
+    # When the match was settled via LiveScore we stored its event id. Resolve by that id
+    # first — it is exact and survives team/league name drift (e.g. "Bosnia & Herzegovina"
+    # vs "Bosnia and Herzegovina", or a "World Cup 2026 Group B" stage label) that defeats
+    # the name-based matcher below, so old FT matches can still backfill their stats.
+    stored_id = str((match.get("livescore_score") or {}).get("source_match_id") or "")
+    if stored_id:
+        for stage in payload.get("Stages") or []:
+            for event in stage.get("Events") or []:
+                if str(event.get("Eid")) == stored_id:
+                    return stage, event
     home_name = (match.get("home") or {}).get("name", "")
     away_name = (match.get("away") or {}).get("name", "")
+    cross_league_matches = []
     for stage in payload.get("Stages") or []:
-        if not stage_matches_league(stage, league_name):
-            continue
         for event in stage.get("Events") or []:
             home = ((event.get("T1") or [{}])[0] or {}).get("Nm", "")
             away = ((event.get("T2") or [{}])[0] or {}).get("Nm", "")
-            if team_names_match(home_name, home) and team_names_match(away_name, away):
+            if not (team_names_match(home_name, home) and team_names_match(away_name, away)):
+                continue
+            if stage_matches_league(stage, league_name):
                 return stage, event
+            cross_league_matches.append((stage, event))
+    if match_due_for_result_check(match) and len(cross_league_matches) == 1:
+        return cross_league_matches[0]
     return None
 
 
@@ -1279,7 +1593,120 @@ def settle_stat_markets(match):
     settle_total_market(predictions.get("ou_corners"), actuals.get("corners_total"))
 
 
-def actuals_for(eid):
+# Stat (cards/corners) markets settle from match["actuals"], which routinely lags the
+# final score: a match often settles via Flashscore/LiveScore before SofaScore publishes
+# statistics. Re-attempt capture for recently finished matches on every results pass so
+# cards/corners settle automatically once any source (SofaScore, LiveScore, Flashscore)
+# publishes them. Markets are never voided — they stay pending and keep retrying until a
+# real actual is captured and settled.
+STAT_MARKET_SPECS = (
+    ("ou_cards", "cards_total", "cards"),
+    ("ou_corners", "corners_total", "corners"),
+)
+SETTLED_MARKET_RESULTS = {"hit", "miss", "pass", "void"}
+
+
+def stat_markets_pending(match):
+    """Stat market specs whose prediction exists but is not yet settled (hit/miss/pass/void)."""
+    predictions = match.get("predictions") or {}
+    pending = []
+    for spec in STAT_MARKET_SPECS:
+        market = predictions.get(spec[0])
+        if not market:
+            continue
+        if str(market.get("result") or "").lower() in SETTLED_MARKET_RESULTS:
+            continue
+        pending.append(spec)
+    return pending
+
+
+def backfill_stat_actuals(store):
+    """Re-fetch and settle cards/corners actuals for recently finished FT matches that are
+    still missing them. Markets that still cannot be settled are left pending for the next
+    pass — they are never voided."""
+    now = datetime.now(ADL)
+    attempted = 0
+    refetched = 0
+    settled = []
+    still_pending_labels = []
+    for L in store.get("leagues", []):
+        for m in L.get("matches", []):
+            if str(m.get("status") or "").lower() != "ft":
+                continue
+            if not ft_recent_enough_for_results_mode(m):
+                continue
+            pending = stat_markets_pending(m)
+            if not pending:
+                continue
+            attempted += 1
+            label = (
+                f"{L.get('name')}: {(m.get('home') or {}).get('name')} vs "
+                f"{(m.get('away') or {}).get('name')}"
+            )
+            tracker = m.get("stat_backfill") or {}
+            tracker["attempts"] = int(tracker.get("attempts") or 0) + 1
+            tracker.setdefault("first_attempt_at", now.isoformat())
+            tracker["last_attempt_at"] = now.isoformat()
+            m["stat_backfill"] = tracker
+
+            eid = m.get("id")
+            act = actuals_for(eid, L.get("name", ""), m) if is_sofascore_event_id(eid) else None
+            if not act or any(spec[1] not in act for spec in pending):
+                flash_act = flashscore_actuals_for_match(L.get("name", ""), m)
+                if flash_act:
+                    act = {**flash_act, **(act or {})}
+            if act:
+                merged = {**(m.get("actuals") or {}), **act}
+                if merged != (m.get("actuals") or {}):
+                    refetched += 1
+                m["actuals"] = merged
+            settle_stat_markets(m)
+
+            still_pending = stat_markets_pending(m)
+            still_pending_keys = {spec[0] for spec in still_pending}
+            for market_key, _actual_key, market_label in pending:
+                if market_key not in still_pending_keys:
+                    settled.append(f"{label} {market_label}")
+            for _market_key, _actual_key, market_label in still_pending:
+                still_pending_labels.append(f"{label} {market_label} (attempt {tracker['attempts']})")
+    return {
+        "attempted": attempted,
+        "refetched": refetched,
+        "settled": settled,
+        "still_pending": still_pending_labels,
+    }
+
+
+_FLASHSCORE_RESULT_EVENTS_CACHE = None
+
+
+def get_flashscore_result_events():
+    """Load and cache the Flashscore result-events feed once per process run."""
+    global _FLASHSCORE_RESULT_EVENTS_CACHE
+    if _FLASHSCORE_RESULT_EVENTS_CACHE is None:
+        events, _source = load_flashscore_result_events()
+        _FLASHSCORE_RESULT_EVENTS_CACHE = events or []
+    return _FLASHSCORE_RESULT_EVENTS_CACHE
+
+
+def flashscore_actuals_for_match(league_name, match):
+    """Fetch full-match cards/corners actuals from Flashscore's statistics feed.
+
+    Uses the Flashscore event id stored at settlement time when present, otherwise
+    matches the fixture against the cached result-events feed to find it."""
+    import soccer_phase1_fixtures as flashsource
+    flash_id = (match.get("flashscore_score") or {}).get("source_match_id")
+    if not flash_id:
+        result = flashscore_result_for_match(get_flashscore_result_events(), league_name, match)
+        if result:
+            flash_id = (result.get("event") or {}).get("id")
+    if not flash_id:
+        return None
+    stats = flashsource.fetch_flashscore_event_stats(flash_id)
+    return stats or None
+
+
+def actuals_for(eid, league_name="", match=None):
     out = {}
     s = fetch(f"/api/v1/event/{eid}/statistics"); time.sleep(0.6)
     if s:
@@ -1323,6 +1750,15 @@ def actuals_for(eid):
         if ht:
             out["ht_home"] = ht[0].get("homeScore", 0); out["ht_away"] = ht[0].get("awayScore", 0)
             out["ht_winner"] = "home" if out["ht_home"] > out["ht_away"] else ("away" if out["ht_away"] > out["ht_home"] else "draw")
+    required_keys = ("corners_total", "fouls_total", "home_sot", "away_sot", "cards_total", "first_to_score")
+    if match and not all(key in out for key in required_keys):
+        fallback_actuals = livescore_actuals_for_match(league_name, match)
+        if fallback_actuals:
+            out = {**fallback_actuals, **out}
+    if match and ("corners_total" not in out or "cards_total" not in out):
+        flash_actuals = flashscore_actuals_for_match(league_name, match)
+        if flash_actuals:
+            out = {**flash_actuals, **out}
     return out
 
 
@@ -1515,7 +1951,7 @@ def phase_a5_backfill_enrich(store, seen_ids, backfill_dates=None, recent_only=F
                     if h2h and need_h2h: m["h2h_streaks"] = h2h
                     if tstr and need_team: m["team_streaks"] = tstr
             if need_actuals:
-                act = actuals_for(eid)
+                act = actuals_for(eid, L.get("name", ""), m)
                 if act: m["actuals"] = {**(m.get("actuals") or {}), **act}
             actuals = m.get("actuals") or {}
             if not all(key in actuals for key in ("corners_total", "fouls_total", "home_sot", "away_sot", "cards_total", "first_to_score")):
@@ -2574,7 +3010,7 @@ def apply_corner_probability_cap_to_existing_prediction(match):
     return changed
 
 
-def populate_pre_match_predictions(store):
+def populate_pre_match_predictions(store, target_dates=None):
     """Fill missing pre-kickoff prediction objects before odds/display upload.
 
     This is intentionally only for non-FT matches. Resulted rows keep the hard
@@ -2590,6 +3026,8 @@ def populate_pre_match_predictions(store):
         league_name = league.get("name") or ""
         league_matches = league.get("matches", [])
         for match in league_matches:
+            if target_dates and match.get("date") not in target_dates:
+                continue
             if match.get("status") == "FT":
                 continue
             predictions = match.setdefault("predictions", {})
@@ -2806,7 +3244,7 @@ def phase_b_forecast(store, seen_ids):
     by_name = {L["name"]: L for L in store["leagues"]}
     all_matches = [m for league in store.get("leagues", []) for m in league.get("matches", [])]
     added = 0; add_brk = {}
-    forecast_days = [(TODAY + timedelta(days=i)).isoformat() for i in range(FIXTURE_LOOKAHEAD_DAYS)]
+    forecast_days = fixture_target_dates()
     for d in forecast_days:
         data = fetch(f"/api/v1/sport/football/scheduled-events/{d}"); time.sleep(0.6)
         if not data: continue
@@ -3183,7 +3621,7 @@ def sportsbet_fixture_rows():
         import soccer_fetch_sportsbet as sportsbet
     except Exception:
         return []
-    allowed_dates = set((TODAY + timedelta(days=i)).isoformat() for i in range(FIXTURE_LOOKAHEAD_DAYS))
+    allowed_dates = set(fixture_target_dates())
     rows = []
     for league_name in PHASE_FIXTURE_FALLBACK_LEAGUES:
         slug = sportsbet.LEAGUE_PAGES.get(league_name)
@@ -3254,7 +3692,7 @@ def entain_fixture_rows():
         import soccer_fetch_bookmaker_links as bookmaker_links
     except Exception:
         return []
-    allowed_dates = set((TODAY + timedelta(days=i)).isoformat() for i in range(FIXTURE_LOOKAHEAD_DAYS))
+    allowed_dates = set(fixture_target_dates())
     league_hints = {
         "Premier League": ("premier league",),
         "LaLiga": ("spanish la liga",),
@@ -3371,8 +3809,6 @@ def promote_phase_fixtures_to_store(store=None):
     phase2_event_ids = {row.get("event_id") for row in phase2_rows if row.get("event_id")}
     rows = list(phase2_rows)
     rows.extend(row for row in phase1_rows if row.get("event_id") not in phase2_event_ids)
-    rows.extend(sportsbet_fixture_rows())
-    rows.extend(entain_fixture_rows())
     by_name = {league.get("name"): league for league in store.get("leagues", [])}
     added = 0
     odds_backfilled = 0
@@ -3385,6 +3821,9 @@ def promote_phase_fixtures_to_store(store=None):
         if row.get("phase1_status") and row.get("phase1_status") != "ready_for_phase_2":
             continue
         if not (row.get("event_id") and row.get("date") and row.get("time") and row.get("home") and row.get("away")):
+            continue
+        row_date = parse_match_date(row.get("date"))
+        if row_date and row_date < TODAY:
             continue
         league = by_name.get(league_name)
         if not league:
@@ -3415,6 +3854,27 @@ def run_helper(name):
     if p.stdout: print(p.stdout.rstrip())
     if p.returncode != 0 and p.stderr:
         print(f"  [{name}] stderr: {p.stderr.rstrip()}")
+
+
+def run_targeted_collector(name, args=None):
+    args = args or []
+    env = os.environ.copy()
+    env["SOCCER_FIXTURE_DATES"] = ",".join(fixture_target_dates())
+    env["SOCCER_TOP_UP_TARGETED"] = "1"
+    p = subprocess.run([sys.executable, str(SCRIPTS / name), *args], capture_output=True, text=True, env=env)
+    if p.stdout:
+        print(p.stdout.rstrip())
+    if p.returncode != 0 and p.stderr:
+        print(f"  [{name}] stderr: {p.stderr.rstrip()}")
+    return p.returncode == 0
+
+
+def run_targeted_fixture_collectors():
+    start, _end, days = fixture_target_date_range()
+    print("\n[Seed B.0] targeted fixture collectors")
+    print(f"  target_dates={', '.join(fixture_target_dates())}")
+    run_targeted_collector("soccer_phase1_fixtures.py", ["--start", start.isoformat(), "--days", str(days)])
+    run_targeted_collector("soccer_phase2_odds.py")
 
 
 def run_dashboard_enrichment_helpers():
@@ -3459,6 +3919,33 @@ def run_dashboard_enrichment_helpers():
     run_helper("soccer_fetch_understat.py")
 
 
+def run_targeted_top_up_helpers(store):
+    target_dates = set(fixture_target_dates())
+    print("\n[Seed C.6] targeted Sportsbet odds")
+    run_targeted_collector("soccer_fetch_sportsbet.py")
+
+    print("\n[Seed C.7] targeted bookmaker direct links")
+    run_targeted_collector("soccer_fetch_bookmaker_links.py")
+    store = load_store()
+
+    print("\n[Seed D] targeted pre-match prediction fill")
+    pre = populate_pre_match_predictions(store, target_dates=target_dates)
+    print(
+        f"  target_dates={', '.join(sorted(target_dates)) or 'n/a'}  "
+        f"created={pre['created']}  corners={pre['corner_created']}  "
+        f"profiled={pre.get('profiled', 0)}  corner_capped={pre.get('corner_capped', 0)}"
+    )
+    if pre["by_league"]:
+        for league_name, count in sorted(pre["by_league"].items()):
+            print(f"  + {league_name}: {count}")
+
+    save_store(store)
+
+    print("\n[Seed D.1] targeted prediction odds")
+    run_targeted_collector("soccer_fetch_pred_odds.py")
+    return load_store()
+
+
 def sort_store(store):
     for L in store["leagues"]:
         L["matches"].sort(key=lambda m: (m.get("date", ""), m.get("time", "")))
@@ -3494,7 +3981,8 @@ def run_full_refresh():
     p0 = phase_0_validate(store)
     print(
         f"  dedupe={p0['dedupe']}  no_id={p0['no_id']}  foreign={p0['foreign']}  "
-        f"excluded={p0.get('excluded', 0)}  moved={p0['moved']}  re_dated={p0['re_dated']}"
+        f"bookmaker={p0.get('bookmaker', 0)}  excluded={p0.get('excluded', 0)}  "
+        f"moved={p0['moved']}  re_dated={p0['re_dated']}"
     )
     seen_ids = {m["id"] for L in store["leagues"] for m in L["matches"] if m.get("id")}
 
@@ -3554,62 +4042,60 @@ def run_full_refresh():
 def run_results_only():
     print(f"=== soccer_routine.py results-only — {TODAY.isoformat()} (Adelaide) ===")
     print(f"  result_check_buffer_minutes={RESULT_CHECK_BUFFER_MINUTES}")
-    print(f"  result_backfill_dates={', '.join(result_backfill_dates())}")
     store = load_store()
-    seen_ids = {m["id"] for L in store["leagues"] for m in L["matches"] if m.get("id")}
-    due_count = sum(
-        1
-        for L in store["leagues"]
-        for m in L["matches"]
-        if m.get("id") and match_due_for_result_check(m)
-    )
+    pruned_bookmaker = prune_bookmaker_fixture_matches(store)
+    if pruned_bookmaker:
+        sort_store(store)
+        save_store(store)
+        print(f"  pruned_bookmaker_fixture_matches={pruned_bookmaker}")
+    due_targets = due_result_targets(store)
+    due_count = len(due_targets)
     print(f"  due_for_result_check={due_count}")
 
-    print("\n[Results A] settle due pending matches")
-    pa = phase_a_settle(store, {}, due_only=True)
-    print(f"  settled={len(pa['settled'])}  skipped={pa['skipped']}  not_due={pa['not_due']}  flashscore_settled={pa.get('flashscore_settled', 0)}  livescore_settled={pa.get('livescore_settled', 0)}")
+    print("\n[Results A] quick fetch due matches")
+    if due_targets:
+        for target in due_targets:
+            match = target["match"]
+            due_at = result_due_datetime(match)
+            due_label = due_at.isoformat() if due_at else "unknown"
+            print(
+                "  due "
+                f"id={target['event_id']} "
+                f"due_at={due_label} "
+                f"{target['league'].get('name')}: "
+                f"{(match.get('home') or {}).get('name')} vs {(match.get('away') or {}).get('name')}"
+            )
+    pa = settle_due_matches_by_sofascore_id(due_targets)
+    print(f"  settled={len(pa['settled'])}  skipped={pa['skipped']}  not_due={pa['not_due']}  flashscore_settled={pa.get('flashscore_settled', 0)}  livescore_settled={pa.get('livescore_settled', 0)}  closed={pa.get('closed', 0)}")
 
-    print("\n[Results B] backfill finished + enrich recent FT")
-    pa5 = phase_a5_backfill_enrich(
-        store,
-        seen_ids,
-        backfill_dates=result_backfill_dates(),
-        recent_only=True,
+    print("\n[Results B] backfill stat actuals for recent FT matches")
+    bf = backfill_stat_actuals(store)
+    print(
+        f"  stat_backfill attempted={bf['attempted']} refetched={bf['refetched']} "
+        f"settled={len(bf['settled'])} still_pending={len(bf['still_pending'])}"
     )
-    print(f"  added={pa5['added']}  enriched={pa5['enriched']}  merged={len(pa5.get('merged', []))}  removed_shells={len(pa5.get('removed_result_shells', []))}")
-
-    print("\n[Results B.5] today new-league calibration exception")
-    cal = populate_today_new_league_calibration_predictions(store)
-    print(f"  created={cal['created']}  settled_matches={cal['settled_matches']}")
-    if cal["by_league"]:
-        for league_name, count in sorted(cal["by_league"].items()):
-            print(f"  + {league_name}: {count}")
-
-    print("\n[Results C] protect resulted predictions")
-    pa6 = phase_a6_retro(store)
-    print(f"  protected={pa6.get('protected', 0)}")
-
-    print("\n[Results D] prune stale unresolved matches")
-    pruned = prune_stale_pending_matches(store)
-    print(f"  pruned={len(pruned)}")
+    for row in bf["settled"]:
+        print(f"  stat settled: {row}")
+    for row in bf["still_pending"]:
+        print(f"  stat still pending (will retry next run): {row}")
 
     sort_store(store)
     save_store(store)
-    merged_results = pa5.get("merged", [])
     schedule_paths = write_result_schedule_log(store, {
-        "settled": pa["settled"] + [f"{row} [SofaScore backfill merge]" for row in merged_results],
+        "settled": pa["settled"],
         "flashscore_settled": pa.get("flashscore_settled", 0),
         "livescore_settled": pa.get("livescore_settled", 0),
-        "skipped": max(0, pa.get("skipped", 0) - len(merged_results)),
+        "closed": pa.get("closed", 0),
+        "skipped": pa.get("skipped", 0),
         "not_due": pa.get("not_due", 0),
-        "backfilled": pa5["added"],
-        "merged_backfill_results": merged_results,
-        "removed_result_shells": pa5.get("removed_result_shells", []),
-        "enriched": pa5["enriched"],
-        "calibration_created": cal["created"],
-        "calibration_settled_matches": cal["settled_matches"],
-        "protected": pa6.get("protected", 0),
-        "pruned": pruned,
+        "backfilled": bf["refetched"],
+        "merged_backfill_results": bf["settled"],
+        "removed_result_shells": [],
+        "enriched": 0,
+        "calibration_created": 0,
+        "calibration_settled_matches": 0,
+        "protected": len(pa["settled"]),
+        "pruned": [],
     })
     print(f"  result_schedule={schedule_paths['markdown']}")
     print_final_tally(store)
@@ -3618,6 +4104,9 @@ def run_results_only():
 def run_seed_next_day():
     print(f"=== soccer_routine.py seed-next-day — {TODAY.isoformat()} (Adelaide) ===")
     print(f"  fixture_lookahead_days={FIXTURE_LOOKAHEAD_DAYS}")
+    print(f"  fixture_target_dates={', '.join(fixture_target_dates())}")
+    if TOP_UP_TARGETED:
+        run_targeted_fixture_collectors()
     store = load_store()
     seen_ids = {m["id"] for L in store["leagues"] for m in L["matches"] if m.get("id")}
 
@@ -3641,9 +4130,12 @@ def run_seed_next_day():
 
     sort_store(store)
     save_store(store)
-    run_dashboard_enrichment_helpers()
-    store = load_store()
-    save_store(store)
+    if TOP_UP_TARGETED:
+        store = run_targeted_top_up_helpers(store)
+    else:
+        run_dashboard_enrichment_helpers()
+        store = load_store()
+        save_store(store)
     print_final_tally(store)
 
 

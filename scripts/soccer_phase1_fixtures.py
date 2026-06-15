@@ -230,6 +230,20 @@ def iso_date_range(start, days):
     return [(start + timedelta(days=i)).isoformat() for i in range(days)]
 
 
+def fixture_target_dates_from_env():
+    dates = []
+    for item in os.environ.get("SOCCER_FIXTURE_DATES", "").split(","):
+        item = item.strip()
+        if not item:
+            continue
+        try:
+            date.fromisoformat(item)
+        except ValueError:
+            continue
+        dates.append(item)
+    return sorted(set(dates))
+
+
 def api_key():
     for name in API_KEY_ENV:
         val = os.environ.get(name)
@@ -426,6 +440,87 @@ def flashscore_status(code):
     if code in ("POSTP", "PST", "CANC", "ABD", "SUSP"):
         return "postponed_or_cancelled"
     return "upcoming"
+
+
+FLASHSCORE_STATS_FEED_TEMPLATES = [
+    "https://www.flashscore.com.au/x/feed/df_st_1_{eid}",
+    "https://www.flashscore.com/x/feed/df_st_1_{eid}",
+    "https://2.flashscore.ninja/2/x/feed/df_st_1_{eid}",
+]
+
+
+def _flashscore_stat_int(value):
+    match = re.search(r"-?\d+", str(value or ""))
+    return int(match.group()) if match else None
+
+
+def parse_flashscore_event_stats(raw):
+    """Parse a Flashscore df_st detail feed into full-match cards/corners actuals.
+
+    The feed is the same ÷/¬ delimited format as the fixture feed. ``SE`` marks a
+    period ("Match", "1st Half", "2nd Half") and each stat row is
+    ``SD÷id¬SG÷<name>¬SH÷<home>¬SI÷<away>``. Only the full-match ("Match") block is
+    used. Flashscore omits zero-count rows, so within a populated block a missing
+    card row legitimately means zero — corners presence confirms the block is real.
+    """
+    period = ""
+    home_corners = away_corners = None
+    home_yellow = away_yellow = home_red = away_red = 0
+    saw_cards = False
+    for chunk in (raw or "").split("~"):
+        fields = flashscore_fields(chunk)
+        if "SE" in fields:
+            period = (fields.get("SE") or "").strip().lower()
+            continue
+        if period != "match":
+            continue
+        name = (fields.get("SG") or "").strip().lower()
+        if not name:
+            continue
+        home = _flashscore_stat_int(fields.get("SH"))
+        away = _flashscore_stat_int(fields.get("SI"))
+        if home is None or away is None:
+            continue
+        if "corner" in name:
+            home_corners, away_corners = home, away
+        elif "yellow card" in name:
+            home_yellow, away_yellow = home, away
+            saw_cards = True
+        elif "red card" in name:
+            home_red, away_red = home, away
+            saw_cards = True
+    if home_corners is None:
+        # No corners in the full-match block means stats are not published yet.
+        return {}
+    out = {
+        "source": "Flashscore",
+        "home_corners": home_corners,
+        "away_corners": away_corners,
+        "corners_total": home_corners + away_corners,
+    }
+    if saw_cards or home_corners is not None:
+        out["home_cards"] = home_yellow + home_red
+        out["away_cards"] = away_yellow + away_red
+        out["cards_total"] = out["home_cards"] + out["away_cards"]
+    return out
+
+
+def fetch_flashscore_event_stats(event_id):
+    """Return full-match stat actuals for a Flashscore event id, or {} if unavailable."""
+    if not event_id:
+        return {}
+    for template in FLASHSCORE_STATS_FEED_TEMPLATES:
+        url = template.format(eid=event_id)
+        req = urllib.request.Request(url, headers=flashscore_headers(url))
+        try:
+            with urllib.request.urlopen(req, timeout=20) as resp:
+                raw = resp.read().decode("utf-8", errors="replace")
+        except Exception:
+            continue
+        stats = parse_flashscore_event_stats(raw)
+        if stats:
+            return stats
+    return {}
 
 
 def flashscore_league(event):
@@ -1223,26 +1318,36 @@ def main():
     )
     args = parser.parse_args()
 
-    start_date = date.fromisoformat(args.start) if args.start else now_adelaide().date()
+    env_target_dates = fixture_target_dates_from_env()
+    if args.start:
+        start_date = date.fromisoformat(args.start)
+        days = args.days
+    elif env_target_dates:
+        start_date = date.fromisoformat(env_target_dates[0])
+        end_date = date.fromisoformat(env_target_dates[-1])
+        days = max(1, (end_date - start_date).days + 1)
+    else:
+        start_date = now_adelaide().date()
+        days = args.days
     run_ts = now_adelaide().strftime("%Y-%m-%d %H:%M:%S %Z")
     key = api_key()
 
-    rows, health_rows = rows_from_sofascore(start_date, args.days, run_ts)
+    rows, health_rows = rows_from_sofascore(start_date, days, run_ts)
     source_mode = "SofaScore"
 
     if not rows and key:
-        api_rows, api_health = rows_from_api(start_date, args.days, run_ts, key)
+        api_rows, api_health = rows_from_api(start_date, days, run_ts, key)
         rows = api_rows
         health_rows.extend(api_health)
         source_mode = "API-Football fallback"
 
     if not rows:
-        flash_rows, flash_health = rows_from_flashscore(start_date, args.days, run_ts)
+        flash_rows, flash_health = rows_from_flashscore(start_date, days, run_ts)
         rows = flash_rows
         health_rows.extend(flash_health)
         source_mode = "Flashscore fallback"
         if not rows:
-            tsdb_rows, tsdb_health = rows_from_thesportsdb(start_date, args.days, run_ts)
+            tsdb_rows, tsdb_health = rows_from_thesportsdb(start_date, days, run_ts)
             rows = tsdb_rows
             health_rows.extend(tsdb_health)
             source_mode = "TheSportsDB fallback"
@@ -1252,12 +1357,16 @@ def main():
             health_rows.extend(fallback_health)
             source_mode = "local fallback"
 
+    if env_target_dates:
+        rows = [row for row in rows if row.get("date") in env_target_dates]
     rows = finalize_rows(rows, start_date)
     ready = [r for r in rows if r["phase1_status"] == READY]
     needs_settlement = [r for r in rows if r["phase1_status"] == "needs_settlement"]
     blocked = [r for r in rows if r["phase1_status"] not in (READY, "needs_settlement")]
     summary = league_summary(rows)
-    notes = run_notes(rows, health_rows, start_date, args.days, source_mode)
+    notes = run_notes(rows, health_rows, start_date, days, source_mode)
+    if env_target_dates:
+        notes.append({"item": "target_dates", "value": ",".join(env_target_dates)})
 
     write_csv(rows)
     write_md(rows, health_rows, notes)
