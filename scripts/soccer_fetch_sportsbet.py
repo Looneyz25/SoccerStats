@@ -15,6 +15,7 @@ explicitly excluded.
 import json, os, re, time, pathlib, unicodedata
 import random
 from curl_cffi import requests
+from team_aliases import NATIONAL_TEAM_ALIASES
 
 _PROFILES = ["chrome120","chrome124","chrome131","chrome116","edge101","safari17_0"]
 def _profile(): return random.choice(_PROFILES)
@@ -63,11 +64,6 @@ LEAGUE_PAGES = {
 }
 
 ABBREV = {
-    # National sides whose name differs from the bookmaker feed (e.g. our store's
-    # "Cabo Verde"/"Côte d'Ivoire" vs Sportsbet's "Cape Verde"/"Ivory Coast"),
-    # which otherwise leaves the fixture with no attached odds.
-    "caboverde": "capeverde",
-    "cotedivoire": "ivorycoast",
     "wolves": "wolverhampton",
     "manutd": "manchesterunited", "manunited": "manchesterunited",
     "mancity": "manchestercity",
@@ -96,6 +92,9 @@ ABBREV = {
     "sociedad": "realsociedad",
     "athletic": "athleticbilbao",
 }
+# National-team synonyms (Cabo Verde/Cape Verde, etc.) live in one shared map so a
+# new country alias is added once across settlement and all odds matchers.
+ABBREV.update(NATIONAL_TEAM_ALIASES)
 
 def norm(s):
     # Fold accented characters to ASCII so München -> munchen, Étienne -> etienne, etc.

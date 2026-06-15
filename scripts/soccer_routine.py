@@ -49,6 +49,7 @@ except ImportError:
 
 import random
 from curl_cffi import requests
+from team_aliases import NATIONAL_TEAM_ALIASES
 
 _PROFILES = ["chrome120","chrome124","chrome131","chrome116","edge101","safari17_0"]
 def _profile(): return random.choice(_PROFILES)
@@ -869,11 +870,10 @@ TEAM_ALIASES = {
     "wolves": "wolverhampton",
     "forest": "nottinghamforest",
     "rennais": "rennes",
-    # National sides whose name differs between our SofaScore store and the
-    # Flashscore/LiveScore result feeds, which otherwise blocks result discovery.
-    "cotedivoire": "ivorycoast",
-    "caboverde": "capeverde",
 }
+# National-team synonyms that span data providers live in one shared map (also used
+# by the Sportsbet/bookmaker odds matchers), so a new country alias is added once.
+TEAM_ALIASES.update(NATIONAL_TEAM_ALIASES)
 
 TEAM_NAME_STOPWORDS = {
     "afc",

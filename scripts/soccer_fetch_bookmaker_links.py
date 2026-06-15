@@ -23,6 +23,8 @@ from typing import Iterable
 from urllib.parse import urljoin, urlparse
 from urllib.request import Request, urlopen
 
+from team_aliases import NATIONAL_TEAM_ALIASES
+
 try:
     from curl_cffi import requests as curl_requests
 except Exception:  # pragma: no cover - depends on local optional dependency
@@ -96,10 +98,6 @@ GENERIC_PATHS = {
 }
 
 ABBREV = {
-    # National sides whose name differs from the bookmaker feed (e.g. our store's
-    # "Cabo Verde"/"Côte d'Ivoire" vs the feed's "Cape Verde"/"Ivory Coast").
-    "caboverde": "capeverde",
-    "cotedivoire": "ivorycoast",
     "wolves": "wolverhampton",
     "manutd": "manchesterunited",
     "manunited": "manchesterunited",
@@ -131,6 +129,9 @@ ABBREV = {
     "sociedad": "realsociedad",
     "athletic": "athleticbilbao",
 }
+# National-team synonyms (Cabo Verde/Cape Verde, etc.) live in one shared map so a
+# new country alias is added once across settlement and all odds matchers.
+ABBREV.update(NATIONAL_TEAM_ALIASES)
 
 
 @dataclass(frozen=True)
