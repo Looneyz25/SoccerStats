@@ -869,6 +869,10 @@ TEAM_ALIASES = {
     "wolves": "wolverhampton",
     "forest": "nottinghamforest",
     "rennais": "rennes",
+    # National sides whose name differs between our SofaScore store and the
+    # Flashscore/LiveScore result feeds, which otherwise blocks result discovery.
+    "cotedivoire": "ivorycoast",
+    "caboverde": "capeverde",
 }
 
 TEAM_NAME_STOPWORDS = {
