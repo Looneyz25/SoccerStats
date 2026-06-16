@@ -1177,13 +1177,21 @@ def phase_a_settle(store, cache, due_only=False):
             if due_only and not due_for_check:
                 not_due += 1
                 continue
-            ev = cache.get(eid) or fetch(f"/api/v1/event/{eid}")
+            settled_this = False
+            source_note = ""
+
+            # ESPN first: primary results source, independent of the (often blocked) SofaScore API.
+            es = espn_state_for_match(L.get("name", ""), m)
+            if es and es[0] == "ft" and settle(m, {"homeScore": {"current": es[1]}, "awayScore": {"current": es[2]}}):
+                m["settled_source"] = "ESPN"
+                settled_this = True
+                source_note = " [ESPN]"
+
+            ev = (cache.get(eid) or fetch(f"/api/v1/event/{eid}")) if not settled_this else None
             e = (ev.get("event") or ev) if ev else None
             is_finished = bool(e and (e.get("status") or {}).get("type") == "finished")
 
-            settled_this = False
-            source_note = ""
-            if e and (is_finished or due_for_check):
+            if not settled_this and e and (is_finished or due_for_check):
                 if settle(m, e):
                     settled_this = True
                     if not is_finished:
@@ -1258,15 +1266,24 @@ def settle_due_matches_by_sofascore_id(targets):
         m = target["match"]
         eid = target["event_id"]
         sofa_event_id = is_sofascore_event_id(eid)
-        if not sofa_event_id:
-            m["result_check_note"] = f"Non-SofaScore event id {eid}; skipped SofaScore quick fetch."
-        ev = fetch(f"/api/v1/event/{eid}") if sofa_event_id else None
-        e = (ev.get("event") or ev) if ev else None
-        is_finished = bool(e and (e.get("status") or {}).get("type") == "finished")
 
         settled_this = False
         source_note = ""
-        if e and settle(m, e):
+
+        # ESPN first: primary results source, independent of the (often blocked) SofaScore API.
+        es = espn_state_for_match(L.get("name", ""), m)
+        if es and es[0] == "ft" and settle(m, {"homeScore": {"current": es[1]}, "awayScore": {"current": es[2]}}):
+            m["settled_source"] = "ESPN"
+            settled_this = True
+            source_note = " [ESPN]"
+
+        if not settled_this and not sofa_event_id:
+            m["result_check_note"] = f"Non-SofaScore event id {eid}; skipped SofaScore quick fetch."
+        ev = fetch(f"/api/v1/event/{eid}") if (sofa_event_id and not settled_this) else None
+        e = (ev.get("event") or ev) if ev else None
+        is_finished = bool(e and (e.get("status") or {}).get("type") == "finished")
+
+        if not settled_this and e and settle(m, e):
             settled_this = True
             if not is_finished:
                 m["settled_source"] = "SofaScoreDueTime"
@@ -1303,13 +1320,6 @@ def settle_due_matches_by_sofascore_id(targets):
                 settled_this = True
                 livescore_settled += 1
                 source_note = " [LiveScore due time]"
-
-        if not settled_this:
-            es = espn_state_for_match(L.get("name", ""), m)
-            if es and es[0] == "ft" and settle(m, {"homeScore": {"current": es[1]}, "awayScore": {"current": es[2]}}):
-                m["settled_source"] = "ESPN"
-                settled_this = True
-                source_note = " [ESPN]"
 
         if not settled_this:
             skipped += 1
@@ -4276,21 +4286,21 @@ def update_live_and_settle(store):
             label = f"{league_name}: {(m.get('home') or {}).get('name')} vs {(m.get('away') or {}).get('name')}"
             eid = m.get("id")
 
-            state = sofascore_state(eid)
-            source = "SofaScore FT" if state else None
-            # ESPN is an independent live/result source that stays up when SofaScore is
-            # blocked and covers fixtures Flashscore omits.
+            # ESPN is the primary live/results source: independent, stays up when the
+            # SofaScore API is blocked, and covers fixtures Flashscore omits.
+            state = espn_state_for_match(league_name, m)
+            source = "ESPN FT" if state else None
             if (not state or state[0] == "upcoming"):
-                es = espn_state_for_match(league_name, m)
-                if es:
-                    state = es
-                    source = "ESPN FT"
+                ss = sofascore_state(eid)
+                if ss:
+                    state = ss
+                    source = "SofaScore FT"
             if (not state or state[0] == "upcoming"):
                 ls = livescore_state_for_match(league_name, m)
                 if ls:
                     state = ls
                     source = "LiveScore FT"
-            # Flashscore in-play feed for a live score when SofaScore/LiveScore have none.
+            # Flashscore in-play feed for a live score when the above have none.
             if (not state or state[0] == "upcoming"):
                 fl = flashscore_live_state_for_match(league_name, m)
                 if fl:

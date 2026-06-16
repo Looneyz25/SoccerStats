@@ -92,6 +92,16 @@ class LiveScoreResultMatchingTests(unittest.TestCase):
 
 
 class ResultsOnlyDueScopeTests(unittest.TestCase):
+    def setUp(self):
+        # ESPN is now the primary results source and is tried first in settle_due. Stub it
+        # to None so these tests exercise the SofaScore/Flashscore/LiveScore fallbacks
+        # deterministically without a live network call.
+        self._original_espn = sr.espn_state_for_match
+        sr.espn_state_for_match = lambda *_args, **_kwargs: None
+
+    def tearDown(self):
+        sr.espn_state_for_match = self._original_espn
+
     def test_due_settlement_fetches_only_target_sofascore_ids(self):
         fetched = []
         targets = [
