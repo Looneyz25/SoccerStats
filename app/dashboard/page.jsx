@@ -118,20 +118,20 @@ class DashboardErrorBoundary extends Component {
       : 'The dashboard hit a render error.';
     return (
       <main className="min-h-screen bg-field px-4 py-10 text-ink">
-        <section className="mx-auto max-w-xl rounded-lg border border-red-200 bg-white p-5 shadow-panel">
+        <section className="mx-auto max-w-xl rounded-lg border border-red-200 dark:border-red-500/40 bg-surface p-5 shadow-panel">
           <div className="flex items-start gap-3">
             <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-red-600" aria-hidden="true" />
             <div>
               <h1 className="text-lg font-semibold">Dashboard could not render</h1>
-              <p className="mt-2 text-sm leading-6 text-slate-600">
+              <p className="mt-2 text-sm leading-6 text-muted">
                 Refresh the dashboard. If it happens again, send the console line that starts with
                 <span className="font-semibold text-ink"> Dashboard render error</span>.
               </p>
-              <p className="mt-3 rounded-md bg-red-50 px-3 py-2 text-xs font-semibold text-red-700">{message}</p>
+              <p className="mt-3 rounded-md bg-red-50 dark:bg-red-500/10 px-3 py-2 text-xs font-semibold text-red-700 dark:text-red-300">{message}</p>
               <button
                 type="button"
                 onClick={() => window.location.reload()}
-                className="mt-4 inline-flex h-10 items-center rounded-md bg-ink px-4 text-sm font-semibold text-white"
+                className="mt-4 inline-flex h-10 items-center rounded-md bg-header px-4 text-sm font-semibold text-white"
               >
                 Refresh dashboard
               </button>
@@ -320,6 +320,21 @@ function leagueLogo(value) {
   );
 }
 
+function BrandMark({ className = '', responsive = false }) {
+  const tail = responsive ? 'hidden lg:inline' : '';
+  return (
+    <span
+      className={`inline-flex select-none items-baseline font-extrabold leading-none tracking-tight ${className}`}
+      role="img"
+      aria-label="LVRstats.com"
+    >
+      <span className="text-ink" aria-hidden="true">LVR</span>
+      <span className={`text-blue-600 dark:text-blue-400 ${tail}`} aria-hidden="true">stats</span>
+      <span className={`ml-px text-[0.5em] font-semibold text-faint ${tail}`} aria-hidden="true">.com</span>
+    </span>
+  );
+}
+
 function TeamBadge({ src, name }) {
   const [failed, setFailed] = useState(false);
   useEffect(() => {
@@ -333,7 +348,7 @@ function TeamBadge({ src, name }) {
     .join('')
     .toUpperCase();
   return (
-    <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-line bg-white text-xs font-bold text-slate-500">
+    <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full border border-line bg-surface text-xs font-bold text-muted">
       {src && !failed ? (
         <img src={src} alt="" className="h-full w-full object-contain p-1" aria-hidden="true" referrerPolicy="no-referrer" onError={() => setFailed(true)} />
       ) : (
@@ -351,14 +366,14 @@ function LeagueBadge({ src, name }) {
 
   if (src && !failed) {
     return (
-      <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-md border border-white/20 bg-white">
+      <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-md border border-white/20 bg-surface">
         <img src={src} alt="" className="h-full w-full object-contain p-1" aria-hidden="true" referrerPolicy="no-referrer" onError={() => setFailed(true)} />
       </span>
     );
   }
 
   return (
-    <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-white/20 bg-white/12 text-xs font-bold text-white">
+    <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-white/20 bg-white/15 text-xs font-bold text-white">
       {String(name || '?').slice(0, 2).toUpperCase()}
     </span>
   );
@@ -366,8 +381,8 @@ function LeagueBadge({ src, name }) {
 
 function statusClass(status) {
   if (status === 'FT') return 'bg-signal/10 text-signal ring-signal/20';
-  if (status === 'live') return 'bg-red-50 text-red-600 ring-red-200';
-  if (status === 'upcoming') return 'bg-blue-50 text-blue-700 ring-blue-200';
+  if (status === 'live') return 'bg-red-50 text-red-600 ring-red-200 dark:bg-red-500/15 dark:text-red-300 dark:ring-red-500/30';
+  if (status === 'upcoming') return 'bg-blue-50 text-blue-700 ring-blue-200 dark:bg-blue-500/15 dark:text-blue-300 dark:ring-blue-500/30';
   return 'bg-warning/10 text-warning ring-warning/20';
 }
 
@@ -390,26 +405,26 @@ function scorelineText(match) {
 function resultIcon(result) {
   if (result === 'hit') return <CheckCircle2 className="h-4 w-4 text-emerald-600" aria-hidden="true" />;
   if (result === 'miss') return <XCircle className="h-4 w-4 text-miss" aria-hidden="true" />;
-  return <Clock3 className="h-4 w-4 text-slate-500" aria-hidden="true" />;
+  return <Clock3 className="h-4 w-4 text-muted" aria-hidden="true" />;
 }
 
 function marketPillClass(result) {
   if (result === 'hit') return 'result-hit-row';
-  if (result === 'miss') return 'border-red-400 bg-red-100 shadow-panel';
-  if (result === 'pass') return 'border-slate-300 bg-slate-100 shadow-panel';
-  return 'border-slate-300 bg-white shadow-panel';
+  if (result === 'miss') return 'border-red-400 bg-red-100 shadow-panel dark:border-red-500/40 dark:bg-red-500/15';
+  if (result === 'pass') return 'border-line bg-surface-3 shadow-panel';
+  return 'border-line bg-surface shadow-panel';
 }
 
 function marketValueClass(result) {
-  if (result === 'hit') return 'text-emerald-700';
-  if (result === 'miss') return 'text-red-700';
+  if (result === 'hit') return 'text-emerald-700 dark:text-emerald-300';
+  if (result === 'miss') return 'text-red-700 dark:text-red-300';
   return 'text-ink';
 }
 
 function resultBadgeClass(result) {
-  if (result === 'hit') return 'bg-emerald-200 text-emerald-800';
-  if (result === 'miss') return 'bg-red-100 text-red-700';
-  return 'bg-slate-200 text-slate-600';
+  if (result === 'hit') return 'bg-emerald-200 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-200';
+  if (result === 'miss') return 'bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-300';
+  return 'bg-surface-3 text-muted dark:bg-white/10 dark:text-faint';
 }
 
 function visibleResultLabel(result) {
@@ -419,20 +434,20 @@ function visibleResultLabel(result) {
 
 function streakCardClass(result) {
   if (result === 'hit') return 'result-hit-row';
-  if (result === 'miss') return 'border-red-400 bg-red-100 shadow-panel';
-  return 'border-slate-300 bg-white shadow-panel';
+  if (result === 'miss') return 'border-red-400 bg-red-100 shadow-panel dark:border-red-500/40 dark:bg-red-500/15';
+  return 'border-line bg-surface shadow-panel';
 }
 
 function streakTextClass(result) {
-  if (result === 'hit') return 'text-emerald-800';
-  if (result === 'miss') return 'text-red-800';
+  if (result === 'hit') return 'text-emerald-800 dark:text-emerald-200';
+  if (result === 'miss') return 'text-red-800 dark:text-red-200';
   return 'text-ink';
 }
 
 function streakMetaClass(result) {
-  if (result === 'hit') return 'text-emerald-700';
-  if (result === 'miss') return 'text-red-700';
-  return 'text-slate-600';
+  if (result === 'hit') return 'text-emerald-700 dark:text-emerald-300';
+  if (result === 'miss') return 'text-red-700 dark:text-red-300';
+  return 'text-muted';
 }
 
 function teamNameForSide(side, match) {
@@ -1245,8 +1260,8 @@ function WinnerProbabilityBreakdown({ match, comparison }) {
   if (!rows) return null;
 
   return (
-    <div className="mt-2 rounded-md border border-slate-300 bg-white p-2 text-xs shadow-panel">
-      <div className="mb-1.5 grid grid-cols-[minmax(0,1fr)_3.5rem_5rem] gap-2 px-1.5 text-[11px] font-semibold uppercase text-slate-500">
+    <div className="mt-2 rounded-md border border-line bg-surface p-2 text-xs shadow-panel">
+      <div className="mb-1.5 grid grid-cols-[minmax(0,1fr)_3.5rem_5rem] gap-2 px-1.5 text-[11px] font-semibold uppercase text-muted">
         <span>1X2 split</span>
         <span className="text-right">Model</span>
         <span className="text-right">Bookmaker</span>
@@ -1255,19 +1270,19 @@ function WinnerProbabilityBreakdown({ match, comparison }) {
         {rows.map((row) => {
           const selected = row.key === pickType;
           const selectedClass = verifyPick
-            ? 'bg-amber-50 text-amber-950 ring-1 ring-amber-400'
-            : 'bg-emerald-100 text-emerald-900 ring-1 ring-emerald-500';
-          const selectedText = verifyPick ? 'font-semibold text-amber-800' : 'font-semibold text-emerald-800';
+            ? 'bg-amber-50 text-amber-950 ring-1 ring-amber-400 dark:bg-amber-500/15 dark:text-amber-200 dark:ring-amber-500/40'
+            : 'bg-emerald-100 text-emerald-900 ring-1 ring-emerald-500 dark:bg-emerald-500/15 dark:text-emerald-200 dark:ring-emerald-500/40';
+          const selectedText = verifyPick ? 'font-semibold text-amber-800 dark:text-amber-200' : 'font-semibold text-emerald-800 dark:text-emerald-200';
           return (
             <div
               key={row.key}
               className={`grid grid-cols-[minmax(0,1fr)_3.5rem_5rem] items-center gap-2 rounded px-1.5 py-1 ${
-                selected ? selectedClass : 'text-slate-600'
+                selected ? selectedClass : 'text-muted'
               }`}
             >
               <span className={`truncate ${selected ? selectedText : ''}`}>{row.label}</span>
-              <span className={`text-right ${selected ? selectedText : ''}`}>{fmtPct(row.model) || '-'}</span>
-              <span className="text-right text-slate-500">{fmtPct(row.bookmaker) || '-'}</span>
+              <span className={`text-right font-mono ${selected ? selectedText : ''}`}>{fmtPct(row.model) || '-'}</span>
+              <span className="text-right font-mono text-muted">{fmtPct(row.bookmaker) || '-'}</span>
             </div>
           );
         })}
@@ -1428,16 +1443,16 @@ function winnerPredictionSide(match, winner = match.predictions?.winner) {
 function winnerPredictionCardClass(match, side, winner = match.predictions?.winner) {
   const predictedSide = winnerPredictionSide(match, winner);
   if (predictedSide !== side) return 'border-line bg-field/60';
-  if (winner?.result === 'hit') return 'border-emerald-400 bg-emerald-200 ring-1 ring-emerald-500';
-  if (winner?.result === 'miss') return 'border-red-300 bg-red-50 ring-1 ring-red-300';
-  return 'border-amber-300 bg-amber-50';
+  if (winner?.result === 'hit') return 'border-emerald-400 bg-emerald-200 ring-1 ring-emerald-500 dark:border-emerald-500/50 dark:bg-emerald-500/15 dark:ring-emerald-500/50';
+  if (winner?.result === 'miss') return 'border-red-300 bg-red-50 ring-1 ring-red-300 dark:border-red-500/40 dark:bg-red-500/15 dark:ring-red-500/40';
+  return 'border-accent/50 bg-accent-soft ring-1 ring-accent/25';
 }
 
 function winnerPredictionScoreClass(match, winner = match.predictions?.winner) {
-  if (winnerPredictionSide(match, winner) !== 'draw') return match.status === 'FT' ? 'rounded-md bg-ink px-3 py-2 text-sm text-white' : 'text-xs text-slate-400';
-  if (winner?.result === 'hit') return 'rounded-md border border-emerald-400 bg-emerald-200 px-3 py-2 text-sm text-emerald-900 ring-1 ring-emerald-500';
-  if (winner?.result === 'miss') return 'rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-800 ring-1 ring-red-300';
-  return 'rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-800';
+  if (winnerPredictionSide(match, winner) !== 'draw') return match.status === 'FT' ? 'rounded-md bg-header px-3 py-2 text-sm text-header-fg' : 'text-xs text-faint';
+  if (winner?.result === 'hit') return 'rounded-md border border-emerald-400 bg-emerald-200 px-3 py-2 text-sm text-emerald-900 ring-1 ring-emerald-500 dark:border-emerald-500/50 dark:bg-emerald-500/15 dark:text-emerald-200 dark:ring-emerald-500/50';
+  if (winner?.result === 'miss') return 'rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-800 ring-1 ring-red-300 dark:border-red-500/40 dark:bg-red-500/15 dark:text-red-300 dark:ring-red-500/40';
+  return 'rounded-md border border-accent/50 bg-accent-soft px-3 py-2 text-sm text-accent-fg ring-1 ring-accent/25 dark:text-accent';
 }
 
 function WinnerPredictionMeta({ match, side, modelProbability, winner = match.predictions?.winner }) {
@@ -1448,9 +1463,9 @@ function WinnerPredictionMeta({ match, side, modelProbability, winner = match.pr
   const predictionLabel = side === 'draw' ? 'Draw' : 'Prediction';
   return (
     <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs">
-      <span className="inline-flex h-7 items-center rounded-md bg-white/70 px-2 font-semibold text-slate-700">{predictionLabel}</span>
-      {winner.lowConfidence && <span className="inline-flex h-7 items-center rounded-md bg-amber-100 px-2 font-semibold text-amber-700">Caution</span>}
-      {modelText && <span className="inline-flex h-7 items-center rounded-md bg-white/70 px-2 font-semibold text-slate-700">Model {modelText}</span>}
+      <span className="inline-flex h-7 items-center text-[11px] font-semibold uppercase tracking-wide text-faint">{predictionLabel}</span>
+      {winner.lowConfidence && <span className="inline-flex h-7 items-center rounded-md bg-amber-100 px-2 font-semibold text-amber-700 dark:bg-amber-500/15 dark:text-amber-300">Caution</span>}
+      {modelText && <span className="inline-flex h-7 items-center gap-1 font-medium text-muted">Model<span className="font-semibold text-ink">{modelText}</span></span>}
       {winner.result && (
         <span className={`inline-flex h-7 items-center gap-1 rounded-md font-semibold leading-none ${visibleResultLabel(winner.result) ? 'px-2' : 'px-1.5'} ${resultBadgeClass(winner.result)}`}>
           {resultIcon(winner.result)}
@@ -1699,11 +1714,11 @@ function QualityDetailPanel({ confidence }) {
   const cautions = Array.isArray(quality.cautions) ? quality.cautions : [];
 
   return (
-    <div className="rounded-lg border border-slate-300 bg-white p-4 shadow-panel">
+    <div className="rounded-lg border border-line bg-surface p-4 shadow-panel">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h3 className="text-sm font-semibold text-ink">Data confidence</h3>
-          <p className="mt-1 text-sm leading-6 text-slate-600">{confidenceDetailCopy(confidence)}</p>
+          <p className="mt-1 text-sm leading-6 text-muted">{confidenceDetailCopy(confidence)}</p>
         </div>
         <div className="flex shrink-0 flex-wrap gap-1.5">
           <ConfidenceBadge confidence={confidence} />
@@ -1714,38 +1729,38 @@ function QualityDetailPanel({ confidence }) {
       </div>
 
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
-        <div className="rounded-md border border-emerald-200 bg-emerald-50/60 p-3">
-          <div className="text-xs font-semibold uppercase text-emerald-800">Supporting signals</div>
+        <div className="rounded-md border border-emerald-200 bg-emerald-50/60 p-3 dark:border-emerald-500/40 dark:bg-emerald-500/10">
+          <div className="text-xs font-semibold uppercase text-emerald-800 dark:text-emerald-300">Supporting signals</div>
           {signals.length ? (
             <div className="mt-2 flex flex-wrap gap-1.5">
               {signals.map((item) => (
-                <span key={item} className="rounded-md border border-emerald-200 bg-white px-2 py-1 text-xs font-semibold text-emerald-800">
+                <span key={item} className="rounded-md border border-emerald-200 bg-surface px-2 py-1 text-xs font-semibold text-emerald-800 dark:border-emerald-500/40 dark:text-emerald-300">
                   {item}
                 </span>
               ))}
             </div>
           ) : (
-            <p className="mt-2 text-xs leading-5 text-emerald-900">No strong supporting data was available for this match.</p>
+            <p className="mt-2 text-xs leading-5 text-emerald-900 dark:text-emerald-200">No strong supporting data was available for this match.</p>
           )}
         </div>
 
-        <div className="rounded-md border border-amber-200 bg-amber-50/70 p-3">
-          <div className="text-xs font-semibold uppercase text-amber-900">Caution notes</div>
+        <div className="rounded-md border border-amber-200 bg-amber-50/70 p-3 dark:border-amber-500/40 dark:bg-amber-500/10">
+          <div className="text-xs font-semibold uppercase text-amber-900 dark:text-amber-300">Caution notes</div>
           {cautions.length ? (
             <div className="mt-2 flex flex-wrap gap-1.5">
               {cautions.map((item) => (
-                <span key={item} className="rounded-md border border-amber-200 bg-white px-2 py-1 text-xs font-semibold text-amber-900">
+                <span key={item} className="rounded-md border border-amber-200 bg-surface px-2 py-1 text-xs font-semibold text-amber-900 dark:border-amber-500/40 dark:text-amber-200">
                   {item}
                 </span>
               ))}
             </div>
           ) : (
-            <p className="mt-2 text-xs leading-5 text-amber-950">No major caution flags for the available data.</p>
+            <p className="mt-2 text-xs leading-5 text-amber-950 dark:text-amber-200">No major caution flags for the available data.</p>
           )}
         </div>
       </div>
 
-      <div className="mt-3 rounded-md bg-slate-50 px-3 py-2 text-xs leading-5 text-slate-600">
+      <div className="mt-3 rounded-md bg-surface-2 px-3 py-2 text-xs leading-5 text-muted">
         Score {quality.score ?? 0}: odds, direct bookmaker link, model expected goals, team streaks, H2H context and league quality all contribute to this label.
       </div>
     </div>
@@ -3037,37 +3052,96 @@ function streakResultFor(streak, match) {
 
 function Stat({ icon: Icon, label, value, tone = 'text-ink', sublabel = '', className = '', featured = false }) {
   return (
-    <div className={`min-w-0 border-b border-line bg-white px-3 py-3 text-center sm:border-b-0 sm:border-r sm:px-4 last:border-r-0 ${featured ? 'bg-slate-50/70' : ''} ${className}`}>
-      <div className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-normal text-slate-500">
+    <div className={`min-w-0 border-b border-line bg-surface px-3 py-3 text-center sm:border-b-0 sm:border-r sm:px-4 last:border-r-0 ${featured ? 'bg-surface-2/70' : ''} ${className}`}>
+      <div className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-normal text-muted">
         <Icon className="h-4 w-4" aria-hidden="true" />
         <span className="truncate">{label}</span>
       </div>
       <div className={`mt-1 flex justify-center ${featured ? 'text-2xl' : 'text-xl'} font-semibold sm:text-2xl ${tone}`}>{value}</div>
-      {sublabel && <div className="mt-1 hidden text-[11px] font-semibold uppercase text-slate-400 sm:block">{sublabel}</div>}
+      {sublabel && <div className="mt-1 hidden text-[11px] font-semibold uppercase text-faint sm:block">{sublabel}</div>}
     </div>
   );
 }
 
 function MarketPill({ label, market, edgeBadge, modelProbability }) {
   const detail = market ? formatMarketDetail(market) : 'No pick';
-  const modelPercent = fmtPct(modelProbability);
   return (
-    <div className={`flex min-h-11 items-center gap-2 rounded-md border px-2.5 py-2 sm:px-3 ${market ? marketPillClass(market.result) : 'border-slate-200 bg-slate-50 text-slate-400'}`}>
-      <span className="shrink-0 text-xs font-medium text-slate-500">{label}</span>
+    <div className={`flex min-h-11 items-center gap-2 rounded-md border px-2.5 py-2 sm:px-3 ${market ? marketPillClass(market.result) : 'border-line bg-surface-2 text-faint'}`}>
+      <span className="shrink-0 text-xs font-medium text-muted">{label}</span>
       <span className="flex min-w-0 flex-1 items-center justify-end gap-1.5">
-        {modelPercent && <span className="hidden rounded-md bg-white/70 px-1.5 py-0.5 text-[11px] font-semibold leading-none text-slate-700 sm:inline-flex">Model {modelPercent}</span>}
         {edgeBadge && (
-          <span className="hidden items-center gap-1 rounded-md border border-amber-300 bg-amber-50 px-1.5 py-0.5 text-[11px] font-semibold leading-none text-amber-700 sm:inline-flex">
+          <span className="hidden items-center gap-1 rounded-md border border-amber-300 bg-amber-50 px-1.5 py-0.5 text-[11px] font-semibold leading-none text-amber-700 dark:border-amber-500/40 dark:bg-amber-500/15 dark:text-amber-300 sm:inline-flex">
             <Star className="h-3 w-3 fill-amber-400 text-amber-500" aria-hidden="true" />
             <span>{edgeBadge}</span>
           </span>
         )}
-        <span className={`flex min-w-0 items-center justify-end gap-1 text-right text-sm font-semibold leading-5 ${market ? marketValueClass(market.result) : 'text-slate-400'}`}>
-          {market && resultIcon(market.result)}
+        <span className={`flex min-w-0 items-center justify-end gap-1 text-right text-sm font-semibold leading-5 ${market ? marketValueClass(market.result) : 'text-faint'}`}>
+          {(market?.result === 'hit' || market?.result === 'miss') && resultIcon(market.result)}
           <span className="min-w-0 truncate">{detail || '-'}</span>
         </span>
       </span>
     </div>
+  );
+}
+
+function WinProbabilityBar({ rows }) {
+  if (!Array.isArray(rows) || rows.length !== 3) return null;
+  const byKey = Object.fromEntries(rows.map((r) => [r.key, r]));
+  const order = ['home', 'draw', 'away'];
+  const vals = order.map((k) => (Number.isFinite(byKey[k]?.model) ? byKey[k].model : 0));
+  const total = vals.reduce((a, b) => a + b, 0);
+  if (total <= 0) return null;
+  const pct = vals.map((v) => (v / total) * 100);
+  const ranked = [...vals].sort((a, b) => b - a);
+  // Favoured outcome reads in accent; the other two recede to neutral greys.
+  // Greens/reds stay reserved for hit/miss results.
+  const tone = (v) => (v === ranked[0] ? 'bg-accent' : v === ranked[1] ? 'bg-faint' : 'bg-faint/40');
+  return (
+    <div className="mt-3 sm:mt-4">
+      <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-faint">Model win probability</div>
+      <div className="flex h-2 w-full overflow-hidden rounded-full ring-1 ring-inset ring-line">
+        {order.map((k, i) => (
+          <div
+            key={k}
+            style={{ width: `${pct[i]}%` }}
+            className={tone(vals[i])}
+            title={`${byKey[k]?.label || k}: ${fmtPct(byKey[k]?.model)}`}
+          />
+        ))}
+      </div>
+      <div className="mt-1 flex justify-between font-mono text-[11px]">
+        <span className="text-ink">{fmtPct(byKey.home?.model) || '-'}</span>
+        <span className="text-faint">{fmtPct(byKey.draw?.model) || '-'}</span>
+        <span className="text-ink">{fmtPct(byKey.away?.model) || '-'}</span>
+      </div>
+    </div>
+  );
+}
+
+function teamStreakBadge(match, side) {
+  const streaks = Array.isArray(match.team_streaks) ? match.team_streaks : [];
+  const valOf = (re) => {
+    const s = streaks.find((x) => x.team === side && re.test(String(x.label || '')));
+    const n = s ? parseInt(String(s.value), 10) : 0;
+    return Number.isFinite(n) ? n : 0;
+  };
+  const wins = valOf(/^wins$/i);
+  const unbeaten = valOf(/^no losses$/i);
+  if (wins >= 2) return { text: `${wins} wins`, title: `On a ${wins}-game winning streak` };
+  if (unbeaten >= 3) return { text: `${unbeaten} unbeaten`, title: `Unbeaten in ${unbeaten}` };
+  return null;
+}
+
+function TeamStreakBadge({ match, side }) {
+  const badge = teamStreakBadge(match, side);
+  if (!badge) return null;
+  return (
+    <span
+      className="inline-flex shrink-0 items-center rounded bg-accent/15 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-accent ring-1 ring-inset ring-accent/30"
+      title={badge.title}
+    >
+      {badge.text}
+    </span>
   );
 }
 
@@ -3105,17 +3179,17 @@ function suggestedMarketPick(candidates, isFinished = false) {
 
 function DetailStat({ label, value }) {
   return (
-    <div className="rounded-md border border-slate-300 bg-white px-3 py-2 shadow-panel">
-      <div className="text-xs font-medium text-slate-500">{label}</div>
+    <div className="rounded-md border border-line bg-surface px-3 py-2 shadow-panel">
+      <div className="text-xs font-medium text-muted">{label}</div>
       <div className="mt-1 text-sm font-semibold text-ink">{value ?? '-'}</div>
     </div>
   );
 }
 
 function toneBadgeClass(tone) {
-  if (tone === 'positive') return 'border-emerald-300 bg-emerald-50 text-emerald-700';
-  if (tone === 'warning') return 'border-red-200 bg-red-50 text-red-700';
-  return 'border-slate-300 bg-slate-50 text-slate-700';
+  if (tone === 'positive') return 'border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-500/40 dark:bg-emerald-500/15 dark:text-emerald-300';
+  if (tone === 'warning') return 'border-red-200 bg-red-50 text-red-700 dark:border-red-500/40 dark:bg-red-500/15 dark:text-red-300';
+  return 'border-line bg-surface-2 text-muted dark:border-line dark:bg-white/5 dark:text-slate-200';
 }
 
 function ConfidenceBadge({ confidence }) {
@@ -3149,7 +3223,7 @@ function BookmakerLink({ bookmakerId, href, label }) {
       href={href}
       target="_blank"
       rel="noreferrer"
-      className={`inline-flex h-11 w-full items-center justify-center rounded-md border px-3 text-sm font-semibold shadow-panel transition sm:w-52 sm:px-5 ${bookmaker.buttonClass}`}
+      className={`inline-flex h-11 w-full items-center justify-center rounded-md border px-3 text-sm font-semibold shadow-panel transition duration-150 ease-out-soft active:scale-[0.98] sm:w-52 sm:px-5 ${bookmaker.buttonClass}`}
       aria-label={`Open this market on ${bookmaker.name}`}
     >
       {bookmaker.logoSrc ? (
@@ -3178,10 +3252,10 @@ function TeamFavoriteButton({ teamName, favoriteTeams = [], onToggleFavoriteTeam
         onToggleFavoriteTeam(cleanTeamName);
       }}
       onKeyDown={(event) => event.stopPropagation()}
-      className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border transition ${
+      className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border transition duration-150 ease-out-soft active:scale-95 ${
         isFavorite
-          ? 'border-amber-300 bg-amber-50 text-amber-600'
-          : 'border-slate-200 bg-white/80 text-slate-400 hover:border-amber-200 hover:bg-amber-50 hover:text-amber-600'
+          ? 'border-amber-300 bg-amber-50 text-amber-600 dark:border-amber-500/40 dark:bg-amber-500/10'
+          : 'border-line bg-white/80 dark:bg-white/10 text-faint hover:border-amber-200 hover:bg-amber-50 hover:text-amber-600 dark:hover:border-amber-500/40 dark:hover:bg-amber-500/20'
       }`}
       aria-label={`${isFavorite ? 'Remove' : 'Add'} ${cleanTeamName} as favourite team`}
       title={`${isFavorite ? 'Remove from' : 'Add to'} favourite teams`}
@@ -3196,7 +3270,7 @@ function BookmakerSelect({ value, onChange, compact = false }) {
     <select
       value={value}
       onChange={(event) => onChange(event.target.value)}
-      className={`rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink shadow-panel ${
+      className={`rounded-md border border-line bg-surface px-3 text-sm font-semibold text-ink shadow-panel ${
         compact ? 'h-10' : 'h-11'
       }`}
       aria-label="Bookmaker"
@@ -3212,7 +3286,7 @@ function BookmakerSelect({ value, onChange, compact = false }) {
 
 function ResponsibleGamblingNotice({ compact = false }) {
   return (
-    <div className={`rounded-lg border border-amber-200 bg-amber-50 text-amber-950 shadow-panel ${compact ? 'px-3 py-2 text-xs leading-5' : 'p-4 text-sm leading-6'}`}>
+    <div className={`rounded-lg border border-amber-200 bg-amber-50 text-amber-950 shadow-panel dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-100 ${compact ? 'px-3 py-2 text-xs leading-5' : 'p-4 text-sm leading-6'}`}>
       <div className="font-semibold">Prediction information only. 18+</div>
       <p className={compact ? 'mt-1' : 'mt-2'}>
         This dashboard is a predictor and guide only. It does not take bets, process wagering payments, or have bookmaker affiliation. Bookmaker links are external handoffs only. You are responsible for your own decisions and outcomes. Be sensible and gamble responsibly.
@@ -3447,59 +3521,55 @@ function SettingsView({
   const billingActionLabel = hasStripeSubscription ? 'Manage subscription' : 'Start subscription';
 
   return (
-    <main className="min-h-screen bg-field pb-24 sm:pl-20 sm:pb-0 lg:pl-64">
-      <header className="border-b border-line bg-white sm:border-b-0 sm:bg-transparent">
+    <main className="min-h-dvh bg-field pb-24 sm:pl-20 sm:pb-0 lg:pl-64">
+      <header className="border-b border-line bg-surface sm:border-b-0 sm:bg-transparent">
         <div className="mx-auto max-w-5xl px-3 py-3 sm:px-6 sm:py-5 lg:px-8">
-          <div className="flex w-full items-center justify-center rounded-lg border border-slate-200 bg-[linear-gradient(135deg,#ffffff_0%,#f8fafc_42%,#e8f5ff_100%)] px-2 py-2 shadow-[0_16px_45px_rgba(15,23,42,0.10)] ring-1 ring-white/80 sm:hidden">
-            <img
-              src="/LVR-LOGO.png"
-              alt="LVRstats.com"
-              className="h-24 w-full object-cover object-center"
-            />
+          <div className="flex w-full items-center justify-center rounded-lg border border-line bg-[linear-gradient(135deg,#ffffff_0%,#f8fafc_42%,#e8f5ff_100%)] px-2 py-2 shadow-[0_16px_45px_rgba(15,23,42,0.10)] ring-1 ring-white/80 dark:bg-[linear-gradient(135deg,#1d2128_0%,#15181d_42%,#123034_100%)] dark:ring-white/5 sm:hidden">
+            <BrandMark className="text-3xl" />
           </div>
-          <div className="mt-3 flex items-start gap-3 rounded-lg border border-slate-300 bg-white p-3 shadow-panel sm:mt-0 sm:p-4">
+          <div className="mt-3 flex items-start gap-3 rounded-lg border border-line bg-surface p-3 shadow-panel sm:mt-0 sm:p-4">
             <button
               type="button"
               onClick={onBack}
-              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-line text-slate-600 hover:bg-field"
+              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-line text-muted hover:bg-field"
               aria-label="Back to matches"
             >
               <ArrowLeft className="h-5 w-5" aria-hidden="true" />
             </button>
             <div className="min-w-0">
               <h1 className="text-xl font-semibold text-ink">Settings</h1>
-              <p className="mt-1 text-sm text-slate-500">Choose the default bookmaker used across match cards.</p>
+              <p className="mt-1 text-sm text-muted">Choose the default bookmaker used across match cards.</p>
             </div>
           </div>
         </div>
       </header>
 
       <section className="mx-auto max-w-5xl px-3 py-4 sm:px-6 sm:py-5 lg:px-8">
-        <div className="rounded-lg border border-slate-300 bg-white p-4 shadow-panel">
+        <div className="rounded-lg border border-line bg-surface p-4 shadow-panel">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 className="text-base font-semibold text-ink">Default bookmaker</h2>
-              <p className="mt-1 text-sm text-slate-500">Current choice: {selectedBookmaker.name}</p>
+              <p className="mt-1 text-sm text-muted">Current choice: {selectedBookmaker.name}</p>
             </div>
             <BookmakerSelect value={selectedBookmaker.id} onChange={onBookmakerChange} />
           </div>
 
-          <div className="mt-4 rounded-md border border-line bg-field p-3 text-sm text-slate-600">
+          <div className="mt-4 rounded-md border border-line bg-field p-3 text-sm text-muted">
             Sportsbet opens direct match pages when the Sportsbet event ID is available. Other bookmakers will open their soccer page unless their direct event URL is added to the match data.
           </div>
         </div>
 
-        <div className="mt-4 rounded-lg border border-slate-300 bg-white p-4 shadow-panel">
+        <div className="mt-4 rounded-lg border border-line bg-surface p-4 shadow-panel">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 className="text-base font-semibold text-ink">Account</h2>
-              <p className="mt-1 text-sm text-slate-500">Leave this device signed out when you are finished.</p>
+              <p className="mt-1 text-sm text-muted">Leave this device signed out when you are finished.</p>
             </div>
             <button
               type="button"
               onClick={handleSignOut}
               disabled={signOutBusy}
-              className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink shadow-panel hover:bg-field disabled:cursor-wait disabled:opacity-70"
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-line bg-surface px-3 text-sm font-semibold text-ink shadow-panel hover:bg-field disabled:cursor-wait disabled:opacity-70"
             >
               {signOutBusy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <LogOut className="h-4 w-4" aria-hidden="true" />}
               Sign out
@@ -3507,32 +3577,32 @@ function SettingsView({
           </div>
         </div>
 
-        <div className="mt-4 rounded-lg border border-slate-300 bg-white p-4 shadow-panel">
+        <div className="mt-4 rounded-lg border border-line bg-surface p-4 shadow-panel">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0">
               <h2 className="flex items-center gap-2 text-base font-semibold text-ink">
                 <Mail className="h-4 w-4 text-signal" aria-hidden="true" />
                 Contact
               </h2>
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="mt-1 text-sm text-muted">
                 Send through billing, access, data, or account questions.
               </p>
-              <div className="mt-3 grid gap-2 text-sm text-slate-600 sm:grid-cols-2">
+              <div className="mt-3 grid gap-2 text-sm text-muted sm:grid-cols-2">
                 <div className="rounded-md border border-line bg-field px-3 py-2">
-                  <div className="text-xs font-semibold uppercase text-slate-500">Support email</div>
+                  <div className="text-xs font-semibold uppercase text-muted">Support email</div>
                   <a href={`mailto:${SUPPORT_EMAIL}`} className="mt-0.5 block truncate font-semibold text-ink underline-offset-2 hover:underline">
                     {SUPPORT_EMAIL}
                   </a>
                 </div>
                 <div className="rounded-md border border-line bg-field px-3 py-2">
-                  <div className="text-xs font-semibold uppercase text-slate-500">Useful details</div>
+                  <div className="text-xs font-semibold uppercase text-muted">Useful details</div>
                   <div className="mt-0.5 font-medium text-ink">Account email, match name, and screenshot</div>
                 </div>
               </div>
             </div>
             <a
               href={`mailto:${SUPPORT_EMAIL}?subject=Soccer%20Stats%20support`}
-              className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink shadow-panel hover:bg-field"
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-line bg-surface px-3 text-sm font-semibold text-ink shadow-panel hover:bg-field"
             >
               <Mail className="h-4 w-4" aria-hidden="true" />
               Email support
@@ -3540,68 +3610,68 @@ function SettingsView({
           </div>
         </div>
 
-        <div className="mt-4 rounded-lg border border-slate-300 bg-white p-4 shadow-panel">
+        <div className="mt-4 rounded-lg border border-line bg-surface p-4 shadow-panel">
           <div className="flex flex-col gap-4">
             <div>
               <h2 className="flex items-center gap-2 text-base font-semibold text-ink">
                 <UserRound className="h-4 w-4 text-signal" aria-hidden="true" />
                 Profile
               </h2>
-              <p className="mt-1 text-sm text-slate-500">Update the name admins see on your account.</p>
+              <p className="mt-1 text-sm text-muted">Update the name admins see on your account.</p>
               {!String(profileForm.nickname || '').trim() && (
-                <div className="mt-3 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-800">
+                <div className="mt-3 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-800 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-300">
                   Set a nickname before using crowd features. Public vote areas show nicknames only.
                 </div>
               )}
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <label className="block">
-                <span className="text-xs font-semibold uppercase text-slate-500">Name</span>
+                <span className="text-xs font-semibold uppercase text-muted">Name</span>
                 <input
                   value={profileForm.displayName}
                   onChange={(event) => handleProfileField('displayName', event.target.value)}
                   maxLength={80}
-                  className="mt-1 h-10 w-full rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink outline-none focus:border-slate-400"
+                  className="mt-1 h-10 w-full rounded-md border border-line bg-surface px-3 text-sm font-semibold text-ink outline-none focus:border-line"
                   placeholder="Your name"
                 />
               </label>
               <label className="block">
-                <span className="text-xs font-semibold uppercase text-slate-500">Nickname required</span>
+                <span className="text-xs font-semibold uppercase text-muted">Nickname required</span>
                 <input
                   value={profileForm.nickname}
                   onChange={(event) => handleProfileField('nickname', event.target.value)}
                   maxLength={40}
                   required
-                  className="mt-1 h-10 w-full rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink outline-none focus:border-slate-400"
+                  className="mt-1 h-10 w-full rounded-md border border-line bg-surface px-3 text-sm font-semibold text-ink outline-none focus:border-line"
                   placeholder="Choose a public nickname"
                 />
-                <span className="mt-1 block text-xs font-semibold text-slate-500">Shown instead of your real name in crowd votes.</span>
+                <span className="mt-1 block text-xs font-semibold text-muted">Shown instead of your real name in crowd votes.</span>
               </label>
             </div>
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <div className="text-sm text-slate-500">
+              <div className="text-sm text-muted">
                 Signed in as <span className="font-semibold text-ink">{profile?.email || '-'}</span>
               </div>
               <button
                 type="button"
                 onClick={saveProfile}
                 disabled={profileBusy}
-                className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-line bg-ink px-3 text-sm font-semibold text-white shadow-panel hover:bg-slate-800 disabled:cursor-wait disabled:opacity-70"
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-line bg-header px-3 text-sm font-semibold text-white shadow-panel hover:bg-slate-800 disabled:cursor-wait disabled:opacity-70"
               >
                 {profileBusy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <UserRound className="h-4 w-4" aria-hidden="true" />}
                 Save profile
               </button>
             </div>
-            <div className="rounded-lg border border-line bg-white p-3 shadow-panel">
+            <div className="rounded-lg border border-line bg-surface p-3 shadow-panel">
               <div className="flex items-center gap-2 text-sm font-semibold text-ink">
-                <Star className="h-4 w-4 text-slate-500" aria-hidden="true" />
+                <Star className="h-4 w-4 text-muted" aria-hidden="true" />
                 Favourite leagues
               </div>
               <div className="mt-3 flex gap-2">
                 <select
                   value={leagueToAdd}
                   onChange={(event) => setLeagueToAdd(event.target.value)}
-                  className="h-10 min-w-0 flex-1 rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink outline-none focus:border-slate-400"
+                  className="h-10 min-w-0 flex-1 rounded-md border border-line bg-surface px-3 text-sm font-semibold text-ink outline-none focus:border-line"
                   aria-label="Add favourite league"
                 >
                   <option value="">Select a league</option>
@@ -3617,7 +3687,7 @@ function SettingsView({
                   type="button"
                   onClick={addFavoriteLeague}
                   disabled={!leagueToAdd}
-                  className="inline-flex h-10 shrink-0 items-center justify-center rounded-md border border-line bg-field px-4 text-sm font-semibold text-ink shadow-panel hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
+                  className="inline-flex h-10 shrink-0 items-center justify-center rounded-md border border-line bg-field px-4 text-sm font-semibold text-ink shadow-panel hover:bg-surface disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Add
                 </button>
@@ -3636,14 +3706,14 @@ function SettingsView({
                         dragLeague === leagueName ? 'border-ink opacity-70' : 'border-line'
                       }`}
                     >
-                      <GripVertical className="h-4 w-4 shrink-0 cursor-grab text-slate-400" aria-hidden="true" />
+                      <GripVertical className="h-4 w-4 shrink-0 cursor-grab text-faint" aria-hidden="true" />
                       <span className="min-w-0 flex-1 truncate font-semibold text-ink">{leagueName}</span>
                       <div className="flex shrink-0 items-center gap-1">
                         <button
                           type="button"
                           onClick={() => moveFavoriteLeague(leagueName, -1)}
                           disabled={index === 0}
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-line bg-white text-slate-600 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-35"
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-line bg-surface text-muted hover:bg-surface-3 disabled:cursor-not-allowed disabled:opacity-35"
                           aria-label={`Move ${leagueName} up`}
                         >
                           <ChevronUp className="h-4 w-4" aria-hidden="true" />
@@ -3652,7 +3722,7 @@ function SettingsView({
                           type="button"
                           onClick={() => moveFavoriteLeague(leagueName, 1)}
                           disabled={index === favoriteLeagues.length - 1}
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-line bg-white text-slate-600 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-35"
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-line bg-surface text-muted hover:bg-surface-3 disabled:cursor-not-allowed disabled:opacity-35"
                           aria-label={`Move ${leagueName} down`}
                         >
                           <ChevronDown className="h-4 w-4" aria-hidden="true" />
@@ -3660,7 +3730,7 @@ function SettingsView({
                         <button
                           type="button"
                           onClick={() => removeFavoriteLeague(leagueName)}
-                          className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-line bg-white text-slate-600 hover:bg-red-50 hover:text-miss"
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-line bg-surface text-muted hover:bg-red-50 hover:text-miss dark:hover:bg-red-500/20"
                           aria-label={`Remove ${leagueName} from favourite leagues`}
                         >
                           <XCircle className="h-4 w-4" aria-hidden="true" />
@@ -3670,19 +3740,19 @@ function SettingsView({
                   ))}
                 </div>
               ) : (
-                <p className="mt-2 text-sm text-slate-500">Favourite leagues appear first on the dashboard. Star a league or add one here.</p>
+                <p className="mt-2 text-sm text-muted">Favourite leagues appear first on the dashboard. Star a league or add one here.</p>
               )}
             </div>
-            <div className="rounded-lg border border-line bg-white p-3 shadow-panel">
+            <div className="rounded-lg border border-line bg-surface p-3 shadow-panel">
               <div className="flex items-center gap-2 text-sm font-semibold text-ink">
-                <Star className="h-4 w-4 text-slate-500" aria-hidden="true" />
+                <Star className="h-4 w-4 text-muted" aria-hidden="true" />
                 Favourite teams
               </div>
               <div className="mt-3 flex gap-2">
                 <select
                   value={teamToAdd}
                   onChange={(event) => setTeamToAdd(event.target.value)}
-                  className="h-10 min-w-0 flex-1 rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink outline-none focus:border-slate-400"
+                  className="h-10 min-w-0 flex-1 rounded-md border border-line bg-surface px-3 text-sm font-semibold text-ink outline-none focus:border-line"
                   aria-label="Add favourite team"
                 >
                   <option value="">Select a team</option>
@@ -3698,7 +3768,7 @@ function SettingsView({
                   type="button"
                   onClick={addFavoriteTeam}
                   disabled={!teamToAdd}
-                  className="inline-flex h-10 shrink-0 items-center justify-center rounded-md border border-line bg-field px-4 text-sm font-semibold text-ink shadow-panel hover:bg-white disabled:cursor-not-allowed disabled:opacity-40"
+                  className="inline-flex h-10 shrink-0 items-center justify-center rounded-md border border-line bg-field px-4 text-sm font-semibold text-ink shadow-panel hover:bg-surface disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Add
                 </button>
@@ -3711,7 +3781,7 @@ function SettingsView({
                       <button
                         type="button"
                         onClick={() => removeFavoriteTeam(team)}
-                        className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-line bg-white text-slate-600 hover:bg-red-50 hover:text-miss"
+                        className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-line bg-surface text-muted hover:bg-red-50 hover:text-miss dark:hover:bg-red-500/20"
                         aria-label={`Remove ${team} from favourite teams`}
                       >
                         <XCircle className="h-4 w-4" aria-hidden="true" />
@@ -3720,49 +3790,49 @@ function SettingsView({
                   ))}
                 </div>
               ) : (
-                <p className="mt-2 text-sm text-slate-500">Favourite team matches will appear at the top of the dashboard.</p>
+                <p className="mt-2 text-sm text-muted">Favourite team matches will appear at the top of the dashboard.</p>
               )}
             </div>
             {profileMessage && (
-              <div className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-medium text-signal">
+              <div className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-medium text-signal dark:border-emerald-500/40 dark:bg-emerald-500/15">
                 {profileMessage}
               </div>
             )}
             {profileError && (
-              <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-miss">
+              <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-miss dark:border-red-500/40 dark:bg-red-500/15 dark:text-red-300">
                 {profileError}
               </div>
             )}
           </div>
         </div>
 
-        <div className="mt-4 rounded-lg border border-slate-300 bg-white p-4 shadow-panel">
+        <div className="mt-4 rounded-lg border border-line bg-surface p-4 shadow-panel">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 className="flex items-center gap-2 text-base font-semibold text-ink">
                 <CreditCard className="h-4 w-4 text-signal" aria-hidden="true" />
                 Subscription
               </h2>
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="mt-1 text-sm text-muted">
                 Manage your Soccer Stats Pro billing and payment method.
               </p>
-              <div className="mt-3 grid gap-2 text-sm text-slate-600 sm:grid-cols-2">
+              <div className="mt-3 grid gap-2 text-sm text-muted sm:grid-cols-2">
                 <div className="rounded-md border border-line bg-field px-3 py-2">
-                  <div className="text-xs font-semibold uppercase text-slate-500">Status</div>
+                  <div className="text-xs font-semibold uppercase text-muted">Status</div>
                   <div className="mt-0.5 font-semibold capitalize text-ink">{String(subscriptionStatus).replaceAll('_', ' ')}</div>
                 </div>
                 <div className="rounded-md border border-line bg-field px-3 py-2">
-                  <div className="text-xs font-semibold uppercase text-slate-500">{isTrialing ? 'Trial ends' : 'Next renewal'}</div>
+                  <div className="text-xs font-semibold uppercase text-muted">{isTrialing ? 'Trial ends' : 'Next renewal'}</div>
                   <div className="mt-0.5 font-semibold text-ink">{(isTrialing ? subscriptionTrialEnd || subscriptionRenewal : subscriptionRenewal) || '-'}</div>
                 </div>
               </div>
               {isTrialing && (
-                <p className="mt-2 text-xs font-medium text-slate-500">
+                <p className="mt-2 text-xs font-medium text-muted">
                   Trial access stays active until the trial ends. Stripe will charge the saved payment method after the trial; without a payment method, the subscription cancels and dashboard access is removed.
                 </p>
               )}
               {profile?.manualAccess && !hasStripeSubscription && (
-                <p className="mt-2 text-xs font-medium text-slate-500">
+                <p className="mt-2 text-xs font-medium text-muted">
                   Your access is currently managed by an administrator. You can still start your own subscription.
                 </p>
               )}
@@ -3771,33 +3841,33 @@ function SettingsView({
               type="button"
               onClick={openBillingSession}
               disabled={billingBusy}
-              className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink shadow-panel hover:bg-field disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-line bg-surface px-3 text-sm font-semibold text-ink shadow-panel hover:bg-field disabled:cursor-not-allowed disabled:opacity-60"
             >
               {billingBusy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <CreditCard className="h-4 w-4" aria-hidden="true" />}
               {billingActionLabel}
             </button>
           </div>
           {billingMessage && (
-            <div className="mt-3 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-medium text-signal">
+            <div className="mt-3 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-medium text-signal dark:border-emerald-500/40 dark:bg-emerald-500/15">
               {billingMessage}
             </div>
           )}
           {billingError && (
-            <div className="mt-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-miss">
+            <div className="mt-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-miss dark:border-red-500/40 dark:bg-red-500/15 dark:text-red-300">
               {billingError}
             </div>
           )}
         </div>
 
         {isPlatformOwner && (
-          <div className="mt-4 rounded-lg border border-slate-300 bg-white p-4 shadow-panel">
+          <div className="mt-4 rounded-lg border border-line bg-surface p-4 shadow-panel">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="flex items-center gap-2 text-base font-semibold text-ink">
                   <ShieldCheck className="h-4 w-4 text-signal" aria-hidden="true" />
                   Admin access
                 </h2>
-                <p className="mt-1 text-sm text-slate-500">View users, Stripe status, and manual access overrides.</p>
+                <p className="mt-1 text-sm text-muted">View users, Stripe status, and manual access overrides.</p>
               </div>
               <button
                 type="button"
@@ -3805,7 +3875,7 @@ function SettingsView({
                   window.sessionStorage.setItem('looneyz-auth-return-path', '/dashboard/admin');
                   window.location.assign('/dashboard/admin');
                 }}
-                className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink shadow-panel hover:bg-field"
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-md border border-line bg-surface px-3 text-sm font-semibold text-ink shadow-panel hover:bg-field"
               >
                 <ShieldCheck className="h-4 w-4" aria-hidden="true" />
                 Manage users
@@ -3827,7 +3897,7 @@ function PredictionDetail({ label, market }) {
   return (
     <div className={`rounded-md border px-3 py-2 ${marketPillClass(market.result)}`}>
       <div className="flex items-center justify-between gap-3">
-        <span className="text-xs font-medium text-slate-500">{label}</span>
+        <span className="text-xs font-medium text-muted">{label}</span>
         <span className={`flex items-center gap-1 text-sm font-semibold ${marketValueClass(market.result)}`}>
           {resultIcon(market.result)}
           {visibleResultLabel(market.result) && <span>{visibleResultLabel(market.result)}</span>}
@@ -3835,17 +3905,17 @@ function PredictionDetail({ label, market }) {
       </div>
       <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
         <span className="font-semibold text-ink">{formatMarketDetail(market)}</span>
-        <span className="text-slate-600">Odds {formatOdds(market.odds)}</span>
-        {'actual' in market && <span className="text-slate-600">Actual {market.actual}</span>}
+        <span className="text-muted">Odds {formatOdds(market.odds)}</span>
+        {'actual' in market && <span className="text-muted">Actual {market.actual}</span>}
       </div>
     </div>
   );
 }
 
 function comparisonBadgeClass(tone) {
-  if (tone === 'positive') return 'border-emerald-600 bg-emerald-100 text-emerald-800';
-  if (tone === 'warning') return 'border-amber-400 bg-amber-100 text-amber-800';
-  return 'border-slate-200 bg-slate-50 text-slate-600';
+  if (tone === 'positive') return 'border-emerald-600 bg-emerald-100 text-emerald-800 dark:border-emerald-500/50 dark:bg-emerald-500/15 dark:text-emerald-200';
+  if (tone === 'warning') return 'border-amber-400 bg-amber-100 text-amber-800 dark:border-amber-500/50 dark:bg-amber-500/15 dark:text-amber-200';
+  return 'border-line bg-surface-2 text-muted';
 }
 
 function comparisonOddsText(value) {
@@ -3854,8 +3924,8 @@ function comparisonOddsText(value) {
 
 function summaryRowClass(result) {
   if (result === 'hit') return 'result-hit-row border-l-4 border-l-emerald-600';
-  if (result === 'miss') return 'border border-red-300 border-l-4 border-l-red-600 bg-red-50/50 shadow-panel';
-  return 'border border-slate-300 border-l-4 border-l-slate-500 bg-slate-50 shadow-panel';
+  if (result === 'miss') return 'border border-red-300 border-l-4 border-l-red-600 bg-red-50/50 shadow-panel dark:border-red-500/40 dark:border-l-red-500 dark:bg-red-500/10';
+  return 'border border-line border-l-4 border-l-slate-500 bg-surface-2 shadow-panel';
 }
 
 function ModelVsBookmakerComparison({ comparison }) {
@@ -3864,32 +3934,32 @@ function ModelVsBookmakerComparison({ comparison }) {
   const bookmakerFavoured = comparison.badge.tone === 'warning';
   const bookmakerLabel = comparison.bookmaker.label || 'Bookmaker';
   const modelPanelClass = modelFavoured
-    ? 'bg-emerald-100 text-emerald-900 ring-1 ring-emerald-500'
+    ? 'bg-emerald-100 text-emerald-900 ring-1 ring-emerald-500 dark:bg-emerald-500/15 dark:text-emerald-200 dark:ring-emerald-500/40'
     : bookmakerFavoured
-      ? 'bg-amber-50 text-amber-950 ring-1 ring-amber-400'
-      : 'bg-white text-slate-600 ring-1 ring-slate-300';
+      ? 'bg-amber-50 text-amber-950 ring-1 ring-amber-400 dark:bg-amber-500/15 dark:text-amber-200 dark:ring-amber-500/40'
+      : 'bg-surface text-muted ring-1 ring-slate-300 dark:ring-line';
   return (
-    <div className="w-full rounded-md border border-slate-500 bg-white p-2 text-xs shadow-panel">
+    <div className="w-full rounded-md border border-line bg-surface p-2 text-xs shadow-panel">
       <div className="mb-1.5 flex items-center justify-between gap-2">
-        <span className="font-semibold text-slate-500">{comparison.title}</span>
+        <span className="font-semibold text-muted">{comparison.title}</span>
         <span className={`inline-flex min-w-24 shrink-0 items-center justify-center rounded-md border px-2 py-1 font-semibold leading-none ${comparisonBadgeClass(comparison.badge.tone)}`}>
           {comparison.badge.label}
         </span>
       </div>
       <div className="grid gap-1">
         <div className="grid grid-cols-[5.5rem_5.25rem_3.5rem] items-center gap-2 rounded px-1.5 py-1">
-          <span className="text-slate-500">{bookmakerLabel}</span>
-          <span className="text-right font-semibold text-ink">{comparisonOddsText(comparison.bookmaker.odds)}</span>
-          <span className="text-right text-slate-500">{comparison.bookmaker.probability}</span>
+          <span className="text-muted">{bookmakerLabel}</span>
+          <span className="text-right font-mono font-semibold text-ink">{comparisonOddsText(comparison.bookmaker.odds)}</span>
+          <span className="text-right font-mono text-muted">{comparison.bookmaker.probability}</span>
         </div>
         <div className={`rounded px-1.5 py-1 ${modelPanelClass}`}>
           <div className="grid grid-cols-[5.5rem_5.25rem_3.5rem] items-center gap-2">
-            <span className={modelFavoured ? 'font-semibold text-emerald-800' : bookmakerFavoured ? 'font-semibold text-amber-800' : 'text-slate-500'}>Model</span>
-            <span className="text-right font-semibold text-ink">{comparisonOddsText(comparison.model.odds)}</span>
-            <span className={modelFavoured ? 'text-right font-semibold text-emerald-800' : bookmakerFavoured ? 'text-right font-semibold text-amber-800' : 'text-right text-slate-500'}>{comparison.model.probability}</span>
+            <span className={modelFavoured ? 'font-semibold text-emerald-800 dark:text-emerald-300' : bookmakerFavoured ? 'font-semibold text-amber-800 dark:text-amber-300' : 'text-muted'}>Model</span>
+            <span className="text-right font-mono font-semibold text-ink">{comparisonOddsText(comparison.model.odds)}</span>
+            <span className={`font-mono ${modelFavoured ? 'text-right font-semibold text-emerald-800 dark:text-emerald-300' : bookmakerFavoured ? 'text-right font-semibold text-amber-800 dark:text-amber-300' : 'text-right text-muted'}`}>{comparison.model.probability}</span>
           </div>
-          <div className={`mt-1 leading-5 ${modelFavoured ? 'text-slate-800' : bookmakerFavoured ? 'text-amber-950' : 'text-slate-600'}`}>
-            <span className={`font-semibold ${bookmakerFavoured ? 'text-amber-800' : 'text-slate-500'}`}>{bookmakerFavoured ? 'Caution: ' : 'Bet note: '}</span>
+          <div className={`mt-1 leading-5 ${modelFavoured ? 'text-ink' : bookmakerFavoured ? 'text-amber-950 dark:text-amber-200' : 'text-muted'}`}>
+            <span className={`font-semibold ${bookmakerFavoured ? 'text-amber-800 dark:text-amber-300' : 'text-muted'}`}>{bookmakerFavoured ? 'Caution: ' : 'Bet note: '}</span>
             {comparison.note}
           </div>
         </div>
@@ -3912,7 +3982,7 @@ function StreakList({ title, streaks, match }) {
             <div key={`${title}-${streak.team}-${streak.label}-${index}`} className={`rounded-md border px-3 py-2 ${streakCardClass(result)}`}>
               <div className="flex items-center justify-between gap-2">
                 <span className={`truncate text-sm font-semibold ${streakTextClass(result)}`}>{streak.label}</span>
-                <span className={`max-w-[45%] truncate rounded bg-white px-2 py-0.5 text-xs font-semibold ${streakMetaClass(result)}`}>
+                <span className={`max-w-[45%] truncate rounded bg-surface px-2 py-0.5 text-xs font-semibold ${streakMetaClass(result)}`}>
                   {displayTeam}
                 </span>
               </div>
@@ -3995,8 +4065,8 @@ function ResultsReview({
       row.hitRate >= 55
         ? 'result-hit-row hover:border-emerald-500'
         : row.hitRate < 45
-          ? 'border-red-200 bg-red-50/45 hover:border-red-300'
-          : 'border-slate-300 bg-field hover:border-slate-400 hover:bg-white';
+          ? 'border-red-200 bg-red-50/45 hover:border-red-300 dark:border-red-500/40 dark:bg-red-500/10'
+          : 'border-line bg-field hover:border-line hover:bg-surface';
     return (
       <button
         key={row.key}
@@ -4004,20 +4074,20 @@ function ResultsReview({
         onClick={() => onReviewFilterChange?.(active ? 'all' : row.key)}
         aria-pressed={active}
         className={`rounded-md border px-2.5 py-2 text-left transition sm:px-3 ${
-          active ? 'border-ink bg-white ring-2 ring-ink/15' : rowTone
+          active ? 'border-ink bg-surface ring-2 ring-ink/15' : rowTone
         }`}
       >
         <div className="flex items-center justify-between gap-1.5">
-          <span className="flex min-w-0 flex-wrap items-center gap-1.5 text-xs font-semibold uppercase text-slate-500">
+          <span className="flex min-w-0 flex-wrap items-center gap-1.5 text-xs font-semibold uppercase text-muted">
             <span>{row.label}</span>
-            {isSuggested && <span className="rounded bg-white px-1.5 py-0.5 text-[10px] text-slate-500 ring-1 ring-slate-200">Primary</span>}
+            {isSuggested && <span className="rounded bg-surface px-1.5 py-0.5 text-[10px] text-muted ring-1 ring-line">Primary</span>}
           </span>
-          <span className={`rounded px-1.5 py-0.5 text-xs font-semibold ${row.hitRate >= 55 ? 'bg-emerald-200 text-emerald-800' : row.hitRate < 45 ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-600'}`}>
+          <span className={`rounded px-1.5 py-0.5 text-xs font-semibold ${row.hitRate >= 55 ? 'bg-emerald-200 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-200' : row.hitRate < 45 ? 'bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-300' : 'bg-surface-3 text-muted'}`}>
             {row.hitRate}%
           </span>
         </div>
         <div className="mt-2 text-sm font-semibold leading-5 text-ink">{row.hits} hit / {row.misses} loss</div>
-        <div className="mt-1 text-xs text-slate-500">
+        <div className="mt-1 text-xs text-muted">
           {hasPricedOdds
             ? <>Priced odds {formatOddsTotal(row.oddsHit)} v {formatOddsTotal(row.oddsMiss)}</>
             : <>Odds not available</>}
@@ -4027,11 +4097,11 @@ function ResultsReview({
   };
 
   return (
-    <section className="mt-3 rounded-lg border border-slate-300 bg-white p-3 shadow-panel sm:mt-5 sm:p-4">
+    <section className="mt-3 rounded-lg border border-line bg-surface p-3 shadow-panel sm:mt-5 sm:p-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h2 className="text-base font-semibold text-ink">Results review</h2>
-          <p className="mt-1 text-xs font-semibold text-slate-500">Tracked from {formatDateDMY(PREDICTION_TRACKING_START_DATE)}</p>
+          <p className="mt-1 text-xs font-semibold text-muted">Tracked from {formatDateDMY(PREDICTION_TRACKING_START_DATE)}</p>
         </div>
         <div className="flex shrink-0 flex-col gap-2 sm:min-w-[26rem]">
           <div className="grid grid-cols-[2.5rem_minmax(0,1fr)] gap-1 text-xs font-semibold">
@@ -4042,7 +4112,7 @@ function ResultsReview({
                 onMoveDate?.(-1);
               }}
               disabled={!canMovePreviousDate}
-              className="inline-flex h-9 items-center justify-center rounded-md border border-slate-300 bg-white text-slate-700 transition hover:bg-field disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex h-9 items-center justify-center rounded-md border border-line bg-surface text-muted transition hover:bg-field disabled:cursor-not-allowed disabled:opacity-40"
               aria-label="Previous results day"
               title="Previous day"
             >
@@ -4054,7 +4124,7 @@ function ResultsReview({
                 setReviewScope('date');
                 onSelectToday?.();
               }}
-              className="h-9 rounded-md border border-slate-300 bg-white px-3 text-slate-700 transition hover:bg-field"
+              className="h-9 rounded-md border border-line bg-surface px-3 text-muted transition hover:bg-field"
             >
               Today
             </button>
@@ -4068,7 +4138,7 @@ function ResultsReview({
                 type="button"
                 onClick={() => setReviewScope(option.key)}
                 className={`rounded-md border px-2 py-1 ${
-                  active ? 'border-ink bg-ink text-white' : 'border-slate-300 bg-white text-slate-700 hover:bg-field'
+                  active ? 'border-ink bg-header text-white' : 'border-line bg-surface text-muted hover:bg-field'
                 }`}
               >
                 {option.label}
@@ -4079,14 +4149,14 @@ function ResultsReview({
         </div>
       </div>
       {insight && (
-        <div className="mt-3 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold leading-5 text-slate-700">
+        <div className="mt-3 rounded-md border border-line bg-surface-2 px-3 py-2 text-sm font-semibold leading-5 text-muted">
           {insight}
         </div>
       )}
       {(best || worst) && (
         <div className="mt-2 flex flex-wrap items-center gap-1.5 text-xs font-semibold">
-          {best && <span className="rounded-md border border-emerald-300 bg-emerald-100 px-2 py-1 text-emerald-800">Best {best.label} {best.hitRate}%</span>}
-          {worst && <span className="rounded-md border border-red-200 bg-red-50 px-2 py-1 text-red-700">Weakest {worst.label} {worst.hitRate}%</span>}
+          {best && <span className="rounded-md border border-emerald-300 bg-emerald-100 px-2 py-1 text-emerald-800 dark:border-emerald-500/40 dark:bg-emerald-500/15 dark:text-emerald-200">Best {best.label} {best.hitRate}%</span>}
+          {worst && <span className="rounded-md border border-red-200 bg-red-50 px-2 py-1 text-red-700 dark:border-red-500/40 dark:bg-red-500/15 dark:text-red-300">Weakest {worst.label} {worst.hitRate}%</span>}
         </div>
       )}
       {rows.length ? (
@@ -4101,7 +4171,7 @@ function ResultsReview({
           )}
         </div>
       ) : (
-        <div className="mt-3 rounded-md border border-slate-300 bg-field px-3 py-3 text-sm text-slate-500">
+        <div className="mt-3 rounded-md border border-line bg-field px-3 py-3 text-sm text-muted">
           No resulted prediction markets in this range yet.
         </div>
       )}
@@ -4120,34 +4190,34 @@ function H2HContextPanel({ match, allMatches }) {
   const h2hXgCount = displayedMeetings.filter((meeting) => meeting.xg).length;
 
   return (
-    <div className="rounded-lg border border-slate-300 bg-white p-4 shadow-panel">
+    <div className="rounded-lg border border-line bg-surface p-4 shadow-panel">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h3 className="text-sm font-semibold text-ink">Head to head context</h3>
           {summary?.count && (
-            <p className="mt-1 text-sm text-slate-600">
+            <p className="mt-1 text-sm text-muted">
               Last {summary.count}: {context.homeName} {summary.homeWins}, {context.awayName} {summary.awayWins}, draws {summary.draws}
             </p>
           )}
           {!summary?.count && h2hStreaks.length > 0 && (
-            <p className="mt-1 text-sm text-slate-600">Imported H2H trend data is available, but exact recent meeting rows are not in this local match file.</p>
+            <p className="mt-1 text-sm text-muted">Imported H2H trend data is available, but exact recent meeting rows are not in this local match file.</p>
           )}
         </div>
         {hasMeetingStats && (
           <div className="flex flex-wrap gap-1.5 text-xs font-semibold">
-            <span className="rounded-md border border-slate-300 bg-slate-50 px-2 py-1 text-slate-700">{context.bttsText}</span>
-            <span className="rounded-md border border-slate-300 bg-slate-50 px-2 py-1 text-slate-700">{context.goalsText}</span>
-            <span className="rounded-md border border-slate-300 bg-slate-50 px-2 py-1 text-slate-700">{h2hXgCount ? `${h2hXgCount}/${displayedMeetings.length} with xG` : 'xG not available'}</span>
+            <span className="rounded-md border border-line bg-surface-2 px-2 py-1 text-muted">{context.bttsText}</span>
+            <span className="rounded-md border border-line bg-surface-2 px-2 py-1 text-muted">{context.goalsText}</span>
+            <span className="rounded-md border border-line bg-surface-2 px-2 py-1 text-muted">{h2hXgCount ? `${h2hXgCount}/${displayedMeetings.length} with xG` : 'xG not available'}</span>
           </div>
         )}
       </div>
 
       <div className="mt-3 grid gap-2 sm:grid-cols-4">
         {advantage.items.map((item) => (
-          <div key={item.label} className="rounded-md border border-slate-300 bg-field px-3 py-2">
-            <div className="text-xs font-semibold uppercase text-slate-500">{item.label}</div>
+          <div key={item.label} className="rounded-md border border-line bg-field px-3 py-2">
+            <div className="text-xs font-semibold uppercase text-muted">{item.label}</div>
             <div className="mt-1 truncate text-sm font-semibold text-ink">{item.value}</div>
-            <div className="mt-0.5 text-xs text-slate-500">{item.detail}</div>
+            <div className="mt-0.5 text-xs text-muted">{item.detail}</div>
           </div>
         ))}
       </div>
@@ -4160,7 +4230,7 @@ function H2HContextPanel({ match, allMatches }) {
               <div key={`${streak.label}-${index}`} className={`rounded-md border px-3 py-2 ${streakCardClass(result)}`}>
                 <div className="flex items-center justify-between gap-2">
                   <span className={`truncate text-sm font-semibold ${streakTextClass(result)}`}>{streak.label}</span>
-                  <span className={`rounded bg-white px-2 py-0.5 text-xs font-semibold ${streakMetaClass(result)}`}>{streak.value || '-'}</span>
+                  <span className={`rounded bg-surface px-2 py-0.5 text-xs font-semibold ${streakMetaClass(result)}`}>{streak.value || '-'}</span>
                 </div>
                 <div className={`mt-1 flex items-center justify-between gap-2 text-xs ${streakMetaClass(result)}`}>
                   <span>{displayTeamForStreak(streak, match)}</span>
@@ -4180,8 +4250,8 @@ function H2HContextPanel({ match, allMatches }) {
       )}
 
       {displayedMeetings.length > 0 && (
-        <div className="mt-3 overflow-hidden rounded-md border border-slate-300">
-          <div className="grid grid-cols-[4.75rem_minmax(0,1fr)_3.25rem_3.25rem] gap-2 border-b border-slate-300 bg-slate-50 px-3 py-2 text-xs font-semibold uppercase text-slate-500 sm:grid-cols-[5.5rem_minmax(0,1fr)_4rem_4rem_5rem_5rem]">
+        <div className="mt-3 overflow-hidden rounded-md border border-line">
+          <div className="grid grid-cols-[4.75rem_minmax(0,1fr)_3.25rem_3.25rem] gap-2 border-b border-line bg-surface-2 px-3 py-2 text-xs font-semibold uppercase text-muted sm:grid-cols-[5.5rem_minmax(0,1fr)_4rem_4rem_5rem_5rem]">
             <span>Date</span>
             <span>Versus</span>
             <span>Score</span>
@@ -4190,13 +4260,13 @@ function H2HContextPanel({ match, allMatches }) {
             <span className="hidden sm:block">Cards</span>
           </div>
           {displayedMeetings.map((meeting) => (
-            <div key={meeting.id} className="grid grid-cols-[4.75rem_minmax(0,1fr)_3.25rem_3.25rem] gap-2 border-b border-slate-200 bg-white px-3 py-2 text-xs last:border-b-0 sm:grid-cols-[5.5rem_minmax(0,1fr)_4rem_4rem_5rem_5rem]">
-              <span className="font-semibold text-slate-500">{formatDateDMY(meeting.date)}</span>
-              <span className="min-w-0 truncate text-slate-700">{teamNameForCopy(meeting.homeName)} v {teamNameForCopy(meeting.awayName)}</span>
+            <div key={meeting.id} className="grid grid-cols-[4.75rem_minmax(0,1fr)_3.25rem_3.25rem] gap-2 border-b border-line bg-surface px-3 py-2 text-xs last:border-b-0 sm:grid-cols-[5.5rem_minmax(0,1fr)_4rem_4rem_5rem_5rem]">
+              <span className="font-semibold text-muted">{formatDateDMY(meeting.date)}</span>
+              <span className="min-w-0 truncate text-muted">{teamNameForCopy(meeting.homeName)} v {teamNameForCopy(meeting.awayName)}</span>
               <span className="font-semibold text-ink">{meeting.score}</span>
-              <span className="font-semibold text-slate-700">{formatH2hXg(meeting.xg)}</span>
-              <span className="hidden text-slate-500 sm:block">{meeting.btts ? 'BTTS' : 'No BTTS'}</span>
-              <span className="hidden text-slate-500 sm:block">{meeting.cards ?? '-'} cards</span>
+              <span className="font-semibold text-muted">{formatH2hXg(meeting.xg)}</span>
+              <span className="hidden text-muted sm:block">{meeting.btts ? 'BTTS' : 'No BTTS'}</span>
+              <span className="hidden text-muted sm:block">{meeting.cards ?? '-'} cards</span>
             </div>
           ))}
         </div>
@@ -4265,25 +4335,25 @@ function PredictionSummaryCard({ match, allMatches, voteState = null }) {
   if (!lines.length) return null;
 
   return (
-    <div className="rounded-lg border border-slate-300 bg-white p-3 shadow-panel sm:p-4">
+    <div className="rounded-lg border border-line bg-surface p-3 shadow-panel sm:p-4">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
           <h3 className="text-base font-semibold leading-6 text-ink">Prediction summary</h3>
-          <p className="mt-1 text-xs text-slate-500">{confidence.reason}</p>
+          <p className="mt-1 text-xs text-muted">{confidence.reason}</p>
         </div>
         {voteState && (
-          <div className="inline-flex items-center gap-2 rounded-md border border-slate-300 bg-slate-50 px-2.5 py-1.5 text-xs font-semibold text-slate-600">
+          <div className="inline-flex items-center gap-2 rounded-md border border-line bg-surface-2 px-2.5 py-1.5 text-xs font-semibold text-muted">
             <span>Crowd votes</span>
-            <span className="text-slate-400">·</span>
+            <span className="text-faint">·</span>
             <span>{voteState.data?.locked ? 'Closed' : voteCutoff ? `Closes ${voteCutoff}` : 'Open'}</span>
           </div>
         )}
       </div>
-      {voteState?.message && <div className="mt-3 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700">{voteState.message}</div>}
-      {voteState?.error && <div className="mt-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700">{voteState.error}</div>}
+      {voteState?.message && <div className="mt-3 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-700 dark:border-emerald-500/40 dark:bg-emerald-500/10 dark:text-emerald-300">{voteState.message}</div>}
+      {voteState?.error && <div className="mt-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-300">{voteState.error}</div>}
       {expectationSummary && (
-        <div className="mt-4 rounded-md border border-blue-200 bg-blue-50/70 px-3 py-3 text-sm leading-6 text-slate-700">
-          <div className="text-xs font-semibold uppercase tracking-wide text-blue-900">What to expect</div>
+        <div className="mt-4 rounded-md border border-blue-200 bg-blue-50/70 px-3 py-3 text-sm leading-6 text-muted dark:border-blue-500/40 dark:bg-blue-500/10">
+          <div className="text-xs font-semibold uppercase tracking-wide text-blue-900 dark:text-blue-300">What to expect</div>
           <p className="mt-1">{expectationSummary}</p>
         </div>
       )}
@@ -4292,7 +4362,7 @@ function PredictionSummaryCard({ match, allMatches, voteState = null }) {
           <li key={row.label} className={`grid gap-3 rounded-md px-3 py-3 sm:grid-cols-[24rem_minmax(0,1fr)] sm:items-start ${summaryRowClass(row.result)}`}>
             <span className="min-w-0">
               <span className="grid min-h-6 grid-cols-[7rem_minmax(0,1fr)] items-center gap-2">
-                <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted">
                   {row.result && resultIcon(row.result)}
                   <span>{row.label}</span>
                 </span>
@@ -4303,7 +4373,7 @@ function PredictionSummaryCard({ match, allMatches, voteState = null }) {
                 {row.label === 'Winner' && !winnerLowConfidence && <WinnerProbabilityBreakdown match={matchWithContext} comparison={winnerComparison} />}
               </span>
             </span>
-            <span className="min-w-0 leading-5 text-slate-600">
+            <span className="min-w-0 leading-5 text-muted">
               {row.text}
               {row.result && row.result !== 'miss' && (
                 <span className={`ml-2 inline-flex items-center gap-1 whitespace-nowrap rounded-md px-2 py-0.5 align-baseline text-xs font-semibold leading-none ${resultBadgeClass(row.result)}`}>
@@ -4391,16 +4461,16 @@ function MatchResultImportPanel({ match, onImported }) {
   }
 
   return (
-    <div className="rounded-md border border-amber-200 bg-amber-50/70 p-3 shadow-panel">
+    <div className="rounded-md border border-amber-200 bg-amber-50/70 p-3 shadow-panel dark:border-amber-500/40 dark:bg-amber-500/10">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="text-sm font-semibold text-ink">Owner result import</div>
-          <div className="mt-0.5 text-xs text-slate-600">Paste the JSON from ChatGPT for this match only. The match id, teams, date and league are filled in automatically.</div>
+          <div className="mt-0.5 text-xs text-muted">Paste the JSON from ChatGPT for this match only. The match id, teams, date and league are filled in automatically.</div>
         </div>
         <button
           type="button"
           onClick={() => setOpen((current) => !current)}
-          className="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-amber-300 bg-white px-3 text-xs font-semibold text-amber-800 transition hover:bg-amber-100"
+          className="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-amber-300 bg-surface px-3 text-xs font-semibold text-amber-800 transition hover:bg-amber-100 dark:border-amber-500/40 dark:text-amber-300 dark:hover:bg-amber-500/20"
         >
           <UploadCloud className="h-4 w-4" aria-hidden="true" />
           {open ? 'Close import' : 'Import result'}
@@ -4414,23 +4484,23 @@ function MatchResultImportPanel({ match, onImported }) {
             onChange={(event) => setJsonText(event.target.value)}
             spellCheck={false}
             placeholder="Paste the JSON result here"
-            className="min-h-60 w-full rounded-md border border-amber-200 bg-white p-3 font-mono text-xs leading-5 text-ink outline-none focus:border-amber-400"
+            className="min-h-60 w-full rounded-md border border-amber-200 bg-surface p-3 font-mono text-xs leading-5 text-ink outline-none focus:border-amber-400 dark:border-amber-500/40 dark:focus:border-amber-400/70"
           />
           <div className="grid gap-2 sm:grid-cols-[1fr_auto] sm:items-center">
-            <div className="text-xs text-slate-600">
+            <div className="text-xs text-muted">
               Needs final score. Stats can include corners, fouls, shotsOnTarget, yellowCards, redCards and firstToScore.
             </div>
             <button
               type="submit"
               disabled={busy || !jsonText.trim()}
-              className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-ink px-4 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-wait disabled:bg-slate-500"
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-header px-4 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-wait disabled:bg-slate-500"
             >
               {busy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <UploadCloud className="h-4 w-4" aria-hidden="true" />}
               {busy ? busyStage || 'Updating...' : 'Update Firestore'}
             </button>
           </div>
-          {message && <div className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-xs font-semibold text-emerald-700">{message}</div>}
-          {error && <div className="rounded-md border border-red-200 bg-red-50 p-3 text-xs font-semibold text-red-700">{error}</div>}
+          {message && <div className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-xs font-semibold text-emerald-700 dark:border-emerald-500/40 dark:bg-emerald-500/10 dark:text-emerald-300">{message}</div>}
+          {error && <div className="rounded-md border border-red-200 bg-red-50 p-3 text-xs font-semibold text-red-700 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-300">{error}</div>}
         </form>
       )}
     </div>
@@ -4476,7 +4546,7 @@ function MarketVoteControls({ voteState, marketKey }) {
   const market = data?.options?.[marketKey];
   if (loading) {
     return (
-      <div className="mt-3 inline-flex items-center gap-2 rounded-md border border-slate-200 bg-white/70 px-2.5 py-1.5 text-xs font-semibold text-slate-500">
+      <div className="mt-3 inline-flex items-center gap-2 rounded-md border border-line bg-white/70 dark:bg-white/10 px-2.5 py-1.5 text-xs font-semibold text-muted">
         <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
         Loading crowd votes
       </div>
@@ -4495,8 +4565,8 @@ function MarketVoteControls({ voteState, marketKey }) {
     .filter((group) => group.voters.length > 0);
 
   return (
-    <div className="mt-3 rounded-md border border-slate-200 bg-white/75 p-2">
-      <div className="mb-1.5 flex items-center justify-between gap-2 text-[11px] font-semibold uppercase text-slate-500">
+    <div className="mt-3 rounded-md border border-line bg-white/75 p-2 dark:bg-white/[0.04]">
+      <div className="mb-1.5 flex items-center justify-between gap-2 text-[11px] font-semibold uppercase text-muted">
         <span>Crowd vote</span>
         <span>{summary.markets?.[marketKey]?.total || 0} votes</span>
       </div>
@@ -4513,35 +4583,35 @@ function MarketVoteControls({ voteState, marketKey }) {
               disabled={locked || Boolean(busyKey)}
               onClick={() => onVote?.(marketKey, option.value)}
               className={`min-h-11 rounded-md border px-2 py-1.5 text-left transition disabled:cursor-not-allowed disabled:opacity-70 ${
-                selected ? 'border-emerald-400 bg-emerald-50 text-emerald-900 ring-1 ring-emerald-400' : 'border-slate-300 bg-white text-ink hover:border-slate-400'
+                selected ? 'border-emerald-400 bg-emerald-50 text-emerald-900 ring-1 ring-emerald-400 dark:border-emerald-500/40 dark:bg-emerald-500/15 dark:text-emerald-200 dark:ring-emerald-500/40' : 'border-line bg-surface text-ink hover:border-line'
               }`}
             >
               <span className="flex items-center justify-between gap-1.5">
                 <span className="min-w-0 truncate text-xs font-semibold">{option.label}</span>
                 {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : selected ? <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" aria-hidden="true" /> : null}
               </span>
-              <span className="mt-0.5 block text-[11px] font-semibold text-slate-500">{percent}% · {count}</span>
+              <span className="mt-0.5 block text-[11px] font-semibold text-muted">{percent}% · {count}</span>
             </button>
           );
         })}
       </div>
       {voterGroups.length > 0 && (
-        <div className="mt-2 space-y-1.5 border-t border-slate-100 pt-2">
+        <div className="mt-2 space-y-1.5 border-t border-line pt-2">
           {voterGroups.map((group) => (
             <div key={group.label} className="grid grid-cols-[5.5rem_minmax(0,1fr)] gap-2 text-[11px] leading-5">
-              <span className="truncate font-semibold text-slate-500">{group.label}</span>
+              <span className="truncate font-semibold text-muted">{group.label}</span>
               <span className="flex min-w-0 flex-wrap gap-1">
                 {group.voters.slice(0, 6).map((voter, index) => (
                   <span
                     key={`${group.label}-${voter.label}-${index}`}
                     className={`max-w-28 truncate rounded px-1.5 py-0.5 font-semibold ${
-                      voter.isMe ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'
+                      voter.isMe ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300' : 'bg-surface-3 text-muted'
                     }`}
                   >
                     {voter.isMe ? 'You' : voter.label}
                   </span>
                 ))}
-                {group.voters.length > 6 && <span className="rounded bg-slate-100 px-1.5 py-0.5 font-semibold text-slate-500">+{group.voters.length - 6}</span>}
+                {group.voters.length > 6 && <span className="rounded bg-surface-3 px-1.5 py-0.5 font-semibold text-muted">+{group.voters.length - 6}</span>}
               </span>
             </div>
           ))}
@@ -4557,59 +4627,60 @@ function VoteLeaderboard({ data, loading, error, bookmakerId, onFollowUser, foll
   const myLeader = rankedLeaders.find((leader) => leader.isMe);
   const popularPicks = data?.popularPicks || [];
   const followingPicks = data?.followingPicks || [];
+  const myFollowers = data?.myFollowers || [];
   const openPicks = popularPicks.filter((pick) => !pick.result);
   const resultedPicks = popularPicks.filter((pick) => pick.result);
   return (
     <div className="mt-3 grid gap-3 sm:mt-5 xl:grid-cols-2">
-      <section className="rounded-lg border border-slate-300 bg-white p-3 shadow-panel sm:p-4">
+      <section className="rounded-lg border border-line bg-surface p-3 shadow-panel sm:p-4">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h2 className="text-base font-semibold text-ink">Crowd leaderboard</h2>
-            <p className="mt-1 text-xs font-semibold text-slate-500">
+            <p className="mt-1 text-xs font-semibold text-muted">
               {myLeader ? 'Your crowd vote stats' : data ? `${data.totalVoters || 0} voters · ${data.totalVotes || 0} market votes` : 'Live from crowd votes'}
             </p>
           </div>
           {data?.settledVotes > 0 && (
-            <span className="inline-flex w-fit rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-600">
+            <span className="inline-flex w-fit rounded-md border border-line bg-surface-2 px-2 py-1 text-xs font-semibold text-muted">
               {data.settledVotes} settled votes scored
             </span>
           )}
         </div>
 
         {loading && (
-          <div className="mt-3 flex items-center gap-2 rounded-md border border-slate-200 bg-field px-3 py-3 text-sm font-semibold text-slate-500">
+          <div className="mt-3 flex items-center gap-2 rounded-md border border-line bg-field px-3 py-3 text-sm font-semibold text-muted">
             <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
             Loading crowd leaderboard
           </div>
         )}
         {!loading && error && (
-          <div className="mt-3 rounded-md border border-red-200 bg-red-50 px-3 py-3 text-sm font-semibold text-red-700">
+          <div className="mt-3 rounded-md border border-red-200 bg-red-50 px-3 py-3 text-sm font-semibold text-red-700 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-300">
             {error}
           </div>
         )}
         {!loading && !error && followError && (
-          <div className="mt-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700">
+          <div className="mt-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-300">
             {followError}
           </div>
         )}
         {!loading && !error && !topLeaders.length && (
-          <div className="mt-3 rounded-md border border-slate-300 bg-field px-3 py-3 text-sm text-slate-500">
+          <div className="mt-3 rounded-md border border-line bg-field px-3 py-3 text-sm text-muted">
             No data captured yet.
           </div>
         )}
         {!loading && !error && data && (
           <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
-            <div className="rounded-md border border-slate-200 bg-field px-2 py-2">
+            <div className="rounded-md border border-line bg-field px-2 py-2">
               <div className="text-base font-semibold text-ink">{data.totalVoters || 0}</div>
-              <div className="font-semibold text-slate-500">Voters</div>
+              <div className="font-semibold text-muted">Voters</div>
             </div>
-            <div className="rounded-md border border-slate-200 bg-field px-2 py-2">
+            <div className="rounded-md border border-line bg-field px-2 py-2">
               <div className="text-base font-semibold text-ink">{data.totalVotes || 0}</div>
-              <div className="font-semibold text-slate-500">Market votes</div>
+              <div className="font-semibold text-muted">Market votes</div>
             </div>
-            <div className="rounded-md border border-slate-200 bg-field px-2 py-2">
+            <div className="rounded-md border border-line bg-field px-2 py-2">
               <div className="text-base font-semibold text-ink">{data.settledVotes || 0}</div>
-              <div className="font-semibold text-slate-500">Settled</div>
+              <div className="font-semibold text-muted">Settled</div>
             </div>
           </div>
         )}
@@ -4617,25 +4688,25 @@ function VoteLeaderboard({ data, loading, error, bookmakerId, onFollowUser, foll
           <div className="mt-3">
             <div className="flex items-center justify-between gap-2">
               <h3 className="text-sm font-semibold text-ink">Top 5 users</h3>
-              <span className="text-xs font-semibold text-slate-500">{topLeaders.length} ranked</span>
+              <span className="text-xs font-semibold text-muted">{topLeaders.length} ranked</span>
             </div>
-            <div className="mt-2 overflow-hidden rounded-md border border-slate-200">
+            <div className="mt-2 overflow-hidden rounded-md border border-line">
               {topLeaders.map((leader) => (
                 <div
                   key={`${leader.uid || leader.label}-${leader.rank}`}
-                  className={`grid gap-3 border-b border-slate-200 px-3 py-2.5 last:border-b-0 sm:grid-cols-[minmax(0,1fr)_5.75rem_5.75rem_5.75rem_5.75rem_6.5rem_6.5rem] sm:items-center ${
-                    leader.settled && leader.hits === leader.settled ? 'result-hit-row' : leader.isMe ? 'bg-emerald-50/80' : 'bg-field'
+                  className={`grid gap-3 border-b border-line px-3 py-2.5 last:border-b-0 sm:grid-cols-[minmax(0,1fr)_5.75rem_5.75rem_5.75rem_5.75rem_6.5rem_6.5rem] sm:items-center ${
+                    leader.settled && leader.hits === leader.settled ? 'result-hit-row' : leader.isMe ? 'bg-emerald-50/80 dark:bg-emerald-500/10' : 'bg-field'
                   }`}
                 >
                   <div className="flex min-w-0 items-center gap-3">
                     <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-xs font-semibold ${
-                      leader.isMe ? 'bg-emerald-100 text-emerald-700' : 'bg-white text-slate-600'
+                      leader.isMe ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300' : 'bg-surface text-muted'
                     }`}>
                       #{leader.rank}
                     </span>
                     <div className="min-w-0">
                       <div className="truncate text-sm font-semibold text-ink">{leader.isMe ? 'You' : leader.label}</div>
-                      <div className="text-xs font-semibold text-slate-500">Crowd voter</div>
+                      <div className="text-xs font-semibold text-muted">Crowd voter</div>
                     </div>
                   </div>
 
@@ -4647,12 +4718,12 @@ function VoteLeaderboard({ data, loading, error, bookmakerId, onFollowUser, foll
                   <div className="flex items-center justify-between gap-2 sm:block sm:text-right">
                     <span className={`inline-flex rounded px-2.5 py-1 text-xs font-semibold ${
                       leader.hitRate === null
-                        ? 'bg-slate-100 text-slate-500'
+                        ? 'bg-surface-3 text-muted'
                         : leader.hitRate >= 55
-                          ? 'bg-emerald-100 text-emerald-700'
+                          ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300'
                           : leader.hitRate < 45
-                            ? 'bg-red-100 text-red-700'
-                            : 'bg-slate-100 text-slate-600'
+                            ? 'bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-300'
+                            : 'bg-surface-3 text-muted'
                     }`}>
                       {leader.hitRate === null ? 'Pending' : `${leader.hitRate}% hit`}
                     </span>
@@ -4663,8 +4734,8 @@ function VoteLeaderboard({ data, loading, error, bookmakerId, onFollowUser, foll
                         onClick={() => onFollowUser?.(leader.uid, !leader.isFollowing)}
                         className={`mt-0 inline-flex h-8 items-center justify-center rounded-md border px-2.5 text-xs font-semibold transition sm:mt-2 sm:w-full ${
                           leader.isFollowing
-                            ? 'border-slate-300 bg-white text-slate-600 hover:bg-slate-50'
-                            : 'border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                            ? 'border-line bg-surface text-muted hover:bg-surface-2'
+                            : 'border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-500/40 dark:bg-emerald-500/15 dark:text-emerald-300 dark:hover:bg-emerald-500/20'
                         } disabled:cursor-wait disabled:opacity-60`}
                       >
                         {followBusyUid === leader.uid ? 'Saving...' : leader.isFollowing ? 'Following' : 'Follow'}
@@ -4678,22 +4749,22 @@ function VoteLeaderboard({ data, loading, error, bookmakerId, onFollowUser, foll
         )}
       </section>
 
-      <section className="rounded-lg border border-slate-300 bg-white p-3 shadow-panel sm:p-4">
+      <section className="rounded-lg border border-line bg-surface p-3 shadow-panel sm:p-4">
         <div className="flex items-center justify-between gap-2">
           <div>
             <h2 className="text-base font-semibold text-ink">Following picks</h2>
-            <p className="mt-1 text-xs font-semibold text-slate-500">
+            <p className="mt-1 text-xs font-semibold text-muted">
               {data?.followingCount ? `${data.followingCount} followed users` : 'Follow leaderboard users to track picks'}
             </p>
           </div>
           {followingPicks.length > 0 && (
-            <span className="shrink-0 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-600">
+            <span className="shrink-0 rounded-md border border-line bg-surface-2 px-2 py-1 text-xs font-semibold text-muted">
               {followingPicks.length} picks
             </span>
           )}
         </div>
         {loading && (
-          <div className="mt-3 flex items-center gap-2 rounded-md border border-slate-200 bg-field px-3 py-3 text-sm font-semibold text-slate-500">
+          <div className="mt-3 flex items-center gap-2 rounded-md border border-line bg-field px-3 py-3 text-sm font-semibold text-muted">
             <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
             Loading followed picks
           </div>
@@ -4704,26 +4775,86 @@ function VoteLeaderboard({ data, loading, error, bookmakerId, onFollowUser, foll
           </div>
         )}
         {!loading && !error && !followingPicks.length && (
-          <div className="mt-3 rounded-md border border-slate-300 bg-field px-3 py-3 text-sm text-slate-500">
+          <div className="mt-3 rounded-md border border-line bg-field px-3 py-3 text-sm text-muted">
             No followed picks yet.
           </div>
         )}
       </section>
 
-      <section className="rounded-lg border border-slate-300 bg-white p-3 shadow-panel sm:p-4">
+      <section className="rounded-lg border border-line bg-surface p-3 shadow-panel sm:p-4">
+        <div className="flex items-center justify-between gap-2">
+          <div>
+            <h2 className="text-base font-semibold text-ink">Your followers</h2>
+            <p className="mt-1 text-xs font-semibold text-muted">
+              {myFollowers.length
+                ? `${myFollowers.length} ${myFollowers.length === 1 ? 'person follows' : 'people follow'} you`
+                : 'No one follows you yet'}
+            </p>
+          </div>
+          {myFollowers.length > 0 && (
+            <span className="shrink-0 rounded-md border border-line bg-surface-2 px-2 py-1 text-xs font-semibold text-muted">
+              {myFollowers.length}
+            </span>
+          )}
+        </div>
+        {loading && (
+          <div className="mt-3 flex items-center gap-2 rounded-md border border-line bg-field px-3 py-3 text-sm font-semibold text-muted">
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+            Loading followers
+          </div>
+        )}
+        {!loading && !error && myFollowers.length > 0 && (
+          <ul className="mt-3 grid gap-2">
+            {myFollowers.map((follower) => (
+              <li
+                key={follower.uid}
+                className="flex items-center justify-between gap-2 rounded-md border border-line bg-field px-3 py-2"
+              >
+                <div className="flex min-w-0 items-center gap-2">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-surface-3 text-xs font-semibold text-muted">
+                    {String(follower.label || '?').slice(0, 2).toUpperCase()}
+                  </span>
+                  <span className="min-w-0 truncate text-sm font-semibold text-ink">{follower.label}</span>
+                </div>
+                {follower.isFollowing ? (
+                  <span className="inline-flex shrink-0 items-center rounded-md border border-accent/40 bg-accent-soft px-2 py-1 text-[11px] font-semibold text-accent">
+                    Following
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    disabled={followBusyUid === follower.uid}
+                    onClick={() => onFollowUser?.(follower.uid, true)}
+                    className="inline-flex shrink-0 items-center rounded-md border border-line bg-surface px-2.5 py-1 text-[11px] font-semibold text-muted transition duration-150 ease-out-soft hover:text-ink active:scale-95 disabled:cursor-wait disabled:opacity-60"
+                  >
+                    {followBusyUid === follower.uid ? 'Saving…' : 'Follow back'}
+                  </button>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+        {!loading && !error && !myFollowers.length && (
+          <div className="mt-3 rounded-md border border-line bg-field px-3 py-3 text-sm text-muted">
+            No one follows you yet.
+          </div>
+        )}
+      </section>
+
+      <section className="rounded-lg border border-line bg-surface p-3 shadow-panel sm:p-4">
         <div className="flex items-center justify-between gap-2">
           <div>
             <h2 className="text-base font-semibold text-ink">Markets picked</h2>
-            <p className="mt-1 text-xs font-semibold text-slate-500">Open voted markets</p>
+            <p className="mt-1 text-xs font-semibold text-muted">Open voted markets</p>
           </div>
           {openPicks.length > 0 && (
-            <span className="shrink-0 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-600">
+            <span className="shrink-0 rounded-md border border-line bg-surface-2 px-2 py-1 text-xs font-semibold text-muted">
               Top {openPicks.length}
             </span>
           )}
         </div>
         {loading && (
-          <div className="mt-3 flex items-center gap-2 rounded-md border border-slate-200 bg-field px-3 py-3 text-sm font-semibold text-slate-500">
+          <div className="mt-3 flex items-center gap-2 rounded-md border border-line bg-field px-3 py-3 text-sm font-semibold text-muted">
             <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
             Loading picked markets
           </div>
@@ -4732,7 +4863,7 @@ function VoteLeaderboard({ data, loading, error, bookmakerId, onFollowUser, foll
           <div className="mt-3">
             <div className="flex items-center justify-between gap-2">
               <h3 className="text-sm font-semibold text-ink">Voted markets</h3>
-              <span className="text-xs font-semibold text-slate-500">Open</span>
+              <span className="text-xs font-semibold text-muted">Open</span>
             </div>
             <div className="mt-2 grid gap-2">
               {openPicks.map((pick) => <VotePickSummaryRow key={`${pick.matchId}-${pick.market}-${pick.option}`} pick={pick} bookmakerId={bookmakerId} />)}
@@ -4740,26 +4871,26 @@ function VoteLeaderboard({ data, loading, error, bookmakerId, onFollowUser, foll
           </div>
         )}
         {!loading && !error && !openPicks.length && (
-          <div className="mt-3 rounded-md border border-slate-300 bg-field px-3 py-3 text-sm text-slate-500">
+          <div className="mt-3 rounded-md border border-line bg-field px-3 py-3 text-sm text-muted">
             No open voted markets captured yet.
           </div>
         )}
       </section>
 
-      <section className="rounded-lg border border-slate-300 bg-white p-3 shadow-panel sm:p-4">
+      <section className="rounded-lg border border-line bg-surface p-3 shadow-panel sm:p-4">
         <div className="flex items-center justify-between gap-2">
           <div>
             <h2 className="text-base font-semibold text-ink">Resulted Picks</h2>
-            <p className="mt-1 text-xs font-semibold text-slate-500">Completed voted markets</p>
+            <p className="mt-1 text-xs font-semibold text-muted">Completed voted markets</p>
           </div>
           {resultedPicks.length > 0 && (
-            <span className="shrink-0 rounded-md border border-slate-200 bg-slate-50 px-2 py-1 text-xs font-semibold text-slate-600">
+            <span className="shrink-0 rounded-md border border-line bg-surface-2 px-2 py-1 text-xs font-semibold text-muted">
               {resultedPicks.length} settled
             </span>
           )}
         </div>
         {loading && (
-          <div className="mt-3 flex items-center gap-2 rounded-md border border-slate-200 bg-field px-3 py-3 text-sm font-semibold text-slate-500">
+          <div className="mt-3 flex items-center gap-2 rounded-md border border-line bg-field px-3 py-3 text-sm font-semibold text-muted">
             <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
             Loading resulted picks
           </div>
@@ -4770,7 +4901,7 @@ function VoteLeaderboard({ data, loading, error, bookmakerId, onFollowUser, foll
           </div>
         )}
         {!loading && !error && !resultedPicks.length && (
-          <div className="mt-3 rounded-md border border-slate-300 bg-field px-3 py-3 text-sm text-slate-500">
+          <div className="mt-3 rounded-md border border-line bg-field px-3 py-3 text-sm text-muted">
             No resulted crowd picks yet.
           </div>
         )}
@@ -4785,14 +4916,14 @@ function VotePickSummaryRow({ pick, bookmakerId }) {
     <VotePickRow pick={pick} bookmakerId={bookmakerId}>
       <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
         <div className="min-w-0 truncate text-sm font-semibold text-ink">{pick.home} v {pick.away}</div>
-        <span className="shrink-0 rounded bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700">{pick.count} votes</span>
+        <span className="shrink-0 rounded bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700 dark:bg-blue-500/15 dark:text-blue-300">{pick.count} votes</span>
       </div>
       <div className="mt-1.5 flex min-w-0 flex-wrap items-center gap-1.5 text-xs">
-        <span className="max-w-36 truncate text-[11px] font-semibold text-slate-500">{pick.league || 'Match'}{pick.date ? ` · ${formatDateDMY(pick.date)}` : ''}</span>
-        <span className="rounded border border-slate-200 bg-white px-2 py-0.5 font-semibold text-slate-500">{pick.marketLabel}</span>
-        <span className="rounded border border-emerald-200 bg-emerald-50 px-2 py-0.5 font-semibold text-emerald-700">{pick.optionLabel}</span>
+        <span className="max-w-36 truncate text-[11px] font-semibold text-muted">{pick.league || 'Match'}{pick.date ? ` · ${formatDateDMY(pick.date)}` : ''}</span>
+        <span className="rounded border border-line bg-surface px-2 py-0.5 font-semibold text-muted">{pick.marketLabel}</span>
+        <span className="rounded border border-emerald-200 bg-emerald-50 px-2 py-0.5 font-semibold text-emerald-700 dark:border-emerald-500/40 dark:bg-emerald-500/15 dark:text-emerald-300">{pick.optionLabel}</span>
         {href && (
-          <span className="inline-flex items-center gap-1 rounded border border-blue-200 bg-blue-50 px-2 py-0.5 text-[11px] font-semibold text-blue-700">
+          <span className="inline-flex items-center gap-1 rounded border border-blue-200 bg-blue-50 px-2 py-0.5 text-[11px] font-semibold text-blue-700 dark:border-blue-500/40 dark:bg-blue-500/15 dark:text-blue-300">
             <ExternalLink className="h-3 w-3" aria-hidden="true" />
             <span>{BOOKMAKERS[bookmakerId]?.name || 'Bookmaker'}</span>
           </span>
@@ -4807,13 +4938,13 @@ function VotePickSummaryRow({ pick, bookmakerId }) {
           <span
             key={`${pick.matchId}-${pick.market}-${voter.label}-${index}`}
             className={`max-w-20 truncate rounded px-1.5 py-0.5 text-[11px] font-semibold ${
-              voter.isMe ? 'bg-emerald-100 text-emerald-700' : 'bg-white text-slate-500'
+              voter.isMe ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300' : 'bg-surface text-muted'
             }`}
           >
             {voter.isMe ? 'You' : voter.label}
           </span>
         ))}
-        {(pick.voters || []).length > 3 && <span className="rounded bg-white px-1.5 py-0.5 text-[11px] font-semibold text-slate-500">+{pick.voters.length - 3}</span>}
+        {(pick.voters || []).length > 3 && <span className="rounded bg-surface px-1.5 py-0.5 text-[11px] font-semibold text-muted">+{pick.voters.length - 3}</span>}
       </div>
     </VotePickRow>
   );
@@ -4821,9 +4952,9 @@ function VotePickSummaryRow({ pick, bookmakerId }) {
 
 function LeaderboardMetric({ label, value }) {
   return (
-    <div className="flex items-center justify-between gap-2 rounded bg-white px-2 py-1.5 text-xs sm:block sm:bg-transparent sm:px-0 sm:py-0 sm:text-center">
+    <div className="flex items-center justify-between gap-2 rounded bg-surface px-2 py-1.5 text-xs sm:block sm:bg-transparent sm:px-0 sm:py-0 sm:text-center">
       <div className="font-semibold text-ink">{value}</div>
-      <div className="text-slate-500">{label}</div>
+      <div className="text-muted">{label}</div>
     </div>
   );
 }
@@ -4850,10 +4981,10 @@ function VotePickRow({ pick, bookmakerId, children }) {
   const resultClass = pick?.result === 'hit'
     ? 'result-hit-row'
     : pick?.result === 'miss'
-      ? 'border-red-300 bg-red-50'
-      : 'border-slate-200 bg-field';
+      ? 'border-red-300 bg-red-50 dark:border-red-500/40 dark:bg-red-500/10'
+      : 'border-line bg-field';
   const className = `block rounded-md border px-3 py-2 text-left transition ${resultClass} ${
-    href && !pick?.result ? 'hover:border-slate-300 hover:bg-white hover:shadow-sm' : ''
+    href && !pick?.result ? 'hover:border-line hover:bg-surface hover:shadow-sm' : ''
   }`;
   if (!href) return <div className={className}>{children}</div>;
   return (
@@ -4869,7 +5000,7 @@ function VotePickRow({ pick, bookmakerId, children }) {
   );
 }
 
-function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerChange, favoriteTeams = [], onToggleFavoriteTeam, isPlatformOwner = false, onMatchImported, onVoteSaved }) {
+function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerChange, favoriteTeams = [], onToggleFavoriteTeam, isPlatformOwner = false, onMatchImported, onVoteSaved, embedded = false }) {
   const predictions = match.predictions || {};
   const odds = displayThreeWayOdds(match);
   const actuals = match.actuals || {};
@@ -4987,19 +5118,21 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
   }, [onBack]);
 
   return (
-    <div className="min-h-screen bg-field">
-      <div className="sticky top-0 z-20 border-b border-line bg-white">
-        <div className="mx-auto flex max-w-3xl items-start gap-3 px-3 py-3 sm:px-5 sm:py-4">
-          <button
-            type="button"
-            onClick={onBack}
-            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-line text-slate-600 hover:bg-field"
-            aria-label="Back to matches"
-          >
-            <ArrowLeft className="h-5 w-5" aria-hidden="true" />
-          </button>
+    <div className={embedded ? 'overflow-hidden rounded-xl border border-line bg-surface shadow-sm' : 'min-h-screen bg-field'}>
+      <div className={embedded ? 'border-b border-line bg-surface' : 'sticky top-0 z-20 border-b border-line bg-surface'}>
+        <div className={`mx-auto flex items-start gap-3 px-3 py-3 sm:px-5 sm:py-4 ${embedded ? 'max-w-none' : 'max-w-3xl'}`}>
+          {!embedded && (
+            <button
+              type="button"
+              onClick={onBack}
+              className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-line text-muted hover:bg-field"
+              aria-label="Back to matches"
+            >
+              <ArrowLeft className="h-5 w-5" aria-hidden="true" />
+            </button>
+          )}
           <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-semibold text-slate-500">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-semibold text-muted">
               <span className="truncate">{match.league}</span>
               <span>{matchDisplayDate(match)}</span>
               <span>{matchDisplayTime(match)}</span>
@@ -5012,29 +5145,29 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
         </div>
       </div>
 
-      <div className="mx-auto max-w-3xl space-y-5 px-3 py-4 sm:px-5 sm:py-5">
+      <div className={`mx-auto space-y-5 px-3 py-4 tabular-nums sm:px-5 sm:py-5 ${embedded ? 'max-w-none' : 'max-w-3xl'}`}>
         <div className="grid grid-cols-1 items-center gap-1.5 sm:grid-cols-[1fr_auto_1fr] sm:gap-2">
-          <div className="min-w-0 rounded-md border border-slate-300 bg-white px-3 py-2.5 text-center shadow-panel sm:py-3 sm:text-left">
+          <div className="min-w-0 overflow-hidden rounded-xl border border-line bg-surface px-3 py-2.5 text-center shadow-sm sm:py-3 sm:text-left dark:bg-[radial-gradient(120%_120%_at_100%_0%,rgba(52,214,200,0.06),transparent_55%),linear-gradient(180deg,#1a1e24_0%,#121419_100%)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_14px_30px_-16px_rgba(0,0,0,0.6)]">
             <div className="flex min-w-0 items-center justify-center gap-2 sm:justify-start">
               <TeamBadge src={teamLogo(match, 'home')} name={match.home?.name} />
-              <div className="min-w-0 whitespace-normal break-words text-base font-semibold leading-snug text-ink">{match.home?.name}</div>
+              <div className="min-w-0 whitespace-normal break-words text-base font-semibold leading-snug text-ink">{match.home?.name}</div><TeamStreakBadge match={match} side="home" />
               <TeamFavoriteButton teamName={match.home?.name} favoriteTeams={favoriteTeams} onToggleFavoriteTeam={onToggleFavoriteTeam} />
             </div>
-            <div className="mt-1 text-xs text-slate-500">Rank {match.home?.rank ?? '-'} · {match.home?.pts ?? '-'} pts</div>
+            <div className="mt-1 text-xs text-muted">Rank {match.home?.rank ?? '-'} · {match.home?.pts ?? '-'} pts</div>
           </div>
           {hasScoreline(match) && (
-            <div className={`justify-self-center rounded-md px-3 py-1.5 text-center text-sm font-semibold text-white shadow-panel sm:px-3 sm:py-3 sm:text-base ${match.status === 'live' ? 'bg-red-600' : 'bg-ink'}`}>
+            <div className={`justify-self-center rounded-xl px-3 py-1.5 text-center font-mono text-sm font-semibold text-white shadow-panel sm:px-3 sm:py-3 sm:text-base ${match.status === 'live' ? 'bg-red-600' : 'bg-header'}`}>
               {scorelineText(match)}
             </div>
           )}
           {!hasScoreline(match) && <div className="hidden sm:block" />}
-          <div className="min-w-0 rounded-md border border-slate-300 bg-white px-3 py-2.5 text-center shadow-panel sm:py-3 sm:text-left">
+          <div className="min-w-0 overflow-hidden rounded-xl border border-line bg-surface px-3 py-2.5 text-center shadow-sm sm:py-3 sm:text-left dark:bg-[radial-gradient(120%_120%_at_100%_0%,rgba(52,214,200,0.06),transparent_55%),linear-gradient(180deg,#1a1e24_0%,#121419_100%)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_14px_30px_-16px_rgba(0,0,0,0.6)]">
             <div className="flex min-w-0 items-center justify-center gap-2 sm:justify-start">
               <TeamBadge src={teamLogo(match, 'away')} name={match.away?.name} />
-              <div className="min-w-0 whitespace-normal break-words text-base font-semibold leading-snug text-ink">{match.away?.name}</div>
+              <div className="min-w-0 whitespace-normal break-words text-base font-semibold leading-snug text-ink">{match.away?.name}</div><TeamStreakBadge match={match} side="away" />
               <TeamFavoriteButton teamName={match.away?.name} favoriteTeams={favoriteTeams} onToggleFavoriteTeam={onToggleFavoriteTeam} />
             </div>
-            <div className="mt-1 text-xs text-slate-500">Rank {match.away?.rank ?? '-'} · {match.away?.pts ?? '-'} pts</div>
+            <div className="mt-1 text-xs text-muted">Rank {match.away?.rank ?? '-'} · {match.away?.pts ?? '-'} pts</div>
           </div>
         </div>
 
@@ -5052,7 +5185,7 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
                 href={sofaScoreHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex h-10 items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink shadow-panel transition hover:bg-field"
+                className="inline-flex h-10 items-center justify-center rounded-md border border-line bg-surface px-3 text-sm font-semibold text-ink shadow-panel transition hover:bg-field"
               >
                 Open SofaScore match id {match.id}
               </a>
@@ -5064,14 +5197,14 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
         {(match.venue || match.referee) && (
           <div className="grid gap-2 sm:grid-cols-2">
             {match.venue && (
-              <div className="flex items-center gap-2 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 shadow-panel">
-                <MapPin className="h-4 w-4 text-slate-500" aria-hidden="true" />
+              <div className="flex items-center gap-2 rounded-md border border-line bg-surface px-3 py-2 text-sm text-muted shadow-panel">
+                <MapPin className="h-4 w-4 text-muted" aria-hidden="true" />
                 <span className="min-w-0 truncate">{match.venue}</span>
               </div>
             )}
             {match.referee && (
-              <div className="flex items-center gap-2 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 shadow-panel">
-                <UserRound className="h-4 w-4 text-slate-500" aria-hidden="true" />
+              <div className="flex items-center gap-2 rounded-md border border-line bg-surface px-3 py-2 text-sm text-muted shadow-panel">
+                <UserRound className="h-4 w-4 text-muted" aria-hidden="true" />
                 <span className="min-w-0 truncate">
                   {match.referee.name} · YC {match.referee.avg_yellow ?? '-'} · RC {match.referee.avg_red ?? '-'}
                 </span>
@@ -5125,6 +5258,7 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
   const drawNoBet = drawNoBetMarket(match);
   const drawNoBetComparison = precomputed.draw_no_bet?.comparison || modelVsBookmakerComparison(match, 'draw_no_bet', drawNoBet);
   const confidence = loadMatchConfidence(match, allMatches);
+  const winnerBreakdown = match.display_summary?.winnerBreakdown || winnerProbabilityBreakdown(match);
   const winnerModelPct = precomputed.winner?.market?.type === displayWinner?.type
     ? precomputed.winner?.modelProbability ?? winnerModelProbability(match, displayWinner)
     : winnerModelProbability(match, displayWinner);
@@ -5153,7 +5287,7 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
   };
 
   return (
-    <article className="rounded-lg border border-line bg-white shadow-panel transition active:scale-[0.99] sm:hover:-translate-y-0.5 sm:hover:border-slate-300 sm:hover:shadow-lg">
+    <article className="relative overflow-hidden rounded-xl border border-line bg-surface shadow-sm tabular-nums transition duration-200 ease-out-soft active:scale-[0.99] dark:bg-[radial-gradient(120%_90%_at_100%_-10%,rgba(52,214,200,0.07),transparent_55%),linear-gradient(180deg,#1a1e24_0%,#121419_100%)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_14px_30px_-16px_rgba(0,0,0,0.75)] sm:hover:-translate-y-0.5 sm:hover:border-accent/40 sm:hover:shadow-lg sm:hover:shadow-accent/10 before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-accent/60 before:to-transparent before:opacity-0 before:transition-opacity before:duration-200 dark:before:opacity-70 sm:hover:before:opacity-100">
       <div
         role="button"
         tabIndex={0}
@@ -5163,7 +5297,7 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
         aria-label={`View details for ${match.home?.name} vs ${match.away?.name}`}
       >
       <div className="border-b border-line px-3 py-3 sm:px-4">
-        <div className="grid grid-cols-[1fr_1fr_auto] items-center gap-2 text-sm text-slate-600">
+        <div className="grid grid-cols-[1fr_1fr_auto] items-center gap-2 text-sm text-muted">
           <span className="min-w-0 truncate">{matchDisplayDate(match)}</span>
           <span className="flex min-w-0 items-center justify-center gap-1">
             <Clock3 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
@@ -5181,7 +5315,7 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
             <div className="flex min-w-0 items-center justify-between gap-2">
               <div className="flex min-w-0 items-center gap-2">
                 <TeamBadge src={teamLogo(match, 'home')} name={match.home?.name} />
-                <div className="min-w-0 whitespace-normal break-words text-left text-sm font-semibold leading-snug text-ink sm:text-base">{match.home?.name}</div>
+                <div className="min-w-0 whitespace-normal break-words text-left text-sm font-semibold leading-snug text-ink sm:text-base">{match.home?.name}</div><TeamStreakBadge match={match} side="home" />
               </div>
               <div className="flex shrink-0 items-center gap-1.5">
                 <TeamFavoriteButton teamName={match.home?.name} favoriteTeams={favoriteTeams} onToggleFavoriteTeam={onToggleFavoriteTeam} />
@@ -5193,7 +5327,7 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
             <div className="flex min-w-0 items-center justify-between gap-2">
               <div className="flex min-w-0 items-center gap-2">
                 <TeamBadge src={teamLogo(match, 'away')} name={match.away?.name} />
-                <div className="min-w-0 whitespace-normal break-words text-left text-sm font-semibold leading-snug text-ink sm:text-base">{match.away?.name}</div>
+                <div className="min-w-0 whitespace-normal break-words text-left text-sm font-semibold leading-snug text-ink sm:text-base">{match.away?.name}</div><TeamStreakBadge match={match} side="away" />
               </div>
               <div className="flex shrink-0 items-center gap-1.5">
                 <TeamFavoriteButton teamName={match.away?.name} favoriteTeams={favoriteTeams} onToggleFavoriteTeam={onToggleFavoriteTeam} />
@@ -5214,7 +5348,7 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
             <div className="flex min-w-0 items-center justify-between gap-2">
               <div className="flex min-w-0 items-center gap-2">
                 <TeamBadge src={teamLogo(match, 'home')} name={match.home?.name} />
-                <div className="min-w-0 whitespace-normal break-words text-base font-semibold leading-snug text-ink">{match.home?.name}</div>
+                <div className="min-w-0 whitespace-normal break-words text-base font-semibold leading-snug text-ink">{match.home?.name}</div><TeamStreakBadge match={match} side="home" />
               </div>
               <div className="flex shrink-0 items-center gap-1.5">
                 <TeamFavoriteButton teamName={match.home?.name} favoriteTeams={favoriteTeams} onToggleFavoriteTeam={onToggleFavoriteTeam} />
@@ -5222,7 +5356,7 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
             </div>
             <WinnerPredictionMeta match={match} side="home" modelProbability={winnerModelPct} winner={displayWinner} />
           </div>
-          <div className={`self-center justify-self-center text-center font-semibold ${hasScoreline(match) ? `rounded-md px-3 py-2 text-sm text-white ${match.status === 'live' ? 'bg-red-600' : 'bg-ink'}` : 'text-xs text-slate-400'}`}>
+          <div className={`self-center justify-self-center text-center font-semibold ${hasScoreline(match) ? `rounded-md px-3 py-2 text-sm text-white ${match.status === 'live' ? 'bg-red-600' : 'bg-header'}` : 'text-xs text-faint'}`}>
             <div>
               {hasScoreline(match) ? (
                 scorelineText(match)
@@ -5237,7 +5371,7 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
             <div className="flex min-w-0 items-center justify-between gap-2">
               <div className="flex min-w-0 items-center gap-2">
                 <TeamBadge src={teamLogo(match, 'away')} name={match.away?.name} />
-                <div className="min-w-0 whitespace-normal break-words text-base font-semibold leading-snug text-ink">{match.away?.name}</div>
+                <div className="min-w-0 whitespace-normal break-words text-base font-semibold leading-snug text-ink">{match.away?.name}</div><TeamStreakBadge match={match} side="away" />
               </div>
               <div className="flex shrink-0 items-center gap-1.5">
                 <TeamFavoriteButton teamName={match.away?.name} favoriteTeams={favoriteTeams} onToggleFavoriteTeam={onToggleFavoriteTeam} />
@@ -5252,9 +5386,9 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
           )}
         </div>
 
-        <div className={`mt-3 rounded-md border px-3 py-2 ${compactPick ? marketPillClass(compactPick.market?.result) : 'border-slate-200 bg-slate-50 text-slate-400'}`}>
+        <div className={`mt-3 rounded-md border px-3 py-2 ${compactPick ? marketPillClass(compactPick.market?.result) : 'border-line bg-surface-2 text-faint'}`}>
             <div className="flex items-center justify-between gap-3">
-              <span className="text-xs font-semibold uppercase text-slate-500">Suggested pick</span>
+              <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted"><span className="h-3 w-1 rounded-full bg-signal" aria-hidden="true" />Suggested pick</span>
               <span className="flex shrink-0 items-center gap-1.5">
                 {compactPick?.market?.result && (
                   <span className={`inline-flex items-center gap-1 rounded-md py-0.5 text-[11px] font-semibold leading-none ${visibleResultLabel(compactPick.market.result) ? 'px-1.5' : 'px-1'} ${resultBadgeClass(compactPick.market.result)}`}>
@@ -5263,7 +5397,7 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
                   </span>
                 )}
                 {compactPick && edgeBadgeFor(compactPick.comparison) && (
-                  <span className="inline-flex items-center gap-1 rounded-md border border-amber-300 bg-amber-50 px-1.5 py-0.5 text-[11px] font-semibold leading-none text-amber-700">
+                  <span className="inline-flex items-center gap-1 rounded-md border border-amber-300 bg-amber-50 px-1.5 py-0.5 text-[11px] font-semibold leading-none text-amber-700 dark:border-amber-500/40 dark:bg-amber-500/15 dark:text-amber-300">
                     <Star className="h-3 w-3 fill-amber-400 text-amber-500" aria-hidden="true" />
                     {edgeBadgeFor(compactPick.comparison)}
                   </span>
@@ -5271,8 +5405,8 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
               </span>
             </div>
             <div className="mt-1 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-              <span className={`text-base font-semibold leading-6 ${compactPick ? 'text-ink' : 'text-slate-400'}`}>{compactPick ? `${compactPick.label} ${formatMarketDetail(compactPick.market)}` : 'No suggested pick'}</span>
-              {compactPick && fmtPct(compactPick.modelProbability) && <span className="text-xs font-semibold text-slate-600">Model {fmtPct(compactPick.modelProbability)}</span>}
+              <span className={`text-lg font-semibold leading-6 ${compactPick ? 'text-ink' : 'text-faint'}`}>{compactPick ? `${compactPick.label} ${formatMarketDetail(compactPick.market)}` : 'No suggested pick'}</span>
+              {compactPick && fmtPct(compactPick.modelProbability) && <span className="inline-flex items-center gap-1 text-xs font-medium text-muted">Model<span className="font-semibold text-ink">{fmtPct(compactPick.modelProbability)}</span></span>}
             </div>
           </div>
 
@@ -5288,18 +5422,20 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
           ))}
         </div>
 
+        <WinProbabilityBar rows={winnerBreakdown} />
+
         <div className="mt-3 grid grid-cols-3 gap-1 rounded-md bg-field p-2 text-center sm:mt-4 sm:gap-2">
           <div>
-            <div className="text-xs text-slate-500">Home</div>
-            <div className="text-sm font-semibold sm:text-base">{formatOdds(odds.home)}</div>
+            <div className="text-[11px] font-medium uppercase tracking-wide text-muted">Home</div>
+            <div className="font-mono text-sm font-semibold sm:text-base">{formatOdds(odds.home)}</div>
+          </div>
+          <div className="border-x border-line">
+            <div className="text-[11px] font-medium uppercase tracking-wide text-muted">Draw</div>
+            <div className="font-mono text-sm font-semibold sm:text-base">{formatOdds(odds.draw)}</div>
           </div>
           <div>
-            <div className="text-xs text-slate-500">Draw</div>
-            <div className="text-sm font-semibold sm:text-base">{formatOdds(odds.draw)}</div>
-          </div>
-          <div>
-            <div className="text-xs text-slate-500">Away</div>
-            <div className="text-sm font-semibold sm:text-base">{formatOdds(odds.away)}</div>
+            <div className="text-[11px] font-medium uppercase tracking-wide text-muted">Away</div>
+            <div className="font-mono text-sm font-semibold sm:text-base">{formatOdds(odds.away)}</div>
           </div>
         </div>
 
@@ -5309,7 +5445,7 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
         </div>
 
         {match.status === 'FT' && (
-          <div className="mt-4 flex flex-wrap gap-2 text-xs text-slate-600">
+          <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted">
             {'corners_total' in actuals && <span className="rounded bg-field px-2 py-1">Corners {actuals.corners_total}</span>}
             {'fouls_total' in actuals && <span className="rounded bg-field px-2 py-1">Fouls {actuals.fouls_total}</span>}
             {'first_scorer' in actuals && <span className="rounded bg-field px-2 py-1">First scorer {actuals.first_scorer}</span>}
@@ -5336,7 +5472,7 @@ function MobileBottomNav({
   ];
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-line bg-white/95 px-2 pb-[calc(env(safe-area-inset-bottom)+0.35rem)] pt-1.5 shadow-[0_-10px_30px_rgba(15,23,42,0.10)] backdrop-blur sm:hidden" aria-label="Mobile app navigation">
+    <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-line bg-surface px-2 pb-[calc(env(safe-area-inset-bottom)+0.35rem)] pt-1.5 shadow-[0_-10px_30px_rgba(15,23,42,0.10)] backdrop-blur sm:hidden" aria-label="Mobile app navigation">
       <div className="mx-auto grid max-w-md grid-cols-4 gap-1">
         {navItems.map(({ key, label, icon: Icon, onClick }) => {
           const selected = active === key;
@@ -5346,8 +5482,8 @@ function MobileBottomNav({
               type="button"
               onClick={onClick}
               aria-pressed={selected}
-              className={`flex min-h-14 flex-col items-center justify-center gap-1 rounded-md px-1 text-[11px] font-semibold transition ${
-                selected ? 'bg-ink text-white' : 'text-slate-600 hover:bg-field hover:text-ink'
+              className={`flex min-h-14 flex-col items-center justify-center gap-1 rounded-md px-1 text-[11px] font-semibold transition duration-150 ease-out-soft active:scale-95 ${
+                selected ? 'bg-header text-white' : 'text-muted hover:bg-field hover:text-ink'
               }`}
             >
               <Icon className={`h-5 w-5 ${key === 'watchlist' && selected ? 'fill-amber-300 text-amber-300' : ''}`} aria-hidden="true" />
@@ -5375,15 +5511,15 @@ function DesktopSidePanel({
   ];
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-40 hidden w-20 border-r border-slate-200 bg-white/95 px-2 py-4 shadow-[12px_0_34px_rgba(15,23,42,0.08)] backdrop-blur sm:flex lg:w-64 lg:px-4">
+    <aside className="fixed inset-y-0 left-0 z-40 hidden w-20 border-r border-line bg-surface px-2 py-4 shadow-[12px_0_34px_rgba(15,23,42,0.08)] backdrop-blur sm:flex lg:w-64 lg:px-4">
       <div className="flex min-h-0 w-full flex-col">
         <button
           type="button"
           onClick={onDashboard}
-          className="flex h-14 items-center justify-center rounded-md border border-slate-200 bg-[linear-gradient(135deg,#ffffff_0%,#f8fafc_55%,#e8f5ff_100%)] px-2 shadow-sm lg:justify-start lg:px-3"
+          className="flex h-14 items-center justify-center rounded-md border border-line bg-[linear-gradient(135deg,#ffffff_0%,#f8fafc_55%,#e8f5ff_100%)] px-2 shadow-sm transition duration-150 ease-out-soft active:scale-[0.98] dark:bg-[linear-gradient(135deg,#1d2128_0%,#15181d_55%,#123034_100%)]"
           aria-label="Open dashboard"
         >
-          <img src="/LVR-LOGO.png" alt="LVRstats.com" className="h-10 w-10 object-cover object-center lg:h-9 lg:w-auto lg:max-w-40 lg:object-contain" />
+          <BrandMark responsive className="text-2xl lg:text-3xl" />
         </button>
         <nav className="mt-5 flex flex-1 flex-col gap-1" aria-label="Dashboard page navigation">
           {navItems.map(({ key, label, icon: Icon, onClick }) => {
@@ -5395,8 +5531,8 @@ function DesktopSidePanel({
                 onClick={onClick}
                 aria-pressed={selected}
                 title={label}
-                className={`inline-flex h-12 items-center justify-center gap-3 rounded-md text-sm font-semibold transition lg:justify-start lg:px-3 ${
-                  selected ? 'bg-ink text-white shadow-sm' : 'text-slate-600 hover:bg-field hover:text-ink'
+                className={`inline-flex h-12 items-center justify-center gap-3 rounded-md text-sm font-semibold transition duration-150 ease-out-soft active:scale-[0.97] lg:justify-start lg:px-3 ${
+                  selected ? 'bg-header text-white shadow-sm' : 'text-muted hover:bg-field hover:text-ink'
                 }`}
               >
                 <Icon className={`h-5 w-5 shrink-0 ${key === 'watchlist' && selected ? 'fill-amber-300 text-amber-300' : ''}`} aria-hidden="true" />
@@ -5405,11 +5541,127 @@ function DesktopSidePanel({
             );
           })}
         </nav>
-        <div className="hidden rounded-md border border-slate-200 bg-field px-3 py-2 text-xs font-semibold leading-5 text-slate-500 lg:block">
+        <div className="mt-2 hidden rounded-md border border-line bg-field px-3 py-2 text-xs font-semibold leading-5 text-muted lg:block">
           Live Firestore data
         </div>
       </div>
     </aside>
+  );
+}
+
+function ViewModeToggle({ value, onChange }) {
+  const items = [
+    { key: 'cards', label: 'Cards' },
+    { key: 'split', label: 'Split' },
+  ];
+  return (
+    <div className="inline-flex shrink-0 items-center gap-0.5 rounded-full border border-line bg-surface p-0.5">
+      {items.map(({ key, label }) => (
+        <button
+          key={key}
+          type="button"
+          onClick={() => onChange(key)}
+          aria-pressed={value === key}
+          className={`inline-flex h-8 items-center rounded-full px-3 text-xs font-semibold transition duration-150 ease-out-soft active:scale-95 ${
+            value === key ? 'bg-header text-white shadow-sm' : 'text-muted hover:text-ink'
+          }`}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function CompactMatchRow({ match, allMatches, selected, onSelect }) {
+  const compactPick = suggestedPickForMatch(match, allMatches);
+  const settled = compactPick?.market?.result;
+  return (
+    <button
+      type="button"
+      onClick={() => onSelect(match)}
+      aria-pressed={selected}
+      className={`flex w-full items-stretch gap-2.5 border-b border-line px-3 py-2.5 text-left tabular-nums transition last:border-b-0 ${
+        selected ? 'bg-accent-soft ring-1 ring-inset ring-accent/30' : 'hover:bg-surface-2'
+      }`}
+    >
+      <div className="flex w-11 shrink-0 flex-col items-center justify-center text-center">
+        {hasScoreline(match) ? (
+          <span className={`font-mono text-sm font-semibold ${match.status === 'live' ? 'text-red-500 dark:text-red-400' : 'text-ink'}`}>{scorelineText(match)}</span>
+        ) : (
+          <span className="font-mono text-xs text-muted">{matchDisplayTime(match)}</span>
+        )}
+        <span className="mt-0.5 text-[9px] font-semibold uppercase tracking-wide text-faint">{statusBadgeLabel(match)}</span>
+      </div>
+      <div className="flex min-w-0 flex-1 flex-col justify-center gap-1.5">
+        <div className="flex min-w-0 items-center gap-2">
+          <TeamBadge src={teamLogo(match, 'home')} name={match.home?.name} />
+          <span className="min-w-0 truncate text-sm font-semibold text-ink">{match.home?.name}</span>
+        </div>
+        <div className="flex min-w-0 items-center gap-2">
+          <TeamBadge src={teamLogo(match, 'away')} name={match.away?.name} />
+          <span className="min-w-0 truncate text-sm font-semibold text-ink">{match.away?.name}</span>
+        </div>
+      </div>
+      {compactPick && (
+        <div className="flex w-24 shrink-0 flex-col items-end justify-center gap-1 text-right">
+          <span className="text-[9px] font-semibold uppercase tracking-wide text-faint">Pick</span>
+          <span className={`inline-flex max-w-full items-center gap-1 rounded px-1.5 py-0.5 text-[11px] font-semibold ${settled ? resultBadgeClass(settled) : 'bg-surface-3 text-ink'}`}>
+            {settled && resultIcon(settled)}
+            <span className="truncate">{compactPick.label}</span>
+          </span>
+        </div>
+      )}
+    </button>
+  );
+}
+
+function SplitView({ groups, selectedMatch, onSelectRow, bookmakerId, allMatches, onBookmakerChange, favoriteTeams, onToggleFavoriteTeam, isPlatformOwner, onMatchImported, onVoteSaved }) {
+  return (
+    <div className="grid grid-cols-1 gap-3 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:items-start lg:gap-4">
+      <div className="overflow-hidden rounded-xl border border-line bg-surface shadow-sm lg:sticky lg:top-[8.5rem] lg:max-h-[calc(100dvh-9.5rem)] lg:overflow-y-auto">
+        {groups.map((group) => (
+          <div key={group.leagueId || group.league}>
+            <div className="sticky top-0 z-10 flex items-center justify-between gap-2 border-b border-line bg-header px-3 py-2 text-xs font-semibold text-header-fg">
+              <span className="flex min-w-0 items-center gap-2">
+                <LeagueBadge src={group.logo} name={group.league} />
+                <span className="truncate">{group.league}</span>
+              </span>
+              <span className="shrink-0 rounded-full bg-white/15 px-2 py-0.5 text-[11px]">{group.matches.length}</span>
+            </div>
+            {group.matches.map((m) => (
+              <CompactMatchRow
+                key={`${m.league}-${m.id}`}
+                match={m}
+                allMatches={allMatches}
+                selected={String(selectedMatch?.id) === String(m.id)}
+                onSelect={onSelectRow}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
+      <div className="hidden lg:sticky lg:top-[8.5rem] lg:block lg:max-h-[calc(100dvh-9.5rem)] lg:overflow-y-auto">
+        {selectedMatch ? (
+          <MatchDetailView
+            key={selectedMatch.id}
+            embedded
+            match={selectedMatch}
+            onBack={() => {}}
+            allMatches={allMatches}
+            bookmakerId={bookmakerId}
+            onBookmakerChange={onBookmakerChange}
+            favoriteTeams={favoriteTeams}
+            onToggleFavoriteTeam={onToggleFavoriteTeam}
+            isPlatformOwner={isPlatformOwner}
+            onMatchImported={onMatchImported}
+            onVoteSaved={onVoteSaved}
+          />
+        ) : (
+          <div className="rounded-xl border border-line bg-surface p-10 text-center text-sm text-muted">Select a match to see details.</div>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -5419,8 +5671,8 @@ function LeagueSection({ group, onSelectMatch, bookmakerId, allMatches, isFavori
   const upcoming = group.matches.filter((match) => match.status === 'upcoming').length;
 
   return (
-    <section ref={sectionRef} className="overflow-hidden rounded-lg border border-line bg-white scroll-mt-4">
-      <div className="flex flex-col gap-2 border-b border-line bg-ink px-3 py-3 text-white sm:flex-row sm:items-center sm:justify-between sm:px-4">
+    <section ref={sectionRef} className="overflow-hidden rounded-xl border border-line bg-surface shadow-sm scroll-mt-4 dark:shadow-[0_18px_40px_-22px_rgba(0,0,0,0.8)]">
+      <div className="flex flex-col gap-2 border-b border-line bg-header px-3 py-3 text-white sm:flex-row sm:items-center sm:justify-between sm:px-4">
         <div className="flex min-w-0 items-center gap-2">
           {isFavoriteTeamGroup ? (
             <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-amber-300/40 bg-amber-400/15 text-amber-200">
@@ -5434,7 +5686,7 @@ function LeagueSection({ group, onSelectMatch, bookmakerId, allMatches, isFavori
             <button
               type="button"
               onClick={() => onToggleFavorite(group.league)}
-              className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border transition ${
+              className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border transition duration-150 ease-out-soft active:scale-95 ${
                 isFavorite
                   ? 'border-amber-300 bg-amber-400/15 text-amber-300'
                   : 'border-white/15 bg-white/5 text-white/65 hover:bg-white/10 hover:text-white'
@@ -5447,9 +5699,9 @@ function LeagueSection({ group, onSelectMatch, bookmakerId, allMatches, isFavori
           )}
         </div>
         <div className="flex flex-wrap items-center gap-1.5 text-xs font-semibold">
-          <span className="rounded-full bg-white/12 px-2.5 py-1">{group.matches.length} matches</span>
-          <span className="rounded-full bg-white/12 px-2.5 py-1">{upcoming} upcoming</span>
-          <span className="rounded-full bg-white/12 px-2.5 py-1">{finished} finished</span>
+          <span className="rounded-full bg-white/15 px-2.5 py-1">{group.matches.length} matches</span>
+          <span className="rounded-full bg-white/15 px-2.5 py-1">{upcoming} upcoming</span>
+          <span className="rounded-full bg-white/15 px-2.5 py-1">{finished} finished</span>
         </div>
       </div>
       <div className="grid grid-cols-1 gap-3 bg-field p-2 sm:gap-4 sm:p-4 lg:grid-cols-2 2xl:grid-cols-3">
@@ -5488,6 +5740,8 @@ function HomeInner() {
   const [allTeamOptions, setAllTeamOptions] = useState([]);
   const [isPlatformOwner, setIsPlatformOwner] = useState(false);
   const [mobileNavActive, setMobileNavActive] = useState('dashboard');
+  const [viewMode, setViewMode] = useState('cards');
+  const [splitSelectedId, setSplitSelectedId] = useState(null);
   const [voteLeaderboard, setVoteLeaderboard] = useState(null);
   const [voteLeaderboardLoading, setVoteLeaderboardLoading] = useState(true);
   const [voteLeaderboardError, setVoteLeaderboardError] = useState('');
@@ -5566,6 +5820,12 @@ function HomeInner() {
       setFavoriteTeams([]);
     }
   }, []);
+
+  useEffect(() => {
+    const isSplit = viewMode === 'split' && (mobileNavActive === 'matches' || mobileNavActive === 'watchlist');
+    document.documentElement.style.overflowY = isSplit ? 'hidden' : '';
+    return () => { document.documentElement.style.overflowY = ''; };
+  }, [viewMode, mobileNavActive]);
 
   useEffect(() => {
     let active = true;
@@ -5914,6 +6174,39 @@ function HomeInner() {
     [router, searchParams],
   );
 
+  const splitSelectedMatch = useMemo(() => {
+    for (const g of displayedGroups) {
+      const m = g.matches.find((x) => String(x.id) === String(splitSelectedId));
+      if (m) return m;
+    }
+    return displayedGroups[0]?.matches?.[0] || null;
+  }, [displayedGroups, splitSelectedId]);
+
+  const handleSplitSelect = useCallback(
+    (match) => {
+      if (typeof window !== 'undefined' && window.matchMedia('(min-width: 1024px)').matches) {
+        setSplitSelectedId(String(match.id));
+      } else {
+        handleSelectMatch(match);
+      }
+    },
+    [handleSelectMatch],
+  );
+
+  const changeViewMode = useCallback((mode) => {
+    setViewMode(mode);
+    try {
+      window.localStorage.setItem('dashboardViewMode', mode);
+    } catch {
+      // View preference is non-critical.
+    }
+  }, []);
+
+  useEffect(() => {
+    const saved = window.localStorage.getItem('dashboardViewMode');
+    if (saved === 'split' || saved === 'cards') setViewMode(saved);
+  }, []);
+
   const openSettings = useCallback(() => {
     const params = new URLSearchParams(searchParams.toString());
     params.delete('match');
@@ -6216,7 +6509,7 @@ function HomeInner() {
   }
 
   return (
-    <main className="min-h-screen bg-field pb-24 sm:pl-20 sm:pb-0 lg:pl-64">
+    <main className="min-h-dvh bg-field pb-24 sm:pl-20 sm:pb-0 lg:pl-64">
       <DesktopSidePanel
         active={mobileNavActive}
         onDashboard={openDashboardSection}
@@ -6224,19 +6517,15 @@ function HomeInner() {
         onWatchlist={openWatchlistSection}
         onSettings={openMobileSettings}
       />
-      <header className="border-b border-slate-300 bg-white sm:hidden">
+      <header className="border-b border-line bg-surface sm:hidden">
         <div className="mx-auto max-w-[112rem] px-3 py-3 sm:px-6 sm:py-4 lg:px-8">
-          <div className="flex items-center justify-center gap-3 rounded-lg border border-slate-200 bg-[linear-gradient(135deg,#ffffff_0%,#f8fafc_42%,#e8f5ff_100%)] px-2 py-2 shadow-[0_16px_45px_rgba(15,23,42,0.10)] ring-1 ring-white/80 sm:justify-between sm:px-5 sm:py-4">
+          <div className="flex items-center justify-center gap-3 rounded-lg border border-line bg-[linear-gradient(135deg,#ffffff_0%,#f8fafc_42%,#e8f5ff_100%)] px-2 py-2 shadow-[0_16px_45px_rgba(15,23,42,0.10)] ring-1 ring-white/80 dark:bg-[linear-gradient(135deg,#1d2128_0%,#15181d_42%,#123034_100%)] dark:ring-white/5 sm:justify-between sm:px-5 sm:py-4">
             <div className="flex min-w-0 flex-1 items-center justify-center gap-3 sm:justify-start">
               <div className="flex w-full shrink items-center justify-center sm:w-auto sm:shrink-0">
-                <img
-                  src="/LVR-LOGO.png"
-                  alt="LVRstats.com"
-                  className="h-24 w-full object-cover object-center sm:h-16 sm:w-auto sm:max-w-xs sm:object-contain"
-                />
+                <BrandMark className="text-3xl sm:text-2xl" />
               </div>
               <div className="hidden min-w-0 sm:block">
-                <div className="text-sm font-semibold uppercase tracking-wide text-slate-500">Smarter football picks</div>
+                <div className="text-sm font-semibold uppercase tracking-wide text-muted">Smarter football picks</div>
                 <div className="mt-0.5 text-base font-semibold text-ink">Model-backed edges, odds and match signals in one view</div>
               </div>
             </div>
@@ -6245,10 +6534,10 @@ function HomeInner() {
       </header>
 
       <section ref={dashboardRef} className="mx-auto max-w-[112rem] scroll-mt-4 px-2 py-3 sm:px-6 sm:py-5 lg:px-8">
-        <div className={`${mobileNavActive === 'dashboard' ? 'block' : 'hidden'} overflow-hidden rounded-lg border border-line bg-white`}>
+        <div className={`${mobileNavActive === 'dashboard' ? 'block' : 'hidden'} overflow-hidden rounded-lg border border-line bg-surface`}>
           <div className="flex items-center justify-between border-b border-line px-3 py-2 sm:hidden">
-            <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">All-time overview</span>
-            <span className="text-xs font-semibold text-slate-400">{stats.finished} settled</span>
+            <span className="text-xs font-semibold uppercase tracking-wide text-muted">All-time overview</span>
+            <span className="text-xs font-semibold text-faint">{stats.finished} settled</span>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-5">
             <Stat icon={Goal} label="Hit Rate" value={`${stats.accuracy}%`} sublabel="All time" featured />
@@ -6260,13 +6549,13 @@ function HomeInner() {
               value={
                 <span className="flex flex-nowrap items-baseline gap-x-1.5 whitespace-nowrap text-lg sm:gap-x-2 sm:text-2xl">
                   <span className="text-signal">{formatOddsTotal(stats.oddsTotals?.hit)}</span>
-                  <span className="text-sm font-semibold text-slate-400">v</span>
+                  <span className="text-sm font-semibold text-faint">v</span>
                   <span className="text-miss">{formatOddsTotal(stats.oddsTotals?.loss)}</span>
                 </span>
               }
             />
             <Stat icon={CheckCircle2} label="Finished" value={stats.finished} tone="text-signal" sublabel="All time" />
-            <Stat icon={Clock3} label="Upcoming" value={stats.upcoming} tone="text-blue-700" sublabel="All time" />
+            <Stat icon={Clock3} label="Upcoming" value={stats.upcoming} tone="text-blue-700 dark:text-blue-300" sublabel="All time" />
             <Stat icon={Activity} label="Matches" value={stats.total} sublabel="All time" className="col-span-2 sm:col-span-1" />
           </div>
         </div>
@@ -6293,13 +6582,13 @@ function HomeInner() {
           />
         </div>
 
-        <div className={`${mobileNavActive === 'matches' || mobileNavActive === 'watchlist' ? 'block' : 'hidden'} mt-3 rounded-lg border border-line bg-white p-3 sm:hidden`}>
+        <div className={`${mobileNavActive === 'matches' || mobileNavActive === 'watchlist' ? 'block' : 'hidden'} mt-3 rounded-lg border border-line bg-surface p-3 sm:hidden`}>
           <div className="flex items-center justify-between gap-2">
             <button
               type="button"
               onClick={() => moveDate(-1)}
               disabled={!dateOptions.length || selectedDateIndex === 0}
-              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-line bg-white text-slate-600 disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-line bg-surface text-muted disabled:cursor-not-allowed disabled:opacity-40"
               aria-label="Previous match date"
             >
               <ChevronLeft className="h-5 w-5" aria-hidden="true" />
@@ -6320,7 +6609,7 @@ function HomeInner() {
               type="button"
               onClick={() => moveDate(1)}
               disabled={!dateOptions.length || selectedDateIndex === dateOptions.length - 1}
-              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-line bg-white text-slate-600 disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-line bg-surface text-muted disabled:cursor-not-allowed disabled:opacity-40"
               aria-label="Next match date"
             >
               <ChevronRight className="h-5 w-5" aria-hidden="true" />
@@ -6331,7 +6620,7 @@ function HomeInner() {
               type="button"
               onClick={selectAllDates}
               disabled={selectedDate === 'all'}
-              className="inline-flex h-9 shrink-0 items-center rounded-full border border-line bg-white px-4 text-sm font-semibold text-slate-700 transition hover:bg-field disabled:border-ink disabled:bg-ink disabled:text-white disabled:opacity-100"
+              className="inline-flex h-9 shrink-0 items-center rounded-full border border-line bg-surface px-4 text-sm font-semibold text-muted transition hover:bg-field disabled:border-ink disabled:bg-header disabled:text-white disabled:opacity-100"
             >
               All dates
             </button>
@@ -6339,7 +6628,7 @@ function HomeInner() {
               type="button"
               onClick={selectToday}
               disabled={selectedDate === todayDate}
-              className="inline-flex h-9 shrink-0 items-center rounded-full border border-line bg-white px-4 text-sm font-semibold text-slate-700 transition hover:bg-field disabled:border-ink disabled:bg-ink disabled:text-white disabled:opacity-100"
+              className="inline-flex h-9 shrink-0 items-center rounded-full border border-line bg-surface px-4 text-sm font-semibold text-muted transition hover:bg-field disabled:border-ink disabled:bg-header disabled:text-white disabled:opacity-100"
             >
               Today
             </button>
@@ -6357,7 +6646,7 @@ function HomeInner() {
                   type="button"
                   onClick={() => setStatus(value)}
                   aria-pressed={active}
-                  className={`inline-flex h-9 shrink-0 items-center rounded-full px-4 text-sm font-semibold transition ${active ? 'border border-ink bg-ink text-white' : 'border border-line bg-white text-slate-700'}`}
+                  className={`inline-flex h-9 shrink-0 items-center rounded-full px-4 text-sm font-semibold transition ${active ? 'border border-ink bg-header text-white' : 'border border-line bg-surface text-muted'}`}
                 >
                   {label}
                 </button>
@@ -6366,11 +6655,12 @@ function HomeInner() {
           </div>
         </div>
 
-        <div ref={matchesRef} className={`${mobileNavActive === 'matches' || mobileNavActive === 'watchlist' ? 'grid' : 'hidden'} mt-3 scroll-mt-4 gap-2 rounded-lg border border-line bg-white p-3 sm:mt-5 sm:grid-cols-[12rem_10rem_minmax(18rem,1fr)_minmax(16rem,1fr)] sm:items-center sm:gap-3`}>
+        <div className={`${mobileNavActive === 'matches' || mobileNavActive === 'watchlist' ? 'sticky top-0 z-30 -mx-2 bg-field px-2 pb-2 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8' : ''}`}>
+        <div ref={matchesRef} className={`${mobileNavActive === 'matches' || mobileNavActive === 'watchlist' ? 'grid' : 'hidden'} mt-3 scroll-mt-4 gap-2 rounded-lg border border-line bg-surface p-3 sm:mt-5 sm:grid-cols-[12rem_10rem_minmax(18rem,1fr)_minmax(16rem,1fr)] sm:items-center sm:gap-3`}>
           <select
             value={league}
             onChange={(event) => setLeague(event.target.value)}
-            className="h-11 w-full min-w-0 rounded-md border border-line bg-white px-3 text-center text-sm sm:h-10 sm:text-left"
+            className="h-11 w-full min-w-0 rounded-md border border-line bg-surface px-3 text-center text-sm sm:h-10 sm:text-left"
             aria-label="League"
           >
             <option value="all">All leagues</option>
@@ -6383,7 +6673,7 @@ function HomeInner() {
           <select
             value={status}
             onChange={(event) => setStatus(event.target.value)}
-            className="hidden h-11 w-full min-w-0 rounded-md border border-line bg-white px-3 text-sm sm:block sm:h-10"
+            className="hidden h-11 w-full min-w-0 rounded-md border border-line bg-surface px-3 text-sm sm:block sm:h-10"
             aria-label="Status"
           >
             <option value="upcoming">Upcoming</option>
@@ -6395,7 +6685,7 @@ function HomeInner() {
               type="button"
               onClick={selectAllDates}
               disabled={selectedDate === 'all'}
-              className="inline-flex h-9 shrink-0 items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-slate-700 hover:bg-white/80 disabled:border-ink disabled:bg-ink disabled:text-white disabled:opacity-100"
+              className="inline-flex h-9 shrink-0 items-center justify-center rounded-md border border-line bg-surface px-3 text-sm font-semibold text-muted hover:bg-white/80 dark:bg-white/10 disabled:border-ink disabled:bg-header disabled:text-white disabled:opacity-100"
               aria-label="Show all match dates"
             >
               All dates
@@ -6404,7 +6694,7 @@ function HomeInner() {
               type="button"
               onClick={selectToday}
               disabled={selectedDate === todayDate}
-              className="inline-flex h-9 shrink-0 items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-slate-700 hover:bg-white/80 disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex h-9 shrink-0 items-center justify-center rounded-md border border-line bg-surface px-3 text-sm font-semibold text-muted hover:bg-white/80 dark:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
               aria-label="Show today's matches"
             >
               Today
@@ -6413,7 +6703,7 @@ function HomeInner() {
               type="button"
               onClick={() => moveDate(-1)}
               disabled={!dateOptions.length || selectedDateIndex === 0}
-              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-line bg-white text-slate-600 hover:bg-white/80 disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-line bg-surface text-muted hover:bg-white/80 dark:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
               aria-label="Previous match date"
             >
               <ChevronLeft className="h-4 w-4" aria-hidden="true" />
@@ -6421,7 +6711,7 @@ function HomeInner() {
             <select
               value={selectedDate || 'all'}
               onChange={(event) => { setSlideDir(0); setSelectedDate(event.target.value); }}
-              className="h-9 min-w-0 flex-1 rounded-md border border-line bg-white px-2 text-center text-sm sm:text-left"
+              className="h-9 min-w-0 flex-1 rounded-md border border-line bg-surface px-2 text-center text-sm sm:text-left"
               aria-label="Match date"
             >
               <option value="all">All dates</option>
@@ -6435,7 +6725,7 @@ function HomeInner() {
               type="button"
               onClick={() => moveDate(1)}
               disabled={!dateOptions.length || selectedDateIndex === dateOptions.length - 1}
-              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-line bg-white text-slate-600 hover:bg-white/80 disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-line bg-surface text-muted hover:bg-white/80 dark:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
               aria-label="Next match date"
             >
               <ChevronRight className="h-4 w-4" aria-hidden="true" />
@@ -6445,7 +6735,7 @@ function HomeInner() {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search teams or league"
-            className="h-11 w-full min-w-0 rounded-md border border-line bg-white px-3 text-center text-sm placeholder:text-center sm:h-10 sm:text-left sm:placeholder:text-left"
+            className="h-11 w-full min-w-0 rounded-md border border-line bg-surface px-3 text-center text-sm placeholder:text-center sm:h-10 sm:text-left sm:placeholder:text-left"
           />
         </div>
 
@@ -6456,8 +6746,16 @@ function HomeInner() {
           </div>
         )}
 
+        <div className={`${mobileNavActive === 'matches' || mobileNavActive === 'watchlist' ? 'flex' : 'hidden'} mt-3 items-center justify-between gap-3 sm:mt-5`}>
+          <span className="text-xs font-semibold uppercase tracking-wide text-faint">
+            {displayedGroups.reduce((total, group) => total + (group.matches?.length || 0), 0)} matches
+          </span>
+          <ViewModeToggle value={viewMode} onChange={changeViewMode} />
+        </div>
+        </div>
+
         <div
-          className={`${mobileNavActive === 'matches' || mobileNavActive === 'watchlist' ? 'block' : 'hidden'} date-slide-frame mt-3 sm:mt-5${dragActive ? ' date-slide-grabbing' : ''}`}
+          className={`${mobileNavActive === 'matches' || mobileNavActive === 'watchlist' ? 'block' : 'hidden'} ${viewMode === 'split' ? '' : 'date-slide-frame'} mt-3${dragActive ? ' date-slide-grabbing' : ''}`}
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
@@ -6473,28 +6771,44 @@ function HomeInner() {
             className={`space-y-4 sm:space-y-5 ${slideDir > 0 ? 'date-slide-next' : slideDir < 0 ? 'date-slide-prev' : ''}${dragActive ? ' date-slide-dragging' : ''}${snapBack ? ' date-slide-snapback' : ''}`}
             style={dragActive || snapBack ? { transform: `translateX(${dragOffset}px)` } : undefined}
           >
-          {displayedGroups.map((group) => (
-            <LeagueSection
-              key={group.leagueId || group.league}
-              group={group}
-              onSelectMatch={handleSelectMatch}
+          {viewMode === 'split' ? (
+            <SplitView
+              groups={displayedGroups}
+              selectedMatch={splitSelectedMatch}
+              onSelectRow={handleSplitSelect}
               bookmakerId={bookmakerId}
               allMatches={matches}
-              isFavorite={favoriteLeagueSet.has(group.league)}
-              onToggleFavorite={handleFavoriteLeagueToggle}
+              onBookmakerChange={handleBookmakerChange}
               favoriteTeams={favoriteTeams}
               onToggleFavoriteTeam={handleFavoriteTeamToggle}
-              sectionRef={group.isFavoriteTeamGroup || group.isFavoriteLeagueGroup ? watchlistRef : null}
+              isPlatformOwner={isPlatformOwner}
+              onMatchImported={refreshMatchData}
+              onVoteSaved={refreshVoteLeaderboard}
             />
-          ))}
+          ) : (
+            displayedGroups.map((group) => (
+              <LeagueSection
+                key={group.leagueId || group.league}
+                group={group}
+                onSelectMatch={handleSelectMatch}
+                bookmakerId={bookmakerId}
+                allMatches={matches}
+                isFavorite={favoriteLeagueSet.has(group.league)}
+                onToggleFavorite={handleFavoriteLeagueToggle}
+                favoriteTeams={favoriteTeams}
+                onToggleFavoriteTeam={handleFavoriteTeamToggle}
+                sectionRef={group.isFavoriteTeamGroup || group.isFavoriteLeagueGroup ? watchlistRef : null}
+              />
+            ))
+          )}
 
           {!error && filtered.length === 0 && mobileNavActive !== 'watchlist' && (
-            <div className="rounded-lg border border-line bg-white p-8 text-center text-sm text-slate-500">
+            <div className="rounded-lg border border-line bg-surface p-8 text-center text-sm text-muted">
               No matches found for the selected filters.
             </div>
           )}
           {!error && mobileNavActive === 'watchlist' && !favoriteGroups.length && (
-            <div className="rounded-lg border border-line bg-white p-8 text-center text-sm text-slate-500">
+            <div className="rounded-lg border border-line bg-surface p-8 text-center text-sm text-muted">
               No favourite matches for these filters. Add favourite teams or leagues in Settings.
             </div>
           )}

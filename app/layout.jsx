@@ -1,5 +1,5 @@
 import './globals.css';
-import { IBM_Plex_Sans } from 'next/font/google';
+import { IBM_Plex_Sans, IBM_Plex_Mono } from 'next/font/google';
 import FirebaseAnalytics from './firebase-analytics';
 
 const SITE_URL = 'https://lvrstats.com';
@@ -10,6 +10,13 @@ const SOCIAL_IMAGE = '/LVR-LOGO.png';
 const plexSans = IBM_Plex_Sans({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
+  display: 'swap',
+});
+
+const plexMono = IBM_Plex_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-plex-mono',
   display: 'swap',
 });
 
@@ -89,7 +96,7 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={plexSans.className}>
+    <html lang="en" className={`dark ${plexSans.className} ${plexMono.variable}`}>
       <body>
         <FirebaseAnalytics />
         {children}

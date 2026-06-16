@@ -17,6 +17,14 @@ const DEFAULT_SERVICE_ACCOUNT_PATH = path.join(process.cwd(), '.secrets', 'fireb
 
 let adminApp = null;
 
+// Vote reads are expensive (collection-group scan + per-match lookups) and
+// change only when someone votes/follows, so cache GET payloads briefly and
+// clear them on any write. Leaderboard is per-user (personalised flags).
+const LEADERBOARD_CACHE_TTL_MS = 30 * 1000;
+const MATCH_VOTE_CACHE_TTL_MS = 20 * 1000;
+const leaderboardCache = new Map();
+const matchVoteCache = new Map();
+
 function getAdminApp() {
   if (adminApp) return adminApp;
   if (getApps().length) {
@@ -355,14 +363,37 @@ function labelFromVoteSummary(parentData, marketKey, value) {
 }
 
 async function leaderboardPayload(db, user) {
-  const [voteSnap, voteParentsSnap, followingSnap] = await Promise.all([
+  const [voteSnap, voteParentsSnap, followingSnap, followersSnap] = await Promise.all([
     db.collectionGroup('votes').get(),
     db.collection(VOTE_COLLECTION).get(),
     db.collection('users').doc(user.uid).collection('following').get(),
+    db.collection('users').doc(user.uid).collection('followers').get(),
   ]);
   const voteParents = new Map(voteParentsSnap.docs.map((doc) => [doc.id, doc.data() || {}]));
   const following = new Map(followingSnap.docs.map((doc) => [doc.id, doc.data() || {}]));
   const followingUids = new Set(following.keys());
+  const followerProfileSnaps = followersSnap.size
+    ? await db.getAll(...followersSnap.docs.map((doc) => db.collection('users').doc(doc.id)))
+    : [];
+  const followerProfileByUid = new Map(
+    followerProfileSnaps.map((snap) => [snap.id, snap.exists ? snap.data() || {} : {}]),
+  );
+  const myFollowers = followersSnap.docs
+    .map((doc) => {
+      const data = doc.data() || {};
+      const uid = doc.id;
+      const live = followerProfileByUid.get(uid) || {};
+      // Show only the chosen nickname (current, else the snapshot), else an
+      // anonymised handle. Never expose email or real name (PII).
+      const niceName = String(live.nickname || data.nickname || '').trim();
+      return {
+        uid,
+        label: voterLabel({ nickname: niceName }, uid),
+        isFollowing: followingUids.has(uid),
+        followedAt: data.followedAt?.toDate?.()?.toISOString?.() || data.followedAt || '',
+      };
+    })
+    .sort((a, b) => String(b.followedAt || '').localeCompare(String(a.followedAt || '')) || a.label.localeCompare(b.label));
   const voteDocs = voteSnap.docs.filter((doc) => doc.ref.parent.parent?.parent?.id === VOTE_COLLECTION);
   const directory = await userDirectory(db, voteDocs, user);
   const matchLookup = new Map(await Promise.all(
@@ -526,6 +557,8 @@ async function leaderboardPayload(db, user) {
     totalVotes: totalMarketVotes,
     settledVotes: settledMarketVotes,
     followingCount: following.size,
+    followerCount: followersSnap.size,
+    myFollowers,
     leaders,
     popularPicks,
     myPicks,
@@ -596,15 +629,28 @@ export async function GET(request) {
 
   const db = getFirestore(getAdminApp());
   if (request.nextUrl.searchParams.get('scope') === 'leaderboard') {
-    return jsonResponse(await leaderboardPayload(db, user));
+    const cached = leaderboardCache.get(user.uid);
+    if (cached && Date.now() - cached.at < LEADERBOARD_CACHE_TTL_MS) {
+      return jsonResponse(cached.payload);
+    }
+    const payload = await leaderboardPayload(db, user);
+    leaderboardCache.set(user.uid, { payload, at: Date.now() });
+    return jsonResponse(payload);
   }
 
   const matchId = request.nextUrl.searchParams.get('matchId');
   const date = request.nextUrl.searchParams.get('date');
+  const voteCacheKey = `${matchId || ''}:${date || ''}:${user.uid}`;
+  const cachedVote = matchVoteCache.get(voteCacheKey);
+  if (cachedVote && Date.now() - cachedVote.at < MATCH_VOTE_CACHE_TTL_MS) {
+    return jsonResponse(cachedVote.payload);
+  }
   const match = await loadMatch(db, matchId, date);
   if (!match) return jsonResponse({ error: 'match-not-found' }, 404);
 
-  return jsonResponse(await responsePayload(db, user, match));
+  const votePayload = await responsePayload(db, user, match);
+  matchVoteCache.set(voteCacheKey, { payload: votePayload, at: Date.now() });
+  return jsonResponse(votePayload);
 }
 
 export async function POST(request) {
@@ -616,6 +662,10 @@ export async function POST(request) {
   }
   const body = await request.json().catch(() => ({}));
   const db = getFirestore(getAdminApp());
+  // Any write changes summaries/leaderboard for everyone — drop caches so the
+  // next GET recomputes (the write itself returns freshly-computed data below).
+  leaderboardCache.clear();
+  matchVoteCache.clear();
   if (body.action === 'followUser') {
     return setFollowState(db, user, body.targetUid, true);
   }

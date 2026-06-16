@@ -67,29 +67,29 @@ function daysUntil(value) {
 }
 
 function stripeStatusClass(status) {
-  if (status === 'active' || status === 'trialing') return 'bg-emerald-50 text-emerald-700 ring-emerald-200';
-  if (status === 'past_due' || status === 'unpaid' || status === 'incomplete') return 'bg-orange-50 text-orange-700 ring-orange-200';
-  if (status === 'canceled' || status === 'incomplete_expired') return 'bg-red-50 text-red-700 ring-red-200';
-  return 'bg-slate-100 text-slate-600 ring-slate-200';
+  if (status === 'active' || status === 'trialing') return 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 ring-emerald-200 dark:ring-emerald-500/40';
+  if (status === 'past_due' || status === 'unpaid' || status === 'incomplete') return 'bg-orange-50 dark:bg-orange-500/10 text-orange-700 dark:text-orange-300 ring-orange-200 dark:ring-orange-500/40';
+  if (status === 'canceled' || status === 'incomplete_expired') return 'bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-300 ring-red-200 dark:ring-red-500/40';
+  return 'bg-surface-3 text-muted ring-slate-200 dark:ring-slate-500/40';
 }
 
 function accessState(user) {
   const inheritsStripe = user.inheritStripeStatus !== false;
   if (user.isPlatformOwner) return { label: 'Owner', tone: 'bg-signal/10 text-signal ring-signal/20' };
-  if (user.manualAccess) return { label: 'Manual', tone: 'bg-blue-50 text-blue-700 ring-blue-200' };
+  if (user.manualAccess) return { label: 'Manual', tone: 'bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-300 ring-blue-200 dark:ring-blue-500/40' };
   if (inheritsStripe && (user.subscriptionHasAccess || user.subscriptionStatus === 'active' || user.subscriptionStatus === 'trialing')) {
-    return { label: 'Stripe', tone: 'bg-emerald-50 text-emerald-700 ring-emerald-200' };
+    return { label: 'Stripe', tone: 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 ring-emerald-200 dark:ring-emerald-500/40' };
   }
-  if (user.hasAccess) return { label: 'Granted', tone: 'bg-emerald-50 text-emerald-700 ring-emerald-200' };
-  return { label: 'Locked', tone: 'bg-orange-50 text-orange-700 ring-orange-200' };
+  if (user.hasAccess) return { label: 'Granted', tone: 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 ring-emerald-200 dark:ring-emerald-500/40' };
+  return { label: 'Locked', tone: 'bg-orange-50 dark:bg-orange-500/10 text-orange-700 dark:text-orange-300 ring-orange-200 dark:ring-orange-500/40' };
 }
 
 function StatCard({ label, value, sublabel = '' }) {
   return (
-    <div className="rounded-md border border-line bg-white px-4 py-3 shadow-panel">
-      <div className="text-sm font-semibold uppercase text-slate-500">{label}</div>
+    <div className="rounded-md border border-line bg-surface px-4 py-3 shadow-panel">
+      <div className="text-sm font-semibold uppercase text-muted">{label}</div>
       <div className="mt-1 text-2xl font-semibold leading-none text-ink">{value}</div>
-      {sublabel && <div className="mt-1 text-base text-slate-500">{sublabel}</div>}
+      {sublabel && <div className="mt-1 text-base text-muted">{sublabel}</div>}
     </div>
   );
 }
@@ -97,7 +97,7 @@ function StatCard({ label, value, sublabel = '' }) {
 function InfoLine({ label, value, valueClassName = 'text-ink' }) {
   return (
     <div className="flex min-w-0 items-center justify-between gap-3 text-base">
-      <span className="shrink-0 text-slate-500">{label}</span>
+      <span className="shrink-0 text-muted">{label}</span>
       <span className={`min-w-0 truncate text-right font-semibold ${valueClassName}`}>{value || '-'}</span>
     </div>
   );
@@ -130,10 +130,10 @@ function isPaymentIssue(user) {
 
 function OverviewPanel({ title, description, children }) {
   return (
-    <section className="rounded-lg border border-line bg-white p-4 shadow-panel">
+    <section className="rounded-lg border border-line bg-surface p-4 shadow-panel">
       <div className="mb-4">
         <h2 className="text-base font-semibold text-ink">{title}</h2>
-        <p className="mt-1 text-base text-slate-600">{description}</p>
+        <p className="mt-1 text-base text-muted">{description}</p>
       </div>
       {children}
     </section>
@@ -142,7 +142,7 @@ function OverviewPanel({ title, description, children }) {
 
 function EmptyState({ children }) {
   return (
-    <div className="rounded-md border border-line bg-field px-4 py-6 text-center text-base font-semibold text-slate-500">
+    <div className="rounded-md border border-line bg-field px-4 py-6 text-center text-base font-semibold text-muted">
       {children}
     </div>
   );
@@ -539,7 +539,7 @@ function AdminDashboard() {
   if (loading) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-field px-4">
-        <div className="flex items-center gap-3 rounded-lg border border-line bg-white px-4 py-3 text-base font-semibold text-ink shadow-panel">
+        <div className="flex items-center gap-3 rounded-lg border border-line bg-surface px-4 py-3 text-base font-semibold text-ink shadow-panel">
           <Loader2 className="h-5 w-5 animate-spin text-signal" />
           Loading admin dashboard...
         </div>
@@ -552,14 +552,14 @@ function AdminDashboard() {
       <div className="mx-auto max-w-7xl">
         <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <Link href="/dashboard" className="mb-2 inline-flex items-center gap-2 text-base font-medium text-slate-500 transition hover:text-ink">
+            <Link href="/dashboard" className="mb-2 inline-flex items-center gap-2 text-base font-medium text-muted transition hover:text-ink">
               <ArrowLeft className="h-4 w-4" /> Back to Dashboard
             </Link>
             <h1 className="flex items-center gap-2 text-2xl font-semibold text-ink">
               <ShieldCheck className="h-6 w-6 text-signal" />
               Admin Dashboard
             </h1>
-            <p className="mt-1 text-base text-slate-600">
+            <p className="mt-1 text-base text-muted">
               Review members, subscription state, and manual access overrides.
             </p>
           </div>
@@ -567,7 +567,7 @@ function AdminDashboard() {
           <button
             type="button"
             onClick={loadUsers}
-            className="inline-flex h-11 items-center justify-center gap-2 rounded-md border border-line bg-white px-3 text-base font-semibold text-ink shadow-sm transition hover:bg-field"
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-md border border-line bg-surface px-3 text-base font-semibold text-ink shadow-sm transition hover:bg-field"
           >
             <RefreshCw className="h-4 w-4" />
             {syncingStripe ? 'Syncing Stripe...' : 'Refresh'}
@@ -581,7 +581,7 @@ function AdminDashboard() {
           <StatCard label="Manual overrides" value={stats.manual} />
         </div>
 
-        <div className="mb-4 grid gap-2 rounded-lg border border-line bg-white p-2 shadow-panel sm:grid-cols-4">
+        <div className="mb-4 grid gap-2 rounded-lg border border-line bg-surface p-2 shadow-panel sm:grid-cols-4">
           {ADMIN_MODULES.map((module) => {
             const Icon = module.icon;
             const active = activeModule === module.id;
@@ -591,7 +591,7 @@ function AdminDashboard() {
                 type="button"
                 onClick={() => setActiveModule(module.id)}
                 className={`inline-flex h-11 items-center justify-center gap-2 rounded-md px-3 text-base font-semibold transition ${
-                  active ? 'bg-ink text-white shadow-sm' : 'text-slate-600 hover:bg-field hover:text-ink'
+                  active ? 'bg-header text-white shadow-sm' : 'text-muted hover:bg-field hover:text-ink'
                 }`}
               >
                 <Icon className="h-4 w-4" />
@@ -602,15 +602,15 @@ function AdminDashboard() {
         </div>
 
         {error && (
-          <div className="mb-4 rounded-md border border-red-200 bg-red-50 p-4 text-base font-semibold text-red-700">
+          <div className="mb-4 rounded-md border border-red-200 dark:border-red-500/40 bg-red-50 dark:bg-red-500/10 p-4 text-base font-semibold text-red-700 dark:text-red-300">
             {error}
           </div>
         )}
 
         {activeModule === 'users' && (
-          <div className="mb-4 flex flex-col gap-3 rounded-lg border border-line bg-white p-3 shadow-panel sm:flex-row sm:items-center sm:justify-between">
-            <label className="flex h-11 min-w-0 flex-1 items-center gap-2 rounded-md border border-line bg-white px-3 focus-within:border-slate-400">
-              <Search className="h-4 w-4 shrink-0 text-slate-500" />
+          <div className="mb-4 flex flex-col gap-3 rounded-lg border border-line bg-surface p-3 shadow-panel sm:flex-row sm:items-center sm:justify-between">
+            <label className="flex h-11 min-w-0 flex-1 items-center gap-2 rounded-md border border-line bg-surface px-3 focus-within:border-line">
+              <Search className="h-4 w-4 shrink-0 text-muted" />
               <input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
@@ -619,7 +619,7 @@ function AdminDashboard() {
               />
             </label>
             {stats.paymentIssues > 0 && (
-              <span className="inline-flex items-center gap-2 rounded-md border border-orange-200 bg-orange-50 px-3 py-2 text-base font-semibold text-orange-700">
+              <span className="inline-flex items-center gap-2 rounded-md border border-orange-200 dark:border-orange-500/40 bg-orange-50 dark:bg-orange-500/10 px-3 py-2 text-base font-semibold text-orange-700 dark:text-orange-300">
                 <Clock3 className="h-4 w-4" />
                 {stats.paymentIssues} payment issue{stats.paymentIssues === 1 ? '' : 's'}
               </span>
@@ -629,10 +629,10 @@ function AdminDashboard() {
 
         {activeModule === 'users' && (
         <div className="grid gap-3 sm:gap-4 lg:grid-cols-[minmax(21rem,0.8fr)_minmax(28rem,1.2fr)]">
-          <section className="order-2 rounded-lg border border-line bg-white shadow-panel lg:order-1">
+          <section className="order-2 rounded-lg border border-line bg-surface shadow-panel lg:order-1">
             <div className="border-b border-line px-4 py-3">
               <h2 className="text-base font-semibold text-ink">Users</h2>
-              <p className="text-base text-slate-500">{filteredUsers.length} shown of {users.length}</p>
+              <p className="text-base text-muted">{filteredUsers.length} shown of {users.length}</p>
             </div>
 
             <div className="space-y-3 border-b border-line p-3">
@@ -640,10 +640,10 @@ function AdminDashboard() {
                 <input
                   value={groupDraft}
                   onChange={(event) => setGroupDraft(event.target.value)}
-                  className="h-10 min-w-0 flex-1 rounded-md border border-line px-3 text-base text-ink outline-none focus:border-slate-400"
+                  className="h-10 min-w-0 flex-1 rounded-md border border-line px-3 text-base text-ink outline-none focus:border-line"
                   placeholder="Create group (e.g. VIP, Trial, Support)"
                 />
-                <button type="submit" className="h-10 rounded-md border border-line bg-field px-3 text-base font-semibold text-ink hover:bg-slate-100 sm:shrink-0">
+                <button type="submit" className="h-10 rounded-md border border-line bg-field px-3 text-base font-semibold text-ink hover:bg-surface-3 sm:shrink-0">
                   Add group
                 </button>
               </form>
@@ -651,7 +651,7 @@ function AdminDashboard() {
                 <select
                   value={groupFilter}
                   onChange={(event) => setGroupFilter(event.target.value)}
-                  className="h-10 min-w-0 flex-1 rounded-md border border-line bg-white px-3 text-base text-ink outline-none focus:border-slate-400"
+                  className="h-10 min-w-0 flex-1 rounded-md border border-line bg-surface px-3 text-base text-ink outline-none focus:border-line"
                 >
                   <option value="all">All ({users.length})</option>
                   <option value={UNASSIGNED_GROUP_FILTER}>Not assigned ({unassignedCount})</option>
@@ -665,7 +665,7 @@ function AdminDashboard() {
                   <button
                     type="button"
                     onClick={() => handleDeleteGroup(groupFilter)}
-                    className="h-10 rounded-md border border-line bg-white px-3 text-base font-semibold text-red-600 hover:bg-red-50"
+                    className="h-10 rounded-md border border-line bg-surface px-3 text-base font-semibold text-red-600 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-500/20"
                   >
                     Delete
                   </button>
@@ -684,12 +684,12 @@ function AdminDashboard() {
                     type="button"
                     key={user.uid}
                     onClick={() => setSelectedUid(user.uid)}
-                    className={`w-full px-4 py-3 text-left transition hover:bg-slate-50 ${isSelected ? 'bg-slate-50/80' : ''}`}
+                    className={`w-full px-4 py-3 text-left transition hover:bg-surface-2 ${isSelected ? 'bg-surface-2/80' : ''}`}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
                         <h3 className="truncate text-base font-semibold text-ink">{memberName}</h3>
-                        <p className="truncate text-base text-slate-600">{user.email || '-'}</p>
+                        <p className="truncate text-base text-muted">{user.email || '-'}</p>
                       </div>
                       <span className={`inline-flex shrink-0 rounded-full px-2 py-0.5 text-sm font-semibold ring-1 ${access.tone}`}>
                         {access.label}
@@ -697,21 +697,21 @@ function AdminDashboard() {
                     </div>
                     <div className="mt-2 flex flex-wrap gap-1">
                       {groupsForUser.length ? groupsForUser.map((group) => (
-                        <span key={group} className="rounded-full border border-line bg-field px-2 py-0.5 text-sm text-slate-600">{group}</span>
-                      )) : <span className="text-sm text-slate-400">No groups</span>}
+                        <span key={group} className="rounded-full border border-line bg-field px-2 py-0.5 text-sm text-muted">{group}</span>
+                      )) : <span className="text-sm text-faint">No groups</span>}
                     </div>
                   </button>
                 );
               })}
               {filteredUsers.length === 0 && (
-                <div className="px-6 py-10 text-center text-base text-slate-500">No users match the current search.</div>
+                <div className="px-6 py-10 text-center text-base text-muted">No users match the current search.</div>
               )}
             </div>
           </section>
 
-          <section className="order-1 rounded-lg border border-line bg-white p-3 shadow-panel sm:p-4 lg:order-2">
+          <section className="order-1 rounded-lg border border-line bg-surface p-3 shadow-panel sm:p-4 lg:order-2">
             {!selectedUser ? (
-              <div className="py-20 text-center text-base text-slate-500">Select a user to view details.</div>
+              <div className="py-20 text-center text-base text-muted">Select a user to view details.</div>
             ) : (() => {
               const user = selectedUser;
               const access = accessState(user);
@@ -733,18 +733,18 @@ function AdminDashboard() {
                     <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
                       <div className="min-w-0">
                         <h2 className="truncate text-lg font-semibold text-ink">{memberName}</h2>
-                        <div className="break-all text-base text-slate-600">{user.email || '-'}</div>
+                        <div className="break-all text-base text-muted">{user.email || '-'}</div>
                       </div>
                       <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-base font-semibold ring-1 ${access.tone}`}>
                         {hasEffectiveAccess ? <CheckCircle2 className="h-3.5 w-3.5" /> : <XCircle className="h-3.5 w-3.5" />}
                         {access.label}
                       </span>
                     </div>
-                    <div className="mt-2 truncate rounded bg-slate-50 px-2 py-1 font-mono text-sm text-slate-400">{user.uid}</div>
+                    <div className="mt-2 truncate rounded bg-surface-2 px-2 py-1 font-mono text-sm text-faint">{user.uid}</div>
                   </div>
 
                   <div className="space-y-2">
-                    <div className="text-base font-semibold uppercase text-slate-500">Groups</div>
+                    <div className="text-base font-semibold uppercase text-muted">Groups</div>
                     <div className="flex flex-wrap gap-2">
                       {groups.map((groupName) => {
                         const active = userGroups.includes(groupName);
@@ -753,25 +753,25 @@ function AdminDashboard() {
                             key={groupName}
                             type="button"
                             onClick={() => handleToggleUserGroup(user.uid, groupName)}
-                            className={`rounded-full border px-2.5 py-1 text-base font-semibold ${active ? 'border-signal/40 bg-signal/10 text-signal' : 'border-line bg-white text-slate-600 hover:bg-field'}`}
+                            className={`rounded-full border px-2.5 py-1 text-base font-semibold ${active ? 'border-signal/40 bg-signal/10 text-signal' : 'border-line bg-surface text-muted hover:bg-field'}`}
                           >
                             {groupName}
                           </button>
                         );
                       })}
-                      {!groups.length && <span className="text-base text-slate-400">No groups created yet.</span>}
+                      {!groups.length && <span className="text-base text-faint">No groups created yet.</span>}
                     </div>
                   </div>
 
                   <div className="grid gap-4 sm:grid-cols-2">
                     <section className="space-y-2">
-                      <div className="text-base font-semibold uppercase text-slate-500">Access</div>
+                      <div className="text-base font-semibold uppercase text-muted">Access</div>
                       <InfoLine label="Source" value={user.accessSource || (user.hasAccess ? 'legacy' : 'none')} />
                       <InfoLine label="Manual" value={user.manualAccess ? 'on' : 'off'} />
                       <InfoLine label="Inherit Stripe" value={inheritsStripe ? 'yes' : 'no'} />
                     </section>
                     <section className="space-y-2">
-                      <div className="text-base font-semibold uppercase text-slate-500">Dates</div>
+                      <div className="text-base font-semibold uppercase text-muted">Dates</div>
                       <InfoLine label="Joined" value={formatDate(user.createdAt)} />
                       <InfoLine label={renewLabel} value={renewValue} />
                       <InfoLine label="Sub update" value={formatDateTime(user.subscriptionUpdatedAt)} />
@@ -785,30 +785,30 @@ function AdminDashboard() {
                         {statusText}
                       </span>
                       {user.subscriptionStatus === 'trialing' && (
-                        <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2 py-1 text-base font-semibold text-emerald-700">
+                        <span className="rounded-full border border-emerald-200 dark:border-emerald-500/40 bg-emerald-50 dark:bg-emerald-500/10 px-2 py-1 text-base font-semibold text-emerald-700 dark:text-emerald-300">
                           {trialDaysLeft != null ? `${trialDaysLeft}d trial` : 'trial'}
                         </span>
                       )}
                       {user.subscriptionCancelAtPeriodEnd && (
-                        <span className="rounded-full border border-orange-200 bg-orange-50 px-2 py-1 text-base font-semibold text-orange-700">Cancels</span>
+                        <span className="rounded-full border border-orange-200 dark:border-orange-500/40 bg-orange-50 dark:bg-orange-500/10 px-2 py-1 text-base font-semibold text-orange-700 dark:text-orange-300">Cancels</span>
                       )}
                     </div>
                     <InfoLine label="Stripe access" value={user.subscriptionHasAccess ? 'yes' : 'no'} />
                     <InfoLine label="Trial used" value={user.stripeTrialUsed || user.subscriptionTrialStart ? 'yes' : 'no'} />
                     {user.stripeCustomerId ? (
-                      <div className="space-y-1 rounded-md bg-slate-50 p-2">
-                        <div className="truncate font-mono text-base text-slate-700">{user.stripeCustomerId}</div>
-                        <div className="truncate font-mono text-sm text-slate-400">{user.stripeSubscriptionId || 'No subscription ID'}</div>
-                        <div className="truncate font-mono text-sm text-slate-400">{user.stripePriceId || '-'}</div>
+                      <div className="space-y-1 rounded-md bg-surface-2 p-2">
+                        <div className="truncate font-mono text-base text-muted">{user.stripeCustomerId}</div>
+                        <div className="truncate font-mono text-sm text-faint">{user.stripeSubscriptionId || 'No subscription ID'}</div>
+                        <div className="truncate font-mono text-sm text-faint">{user.stripePriceId || '-'}</div>
                       </div>
                     ) : (
-                      <span className="text-base italic text-slate-400">No Stripe customer</span>
+                      <span className="text-base italic text-faint">No Stripe customer</span>
                     )}
                   </section>
 
                   <section className="space-y-2 border-t border-line pt-3">
                     {user.isPlatformOwner ? (
-                      <span className="inline-flex rounded-md border border-line bg-field px-3 py-2 text-base font-semibold text-slate-400">Protected</span>
+                      <span className="inline-flex rounded-md border border-line bg-field px-3 py-2 text-base font-semibold text-faint">Protected</span>
                     ) : (
                       <>
                         <button
@@ -817,21 +817,21 @@ function AdminDashboard() {
                           onClick={() => handleStripeInheritance(user, !inheritsStripe)}
                           className={`inline-flex h-10 w-full items-center justify-between gap-3 rounded-md border px-3 text-base font-semibold transition disabled:cursor-wait disabled:opacity-70 ${
                             inheritsStripe
-                              ? 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
-                              : 'border-slate-200 bg-white text-slate-600 hover:bg-field'
+                              ? 'border-emerald-200 dark:border-emerald-500/40 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-500/20'
+                              : 'border-line bg-surface text-muted hover:bg-field'
                           }`}
                         >
                           <span>{isBusy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : 'Inherit Stripe'}</span>
-                          <span className={`h-5 w-9 rounded-full p-0.5 transition ${inheritsStripe ? 'bg-emerald-600' : 'bg-slate-300'}`}>
-                            <span className={`block h-4 w-4 rounded-full bg-white transition ${inheritsStripe ? 'translate-x-4' : 'translate-x-0'}`} />
+                          <span className={`h-5 w-9 rounded-full p-0.5 transition ${inheritsStripe ? 'bg-emerald-600' : 'bg-slate-300 dark:bg-slate-500/40'}`}>
+                            <span className={`block h-4 w-4 rounded-full bg-surface transition ${inheritsStripe ? 'translate-x-4' : 'translate-x-0'}`} />
                           </span>
                         </button>
-                        <div className="grid w-full grid-cols-3 gap-1 rounded-md border border-line bg-white p-1 sm:gap-0">
+                        <div className="grid w-full grid-cols-3 gap-1 rounded-md border border-line bg-surface p-1 sm:gap-0">
                           <button
                             type="button"
                             disabled={isBusy || !user.stripeCustomerId}
                             onClick={() => handleSyncStripeUser(user)}
-                            className="inline-flex h-10 items-center justify-center gap-1 rounded px-1.5 text-sm font-semibold text-slate-700 transition hover:bg-field disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400 sm:px-2 sm:text-base"
+                            className="inline-flex h-10 items-center justify-center gap-1 rounded px-1.5 text-sm font-semibold text-muted transition hover:bg-field disabled:cursor-not-allowed disabled:bg-surface-2 disabled:text-faint sm:px-2 sm:text-base"
                           >
                             {isBusy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RefreshCw className="h-3.5 w-3.5" />}
                             Sync
@@ -840,7 +840,7 @@ function AdminDashboard() {
                             type="button"
                             disabled={isBusy || user.manualAccess}
                             onClick={() => handleManualOverride(user, true)}
-                            className="inline-flex h-10 items-center justify-center gap-1 rounded px-1.5 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50 disabled:cursor-not-allowed disabled:bg-emerald-50 disabled:opacity-60 sm:px-2 sm:text-base"
+                            className="inline-flex h-10 items-center justify-center gap-1 rounded px-1.5 text-sm font-semibold text-emerald-700 dark:text-emerald-300 transition hover:bg-emerald-50 dark:hover:bg-emerald-500/20 disabled:cursor-not-allowed disabled:bg-emerald-50 dark:disabled:bg-emerald-500/10 disabled:opacity-60 sm:px-2 sm:text-base"
                           >
                             {isBusy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <SlidersHorizontal className="h-3.5 w-3.5" />}
                             Allow
@@ -849,7 +849,7 @@ function AdminDashboard() {
                             type="button"
                             disabled={isBusy || !user.manualAccess}
                             onClick={() => handleManualOverride(user, false)}
-                            className="inline-flex h-10 items-center justify-center rounded px-1.5 text-sm font-semibold text-red-700 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400 sm:px-2 sm:text-base"
+                            className="inline-flex h-10 items-center justify-center rounded px-1.5 text-sm font-semibold text-red-700 dark:text-red-300 transition hover:bg-red-50 dark:hover:bg-red-500/20 disabled:cursor-not-allowed disabled:bg-surface-2 disabled:text-faint sm:px-2 sm:text-base"
                           >
                             Remove
                           </button>
@@ -866,7 +866,7 @@ function AdminDashboard() {
 
         {activeModule === 'data' && (
           <OverviewPanel title="Data Operations" description="Current Firestore slate shape, source freshness, and result queue signals from the dashboard data.">
-            {matchDataError && <div className="mb-4 rounded-md border border-red-200 bg-red-50 p-3 text-base font-semibold text-red-700">{matchDataError}</div>}
+            {matchDataError && <div className="mb-4 rounded-md border border-red-200 dark:border-red-500/40 bg-red-50 dark:bg-red-500/10 p-3 text-base font-semibold text-red-700 dark:text-red-300">{matchDataError}</div>}
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               <StatCard label="Leagues" value={dataSummary.leagues.length} />
               <StatCard label="Matches" value={matches.length} />
@@ -878,9 +878,9 @@ function AdminDashboard() {
                 <h3 className="text-base font-semibold text-ink">Result queue</h3>
                 <div className="mt-3 space-y-2">
                   {dataSummary.dueRows.slice(0, 8).map((match) => (
-                    <div key={`${match.id}-${match.home?.name}-${match.away?.name}`} className="rounded-md border border-line bg-white px-3 py-2 text-base">
+                    <div key={`${match.id}-${match.home?.name}-${match.away?.name}`} className="rounded-md border border-line bg-surface px-3 py-2 text-base">
                       <div className="font-semibold text-ink">{match.home?.name || 'Home'} vs {match.away?.name || 'Away'}</div>
-                      <div className="mt-1 text-base text-slate-500">{match.league || '-'} · {match.date || '-'} {match.time || ''} · {match.result_queue || 'Queued'}</div>
+                      <div className="mt-1 text-base text-muted">{match.league || '-'} · {match.date || '-'} {match.time || ''} · {match.result_queue || 'Queued'}</div>
                     </div>
                   ))}
                   {!dataSummary.dueRows.length && <EmptyState>No due result rows are exposed in the current dashboard payload.</EmptyState>}
@@ -888,7 +888,7 @@ function AdminDashboard() {
               </section>
               <section className="rounded-md border border-line bg-field p-3">
                 <h3 className="text-base font-semibold text-ink">Data source</h3>
-                <div className="mt-3 space-y-2 rounded-md border border-line bg-white p-3">
+                <div className="mt-3 space-y-2 rounded-md border border-line bg-surface p-3">
                   <InfoLine label="Source" value={matchData?.source || '-'} />
                   <InfoLine label="Captured" value={formatDateTime(matchData?.captured_at)} />
                   <InfoLine label="Date docs" value={dataSummary.dates.length} />
@@ -919,9 +919,9 @@ function AdminDashboard() {
               <h3 className="text-base font-semibold text-ink">Weak or cautious cards</h3>
               <div className="mt-3 grid gap-2 lg:grid-cols-2">
                 {qaSummary.weakMatches.map((match) => (
-                  <div key={`${match.id}-${match.home?.name}-${match.away?.name}`} className="rounded-md border border-line bg-white px-3 py-2 text-base">
+                  <div key={`${match.id}-${match.home?.name}-${match.away?.name}`} className="rounded-md border border-line bg-surface px-3 py-2 text-base">
                     <div className="font-semibold text-ink">{match.home?.name || 'Home'} vs {match.away?.name || 'Away'}</div>
-                    <div className="mt-1 text-base text-slate-500">{match.league || '-'} · {match.date || '-'} · {confidenceLabel(match) || 'Caution'}</div>
+                    <div className="mt-1 text-base text-muted">{match.league || '-'} · {match.date || '-'} · {confidenceLabel(match) || 'Caution'}</div>
                   </div>
                 ))}
                 {!qaSummary.weakMatches.length && <EmptyState>No weak cards found in the current loaded slate.</EmptyState>}
@@ -944,7 +944,7 @@ function AdminDashboard() {
                   <Database className="h-4 w-4 text-signal" />
                   Dashboard payload
                 </div>
-                <div className="mt-3 rounded-md border border-line bg-white p-3">
+                <div className="mt-3 rounded-md border border-line bg-surface p-3">
                   <InfoLine label="Captured" value={formatDateTime(healthSummary.capturedAt)} />
                   <InfoLine label="Leagues" value={dataSummary.leagues.length} />
                   <InfoLine label="Dates" value={dataSummary.dates.length} />
@@ -955,7 +955,7 @@ function AdminDashboard() {
                   <CreditCard className="h-4 w-4 text-signal" />
                   Stripe surface
                 </div>
-                <div className="mt-3 rounded-md border border-line bg-white p-3">
+                <div className="mt-3 rounded-md border border-line bg-surface p-3">
                   <InfoLine label="Customers" value={billingSummary.stripeUsers.length} />
                   <InfoLine label="Issues" value={billingSummary.paymentIssues.length} />
                   <InfoLine label="Syncing" value={syncingStripe ? 'yes' : 'no'} />
@@ -968,7 +968,7 @@ function AdminDashboard() {
                 </div>
                 <div className="mt-3 space-y-2">
                   {dataSummary.dueRows.slice(0, 3).map((match) => (
-                    <div key={`${match.id}-${match.result_queue}`} className="rounded-md border border-line bg-white px-3 py-2 text-base font-semibold text-slate-600">
+                    <div key={`${match.id}-${match.result_queue}`} className="rounded-md border border-line bg-surface px-3 py-2 text-base font-semibold text-muted">
                       {match.result_queue || 'Queued'} · {match.home?.name || 'Home'} vs {match.away?.name || 'Away'}
                     </div>
                   ))}

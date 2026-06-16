@@ -6,8 +6,13 @@ const FAST_DASHBOARD_DOC = 'match_data_fast';
 const MAX_FAVORITE_TEAMS = 100;
 const ADMIN_GROUPS_DOC = 'admin_user_groups';
 
+// Last successfully loaded payload per date key, kept in memory for the SPA
+// session so date switches / navigation paint instantly while a fresh fetch
+// runs in the background (the dashboard already does stale-while-revalidate).
+const matchDataCacheStore = new Map();
+
 export function readMatchDataCache(date = '') {
-  return null;
+  return matchDataCacheStore.get(date || 'all') || null;
 }
 
 const inflightMatchDataPromises = new Map();
@@ -15,9 +20,19 @@ const inflightMatchDataPromises = new Map();
 export function loadMatchDataFromFirestore(date = '') {
   const key = date || 'all';
   if (!inflightMatchDataPromises.has(key)) {
-    inflightMatchDataPromises.set(key, fetchMatchData(date).finally(() => {
-      inflightMatchDataPromises.delete(key);
-    }));
+    inflightMatchDataPromises.set(
+      key,
+      fetchMatchData(date)
+        .then((payload) => {
+          if (payload && Array.isArray(payload.leagues)) {
+            matchDataCacheStore.set(key, payload);
+          }
+          return payload;
+        })
+        .finally(() => {
+          inflightMatchDataPromises.delete(key);
+        }),
+    );
   }
   return inflightMatchDataPromises.get(key);
 }

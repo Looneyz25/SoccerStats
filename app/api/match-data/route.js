@@ -16,23 +16,40 @@ const DEFAULT_SERVICE_ACCOUNT_PATH = path.join(process.cwd(), '.secrets', 'fireb
 
 let adminApp = null;
 const accessCache = new Map();
+// Slate payload is identical for every authorised user and only changes when
+// the routine re-uploads (~every 15 min), so cache it briefly to skip Firestore
+// reads on repeat requests. Keyed by date ('fast' for the default slate).
+const DATA_CACHE_TTL_MS = 60 * 1000;
+const dataCache = new Map();
+
+function pricedMarketOdds(market) {
+  if (market?.odds_estimated) return null;
+  const odds = Number(market?.odds);
+  return Number.isFinite(odds) && odds > 1 ? odds : null;
+}
+
+function marketReturnTotals(markets) {
+  return (markets || []).reduce((totals, market) => {
+    const odds = pricedMarketOdds(market);
+    if (!odds) return totals;
+    if (market.result === 'hit') totals.hit += odds;
+    if (market.result === 'miss') totals.loss += 1;
+    totals.priced += 1;
+    return totals;
+  }, { hit: 0, loss: 0, priced: 0 });
+}
 
 function summarizeAllTime(leagues) {
   const matches = (Array.isArray(leagues) ? leagues : []).flatMap((league) => Array.isArray(league.matches) ? league.matches : []);
   const markets = matches.flatMap((match) => Array.isArray(match.display_summary?.headlineMarkets) ? match.display_summary.headlineMarkets : []);
   const hits = markets.filter((market) => market?.result === 'hit').length;
-  const oddsTotals = markets.reduce((totals, market) => {
-    const odds = Number(market?.odds);
-    if (!Number.isFinite(odds)) return totals;
-    if (market.result === 'hit') totals.hit += odds;
-    if (market.result === 'miss') totals.loss += odds;
-    return totals;
-  }, { hit: 0, loss: 0 });
+  const oddsTotals = marketReturnTotals(markets);
   const finished = matches.filter((match) => match.status === 'FT').length;
+  const upcoming = matches.filter((match) => match.status === 'upcoming').length;
   return {
     total: matches.length,
     finished,
-    upcoming: matches.length - finished,
+    upcoming,
     settledMarkets: markets.length,
     marketHits: hits,
     marketMisses: markets.length - hits,
@@ -40,6 +57,7 @@ function summarizeAllTime(leagues) {
     oddsTotals: {
       hit: Math.round(oddsTotals.hit * 10) / 10,
       loss: Math.round(oddsTotals.loss * 10) / 10,
+      priced: oddsTotals.priced,
     },
   };
 }
@@ -239,8 +257,15 @@ export async function GET(request) {
     }
 
     const requestedDate = request.nextUrl.searchParams.get('date');
-    payload = requestedDate ? await loadDateDoc(requestedDate) : null;
-    if (!payload) payload = await loadFastDoc();
+    const cacheKey = requestedDate || 'fast';
+    const cached = dataCache.get(cacheKey);
+    if (cached && Date.now() - cached.at < DATA_CACHE_TTL_MS) {
+      payload = cached.payload;
+    } else {
+      payload = requestedDate ? await loadDateDoc(requestedDate) : null;
+      if (!payload) payload = await loadFastDoc();
+      dataCache.set(cacheKey, { payload, at: Date.now() });
+    }
   } catch (err) {
     return new Response(JSON.stringify({ error: 'data-unavailable', detail: err.message }), {
       status: 503,

@@ -14,6 +14,10 @@ You are in the top 0.1% of web development. Work to that bar every prompt: preci
 6. **Repeat load-bearing constraints.** In long conversations, restate the core constraints in your own words so they stay top of context for both sides.
 7. **Stay in scope.** Match the size of the change to what was actually requested. Don't expand work, don't pre-build for hypothetical future needs.
 
+## Read order
+
+Read [docs/agent-function-dependency-map.md](C:/Betting/Soccer%20Stats/docs/agent-function-dependency-map.md) first on every prompt. Use it as the dependency index for routine scripts, artifacts, Firestore paths, and dashboard data flow before going deeper into the codebase.
+
 ## Active app is Next.js + Tailwind
 
 The frontend lives in [app/page.jsx](app/page.jsx) (App Router) with Tailwind styling. Make all UI changes there. The live Next.js dashboard reads Firestore from `dashboardData/match_data/leagues/*`; do not add a public JSON fallback for dashboard loading. The local `match_data.json` file is an auto-generated pipeline/upload artifact, not the browser data source. The legacy `index.html` static dashboard and its `DATA_SOCCER` splicer have been removed.
@@ -42,7 +46,7 @@ Port `3001` is the expected local dashboard port. If startup fails with `EADDRIN
 | Auth / subscription gate | [app/auth-gate.jsx](app/auth-gate.jsx) |
 | Stripe backend logic | [functions/index.js](functions/index.js) |
 | Stripe API proxy routes | [app/api/stripe/](app/api/stripe/) |
-| Data pipeline / settlement / forecasts | [scripts/soccer_routine.py](scripts/soccer_routine.py) |
+| Data pipeline / settlement / forecasts | [scripts/soccer_routine.py](scripts/soccer_routine.py), [scripts/verify_market_settlement.mjs](scripts/verify_market_settlement.mjs) |
 | Match data source of truth | Firestore `dashboardData/match_data/leagues/*`; [match_data.json](match_data.json) is the local generated upload artifact |
 | PWA assets | [public/](public/) (manifest, icons) |
 | App Hosting env vars (public) | [apphosting.yaml](apphosting.yaml) |
@@ -83,14 +87,30 @@ npm.cmd run get:data
 ```
 This is a data-only operation. It must not commit, push, run a production build, or deploy; live customers receive the new data because the app reads Firestore only.
 
-`get:data` is the full slate builder and intentionally pulls the 7-day fixture window. For scheduled result checks, use the smaller time-aware path:
+`get:data` is the full slate builder and intentionally pulls the 7-day fixture window. For scheduled result checks, use the smaller progress-aware path:
 ```
 npm.cmd run get:data:results
 ```
-The results path keeps a shrinking result checklist in `docs/agent-system/outputs/result_check_schedule_latest.md`. It preflights that checklist before doing expensive work:
-- If matches are due, it checks only unresolved matches whose kickoff time plus the completion buffer has passed, settles/backfills finished matches, prunes stale unresolved matches outside the result lookback window, runs result review/calibration, caches badges, and uploads Firestore.
-- If no matches are due and the active slate is complete, it seeds day+1 once, caches badges, and uploads Firestore.
-- If no matches are due and the active slate is not complete, it performs one 7-day prediction horizon top-up per Adelaide day, then later no-op runs only write a log with the next due times.
+The results path writes and reads `docs/agent-system/outputs/routine_progress_latest.{md,json}` plus the result checklist in `docs/agent-system/outputs/result_check_schedule_latest.md`. It must do the minimal required work:
+- Step 1 is always to read `docs/agent-system/outputs/routine_progress_latest.md` and use it as the stage marker before deciding anything else. It tells the agent whether the routine is waiting on pending results, already covered through +6 days, or needs only a light top-up.
+- All Soccer Stats routine artifacts and Agent Review Gates must identify the routine agent as `codex 5.3`. Do not stamp routine progress/log output with `5.4` or any other model label unless the user explicitly changes this rule.
+- At every Agent Review Gate, treat local horizon coverage as provisional until Firestore confirms it. If the agent is using `latestCollectedDate`, `requiredLatestDate`, or `hasSevenDayForecast` to claim coverage through Adelaide `today + 6`, it must verify that Firestore `dashboardData/match_data` plus the relevant league/date docs also contain the target horizon rows. Do not treat local `match_data.json` or progress artifacts alone as proof that +6 coverage is complete.
+- After reading progress, compile the day's match queue from the current ledger/schedule before deciding due work. The queue should include every tracked match for the Adelaide day with league, teams, match date, kickoff/start time, SofaScore match id when available, current status, and derived score-check time. Only after this list exists should the routine filter to matches whose score-check time has passed.
+- Only after reading progress should the routine inspect `docs/agent-system/outputs/result_check_schedule_latest.md` to confirm timed `DUE @` rows.
+- Every wrapper stage must update `routine_progress_latest.{md,json}` before it starts and after it completes, including decision, settlement, review/calibration, badge caching, upload, skip, and intervention gates. The progress markdown must show the current stage label/status while a long stage is running.
+- Every tracked match must include a match date, kickoff/start time, and score-check time derived as kickoff/start + 3 hours. Use that derived score-check time as the canonical expected finish / `DUE @` gate for score updates. If kickoff/start exists but the check time is missing, derive it before deciding whether results are due; if kickoff/start is missing or unreadable, stop and report agent intervention instead of guessing.
+- Always update `routine_progress_latest.{md,json}` before and after every routine step, including repeated result attempts, artifact rereads, skip decisions, upload recovery, and intervention gates.
+- If the progress ledger or schedule has pending matches past expected finish, run only the results path: apply manual imports, settle/backfill due results, run review/calibration, then reread progress/schedule. Repeat the results path for that day's due matches until they are updated to `resulted`, or stop with explicit `agent_intervention_required` rows when the source is blocked/unavailable. Publish only if the post-check progress ledger has no pending match still past expected finish.
+- For due-result evidence, use SofaScore as primary and Sportsbet as the preferred fallback when SofaScore is blocked, stale, or missing a due result. Sportsbet has been reliable for result confirmation, but keep provider IDs isolated: use Sportsbet only as result evidence/fallback context and do not mix Sportsbet event IDs with SofaScore team or event IDs.
+- If SofaScore/Sportsbet/Flashscore/LiveScore show a due fixture as postponed, cancelled, canceled, or abandoned, update the match to `postponed_or_cancelled`, lock the prediction snapshot, void unsettled prediction-market results, and treat the tracked row as no longer pending. A terminal void state must not block badge caching or Firestore upload.
+- If a match remains pending past expected finish after `get:data:results`, the wrapper must stop with `agent_intervention_required` before badge caching or Firestore upload. The agent must manually investigate or import/fetch that result; do not let the routine silently publish over the unresolved row.
+- Before any Firestore-uploading path reaches badge caching/upload, run the market settlement verification gate: `node scripts/verify_market_settlement.mjs`. This gate must check Adelaide today's `FT` matches, repair score-derived markets (`winner`, `BTTS`, `goals`) and stat-derived markets (`cards`, `corners`) when stored actual totals are present, then write `docs/agent-system/outputs/market_settlement_verification_latest.{md,json}`. If any required `FT` market still lacks `hit`, `miss`, `pass`, or `void`, stop before Firestore upload, update `routine_progress_latest.{md,json}` with `agent_intervention_required`, and carry forward the match, market, provider/source status, reason, and next action. Missing cards/corners actuals require provider actuals or a manual result import; do not invent stats.
+- After any Firestore upload attempt, run a Firestore verification gate before reporting success. Verify that `dashboardData/match_data` and the relevant league/date docs contain the just-settled due matches with `status: FT`, final scores, and locked predictions. If the local `match_data.json` has a due result but Firestore still shows it as upcoming or missing, report upload verification failed and recover from the upload stage before calling the routine complete.
+- The Firestore verification gate must also verify market settlement for the day in Firestore. For every `FT` match in the Adelaide day date doc, required visible markets (`winner`, `BTTS`, `goals`, `cards`, `corners`, plus present suggested/DNB/double-chance markets) must have a settled result of `hit`, `miss`, `pass`, or `void`. If Firestore still contains an unsettled market after upload, report upload verification failed and recover from the settlement/upload stage before calling the routine complete.
+- The same Firestore gate applies to forecast completeness. Before any stage says the slate is collected through Adelaide `today + 6`, verify Firestore also contains the target-horizon rows for that day. If Firestore has not been checked yet, mark forecast coverage as `pending_firestore_verification` in progress and do not use local-only coverage to justify a clean skip.
+- If the progress ledger shows the +6-day forecast is collected, still inspect `result_check_schedule_latest.md` and recompute due matches before skipping. Complete forecast coverage only skips top-up/full refresh; the routine ends as a no-op only after confirming there are no pending matches past expected finish and no `DUE @` / score-check rows due now.
+- If there are no overdue pending matches but the +6-day forecast is not collected, run only the light top-up path, not full `get:data`, unless an agent check finds broken base data.
+- The progress markdown must show the latest / last day of data collected, whether +6 forecast coverage is present, the Firestore verification status for that +6 claim, pending/resulted counts, pending rows past expected finish, and the tracked match list with only `pending` or `resulted` statuses.
 
 Use the explicit top-up path when you want the light prediction horizon refresh without running the full phase pipeline:
 ```

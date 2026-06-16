@@ -17,6 +17,21 @@ const AUTH_RETURN_PATH_KEY = 'looneyz-auth-return-path';
 const AUTH_GOOGLE_PENDING_KEY = 'looneyz-google-sign-in-pending';
 const PLATFORM_OWNER_EMAIL = 'l.vorabouth@gmail.com';
 
+// Today's date in the slate's timezone (matches the dashboard's localTodayDate),
+// so warming loads only today's date doc rather than the whole slate.
+function adelaideToday() {
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Australia/Adelaide',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(new Date());
+  const date = Object.fromEntries(
+    parts.filter((part) => part.type !== 'literal').map((part) => [part.type, part.value]),
+  );
+  return `${date.year}-${date.month}-${date.day}`;
+}
+
 function currentReturnPath() {
   if (typeof window === 'undefined') return '/dashboard';
   return `${window.location.pathname}${window.location.search}${window.location.hash}` || '/dashboard';
@@ -127,7 +142,7 @@ export default function AuthGate({ children }) {
         setMessage('');
         setError('');
         setBusy(null);
-        loadMatchDataFromFirestore().catch(() => {});
+        loadMatchDataFromFirestore(adelaideToday()).catch(() => {});
       } else {
         setProfile(null);
         setReady(true);
@@ -311,7 +326,7 @@ export default function AuthGate({ children }) {
   if (!ready || checkingAccess) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-field px-4">
-        <div className="flex items-center gap-3 rounded-lg border border-line bg-white px-4 py-3 text-sm font-semibold text-ink shadow-panel">
+        <div className="flex items-center gap-3 rounded-xl border border-line bg-surface px-4 py-3 text-sm font-semibold text-ink shadow-panel">
           <Loader2 className="h-5 w-5 animate-spin text-signal" />
           {checkingAccess ? 'Verifying access...' : 'Checking session...'}
         </div>
@@ -326,21 +341,25 @@ export default function AuthGate({ children }) {
         <div className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-md min-w-0 flex-col justify-center">
           <div className="mb-3">
             <div className="flex w-full items-center justify-center px-1 py-2">
-              <img
-                src="/LVR-LOGO.png"
-                alt="LVRstats.com"
-                className="h-20 w-full max-w-xs object-contain object-center sm:h-24 sm:max-w-sm"
-              />
+              <span
+                className="inline-flex select-none items-baseline text-5xl font-extrabold leading-none tracking-tight sm:text-6xl"
+                role="img"
+                aria-label="LVRstats.com"
+              >
+                <span className="text-ink" aria-hidden="true">LVR</span>
+                <span className="text-blue-600 dark:text-blue-400" aria-hidden="true">stats</span>
+                <span className="ml-0.5 text-[0.42em] font-semibold text-faint" aria-hidden="true">.com</span>
+              </span>
             </div>
-            <div className="mt-3 w-full min-w-0 rounded-lg border border-line bg-white px-4 py-3 text-center shadow-panel">
+            <div className="mt-3 w-full min-w-0 rounded-lg border border-line bg-surface px-4 py-3 text-center shadow-panel">
               <h1 className="text-lg font-semibold leading-6 text-ink">Tired of researching every match?</h1>
-              <p className="mt-1 text-sm leading-5 text-slate-600">
+              <p className="mt-1 text-sm leading-5 text-muted">
                 We do the form, odds, and market checks for you, then show the picks worth reviewing.
               </p>
             </div>
           </div>
 
-          <section className="w-full min-w-0 rounded-lg border border-line bg-white p-4 shadow-panel sm:p-5">
+          <section className="w-full min-w-0 rounded-lg border border-line bg-surface p-4 shadow-panel sm:p-5">
             <div className="mb-4 grid grid-cols-2 gap-2 rounded-md bg-field p-1">
               <button
                 type="button"
@@ -350,7 +369,7 @@ export default function AuthGate({ children }) {
                   setMessage('');
                 }}
                 className={`h-10 min-w-0 rounded-md text-xs font-semibold transition sm:text-sm ${
-                  !isCreateMode ? 'bg-white text-ink shadow-sm' : 'text-slate-600 hover:text-ink'
+                  !isCreateMode ? 'bg-surface text-ink shadow-sm' : 'text-muted hover:text-ink'
                 }`}
               >
                 Sign in
@@ -363,7 +382,7 @@ export default function AuthGate({ children }) {
                   setMessage('');
                 }}
                 className={`h-10 min-w-0 rounded-md text-xs font-semibold transition sm:text-sm ${
-                  isCreateMode ? 'bg-white text-ink shadow-sm' : 'text-slate-600 hover:text-ink'
+                  isCreateMode ? 'bg-surface text-ink shadow-sm' : 'text-muted hover:text-ink'
                 }`}
               >
                 Create account
@@ -372,9 +391,9 @@ export default function AuthGate({ children }) {
 
             <form className="space-y-3" onSubmit={handleSubmit}>
               <label className="block">
-                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Email</span>
-                <span className="flex h-11 items-center gap-2 rounded-md border border-line bg-white px-3 focus-within:border-slate-400">
-                  <Mail className="h-4 w-4 shrink-0 text-slate-500" />
+                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted">Email</span>
+                <span className="flex h-11 items-center gap-2 rounded-md border border-line bg-surface px-3 focus-within:border-line">
+                  <Mail className="h-4 w-4 shrink-0 text-muted" />
                   <input
                     type="email"
                     value={email}
@@ -388,9 +407,9 @@ export default function AuthGate({ children }) {
               </label>
 
               <label className="block">
-                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-500">Password</span>
-                <span className="flex h-11 items-center gap-2 rounded-md border border-line bg-white px-3 focus-within:border-slate-400">
-                  <LockKeyhole className="h-4 w-4 shrink-0 text-slate-500" />
+                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted">Password</span>
+                <span className="flex h-11 items-center gap-2 rounded-md border border-line bg-surface px-3 focus-within:border-line">
+                  <LockKeyhole className="h-4 w-4 shrink-0 text-muted" />
                   <input
                     type="password"
                     value={password}
@@ -405,12 +424,12 @@ export default function AuthGate({ children }) {
               </label>
 
               {error && (
-                <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-miss">
+                <div className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-miss dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-300">
                   {error}
                 </div>
               )}
               {message && (
-                <div className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-medium text-signal">
+                <div className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-medium text-signal dark:border-emerald-500/40 dark:bg-emerald-500/10">
                   {message}
                 </div>
               )}
@@ -418,7 +437,7 @@ export default function AuthGate({ children }) {
               <button
                 type="submit"
                 disabled={!!busy}
-                className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-ink px-4 text-sm font-semibold text-white shadow-panel transition hover:bg-slate-800 disabled:cursor-wait disabled:opacity-70"
+                className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-header px-4 text-sm font-semibold text-white shadow-panel transition hover:bg-slate-800 disabled:cursor-wait disabled:opacity-70"
               >
                 {busy === 'email' ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogIn className="h-4 w-4" />}
                 {isCreateMode ? 'Create account' : 'Sign in'}
@@ -430,7 +449,7 @@ export default function AuthGate({ children }) {
                 type="button"
                 onClick={handleGoogleSignIn}
                 disabled={!!busy}
-                className="inline-flex h-10 gap-2 items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink hover:bg-field disabled:cursor-wait disabled:opacity-70"
+                className="inline-flex h-10 gap-2 items-center justify-center rounded-md border border-line bg-surface px-3 text-sm font-semibold text-ink hover:bg-field disabled:cursor-wait disabled:opacity-70"
               >
                 {busy === 'google' && <Loader2 className="h-4 w-4 animate-spin" />}
                 Continue with Google
@@ -439,7 +458,7 @@ export default function AuthGate({ children }) {
                 type="button"
                 onClick={handlePasswordReset}
                 disabled={!!busy}
-                className="inline-flex h-10 gap-2 items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-ink hover:bg-field disabled:cursor-wait disabled:opacity-70"
+                className="inline-flex h-10 gap-2 items-center justify-center rounded-md border border-line bg-surface px-3 text-sm font-semibold text-ink hover:bg-field disabled:cursor-wait disabled:opacity-70"
               >
                 {busy === 'reset' && <Loader2 className="h-4 w-4 animate-spin" />}
                 Reset password
@@ -463,28 +482,28 @@ export default function AuthGate({ children }) {
       <main className="min-h-screen bg-field px-4 py-8">
         <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-md flex-col justify-center">
           <div className="mb-5 text-center">
-            <div className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-full bg-orange-100 text-orange-600">
+            <div className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-full bg-orange-100 text-orange-600 dark:bg-orange-500/15 dark:text-orange-300">
               <Clock className="h-6 w-6" />
             </div>
             <h1 className="mt-4 text-2xl font-semibold text-ink">Unlock Soccer Stats Pro</h1>
-            <p className="mt-2 text-sm text-slate-600">
+            <p className="mt-2 text-sm text-muted">
               {subscriptionNotice}
             </p>
           </div>
-          <div className="rounded-lg border border-line bg-white p-6 shadow-panel text-center">
+          <div className="rounded-lg border border-line bg-surface p-6 shadow-panel text-center">
             <div className="mb-4 rounded-md border border-line bg-field px-3 py-3 text-left">
               <div className="text-sm font-semibold text-ink">A$19.99 / month</div>
-              <div className="mt-1 text-xs text-slate-600">
+              <div className="mt-1 text-xs text-muted">
                 Full predictions, odds, H2H trends, saved access, and member-only dashboard data.
               </div>
             </div>
             {error && (
-              <div className="mb-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-miss">
+              <div className="mb-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-miss dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-300">
                 {error}
               </div>
             )}
             {message && (
-              <div className="mb-3 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-medium text-signal">
+              <div className="mb-3 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm font-medium text-signal dark:border-emerald-500/40 dark:bg-emerald-500/10">
                 {message}
               </div>
             )}
@@ -492,7 +511,7 @@ export default function AuthGate({ children }) {
               type="button"
               onClick={() => openStripeSession('/api/stripe/create-checkout', 'checkout')}
               disabled={!!busy}
-              className="mb-3 inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-ink px-4 text-sm font-semibold text-white shadow-panel transition hover:bg-slate-800 disabled:cursor-wait disabled:opacity-70"
+              className="mb-3 inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-header px-4 text-sm font-semibold text-white shadow-panel transition hover:bg-slate-800 disabled:cursor-wait disabled:opacity-70"
             >
               {busy === 'checkout' ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
               Subscribe to Pro
@@ -500,7 +519,7 @@ export default function AuthGate({ children }) {
             <button
               type="button"
               onClick={() => signOut(auth)}
-              className="inline-flex h-10 w-full items-center justify-center rounded-md border border-line bg-white px-4 text-sm font-semibold text-ink hover:bg-field transition"
+              className="inline-flex h-10 w-full items-center justify-center rounded-md border border-line bg-surface px-4 text-sm font-semibold text-ink hover:bg-field transition"
             >
               Sign out
             </button>

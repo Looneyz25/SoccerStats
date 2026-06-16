@@ -1,4 +1,9 @@
 # Settings for App Hosting
+# Keep one warm instance so the SSR/API container avoids cold starts (admin-SDK
+# init + token-key fetch) on the first dashboard load.
+runConfig:
+  minInstances: 1
+
 env:
   - variable: NEXT_PUBLIC_APP_URL
     value: https://lvrstats.com

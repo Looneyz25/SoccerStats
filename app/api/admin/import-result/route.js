@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 import { cert, getApps, initializeApp, applicationDefault } from 'firebase-admin/app';
@@ -14,10 +14,12 @@ const META_DOC_ID = 'match_data';
 const FAST_DOC_ID = 'match_data_fast';
 const MANUAL_IMPORTS_COLLECTION = 'manualResultImports';
 const DEFAULT_SERVICE_ACCOUNT_PATH = path.join(process.cwd(), '.secrets', 'firebase-service-account.json');
+const LOCAL_MATCH_DATA_PATH = path.join(process.cwd(), 'match_data.json');
 const OWNER_EMAIL = 'l.vorabouth@gmail.com';
 const DRAW_NO_BET_TRACKING_START_DATE = '2026-05-25';
 
 let adminApp = null;
+let localMatchDataCache = null;
 
 function getAdminApp() {
   if (adminApp) return adminApp;
@@ -85,9 +87,17 @@ function cleanKey(value) {
     .replace(/[^a-z0-9]+/g, '');
 }
 
+function hasContent(value) {
+  if (Array.isArray(value)) return value.length > 0;
+  if (!value || typeof value !== 'object') return value !== null && value !== undefined && value !== '';
+  return Object.keys(value).length > 0;
+}
+
 function parseNumber(value) {
   if (value === null || value === undefined || value === '') return null;
-  const number = Number(String(value).replace(/[^\d.-]/g, ''));
+  const cleaned = String(value).replace(/[^\d.-]/g, '');
+  if (!cleaned || !/\d/.test(cleaned)) return null;
+  const number = Number(cleaned);
   return Number.isFinite(number) ? number : null;
 }
 
@@ -139,12 +149,32 @@ function statPair(stats, homeName, awayName, ...keys) {
   return null;
 }
 
-function parseScore(input) {
+export function parseScore(input) {
   const direct = sidePair(input?.score || input?.result || input?.fullTime || input?.ft || input, ['home', 'homeScore'], ['away', 'awayScore']);
   if (direct) return direct;
 
-  const home = parseNumber(firstValue(input?.homeScore, input?.home?.score, input?.home?.goals, input?.scoreHome, input?.match?.homeScore));
-  const away = parseNumber(firstValue(input?.awayScore, input?.away?.score, input?.away?.goals, input?.scoreAway, input?.match?.awayScore));
+  const home = parseNumber(firstValue(
+    input?.homeScore,
+    input?.home?.score,
+    input?.home?.goals,
+    input?.homeTeam?.score,
+    input?.homeTeam?.goals,
+    input?.scoreHome,
+    input?.match?.homeScore,
+    input?.match?.homeTeam?.score,
+    input?.match?.homeTeam?.goals,
+  ));
+  const away = parseNumber(firstValue(
+    input?.awayScore,
+    input?.away?.score,
+    input?.away?.goals,
+    input?.awayTeam?.score,
+    input?.awayTeam?.goals,
+    input?.scoreAway,
+    input?.match?.awayScore,
+    input?.match?.awayTeam?.score,
+    input?.match?.awayTeam?.goals,
+  ));
   if (home !== null && away !== null) return { home, away };
 
   const scoreText = firstValue(input?.score, input?.result, input?.fullTime, input?.ft);
@@ -165,7 +195,7 @@ function normalizeFirstToScore(value, homeName, awayName) {
   return null;
 }
 
-function normalizeImport(raw) {
+export function normalizeImport(raw) {
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
     throw new Error('Each import item must be a JSON object.');
   }
@@ -265,6 +295,79 @@ function matchScore(match, item) {
   return score;
 }
 
+function matchRichnessScore(match) {
+  if (!match || typeof match !== 'object') return 0;
+  let score = 0;
+  if (hasContent(match.predictions)) score += 10;
+  if (hasContent(match.odds)) score += 4;
+  if (hasContent(match.sportsbet_odds)) score += 4;
+  if (hasContent(match.sportsbet_markets)) score += 4;
+  if (hasContent(match.bookmaker_links)) score += 3;
+  if (hasContent(match.team_streaks)) score += 3;
+  if (hasContent(match.h2h_duel)) score += 2;
+  if (hasContent(match.display_markets)) score += 2;
+  if (hasContent(match.display_summary)) score += 2;
+  return score;
+}
+
+function mergeMissingMatchFields(target, reference) {
+  if (!reference) return target;
+  const next = {
+    ...reference,
+    ...target,
+    home: { ...(reference.home || {}), ...(target.home || {}) },
+    away: { ...(reference.away || {}), ...(target.away || {}) },
+  };
+  const preferredKeys = [
+    'predictions',
+    'odds',
+    'sportsbet_odds',
+    'sportsbet_markets',
+    'bookmaker_links',
+    'bookmaker_meta',
+    'corner_odds',
+    'team_streaks',
+    'h2h_duel',
+    'display_markets',
+    'display_summary',
+  ];
+  for (const key of preferredKeys) {
+    next[key] = hasContent(target?.[key]) ? target[key] : reference?.[key];
+  }
+  return next;
+}
+
+function loadLocalMatchData() {
+  if (localMatchDataCache) return localMatchDataCache;
+  if (!existsSync(LOCAL_MATCH_DATA_PATH)) return null;
+  try {
+    localMatchDataCache = JSON.parse(readFileSync(LOCAL_MATCH_DATA_PATH, 'utf8'));
+    return localMatchDataCache;
+  } catch {
+    return null;
+  }
+}
+
+function findArtifactMatch(item) {
+  const data = loadLocalMatchData();
+  const leagues = Array.isArray(data?.leagues) ? data.leagues : [];
+  let best = null;
+  leagues.forEach((league) => {
+    (Array.isArray(league.matches) ? league.matches : []).forEach((match) => {
+      const score = matchScore(match, item);
+      if (score >= 8 && (!best || score > best.score)) best = { score, match };
+    });
+  });
+  return best?.match || null;
+}
+
+export function hydrateImportBaseMatch(targetMatch, item) {
+  const artifactMatch = findArtifactMatch(item);
+  if (!artifactMatch) return targetMatch;
+  if (matchRichnessScore(artifactMatch) <= matchRichnessScore(targetMatch)) return targetMatch;
+  return mergeMissingMatchFields(targetMatch, artifactMatch);
+}
+
 function settleTotalMarket(market, actual) {
   if (!market || actual === null || actual === undefined) return market;
   const line = Number(market.line);
@@ -336,6 +439,23 @@ function firestoreSafe(value) {
   return value;
 }
 
+function pricedMarketOdds(market) {
+  if (market?.odds_estimated) return null;
+  const odds = Number(market?.odds);
+  return Number.isFinite(odds) && odds > 1 ? odds : null;
+}
+
+function marketReturnTotals(markets) {
+  return (markets || []).reduce((totals, market) => {
+    const odds = pricedMarketOdds(market);
+    if (!odds) return totals;
+    if (market.result === 'hit') totals.hit += odds;
+    if (market.result === 'miss') totals.loss += 1;
+    totals.priced += 1;
+    return totals;
+  }, { hit: 0, loss: 0, priced: 0 });
+}
+
 function summarizeReviewRows(matches) {
   const configs = [
     { key: 'suggested', label: 'Suggested pick', getMarket: (match) => match.display_summary?.compactMarket?.market },
@@ -353,8 +473,7 @@ function summarizeReviewRows(matches) {
       .filter((market) => market?.result === 'hit' || market?.result === 'miss');
     const hits = settled.filter((market) => market.result === 'hit');
     const misses = settled.filter((market) => market.result === 'miss');
-    const oddsHit = hits.reduce((sum, market) => sum + (Number(market.odds) || 0), 0);
-    const oddsMiss = misses.reduce((sum, market) => sum + (Number(market.odds) || 0), 0);
+    const oddsTotals = marketReturnTotals(settled);
     return {
       key: config.key,
       label: config.label,
@@ -362,9 +481,10 @@ function summarizeReviewRows(matches) {
       hits: hits.length,
       misses: misses.length,
       hitRate: settled.length ? Math.round((hits.length / settled.length) * 100) : 0,
-      oddsHit: Math.round(oddsHit * 10) / 10,
-      oddsMiss: Math.round(oddsMiss * 10) / 10,
-      net: Math.round((oddsHit - oddsMiss) * 10) / 10,
+      oddsHit: Math.round(oddsTotals.hit * 10) / 10,
+      oddsMiss: Math.round(oddsTotals.loss * 10) / 10,
+      oddsPriced: oddsTotals.priced,
+      net: Math.round((oddsTotals.hit - oddsTotals.loss) * 10) / 10,
     };
   }).filter((row) => row.total > 0);
 }
@@ -400,13 +520,7 @@ function summarizeAllTime(leagues) {
   const matches = leagues.flatMap((league) => Array.isArray(league.matches) ? league.matches : []);
   const markets = matches.flatMap((match) => Array.isArray(match.display_summary?.headlineMarkets) ? match.display_summary.headlineMarkets : []);
   const hits = markets.filter((market) => market?.result === 'hit').length;
-  const oddsTotals = markets.reduce((totals, market) => {
-    const odds = Number(market?.odds);
-    if (!Number.isFinite(odds)) return totals;
-    if (market.result === 'hit') totals.hit += odds;
-    if (market.result === 'miss') totals.loss += odds;
-    return totals;
-  }, { hit: 0, loss: 0 });
+  const oddsTotals = marketReturnTotals(markets);
   const finished = matches.filter((match) => match.status === 'FT').length;
   return {
     total: matches.length,
@@ -419,6 +533,7 @@ function summarizeAllTime(leagues) {
     oddsTotals: {
       hit: Math.round(oddsTotals.hit * 10) / 10,
       loss: Math.round(oddsTotals.loss * 10) / 10,
+      priced: oddsTotals.priced,
     },
     review: summarizeReviewMarkets(matches),
   };
@@ -549,7 +664,8 @@ export async function POST(request) {
       continue;
     }
     const league = leagueDocs[target.leagueIndex];
-    const nextMatch = applyResultToMatch(league.matches[target.matchIndex], item, owner);
+    const baseMatch = hydrateImportBaseMatch(league.matches[target.matchIndex], item);
+    const nextMatch = applyResultToMatch(baseMatch, item, owner);
     league.matches[target.matchIndex] = nextMatch;
     affectedLeagueIndexes.add(target.leagueIndex);
     affectedDates.add(nextMatch.date || item.date);

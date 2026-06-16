@@ -1,9 +1,42 @@
 # Soccer Stats — Scheduled Tasks
 
-The two schedules requested in the task brief cannot be created from inside a
-scheduled-task run (the platform refuses with `Cannot create scheduled tasks
-from within a scheduled task session`). Run the following two prompts from a
-normal Cowork chat and Claude will create them for you.
+> Scheduled tasks cannot be created from inside a scheduled-task run (the
+> platform refuses with `Cannot create scheduled tasks from within a scheduled
+> task session`). Create them from a normal Cowork chat.
+
+---
+
+## ACTIVE — Due-time result check (`soccer-due-time-result-check`)
+
+- **Status:** installed and enabled (Cowork scheduled task).
+- **Schedule:** hourly — cron `30 * * * *` (dispatch lands near :36 past the hour due to scheduler jitter). Local timezone.
+- **Runner:** delegates the whole routine to a Sonnet agent (Agent tool, `model: sonnet`, `subagent_type: general-purpose`).
+- **Conforms to:** the current `AGENTS.md` routine spec + `docs/agent-function-dependency-map.md`.
+- **Self-gating:** no-ops when no match's score-check time (kickoff + 3h, Adelaide) has passed and nothing is pending past expected finish; otherwise settles the due match(es).
+
+What each run does (full prompt lives in the task's `SKILL.md`):
+
+1. Read order — `docs/agent-function-dependency-map.md` first, then `routine_progress_latest.md` as the stage marker.
+2. Compile the Adelaide-day match queue, then filter to due `DUE @` rows (score-check = kickoff + 3h).
+3. Settle due results via `node scripts/get-data-with-log.mjs --results-only` (SofaScore primary, Sportsbet fallback, IDs isolated; postponed/cancelled → `postponed_or_cancelled` + void).
+4. Market settlement gate before any upload: `node scripts/verify_market_settlement.mjs` (unresolved must be 0; never fabricate actuals).
+5. Firestore is source of truth: verify `dashboardData/match_data/dates/<today>`, upload only if it's missing clean local results, then the post-upload Firestore verification gate; +6 horizon is provisional until Firestore confirms it.
+6. Stuck-upload recovery: kill only stuck `soccer_routine|get-data-with-log|upload_match_data|cache_badges|run-python.js` processes, rerun the REST small-batch uploader.
+7. Finalize `routine_progress_latest.{md,json}` accurately (never left "running"; gate computed from verification, not hand-written; artifacts stay labeled `codex 5.3`).
+
+Hard constraints: never commit/push/build/deploy; never fabricate results; never bypass provider blocking. Sandbox caveats: `pip install curl_cffi --break-system-packages` if the python step errors; skip the badge-cache step if it hangs (>~30s). Firestore reads/writes work in the sandbox; provider fetch + badge cache are most reliable on the Windows host (`run_daily.bat`, which calls the same `get:data:results` entry point).
+
+To recreate from a normal Cowork chat: ask Claude to create a scheduled task `soccer-due-time-result-check`, cron `30 * * * *`, running the routine above via a Sonnet agent, conformed to `AGENTS.md`.
+
+---
+
+## LEGACY (superseded — kept for reference)
+
+> Sections 1 and 2 below predate the Firestore + `codex 5.3` routine. They
+> target removed artifacts (`build_xlsx.py`, the static `Soccer_Stats_Dashboard.html`,
+> the public `match_data.json` browser source). The live app now reads Firestore
+> only, and result checking is handled by the ACTIVE task above plus
+> `npm.cmd run get:data` / `get:data:results`. Do not run these as written.
 
 ---
 
