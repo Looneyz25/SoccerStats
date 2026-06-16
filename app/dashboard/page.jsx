@@ -5742,6 +5742,7 @@ function HomeInner() {
   const [mobileNavActive, setMobileNavActive] = useState('dashboard');
   const [viewMode, setViewMode] = useState('cards');
   const [splitSelectedId, setSplitSelectedId] = useState(null);
+  const [isLg, setIsLg] = useState(false);
   const [voteLeaderboard, setVoteLeaderboard] = useState(null);
   const [voteLeaderboardLoading, setVoteLeaderboardLoading] = useState(true);
   const [voteLeaderboardError, setVoteLeaderboardError] = useState('');
@@ -5822,10 +5823,18 @@ function HomeInner() {
   }, []);
 
   useEffect(() => {
-    const isSplit = viewMode === 'split' && (mobileNavActive === 'matches' || mobileNavActive === 'watchlist');
+    const mq = window.matchMedia('(min-width: 1024px)');
+    setIsLg(mq.matches);
+    const handler = (e) => setIsLg(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
+  useEffect(() => {
+    const isSplit = isLg && viewMode === 'split' && (mobileNavActive === 'matches' || mobileNavActive === 'watchlist');
     document.documentElement.style.overflowY = isSplit ? 'hidden' : '';
     return () => { document.documentElement.style.overflowY = ''; };
-  }, [viewMode, mobileNavActive]);
+  }, [viewMode, mobileNavActive, isLg]);
 
   useEffect(() => {
     let active = true;
@@ -6750,12 +6759,14 @@ function HomeInner() {
           <span className="text-xs font-semibold uppercase tracking-wide text-faint">
             {displayedGroups.reduce((total, group) => total + (group.matches?.length || 0), 0)} matches
           </span>
-          <ViewModeToggle value={viewMode} onChange={changeViewMode} />
+          <div className="hidden lg:block">
+            <ViewModeToggle value={viewMode} onChange={changeViewMode} />
+          </div>
         </div>
         </div>
 
         <div
-          className={`${mobileNavActive === 'matches' || mobileNavActive === 'watchlist' ? 'block' : 'hidden'} ${viewMode === 'split' ? '' : 'date-slide-frame'} mt-3${dragActive ? ' date-slide-grabbing' : ''}`}
+          className={`${mobileNavActive === 'matches' || mobileNavActive === 'watchlist' ? 'block' : 'hidden'} ${viewMode === 'split' && isLg ? '' : 'date-slide-frame'} mt-3${dragActive ? ' date-slide-grabbing' : ''}`}
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
@@ -6771,7 +6782,7 @@ function HomeInner() {
             className={`space-y-4 sm:space-y-5 ${slideDir > 0 ? 'date-slide-next' : slideDir < 0 ? 'date-slide-prev' : ''}${dragActive ? ' date-slide-dragging' : ''}${snapBack ? ' date-slide-snapback' : ''}`}
             style={dragActive || snapBack ? { transform: `translateX(${dragOffset}px)` } : undefined}
           >
-          {viewMode === 'split' ? (
+          {viewMode === 'split' && isLg ? (
             <SplitView
               groups={displayedGroups}
               selectedMatch={splitSelectedMatch}
