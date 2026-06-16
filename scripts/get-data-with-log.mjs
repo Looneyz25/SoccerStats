@@ -4,12 +4,21 @@ import { existsSync } from 'node:fs';
 import path from 'node:path';
 import process from 'node:process';
 import { fileURLToPath } from 'node:url';
+import {
+  buildRoutineProgress,
+  progressMaintenanceDecision,
+  progressPendingPastExpectedFinish,
+  renderRoutineProgressMarkdown,
+} from './routine-progress.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT_DIR = path.join(ROOT, 'docs', 'agent-system', 'outputs');
 const PENDING_UPLOAD_PATH = path.join(OUT_DIR, 'result_pending_upload_latest.json');
+const PROGRESS_JSON_PATH = path.join(OUT_DIR, 'routine_progress_latest.json');
+const PROGRESS_MD_PATH = path.join(OUT_DIR, 'routine_progress_latest.md');
 const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 const argv = process.argv.slice(2);
+const strictResultsOnly = argv.includes('--results-only-strict');
 const resultsOnly = argv.includes('--results-only') || process.env.SOCCER_DATA_MODE === 'results';
 const topUpOnly = argv.includes('--top-up-only') || process.env.SOCCER_DATA_MODE === 'topup';
 const sourceArg = argv.find((arg) => arg.startsWith('--source='));
@@ -32,7 +41,7 @@ const DEFAULT_ENV = {
   SOCCER_FIXTURE_DAYS: resultsOnly ? '1' : '7',
   SOCCER_ODDS_BUDGET: resultsOnly ? '80' : topUpOnly ? '320' : '720',
   SOCCER_SPORTSBET_DEEP_BUDGET: resultsOnly ? '120' : topUpOnly ? '240' : '420',
-  SOCCER_RESULT_BUFFER_MINUTES: process.env.SOCCER_RESULT_BUFFER_MINUTES || '150',
+  SOCCER_RESULT_BUFFER_MINUTES: process.env.SOCCER_RESULT_BUFFER_MINUTES || '180',
   SOCCER_RESULT_LOOKBACK_DAYS: process.env.SOCCER_RESULT_LOOKBACK_DAYS || '3',
 };
 
@@ -48,6 +57,12 @@ const FULL_REFRESH_STEPS = [
     label: 'Run phase pipeline',
     command: 'node',
     args: ['scripts/run-python.js', 'scripts/soccer_phases_routine.py'],
+  },
+  {
+    id: 'verify_market_settlement',
+    label: 'Verify and repair settled markets',
+    command: 'node',
+    args: ['scripts/verify_market_settlement.mjs'],
   },
   {
     id: 'cache_badges',
@@ -87,6 +102,12 @@ const RESULTS_ONLY_STEPS = [
     label: 'Run model calibration',
     command: 'node',
     args: ['scripts/run-python.js', 'scripts/soccer_model_calibration_agent.py'],
+  },
+  {
+    id: 'verify_market_settlement',
+    label: 'Verify and repair settled markets',
+    command: 'node',
+    args: ['scripts/verify_market_settlement.mjs'],
   },
   {
     id: 'cache_badges',
@@ -129,6 +150,12 @@ const TOP_UP_HORIZON_STEP = {
 const TOP_UP_ONLY_STEPS = [
   TOP_UP_HORIZON_STEP,
   {
+    id: 'verify_market_settlement',
+    label: 'Verify and repair settled markets',
+    command: 'node',
+    args: ['scripts/verify_market_settlement.mjs'],
+  },
+  {
     id: 'cache_badges',
     label: 'Cache badges to Firebase Storage',
     command: 'node',
@@ -143,6 +170,12 @@ const TOP_UP_ONLY_STEPS = [
 ];
 
 const UPLOAD_RETRY_STEPS = [
+  {
+    id: 'verify_market_settlement',
+    label: 'Verify and repair settled markets',
+    command: 'node',
+    args: ['scripts/verify_market_settlement.mjs'],
+  },
   {
     id: 'cache_badges',
     label: 'Cache badges to Firebase Storage',
@@ -183,6 +216,12 @@ const SPORTSBET_SOURCE_STEPS = [
     },
   },
   {
+    id: 'verify_market_settlement',
+    label: 'Verify and repair settled markets',
+    command: 'node',
+    args: ['scripts/verify_market_settlement.mjs'],
+  },
+  {
     id: 'cache_badges',
     label: 'Cache badges to Firebase Storage',
     command: 'node',
@@ -204,6 +243,12 @@ const BET365_SOURCE_STEPS = [
     args: ['scripts/merge_bet365_context.mjs'],
   },
   {
+    id: 'verify_market_settlement',
+    label: 'Verify and repair settled markets',
+    command: 'node',
+    args: ['scripts/verify_market_settlement.mjs'],
+  },
+  {
     id: 'cache_badges',
     label: 'Cache badges to Firebase Storage',
     command: 'node',
@@ -223,11 +268,13 @@ const DATA_MUTATION_STEP_IDS = new Set([
   'top_up_horizon',
   'run_result_review',
   'run_model_calibration',
+  'verify_market_settlement',
   'refresh_sportsbet_odds',
   'refresh_bookmaker_links',
   'refresh_prediction_odds',
   'merge_bet365_context',
 ]);
+const RESULT_UPLOAD_GATE_STEP_IDS = new Set(['cache_badges', 'upload_firestore']);
 
 const BET365_CONTEXT_INPUTS = [
   path.join(ROOT, 'docs', 'agent-system', 'inputs', 'bet365_context.json'),
@@ -362,6 +409,42 @@ function addIsoDays(isoDate, days) {
   return date.toISOString().slice(0, 10);
 }
 
+function dateRangeAfter(startDate, endDate) {
+  if (!endDate) return [];
+  if (!startDate || startDate >= endDate) return [endDate];
+  const dates = [];
+  for (let cursor = addIsoDays(startDate, 1); cursor <= endDate; cursor = addIsoDays(cursor, 1)) {
+    dates.push(cursor);
+  }
+  return dates;
+}
+
+function topUpStepForDates(targetDates) {
+  const dates = targetDates.filter(Boolean);
+  return {
+    ...TOP_UP_HORIZON_STEP,
+    env: {
+      ...TOP_UP_HORIZON_STEP.env,
+      SOCCER_FIXTURE_DATES: dates.join(','),
+      SOCCER_FIXTURE_DAYS: String(Math.max(1, dates.length)),
+      SOCCER_TOP_UP_TARGETED: '1',
+    },
+  };
+}
+
+function scopedPostTopUpStep(step, targetDates) {
+  const dates = targetDates.filter(Boolean);
+  if (step.id !== 'cache_badges' || !dates.length) return step;
+  return {
+    ...step,
+    env: {
+      ...(step.env || {}),
+      BADGE_TARGET_DATES: dates.join(','),
+      SOCCER_FIXTURE_DATES: dates.join(','),
+    },
+  };
+}
+
 function seedTargetDate(schedule) {
   const tomorrowRows = (schedule?.matches || [])
     .filter((row) => row.scope === 'tomorrow' && row.date)
@@ -420,6 +503,8 @@ async function markPendingUpload(log, reason) {
     runId: log.runId,
     mode: log.mode,
     decision: log.decision?.action || null,
+    targetDate: log.decision?.targetDate || null,
+    targetDates: log.decision?.targetDates || [],
     markedAt: nowIso(),
     steps: log.steps.map((step) => ({
       id: step.id,
@@ -437,11 +522,49 @@ async function clearPendingUpload() {
 async function pendingUploadDecision() {
   const pending = await readJsonSafe(PENDING_UPLOAD_PATH);
   if (!pending) return { shouldRetryUpload: false };
+  const horizonTopUp = await readJsonSafe(path.join(OUT_DIR, 'result_horizon_top_up_latest.json'));
+  const targetDates = Array.isArray(pending.targetDates) && pending.targetDates.length
+    ? pending.targetDates
+    : pending.targetDate
+      ? [pending.targetDate]
+      : pending.decision === 'top-up-horizon' && horizonTopUp?.targetDate
+        ? [horizonTopUp.targetDate]
+        : [];
   return {
     shouldRetryUpload: true,
     reason: `previous local data run needs Firestore upload retry (${pending.reason || 'upload did not complete'})`,
     pending,
+    targetDates,
   };
+}
+
+async function writeRoutineProgress(log) {
+  const matchData = await readJsonSafe(path.join(ROOT, 'match_data.json'));
+  const schedule = await readJsonSafe(path.join(OUT_DIR, 'result_check_schedule_latest.json'));
+  const previousProgress = await readJsonSafe(PROGRESS_JSON_PATH);
+  const progress = buildRoutineProgress({ matchData, schedule, log, previousProgress });
+  await writeFile(PROGRESS_JSON_PATH, `${JSON.stringify(progress, null, 2)}\n`, 'utf8');
+  await writeFile(PROGRESS_MD_PATH, renderRoutineProgressMarkdown(progress), 'utf8');
+  return progress;
+}
+
+async function checkpointRoutineProgress(log, stage) {
+  log.stage = {
+    id: stage.id || null,
+    label: stage.label || stage.id || 'Routine checkpoint',
+    status: stage.status || log.status || 'running',
+    updatedAt: nowIso(),
+    stepStatus: stage.stepStatus || null,
+    stepExitCode: stage.stepExitCode ?? null,
+  };
+  return writeRoutineProgress(log);
+}
+
+async function readRoutineProgressSnapshot(log = null) {
+  const matchData = await readJsonSafe(path.join(ROOT, 'match_data.json'));
+  const schedule = await readJsonSafe(path.join(OUT_DIR, 'result_check_schedule_latest.json'));
+  const previousProgress = await readJsonSafe(PROGRESS_JSON_PATH);
+  return buildRoutineProgress({ matchData, schedule, log, previousProgress });
 }
 
 function parseDueAt(row) {
@@ -451,8 +574,20 @@ function parseDueAt(row) {
   return Number.isFinite(timestamp) ? timestamp : null;
 }
 
+function rowClosedForResultCheck(row) {
+  return new Set([
+    'ft',
+    'postponed_or_cancelled',
+    'postponed',
+    'cancelled',
+    'canceled',
+    'abandoned',
+    'suspended',
+  ]).has(String(row?.status || '').toLowerCase());
+}
+
 function rowIsDue(row, nowMs = Date.now()) {
-  if (!row || row.status === 'FT') return false;
+  if (!row || rowClosedForResultCheck(row)) return false;
   if (row.due_for_check === true) return true;
   if (row.scope === 'overdue') return true;
   if (row.date && row.date < todayInAdelaide()) return true;
@@ -478,7 +613,71 @@ function describeMatch(row) {
   return `${row.date || '?'} ${row.time || '?'} ${row.league || '?'} ${teams} (${row.result_queue || 'DUE @ unknown'})`;
 }
 
-async function planResultsRun() {
+function unresolvedDueResultsStep(due) {
+  const details = due.map(describeMatch);
+  return {
+    id: 'block_unresolved_due_results',
+    label: 'Block upload on unresolved due results',
+    command: 'internal',
+    args: [],
+    status: 'failed',
+    exitCode: 1,
+    durationMs: 0,
+    stdout: details.join('\n'),
+    stderr: `${due.length} due result${due.length === 1 ? '' : 's'} still unresolved after settlement`,
+  };
+}
+
+function agentInterventionRequiredStep(overduePending) {
+  const details = overduePending.map((match) =>
+    `${match.date || '?'} ${match.time || '?'} ${match.league || '?'} ${match.home || '?'} vs ${match.away || '?'} (${match.expectedFinish || 'expected finish unknown'})`,
+  );
+  return {
+    id: 'agent_intervention_required',
+    label: 'Agent intervention required for pending results',
+    command: 'internal',
+    args: [],
+    status: 'failed',
+    exitCode: 1,
+    durationMs: 0,
+    stdout: details.join('\n'),
+    stderr: `${overduePending.length} pending match${overduePending.length === 1 ? '' : 'es'} still past expected finish after get:data results check`,
+  };
+}
+
+function horizonTopUpIncompleteStep(progress) {
+  return {
+    id: 'horizon_top_up_incomplete',
+    label: 'Forecast horizon still incomplete',
+    command: 'internal',
+    args: [],
+    status: 'failed',
+    exitCode: 1,
+    durationMs: 0,
+    stdout: `latest=${progress.latestCollectedDate || 'n/a'} required=${progress.requiredLatestDate || 'n/a'}`,
+    stderr: `forecast horizon still short after top-up: latest ${progress.latestCollectedDate || 'n/a'}, required ${progress.requiredLatestDate || 'n/a'}`,
+  };
+}
+
+async function postResultsInterventionStep() {
+  const progress = await readRoutineProgressSnapshot();
+  const overduePending = progressPendingPastExpectedFinish(progress);
+  if (!overduePending.length) return null;
+  return agentInterventionRequiredStep(overduePending);
+}
+
+async function planResultsRun({ forceResultsOnly = false } = {}) {
+  const progress = await readRoutineProgressSnapshot();
+  const progressDecision = progressMaintenanceDecision(progress);
+  if (progressDecision?.action === 'results') {
+    return {
+      action: 'results',
+      reason: progressDecision.reason,
+      due: progressDecision.due || [],
+      requiredSteps: RESULTS_ONLY_STEPS,
+    };
+  }
+
   const schedulePath = path.join(OUT_DIR, 'result_check_schedule_latest.json');
   const schedule = await readJsonSafe(schedulePath);
   if (!schedule) {
@@ -499,42 +698,61 @@ async function planResultsRun() {
     };
   }
 
+  if (!forceResultsOnly && progressDecision?.action === 'top-up-horizon') {
+    const targetDates = dateRangeAfter(progress.latestCollectedDate, progressDecision.targetDate);
+    return {
+      action: 'top-up-horizon',
+      reason: progressDecision.reason,
+      targetDate: progressDecision.targetDate || null,
+      targetDates,
+      requiredSteps: [
+        topUpStepForDates(targetDates),
+        ...TOP_UP_ONLY_STEPS.slice(1).map((step) => scopedPostTopUpStep(step, targetDates)),
+      ],
+    };
+  }
+
+  // Check pending upload BEFORE the completed-today gate: the --live pass writes this
+  // flag when it updates live scores, and those changes need a Firestore upload even
+  // when today's full settlement run already completed.
   const pendingUpload = await pendingUploadDecision();
   if (pendingUpload.shouldRetryUpload) {
     return {
       action: 'retry-upload',
       reason: pendingUpload.reason,
-      requiredSteps: UPLOAD_RETRY_STEPS,
+      targetDates: pendingUpload.targetDates,
+      requiredSteps: UPLOAD_RETRY_STEPS.map((step) => scopedPostTopUpStep(step, pendingUpload.targetDates)),
     };
   }
 
-  const seed = await seedDecision();
-  if (seed.shouldSeed) {
+  const routineCompletedToday = progress?.completedForDate
+    && progress.completedForDate === todayInAdelaide()
+    && progress.progressState === 'completed'
+    && Number(schedule.remaining_count ?? 0) === 0
+    && Number(schedule.due_count ?? 0) === 0;
+  if (routineCompletedToday) {
     return {
-      action: 'seed-next-day',
-      reason: seed.reason,
-      targetDate: seed.targetDate,
-      requiredSteps: [
-        SEED_NEXT_DAY_STEP,
-        ...RESULTS_ONLY_STEPS.filter((step) => ['cache_badges', 'upload_firestore'].includes(step.id)),
-      ],
+      action: 'skip',
+      reason: `routine progress marks in progress ${progress.completedForDate} completed`,
+      nextDue: nextDueRows(schedule).map(describeMatch),
+      requiredSteps: [],
     };
   }
 
-  const topUp = await horizonTopUpDecision();
-  if (topUp.shouldTopUp) {
+  if (!progressDecision) {
+    const nextDue = nextDueRows(schedule).map(describeMatch);
     return {
-      action: 'top-up-horizon',
-      reason: topUp.reason,
-      targetDate: topUp.targetDate,
-      requiredSteps: TOP_UP_ONLY_STEPS,
+      action: 'skip',
+      reason: 'routine progress has no pending matches past expected finish and +6 forecast is collected',
+      nextDue,
+      requiredSteps: [],
     };
   }
 
   const nextDue = nextDueRows(schedule).map(describeMatch);
   return {
     action: 'skip',
-    reason: topUp.reason,
+    reason: 'routine progress did not require data collection',
     nextDue,
     requiredSteps: [],
   };
@@ -604,6 +822,7 @@ async function collectArtifacts() {
   const phaseRunLog = await readJsonSafe(path.join(OUT_DIR, 'Phase7_Run_Log.json'));
   const resultSchedule = await readJsonSafe(path.join(OUT_DIR, 'result_check_schedule_latest.json'));
   const phaseSummary = await readTextSafe(path.join(OUT_DIR, 'Phase7_Daily_Summary.md'));
+  const marketSettlement = await readJsonSafe(path.join(OUT_DIR, 'market_settlement_verification_latest.json'));
   const leagues = Array.isArray(matchData?.leagues) ? matchData.leagues : [];
   const uploadMeta = matchData
     ? {
@@ -625,6 +844,30 @@ async function collectArtifacts() {
     resultSchedulePath: path.join('docs', 'agent-system', 'outputs', 'result_check_schedule_latest.md'),
     phaseSummaryPath: path.join('docs', 'agent-system', 'outputs', 'Phase7_Daily_Summary.md'),
     phaseRunLogPath: path.join('docs', 'agent-system', 'outputs', 'Phase7_Run_Log.json'),
+    marketSettlement,
+    marketSettlementPath: path.join('docs', 'agent-system', 'outputs', 'market_settlement_verification_latest.md'),
+  };
+}
+
+function marketSettlementAgentReviewGate(marketSettlement) {
+  if (!marketSettlement) return null;
+  const unresolved = Array.isArray(marketSettlement.unresolvedMarkets) ? marketSettlement.unresolvedMarkets : [];
+  return {
+    current_step: 'market_settlement_verification',
+    status: marketSettlement.status || 'unknown',
+    evidence_checked: [
+      'match_data.json',
+      'docs/agent-system/outputs/market_settlement_verification_latest.json',
+      'docs/agent-system/outputs/market_settlement_verification_latest.md',
+    ],
+    decision: unresolved.length
+      ? 'stop before Firestore upload; required FT markets are not fully settled'
+      : 'proceed; required FT markets for the day are settled',
+    action_taken: `checked FT=${marketSettlement.ftMatchesChecked ?? 0}; repaired=${marketSettlement.marketsRepaired ?? 0}`,
+    result: `unresolved_markets=${unresolved.length}`,
+    blockers: unresolved.slice(0, 8).map((row) => `${row.label || row.matchId || 'match'}: ${row.reason || 'unsettled'}`),
+    next_step: unresolved.length ? 'fetch provider actuals or add manual result import, then rerun results/upload' : 'continue Firestore upload verification',
+    agent_intervention_required: unresolved.length > 0,
   };
 }
 
@@ -672,6 +915,21 @@ function renderMarkdown(log) {
     lines.push(`- Result schedule: \`${log.artifacts.resultSchedulePath}\``);
   }
 
+  if (log.artifacts.routineProgress) {
+    const progress = log.artifacts.routineProgress;
+    lines.push(`- Routine progress: \`${log.artifacts.routineProgressPath}\``);
+    lines.push(`- Latest / last day collected: ${progress.latestCollectedDate || 'n/a'}`);
+    lines.push(`- Forecast through +6 days: ${progress.hasSevenDayForecast ? 'yes' : 'no'} (needs ${progress.requiredLatestDate || 'n/a'})`);
+    lines.push(`- Progress pending/resulted: pending=${progress.pendingCount}, resulted=${progress.resultedCount}, overdue_pending=${progress.overduePendingCount}`);
+  }
+
+  if (log.artifacts.marketSettlement) {
+    const marketSettlement = log.artifacts.marketSettlement;
+    const unresolvedCount = Array.isArray(marketSettlement.unresolvedMarkets) ? marketSettlement.unresolvedMarkets.length : 0;
+    lines.push(`- Market settlement verification: ${marketSettlement.status || 'unknown'} (FT=${marketSettlement.ftMatchesChecked ?? 0}, repaired=${marketSettlement.marketsRepaired ?? 0}, unresolved=${unresolvedCount})`);
+    lines.push(`- Market settlement report: \`${log.artifacts.marketSettlementPath}\``);
+  }
+
   if (log.decision) {
     lines.push('');
     lines.push('## Routine Decision');
@@ -679,6 +937,9 @@ function renderMarkdown(log) {
     lines.push(`- Action: ${log.decision.action}`);
     lines.push(`- Reason: ${log.decision.reason}`);
     if (log.decision.targetDate) lines.push(`- Target date: ${log.decision.targetDate}`);
+    if (Array.isArray(log.decision.targetDates) && log.decision.targetDates.length) {
+      lines.push(`- Target dates: ${log.decision.targetDates.join(', ')}`);
+    }
     if (Array.isArray(log.decision.due) && log.decision.due.length) {
       log.decision.due.forEach((row) => lines.push(`- Due: ${row}`));
     }
@@ -738,7 +999,7 @@ async function main() {
     `npm_command=${npmCommand}`,
   ];
 
-  const decision = sourceMode ? planSourceRun(sourceMode) : resultsOnly ? await planResultsRun() : topUpOnly ? {
+  const decision = sourceMode ? planSourceRun(sourceMode) : resultsOnly ? await planResultsRun({ forceResultsOnly: strictResultsOnly }) : topUpOnly ? {
     action: 'top-up-horizon',
     reason: 'manual top-up-only mode requested',
     targetDate: todayInAdelaide(),
@@ -759,31 +1020,119 @@ async function main() {
   }
 
   const steps = [];
+  const log = {
+    runId,
+    mode: runMode,
+    status: 'running',
+    startedAt: started.toISOString(),
+    completedAt: null,
+    paths: relativePaths,
+    decision: {
+      action: decision.action,
+      reason: decision.reason,
+      targetDate: decision.targetDate || null,
+      targetDates: decision.targetDates || [],
+      due: decision.due || [],
+      nextDue: decision.nextDue || [],
+    },
+    steps,
+    artifacts: {},
+    stage: null,
+  };
+
+  await checkpointRoutineProgress(log, {
+    id: 'decision',
+    label: `Decision: ${decision.action}`,
+    status: 'running',
+  });
+
   for (const step of decision.requiredSteps) {
-    if (resultsOnly && decision.action === 'results' && step.id === 'upload_firestore') {
-      const decision = await seedDecision();
-      transcript.push('');
-      transcript.push(`seed_next_day_decision=${decision.reason}`);
-      console.log(`[Seed day+1] ${decision.reason}`);
-      if (decision.shouldSeed) {
-        const seedResult = await runStep(SEED_NEXT_DAY_STEP, transcript);
-        steps.push(seedResult);
-        if (seedResult.status === 'ok') {
-          await markSeeded(decision.targetDate, seedResult);
-        } else {
-          break;
-        }
+    await checkpointRoutineProgress(log, {
+      id: step.id,
+      label: `Starting: ${step.label}`,
+      status: 'running',
+    });
+
+    if (resultsOnly && decision.action === 'results' && RESULT_UPLOAD_GATE_STEP_IDS.has(step.id)) {
+      const interventionStep = await postResultsInterventionStep();
+      if (interventionStep) {
+        transcript.push('');
+        transcript.push(`agent_intervention_required=${interventionStep.stderr}`);
+        interventionStep.stdout.split(/\r?\n/).filter(Boolean).forEach((row) => transcript.push(`agent_intervention_match=${row}`));
+        console.error(`[Agent intervention] ${interventionStep.stderr}`);
+        interventionStep.stdout.split(/\r?\n/).filter(Boolean).forEach((row) => console.error(`  pending: ${row}`));
+        steps.push(interventionStep);
+        await checkpointRoutineProgress(log, {
+          id: interventionStep.id,
+          label: interventionStep.label,
+          status: interventionStep.status,
+          stepStatus: interventionStep.status,
+          stepExitCode: interventionStep.exitCode,
+        });
+        break;
+      }
+
+      const postSettleSchedule = await readJsonSafe(path.join(OUT_DIR, 'result_check_schedule_latest.json'));
+      const unresolvedDue = dueRows(postSettleSchedule);
+      if (unresolvedDue.length) {
+        const gateStep = unresolvedDueResultsStep(unresolvedDue);
+        transcript.push('');
+        transcript.push(`unresolved_due_results=${unresolvedDue.length}`);
+        gateStep.stdout.split(/\r?\n/).filter(Boolean).forEach((row) => transcript.push(`unresolved_due=${row}`));
+        console.error(`[Result gate] ${gateStep.stderr}`);
+        gateStep.stdout.split(/\r?\n/).filter(Boolean).forEach((row) => console.error(`  unresolved: ${row}`));
+        steps.push(gateStep);
+        await checkpointRoutineProgress(log, {
+          id: gateStep.id,
+          label: gateStep.label,
+          status: gateStep.status,
+          stepStatus: gateStep.status,
+          stepExitCode: gateStep.exitCode,
+        });
+        break;
       }
     }
     const result = await runStep(step, transcript);
     steps.push(result);
+    await checkpointRoutineProgress(log, {
+      id: result.id,
+      label: `Completed: ${result.label}`,
+      status: result.status === 'ok' ? 'running' : 'failed',
+      stepStatus: result.status,
+      stepExitCode: result.exitCode,
+    });
     if (result.status === 'ok' && result.id === 'seed_next_day' && decision.targetDate) {
       await markSeeded(decision.targetDate, result);
     }
     if (result.status === 'ok' && result.id === 'top_up_horizon' && decision.targetDate) {
+      const progress = await readRoutineProgressSnapshot(log);
+      if (!progress.hasSevenDayForecast) {
+        const incompleteStep = horizonTopUpIncompleteStep(progress);
+        transcript.push('');
+        transcript.push(`horizon_top_up_incomplete=${incompleteStep.stderr}`);
+        transcript.push(incompleteStep.stdout);
+        console.error(`[Forecast horizon] ${incompleteStep.stderr}`);
+        steps.push(incompleteStep);
+        await checkpointRoutineProgress(log, {
+          id: incompleteStep.id,
+          label: incompleteStep.label,
+          status: incompleteStep.status,
+          stepStatus: incompleteStep.status,
+          stepExitCode: incompleteStep.exitCode,
+        });
+        continue;
+      }
       await markHorizonTopUp(decision.targetDate, result);
     }
     if (result.status !== 'ok') break;
+  }
+
+  if (!decision.requiredSteps.length) {
+    await checkpointRoutineProgress(log, {
+      id: 'skip',
+      label: 'No command needed',
+      status: 'ok',
+    });
   }
 
   const completedAt = nowIso();
@@ -793,30 +1142,36 @@ async function main() {
   );
   const status = requiredStepsOk && steps.every((step) => step.status === 'ok') ? 'ok' : 'failed';
   const uploadOk = steps.some((step) => step.id === 'upload_firestore' && step.status === 'ok');
-  const localDataChanged = steps.some((step) => DATA_MUTATION_STEP_IDS.has(step.id) && step.status === 'ok');
-  const log = {
-    runId,
-    mode: runMode,
-    status,
-    startedAt: started.toISOString(),
-    completedAt,
-    paths: relativePaths,
-    decision: {
-      action: decision.action,
-      reason: decision.reason,
-      targetDate: decision.targetDate || null,
-      due: decision.due || [],
-      nextDue: decision.nextDue || [],
-    },
-    steps,
-    artifacts,
-  };
+  const marketSettlementChanged = Number(artifacts.marketSettlement?.marketsRepaired || 0) > 0;
+  const localDataChanged = marketSettlementChanged || steps.some((step) => DATA_MUTATION_STEP_IDS.has(step.id) && step.status === 'ok');
+  log.status = status;
+  log.completedAt = completedAt;
+  log.artifacts = artifacts;
+  log.agentReviewGate = marketSettlementAgentReviewGate(artifacts.marketSettlement) || log.agentReviewGate || null;
 
   if (uploadOk) {
     await clearPendingUpload();
   } else if (localDataChanged) {
     await markPendingUpload(log, status === 'ok' ? 'upload step was not run after local data changed' : 'upload step failed after local data changed');
   }
+
+  const progress = await writeRoutineProgress(log);
+  await checkpointRoutineProgress(log, {
+    id: 'completed',
+    label: `Completed: ${status}`,
+    status,
+  });
+  log.artifacts.routineProgressPath = path.join('docs', 'agent-system', 'outputs', 'routine_progress_latest.md');
+  log.artifacts.routineProgress = {
+    latestCollectedDate: progress.latestCollectedDate,
+    requiredLatestDate: progress.requiredLatestDate,
+    hasSevenDayForecast: progress.hasSevenDayForecast,
+    pendingCount: progress.pendingCount,
+    resultedCount: progress.resultedCount,
+    overduePendingCount: progress.overduePendingCount,
+    actions: progress.actions,
+    agentReviewGate: progress.agentReviewGate,
+  };
 
   transcript.push('');
   transcript.push(`completed_at=${completedAt}`);
