@@ -1305,6 +1305,13 @@ def settle_due_matches_by_sofascore_id(targets):
                 source_note = " [LiveScore due time]"
 
         if not settled_this:
+            es = espn_state_for_match(L.get("name", ""), m)
+            if es and es[0] == "ft" and settle(m, {"homeScore": {"current": es[1]}, "awayScore": {"current": es[2]}}):
+                m["settled_source"] = "ESPN"
+                settled_this = True
+                source_note = " [ESPN]"
+
+        if not settled_this:
             skipped += 1
             continue
 
@@ -1770,6 +1777,10 @@ def actuals_for(eid, league_name="", match=None):
         flash_actuals = flashscore_actuals_for_match(league_name, match)
         if flash_actuals:
             out = {**flash_actuals, **out}
+    if match and "corners_total" not in out:
+        espn_actuals = espn_actuals_for_match(league_name, match)
+        if espn_actuals:
+            out = {**espn_actuals, **out}
     return out
 
 
@@ -4116,7 +4127,9 @@ def apply_live_state(match, home, away, minute):
     if home is None or away is None:
         return False
     match["status"] = "live"
-    match["time"] = "LIVE"
+    # Keep the original kickoff time intact: overwriting it (e.g. with "LIVE") breaks
+    # match_kickoff_datetime, dropping the match out of the live window on the next run.
+    # The dashboard shows the live state from status + live_minute, not the time field.
     match.setdefault("home", {})["goals"] = home
     match.setdefault("away", {})["goals"] = away
     if minute:
@@ -4172,6 +4185,70 @@ def flashscore_live_state_for_match(league_name, match):
     return None
 
 
+_ESPN_SCOREBOARD_CACHE = {}
+
+
+def espn_scoreboard_events(league_name):
+    """Cached ESPN scoreboard events for a tracked league (current window)."""
+    import soccer_phase1_fixtures as espnsource
+    slug = espnsource.ESPN_LEAGUE_SLUGS.get(league_name)
+    if not slug:
+        return []
+    if slug not in _ESPN_SCOREBOARD_CACHE:
+        _ESPN_SCOREBOARD_CACHE[slug] = espnsource.fetch_espn_scoreboard(slug)
+    return _ESPN_SCOREBOARD_CACHE[slug]
+
+
+def _espn_date_close(ev_date, match_date):
+    # ESPN dates are UTC; our match dates are Adelaide local, so allow a one-day slack.
+    a = parse_match_date(ev_date)
+    b = parse_match_date(match_date)
+    if not a or not b:
+        return True
+    return abs((a - b).days) <= 1
+
+
+def espn_event_for_match(league_name, match):
+    home = (match.get("home") or {}).get("name", "")
+    away = (match.get("away") or {}).get("name", "")
+    for ev in espn_scoreboard_events(league_name):
+        if not _espn_date_close(ev.get("date"), match.get("date")):
+            continue
+        if team_names_match(home, ev.get("home")) and team_names_match(away, ev.get("away")):
+            return ev
+    return None
+
+
+def espn_state_for_match(league_name, match):
+    """Return (kind, home, away, minute) from ESPN, or None. kind is 'ft'/'live'/'upcoming'."""
+    ev = espn_event_for_match(league_name, match)
+    if not ev:
+        return None
+    try:
+        h = int(ev.get("home_score"))
+        a = int(ev.get("away_score"))
+    except (TypeError, ValueError):
+        return None
+    if ev.get("state") == "post" or ev.get("completed"):
+        return ("ft", h, a, ev.get("detail"))
+    if ev.get("state") == "in":
+        return ("live", h, a, ev.get("detail"))
+    return ("upcoming", h, a, None)
+
+
+def espn_actuals_for_match(league_name, match):
+    """Return {corners_total, ...} from ESPN, or None (ESPN scoreboard has no cards)."""
+    ev = espn_event_for_match(league_name, match)
+    if not ev:
+        return None
+    try:
+        hc = int(ev.get("home_corners"))
+        ac = int(ev.get("away_corners"))
+    except (TypeError, ValueError):
+        return None
+    return {"source": "ESPN", "home_corners": hc, "away_corners": ac, "corners_total": hc + ac}
+
+
 def update_live_and_settle(store):
     """For every started, not-yet-closed match in the live window: show the in-play
     score, or settle on confirmed full time. Record matches stuck upcoming past their
@@ -4186,7 +4263,14 @@ def update_live_and_settle(store):
             if match_closed_for_result_check(m):
                 continue
             mins = minutes_since_kickoff(m, now)
-            if mins is None or mins < 0 or mins > LIVE_LOOKBACK_HOURS * 60:
+            is_live_status = str(m.get("status") or "").lower() == "live"
+            if mins is None:
+                # A match already marked live but with an unparseable kickoff time still
+                # needs updating/settling; treat it as in-play and eligible for FT confirm.
+                if not is_live_status:
+                    continue
+                mins = EARLY_FT_CONFIRM_MINUTES
+            elif mins < 0 or mins > LIVE_LOOKBACK_HOURS * 60:
                 continue
             league_name = L.get("name", "")
             label = f"{league_name}: {(m.get('home') or {}).get('name')} vs {(m.get('away') or {}).get('name')}"
@@ -4194,6 +4278,13 @@ def update_live_and_settle(store):
 
             state = sofascore_state(eid)
             source = "SofaScore FT" if state else None
+            # ESPN is an independent live/result source that stays up when SofaScore is
+            # blocked and covers fixtures Flashscore omits.
+            if (not state or state[0] == "upcoming"):
+                es = espn_state_for_match(league_name, m)
+                if es:
+                    state = es
+                    source = "ESPN FT"
             if (not state or state[0] == "upcoming"):
                 ls = livescore_state_for_match(league_name, m)
                 if ls:

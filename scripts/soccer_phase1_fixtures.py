@@ -523,6 +523,82 @@ def fetch_flashscore_event_stats(event_id):
     return {}
 
 
+# ESPN's free, no-auth soccer API is an independent fallback for live scores, final
+# results and corner counts — it covers fixtures Flashscore omits and stays up when
+# SofaScore is blocked. Map our canonical league names to ESPN league slugs.
+ESPN_BASE = "https://site.api.espn.com/apis/site/v2/sports/soccer"
+ESPN_LEAGUE_SLUGS = {
+    "FIFA World Cup": "fifa.world",
+    "International Friendly Games": "fifa.friendly",
+    "Premier League": "eng.1",
+    "Championship": "eng.2",
+    "League One": "eng.3",
+    "League Two": "eng.4",
+    "LaLiga": "esp.1",
+    "Bundesliga": "ger.1",
+    "Serie A": "ita.1",
+    "Ligue 1": "fra.1",
+    "Eredivisie": "ned.1",
+    "Primeira Liga": "por.1",
+    "A-League Men": "aus.1",
+    "Scottish Premiership": "sco.1",
+    "J1 League": "jpn.1",
+    "UEFA Champions League": "uefa.champions",
+    "UEFA Europa League": "uefa.europa",
+    "UEFA Conference League": "uefa.europa.conf",
+    "MLS": "usa.1",
+    "Brasileirão Betano": "bra.1",
+    "CONMEBOL Libertadores": "conmebol.libertadores",
+    "Allsvenskan": "swe.1",
+    "Eliteserien": "nor.1",
+}
+
+
+def _espn_competitor_stat(competitor, name):
+    for stat in competitor.get("statistics") or []:
+        if stat.get("name") == name:
+            return stat.get("displayValue")
+    return None
+
+
+def parse_espn_events(data):
+    events = []
+    for event in (data or {}).get("events", []):
+        comp = (event.get("competitions") or [{}])[0]
+        competitors = comp.get("competitors") or []
+        home = next((c for c in competitors if c.get("homeAway") == "home"), {})
+        away = next((c for c in competitors if c.get("homeAway") == "away"), {})
+        status_type = (event.get("status") or {}).get("type") or {}
+        events.append({
+            "event_id": event.get("id"),
+            "home": (home.get("team") or {}).get("displayName") or (home.get("team") or {}).get("name"),
+            "away": (away.get("team") or {}).get("displayName") or (away.get("team") or {}).get("name"),
+            "home_score": home.get("score"),
+            "away_score": away.get("score"),
+            "state": status_type.get("state"),            # pre / in / post
+            "completed": bool(status_type.get("completed")),
+            "detail": status_type.get("shortDetail") or status_type.get("detail"),
+            "home_corners": _espn_competitor_stat(home, "wonCorners"),
+            "away_corners": _espn_competitor_stat(away, "wonCorners"),
+            "date": (event.get("date") or "")[:10],
+        })
+    return events
+
+
+def fetch_espn_scoreboard(slug):
+    """Return parsed ESPN scoreboard events for a league slug (current window), or []."""
+    if not slug:
+        return []
+    url = f"{ESPN_BASE}/{slug}/scoreboard"
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=20) as resp:
+            data = json.loads(resp.read().decode("utf-8", errors="replace"))
+    except Exception:
+        return []
+    return parse_espn_events(data)
+
+
 def flashscore_league(event):
     country = (event.get("country") or "").lower()
     league = (event.get("league") or "").lower()
