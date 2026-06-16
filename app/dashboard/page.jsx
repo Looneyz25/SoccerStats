@@ -5801,6 +5801,18 @@ function HomeInner() {
   }, []);
 
   useEffect(() => {
+    if (matchParam || isSettingsView) return;
+    const saved = window.localStorage.getItem('activeSection');
+    if (saved && ['dashboard', 'matches', 'watchlist', 'results'].includes(saved)) {
+      setMobileNavActive(saved);
+    }
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem('activeSection', mobileNavActive);
+  }, [mobileNavActive]);
+
+  useEffect(() => {
     try {
       const saved = JSON.parse(window.localStorage.getItem(FAVORITE_LEAGUES_STORAGE_KEY) || '[]');
       if (Array.isArray(saved)) {
