@@ -2187,9 +2187,16 @@ def fetch_standings(unique_tournament_id, season_id):
     if d:
         for st in d.get("standings", []):
             for row in st.get("rows", []):
-                tid = ((row.get("team") or {}).get("id"))
+                team = row.get("team") or {}
+                tid = team.get("id")
+                entry = {"rank": row.get("position"), "pts": row.get("points")}
                 if tid:
-                    out[tid] = {"rank": row.get("position"), "pts": row.get("points")}
+                    out[tid] = entry
+                # Also index by lowercased name so Phase 1 fixtures (ESPN/Flashscore
+                # team IDs) can still look up standings via team name.
+                tname = (team.get("name") or "").strip().lower()
+                if tname:
+                    out[tname] = entry
     _STANDINGS_CACHE[key] = out
     return out
 
@@ -3314,6 +3321,14 @@ def phase_b_forecast(store, seen_ids):
                     "home": team_payload(h),
                     "away": team_payload(a),
                 }
+                if hr.get("rank") is not None:
+                    temp_match["home"]["rank"] = hr["rank"]
+                if hr.get("pts") is not None:
+                    temp_match["home"]["pts"] = hr["pts"]
+                if ar.get("rank") is not None:
+                    temp_match["away"]["rank"] = ar["rank"]
+                if ar.get("pts") is not None:
+                    temp_match["away"]["pts"] = ar["pts"]
                 if odds:
                     temp_match["odds"] = odds
                 market_context = prediction_context_for_match(temp_match, all_matches)
@@ -3380,11 +3395,17 @@ def phase_b3_attach_standings(store):
             continue
         for m in L["matches"]:
             for side in ("home", "away"):
-                tid = (m.get(side) or {}).get("team_id")
+                team = m.get(side) or {}
+                tid = team.get("team_id")
                 row = stand.get(tid)
+                # Name-based fallback for Phase 1 fixtures whose team_id is an ESPN/
+                # Flashscore ID and won't match SofaScore standings keys.
+                if not row:
+                    tname = (team.get("name") or "").strip().lower()
+                    row = stand.get(tname) if tname else None
                 if row and row.get("rank") is not None:
-                    m[side]["rank"] = row.get("rank")
-                    m[side]["pts"] = row.get("pts")
+                    team["rank"] = row.get("rank")
+                    team["pts"] = row.get("pts")
                     attached += 1
     return {"attached": attached}
 
@@ -4048,14 +4069,15 @@ def run_full_refresh():
     pb = phase_b_forecast(store, seen_ids)
     print(f"  added={pb['added']}")
 
-    # Phase B.3 — attach league-table rank/pts to every match's home/away
-    print("\n[Phase B.3] attach standings to home/away")
-    pb3 = phase_b3_attach_standings(store)
-    print(f"  attached={pb3['attached']}")
-
     print("\n[Phase B.3a] promote phase fixture cards")
     pbf = promote_phase_fixtures_to_store(store)
     print(f"  added={pbf['added']}")
+
+    # Phase B.3 — attach league-table rank/pts to every match's home/away.
+    # Runs AFTER Phase B.3a so newly promoted Phase 1 fixtures are included.
+    print("\n[Phase B.3] attach standings to home/away")
+    pb3 = phase_b3_attach_standings(store)
+    print(f"  attached={pb3['attached']}")
 
     # Sort matches inside each league
     sort_store(store)
