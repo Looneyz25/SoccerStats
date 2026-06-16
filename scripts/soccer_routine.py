@@ -1402,11 +1402,13 @@ def livescore_date_payload(match_date, tz_offset):
     try:
         resp = requests.get(url, impersonate=_profile(), timeout=20, headers={"Accept": "application/json"})
         if resp.status_code != 200:
-            _LIVESCORE_DAY_CACHE[key] = None
+            # Do not cache a transient failure: a single flaky fetch would otherwise
+            # poison every later match lookup in this run (LiveScore is the main result
+            # source while SofaScore is blocked).
             return None
         payload = resp.json()
     except Exception:
-        payload = None
+        return None
     _LIVESCORE_DAY_CACHE[key] = payload
     return payload
 
@@ -1444,7 +1446,12 @@ def find_livescore_event(league_name, match):
             if stage_matches_league(stage, league_name):
                 return stage, event
             cross_league_matches.append((stage, event))
-    if match_due_for_result_check(match) and len(cross_league_matches) == 1:
+    # A unique team-name match under a different competition label is almost certainly the
+    # same fixture (LiveScore labels World Cup games "World Cup 2026 / Group G", which our
+    # "FIFA World Cup" alias does not match). Accept it when the match is due for a result
+    # check, or already closed (FT) — the latter only feeds stat backfill, never settlement,
+    # since closed matches are never re-settled.
+    if (match_due_for_result_check(match) or match_closed_for_result_check(match)) and len(cross_league_matches) == 1:
         return cross_league_matches[0]
     return None
 
@@ -4132,6 +4139,39 @@ def settle_confirmed_ft(match, league_name, home, away, source):
     return True
 
 
+_FLASHSCORE_LIVE_EVENTS_CACHE = None
+
+
+def get_flashscore_live_events():
+    """Load and cache in-play Flashscore events (live status codes with a score) once
+    per process. SofaScore is the richest in-play source but is frequently blocked, so
+    this is the resilient fallback for live scores."""
+    global _FLASHSCORE_LIVE_EVENTS_CACHE
+    if _FLASHSCORE_LIVE_EVENTS_CACHE is None:
+        try:
+            import soccer_phase1_fixtures as flashsource
+            raw = flashsource.fetch_flashscore_feed()
+            events = flashsource.parse_flashscore_feed(raw)
+            _FLASHSCORE_LIVE_EVENTS_CACHE = [
+                event for event in events
+                if flashsource.flashscore_status(event.get("status")) == "live"
+                and event.get("home_score") not in ("", None)
+                and event.get("away_score") not in ("", None)
+            ]
+        except Exception as exc:
+            print(f"  flashscore_live_error={exc}")
+            _FLASHSCORE_LIVE_EVENTS_CACHE = []
+    return _FLASHSCORE_LIVE_EVENTS_CACHE
+
+
+def flashscore_live_state_for_match(league_name, match):
+    """Return ('live', home, away, None) from the Flashscore in-play feed, or None."""
+    res = flashscore_result_for_match(get_flashscore_live_events(), league_name, match)
+    if res and res.get("home_score") is not None and res.get("away_score") is not None:
+        return ("live", res["home_score"], res["away_score"], None)
+    return None
+
+
 def update_live_and_settle(store):
     """For every started, not-yet-closed match in the live window: show the in-play
     score, or settle on confirmed full time. Record matches stuck upcoming past their
@@ -4159,6 +4199,12 @@ def update_live_and_settle(store):
                 if ls:
                     state = ls
                     source = "LiveScore FT"
+            # Flashscore in-play feed for a live score when SofaScore/LiveScore have none.
+            if (not state or state[0] == "upcoming"):
+                fl = flashscore_live_state_for_match(league_name, m)
+                if fl:
+                    state = fl
+                    source = "Flashscore live"
             # Flashscore confirms full time once a match should be over.
             if (not state or state[0] != "ft") and mins >= EARLY_FT_CONFIRM_MINUTES:
                 if flash_events is None:
@@ -4215,6 +4261,13 @@ def run_live_update():
     sort_store(store)
     save_store(store)
     write_live_stuck_marker(res["stuck"])
+    if res["live"] or res["settled"]:
+        # Signal the results wrapper to upload the live/FT changes on its next pass
+        # (it owns Firestore upload + the settlement gate + stat backfill).
+        (OUT_DIR / "result_pending_upload_latest.json").write_text(json.dumps({
+            "reason": f"live update changed data (live={len(res['live'])}, settled={len(res['settled'])})",
+            "markedAt": datetime.now(ADL).isoformat(),
+        }, ensure_ascii=False, indent=2), encoding="utf-8")
     print_final_tally(store)
 
 

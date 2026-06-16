@@ -75,7 +75,6 @@ function hasUnsettledStatMarket(match) {
 }
 
 const STAT_BACKFILL_WINDOW_DAYS = Math.max(1, Number(process.env.SOCCER_STAT_BACKFILL_WINDOW_DAYS) || 3);
-const STAT_BACKFILL_FORCE_MAX_ATTEMPTS = Math.max(1, Number(process.env.SOCCER_STAT_BACKFILL_FORCE_MAX_ATTEMPTS) || 12);
 
 function matchKey(match) {
   if (match.event_id !== undefined && match.event_id !== null) return String(match.event_id);
@@ -182,16 +181,15 @@ export function buildRoutineProgress({ matchData, schedule, log, previousProgres
   );
   // Recently finished matches whose cards/corners markets are not yet settled. These keep the
   // routine in results mode every run so the stat backfill retries until they settle (never
-  // voided). Scoped to the backfill's own lookback so any settleable straggler settles
-  // deterministically within the hour, but a match attempted past the cap stops forcing runs
-  // (it is almost certainly an unobtainable provider gap) — it is still swept opportunistically
-  // by any other results run, and is never voided.
+  // voided). Scoped only to the backfill's own lookback window: a match keeps being retried
+  // until it settles or ages out of the window. (An earlier attempt cap was removed — it
+  // permanently stranded matches whose stats arrived late, e.g. when LiveScore lagged while
+  // SofaScore was blocked.) The window bounds any churn for a genuinely unobtainable stat.
   const statBackfillWindowStart = addIsoDays(today, -STAT_BACKFILL_WINDOW_DAYS);
   const statBackfillPending = storeMatches.filter((match) =>
     match.statSettlementPending
     && match.date
-    && match.date >= statBackfillWindowStart
-    && match.statBackfillAttempts < STAT_BACKFILL_FORCE_MAX_ATTEMPTS,
+    && match.date >= statBackfillWindowStart,
   );
   const strictDueCount = Number(schedule?.due_count ?? 0);
   const strictRemainingCount = Number(schedule?.remaining_count ?? 0);
