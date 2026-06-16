@@ -8,6 +8,7 @@ the UI can price synthetic safety picks derived from the 1X2 model.
 """
 import json, os, time, pathlib
 import random
+import re
 from curl_cffi import requests
 
 _PROFILES = ["chrome120","chrome124","chrome131","chrome116","edge101","safari17_0"]
@@ -18,6 +19,19 @@ STORE_PATH = FOLDER / "match_data.json"
 BUDGET = int(os.environ.get("SOCCER_ODDS_BUDGET", "420"))
 START = time.time()
 PREDICTION_MARKETS = ("winner", "btts", "ou_goals", "ou_cards")
+
+
+def fixture_target_dates():
+    dates = set()
+    for item in os.environ.get("SOCCER_FIXTURE_DATES", "").split(","):
+        item = item.strip()
+        if re.fullmatch(r"\d{4}-\d{2}-\d{2}", item):
+            dates.add(item)
+    return dates
+
+
+def match_in_target_dates(match, target_dates):
+    return not target_dates or match.get("date") in target_dates
 
 def fetch(path):
     try:
@@ -255,12 +269,16 @@ def attach_pred_odds(m, market):
 
 def main():
     store = json.loads(STORE_PATH.read_text(encoding="utf-8"))
+    target_dates = fixture_target_dates()
+    if target_dates:
+        print("target_dates=" + ",".join(sorted(target_dates)))
     added = 0
     matches = [
         (L, m)
         for L in store["leagues"]
         for m in L["matches"]
         if m.get("status") != "FT"
+        and match_in_target_dates(m, target_dates)
     ]
     matches.sort(key=lambda item: (
         item[1].get("date", ""),

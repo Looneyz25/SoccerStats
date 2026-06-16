@@ -6,18 +6,18 @@ Timezone: Australia/Adelaide
 
 | Item | Value |
 | --- | --- |
-| run_timestamp | 2026-05-22 18:59:47 ACST |
+| run_timestamp | 2026-06-05 19:29:23 ACST |
 | sofa_health | healthy |
 | flashscore_health | healthy |
 | flashscore_note |  |
-| phase5_input_rows | 3 |
+| phase5_input_rows | 21 |
 | rows_settled_this_run | 0 |
 | won_this_run | 0 |
 | lost_this_run | 0 |
 | pending | 0 |
 | void | 0 |
 | not_found | 0 |
-| skipped | 3 |
+| skipped | 21 |
 
 ## History Summary
 
@@ -36,6 +36,24 @@ Timezone: Australia/Adelaide
 
 | Date | Match | Pick | Odds | Stake | Actual | Outcome | Status | Return |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-22 | Machida vs Urawa |  |  |  |  |  | skipped | 0.0 |
-| 2026-05-23 | Djurgarden vs Brommapojkarna |  |  |  |  |  | skipped | 0.0 |
-| 2026-05-23 | Fiorentina vs Atalanta |  |  |  |  |  | skipped | 0.0 |
+| 2026-06-05 | Singapore vs China |  |  |  |  |  | skipped | 0.0 |
+| 2026-06-05 | Hong Kong vs Mongolia |  |  |  |  |  | skipped | 0.0 |
+| 2026-06-05 | Thailand vs Kuwait |  |  |  |  |  | skipped | 0.0 |
+| 2026-06-05 | Indonesia vs Oman |  |  |  |  |  | skipped | 0.0 |
+| 2026-06-05 | Angola vs Botswana |  |  |  |  |  | skipped | 0.0 |
+| 2026-06-05 | Czech Republic vs Guatemala |  |  |  |  |  | skipped | 0.0 |
+| 2026-06-05 | Liberia vs Benin |  |  |  |  |  | skipped | 0.0 |
+| 2026-06-05 | Mexico vs Serbia |  |  |  |  |  | skipped | 0.0 |
+| 2026-06-05 | Tanzania vs Uganda |  |  |  |  |  | skipped | 0.0 |
+| 2026-06-06 | Tajikistan vs India |  |  |  |  |  | skipped | 0.0 |
+| 2026-06-06 | Belarus vs Syria |  |  |  |  |  | skipped | 0.0 |
+| 2026-06-06 | Georgia vs Bahrain |  |  |  |  |  | skipped | 0.0 |
+| 2026-06-06 | Slovakia vs Montenegro |  |  |  |  |  | skipped | 0.0 |
+| 2026-06-06 | Moldova vs Bulgaria |  |  |  |  |  | skipped | 0.0 |
+| 2026-06-06 | Russia vs Burkina Faso |  |  |  |  |  | skipped | 0.0 |
+| 2026-06-06 | San Marino vs Bangladesh |  |  |  |  |  | skipped | 0.0 |
+| 2026-06-06 | Hungary vs Finland |  |  |  |  |  | skipped | 0.0 |
+| 2026-06-06 | Azerbaijan vs Malta |  |  |  |  |  | skipped | 0.0 |
+| 2026-06-06 | Benin vs Niger |  |  |  |  |  | skipped | 0.0 |
+| 2026-06-06 | Central Africa vs Togo |  |  |  |  |  | skipped | 0.0 |
+| 2026-06-06 | Angola vs Mauritania |  |  |  |  |  | skipped | 0.0 |

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-25 12:45:18 ACST",
+  "generated_at": "2026-06-17 07:36:40 ACST",
   "source": "docs\\agent-system\\outputs\\model_result_review_summary.json",
   "mode": "conservative_auto_learning",
   "rules": {
@@ -13,27 +13,27 @@
   "market_adjustments": {
     "btts": {
       "market": "BTTS",
-      "settled": 498,
-      "hit_rate": 0.5442,
-      "trust_factor": 0.9498,
-      "min_edge_delta": 0.0195,
-      "reason": "BTTS below 60% target over 498 settled markets."
+      "settled": 645,
+      "hit_rate": 0.5736,
+      "trust_factor": 0.9762,
+      "min_edge_delta": 0.0092,
+      "reason": "BTTS below 60% target over 645 settled markets."
     },
     "ou_goals": {
       "market": "Goals",
-      "settled": 498,
-      "hit_rate": 0.5522,
-      "trust_factor": 0.957,
-      "min_edge_delta": 0.0167,
-      "reason": "Goals below 60% target over 498 settled markets."
+      "settled": 645,
+      "hit_rate": 0.5659,
+      "trust_factor": 0.9693,
+      "min_edge_delta": 0.0119,
+      "reason": "Goals below 60% target over 645 settled markets."
     },
     "winner": {
       "market": "Winner",
-      "settled": 498,
-      "hit_rate": 0.496,
-      "trust_factor": 0.9064,
-      "min_edge_delta": 0.0364,
-      "reason": "Winner below 60% target over 498 settled markets."
+      "settled": 645,
+      "hit_rate": 0.5008,
+      "trust_factor": 0.9107,
+      "min_edge_delta": 0.0347,
+      "reason": "Winner below 60% target over 645 settled markets."
     }
   },
   "league_market_adjustments": {
@@ -41,22 +41,22 @@
       "league": "Serie A",
       "market": "Winner",
       "market_key": "winner",
-      "settled": 21,
-      "hit_rate": 0.3333,
-      "odds_net": -23.11,
-      "trust_factor": 0.94,
-      "min_edge_delta": 0.0233,
+      "settled": 20,
+      "hit_rate": 0.3,
+      "odds_net": -26.51,
+      "trust_factor": 0.9325,
+      "min_edge_delta": 0.0262,
       "reason": "Serie A Winner weak spot from result review."
     },
     "Bundesliga|winner": {
       "league": "Bundesliga",
       "market": "Winner",
       "market_key": "winner",
-      "settled": 37,
-      "hit_rate": 0.3514,
-      "odds_net": -9.2,
-      "trust_factor": 0.9172,
-      "min_edge_delta": 0.0322,
+      "settled": 38,
+      "hit_rate": 0.3684,
+      "odds_net": -5.95,
+      "trust_factor": 0.9208,
+      "min_edge_delta": 0.0308,
       "reason": "Bundesliga Winner weak spot from result review."
     },
     "League One|btts": {
@@ -70,6 +70,28 @@
       "min_edge_delta": 0.0252,
       "reason": "League One BTTS weak spot from result review."
     },
+    "Brasileirão Betano|ou_goals": {
+      "league": "Brasileirão Betano",
+      "market": "Goals",
+      "market_key": "ou_goals",
+      "settled": 20,
+      "hit_rate": 0.4,
+      "odds_net": -7.88,
+      "trust_factor": 0.955,
+      "min_edge_delta": 0.0175,
+      "reason": "Brasileirão Betano Goals weak spot from result review."
+    },
+    "Bundesliga|ou_cards": {
+      "league": "Bundesliga",
+      "market": "Cards",
+      "market_key": "ou_cards",
+      "settled": 37,
+      "hit_rate": 0.4324,
+      "odds_net": -19.22,
+      "trust_factor": 0.9442,
+      "min_edge_delta": 0.0217,
+      "reason": "Bundesliga Cards weak spot from result review."
+    },
     "LaLiga|winner": {
       "league": "LaLiga",
       "market": "Winner",
@@ -80,28 +102,6 @@
       "trust_factor": 0.91,
       "min_edge_delta": 0.035,
       "reason": "LaLiga Winner weak spot from result review."
-    },
-    "MLS|winner": {
-      "league": "MLS",
-      "market": "Winner",
-      "market_key": "winner",
-      "settled": 88,
-      "hit_rate": 0.4432,
-      "odds_net": -9.89,
-      "trust_factor": 0.8758,
-      "min_edge_delta": 0.0483,
-      "reason": "MLS Winner weak spot from result review."
-    },
-    "Bundesliga|ou_cards": {
-      "league": "Bundesliga",
-      "market": "Cards",
-      "market_key": "ou_cards",
-      "settled": 36,
-      "hit_rate": 0.4444,
-      "odds_net": -19.22,
-      "trust_factor": 0.9496,
-      "min_edge_delta": 0.0196,
-      "reason": "Bundesliga Cards weak spot from result review."
     }
   },
   "notes": [

@@ -5000,6 +5000,149 @@ function VotePickRow({ pick, bookmakerId, children }) {
   );
 }
 
+function EspnStatBar({ label, homeVal, awayVal, homeRaw, awayRaw }) {
+  const total = (homeRaw || 0) + (awayRaw || 0);
+  const homePct = total > 0 ? (homeRaw / total) * 100 : 50;
+  return (
+    <div>
+      <div className="mb-1 flex items-center justify-between text-sm">
+        <span className="w-10 font-semibold text-ink">{homeVal ?? '-'}</span>
+        <span className="text-xs text-muted">{label}</span>
+        <span className="w-10 text-right font-semibold text-ink">{awayVal ?? '-'}</span>
+      </div>
+      <div className="flex h-1.5 overflow-hidden rounded-full">
+        <div className="h-full bg-[#34d6c8] transition-all" style={{ width: `${homePct}%` }} />
+        <div className="h-full flex-1 bg-white/15" />
+      </div>
+    </div>
+  );
+}
+
+function EspnStatsSection({ espnData, loading, error, homeName, awayName }) {
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center gap-2 py-16 text-sm text-muted">
+        <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+        Loading ESPN stats…
+      </div>
+    );
+  }
+  if (error || !espnData) {
+    return (
+      <div className="rounded-xl border border-line bg-surface p-6 text-center text-sm text-muted">
+        {error || 'ESPN stats not available for this match.'}
+      </div>
+    );
+  }
+
+  const { stats, keyEvents = [], h2h = [], lastFiveHome = [], lastFiveAway = [] } = espnData;
+  const hasAnyStats = stats || keyEvents.length || h2h.length || lastFiveHome.length || lastFiveAway.length;
+
+  function resultChip(r) {
+    return (
+      <span className={`inline-flex h-6 w-6 items-center justify-center rounded text-xs font-bold ${r === 'W' ? 'bg-emerald-500/20 text-emerald-400' : r === 'L' ? 'bg-red-500/20 text-red-400' : 'bg-white/10 text-muted'}`}>
+        {r}
+      </span>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Match stats */}
+      {stats && (
+        <div className="rounded-xl border border-line bg-surface p-4 shadow-sm">
+          <div className="mb-1 flex items-center justify-between text-xs font-semibold text-muted">
+            <span className="truncate">{homeName}</span>
+            <span className="shrink-0 px-3">vs</span>
+            <span className="truncate text-right">{awayName}</span>
+          </div>
+          <div className="mb-4 flex items-center justify-between text-xs font-bold uppercase tracking-wide text-muted">
+            <span />
+            <span>Match Statistics</span>
+            <span />
+          </div>
+          <div className="space-y-3">
+            {stats.possession?.home != null && <EspnStatBar label="Possession" homeVal={`${stats.possession.home}%`} awayVal={`${stats.possession.away}%`} homeRaw={parseFloat(stats.possession.home)} awayRaw={parseFloat(stats.possession.away)} />}
+            {stats.shots?.home != null && <EspnStatBar label="Shots" homeVal={stats.shots.home} awayVal={stats.shots.away} homeRaw={stats.shots.home} awayRaw={stats.shots.away} />}
+            {stats.shotsOnTarget?.home != null && <EspnStatBar label="On target" homeVal={stats.shotsOnTarget.home} awayVal={stats.shotsOnTarget.away} homeRaw={stats.shotsOnTarget.home} awayRaw={stats.shotsOnTarget.away} />}
+            {stats.corners?.home != null && <EspnStatBar label="Corners" homeVal={stats.corners.home} awayVal={stats.corners.away} homeRaw={stats.corners.home} awayRaw={stats.corners.away} />}
+            {stats.fouls?.home != null && <EspnStatBar label="Fouls" homeVal={stats.fouls.home} awayVal={stats.fouls.away} homeRaw={stats.fouls.home} awayRaw={stats.fouls.away} />}
+            {stats.yellowCards?.home != null && <EspnStatBar label="Yellow cards" homeVal={stats.yellowCards.home} awayVal={stats.yellowCards.away} homeRaw={stats.yellowCards.home} awayRaw={stats.yellowCards.away} />}
+            {stats.redCards?.home != null && <EspnStatBar label="Red cards" homeVal={stats.redCards.home} awayVal={stats.redCards.away} homeRaw={stats.redCards.home} awayRaw={stats.redCards.away} />}
+            {stats.saves?.home != null && <EspnStatBar label="Saves" homeVal={stats.saves.home} awayVal={stats.saves.away} homeRaw={stats.saves.home} awayRaw={stats.saves.away} />}
+            {stats.offsides?.home != null && <EspnStatBar label="Offsides" homeVal={stats.offsides.home} awayVal={stats.offsides.away} homeRaw={stats.offsides.home} awayRaw={stats.offsides.away} />}
+          </div>
+        </div>
+      )}
+
+      {/* Key events */}
+      {keyEvents.length > 0 && (
+        <div className="rounded-xl border border-line bg-surface p-4 shadow-sm">
+          <h3 className="mb-3 text-sm font-semibold text-ink">Key Events</h3>
+          <div className="space-y-2">
+            {keyEvents.map((ev, i) => {
+              const typeL = (ev.type || '').toLowerCase();
+              const icon = typeL.includes('goal') ? '⚽' : typeL.includes('yellow') ? '🟨' : typeL.includes('red') ? '🟥' : typeL.includes('sub') ? '🔄' : '•';
+              return (
+                <div key={i} className="flex items-center gap-3 text-sm">
+                  <span className="w-12 shrink-0 text-right font-mono text-xs text-muted">{ev.clock}</span>
+                  <span className="text-base leading-none">{icon}</span>
+                  <span className="min-w-0 flex-1 text-ink">{ev.participant || ev.text}</span>
+                  {ev.team && <span className="shrink-0 text-xs text-muted">{ev.team}</span>}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Form guide */}
+      {(lastFiveHome.length > 0 || lastFiveAway.length > 0) && (
+        <div className="rounded-xl border border-line bg-surface p-4 shadow-sm">
+          <h3 className="mb-3 text-sm font-semibold text-ink">Recent Form</h3>
+          <div className="space-y-3">
+            {lastFiveHome.length > 0 && (
+              <div className="flex items-center justify-between gap-3">
+                <span className="min-w-0 truncate text-xs font-semibold text-ink">{homeName}</span>
+                <div className="flex shrink-0 gap-1">{lastFiveHome.map((g, i) => <span key={i}>{resultChip(g.result)}</span>)}</div>
+              </div>
+            )}
+            {lastFiveAway.length > 0 && (
+              <div className="flex items-center justify-between gap-3">
+                <span className="min-w-0 truncate text-xs font-semibold text-ink">{awayName}</span>
+                <div className="flex shrink-0 gap-1">{lastFiveAway.map((g, i) => <span key={i}>{resultChip(g.result)}</span>)}</div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* H2H */}
+      {h2h.length > 0 && (
+        <div className="rounded-xl border border-line bg-surface p-4 shadow-sm">
+          <h3 className="mb-3 text-sm font-semibold text-ink">Head to Head</h3>
+          <div className="space-y-1.5">
+            {h2h.map((g, i) => (
+              <div key={i} className="flex items-center gap-2 rounded-md bg-field px-3 py-2 text-sm">
+                <span className="w-20 shrink-0 text-xs text-muted">{g.date}</span>
+                <span className="min-w-0 flex-1 text-center font-semibold text-ink">{g.homeTeam} {g.homeScore ?? '?'} – {g.awayScore ?? '?'} {g.awayTeam}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {!hasAnyStats && (
+        <div className="rounded-xl border border-line bg-surface p-6 text-center text-sm text-muted">
+          No detailed stats available yet. Check back after the match starts.
+        </div>
+      )}
+
+      <p className="text-center text-xs text-muted opacity-60">Stats provided by ESPN</p>
+    </div>
+  );
+}
+
 function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerChange, favoriteTeams = [], onToggleFavoriteTeam, isPlatformOwner = false, onMatchImported, onVoteSaved, embedded = false }) {
   const predictions = match.predictions || {};
   const odds = displayThreeWayOdds(match);
@@ -5018,6 +5161,10 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
   const [voteBusyKey, setVoteBusyKey] = useState('');
   const [voteError, setVoteError] = useState('');
   const [voteMessage, setVoteMessage] = useState('');
+  const [activeTab, setActiveTab] = useState('overview');
+  const [espnData, setEspnData] = useState(null);
+  const [espnLoading, setEspnLoading] = useState(false);
+  const [espnError, setEspnError] = useState('');
 
   useEffect(() => {
     let active = true;
@@ -5117,6 +5264,36 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [onBack]);
 
+  useEffect(() => {
+    setActiveTab('overview');
+    setEspnData(null);
+    setEspnLoading(false);
+    setEspnError('');
+  }, [match.id, match.date]);
+
+  useEffect(() => {
+    if (activeTab !== 'stats' || espnData || espnLoading) return;
+    let active = true;
+    setEspnLoading(true);
+    setEspnError('');
+    const params = new URLSearchParams({
+      home: match.home?.name || '',
+      away: match.away?.name || '',
+      date: match.date || '',
+      league: match.league || '',
+    });
+    fetch(`/api/espn-stats?${params}`)
+      .then((r) => r.json())
+      .catch(() => ({ found: false }))
+      .then((data) => {
+        if (!active) return;
+        if (data?.found) setEspnData(data);
+        else setEspnError(data?.reason === 'league_not_mapped' ? 'ESPN Stats not available for this league.' : 'ESPN Stats not available for this match.');
+      })
+      .finally(() => { if (active) setEspnLoading(false); });
+    return () => { active = false; };
+  }, [activeTab, espnData, espnLoading, match.home?.name, match.away?.name, match.date, match.league]);
+
   return (
     <div className={embedded ? 'overflow-hidden rounded-xl border border-line bg-surface shadow-sm' : 'min-h-screen bg-field'}>
       <div className={embedded ? 'border-b border-line bg-surface' : 'sticky top-0 z-20 border-b border-line bg-surface'}>
@@ -5143,9 +5320,22 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
             </h2>
           </div>
         </div>
+        <div className={`mx-auto flex border-t border-line/40 px-3 sm:px-5 ${embedded ? 'max-w-none' : 'max-w-3xl'}`}>
+          {[['overview', 'Overview'], ['stats', 'ESPN Stats']].map(([id, label]) => (
+            <button
+              key={id}
+              type="button"
+              onClick={() => setActiveTab(id)}
+              className={`-mb-px border-b-2 px-3 py-2 text-xs font-semibold uppercase tracking-wide transition ${activeTab === id ? 'border-[#34d6c8] text-[#34d6c8]' : 'border-transparent text-muted hover:text-ink'}`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className={`mx-auto space-y-5 px-3 py-4 tabular-nums sm:px-5 sm:py-5 ${embedded ? 'max-w-none' : 'max-w-3xl'}`}>
+        {activeTab === 'overview' ? (<>
         <div className="grid grid-cols-1 items-center gap-1.5 sm:grid-cols-[1fr_auto_1fr] sm:gap-2">
           <div className="min-w-0 overflow-hidden rounded-xl border border-line bg-surface px-3 py-2.5 text-center shadow-sm sm:py-3 sm:text-left dark:bg-[radial-gradient(120%_120%_at_100%_0%,rgba(52,214,200,0.06),transparent_55%),linear-gradient(180deg,#1a1e24_0%,#121419_100%)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.05),0_14px_30px_-16px_rgba(0,0,0,0.6)]">
             <div className="flex min-w-0 items-center justify-center gap-2 sm:justify-start">
@@ -5234,6 +5424,9 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
         <H2HContextPanel match={match} allMatches={allMatches} />
 
         <StreakList title="Team streaks" streaks={match.team_streaks} match={match} />
+        </>) : (
+          <EspnStatsSection espnData={espnData} loading={espnLoading} error={espnError} homeName={match.home?.name} awayName={match.away?.name} />
+        )}
       </div>
     </div>
   );

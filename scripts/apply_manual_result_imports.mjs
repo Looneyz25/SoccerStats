@@ -99,7 +99,45 @@ function settleWinnerMarket(match, winner, actualWinner) {
   return next;
 }
 
+function isTerminalVoidStatus(item) {
+  return ['postponed_or_cancelled', 'postponed', 'cancelled', 'canceled', 'abandoned'].includes(
+    String(item.status || item.state || '').toLowerCase(),
+  );
+}
+
+function voidPredictions(predictions = {}) {
+  return Object.fromEntries(Object.entries(predictions).map(([key, value]) => {
+    if (!value || typeof value !== 'object' || ['hit', 'miss'].includes(value.result)) return [key, value];
+    return [key, { ...value, result: 'void' }];
+  }));
+}
+
+function applyTerminalStatus(match, item) {
+  const importedAt = item.importedAt || new Date().toISOString();
+  const statusText = item.statusText || item.status_text || item.state || item.status || 'Postponed';
+  const displayTime = String(statusText).toLowerCase().includes('postpon') ? 'Postponed' : 'Cancelled';
+  return {
+    ...match,
+    status: 'postponed_or_cancelled',
+    time: displayTime,
+    predictions: voidPredictions(match.predictions || {}),
+    settled_at: String(item.date || match.date || importedAt).slice(0, 10),
+    prediction_locked: true,
+    prediction_locked_at: match.prediction_locked_at || importedAt,
+    void_reason: item.voidReason || 'Fixture postponed/cancelled by manual source before result settlement.',
+    manual_result_import: {
+      source: item.source || 'manual_terminal_status',
+      statusText,
+      importedAt,
+      importedBy: item.importedBy || null,
+      importedByEmail: item.importedByEmail || null,
+      reappliedByRoutine: true,
+    },
+  };
+}
+
 function applyResult(match, item) {
+  if (isTerminalVoidStatus(item)) return applyTerminalStatus(match, item);
   const homeGoals = Number(item.score?.home);
   const awayGoals = Number(item.score?.away);
   if (!Number.isFinite(homeGoals) || !Number.isFinite(awayGoals)) return match;
@@ -148,7 +186,7 @@ async function loadManualImports(db) {
   const snap = await db.collection('dashboardData').doc(DOC_ID).collection(MANUAL_IMPORTS_COLLECTION).get();
   return snap.docs
     .map((doc) => ({ id: doc.id, ...(doc.data() || {}) }))
-    .filter((item) => item.date && item.score && item.homeName && item.awayName);
+    .filter((item) => item.date && (item.score || isTerminalVoidStatus(item)) && item.homeName && item.awayName);
 }
 
 async function main() {

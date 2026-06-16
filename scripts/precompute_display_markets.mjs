@@ -1,3 +1,5 @@
+import { marketReturnTotals } from './market_odds_returns.mjs';
+
 const WINNER_CONFIDENCE_THRESHOLD = 0.40;
 const BOOKMAKER_WINNER_GUARD_THRESHOLD = 0.65;
 const PREDICTION_TRACKING_START_DATE = '2026-04-22';
@@ -26,6 +28,11 @@ function impliedProbability(odds) {
   return Number.isFinite(value) && value > 0 ? 1 / value : null;
 }
 
+function isBookmakerPrice(value) {
+  const number = Number(value);
+  return Number.isFinite(number) && number > 1.01;
+}
+
 function decimalFromProbability(probability) {
   const value = Number(probability);
   return Number.isFinite(value) && value > 0 ? 1 / value : null;
@@ -44,6 +51,44 @@ function displayThreeWayOdds(match) {
   if (match?.status === 'FT' && hasThreeWayOdds(originalOdds)) return originalOdds;
   if (hasThreeWayOdds(bookmakerOdds)) return bookmakerOdds;
   return originalOdds;
+}
+
+function storedWinnerOdds(match, type) {
+  const odds = displayThreeWayOdds(match);
+  const direct = Number(odds?.[type]);
+  if (isBookmakerPrice(direct)) return direct;
+  const fullTime = match?.sportsbet_markets?.['Full time'] || {};
+  const key = type === 'home' ? '1' : type === 'draw' ? 'X' : type === 'away' ? '2' : '';
+  const marketPrice = Number(fullTime[key]);
+  return isBookmakerPrice(marketPrice) ? marketPrice : undefined;
+}
+
+function storedTwoWayMarketOdds(match, marketName, pick) {
+  const price = Number(match?.sportsbet_markets?.[marketName]?.[pick]);
+  return isBookmakerPrice(price) ? price : undefined;
+}
+
+function storedMarketOddsForDisplay(match, key, market) {
+  if (!market) return undefined;
+  if (key === 'winner') return storedWinnerOdds(match, market.type);
+  if (key === 'btts') return storedTwoWayMarketOdds(match, 'Both teams to score', market.pick);
+  if (key === 'ou_goals') return storedTwoWayMarketOdds(match, `Match goals ${market.line ?? 2.5}`, market.pick);
+  if (key === 'ou_cards') {
+    const line = market.line ?? 4.5;
+    return storedTwoWayMarketOdds(match, `Cards in match ${line}`, market.pick)
+      ?? Object.entries(match?.sportsbet_markets || {})
+        .find(([name, prices]) => name.startsWith('Cards in match') && isBookmakerPrice(prices?.[market.pick]))?.[1]?.[market.pick];
+  }
+  if (key === 'ou_corners') return cornerBookmakerOdds(match, market.line ?? 10.5, market.pick);
+  return undefined;
+}
+
+function withStoredBookmakerOdds(match, key, market) {
+  if (!market) return market;
+  const existing = Number(market.odds);
+  if (isBookmakerPrice(existing)) return market;
+  const odds = Number(storedMarketOddsForDisplay(match, key, market));
+  return isBookmakerPrice(odds) ? { ...market, odds } : market;
 }
 
 function bookmakerNoVigProbability(odds, side) {
@@ -128,6 +173,13 @@ function doubleChanceResultFromActual(match, type) {
 }
 
 function doubleChanceMarket(match) {
+  const precomputed = match.display_markets?.double_chance?.market;
+  if (precomputed) {
+    return {
+      ...precomputed,
+      result: precomputed.result || doubleChanceResultFromActual(match, precomputed.type) || undefined,
+    };
+  }
   const rows = winnerProbabilityBreakdown(match);
   if (!Array.isArray(rows) || rows.length < 3) return null;
   const ranked = [...rows]
@@ -179,6 +231,13 @@ function drawNoBetOdds(match, type) {
 }
 
 function drawNoBetMarket(match) {
+  const precomputed = match.display_markets?.draw_no_bet?.market;
+  if (precomputed) {
+    return {
+      ...precomputed,
+      result: precomputed.result || (String(match.date || '') >= DRAW_NO_BET_TRACKING_START_DATE ? drawNoBetResultFromActual(match, precomputed.type) || undefined : undefined),
+    };
+  }
   const rows = winnerProbabilityBreakdown(match);
   if (!Array.isArray(rows) || rows.length < 3) return null;
   const byKey = Object.fromEntries(rows.map((row) => [row.key, Number(row.model)]));
@@ -753,8 +812,9 @@ function displayableMarketForKey(match, key, market) {
 }
 
 function marketEntryIfDisplayable(match, allMatches, key, title, market) {
-  return displayableMarketForKey(match, key, market)
-    ? marketEntry(match, allMatches, key, title, market)
+  const pricedMarket = withStoredBookmakerOdds(match, key, market);
+  return displayableMarketForKey(match, key, pricedMarket)
+    ? marketEntry(match, allMatches, key, title, pricedMarket)
     : null;
 }
 
@@ -837,13 +897,7 @@ function headlineMarkets(match, displayMarkets) {
 
 function summarizeHeadline(markets) {
   const hits = markets.filter((market) => market.result === 'hit').length;
-  const oddsTotals = markets.reduce((totals, market) => {
-    const odds = Number(market?.odds);
-    if (!Number.isFinite(odds)) return totals;
-    if (market.result === 'hit') totals.hit += odds;
-    if (market.result === 'miss') totals.loss += odds;
-    return totals;
-  }, { hit: 0, loss: 0 });
+  const oddsTotals = marketReturnTotals(markets);
   return {
     settled: markets.length,
     hits,
@@ -851,6 +905,7 @@ function summarizeHeadline(markets) {
     hitRate: markets.length ? Math.round((hits / markets.length) * 100) : 0,
     oddsHit: round(oddsTotals.hit, 1) || 0,
     oddsLoss: round(oddsTotals.loss, 1) || 0,
+    oddsPriced: oddsTotals.priced,
   };
 }
 

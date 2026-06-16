@@ -1,37 +1,29 @@
 # Result Check Schedule
 
-Generated: 2026-05-25T12:45:18.048815+09:30
-Completion buffer: 150 minutes after kickoff
-Due now: 1
-Remaining today/overdue: 4
-Tomorrow visible: 10
+Generated: 2026-06-17T07:36:39.860165+09:30
+Completion buffer: 180 minutes after kickoff
+Due now: 0
+Remaining today/overdue: 3
+Tomorrow visible: 2
 
 ## This Run
 
 - Settled: 0
 - Flashscore settled: 0
 - LiveScore settled: 0
-- Due skipped / awaiting source: 1
-- Not due yet: 50
+- Closed / voided: 0
+- Due skipped / awaiting source: 0
+- Not due yet: 0
 - Backfilled finished: 0
-- Enriched FT: 6
+- Enriched FT: 0
 - Pruned stale unresolved: 0
 
 ## Match Checks
 
 | Scope | Queue | Date | Kickoff | Due time | League | Match | Result queue |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| overdue | yes | 2026-05-24 | 21:30 | 00:00 | League One | Stockport County vs Bolton Wanderers | DUE @ 00:00 |
-| today | no | 2026-05-25 | 10:30 | 13:00 | MLS | Los Angeles FC vs Seattle Sounders FC | DUE @ 13:00 |
-| today | no | 2026-05-25 | 22:00 | 00:30 | Eliteserien | Start vs Valerenga | DUE @ 00:30 |
-| today | no | 2026-05-25 | 23:30 | 02:00 | League Two | Notts County vs Salford City | DUE @ 02:00 |
-| tomorrow | no | 2026-05-26 | 00:30 | 03:00 | Eliteserien | Kfum Oslo vs Rosenborg | DUE @ 03:00 |
-| tomorrow | no | 2026-05-26 | 00:30 | 03:00 | Eliteserien | Sarpsborg vs Molde | DUE @ 03:00 |
-| tomorrow | no | 2026-05-26 | 00:30 | 03:00 | Eliteserien | Tromso vs Aalesunds | DUE @ 03:00 |
-| tomorrow | no | 2026-05-26 | 00:30 | 03:00 | Eliteserien | Ham-Kam vs Lillestrom | DUE @ 03:00 |
-| tomorrow | no | 2026-05-26 | 02:30 | 05:00 | Allsvenskan | Elfsborg vs Hacken | DUE @ 05:00 |
-| tomorrow | no | 2026-05-26 | 02:30 | 05:00 | Allsvenskan | IFK Goteborg vs Mjallby | DUE @ 05:00 |
-| tomorrow | no | 2026-05-26 | 02:45 | 05:15 | Eliteserien | Sandefjord vs Fredrikstad | DUE @ 05:15 |
-| tomorrow | no | 2026-05-26 | 04:00 | 06:30 | Bundesliga | SC Paderborn 07 vs VfL Wolfsburg | DUE @ 06:30 |
-| tomorrow | no | 2026-05-26 | 04:30 | 07:00 | Scottish Premiership | St. Mirren vs Partick Thistle | DUE @ 07:00 |
-| tomorrow | no | 2026-05-26 | 08:30 | 11:00 | Brasileirão Betano | Coritiba vs Bahia | DUE @ 11:00 |
+| today | no | 2026-06-17 | 07:30 | 10:30 | FIFA World Cup | Iraq vs Norway | DUE @ 10:30 |
+| today | no | 2026-06-17 | 10:30 | 13:30 | FIFA World Cup | Argentina vs Algeria | DUE @ 13:30 |
+| today | no | 2026-06-17 | 13:30 | 16:30 | FIFA World Cup | Austria vs Jordan | DUE @ 16:30 |
+| tomorrow | no | 2026-06-18 | 10:00 | 13:00 | Championship | FC Tulsa vs Monterey Bay FC | DUE @ 13:00 |
+| tomorrow | no | 2026-06-18 | 11:30 | 14:30 | FIFA World Cup | Uzbekistan vs Colombia | DUE @ 14:30 |

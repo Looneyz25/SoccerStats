@@ -1,34 +1,34 @@
 # Soccer Stats Daily Summary
 
-Generated: 2026-05-22 18:59 ACST
-Date window: 2026-05-22 to 2026-05-23
+Generated: 2026-06-05 19:29 ACST
+Date window: 2026-06-05 to 2026-06-06
 
 ## Phase Run Status
 
 | Phase | Status | Exit | Duration | Last line |
 | --- | --- | --- | --- | --- |
-| 1 Fixtures | ok | 0 | 2.03s | NOTE: Missing API_FOOTBALL_KEY/APISPORTS_KEY; used keyless Flashscore feed. |
-| 2 Odds | ok | 0 | 19.42s | total=3 ready_for_phase_3=2 unmatched=1 blocked=0 |
-| 3 Team Context | ok | 0 | 39.84s | total=3 ready_for_phase_4=0 unresolved=2 upstream_blocked=1 |
-| 4 Predictions | ok | 0 | 0.11s | total=3 ready_for_phase_5=0 model_only=0 upstream_blocked=3 |
-| 5 Value & Risk | ok | 0 | 0.11s | total=3 bets=0 leans=0 no_value=0 upstream_blocked=3 scale=1.0 |
-| 6 Settlement | ok | 0 | 1.69s | settled_this_run=0 won=0 lost=0 pending=0 history_hit_rate=0.0 history_roi=-1.0 |
-| Promote Phase Fixtures | ok | 0 | 9.34s | added=0 removed_duplicates=0 to match_data.json |
-| Result Review | ok | 0 | 0.12s | settled_market_rows=1659 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the revie |
-| Model Calibration | ok | 0 | 0.09s | market_adjustments=4 league_market_adjustments=8 |
+| 1 Fixtures | ok | 0 | 1.8s | NOTE: Missing API_FOOTBALL_KEY/APISPORTS_KEY; used keyless Flashscore feed. |
+| 2 Odds | ok | 0 | 9.56s | total=21 ready_for_phase_3=14 unmatched=7 blocked=0 |
+| 3 Team Context | ok | 0 | 275.5s | total=21 ready_for_phase_4=0 unresolved=14 upstream_blocked=7 |
+| 4 Predictions | ok | 0 | 0.09s | total=21 ready_for_phase_5=0 model_only=0 upstream_blocked=21 |
+| 5 Value & Risk | ok | 0 | 0.09s | total=21 bets=0 leans=0 no_value=0 upstream_blocked=21 scale=1.0 |
+| 6 Settlement | ok | 0 | 2.62s | settled_this_run=0 won=0 lost=0 pending=0 history_hit_rate=0.0 history_roi=-1.0 |
+| Promote Phase Fixtures | ok | 0 | 12.38s | added=3 removed_duplicates=0 to match_data.json |
+| Result Review | ok | 0 | 0.12s | settled_market_rows=2439 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the revie |
+| Model Calibration | ok | 0 | 0.06s | market_adjustments=3 league_market_adjustments=7 |
 
 ## Phase Health
 
 | Phase | Ready | Blocked | Source |
 | --- | --- | --- | --- |
-| 1 Fixtures | 3 | 0 | Flashscore |
-| 2 Odds | 2 | 1 | Sportsbet (mimic) |
-| 3 Team Context | 0 | 3 | SofaScore (mimic) |
-| 4 Predictions | 0 | 3 | model |
-| 5 Value & Risk | 0 bets / 0 leans | 3 | model |
+| 1 Fixtures | 21 | 0 | Flashscore |
+| 2 Odds | 14 | 7 | Sportsbet (mimic) |
+| 3 Team Context | 0 | 21 | SofaScore (mimic) |
+| 4 Predictions | 0 | 21 | model |
+| 5 Value & Risk | 0 bets / 0 leans | 21 | model |
 | 6 Settlement | 0 won / 0 lost | 0 | Flashscore |
-| Result Review | 1659 | 12 | match_data.json |
-| Model Calibration | 4 | 8 | model_calibration.json |
+| Result Review | 2439 | 12 | match_data.json |
+| Model Calibration | 3 | 7 | model_calibration.json |
 
 ## Today's Bets
 
@@ -43,15 +43,15 @@ No bets above threshold.
 
 ## Model Result Review
 
-- Settled market rows reviewed: 1659
+- Settled market rows reviewed: 2439
 - Weak spots flagged: 12
 - Top action: Persist model probabilities per market in match_data.json so the review agent can compare confidence bands to actual hit rate.
 - Full review: `docs/agent-system/outputs/model_result_review_current.md`
 
 ## Model Calibration
 
-- Market adjustments: 4
-- League/market adjustments: 8
+- Market adjustments: 3
+- League/market adjustments: 7
 - Full calibration: `docs/agent-system/outputs/model_calibration.md`
 
 ## Responsible Betting

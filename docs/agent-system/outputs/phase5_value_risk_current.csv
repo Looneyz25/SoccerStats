@@ -1,4 +1,22 @@
 run_timestamp,league,event_id,date,time,home,away,home_p,home_market,home_edge,home_ev,home_kelly,home_stake,home_decision,draw_p,draw_market,draw_edge,draw_ev,draw_kelly,draw_stake,draw_decision,away_p,away_market,away_edge,away_ev,away_kelly,away_stake,away_decision,top_side,top_decision,top_market_odds,top_p,top_edge,top_stake,risk_scale_factor,phase5_status,phase5_notes
-2026-05-22 18:59:47 ACST,J1 League,flashscore:fXvLSp0T,2026-05-22,20:00,Machida,Urawa,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-22 18:59:47 ACST,Allsvenskan,flashscore:l6SULOIj,2026-05-23,02:30,Djurgarden,Brommapojkarna,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
-2026-05-22 18:59:47 ACST,Serie A,flashscore:ln2VQVwR,2026-05-23,04:15,Fiorentina,Atalanta,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-06-05 19:29:23 ACST,International Friendly Games,flashscore:EsE6FP8c,2026-06-05,21:00,Singapore,China,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-06-05 19:29:23 ACST,International Friendly Games,flashscore:AqnFNaI5,2026-06-05,21:30,Hong Kong,Mongolia,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-06-05 19:29:23 ACST,International Friendly Games,flashscore:f55NQIsS,2026-06-05,22:00,Thailand,Kuwait,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-06-05 19:29:23 ACST,International Friendly Games,flashscore:WCykuuhU,2026-06-05,22:30,Indonesia,Oman,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-06-05 19:29:23 ACST,International Friendly Games,flashscore:A7YX1Ha6,2026-06-05,FT,Angola,Botswana,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-06-05 19:29:23 ACST,International Friendly Games,flashscore:j1djEBZR,2026-06-05,FT,Czech Republic,Guatemala,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-06-05 19:29:23 ACST,International Friendly Games,flashscore:MHMpxPfo,2026-06-05,FT,Liberia,Benin,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-06-05 19:29:23 ACST,International Friendly Games,flashscore:b1x9Omno,2026-06-05,FT,Mexico,Serbia,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-06-05 19:29:23 ACST,International Friendly Games,flashscore:UTlT8H3E,2026-06-05,FT,Tanzania,Uganda,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-06-05 19:29:23 ACST,International Friendly Games,flashscore:GCkooKhS,2026-06-06,00:30,Tajikistan,India,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-06-05 19:29:23 ACST,International Friendly Games,flashscore:x0ey9SdL,2026-06-06,01:30,Belarus,Syria,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-06-05 19:29:23 ACST,International Friendly Games,flashscore:lIwBomFD,2026-06-06,01:30,Georgia,Bahrain,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-06-05 19:29:23 ACST,International Friendly Games,flashscore:G4u3m9p1,2026-06-06,02:00,Slovakia,Montenegro,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-06-05 19:29:23 ACST,International Friendly Games,flashscore:Cv3iCkuq,2026-06-06,02:30,Moldova,Bulgaria,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-06-05 19:29:23 ACST,International Friendly Games,flashscore:fJz9NRBE,2026-06-06,02:30,Russia,Burkina Faso,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-06-05 19:29:23 ACST,International Friendly Games,flashscore:rPCLHBHL,2026-06-06,02:30,San Marino,Bangladesh,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-06-05 19:29:23 ACST,International Friendly Games,flashscore:bZVLx0FO,2026-06-06,03:15,Hungary,Finland,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-06-05 19:29:23 ACST,International Friendly Games,flashscore:jDnBGlak,2026-06-06,03:30,Azerbaijan,Malta,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-06-05 19:29:23 ACST,International Friendly Games,flashscore:fNtF7Ai4,2026-06-06,03:30,Benin,Niger,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-06-05 19:29:23 ACST,International Friendly Games,flashscore:8xq71Zel,2026-06-06,03:30,Central Africa,Togo,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.
+2026-06-05 19:29:23 ACST,International Friendly Games,flashscore:WjtZbjct,2026-06-06,04:30,Angola,Mauritania,,,,,,,,,,,,,,,,,,,,,,,,,,,,1.0,upstream_blocked,Phase 4 status was upstream_blocked.

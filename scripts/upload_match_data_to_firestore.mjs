@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { cert, getApps, initializeApp, applicationDefault } from 'firebase-admin/app';
 import { initializeFirestore, getFirestore, FieldValue } from 'firebase-admin/firestore';
 import { precomputeDisplayData } from './precompute_display_markets.mjs';
+import { marketReturnTotals, pricedMarketOdds } from './market_odds_returns.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PROJECT_ID = 'sports-predictions-f91fd';
@@ -15,6 +16,7 @@ const MANUAL_IMPORTS_COLLECTION = 'manualResultImports';
 const DEFAULT_SERVICE_ACCOUNT_PATH = path.join(ROOT, '.secrets', 'firebase-service-account.json');
 const FIRESTORE_UPLOAD_BATCH_SIZE = Number(process.env.FIRESTORE_UPLOAD_BATCH_SIZE || 5);
 const DRAW_NO_BET_TRACKING_START_DATE = '2026-05-25';
+const SETTLED_MARKET_RESULTS = new Set(['hit', 'miss', 'pass', 'void']);
 
 function slugify(value, fallback) {
   const slug = String(value || '')
@@ -81,7 +83,45 @@ function settleTotalMarket(market, actual) {
   return next;
 }
 
+function isTerminalVoidStatus(item) {
+  return ['postponed_or_cancelled', 'postponed', 'cancelled', 'canceled', 'abandoned'].includes(
+    String(item.status || item.state || '').toLowerCase(),
+  );
+}
+
+function voidPredictions(predictions = {}) {
+  return Object.fromEntries(Object.entries(predictions).map(([key, value]) => {
+    if (!value || typeof value !== 'object' || ['hit', 'miss'].includes(value.result)) return [key, value];
+    return [key, { ...value, result: 'void' }];
+  }));
+}
+
+function applyManualTerminalStatus(match, item) {
+  const importedAt = item.importedAt || item.updatedAt || new Date().toISOString();
+  const statusText = item.statusText || item.status_text || item.state || item.status || 'Postponed';
+  const displayTime = String(statusText).toLowerCase().includes('postpon') ? 'Postponed' : 'Cancelled';
+  return {
+    ...match,
+    status: 'postponed_or_cancelled',
+    time: displayTime,
+    predictions: voidPredictions(match.predictions || {}),
+    settled_at: String(item.date || match.date || importedAt).slice(0, 10),
+    prediction_locked: true,
+    prediction_locked_at: match.prediction_locked_at || importedAt,
+    void_reason: item.voidReason || 'Fixture postponed/cancelled by manual source before result settlement.',
+    manual_result_import: {
+      source: item.source || 'manual_terminal_status',
+      statusText,
+      importedAt,
+      importedBy: item.importedBy || null,
+      importedByEmail: item.importedByEmail || null,
+      reappliedByRoutine: true,
+    },
+  };
+}
+
 function applyManualResult(match, item) {
+  if (isTerminalVoidStatus(item)) return applyManualTerminalStatus(match, item);
   const homeGoals = Number(item.score?.home);
   const awayGoals = Number(item.score?.away);
   if (!Number.isFinite(homeGoals) || !Number.isFinite(awayGoals)) return match;
@@ -130,7 +170,7 @@ async function loadManualResultImports(db) {
   const snap = await db.collection('dashboardData').doc(DOC_ID).collection(MANUAL_IMPORTS_COLLECTION).get();
   return snap.docs
     .map((doc) => ({ id: doc.id, ...(doc.data() || {}) }))
-    .filter((item) => item.date && item.score && item.homeName && item.awayName);
+    .filter((item) => item.date && (item.score || isTerminalVoidStatus(item)) && item.homeName && item.awayName);
 }
 
 function applyManualResultImports(leagues, imports) {
@@ -196,9 +236,32 @@ function slimMatch(match) {
     'corner_odds',
     'display_markets',
     'display_summary',
+    'settled_source',
+    'void_reason',
+    'manual_result_source_url',
     'manual_result_import',
     'venue',
     'referee',
+  ];
+  return Object.fromEntries(
+    keep
+      .filter((key) => match[key] !== undefined && match[key] !== null)
+      .map((key) => [key, match[key]]),
+  );
+}
+
+function slimLeagueDocMatch(match) {
+  const keep = [
+    'id',
+    'date',
+    'time',
+    'status',
+    'home',
+    'away',
+    'display_summary',
+    'settled_source',
+    'void_reason',
+    'prediction_locked',
   ];
   return Object.fromEntries(
     keep
@@ -223,18 +286,13 @@ function summarizeAllTime(leagues) {
   const matches = (Array.isArray(leagues) ? leagues : []).flatMap((league) => Array.isArray(league.matches) ? league.matches : []);
   const markets = matches.flatMap((match) => Array.isArray(match.display_summary?.headlineMarkets) ? match.display_summary.headlineMarkets : []);
   const hits = markets.filter((market) => market?.result === 'hit').length;
-  const oddsTotals = markets.reduce((totals, market) => {
-    const odds = Number(market?.odds);
-    if (!Number.isFinite(odds)) return totals;
-    if (market.result === 'hit') totals.hit += odds;
-    if (market.result === 'miss') totals.loss += odds;
-    return totals;
-  }, { hit: 0, loss: 0 });
+  const oddsTotals = marketReturnTotals(markets);
   const finished = matches.filter((match) => match.status === 'FT').length;
+  const upcoming = matches.filter((match) => match.status === 'upcoming').length;
   return {
     total: matches.length,
     finished,
-    upcoming: matches.length - finished,
+    upcoming,
     settledMarkets: markets.length,
     marketHits: hits,
     marketMisses: markets.length - hits,
@@ -242,6 +300,7 @@ function summarizeAllTime(leagues) {
     oddsTotals: {
       hit: Math.round(oddsTotals.hit * 10) / 10,
       loss: Math.round(oddsTotals.loss * 10) / 10,
+      priced: oddsTotals.priced,
     },
     review: summarizeReviewMarkets(matches),
   };
@@ -274,8 +333,7 @@ function summarizeReviewRows(matches) {
       .filter((market) => market?.result === 'hit' || market?.result === 'miss');
     const hits = settled.filter((market) => market.result === 'hit');
     const misses = settled.filter((market) => market.result === 'miss');
-    const oddsHit = hits.reduce((sum, market) => sum + (Number(market.odds) || 0), 0);
-    const oddsMiss = misses.reduce((sum, market) => sum + (Number(market.odds) || 0), 0);
+    const oddsTotals = marketReturnTotals(settled);
     return {
       key: config.key,
       label: config.label,
@@ -283,9 +341,10 @@ function summarizeReviewRows(matches) {
       hits: hits.length,
       misses: misses.length,
       hitRate: settled.length ? Math.round((hits.length / settled.length) * 100) : 0,
-      oddsHit: Math.round(oddsHit * 10) / 10,
-      oddsMiss: Math.round(oddsMiss * 10) / 10,
-      net: Math.round((oddsHit - oddsMiss) * 10) / 10,
+      oddsHit: Math.round(oddsTotals.hit * 10) / 10,
+      oddsMiss: Math.round(oddsTotals.loss * 10) / 10,
+      oddsPriced: settled.filter((market) => pricedMarketOdds(market)).length,
+      net: Math.round((oddsTotals.hit - oddsTotals.loss) * 10) / 10,
     };
   }).filter((row) => row.total > 0);
 }
@@ -414,6 +473,88 @@ function selectFastPayload(leagues, parsed, allTimeSummary, availableDates) {
   };
 }
 
+function flattenedMatchesFromDateDoc(dateDoc) {
+  return (Array.isArray(dateDoc?.leagues) ? dateDoc.leagues : [])
+    .flatMap((league) =>
+      (Array.isArray(league.matches) ? league.matches : []).map((match) => ({
+        ...match,
+        leagueName: league.name || league.id || null,
+      })),
+    );
+}
+
+function isFinishedStatus(match) {
+  return String(match?.status || '').toLowerCase() === 'ft';
+}
+
+function marketResult(market) {
+  const result = String(market?.result || '').toLowerCase();
+  return SETTLED_MARKET_RESULTS.has(result) ? result : '';
+}
+
+function marketLabelForIssue(match, key) {
+  const home = match?.home?.short || match?.home?.name || 'Home';
+  const away = match?.away?.short || match?.away?.name || 'Away';
+  return `${match?.date || '?'} ${match?.time || '?'} ${match?.leagueName || match?.league || '?'} ${home} vs ${away} [${match?.id || 'no-id'}] ${key}`;
+}
+
+function requiredMarketChecks(match) {
+  const display = match?.display_markets || {};
+  const predictions = match?.predictions || {};
+  const checks = [
+    ['winner', display.winner?.market || predictions.winner],
+    ['btts', display.btts?.market || predictions.btts],
+    ['goals', display.goals?.market || predictions.ou_goals],
+    ['cards', display.cards?.market || predictions.ou_cards],
+    ['corners', display.corners?.market || predictions.ou_corners],
+  ];
+
+  if (display.double_chance?.market) checks.push(['double_chance', display.double_chance.market]);
+  if (display.draw_no_bet?.market && String(match?.date || '') >= DRAW_NO_BET_TRACKING_START_DATE) {
+    checks.push(['draw_no_bet', display.draw_no_bet.market]);
+  }
+  if (match?.display_summary?.compactMarket?.market) {
+    checks.push(['suggested', match.display_summary.compactMarket.market]);
+  }
+  return checks;
+}
+
+function unsettledMarketsForMatch(match) {
+  return requiredMarketChecks(match)
+    .filter(([, market]) => market && !marketResult(market))
+    .map(([key]) => marketLabelForIssue(match, key));
+}
+
+async function verifyFirestoreDayMarketsSettled(db, date) {
+  const dateRef = db.collection('dashboardData').doc(DOC_ID).collection('dates').doc(slugify(date, 'unknown'));
+  const dateSnap = await dateRef.get();
+  if (!dateSnap.exists) {
+    throw new Error(`Firestore day-market verification failed: date doc ${date} is missing.`);
+  }
+
+  const dateData = dateSnap.data() || {};
+  const dayMatches = flattenedMatchesFromDateDoc(dateData).filter((match) => String(match.date || '') === date);
+  const finishedMatches = dayMatches.filter(isFinishedStatus);
+  const unsettled = finishedMatches.flatMap(unsettledMarketsForMatch);
+
+  console.log(`Firestore day-market verification ${date}: matches=${dayMatches.length} FT=${finishedMatches.length} unsettled=${unsettled.length}`);
+  if (unsettled.length) {
+    const sample = unsettled.slice(0, 12).join('; ');
+    throw new Error(`Firestore day-market verification failed: ${unsettled.length} unsettled market(s) for ${date}. ${sample}`);
+  }
+
+  const fastSnap = await db.collection('dashboardData').doc(FAST_DOC_ID).get();
+  if (fastSnap.exists) {
+    const fastMatches = flattenedMatchesFromDateDoc(fastSnap.data()).filter((match) => String(match.date || '') === date);
+    const fastUnsettled = fastMatches.filter(isFinishedStatus).flatMap(unsettledMarketsForMatch);
+    if (fastUnsettled.length) {
+      const sample = fastUnsettled.slice(0, 12).join('; ');
+      throw new Error(`Firestore fast-doc market verification failed: ${fastUnsettled.length} unsettled market(s) for ${date}. ${sample}`);
+    }
+    console.log(`Firestore fast-doc market verification ${date}: matches=${fastMatches.length} unsettled=${fastUnsettled.length}`);
+  }
+}
+
 function firestoreSafe(value) {
   if (Array.isArray(value)) return value.map(firestoreSafe);
   if (value && typeof value === 'object') {
@@ -533,7 +674,7 @@ async function main() {
       round: league.round ?? null,
       logo: league.logo || null,
       matchCount: Array.isArray(league.matches) ? league.matches.length : 0,
-      matches: Array.isArray(league.matches) ? league.matches.map(slimMatch) : [],
+      matches: Array.isArray(league.matches) ? league.matches.map(slimLeagueDocMatch) : [],
       updatedAt: FieldValue.serverTimestamp(),
     }) });
   });
@@ -601,6 +742,7 @@ async function main() {
   operations.push({ type: 'set', ref: fastRef, payload: fastPayload });
 
   await commitUploadOperations(db, operations);
+  await verifyFirestoreDayMarketsSettled(db, adelaideTodayIso());
   console.log(`Uploaded ${dataPath} to Firestore dashboardData/${DOC_ID} as ${leagues.length} league docs and ${dateBuckets.size} date docs.`);
   if (fastOverflow) {
     console.log(`Uploaded fast dashboard doc dashboardData/${FAST_DOC_ID} as metadata-only fallback (${(fastByteLength / 1024).toFixed(1)} KB); app will use date/league docs.`);

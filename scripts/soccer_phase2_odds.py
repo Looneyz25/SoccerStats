@@ -52,6 +52,15 @@ MD_PATH = OUT_DIR / "phase2_odds_slate_current.md"
 LOCAL_TZ = "Australia/Adelaide"
 READY = "ready_for_phase_3"
 
+
+def fixture_target_dates_from_env():
+    dates = set()
+    for item in os.environ.get("SOCCER_FIXTURE_DATES", "").split(","):
+        item = item.strip()
+        if re.fullmatch(r"\d{4}-\d{2}-\d{2}", item):
+            dates.add(item)
+    return dates
+
 LEAGUE_PAGES = {
     "Premier League":         "united-kingdom/english-premier-league",
     "Championship":           "united-kingdom/english-championship",
@@ -619,6 +628,10 @@ def main():
 
     run_ts = datetime.now(ADL).strftime("%Y-%m-%d %H:%M:%S %Z")
     phase1_rows = read_phase1()
+    target_dates = fixture_target_dates_from_env()
+    if target_dates:
+        phase1_rows = [row for row in phase1_rows if row.get("date") in target_dates]
+        print(f"[target] dates: {','.join(sorted(target_dates))}")
 
     requested_leagues = {x.strip() for x in args.leagues.split(",")} if args.leagues else None
     leagues_needed = sorted({
@@ -751,6 +764,7 @@ def main():
         {"item": "run_timestamp", "value": run_ts},
         {"item": "timezone", "value": LOCAL_TZ},
         {"item": "source", "value": "Sportsbet AU"},
+        {"item": "target_dates", "value": ",".join(sorted(target_dates)) if target_dates else ""},
         {"item": "phase1_input_rows", "value": len(phase1_rows)},
         {"item": "phase1_ready_rows", "value": sum(1 for r in phase1_rows if r.get("phase1_status") == "ready_for_phase_2")},
         {"item": "phase2_total_rows", "value": len(rows)},

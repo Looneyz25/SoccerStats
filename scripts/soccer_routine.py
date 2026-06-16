@@ -1787,7 +1787,7 @@ def actuals_for(eid, league_name="", match=None):
         flash_actuals = flashscore_actuals_for_match(league_name, match)
         if flash_actuals:
             out = {**flash_actuals, **out}
-    if match and "corners_total" not in out:
+    if match and ("corners_total" not in out or "cards_total" not in out):
         espn_actuals = espn_actuals_for_match(league_name, match)
         if espn_actuals:
             out = {**espn_actuals, **out}
@@ -4196,6 +4196,7 @@ def flashscore_live_state_for_match(league_name, match):
 
 
 _ESPN_SCOREBOARD_CACHE = {}
+_ESPN_SUMMARY_CACHE = {}
 
 
 def espn_scoreboard_events(league_name):
@@ -4209,6 +4210,24 @@ def espn_scoreboard_events(league_name):
     return _ESPN_SCOREBOARD_CACHE[slug]
 
 
+def _fetch_espn_summary(slug, event_id):
+    """Fetch and cache ESPN /summary for a specific event. Returns raw dict or None."""
+    import urllib.request, json as _json
+    cache_key = (slug, event_id)
+    if cache_key in _ESPN_SUMMARY_CACHE:
+        return _ESPN_SUMMARY_CACHE[cache_key]
+    import soccer_phase1_fixtures as espnsource
+    url = f"{espnsource.ESPN_BASE}/{slug}/summary?event={event_id}"
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=20) as resp:
+            result = _json.loads(resp.read().decode("utf-8", errors="replace"))
+    except Exception:
+        result = None
+    _ESPN_SUMMARY_CACHE[cache_key] = result
+    return result
+
+
 def _espn_date_close(ev_date, match_date):
     # ESPN dates are UTC; our match dates are Adelaide local, so allow a one-day slack.
     a = parse_match_date(ev_date)
@@ -4219,12 +4238,24 @@ def _espn_date_close(ev_date, match_date):
 
 
 def espn_event_for_match(league_name, match):
+    # Fast path: use cached event_id to skip fuzzy matching on repeat calls.
+    cached_id = match.get("espn_event_id")
+    if cached_id:
+        for ev in espn_scoreboard_events(league_name):
+            if ev.get("event_id") == cached_id:
+                return ev
+        # Event has scrolled off the scoreboard window; return a minimal stub so
+        # espn_actuals_for_match() can still call the /summary endpoint by event_id.
+        return {"event_id": cached_id, "state": "post", "completed": True}
+
     home = (match.get("home") or {}).get("name", "")
     away = (match.get("away") or {}).get("name", "")
     for ev in espn_scoreboard_events(league_name):
         if not _espn_date_close(ev.get("date"), match.get("date")):
             continue
         if team_names_match(home, ev.get("home")) and team_names_match(away, ev.get("away")):
+            # Cache event_id on the match so the next call skips scoreboard scan.
+            match["espn_event_id"] = ev.get("event_id")
             return ev
     return None
 
@@ -4247,16 +4278,65 @@ def espn_state_for_match(league_name, match):
 
 
 def espn_actuals_for_match(league_name, match):
-    """Return {corners_total, ...} from ESPN, or None (ESPN scoreboard has no cards)."""
+    """Return corners and/or cards from ESPN, or None.
+    Corners come from the scoreboard; cards come from /summary (yellowCards + redCards)."""
+    import soccer_phase1_fixtures as espnsource
     ev = espn_event_for_match(league_name, match)
     if not ev:
         return None
+    out = {"source": "ESPN"}
+
+    # Corners — scoreboard already has them
     try:
         hc = int(ev.get("home_corners"))
         ac = int(ev.get("away_corners"))
+        out["home_corners"] = hc
+        out["away_corners"] = ac
+        out["corners_total"] = hc + ac
     except (TypeError, ValueError):
-        return None
-    return {"source": "ESPN", "home_corners": hc, "away_corners": ac, "corners_total": hc + ac}
+        pass
+
+    # Cards — need /summary endpoint; only worth calling for completed matches
+    event_id = ev.get("event_id")
+    slug = espnsource.ESPN_LEAGUE_SLUGS.get(league_name)
+    if event_id and slug and (ev.get("state") == "post" or ev.get("completed")):
+        summary = _fetch_espn_summary(slug, event_id)
+        teams = ((summary or {}).get("boxscore") or {}).get("teams") or []
+        home_team = next((t for t in teams if (t.get("homeAway") or "").lower() == "home"), None)
+        away_team = next((t for t in teams if (t.get("homeAway") or "").lower() == "away"), None)
+
+        def _card_stat(team_entry, name):
+            for stat in (team_entry or {}).get("statistics") or []:
+                if stat.get("name") == name:
+                    try:
+                        return int(stat.get("displayValue", 0))
+                    except (TypeError, ValueError):
+                        return 0
+            return 0
+
+        if home_team is not None and away_team is not None:
+            home_yellow = _card_stat(home_team, "yellowCards")
+            away_yellow = _card_stat(away_team, "yellowCards")
+            home_red = _card_stat(home_team, "redCards")
+            away_red = _card_stat(away_team, "redCards")
+            home_cards = home_yellow + home_red
+            away_cards = away_yellow + away_red
+            out["home_cards"] = home_cards
+            out["away_cards"] = away_cards
+            out["cards_total"] = home_cards + away_cards
+            # Corners from summary — fills the gap when scoreboard is stale/out-of-window.
+            if "corners_total" not in out:
+                try:
+                    hc = int(_card_stat(home_team, "wonCorners") or 0)
+                    ac = int(_card_stat(away_team, "wonCorners") or 0)
+                    if hc > 0 or ac > 0:
+                        out["home_corners"] = hc
+                        out["away_corners"] = ac
+                        out["corners_total"] = hc + ac
+                except (TypeError, ValueError):
+                    pass
+
+    return out if len(out) > 1 else None
 
 
 def update_live_and_settle(store):

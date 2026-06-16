@@ -1,57 +1,57 @@
 {
-  "generated_at": "2026-05-25 12:45:18 ACST",
+  "generated_at": "2026-06-17 07:36:40 ACST",
   "prediction_tracking_start_date": "2026-04-22",
-  "settled_market_rows": 2052,
+  "settled_market_rows": 2732,
   "market_summary": [
     {
       "market": "BTTS",
-      "settled": 498,
-      "hits": 271,
-      "misses": 227,
-      "hit_rate": 0.5442,
-      "odds_hit": 236.2,
-      "odds_loss": 203.1,
-      "odds_net": 33.1
+      "settled": 645,
+      "hits": 370,
+      "misses": 275,
+      "hit_rate": 0.5736,
+      "odds_hit": 351.95,
+      "odds_loss": 242.41,
+      "odds_net": 109.54
     },
     {
       "market": "Cards",
-      "settled": 470,
-      "hits": 286,
-      "misses": 184,
-      "hit_rate": 0.6085,
-      "odds_hit": 214.76,
-      "odds_loss": 164.85,
-      "odds_net": 49.91
+      "settled": 602,
+      "hits": 396,
+      "misses": 206,
+      "hit_rate": 0.6578,
+      "odds_hit": 255.86,
+      "odds_loss": 189.03,
+      "odds_net": 66.83
     },
     {
       "market": "Corners",
-      "settled": 88,
-      "hits": 61,
-      "misses": 27,
-      "hit_rate": 0.6932,
-      "odds_hit": 6.42,
-      "odds_loss": 10.45,
-      "odds_net": -4.03
+      "settled": 195,
+      "hits": 128,
+      "misses": 67,
+      "hit_rate": 0.6564,
+      "odds_hit": 15.11,
+      "odds_loss": 14.01,
+      "odds_net": 1.1
     },
     {
       "market": "Goals",
-      "settled": 498,
-      "hits": 275,
-      "misses": 223,
-      "hit_rate": 0.5522,
-      "odds_hit": 235.47,
-      "odds_loss": 220.85,
-      "odds_net": 14.62
+      "settled": 645,
+      "hits": 365,
+      "misses": 280,
+      "hit_rate": 0.5659,
+      "odds_hit": 344.0,
+      "odds_loss": 274.66,
+      "odds_net": 69.34
     },
     {
       "market": "Winner",
-      "settled": 498,
-      "hits": 247,
-      "misses": 251,
-      "hit_rate": 0.496,
-      "odds_hit": 259.16,
-      "odds_loss": 335.85,
-      "odds_net": -76.69
+      "settled": 645,
+      "hits": 323,
+      "misses": 322,
+      "hit_rate": 0.5008,
+      "odds_hit": 344.58,
+      "odds_loss": 459.6,
+      "odds_net": -115.02
     }
   ],
   "league_summary": [
@@ -67,33 +67,43 @@
     },
     {
       "league": "Allsvenskan",
-      "settled": 43,
-      "hits": 23,
-      "misses": 20,
-      "hit_rate": 0.5349,
-      "odds_hit": 14.76,
-      "odds_loss": 26.6,
-      "odds_net": -11.84
+      "settled": 35,
+      "hits": 25,
+      "misses": 10,
+      "hit_rate": 0.7143,
+      "odds_hit": 33.03,
+      "odds_loss": 11.61,
+      "odds_net": 21.42
     },
     {
       "league": "Brasileirão Betano",
-      "settled": 45,
-      "hits": 17,
-      "misses": 28,
-      "hit_rate": 0.3778,
-      "odds_hit": 27.8,
-      "odds_loss": 45.32,
-      "odds_net": -17.52
+      "settled": 100,
+      "hits": 53,
+      "misses": 47,
+      "hit_rate": 0.53,
+      "odds_hit": 87.28,
+      "odds_loss": 79.18,
+      "odds_net": 8.1
     },
     {
       "league": "Bundesliga",
-      "settled": 148,
-      "hits": 78,
-      "misses": 70,
-      "hit_rate": 0.527,
-      "odds_hit": 59.6,
+      "settled": 153,
+      "hits": 81,
+      "misses": 72,
+      "hit_rate": 0.5294,
+      "odds_hit": 66.4,
       "odds_loss": 68.46,
-      "odds_net": -8.86
+      "odds_net": -2.06
+    },
+    {
+      "league": "CONMEBOL Libertadores",
+      "settled": 77,
+      "hits": 44,
+      "misses": 33,
+      "hit_rate": 0.5714,
+      "odds_hit": 56.67,
+      "odds_loss": 51.74,
+      "odds_net": 4.93
     },
     {
       "league": "Championship",
@@ -107,13 +117,13 @@
     },
     {
       "league": "Eliteserien",
-      "settled": 30,
-      "hits": 22,
-      "misses": 8,
-      "hit_rate": 0.7333,
-      "odds_hit": 8.33,
-      "odds_loss": 0,
-      "odds_net": 8.33
+      "settled": 35,
+      "hits": 23,
+      "misses": 12,
+      "hit_rate": 0.6571,
+      "odds_hit": 22.12,
+      "odds_loss": 17.77,
+      "odds_net": 4.35
     },
     {
       "league": "Eredivisie",
@@ -126,14 +136,34 @@
       "odds_net": -5.56
     },
     {
-      "league": "J1 League",
+      "league": "FIFA World Cup",
       "settled": 85,
-      "hits": 54,
-      "misses": 31,
-      "hit_rate": 0.6353,
-      "odds_hit": 50.26,
-      "odds_loss": 58.37,
-      "odds_net": -8.11
+      "hits": 57,
+      "misses": 28,
+      "hit_rate": 0.6706,
+      "odds_hit": 85.5,
+      "odds_loss": 33.99,
+      "odds_net": 51.51
+    },
+    {
+      "league": "International Friendly Games",
+      "settled": 333,
+      "hits": 222,
+      "misses": 111,
+      "hit_rate": 0.6667,
+      "odds_hit": 29.28,
+      "odds_loss": 22.04,
+      "odds_net": 7.24
+    },
+    {
+      "league": "J1 League",
+      "settled": 180,
+      "hits": 114,
+      "misses": 66,
+      "hit_rate": 0.6333,
+      "odds_hit": 118.06,
+      "odds_loss": 117.0,
+      "odds_net": 1.06
     },
     {
       "league": "LaLiga",
@@ -157,33 +187,33 @@
     },
     {
       "league": "League Two",
-      "settled": 107,
-      "hits": 61,
-      "misses": 46,
-      "hit_rate": 0.5701,
-      "odds_hit": 3.77,
-      "odds_loss": 12.88,
-      "odds_net": -9.11
+      "settled": 112,
+      "hits": 64,
+      "misses": 48,
+      "hit_rate": 0.5714,
+      "odds_hit": 7.51,
+      "odds_loss": 17.58,
+      "odds_net": -10.07
     },
     {
       "league": "Ligue 1",
-      "settled": 155,
-      "hits": 80,
-      "misses": 75,
-      "hit_rate": 0.5161,
-      "odds_hit": 79.27,
-      "odds_loss": 80.19,
-      "odds_net": -0.92
+      "settled": 165,
+      "hits": 85,
+      "misses": 80,
+      "hit_rate": 0.5152,
+      "odds_hit": 83.3,
+      "odds_loss": 90.19,
+      "odds_net": -6.89
     },
     {
       "league": "MLS",
-      "settled": 366,
-      "hits": 203,
-      "misses": 163,
-      "hit_rate": 0.5546,
-      "odds_hit": 219.96,
-      "odds_loss": 164.98,
-      "odds_net": 54.98
+      "settled": 371,
+      "hits": 205,
+      "misses": 166,
+      "hit_rate": 0.5526,
+      "odds_hit": 222.06,
+      "odds_loss": 171.97,
+      "odds_net": 50.09
     },
     {
       "league": "Premier League",
@@ -197,76 +227,78 @@
     },
     {
       "league": "Primeira Liga",
-      "settled": 40,
-      "hits": 23,
-      "misses": 17,
-      "hit_rate": 0.575,
-      "odds_hit": 5.15,
-      "odds_loss": 2.35,
+      "settled": 43,
+      "hits": 25,
+      "misses": 18,
+      "hit_rate": 0.5814,
+      "odds_hit": 8.35,
+      "odds_loss": 5.55,
       "odds_net": 2.8
     },
     {
       "league": "Scottish Premiership",
-      "settled": 31,
-      "hits": 21,
-      "misses": 10,
-      "hit_rate": 0.6774,
-      "odds_hit": 21.36,
-      "odds_loss": 9.52,
-      "odds_net": 11.84
+      "settled": 36,
+      "hits": 23,
+      "misses": 13,
+      "hit_rate": 0.6389,
+      "odds_hit": 23.16,
+      "odds_loss": 18.05,
+      "odds_net": 5.11
     },
     {
       "league": "Serie A",
-      "settled": 95,
-      "hits": 54,
-      "misses": 41,
-      "hit_rate": 0.5684,
-      "odds_hit": 82.87,
+      "settled": 90,
+      "hits": 50,
+      "misses": 40,
+      "hit_rate": 0.5556,
+      "odds_hit": 79.47,
       "odds_loss": 83.23,
-      "odds_net": -0.36
+      "odds_net": -3.76
     },
     {
       "league": "UEFA Champions League",
-      "settled": 14,
-      "hits": 8,
-      "misses": 6,
-      "hit_rate": 0.5714,
-      "odds_hit": 4.49,
-      "odds_loss": 8.51,
-      "odds_net": -4.02
+      "settled": 19,
+      "hits": 12,
+      "misses": 7,
+      "hit_rate": 0.6316,
+      "odds_hit": 11.42,
+      "odds_loss": 10.46,
+      "odds_net": 0.96
+    },
+    {
+      "league": "UEFA Conference League",
+      "settled": 5,
+      "hits": 3,
+      "misses": 2,
+      "hit_rate": 0.6,
+      "odds_hit": 3.5,
+      "odds_loss": 6.2,
+      "odds_net": -2.7
     }
   ],
   "weak_spots": [
     {
-      "league": "Brasileirão Betano",
-      "market": "Goals",
-      "settled": 9,
-      "hit_rate": 0.1111,
-      "odds_net": -13.64,
+      "league": "CONMEBOL Libertadores",
+      "market": "Winner",
+      "settled": 16,
+      "hit_rate": 0.25,
+      "odds_net": -25.14,
       "action": "review_weighting"
     },
     {
-      "league": "Brasileirão Betano",
-      "market": "BTTS",
-      "settled": 9,
-      "hit_rate": 0.2222,
-      "odds_net": -9.83,
+      "league": "Eliteserien",
+      "market": "Winner",
+      "settled": 7,
+      "hit_rate": 0.2857,
+      "odds_net": -10.55,
       "action": "review_weighting"
     },
     {
       "league": "Serie A",
       "market": "Winner",
-      "settled": 21,
-      "hit_rate": 0.3333,
-      "odds_net": -23.11,
-      "action": "review_weighting"
-    },
-    {
-      "league": "Allsvenskan",
-      "market": "BTTS",
-      "settled": 9,
-      "hit_rate": 0.3333,
-      "odds_net": -9.84,
+      "settled": 20,
+      "hit_rate": 0.3,
+      "odds_net": -26.51,
       "action": "review_weighting"
     },
     {
@@ -280,9 +312,9 @@
     {
       "league": "Bundesliga",
       "market": "Winner",
-      "settled": 37,
-      "hit_rate": 0.3514,
-      "odds_net": -9.2,
+      "settled": 38,
+      "hit_rate": 0.3684,
+      "odds_net": -5.95,
       "action": "review_weighting"
     },
     {
@@ -294,11 +326,43 @@
       "action": "review_weighting"
     },
     {
-      "league": "J1 League",
+      "league": "Brasileirão Betano",
+      "market": "Goals",
+      "settled": 20,
+      "hit_rate": 0.4,
+      "odds_net": -7.88,
+      "action": "review_weighting"
+    },
+    {
+      "league": "UEFA Champions League",
       "market": "BTTS",
-      "settled": 19,
-      "hit_rate": 0.4211,
-      "odds_net": -5.03,
+      "settled": 5,
+      "hit_rate": 0.4,
+      "odds_net": -2.65,
+      "action": "review_weighting"
+    },
+    {
+      "league": "FIFA World Cup",
+      "market": "Winner",
+      "settled": 17,
+      "hit_rate": 0.4118,
+      "odds_net": 5.26,
+      "action": "review_weighting"
+    },
+    {
+      "league": "Eliteserien",
+      "market": "Corners",
+      "settled": 7,
+      "hit_rate": 0.4286,
+      "odds_net": 0,
+      "action": "review_weighting"
+    },
+    {
+      "league": "Bundesliga",
+      "market": "Cards",
+      "settled": 37,
+      "hit_rate": 0.4324,
+      "odds_net": -19.22,
       "action": "review_weighting"
     },
     {
@@ -308,36 +372,12 @@
       "hit_rate": 0.4333,
       "odds_net": -33.84,
       "action": "review_weighting"
-    },
-    {
-      "league": "MLS",
-      "market": "Winner",
-      "settled": 88,
-      "hit_rate": 0.4432,
-      "odds_net": -9.89,
-      "action": "review_weighting"
-    },
-    {
-      "league": "Bundesliga",
-      "market": "Cards",
-      "settled": 36,
-      "hit_rate": 0.4444,
-      "odds_net": -19.22,
-      "action": "review_weighting"
-    },
-    {
-      "league": "Allsvenskan",
-      "market": "Goals",
-      "settled": 9,
-      "hit_rate": 0.4444,
-      "odds_net": -6.72,
-      "action": "review_weighting"
     }
   ],
   "recommendations": [
     "Persist model probabilities per market in match_data.json so the review agent can compare confidence bands to actual hit rate.",
     "Inspect high-edge misses before raising thresholds; they are the cleanest overconfidence signal.",
-    "First targeted review: Brasileirão Betano Goals (9 settled, 11.1% hit rate)."
+    "First targeted review: CONMEBOL Libertadores Winner (16 settled, 25.0% hit rate)."
   ],
   "outputs": {
     "csv": "docs\\agent-system\\outputs\\model_result_review_current.csv",

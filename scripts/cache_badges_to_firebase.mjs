@@ -23,6 +23,12 @@ const TARGET_TEAM_KEYS = new Set(
     .flatMap((value) => sourceKeysForTeamName(value))
     .filter(Boolean),
 );
+const TARGET_DATES = new Set(
+  (process.env.BADGE_TARGET_DATES || process.env.SOCCER_FIXTURE_DATES || '')
+    .split(',')
+    .map((value) => value.trim())
+    .filter((value) => /^\d{4}-\d{2}-\d{2}$/.test(value)),
+);
 const FIREBASE_STORAGE_HOST = 'firebasestorage.googleapis.com';
 const GOOGLE_STORAGE_HOST = 'storage.googleapis.com';
 const THESPORTSDB_KEY = process.env.THESPORTSDB_KEY || process.env.THESPORTSDB_API_KEY || '123';
@@ -581,12 +587,18 @@ async function processFile(bucket, db, registryCache, fileName) {
 
   const counts = { cached: 0, skipped: 0, failed: 0 };
   const hasTargetTeams = TARGET_TEAM_KEYS.size > 0;
-  const teamSources = hasTargetTeams ? { byLeague: new Map(), byName: new Map() } : await loadTeamSources(data.leagues || []);
-  for (const league of data.leagues || []) {
+  const targetLeagues = TARGET_DATES.size
+    ? (data.leagues || [])
+        .map((league) => ({ league, matches: (league.matches || []).filter((match) => TARGET_DATES.has(match.date)) }))
+        .filter((entry) => entry.matches.length)
+    : (data.leagues || []).map((league) => ({ league, matches: league.matches || [] }));
+  const teamSourceLeagues = targetLeagues.map((entry) => ({ ...entry.league, matches: entry.matches }));
+  const teamSources = hasTargetTeams ? { byLeague: new Map(), byName: new Map() } : await loadTeamSources(teamSourceLeagues);
+  for (const { league, matches } of targetLeagues) {
     if (!hasTargetTeams) {
       addCounts(counts, await cacheEntity(bucket, db, registryCache, teamSources, 'leagues', league, [league.name || league.id], 'league', league.name));
     }
-    for (const match of league.matches || []) {
+    for (const match of matches) {
       if (!hasTargetTeams || sourceKeysForTeamName(match.home?.name || match.home?.short).some((key) => TARGET_TEAM_KEYS.has(key))) {
         addCounts(counts, await cacheEntity(bucket, db, registryCache, teamSources, 'teams', match.home, [match.home?.team_id, match.home?.name].filter(Boolean), match.home?.badge_source || 'thesportsdb', league.name));
       }
@@ -612,6 +624,9 @@ async function main() {
   for (const fileName of DATA_FILES) {
     const result = await processFile(bucket, db, registryCache, fileName);
     if (result) results.push(result);
+  }
+  if (TARGET_DATES.size) {
+    console.log(`target_dates=${Array.from(TARGET_DATES).sort().join(',')}`);
   }
   results.forEach((result) => {
     console.log(`${result.fileName}: cached=${result.cached} skipped=${result.skipped} failed=${result.failed}`);
