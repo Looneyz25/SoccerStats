@@ -219,6 +219,7 @@ HEADERS = [
     "missing_fields",
     "phase1_status",
     "phase1_notes",
+    "group",
 ]
 
 
@@ -597,6 +598,136 @@ def fetch_espn_scoreboard(slug):
     except Exception:
         return []
     return parse_espn_events(data)
+
+
+def fetch_espn_events_for_date(slug, day_compact):
+    """Raw ESPN scoreboard events for a league slug on a specific YYYYMMDD UTC date."""
+    if not slug:
+        return []
+    url = f"{ESPN_BASE}/{slug}/scoreboard?dates={day_compact}"
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"})
+    with urllib.request.urlopen(req, timeout=20) as resp:
+        data = json.loads(resp.read().decode("utf-8", errors="replace"))
+    return (data or {}).get("events", [])
+
+
+def _espn_status_text(state, completed):
+    if completed or state == "post":
+        return "FT"
+    if state == "in":
+        return "live"
+    return "upcoming"
+
+
+def _espn_group_label(comp):
+    """Best-effort group letter from ESPN competition notes ('Group K'), else ''."""
+    for note in (comp.get("notes") or []):
+        headline = note.get("headline") or ""
+        m = re.search(r"group\s+([a-z0-9]+)", headline, re.I)
+        if m:
+            return m.group(1).upper()
+    return ""
+
+
+def rows_from_espn(start_date, days, run_ts):
+    """Fixture rows from ESPN's public scoreboard — the reliable fixture floor. ESPN is a
+    public API (no anti-bot impersonation needed), so it stays up when SofaScore/Sportsbet
+    are blocked. Queries one extra UTC day each side and filters by Adelaide date so
+    timezone-boundary kickoffs aren't dropped."""
+    rows = []
+    health_rows = []
+    allowed = {(start_date + timedelta(days=i)).isoformat() for i in range(days)}
+    day_codes = [(start_date + timedelta(days=i)).strftime("%Y%m%d") for i in range(-1, days + 1)]
+    for league in LEAGUES:
+        slug = ESPN_LEAGUE_SLUGS.get(league["name"])
+        if not slug:
+            continue
+        matched = 0
+        status = "healthy"
+        notes = ""
+        for day_compact in day_codes:
+            try:
+                events = fetch_espn_events_for_date(slug, day_compact)
+            except Exception as exc:
+                status = "blocked"
+                notes = str(exc)
+                continue
+            for ev in events:
+                comp = (ev.get("competitions") or [{}])[0]
+                competitors = comp.get("competitors") or []
+                home = next((c for c in competitors if c.get("homeAway") == "home"), {})
+                away = next((c for c in competitors if c.get("homeAway") == "away"), {})
+                home_team = home.get("team") or {}
+                away_team = away.get("team") or {}
+                h_name = home_team.get("displayName") or home_team.get("name") or ""
+                a_name = away_team.get("displayName") or away_team.get("name") or ""
+                if not h_name or not a_name:
+                    continue
+                if is_women_team(h_name) or is_women_team(a_name):
+                    continue
+                if is_excluded_fixture(league["name"], h_name, a_name):
+                    continue
+                iso = ev.get("date") or ""
+                local_date = iso[:10]
+                local_time = ""
+                utc_ts = ""
+                try:
+                    dt = datetime.fromisoformat(iso.replace("Z", "+00:00"))
+                    if dt.tzinfo is None:
+                        dt = dt.replace(tzinfo=timezone.utc)
+                    local = dt.astimezone(ADL)
+                    local_date = local.strftime("%Y-%m-%d")
+                    local_time = local.strftime("%H:%M")
+                    utc_ts = int(dt.astimezone(timezone.utc).timestamp())
+                except Exception:
+                    pass
+                if local_date not in allowed:
+                    continue
+                stype = (ev.get("status") or {}).get("type") or {}
+                status_text = _espn_status_text(stype.get("state"), stype.get("completed"))
+                group = _espn_group_label(comp)
+                rows.append({
+                    "run_timestamp": run_ts,
+                    "source": "ESPN",
+                    "source_health": status,
+                    "league_id": league["legacy_id"],
+                    "api_league_id": slug,
+                    "league": league["name"],
+                    "league_logo": f"https://img.sofascore.com/api/v1/unique-tournament/{league.get('sofa_id')}/image",
+                    "event_id": "espn:" + str(ev.get("id", "")),
+                    "date": local_date,
+                    "time": "FT" if status_text == "FT" else local_time,
+                    "timezone": LOCAL_TZ,
+                    "utc_timestamp": utc_ts,
+                    "status": status_text,
+                    "home": h_name,
+                    "home_team_id": str(home_team.get("id") or ""),
+                    "home_logo": home_team.get("logo") or "",
+                    "home_goals": home.get("score") if status_text != "upcoming" else "",
+                    "away": a_name,
+                    "away_team_id": str(away_team.get("id") or ""),
+                    "away_logo": away_team.get("logo") or "",
+                    "away_goals": away.get("score") if status_text != "upcoming" else "",
+                    "is_duplicate": "no",
+                    "is_stale": "no",
+                    "missing_fields": "",
+                    "phase1_status": "",
+                    "phase1_notes": "ESPN scoreboard fixture source." + (f" Group {group}." if group else ""),
+                    "group": group,
+                })
+                matched += 1
+            time.sleep(0.15)
+        health_rows.append({
+            "run_timestamp": run_ts,
+            "source": "ESPN",
+            "endpoint": f"{ESPN_BASE}/{slug}/scoreboard?dates=<day>",
+            "date": day_codes[1] if len(day_codes) > 1 else "",
+            "league": league["name"],
+            "source_health": status,
+            "records": matched,
+            "notes": notes,
+        })
+    return rows, health_rows
 
 
 def flashscore_league(event):
@@ -1417,8 +1548,19 @@ def main():
     run_ts = now_adelaide().strftime("%Y-%m-%d %H:%M:%S %Z")
     key = api_key()
 
-    rows, health_rows = rows_from_sofascore(start_date, days, run_ts)
-    source_mode = "SofaScore"
+    # ESPN is the primary fixture source: a public, structured API (no anti-bot
+    # impersonation) that stays up when the scraped sources are blocked. Every tracked
+    # league has an ESPN slug, so ESPN alone covers the full slate when reachable.
+    rows, health_rows = rows_from_espn(start_date, days, run_ts)
+    source_mode = "ESPN"
+
+    # Everything below is a fallback only if ESPN returns nothing at all. SofaScore stays
+    # as a silent deep fallback (it 403-blocks often); TheSportsDB is no longer used.
+    if not rows:
+        sofa_rows, sofa_health = rows_from_sofascore(start_date, days, run_ts)
+        rows = sofa_rows
+        health_rows.extend(sofa_health)
+        source_mode = "SofaScore fallback"
 
     if not rows and key:
         api_rows, api_health = rows_from_api(start_date, days, run_ts, key)
@@ -1431,16 +1573,12 @@ def main():
         rows = flash_rows
         health_rows.extend(flash_health)
         source_mode = "Flashscore fallback"
-        if not rows:
-            tsdb_rows, tsdb_health = rows_from_thesportsdb(start_date, days, run_ts)
-            rows = tsdb_rows
-            health_rows.extend(tsdb_health)
-            source_mode = "TheSportsDB fallback"
-        if not rows:
-            fallback_rows, fallback_health = rows_from_store(run_ts)
-            rows = fallback_rows
-            health_rows.extend(fallback_health)
-            source_mode = "local fallback"
+
+    if not rows:
+        fallback_rows, fallback_health = rows_from_store(run_ts)
+        rows = fallback_rows
+        health_rows.extend(fallback_health)
+        source_mode = "local fallback"
 
     if env_target_dates:
         rows = [row for row in rows if row.get("date") in env_target_dates]
