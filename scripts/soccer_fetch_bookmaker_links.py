@@ -168,6 +168,13 @@ def entain_path_slug(value: object) -> str:
     return re.sub(r"[^a-z0-9]+", "-", entain_slug(value)).strip("-")
 
 
+_MATCH_STOPWORDS = {"fc", "afc", "cf", "sc", "and", "the", "of", "club", "vs", "v"}
+
+
+def _significant_tokens(value: object) -> set[str]:
+    return {tok for tok in re.split(r"[^a-z0-9]+", fold(value).lower()) if tok and tok not in _MATCH_STOPWORDS}
+
+
 def names_match(team: str, haystack: str) -> bool:
     team_norm = norm(team)
     hay_norm = norm(haystack)
@@ -184,6 +191,11 @@ def names_match(team: str, haystack: str) -> bool:
             return True
         if expanded in team_norm and token in hay_norm:
             return True
+    # Order-insensitive: every significant token of the team appears in the haystack
+    # ("Congo DR" vs "DR Congo", "Bosnia-Herzegovina" vs "Bosnia & Herzegovina").
+    team_tokens = _significant_tokens(team)
+    if team_tokens and team_tokens <= _significant_tokens(haystack):
+        return True
     return False
 
 
@@ -562,6 +574,15 @@ def enrich_ladbrokes_odds(store: dict, target_dates: set[str] | None) -> int:
         return 0
     price_by_entrant = _index_entain_prices(prices)
     soccer_events = [e for e in events.values() if e.get("category_id") == ENTAIN_SOCCER_CATEGORY_ID]
+    # Ceiling diagnostic: how many soccer events actually carry a priced 1X2 market — tells
+    # us whether a low attach count is a matcher miss or just thin Ladbrokes coverage.
+    event_ids_with_1x2 = {
+        m.get("event_id") for m in markets.values()
+        if (m.get("name") or "") in _ENTAIN_1X2_MARKETS
+        and any(price_by_entrant.get(eid) for eid in (m.get("entrant_ids") or []))
+    }
+    priced = sum(1 for e in soccer_events if e.get("id") in event_ids_with_1x2)
+    print(f"[ladbrokes] soccer events: {len(soccer_events)} | with priced 1X2: {priced}")
     attached = 0
     for _, match in iter_matches(store, target_dates):
         scored = [(entain_match_score(match, event), event) for event in soccer_events]
