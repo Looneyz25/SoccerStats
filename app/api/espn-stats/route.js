@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 
 const ESPN_BASE = 'https://site.api.espn.com/apis/site/v2/sports/soccer';
+const FETCH_TIMEOUT_MS = 8000;
 
 const ESPN_LEAGUE_SLUGS = {
   'FIFA World Cup': 'fifa.world',
@@ -54,15 +55,20 @@ function namesMatch(a, b) {
 }
 
 async function espnFetch(url) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
   try {
     const res = await fetch(url, {
       headers: { 'User-Agent': 'Mozilla/5.0', Accept: 'application/json' },
-      next: { revalidate: 60 },
+      cache: 'no-store',
+      signal: controller.signal,
     });
     if (!res.ok) return null;
-    return res.json();
+    return await res.json();
   } catch {
     return null;
+  } finally {
+    clearTimeout(timer);
   }
 }
 
@@ -76,11 +82,15 @@ function competitorStat(competitor, statName) {
   return null;
 }
 
+function parseEvents(data) {
+  return data?.events || [];
+}
+
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const home = searchParams.get('home') || '';
   const away = searchParams.get('away') || '';
-  const date = searchParams.get('date') || '';
+  const date = searchParams.get('date') || '';   // YYYY-MM-DD
   const league = searchParams.get('league') || '';
 
   const slug = ESPN_LEAGUE_SLUGS[league];
@@ -88,22 +98,27 @@ export async function GET(request) {
     return NextResponse.json({ found: false, reason: 'league_not_mapped' });
   }
 
-  const scoreboard = await espnFetch(`${ESPN_BASE}/${slug}/scoreboard`);
+  // Build scoreboard URL — include the match date so ESPN returns FT matches
+  // from that day rather than only current/upcoming ones.
+  const dateCompact = date.replace(/-/g, '');
+  const scoreboardUrl = dateCompact
+    ? `${ESPN_BASE}/${slug}/scoreboard?dates=${dateCompact}`
+    : `${ESPN_BASE}/${slug}/scoreboard`;
+
+  const scoreboard = await espnFetch(scoreboardUrl);
   if (!scoreboard) {
     return NextResponse.json({ found: false, reason: 'scoreboard_fetch_failed' });
   }
 
   let matchedEvent = null;
-  for (const event of scoreboard.events || []) {
+  for (const event of parseEvents(scoreboard)) {
     const comp = (event.competitions || [{}])[0];
     const competitors = comp.competitors || [];
     const homeComp = competitors.find((c) => c.homeAway === 'home') || {};
     const awayComp = competitors.find((c) => c.homeAway === 'away') || {};
     const homeTeam = homeComp.team?.displayName || homeComp.team?.name || '';
     const awayTeam = awayComp.team?.displayName || awayComp.team?.name || '';
-    const eventDate = (event.date || '').slice(0, 10);
-    const dateClose = !date || Math.abs(new Date(eventDate) - new Date(date)) <= 86400 * 2 * 1000;
-    if (dateClose && namesMatch(home, homeTeam) && namesMatch(away, awayTeam)) {
+    if (namesMatch(home, homeTeam) && namesMatch(away, awayTeam)) {
       matchedEvent = { event, comp, homeComp, awayComp };
       break;
     }
@@ -128,42 +143,15 @@ export async function GET(request) {
   const stats =
     bsHome && bsAway
       ? {
-          possession: {
-            home: competitorStat(bsHome, 'possessionPct'),
-            away: competitorStat(bsAway, 'possessionPct'),
-          },
-          shots: {
-            home: competitorStat(bsHome, 'totalShots'),
-            away: competitorStat(bsAway, 'totalShots'),
-          },
-          shotsOnTarget: {
-            home: competitorStat(bsHome, 'shotsOnTarget'),
-            away: competitorStat(bsAway, 'shotsOnTarget'),
-          },
-          corners: {
-            home: competitorStat(bsHome, 'wonCorners'),
-            away: competitorStat(bsAway, 'wonCorners'),
-          },
-          fouls: {
-            home: competitorStat(bsHome, 'foulsCommitted'),
-            away: competitorStat(bsAway, 'foulsCommitted'),
-          },
-          yellowCards: {
-            home: competitorStat(bsHome, 'yellowCards'),
-            away: competitorStat(bsAway, 'yellowCards'),
-          },
-          redCards: {
-            home: competitorStat(bsHome, 'redCards'),
-            away: competitorStat(bsAway, 'redCards'),
-          },
-          saves: {
-            home: competitorStat(bsHome, 'saves'),
-            away: competitorStat(bsAway, 'saves'),
-          },
-          offsides: {
-            home: competitorStat(bsHome, 'offsides'),
-            away: competitorStat(bsAway, 'offsides'),
-          },
+          possession: { home: competitorStat(bsHome, 'possessionPct'), away: competitorStat(bsAway, 'possessionPct') },
+          shots: { home: competitorStat(bsHome, 'totalShots'), away: competitorStat(bsAway, 'totalShots') },
+          shotsOnTarget: { home: competitorStat(bsHome, 'shotsOnTarget'), away: competitorStat(bsAway, 'shotsOnTarget') },
+          corners: { home: competitorStat(bsHome, 'wonCorners'), away: competitorStat(bsAway, 'wonCorners') },
+          fouls: { home: competitorStat(bsHome, 'foulsCommitted'), away: competitorStat(bsAway, 'foulsCommitted') },
+          yellowCards: { home: competitorStat(bsHome, 'yellowCards'), away: competitorStat(bsAway, 'yellowCards') },
+          redCards: { home: competitorStat(bsHome, 'redCards'), away: competitorStat(bsAway, 'redCards') },
+          saves: { home: competitorStat(bsHome, 'saves'), away: competitorStat(bsAway, 'saves') },
+          offsides: { home: competitorStat(bsHome, 'offsides'), away: competitorStat(bsAway, 'offsides') },
         }
       : null;
 
@@ -186,33 +174,18 @@ export async function GET(request) {
     awayScore: g.competitions?.[0]?.competitors?.find((c) => c.homeAway === 'away')?.score,
   }));
 
-  const lastFiveHome = (summary?.lastFiveGames || [])
-    .filter((g) => {
-      const comps = g.competitions?.[0]?.competitors || [];
-      return comps.some((c) => namesMatch(c.team?.displayName || '', home));
-    })
-    .slice(0, 5)
-    .map((g) => {
-      const comps = g.competitions?.[0]?.competitors || [];
-      const myComp = comps.find((c) => namesMatch(c.team?.displayName || '', home));
-      const won = myComp?.winner === true;
-      const drew = !myComp?.winner && comps.every((c) => !c.winner);
-      return { result: won ? 'W' : drew ? 'D' : 'L', score: `${myComp?.score ?? '?'}` };
-    });
-
-  const lastFiveAway = (summary?.lastFiveGames || [])
-    .filter((g) => {
-      const comps = g.competitions?.[0]?.competitors || [];
-      return comps.some((c) => namesMatch(c.team?.displayName || '', away));
-    })
-    .slice(0, 5)
-    .map((g) => {
-      const comps = g.competitions?.[0]?.competitors || [];
-      const myComp = comps.find((c) => namesMatch(c.team?.displayName || '', away));
-      const won = myComp?.winner === true;
-      const drew = !myComp?.winner && comps.every((c) => !c.winner);
-      return { result: won ? 'W' : drew ? 'D' : 'L', score: `${myComp?.score ?? '?'}` };
-    });
+  function lastFive(teamName) {
+    return (summary?.lastFiveGames || [])
+      .filter((g) => (g.competitions?.[0]?.competitors || []).some((c) => namesMatch(c.team?.displayName || '', teamName)))
+      .slice(0, 5)
+      .map((g) => {
+        const comps = g.competitions?.[0]?.competitors || [];
+        const mine = comps.find((c) => namesMatch(c.team?.displayName || '', teamName));
+        const won = mine?.winner === true;
+        const drew = !mine?.winner && comps.every((c) => !c.winner);
+        return { result: won ? 'W' : drew ? 'D' : 'L' };
+      });
+  }
 
   return NextResponse.json({
     found: true,
@@ -224,7 +197,7 @@ export async function GET(request) {
     stats,
     keyEvents,
     h2h,
-    lastFiveHome,
-    lastFiveAway,
+    lastFiveHome: lastFive(home),
+    lastFiveAway: lastFive(away),
   });
 }
