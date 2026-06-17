@@ -60,7 +60,19 @@ function combinedOdds(legs) {
   return legs.reduce((p, l) => p * (Number(l.book) || 1), 1);
 }
 function combinedProb(legs) {
-  return legs.reduce((p, l) => p * (Number(l.prob) || 0), 1);
+  // Missing/zero leg probability is unknown, not impossible — treat it as the
+  // neutral multiplier (1) like combinedOdds does, so one prob-less leg doesn't
+  // collapse the whole combined probability to 0.
+  return legs.reduce((p, l) => {
+    const prob = Number(l.prob);
+    return p * (Number.isFinite(prob) && prob > 0 ? prob : 1);
+  }, 1);
+}
+
+function clampStake(value) {
+  const stake = Number(value);
+  if (!Number.isFinite(stake)) return 10;
+  return Math.max(0, Math.min(100000, stake));
 }
 
 function serializeSlip(doc) {
@@ -86,7 +98,7 @@ async function settleSlip(db, ref, doc) {
   let changed = false;
   const nextLegs = [];
   for (const leg of legs) {
-    if (leg.result) { nextLegs.push(leg); continue; }
+    if (leg.result != null) { nextLegs.push(leg); continue; }
     const match = await loadMatch(db, leg.matchId, leg.date);
     const result = match ? scoreLeg(match, leg) : null;
     if (result) { changed = true; nextLegs.push({ ...leg, result }); }
@@ -139,10 +151,9 @@ export async function POST(request) {
 
   if (body.action === 'saveDraft') {
     const legs = sanitizeLegs(body.legs);
-    const stake = Number(body.stake);
     await col.doc(DRAFT_ID).set({
       legs,
-      stake: Number.isFinite(stake) ? stake : 10,
+      stake: clampStake(body.stake),
       updatedAt: FieldValue.serverTimestamp(),
     }, { merge: true });
     return jsonResponse(await payload(db, user.uid));
@@ -151,10 +162,9 @@ export async function POST(request) {
   if (body.action === 'saveSlip') {
     const legs = sanitizeLegs(body.legs);
     if (!legs.length) return jsonResponse({ error: 'empty-slip' }, 400);
-    const stake = Number(body.stake);
     await col.add({
       legs,
-      stake: Number.isFinite(stake) ? stake : 10,
+      stake: clampStake(body.stake),
       combinedOdds: combinedOdds(legs),
       combinedProb: combinedProb(legs),
       status: 'pending',
