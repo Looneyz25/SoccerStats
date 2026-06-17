@@ -30,13 +30,16 @@ OUT_DIR = ROOT / "docs" / "agent-system" / "outputs"
 SUMMARY_PATH = OUT_DIR / "Phase7_Daily_Summary.md"
 RUN_LOG_PATH = OUT_DIR / "Phase7_Run_Log.json"
 
+# Phases 3-6 (Team Context / Predictions / Value / Settlement) were a self-contained
+# CSV chain whose output nothing downstream consumes — soccer_routine.py reads only the
+# Phase 1 (fixtures) and Phase 2 (odds) slates, does its own predictions/settlement, and
+# uses the Phase 8 calibration JSON. Phase 3 in particular was the slow SofaScore xG
+# scrape we're dropping. Removing 3-6 cuts the bulk of the runtime and a SofaScore
+# dependency without changing match_data.json. Kept: 1, 2, and the review→calibration
+# pair (7-8) that feeds model_calibration.json.
 PHASES = [
     ("1 Fixtures",       "soccer_phase1_fixtures.py",      None),
     ("2 Odds",           "soccer_phase2_odds.py",          OUT_DIR / "phase1_fixture_slate_current.csv"),
-    ("3 Team Context",   "soccer_phase3_team_context.py",  OUT_DIR / "phase2_odds_slate_current.csv"),
-    ("4 Predictions",    "soccer_phase4_predictions.py",   OUT_DIR / "phase3_team_context_current.csv"),
-    ("5 Value & Risk",   "soccer_phase5_value_risk.py",    OUT_DIR / "phase4_predictions_current.csv"),
-    ("6 Settlement",     "soccer_phase6_settlement.py",    OUT_DIR / "phase5_value_risk_current.csv"),
     ("Result Review",    "soccer_result_review_agent.py",  ROOT / "match_data.json"),
     ("Model Calibration", "soccer_model_calibration_agent.py", OUT_DIR / "model_result_review_summary.json"),
 ]
@@ -86,10 +89,6 @@ def read_json_safe(path):
 def health_table():
     p1 = read_csv_safe(OUT_DIR / "phase1_fixture_slate_current.csv")
     p2 = read_csv_safe(OUT_DIR / "phase2_odds_slate_current.csv")
-    p3 = read_csv_safe(OUT_DIR / "phase3_team_context_current.csv")
-    p4 = read_csv_safe(OUT_DIR / "phase4_predictions_current.csv")
-    p5 = read_csv_safe(OUT_DIR / "phase5_value_risk_current.csv")
-    p6 = read_csv_safe(OUT_DIR / "phase6_settlement_current.csv")
     review = read_json_safe(OUT_DIR / "model_result_review_summary.json") or {}
     calibration = read_json_safe(OUT_DIR / "model_calibration.json") or {}
     def count(rows, key, val):
@@ -97,24 +96,10 @@ def health_table():
     rows = [
         ("1 Fixtures", count(p1, "phase1_status", "ready_for_phase_2"),
          len(p1) - count(p1, "phase1_status", "ready_for_phase_2"),
-         "Flashscore" if p1 else "n/a"),
+         "ESPN" if p1 else "n/a"),
         ("2 Odds", count(p2, "phase2_status", "ready_for_phase_3"),
          len(p2) - count(p2, "phase2_status", "ready_for_phase_3"),
-         "Sportsbet (mimic)"),
-        ("3 Team Context", count(p3, "phase3_status", "ready_for_phase_4"),
-         len(p3) - count(p3, "phase3_status", "ready_for_phase_4"),
-         "SofaScore (mimic)"),
-        ("4 Predictions", count(p4, "phase4_status", "ready_for_phase_5"),
-         len(p4) - count(p4, "phase4_status", "ready_for_phase_5"),
-         "model"),
-        ("5 Value & Risk",
-         f"{count(p5, 'phase5_status', 'bet')} bets / {count(p5, 'phase5_status', 'lean')} leans",
-         count(p5, "phase5_status", "no_value") + count(p5, "phase5_status", "upstream_blocked"),
-         "model"),
-        ("6 Settlement",
-         f"{count(p6, 'phase6_status', 'won')} won / {count(p6, 'phase6_status', 'lost')} lost",
-         count(p6, "phase6_status", "pending") + count(p6, "phase6_status", "not_found"),
-         "Flashscore"),
+         "Sportsbet"),
         ("Result Review",
          review.get("settled_market_rows", 0),
          len(review.get("weak_spots", [])),
