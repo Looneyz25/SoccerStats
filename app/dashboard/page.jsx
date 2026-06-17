@@ -34,11 +34,46 @@ import {
   X,
 } from 'lucide-react';
 
+// Country for each tracked competition, so the UI reads country -> league -> match and
+// same-named cups (e.g. England's Championship vs USA's USL Championship) are visibly
+// distinct. Mirrors the pipeline's FLASH_LEAGUE_ALIASES; league identity itself is already
+// guaranteed unique by tournament id.
+const LEAGUE_COUNTRY = {
+  'Premier League': 'England',
+  'Championship': 'England',
+  'League One': 'England',
+  'League Two': 'England',
+  'LaLiga': 'Spain',
+  'Bundesliga': 'Germany',
+  'Serie A': 'Italy',
+  'Ligue 1': 'France',
+  'Eredivisie': 'Netherlands',
+  'Primeira Liga': 'Portugal',
+  'A-League Men': 'Australia',
+  'Scottish Premiership': 'Scotland',
+  'J1 League': 'Japan',
+  'UEFA Champions League': 'Europe',
+  'UEFA Europa League': 'Europe',
+  'UEFA Conference League': 'Europe',
+  'MLS': 'USA',
+  'Brasileirão Betano': 'Brazil',
+  'CONMEBOL Libertadores': 'South America',
+  'FIFA World Cup': 'World',
+  'International Friendly Games': 'International',
+  'Allsvenskan': 'Sweden',
+  'Eliteserien': 'Norway',
+};
+
+function leagueCountryLabel(name) {
+  return LEAGUE_COUNTRY[name] || '';
+}
+
 const GAMBLING_HELP_URL = 'https://www.gamblinghelponline.org.au/';
 const BETSTOP_URL = 'https://www.betstop.gov.au/';
 const SUPPORT_EMAIL = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'lvrstats.com@gmail.com';
 const FAVORITE_LEAGUES_STORAGE_KEY = 'favoriteLeagues';
 const FAVORITE_TEAMS_STORAGE_KEY = 'favoriteTeams';
+const ACCA_LEGS_STORAGE_KEY = 'accaLegs';
 const MAX_FAVORITE_TEAMS = 100;
 const PREDICTION_TRACKING_START_DATE = '2026-04-22';
 const DRAW_NO_BET_TRACKING_START_DATE = '2026-05-25';
@@ -1186,11 +1221,25 @@ function valueBoardPicks(matches, limit = 8, minEv = 0.03) {
       const ev = prob * book - 1;
       if (ev < minEv) continue;
       const kelly = Math.max(0, ((prob * book - 1) / (book - 1)) * 0.25);
-      picks.push({ match: m, label: row.label, pick: formatMarketDetail(row.market), book, ev, kelly });
+      picks.push({ match: m, label: row.label, pick: formatMarketDetail(row.market), book, prob, ev, kelly });
     }
   }
   picks.sort((a, b) => b.ev - a.ev);
   return picks.slice(0, limit);
+}
+
+// One acca leg per match keeps legs independent, so the combined model probability
+// (product of leg probabilities) is valid. Adding a second pick from a match replaces
+// the first; clicking the same pick again removes it.
+function accaLegKey(matchId, label) {
+  return `${matchId}::${label}`;
+}
+
+function accaCombined(legs) {
+  if (!legs.length) return null;
+  const odds = legs.reduce((p, l) => p * Number(l.book), 1);
+  const prob = legs.reduce((p, l) => p * Number(l.prob), 1);
+  return { odds, prob, ev: prob * odds - 1 };
 }
 
 // Flat-stake (1u) P&L over every settled suggested pick, chronologically — the equity
@@ -1267,7 +1316,7 @@ function BankrollPanel({ matches }) {
   );
 }
 
-function ValueBoard({ matches, onSelectMatch }) {
+function ValueBoard({ matches, onSelectMatch, accaKeys, onToggleLeg }) {
   const picks = useMemo(() => valueBoardPicks(matches), [matches]);
   if (!picks.length) return null;
   return (
@@ -1280,27 +1329,149 @@ function ValueBoard({ matches, onSelectMatch }) {
         <span className="rounded-full bg-field px-2 py-0.5 text-[11px] font-semibold text-muted">{picks.length}</span>
       </div>
       <ul className="divide-y divide-line">
-        {picks.map((p, i) => (
-          <li key={`${p.match.id}-${p.label}`}>
-            <button
-              type="button"
-              onClick={() => onSelectMatch(p.match)}
-              className="flex w-full items-center gap-3 px-3 py-2.5 text-left transition hover:bg-surface-2"
-            >
-              <span className="w-4 shrink-0 text-center font-mono text-xs font-semibold text-faint">{i + 1}</span>
-              <span className="min-w-0 flex-1">
-                <span className="block truncate text-sm font-semibold text-ink">{p.match.home?.name} v {p.match.away?.name}</span>
-                <span className="block truncate text-[11px] text-muted">{p.match.league} · {matchDisplayTime(p.match)} · <span className="font-semibold text-ink">{p.label} {p.pick}</span> @ {p.book.toFixed(2)}</span>
-              </span>
-              <span className="shrink-0 text-right">
-                <span className="block font-mono text-sm font-semibold text-emerald-600 dark:text-emerald-400">+{(p.ev * 100).toFixed(0)}%</span>
-                <span className="block text-[10px] text-faint">¼K {(p.kelly * 100).toFixed(1)}%</span>
-              </span>
-            </button>
-          </li>
-        ))}
+        {picks.map((p, i) => {
+          const key = accaLegKey(p.match.id, p.label);
+          const inSlip = accaKeys?.has(key);
+          return (
+            <li key={key} className="flex items-center gap-1 pr-2">
+              <button
+                type="button"
+                onClick={() => onSelectMatch(p.match)}
+                className="flex min-w-0 flex-1 items-center gap-3 py-2.5 pl-3 text-left transition hover:bg-surface-2"
+              >
+                <span className="w-4 shrink-0 text-center font-mono text-xs font-semibold text-faint">{i + 1}</span>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-sm font-semibold text-ink">{p.match.home?.name} v {p.match.away?.name}</span>
+                  <span className="block truncate text-[11px] text-muted">{p.match.league} · {matchDisplayTime(p.match)} · <span className="font-semibold text-ink">{p.label} {p.pick}</span> @ {p.book.toFixed(2)}</span>
+                </span>
+                <span className="shrink-0 text-right">
+                  <span className="block font-mono text-sm font-semibold text-emerald-600 dark:text-emerald-400">+{(p.ev * 100).toFixed(0)}%</span>
+                  <span className="block text-[10px] text-faint">¼K {(p.kelly * 100).toFixed(1)}%</span>
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={() => onToggleLeg({
+                  matchId: p.match.id,
+                  label: p.label,
+                  pick: p.pick,
+                  matchLabel: `${p.match.home?.name} v ${p.match.away?.name}`,
+                  league: p.match.league,
+                  book: p.book,
+                  prob: p.prob,
+                })}
+                aria-pressed={inSlip}
+                aria-label={inSlip ? 'Remove from bet slip' : 'Add to bet slip'}
+                className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-sm font-bold transition active:scale-90 ${
+                  inSlip ? 'border-accent bg-accent text-white' : 'border-line bg-surface text-muted hover:text-ink'
+                }`}
+              >
+                {inSlip ? <CheckCircle2 className="h-4 w-4" aria-hidden="true" /> : '+'}
+              </button>
+            </li>
+          );
+        })}
       </ul>
     </section>
+  );
+}
+
+function AccaSlip({ legs, onRemoveLeg, onClear }) {
+  const [open, setOpen] = useState(false);
+  const [stake, setStake] = useState(10);
+  useEffect(() => {
+    if (!open) return undefined;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, [open]);
+  if (!legs.length) return null;
+  const combined = accaCombined(legs);
+  const stakeNum = Number(stake) || 0;
+  const returns = combined ? stakeNum * combined.odds : 0;
+  const evPositive = combined && combined.ev > 0;
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="fixed bottom-20 right-4 z-40 inline-flex items-center gap-2 rounded-full bg-header px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-black/30 transition active:scale-95 sm:bottom-6"
+        aria-label={`Open bet slip, ${legs.length} legs`}
+      >
+        Bet slip
+        <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs font-bold text-white">{legs.length}</span>
+      </button>
+
+      {open && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center" role="dialog" aria-modal="true" aria-label="Bet slip">
+          <button type="button" aria-label="Close bet slip" onClick={() => setOpen(false)} className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+          <div className="relative z-10 flex max-h-[85vh] w-full flex-col rounded-t-2xl border-t border-line bg-surface shadow-2xl sm:max-w-md sm:rounded-2xl">
+            <div className="flex items-center justify-between border-b border-line px-4 py-3">
+              <h2 className="text-base font-semibold text-ink">Bet slip <span className="text-muted">· {legs.length}</span></h2>
+              <button type="button" onClick={() => setOpen(false)} aria-label="Close" className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-line text-muted transition hover:text-ink active:scale-95">
+                <X className="h-5 w-5" aria-hidden="true" />
+              </button>
+            </div>
+
+            <ul className="min-h-0 flex-1 divide-y divide-line overflow-y-auto">
+              {legs.map((l) => (
+                <li key={accaLegKey(l.matchId, l.label)} className="flex items-center gap-2 px-4 py-2.5">
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-semibold text-ink">{l.matchLabel}</span>
+                    <span className="block truncate text-[11px] text-muted">{l.label} {l.pick} @ <span className="font-mono font-semibold text-ink">{Number(l.book).toFixed(2)}</span> · model {(Number(l.prob) * 100).toFixed(0)}%</span>
+                  </span>
+                  <button type="button" onClick={() => onRemoveLeg(l)} aria-label="Remove leg" className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-line text-muted transition hover:text-red-500 active:scale-90">
+                    <X className="h-4 w-4" aria-hidden="true" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+
+            {combined && (
+              <div className="border-t border-line px-4 py-3">
+                <div className="grid grid-cols-3 gap-2 text-center">
+                  <div>
+                    <div className="font-mono text-lg font-semibold text-ink">{combined.odds.toFixed(2)}</div>
+                    <div className="text-[11px] uppercase tracking-wide text-faint">Odds</div>
+                  </div>
+                  <div>
+                    <div className="font-mono text-lg font-semibold text-ink">{(combined.prob * 100).toFixed(1)}%</div>
+                    <div className="text-[11px] uppercase tracking-wide text-faint">Model</div>
+                  </div>
+                  <div>
+                    <div className={`font-mono text-lg font-semibold ${evPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}`}>{combined.ev >= 0 ? '+' : ''}{(combined.ev * 100).toFixed(0)}%</div>
+                    <div className="text-[11px] uppercase tracking-wide text-faint">EV</div>
+                  </div>
+                </div>
+                <div className="mt-3 flex items-center gap-3">
+                  <label className="flex items-center gap-2 text-sm text-muted">
+                    Stake
+                    <input
+                      type="number"
+                      min="0"
+                      inputMode="decimal"
+                      value={stake}
+                      onChange={(e) => setStake(e.target.value)}
+                      className="h-10 w-20 rounded-md border border-line bg-surface px-2 text-right font-mono text-sm text-ink"
+                    />
+                  </label>
+                  <span className="ml-auto text-sm text-muted">
+                    Returns <span className="font-mono text-base font-semibold text-ink">{returns.toFixed(2)}</span>
+                  </span>
+                </div>
+                <p className="mt-2 text-[11px] text-muted">Combined model probability assumes independent legs (one per match). Not betting advice.</p>
+              </div>
+            )}
+
+            <div className="flex items-center gap-3 border-t border-line px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
+              <button type="button" onClick={onClear} className="inline-flex h-11 items-center justify-center rounded-md border border-line bg-surface px-5 text-sm font-semibold text-muted transition hover:text-ink active:scale-95">Clear</button>
+              <button type="button" onClick={() => setOpen(false)} className="inline-flex h-11 flex-1 items-center justify-center rounded-md bg-header text-sm font-semibold text-white transition active:scale-95">Done</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
@@ -5563,7 +5734,7 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
           )}
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-semibold text-muted">
-              <span className="truncate">{match.league}</span>
+              <span className="truncate">{match.league}{leagueCountryLabel(match.league) && <span className="font-normal text-faint"> · {leagueCountryLabel(match.league)}</span>}</span>
               <span>{matchDisplayDate(match)}</span>
               <span>{matchDisplayTime(match)}</span>
               <span className={`rounded-full px-2 py-1 ring-1 ${statusClass(match.status)}`}>{statusBadgeLabel(match)}</span>
@@ -6080,7 +6251,12 @@ function SplitView({ groups, selectedMatch, onSelectRow, bookmakerId, allMatches
             <div className="sticky top-0 z-10 flex items-center justify-between gap-2 border-b border-line bg-header px-3 py-2 text-xs font-semibold text-header-fg">
               <span className="flex min-w-0 items-center gap-2">
                 <LeagueBadge src={group.logo} name={group.league} />
-                <span className="truncate">{group.league}</span>
+                <span className="min-w-0">
+                  <span className="block truncate leading-tight">{group.league}</span>
+                  {leagueCountryLabel(group.league) && (
+                    <span className="block truncate text-[10px] font-normal leading-tight text-white/55">{leagueCountryLabel(group.league)}</span>
+                  )}
+                </span>
               </span>
               <span className="shrink-0 rounded-full bg-white/15 px-2 py-0.5 text-[11px]">{group.matches.length}</span>
             </div>
@@ -6138,7 +6314,12 @@ function CompactLeagueSection({ group, allMatches, onSelectMatch, isFavorite = f
           ) : (
             <LeagueBadge src={group.logo} name={group.league} />
           )}
-          <span className="truncate text-sm font-semibold">{group.league}</span>
+          <span className="min-w-0">
+            <span className="block truncate text-sm font-semibold leading-tight">{group.league}</span>
+            {leagueCountryLabel(group.league) && (
+              <span className="block truncate text-[10px] font-normal leading-tight text-white/55">{leagueCountryLabel(group.league)}</span>
+            )}
+          </span>
           {!isFavoriteTeamGroup && (
             <button
               type="button"
@@ -6199,7 +6380,12 @@ function LeagueSection({ group, onSelectMatch, bookmakerId, allMatches, isFavori
           ) : (
             <LeagueBadge src={group.logo} name={group.league} />
           )}
-          <h2 className="truncate text-base font-semibold sm:text-lg">{group.league}</h2>
+          <span className="min-w-0">
+            <h2 className="truncate text-base font-semibold leading-tight sm:text-lg">{group.league}</h2>
+            {leagueCountryLabel(group.league) && (
+              <span className="block truncate text-[11px] font-normal leading-tight text-white/60">{leagueCountryLabel(group.league)}</span>
+            )}
+          </span>
           {!isFavoriteTeamGroup && (
             <button
               type="button"
@@ -6260,6 +6446,7 @@ function HomeInner() {
   const [mobileNavActive, setMobileNavActive] = useState('dashboard');
   const [viewMode, setViewMode] = useState('cards');
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [accaLegs, setAccaLegs] = useState([]);
   const [splitSelectedId, setSplitSelectedId] = useState(null);
   const [isLg, setIsLg] = useState(false);
   const [voteLeaderboard, setVoteLeaderboard] = useState(null);
@@ -6374,6 +6561,35 @@ function HomeInner() {
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = prev; };
   }, [filtersOpen]);
+
+  // Bet slip (accumulator) — persisted across refreshes.
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(ACCA_LEGS_STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) setAccaLegs(parsed);
+      }
+    } catch {}
+  }, []);
+  useEffect(() => {
+    try { localStorage.setItem(ACCA_LEGS_STORAGE_KEY, JSON.stringify(accaLegs)); } catch {}
+  }, [accaLegs]);
+  const accaKeys = useMemo(() => new Set(accaLegs.map((l) => accaLegKey(l.matchId, l.label))), [accaLegs]);
+  const toggleAccaLeg = useCallback((leg) => {
+    setAccaLegs((legs) => {
+      const key = accaLegKey(leg.matchId, leg.label);
+      if (legs.some((l) => accaLegKey(l.matchId, l.label) === key)) {
+        return legs.filter((l) => accaLegKey(l.matchId, l.label) !== key);
+      }
+      // One leg per match keeps the combined probability valid.
+      return [...legs.filter((l) => String(l.matchId) !== String(leg.matchId)), leg];
+    });
+  }, []);
+  const removeAccaLeg = useCallback((leg) => {
+    setAccaLegs((legs) => legs.filter((l) => accaLegKey(l.matchId, l.label) !== accaLegKey(leg.matchId, leg.label)));
+  }, []);
+  const clearAcca = useCallback(() => setAccaLegs([]), []);
 
   useEffect(() => {
     let active = true;
@@ -7124,7 +7340,7 @@ function HomeInner() {
 
         <div ref={resultsRef} className={`${mobileNavActive === 'dashboard' || mobileNavActive === 'results' ? 'block' : 'hidden'} scroll-mt-4`}>
           <div className="mb-4">
-            <ValueBoard matches={matches} onSelectMatch={handleSelectMatch} />
+            <ValueBoard matches={matches} onSelectMatch={handleSelectMatch} accaKeys={accaKeys} onToggleLeg={toggleAccaLeg} />
           </div>
           <ResultsReview
             matches={matches}
@@ -7510,6 +7726,7 @@ function HomeInner() {
         </div>
 
       </section>
+      <AccaSlip legs={accaLegs} onRemoveLeg={removeAccaLeg} onClear={clearAcca} />
       <MobileBottomNav
         active={mobileNavActive}
         onDashboard={openDashboardSection}
