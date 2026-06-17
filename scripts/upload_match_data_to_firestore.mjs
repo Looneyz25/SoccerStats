@@ -220,35 +220,72 @@ function loadLocalCredentials() {
   }
 }
 
+// The whitelist of match fields that reach Firestore. Anything not listed here is
+// silently dropped by slimMatch — so a new match field (e.g. espn_stats) must be added
+// here or it never ships. reportDroppedMatchFields() warns loudly when that happens.
+const MATCH_KEEP_FIELDS = [
+  'id',
+  'date',
+  'time',
+  'status',
+  'home',
+  'away',
+  'predictions',
+  'odds',
+  'sportsbet_odds',
+  'bookmaker_links',
+  'actuals',
+  'corner_odds',
+  'display_markets',
+  'display_summary',
+  'settled_source',
+  'void_reason',
+  'manual_result_source_url',
+  'manual_result_import',
+  'venue',
+  'referee',
+  'espn_stats',
+];
+
+// Fields present on source matches that are intentionally not uploaded (pipeline-internal
+// bookkeeping). Listed so the coverage check doesn't cry wolf about them.
+const MATCH_DROP_OK = new Set([
+  'leagueId', 'leagueLogo', 'league', 'source', 'source_status', 'source_health',
+  'phase_status', 'phase_notes', 'stat_backfill', 'flashscore_score', 'livescore_score',
+  'settled_at', 'settled_by_due_time', 'prediction_locked', 'prediction_locked_at',
+  'team_streaks', 'h2h_streaks', 'h2h_duel', 'h2h_history', 'odds_backfill_only',
+  'live_minute', 'live_updated_at', 'utc_timestamp', 'sportsbet_markets',
+  'bookmaker_odds_source', 'bookmaker_meta', 'merged_source_ids', 'espn_event_id',
+]);
+
 function slimMatch(match) {
-  const keep = [
-    'id',
-    'date',
-    'time',
-    'status',
-    'home',
-    'away',
-    'predictions',
-    'odds',
-    'sportsbet_odds',
-    'bookmaker_links',
-    'actuals',
-    'corner_odds',
-    'display_markets',
-    'display_summary',
-    'settled_source',
-    'void_reason',
-    'manual_result_source_url',
-    'manual_result_import',
-    'venue',
-    'referee',
-    'espn_stats',
-  ];
   return Object.fromEntries(
-    keep
+    MATCH_KEEP_FIELDS
       .filter((key) => match[key] !== undefined && match[key] !== null)
       .map((key) => [key, match[key]]),
   );
+}
+
+// Warn when a match carries a field that is neither uploaded nor explicitly OK to drop —
+// the silent-loss class that hid espn_stats from Firestore. Returns the unexpected keys.
+function reportDroppedMatchFields(leagues) {
+  const keep = new Set(MATCH_KEEP_FIELDS);
+  const unexpected = new Map();
+  for (const league of Array.isArray(leagues) ? leagues : []) {
+    for (const match of Array.isArray(league?.matches) ? league.matches : []) {
+      for (const key of Object.keys(match || {})) {
+        if (keep.has(key) || MATCH_DROP_OK.has(key)) continue;
+        unexpected.set(key, (unexpected.get(key) || 0) + 1);
+      }
+    }
+  }
+  if (unexpected.size) {
+    console.warn('⚠ Upload whitelist: dropping unrecognised match field(s) — add to MATCH_KEEP_FIELDS or MATCH_DROP_OK:');
+    for (const [key, count] of [...unexpected.entries()].sort((a, b) => b[1] - a[1])) {
+      console.warn(`  - ${key} (${count} matches)`);
+    }
+  }
+  return [...unexpected.keys()];
 }
 
 function slimLeagueDocMatch(match) {
@@ -649,6 +686,7 @@ async function main() {
   }
   const parsed = precomputeDisplayData({ ...sourceData, leagues: manualResult.leagues });
   const leagues = Array.isArray(parsed.leagues) ? parsed.leagues : [];
+  reportDroppedMatchFields(leagues);
   const allTimeSummary = summarizeAllTime(leagues);
   const metaRef = db.collection('dashboardData').doc(DOC_ID);
   const fastRef = db.collection('dashboardData').doc(FAST_DOC_ID);

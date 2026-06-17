@@ -4115,6 +4115,86 @@ def print_final_tally(store):
     print(f"\n=== TOTAL: {total}  FT: {ft}  upcoming: {up}  | winner hit: {hit}  miss: {miss}  pending: {pending} ===")
 
 
+def check_store_integrity(store):
+    """Post-build data-integrity audit for silent-failure classes that exit 0 but ship
+    wrong data: duplicate matches, missing core fields, upcoming matches missing required
+    markets, and leagues whose matches mostly belong to a foreign tournament-id scheme
+    (the league-leak signature). Returns (violations, review): violations are unambiguous;
+    review notes want a human eye. (League-leak prevention proper lives at the collector
+    via the exact idLeague gate; this is the backstop.)"""
+    required_markets = ("winner", "btts", "ou_goals", "ou_cards", "ou_corners")
+    violations = []
+    review = []
+    seen_ids = {}
+    for L in store.get("leagues", []):
+        lname = L.get("name", "?")
+        matches = L.get("matches", [])
+        if not matches:
+            review.append(f"empty league: {lname}")
+            continue
+        # Source-scheme outliers: a league whose matches are overwhelmingly one id scheme
+        # (e.g. SofaScore numeric ids) with one or two foreign ones (e.g. thesportsdb:) is
+        # the shape the USL fixture took when it leaked into EFL Championship.
+        sofa = sum(1 for m in matches if is_sofascore_event_id(m.get("id")))
+        foreign = [m for m in matches if not is_sofascore_event_id(m.get("id"))]
+        if sofa >= 5 and 0 < len(foreign) <= 2:
+            for m in foreign:
+                review.append(
+                    f"source-scheme outlier in {lname}: "
+                    f"{(m.get('home') or {}).get('name')} vs {(m.get('away') or {}).get('name')} "
+                    f"(id={m.get('id')}) — verify it belongs to this competition"
+                )
+        for m in matches:
+            home = (m.get("home") or {}).get("name")
+            away = (m.get("away") or {}).get("name")
+            label = f"{lname}: {home} vs {away}"
+            mid = m.get("id")
+            if mid is not None:
+                if mid in seen_ids:
+                    violations.append(f"duplicate id {mid}: {label} | also {seen_ids[mid]}")
+                else:
+                    seen_ids[mid] = label
+            if not home or not away:
+                violations.append(f"missing team name: {label}")
+            if not m.get("date"):
+                violations.append(f"missing date: {label}")
+            if str(m.get("status") or "").lower() == "upcoming":
+                preds = m.get("predictions") or {}
+                missing = [k for k in required_markets if not preds.get(k)]
+                if missing:
+                    violations.append(f"missing markets {','.join(missing)}: {label}")
+    return violations, review
+
+
+def run_integrity_audit(store, label="full refresh"):
+    """Run the integrity audit, write a marker file, and log loudly. Returns the hard
+    violation count (0 = clean). Does not stop the run — the marker surfaces problems
+    that otherwise exit 0 with wrong data."""
+    violations, review = check_store_integrity(store)
+    lines = [
+        "# Data integrity audit",
+        f"stage: {label}",
+        f"generated: {datetime.now(ADL).isoformat()}",
+        f"violations: {len(violations)}",
+        f"review notes: {len(review)}",
+        "",
+        "## Violations",
+    ]
+    lines += [f"- {v}" for v in violations] if violations else ["- none"]
+    lines += ["", "## Review notes"]
+    lines += [f"- {r}" for r in review] if review else ["- none"]
+    try:
+        (OUT_DIR / "data_integrity_latest.md").write_text("\n".join(lines), encoding="utf-8")
+    except Exception:
+        pass
+    print(f"\n[Integrity] violations={len(violations)} review={len(review)} -> data_integrity_latest.md")
+    for v in violations[:25]:
+        print(f"  VIOLATION: {v}")
+    for r in review[:10]:
+        print(f"  review: {r}")
+    return len(violations)
+
+
 def run_full_refresh():
     print(f"=== soccer_routine.py — {TODAY.isoformat()} (Adelaide) ===")
     store = load_store()
@@ -4180,6 +4260,7 @@ def run_full_refresh():
     # Final tally — reload store after helpers (they mutate match_data.json)
     store = load_store()
     save_store(store)
+    run_integrity_audit(store, "full refresh")
     print_final_tally(store)
 
 
@@ -4697,6 +4778,7 @@ def run_results_only():
         "pruned": [],
     })
     print(f"  result_schedule={schedule_paths['markdown']}")
+    run_integrity_audit(store, "results")
     print_final_tally(store)
 
 
