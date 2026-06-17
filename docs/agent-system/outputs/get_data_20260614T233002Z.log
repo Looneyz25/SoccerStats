@@ -1,0 +1,133 @@
+# get:data transcript 20260614T233002Z
+root=C:\Betting\SOCCER~1
+mode=results-only
+started_at=2026-06-14T23:30:02.787Z
+npm_command=npm.cmd
+decision_action=results
+decision_reason=1 progress pending match past expected finish
+
+## Apply manual result imports
+$ node scripts/apply_manual_result_imports.mjs
+started_at=2026-06-14T23:30:02.918Z
+Manual result imports reapplied to match_data.json: 24/25
+
+Manual result imports missed: 2026-06-12 International Friendly Games Zanzibar vs Uganda
+
+completed_at=2026-06-14T23:30:04.974Z
+exit_code=0
+
+## Settle due results
+$ node scripts/run-python.js scripts/soccer_routine.py --results-only
+started_at=2026-06-14T23:30:05.048Z
+=== soccer_routine.py results-only � 2026-06-15 (Adelaide) ===
+  result_check_buffer_minutes=180
+  due_for_result_check=1
+
+[Results A] quick fetch due matches
+  due id=15186945 due_at=2026-06-15T08:30:00+09:30 FIFA World Cup: Netherlands vs Japan
+  flashscore_fallback_source=https://www.flashscore.com.au/x/feed/f_1_0_3_en-au_1
+  settled=1  skipped=0  not_due=0  flashscore_settled=1  livescore_settled=0  closed=0
+
+[Results B] backfill stat actuals for recent FT matches
+  stat_backfill attempted=1 refetched=0 settled=0 still_pending=2
+  stat still pending (will retry next run): FIFA World Cup: Canada vs Bosnia & Herzegovina cards (attempt 4)
+  stat still pending (will retry next run): FIFA World Cup: Canada vs Bosnia & Herzegovina corners (attempt 4)
+  result_schedule=docs\agent-system\outputs\result_check_schedule_20260615T090015+0930.md
+
+=== TOTAL: 699  FT: 678  upcoming: 21  | winner hit: 320  miss: 318  pending: 61 ===
+
+completed_at=2026-06-14T23:30:15.870Z
+exit_code=0
+
+## Run result review
+$ node scripts/run-python.js scripts/soccer_result_review_agent.py
+started_at=2026-06-14T23:30:15.951Z
+Result review written: C:\Betting\Soccer Stats\docs\agent-system\outputs\model_result_review_current.md
+CSV: C:\Betting\Soccer Stats\docs\agent-system\outputs\model_result_review_current.csv
+settled_market_rows=2695 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the review agent can compare confidence bands to actual hit rate.
+
+completed_at=2026-06-14T23:30:16.164Z
+exit_code=0
+
+## Run model calibration
+$ node scripts/run-python.js scripts/soccer_model_calibration_agent.py
+started_at=2026-06-14T23:30:16.249Z
+Model calibration written: C:\Betting\Soccer Stats\docs\agent-system\outputs\model_calibration.json
+Markdown: C:\Betting\Soccer Stats\docs\agent-system\outputs\model_calibration.md
+market_adjustments=3 league_market_adjustments=6
+
+completed_at=2026-06-14T23:30:16.360Z
+exit_code=0
+
+## Verify and repair settled markets
+$ node scripts/verify_market_settlement.mjs
+started_at=2026-06-14T23:30:16.432Z
+Market settlement verification 2026-06-15: FT=2 repaired=0 unresolved=0
+
+completed_at=2026-06-14T23:30:16.617Z
+exit_code=0
+
+## Cache badges to Firebase Storage
+$ node scripts/cache_badges_to_firebase.mjs
+started_at=2026-06-14T23:30:16.727Z
+match_data.json: cached=0 skipped=1421 failed=0
+predictions_2026-06-14.json: cached=0 skipped=1417 failed=0
+
+completed_at=2026-06-14T23:45:58.086Z
+exit_code=0
+
+## Upload league docs to Firestore
+$ node scripts/upload_match_data_to_firestore.mjs
+started_at=2026-06-14T23:45:58.212Z
+Manual result imports reapplied: 24/25
+
+Manual result imports missed: 2026-06-12 International Friendly Games Zanzibar vs Uganda
+
+Fast doc payload 1357.3 KB at 14d window, retrying with smaller window
+
+Committed Firestore upload batch 1
+
+Committed Firestore upload batch 2
+
+Committed Firestore upload batch 3
+
+Committed Firestore upload batch 4
+
+Committed Firestore upload batch 5
+
+Committed Firestore upload batch 6
+
+Committed Firestore upload batch 7
+
+Committed Firestore upload batch 8
+
+Committed Firestore upload batch 9
+
+Committed Firestore upload batch 10
+
+Committed Firestore upload batch 11
+
+Committed Firestore upload batch 12
+
+Committed Firestore upload batch 13
+
+Committed Firestore upload batch 14
+
+Committed Firestore upload batch 15
+
+Committed Firestore upload batch 16
+
+Committed Firestore upload batch 17
+
+Firestore day-market verification 2026-06-15: matches=4 FT=2 unsettled=0
+
+Firestore fast-doc market verification 2026-06-15: matches=4 unsettled=0
+Uploaded C:\Betting\SOCCER~1\match_data.json to Firestore dashboardData/match_data as 23 league docs and 58 date docs.
+
+Uploaded fast dashboard doc dashboardData/match_data_fast (7-day window from 2026-06-08, 614.6 KB).
+
+completed_at=2026-06-14T23:48:16.361Z
+exit_code=0
+
+completed_at=2026-06-14T23:48:16.405Z
+status=ok

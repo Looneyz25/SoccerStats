@@ -6,62 +6,73 @@ Timezone: Australia/Adelaide
 
 | Item | Value |
 | --- | --- |
-| date_window | 2026-06-23 to 2026-06-23 |
+| date_window | 2026-06-18 to 2026-06-24 |
 | timezone | Australia/Adelaide |
-| source_mode | TheSportsDB fallback |
-| total_fixtures | 2 |
-| ready_for_phase_2 | 2 |
+| source_mode | ESPN |
+| total_fixtures | 28 |
+| ready_for_phase_2 | 28 |
 | needs_settlement | 0 |
 | blocked_or_invalid | 0 |
-| source_issues | 23 |
+| source_issues | 0 |
 | next_action | Review SofaScore Source Health; API-Football, Flashscore, TheSportsDB, and local data are fallback-only paths. |
-| target_dates | 2026-06-23 |
 
 ## Source Health
 
 | Source | Endpoint | Date | League | Health | Records | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
-| SofaScore | unique-tournament/7/season/76953 | 2026-06-23 to 2026-06-23 | UEFA Champions League | blocked | 0 | Primary tournament feed from sofascore.com; pages checked=8. |
-| SofaScore | unique-tournament/679/season/76984 | 2026-06-23 to 2026-06-23 | UEFA Europa League | blocked | 0 | Primary tournament feed from sofascore.com; pages checked=8. |
-| SofaScore | unique-tournament/17/season/76986 | 2026-06-23 to 2026-06-23 | Premier League | blocked | 0 | Primary tournament feed from sofascore.com; pages checked=8. |
-| SofaScore | unique-tournament/8/season/77559 | 2026-06-23 to 2026-06-23 | LaLiga | blocked | 0 | Primary tournament feed from sofascore.com; pages checked=8. |
-| SofaScore | unique-tournament/35/season/77333 | 2026-06-23 to 2026-06-23 | Bundesliga | blocked | 0 | Primary tournament feed from sofascore.com; pages checked=8. |
-| SofaScore | unique-tournament/23/season/76457 | 2026-06-23 to 2026-06-23 | Serie A | blocked | 0 | Primary tournament feed from sofascore.com; pages checked=8. |
-| SofaScore | unique-tournament/34/season/77356 | 2026-06-23 to 2026-06-23 | Ligue 1 | blocked | 0 | Primary tournament feed from sofascore.com; pages checked=8. |
-| SofaScore | unique-tournament/17015/season/76960 | 2026-06-23 to 2026-06-23 | UEFA Conference League | blocked | 0 | Primary tournament feed from sofascore.com; pages checked=8. |
-| SofaScore | unique-tournament/325/season/87678 | 2026-06-23 to 2026-06-23 | Brasileirão Betano | blocked | 0 | Primary tournament feed from sofascore.com; pages checked=8. |
-| SofaScore | unique-tournament/384/season/87760 | 2026-06-23 to 2026-06-23 | CONMEBOL Libertadores | blocked | 0 | Primary tournament feed from sofascore.com; pages checked=8. |
-| SofaScore | unique-tournament/136/season/82603 | 2026-06-23 to 2026-06-23 | A-League Men | blocked | 0 | Primary tournament feed from sofascore.com; pages checked=8. |
-| SofaScore | unique-tournament/16/season/58210 | 2026-06-23 to 2026-06-23 | FIFA World Cup | blocked | 0 | Primary tournament feed from sofascore.com; pages checked=8. |
-| SofaScore | unique-tournament/851/season/87155 | 2026-06-23 to 2026-06-23 | International Friendly Games | blocked | 0 | Primary tournament feed from sofascore.com; pages checked=8. |
-| SofaScore | unique-tournament/37/season/77012 | 2026-06-23 to 2026-06-23 | Eredivisie | blocked | 0 | Primary tournament feed from sofascore.com; pages checked=8. |
-| SofaScore | unique-tournament/238/season/77806 | 2026-06-23 to 2026-06-23 | Primeira Liga | blocked | 0 | Primary tournament feed from sofascore.com; pages checked=8. |
-| SofaScore | unique-tournament/242/season/86668 | 2026-06-23 to 2026-06-23 | MLS | blocked | 0 | Primary tournament feed from sofascore.com; pages checked=8. |
-| SofaScore | unique-tournament/36/season/77128 | 2026-06-23 to 2026-06-23 | Scottish Premiership | blocked | 0 | Primary tournament feed from sofascore.com; pages checked=8. |
-| SofaScore | unique-tournament/196/season/87931 | 2026-06-23 to 2026-06-23 | J1 League | blocked | 0 | Primary tournament feed from sofascore.com; pages checked=8. |
-| SofaScore | unique-tournament/18/season/77347 | 2026-06-23 to 2026-06-23 | Championship | blocked | 0 | Primary tournament feed from sofascore.com; pages checked=8. |
-| SofaScore | unique-tournament/24/season/77352 | 2026-06-23 to 2026-06-23 | League One | blocked | 0 | Primary tournament feed from sofascore.com; pages checked=8. |
-| SofaScore | unique-tournament/25/season/77351 | 2026-06-23 to 2026-06-23 | League Two | blocked | 0 | Primary tournament feed from sofascore.com; pages checked=8. |
-| SofaScore | unique-tournament/40/season/87925 | 2026-06-23 to 2026-06-23 | Allsvenskan | blocked | 0 | Primary tournament feed from sofascore.com; pages checked=8. |
-| SofaScore | unique-tournament/20/season/87809 | 2026-06-23 to 2026-06-23 | Eliteserien | blocked | 0 | Primary tournament feed from sofascore.com; pages checked=8. |
-| Flashscore | https://www.flashscore.com.au/x/feed/f_1_0_3_en-au_1 | 2026-06-23 to 2026-06-23 | listed leagues | healthy | 0 | events=82 league_hit=3 skipped_women=0 skipped_youth=0 out_of_window=3 matched=0 by_league={} sample_leagues=[&#x27;Argentina|ARGENTINA: Torneo Federal&#x27;, &#x27;Aruba|ARUBA: Di |
-| TheSportsDB | https://www.thesportsdb.com/api/v1/json/<key>/eventsday.php?d=2026-06-23&l=4480 | 2026-06-23 | UEFA Champions League | healthy | 0 |  |
-| TheSportsDB | https://www.thesportsdb.com/api/v1/json/<key>/eventsday.php?d=2026-06-23&l=4481 | 2026-06-23 | UEFA Europa League | healthy | 0 |  |
-| TheSportsDB | https://www.thesportsdb.com/api/v1/json/<key>/eventsday.php?d=2026-06-23&l=4328 | 2026-06-23 | Premier League | healthy | 0 |  |
-| TheSportsDB | https://www.thesportsdb.com/api/v1/json/<key>/eventsday.php?d=2026-06-23&l=4335 | 2026-06-23 | LaLiga | healthy | 0 |  |
-| TheSportsDB | https://www.thesportsdb.com/api/v1/json/<key>/eventsday.php?d=2026-06-23&l=4331 | 2026-06-23 | Bundesliga | healthy | 0 |  |
-| TheSportsDB | https://www.thesportsdb.com/api/v1/json/<key>/eventsday.php?d=2026-06-23&l=4332 | 2026-06-23 | Serie A | healthy | 0 |  |
-| TheSportsDB | https://www.thesportsdb.com/api/v1/json/<key>/eventsday.php?d=2026-06-23&l=4334 | 2026-06-23 | Ligue 1 | healthy | 0 |  |
-| TheSportsDB | https://www.thesportsdb.com/api/v1/json/<key>/eventsday.php?d=2026-06-23&l=4337 | 2026-06-23 | Eredivisie | healthy | 0 |  |
-| TheSportsDB | https://www.thesportsdb.com/api/v1/json/<key>/eventsday.php?d=2026-06-23&l=4346 | 2026-06-23 | MLS | healthy | 0 |  |
-| TheSportsDB | https://www.thesportsdb.com/api/v1/json/<key>/eventsday.php?d=2026-06-23&l=4329 | 2026-06-23 | Championship | healthy | 0 |  |
-| TheSportsDB | https://www.thesportsdb.com/api/v1/json/<key>/eventsday.php?d=2026-06-23&l=4339 | 2026-06-23 | Allsvenskan | healthy | 0 |  |
-| TheSportsDB | https://www.thesportsdb.com/api/v1/json/<key>/eventsday.php?d=2026-06-23&l=4396 | 2026-06-23 | Eliteserien | healthy | 0 |  |
-| TheSportsDB | https://www.thesportsdb.com/api/v1/json/<key>/eventsday.php?d=2026-06-23&s=Soccer | 2026-06-23 | Soccer | healthy | 3 | Global free feed returns a small sample. |
+| ESPN | https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.champions/scoreboard?dates=<day> | 20260618 | UEFA Champions League | healthy | 0 |  |
+| ESPN | https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.europa/scoreboard?dates=<day> | 20260618 | UEFA Europa League | healthy | 0 |  |
+| ESPN | https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/scoreboard?dates=<day> | 20260618 | Premier League | healthy | 0 |  |
+| ESPN | https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/scoreboard?dates=<day> | 20260618 | LaLiga | healthy | 0 |  |
+| ESPN | https://site.api.espn.com/apis/site/v2/sports/soccer/ger.1/scoreboard?dates=<day> | 20260618 | Bundesliga | healthy | 0 |  |
+| ESPN | https://site.api.espn.com/apis/site/v2/sports/soccer/ita.1/scoreboard?dates=<day> | 20260618 | Serie A | healthy | 0 |  |
+| ESPN | https://site.api.espn.com/apis/site/v2/sports/soccer/fra.1/scoreboard?dates=<day> | 20260618 | Ligue 1 | healthy | 0 |  |
+| ESPN | https://site.api.espn.com/apis/site/v2/sports/soccer/uefa.europa.conf/scoreboard?dates=<day> | 20260618 | UEFA Conference League | healthy | 0 |  |
+| ESPN | https://site.api.espn.com/apis/site/v2/sports/soccer/bra.1/scoreboard?dates=<day> | 20260618 | Brasileirão Betano | healthy | 0 |  |
+| ESPN | https://site.api.espn.com/apis/site/v2/sports/soccer/conmebol.libertadores/scoreboard?dates=<day> | 20260618 | CONMEBOL Libertadores | healthy | 0 |  |
+| ESPN | https://site.api.espn.com/apis/site/v2/sports/soccer/aus.1/scoreboard?dates=<day> | 20260618 | A-League Men | healthy | 0 |  |
+| ESPN | https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=<day> | 20260618 | FIFA World Cup | healthy | 28 |  |
+| ESPN | https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.friendly/scoreboard?dates=<day> | 20260618 | International Friendly Games | healthy | 0 |  |
+| ESPN | https://site.api.espn.com/apis/site/v2/sports/soccer/ned.1/scoreboard?dates=<day> | 20260618 | Eredivisie | healthy | 0 |  |
+| ESPN | https://site.api.espn.com/apis/site/v2/sports/soccer/por.1/scoreboard?dates=<day> | 20260618 | Primeira Liga | healthy | 0 |  |
+| ESPN | https://site.api.espn.com/apis/site/v2/sports/soccer/usa.1/scoreboard?dates=<day> | 20260618 | MLS | healthy | 0 |  |
+| ESPN | https://site.api.espn.com/apis/site/v2/sports/soccer/sco.1/scoreboard?dates=<day> | 20260618 | Scottish Premiership | healthy | 0 |  |
+| ESPN | https://site.api.espn.com/apis/site/v2/sports/soccer/jpn.1/scoreboard?dates=<day> | 20260618 | J1 League | healthy | 0 |  |
+| ESPN | https://site.api.espn.com/apis/site/v2/sports/soccer/eng.2/scoreboard?dates=<day> | 20260618 | Championship | healthy | 0 |  |
+| ESPN | https://site.api.espn.com/apis/site/v2/sports/soccer/eng.3/scoreboard?dates=<day> | 20260618 | League One | healthy | 0 |  |
+| ESPN | https://site.api.espn.com/apis/site/v2/sports/soccer/eng.4/scoreboard?dates=<day> | 20260618 | League Two | healthy | 0 |  |
+| ESPN | https://site.api.espn.com/apis/site/v2/sports/soccer/swe.1/scoreboard?dates=<day> | 20260618 | Allsvenskan | healthy | 0 |  |
+| ESPN | https://site.api.espn.com/apis/site/v2/sports/soccer/nor.1/scoreboard?dates=<day> | 20260618 | Eliteserien | healthy | 0 |  |
 
 ## Fixtures
 
 | Date | Time | League | Home | Away | Event ID | Status | Phase 1 Status | Notes |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 2026-06-23 | 09:30 | FIFA World Cup | Norway | Senegal | thesportsdb:2391760 | upcoming | ready_for_phase_2 | TheSportsDB global soccer day fallback. |
-| 2026-06-23 | 12:30 | FIFA World Cup | Jordan | Algeria | thesportsdb:2391759 | upcoming | ready_for_phase_2 | TheSportsDB global soccer day fallback. |
+| 2026-06-18 | 02:30 | FIFA World Cup | Portugal | Congo DR | espn:760435 | live | ready_for_phase_2 | ESPN scoreboard fixture source. |
+| 2026-06-18 | 05:30 | FIFA World Cup | England | Croatia | espn:760437 | upcoming | ready_for_phase_2 | ESPN scoreboard fixture source. |
+| 2026-06-18 | 08:30 | FIFA World Cup | Ghana | Panama | espn:760434 | upcoming | ready_for_phase_2 | ESPN scoreboard fixture source. |
+| 2026-06-18 | 11:30 | FIFA World Cup | Uzbekistan | Colombia | espn:760436 | upcoming | ready_for_phase_2 | ESPN scoreboard fixture source. |
+| 2026-06-19 | 01:30 | FIFA World Cup | Czechia | South Africa | espn:760438 | upcoming | ready_for_phase_2 | ESPN scoreboard fixture source. |
+| 2026-06-19 | 04:30 | FIFA World Cup | Switzerland | Bosnia-Herzegovina | espn:760439 | upcoming | ready_for_phase_2 | ESPN scoreboard fixture source. |
+| 2026-06-19 | 07:30 | FIFA World Cup | Canada | Qatar | espn:760440 | upcoming | ready_for_phase_2 | ESPN scoreboard fixture source. |
+| 2026-06-19 | 10:30 | FIFA World Cup | Mexico | South Korea | espn:760441 | upcoming | ready_for_phase_2 | ESPN scoreboard fixture source. |
+| 2026-06-20 | 04:30 | FIFA World Cup | United States | Australia | espn:760442 | upcoming | ready_for_phase_2 | ESPN scoreboard fixture source. |
+| 2026-06-20 | 07:30 | FIFA World Cup | Scotland | Morocco | espn:760445 | upcoming | ready_for_phase_2 | ESPN scoreboard fixture source. |
+| 2026-06-20 | 10:00 | FIFA World Cup | Brazil | Haiti | espn:760444 | upcoming | ready_for_phase_2 | ESPN scoreboard fixture source. |
+| 2026-06-20 | 12:30 | FIFA World Cup | Türkiye | Paraguay | espn:760443 | upcoming | ready_for_phase_2 | ESPN scoreboard fixture source. |
+| 2026-06-21 | 02:30 | FIFA World Cup | Netherlands | Sweden | espn:760447 | upcoming | ready_for_phase_2 | ESPN scoreboard fixture source. |
+| 2026-06-21 | 05:30 | FIFA World Cup | Germany | Ivory Coast | espn:760448 | upcoming | ready_for_phase_2 | ESPN scoreboard fixture source. |
+| 2026-06-21 | 09:30 | FIFA World Cup | Ecuador | Curaçao | espn:760446 | upcoming | ready_for_phase_2 | ESPN scoreboard fixture source. |
+| 2026-06-21 | 13:30 | FIFA World Cup | Tunisia | Japan | espn:760449 | upcoming | ready_for_phase_2 | ESPN scoreboard fixture source. |
+| 2026-06-22 | 01:30 | FIFA World Cup | Spain | Saudi Arabia | espn:760453 | upcoming | ready_for_phase_2 | ESPN scoreboard fixture source. |
+| 2026-06-22 | 04:30 | FIFA World Cup | Belgium | Iran | espn:760451 | upcoming | ready_for_phase_2 | ESPN scoreboard fixture source. |
+| 2026-06-22 | 07:30 | FIFA World Cup | Uruguay | Cape Verde | espn:760450 | upcoming | ready_for_phase_2 | ESPN scoreboard fixture source. |
+| 2026-06-22 | 10:30 | FIFA World Cup | New Zealand | Egypt | espn:760452 | upcoming | ready_for_phase_2 | ESPN scoreboard fixture source. |
+| 2026-06-23 | 02:30 | FIFA World Cup | Argentina | Austria | espn:760456 | upcoming | ready_for_phase_2 | ESPN scoreboard fixture source. |
+| 2026-06-23 | 06:30 | FIFA World Cup | France | Iraq | espn:760457 | upcoming | ready_for_phase_2 | ESPN scoreboard fixture source. |
+| 2026-06-23 | 09:30 | FIFA World Cup | Norway | Senegal | espn:760454 | upcoming | ready_for_phase_2 | ESPN scoreboard fixture source. |
+| 2026-06-23 | 12:30 | FIFA World Cup | Jordan | Algeria | espn:760455 | upcoming | ready_for_phase_2 | ESPN scoreboard fixture source. |
+| 2026-06-24 | 02:30 | FIFA World Cup | Portugal | Uzbekistan | espn:760461 | upcoming | ready_for_phase_2 | ESPN scoreboard fixture source. |
+| 2026-06-24 | 05:30 | FIFA World Cup | England | Ghana | espn:760458 | upcoming | ready_for_phase_2 | ESPN scoreboard fixture source. |
+| 2026-06-24 | 08:30 | FIFA World Cup | Panama | Croatia | espn:760460 | upcoming | ready_for_phase_2 | ESPN scoreboard fixture source. |
+| 2026-06-24 | 11:30 | FIFA World Cup | Colombia | Congo DR | espn:760459 | upcoming | ready_for_phase_2 | ESPN scoreboard fixture source. |

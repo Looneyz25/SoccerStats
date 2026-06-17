@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-17 07:36:40 ACST",
+  "generated_at": "2026-06-18 03:05:17 ACST",
   "source": "docs\\agent-system\\outputs\\model_result_review_summary.json",
   "mode": "conservative_auto_learning",
   "rules": {
@@ -13,27 +13,27 @@
   "market_adjustments": {
     "btts": {
       "market": "BTTS",
-      "settled": 645,
-      "hit_rate": 0.5736,
-      "trust_factor": 0.9762,
-      "min_edge_delta": 0.0092,
-      "reason": "BTTS below 60% target over 645 settled markets."
+      "settled": 648,
+      "hit_rate": 0.5741,
+      "trust_factor": 0.9767,
+      "min_edge_delta": 0.0091,
+      "reason": "BTTS below 60% target over 648 settled markets."
     },
     "ou_goals": {
       "market": "Goals",
-      "settled": 645,
-      "hit_rate": 0.5659,
-      "trust_factor": 0.9693,
-      "min_edge_delta": 0.0119,
-      "reason": "Goals below 60% target over 645 settled markets."
+      "settled": 648,
+      "hit_rate": 0.5679,
+      "trust_factor": 0.9711,
+      "min_edge_delta": 0.0112,
+      "reason": "Goals below 60% target over 648 settled markets."
     },
     "winner": {
       "market": "Winner",
-      "settled": 645,
-      "hit_rate": 0.5008,
-      "trust_factor": 0.9107,
-      "min_edge_delta": 0.0347,
-      "reason": "Winner below 60% target over 645 settled markets."
+      "settled": 648,
+      "hit_rate": 0.5031,
+      "trust_factor": 0.9128,
+      "min_edge_delta": 0.0339,
+      "reason": "Winner below 60% target over 648 settled markets."
     }
   },
   "league_market_adjustments": {
@@ -102,6 +102,17 @@
       "trust_factor": 0.91,
       "min_edge_delta": 0.035,
       "reason": "LaLiga Winner weak spot from result review."
+    },
+    "MLS|winner": {
+      "league": "MLS",
+      "market": "Winner",
+      "market_key": "winner",
+      "settled": 89,
+      "hit_rate": 0.4382,
+      "odds_net": -13.59,
+      "trust_factor": 0.8704,
+      "min_edge_delta": 0.0504,
+      "reason": "MLS Winner weak spot from result review."
     }
   },
   "notes": [

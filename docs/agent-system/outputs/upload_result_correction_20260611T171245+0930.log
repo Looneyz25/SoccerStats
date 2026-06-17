@@ -1,0 +1,9 @@
+Manual result imports reapplied: 19/19
+Fast doc payload 2093.9 KB at 14d window, retrying with smaller window
+Fast doc payload 1497.7 KB at 7d window, retrying with smaller window
+Committed Firestore upload batch 1
+Committed Firestore upload batch 2
+Firestore upload batch 3 attempt 1 failed: Document 'projects/sports-predictions-f91fd/databases/(default)/documents/dashboardData/match_data/leagues/10' cannot be written because its size (1,091,202 bytes) exceeds the maximum allowed size of 1,048,576 bytes.
+Firestore upload batch 3 attempt 2 failed: Document 'projects/sports-predictions-f91fd/databases/(default)/documents/dashboardData/match_data/leagues/10' cannot be written because its size (1,091,202 bytes) exceeds the maximum allowed size of 1,048,576 bytes.
+Firestore upload batch 3 attempt 3 failed: Document 'projects/sports-predictions-f91fd/databases/(default)/documents/dashboardData/match_data/leagues/10' cannot be written because its size (1,091,202 bytes) exceeds the maximum allowed size of 1,048,576 bytes.
+Document 'projects/sports-predictions-f91fd/databases/(default)/documents/dashboardData/match_data/leagues/10' cannot be written because its size (1,091,202 bytes) exceeds the maximum allowed size of 1,048,576 bytes.

@@ -1,21 +1,12 @@
-import { existsSync } from 'node:fs';
-import path from 'node:path';
-import process from 'node:process';
-import { cert, getApps, initializeApp, applicationDefault } from 'firebase-admin/app';
-import { getAuth } from 'firebase-admin/auth';
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
+import { getAdminApp, verifyAccess, loadMatch } from '../_lib/firebase-admin.mjs';
+import { marketLine, marketActualResult, adelaideLocalToUtc } from '../_lib/match-scoring.mjs';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const PROJECT_ID = 'sports-predictions-f91fd';
-const DASHBOARD_DOC = 'match_data';
 const VOTE_COLLECTION = 'matchVotes';
 const VOTE_CUTOFF_MINUTES = 5;
-const OWNER_EMAIL = 'l.vorabouth@gmail.com';
-const DEFAULT_SERVICE_ACCOUNT_PATH = path.join(process.cwd(), '.secrets', 'firebase-service-account.json');
-
-let adminApp = null;
 
 // Vote reads are expensive (collection-group scan + per-match lookups) and
 // change only when someone votes/follows, so cache GET payloads briefly and
@@ -25,21 +16,6 @@ const MATCH_VOTE_CACHE_TTL_MS = 20 * 1000;
 const leaderboardCache = new Map();
 const matchVoteCache = new Map();
 
-function getAdminApp() {
-  if (adminApp) return adminApp;
-  if (getApps().length) {
-    adminApp = getApps()[0];
-    return adminApp;
-  }
-  const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT_JSON?.trim();
-  if (!serviceAccountJson && !process.env.GOOGLE_APPLICATION_CREDENTIALS && existsSync(DEFAULT_SERVICE_ACCOUNT_PATH)) {
-    process.env.GOOGLE_APPLICATION_CREDENTIALS = DEFAULT_SERVICE_ACCOUNT_PATH;
-  }
-  const credential = serviceAccountJson ? cert(JSON.parse(serviceAccountJson)) : applicationDefault();
-  adminApp = initializeApp({ projectId: PROJECT_ID, credential });
-  return adminApp;
-}
-
 function jsonResponse(payload, status = 200) {
   return new Response(JSON.stringify(payload), {
     status,
@@ -48,39 +24,6 @@ function jsonResponse(payload, status = 200) {
       'Cache-Control': 'no-store',
     },
   });
-}
-
-async function verifyAccess(request) {
-  const authHeader = request.headers.get('authorization') || '';
-  const match = authHeader.match(/^Bearer\s+(.+)$/i);
-  if (!match) throw Object.assign(new Error('missing-token'), { status: 401 });
-
-  const decoded = await getAuth(getAdminApp()).verifyIdToken(match[1]);
-  const userSnap = await getFirestore(getAdminApp()).collection('users').doc(decoded.uid).get();
-  const profile = userSnap.exists ? userSnap.data() || {} : {};
-  if (decoded.email === OWNER_EMAIL) {
-    return {
-      uid: decoded.uid,
-      email: decoded.email || '',
-      displayName: profile.displayName || decoded.name || '',
-      nickname: profile.nickname || '',
-      allowed: true,
-      isPlatformOwner: true,
-    };
-  }
-  const allowed = Boolean(
-    userSnap.exists &&
-      (userSnap.get('hasAccess') || userSnap.get('isPlatformOwner') || userSnap.get('manualAccess')),
-  );
-  if (!allowed) throw Object.assign(new Error('no-access'), { status: 403 });
-  return {
-    uid: decoded.uid,
-    email: decoded.email || profile.email || '',
-    displayName: profile.displayName || decoded.name || '',
-    nickname: profile.nickname || '',
-    allowed,
-    isPlatformOwner: Boolean(profile.isPlatformOwner),
-  };
 }
 
 function slugify(value, fallback) {
@@ -97,14 +40,6 @@ function matchVoteId(matchId) {
 
 function voteDocId(match) {
   return matchVoteId(match.id || `${match.date}-${match.home?.name}-${match.away?.name}`);
-}
-
-function marketLine(match, key, fallback) {
-  const displayKey = key === 'goals' ? 'goals' : key;
-  const market =
-    match.display_markets?.[displayKey]?.market ||
-    (key === 'goals' ? match.predictions?.ou_goals : key === 'cards' ? match.predictions?.ou_cards : key === 'corners' ? match.predictions?.ou_corners : null);
-  return market?.line ?? fallback;
 }
 
 function voteOptionsForMatch(match) {
@@ -151,27 +86,6 @@ function voteOptionsForMatch(match) {
   };
 }
 
-function adelaideLocalToUtc(dateStr, timeStr) {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(dateStr || '')) || !/^\d{2}:\d{2}$/.test(String(timeStr || ''))) return null;
-  const [year, month, day] = dateStr.split('-').map(Number);
-  const [hour, minute] = timeStr.split(':').map(Number);
-  const utcGuess = Date.UTC(year, month - 1, day, hour, minute, 0);
-  const parts = new Intl.DateTimeFormat('en-US', {
-    timeZone: 'Australia/Adelaide',
-    hourCycle: 'h23',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  }).formatToParts(new Date(utcGuess));
-  const map = Object.fromEntries(parts.filter((part) => part.type !== 'literal').map((part) => [part.type, part.value]));
-  const renderedAsUtc = Date.UTC(Number(map.year), Number(map.month) - 1, Number(map.day), Number(map.hour), Number(map.minute), Number(map.second));
-  const offset = renderedAsUtc - utcGuess;
-  return new Date(Date.UTC(year, month - 1, day, hour, minute, 0) - offset);
-}
-
 function voteLockState(match) {
   if (String(match.status || '').toLowerCase() !== 'upcoming') {
     return { locked: true, reason: 'Voting is closed because this match is not upcoming.', cutoffAt: null };
@@ -191,29 +105,6 @@ function voteLockState(match) {
     reason: `Voting closes ${VOTE_CUTOFF_MINUTES} minutes before kickoff.`,
     cutoffAt: cutoff.toISOString(),
   };
-}
-
-async function loadMatch(db, matchId, date) {
-  const wantedId = String(matchId || '');
-  if (!wantedId) return null;
-
-  if (/^\d{4}-\d{2}-\d{2}$/.test(String(date || ''))) {
-    const dateSnap = await db.collection('dashboardData').doc(DASHBOARD_DOC).collection('dates').doc(date).get();
-    if (dateSnap.exists) {
-      for (const league of dateSnap.data()?.leagues || []) {
-        const match = (league.matches || []).find((item) => String(item.id || '') === wantedId);
-        if (match) return { ...match, league: match.league || league.name, leagueId: league.id };
-      }
-    }
-  }
-
-  const leaguesSnap = await db.collection('dashboardData').doc(DASHBOARD_DOC).collection('leagues').orderBy('index', 'asc').get();
-  for (const leagueDoc of leaguesSnap.docs) {
-    const league = leagueDoc.data() || {};
-    const match = (league.matches || []).find((item) => String(item.id || '') === wantedId);
-    if (match) return { ...match, league: match.league || league.name, leagueId: league.id || leagueDoc.id };
-  }
-  return null;
 }
 
 async function buildVoteSummary(voteRef, optionsByMarket) {
@@ -291,51 +182,6 @@ function buildVoteSummaryFromDocs(voteDocs, optionsByMarket, directory = new Map
     totalUsers: voteDocs.length,
     markets,
   };
-}
-
-function parseNumber(value) {
-  if (typeof value === 'number') return Number.isFinite(value) ? value : null;
-  if (typeof value !== 'string') return null;
-  const trimmed = value.trim();
-  if (!trimmed) return null;
-  const parsed = Number(trimmed);
-  return Number.isFinite(parsed) ? parsed : null;
-}
-
-function marketActualResult(match, marketKey, value) {
-  if (!match) return null;
-  const homeGoals = parseNumber(match?.home?.goals);
-  const awayGoals = parseNumber(match?.away?.goals);
-  if (marketKey === 'winner') {
-    if (homeGoals === null || awayGoals === null) return null;
-    const actual = homeGoals > awayGoals ? 'home' : awayGoals > homeGoals ? 'away' : 'draw';
-    return value === actual;
-  }
-  if (marketKey === 'btts') {
-    if (homeGoals === null || awayGoals === null) return null;
-    const actual = homeGoals > 0 && awayGoals > 0 ? 'yes' : 'no';
-    return value === actual;
-  }
-  if (marketKey === 'goals') {
-    if (homeGoals === null || awayGoals === null) return null;
-    const line = Number(marketLine(match, 'goals', 2.5));
-    if (!Number.isFinite(line)) return null;
-    const total = homeGoals + awayGoals;
-    return value === 'over' ? total > line : value === 'under' ? total < line : null;
-  }
-  if (marketKey === 'cards') {
-    const total = parseNumber(match?.actuals?.cards_total);
-    const line = Number(marketLine(match, 'cards', 4.5));
-    if (total === null || !Number.isFinite(line)) return null;
-    return value === 'over' ? total > line : value === 'under' ? total < line : null;
-  }
-  if (marketKey === 'corners') {
-    const total = parseNumber(match?.actuals?.corners_total);
-    const line = Number(marketLine(match, 'corners', 10.5));
-    if (total === null || !Number.isFinite(line)) return null;
-    return value === 'over' ? total > line : value === 'under' ? total < line : null;
-  }
-  return null;
 }
 
 function votePickMatchFields(match) {

@@ -4,6 +4,7 @@ import { Component, Suspense, useCallback, useEffect, useMemo, useRef, useState 
 import { useRouter, useSearchParams } from 'next/navigation';
 import AuthGate from '../auth-gate';
 import { loadMatchDataFromFirestore, readMatchDataCache } from '../firestore-data';
+import { accaLegKey, legFromMarketRow, combinedFromLegs } from './bet-slip-utils.mjs';
 import {
   Activity,
   AlertTriangle,
@@ -73,7 +74,6 @@ const BETSTOP_URL = 'https://www.betstop.gov.au/';
 const SUPPORT_EMAIL = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'lvrstats.com@gmail.com';
 const FAVORITE_LEAGUES_STORAGE_KEY = 'favoriteLeagues';
 const FAVORITE_TEAMS_STORAGE_KEY = 'favoriteTeams';
-const ACCA_LEGS_STORAGE_KEY = 'accaLegs';
 const MAX_FAVORITE_TEAMS = 100;
 const PREDICTION_TRACKING_START_DATE = '2026-04-22';
 const DRAW_NO_BET_TRACKING_START_DATE = '2026-05-25';
@@ -1243,25 +1243,11 @@ function valueBoardPicks(matches, limit = 8, minEv = 0.03) {
       const ev = prob * book - 1;
       if (ev < minEv) continue;
       const kelly = Math.max(0, ((prob * book - 1) / (book - 1)) * 0.25);
-      picks.push({ match: m, label: row.label, pick: formatMarketDetail(row.market), book, prob, ev, kelly });
+      picks.push({ match: m, label: row.label, pick: formatMarketDetail(row.market), book, prob, ev, kelly, line: row.market?.line ?? null });
     }
   }
   picks.sort((a, b) => b.ev - a.ev);
   return picks.slice(0, limit);
-}
-
-// One acca leg per match keeps legs independent, so the combined model probability
-// (product of leg probabilities) is valid. Adding a second pick from a match replaces
-// the first; clicking the same pick again removes it.
-function accaLegKey(matchId, label) {
-  return `${matchId}::${label}`;
-}
-
-function accaCombined(legs) {
-  if (!legs.length) return null;
-  const odds = legs.reduce((p, l) => p * Number(l.book), 1);
-  const prob = legs.reduce((p, l) => p * Number(l.prob), 1);
-  return { odds, prob, ev: prob * odds - 1 };
 }
 
 // Flat-stake (1u) P&L over every settled suggested pick, chronologically — the equity
@@ -1373,15 +1359,13 @@ function ValueBoard({ matches, onSelectMatch, accaKeys, onToggleLeg }) {
               </button>
               <button
                 type="button"
-                onClick={() => onToggleLeg({
-                  matchId: p.match.id,
-                  label: p.label,
-                  pick: p.pick,
-                  matchLabel: `${p.match.home?.name} v ${p.match.away?.name}`,
-                  league: p.match.league,
-                  book: p.book,
-                  prob: p.prob,
-                })}
+                onClick={() => {
+                  const leg = legFromMarketRow(
+                    { label: p.label, pick: p.pick, book: p.book, prob: p.prob, line: p.line ?? p.market?.line ?? null },
+                    p.match,
+                  );
+                  if (leg) onToggleLeg(leg);
+                }}
                 aria-pressed={inSlip}
                 aria-label={inSlip ? 'Remove from bet slip' : 'Add to bet slip'}
                 className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-sm font-bold transition active:scale-90 ${
@@ -1398,20 +1382,102 @@ function ValueBoard({ matches, onSelectMatch, accaKeys, onToggleLeg }) {
   );
 }
 
-function AccaSlip({ legs, onRemoveLeg, onClear }) {
+function AccaSlip({ legs, onRemoveLeg, onClear, onSaved }) {
   const [open, setOpen] = useState(false);
   const [stake, setStake] = useState(10);
+  const [tab, setTab] = useState('current');
+  const [slips, setSlips] = useState([]);
+  const [slipsLoading, setSlipsLoading] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+
   useEffect(() => {
     if (!open) return undefined;
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = prev; };
   }, [open]);
-  if (!legs.length) return null;
-  const combined = accaCombined(legs);
+
+  const getToken = useCallback(async () => {
+    const { getFirebaseAuth } = await import('../firebase');
+    return getFirebaseAuth().currentUser?.getIdToken();
+  }, []);
+
+  const loadSlips = useCallback(async () => {
+    setSlipsLoading(true);
+    setError('');
+    try {
+      const token = await getToken();
+      if (!token) throw new Error('Sign in again to load slips.');
+      const res = await fetch('/api/bet-slips', { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error || 'Could not load slips.');
+      setSlips(Array.isArray(data.slips) ? data.slips : []);
+    } catch (e) {
+      setError(e.message || 'Could not load slips.');
+    } finally {
+      setSlipsLoading(false);
+    }
+  }, [getToken]);
+
+  useEffect(() => { if (open) loadSlips(); }, [open, loadSlips]);
+
+  const saveSlip = useCallback(async () => {
+    setBusy(true);
+    setError('');
+    try {
+      const token = await getToken();
+      if (!token) throw new Error('Sign in again to save.');
+      const res = await fetch('/api/bet-slips', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ action: 'saveSlip', legs, stake: Number(stake) || 0 }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error || 'Could not save slip.');
+      setSlips(Array.isArray(data.slips) ? data.slips : []);
+      onSaved?.();
+      setTab('history');
+    } catch (e) {
+      setError(e.message || 'Could not save slip.');
+    } finally {
+      setBusy(false);
+    }
+  }, [getToken, legs, stake, onSaved]);
+
+  const deleteSlip = useCallback(async (slipId) => {
+    setError('');
+    try {
+      const token = await getToken();
+      if (!token) throw new Error('Sign in again to delete.');
+      const res = await fetch('/api/bet-slips', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ action: 'deleteSlip', slipId }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error || 'Could not delete slip.');
+      setSlips(Array.isArray(data.slips) ? data.slips : []);
+    } catch (e) {
+      setError(e.message || 'Could not delete slip.');
+    }
+  }, [getToken]);
+
+  const combined = combinedFromLegs(legs);
   const stakeNum = Number(stake) || 0;
   const returns = combined ? stakeNum * combined.odds : 0;
   const evPositive = combined && combined.ev > 0;
+  const hasEstimated = legs.some((l) => l.priceEstimated);
+
+  const statusBadge = (status) =>
+    status === 'won' ? 'bg-emerald-500 text-white'
+      : status === 'lost' ? 'bg-red-500 text-white'
+        : status === 'void' ? 'bg-field text-muted'
+          : 'bg-amber-500/80 text-white';
+  const legResultClass = (result) =>
+    result === 'hit' ? 'text-emerald-500'
+      : result === 'miss' ? 'text-red-500'
+        : result === 'void' ? 'text-muted' : 'text-amber-500';
 
   return (
     <>
@@ -1422,7 +1488,9 @@ function AccaSlip({ legs, onRemoveLeg, onClear }) {
         aria-label={`Open bet slip, ${legs.length} legs`}
       >
         Bet slip
-        <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs font-bold text-white">{legs.length}</span>
+        {legs.length > 0 && (
+          <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs font-bold text-white">{legs.length}</span>
+        )}
       </button>
 
       {open && (
@@ -1430,66 +1498,137 @@ function AccaSlip({ legs, onRemoveLeg, onClear }) {
           <button type="button" aria-label="Close bet slip" onClick={() => setOpen(false)} className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
           <div className="relative z-10 flex max-h-[85vh] w-full flex-col rounded-t-2xl border-t border-line bg-surface shadow-2xl sm:max-w-md sm:rounded-2xl">
             <div className="flex items-center justify-between border-b border-line px-4 py-3">
-              <h2 className="text-base font-semibold text-ink">Bet slip <span className="text-muted">· {legs.length}</span></h2>
+              <h2 className="text-base font-semibold text-ink">Bet slip</h2>
               <button type="button" onClick={() => setOpen(false)} aria-label="Close" className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-line text-muted transition hover:text-ink active:scale-95">
                 <X className="h-5 w-5" aria-hidden="true" />
               </button>
             </div>
 
-            <ul className="min-h-0 flex-1 divide-y divide-line overflow-y-auto">
-              {legs.map((l) => (
-                <li key={accaLegKey(l.matchId, l.label)} className="flex items-center gap-2 px-4 py-2.5">
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-semibold text-ink">{l.matchLabel}</span>
-                    <span className="block truncate text-[11px] text-muted">{l.label} {l.pick} @ <span className="font-mono font-semibold text-ink">{Number(l.book).toFixed(2)}</span> · model {(Number(l.prob) * 100).toFixed(0)}%</span>
-                  </span>
-                  <button type="button" onClick={() => onRemoveLeg(l)} aria-label="Remove leg" className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-line text-muted transition hover:text-red-500 active:scale-90">
-                    <X className="h-4 w-4" aria-hidden="true" />
-                  </button>
-                </li>
+            <div className="flex border-b border-line px-4">
+              {[['current', `Current${legs.length ? ` · ${legs.length}` : ''}`], ['history', 'History']].map(([id, label]) => (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => setTab(id)}
+                  className={`-mb-px border-b-2 px-3 py-2 text-xs font-semibold uppercase tracking-wide transition ${tab === id ? 'border-[#34d6c8] text-[#34d6c8]' : 'border-transparent text-muted hover:text-ink'}`}
+                >
+                  {label}
+                </button>
               ))}
-            </ul>
+            </div>
 
-            {combined && (
-              <div className="border-t border-line px-4 py-3">
-                <div className="grid grid-cols-3 gap-2 text-center">
-                  <div>
-                    <div className="font-mono text-lg font-semibold text-ink">{combined.odds.toFixed(2)}</div>
-                    <div className="text-[11px] uppercase tracking-wide text-faint">Odds</div>
-                  </div>
-                  <div>
-                    <div className="font-mono text-lg font-semibold text-ink">{(combined.prob * 100).toFixed(1)}%</div>
-                    <div className="text-[11px] uppercase tracking-wide text-faint">Model</div>
-                  </div>
-                  <div>
-                    <div className={`font-mono text-lg font-semibold ${evPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}`}>{combined.ev >= 0 ? '+' : ''}{(combined.ev * 100).toFixed(0)}%</div>
-                    <div className="text-[11px] uppercase tracking-wide text-faint">EV</div>
-                  </div>
-                </div>
-                <div className="mt-3 flex items-center gap-3">
-                  <label className="flex items-center gap-2 text-sm text-muted">
-                    Stake
-                    <input
-                      type="number"
-                      min="0"
-                      inputMode="decimal"
-                      value={stake}
-                      onChange={(e) => setStake(e.target.value)}
-                      className="h-10 w-20 rounded-md border border-line bg-surface px-2 text-right font-mono text-sm text-ink"
-                    />
-                  </label>
-                  <span className="ml-auto text-sm text-muted">
-                    Returns <span className="font-mono text-base font-semibold text-ink">{returns.toFixed(2)}</span>
-                  </span>
-                </div>
-                <p className="mt-2 text-[11px] text-muted">Combined model probability assumes independent legs (one per match). Not betting advice.</p>
+            {tab === 'current' && (
+              <>
+                {!legs.length ? (
+                  <div className="px-4 py-10 text-center text-sm text-muted">Your slip is empty. Add markets from the value board or a match's detail view.</div>
+                ) : (
+                  <>
+                    <ul className="min-h-0 flex-1 divide-y divide-line overflow-y-auto">
+                      {legs.map((l) => (
+                        <li key={accaLegKey(l.matchId, l.label)} className="flex items-center gap-2 px-4 py-2.5">
+                          <span className="min-w-0 flex-1">
+                            <span className="block truncate text-sm font-semibold text-ink">{l.matchLabel}</span>
+                            <span className="block truncate text-[11px] text-muted">{l.label} {l.pick}{l.priceEstimated ? ' (est.)' : ''} @ <span className="font-mono font-semibold text-ink">{Number(l.book).toFixed(2)}</span>{Number.isFinite(Number(l.prob)) ? <> · model {(Number(l.prob) * 100).toFixed(0)}%</> : null}</span>
+                          </span>
+                          <button type="button" onClick={() => onRemoveLeg(l)} aria-label="Remove leg" className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-line text-muted transition hover:text-red-500 active:scale-90">
+                            <X className="h-4 w-4" aria-hidden="true" />
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                    {combined && (
+                      <div className="border-t border-line px-4 py-3">
+                        <div className="grid grid-cols-3 gap-2 text-center">
+                          <div>
+                            <div className="font-mono text-lg font-semibold text-ink">{combined.odds.toFixed(2)}</div>
+                            <div className="text-[11px] uppercase tracking-wide text-faint">Odds</div>
+                          </div>
+                          <div>
+                            <div className="font-mono text-lg font-semibold text-ink">{(combined.prob * 100).toFixed(1)}%</div>
+                            <div className="text-[11px] uppercase tracking-wide text-faint">Model</div>
+                          </div>
+                          <div>
+                            <div className={`font-mono text-lg font-semibold ${evPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}`}>{combined.ev >= 0 ? '+' : ''}{(combined.ev * 100).toFixed(0)}%</div>
+                            <div className="text-[11px] uppercase tracking-wide text-faint">EV</div>
+                          </div>
+                        </div>
+                        <div className="mt-3 flex items-center gap-3">
+                          <label className="flex items-center gap-2 text-sm text-muted">
+                            Stake
+                            <input
+                              type="number"
+                              min="0"
+                              inputMode="decimal"
+                              value={stake}
+                              onChange={(e) => setStake(e.target.value)}
+                              className="h-10 w-20 rounded-md border border-line bg-surface px-2 text-right font-mono text-sm text-ink"
+                            />
+                          </label>
+                          <span className="ml-auto text-sm text-muted">
+                            Returns <span className="font-mono text-base font-semibold text-ink">{returns.toFixed(2)}</span>
+                          </span>
+                        </div>
+                        <p className="mt-2 text-[11px] text-muted">Combined model probability assumes independent legs (one per match).{hasEstimated ? ' Includes model-estimated prices (est.).' : ''} Not betting advice.</p>
+                      </div>
+                    )}
+                    <div className="flex items-center gap-3 border-t border-line px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
+                      <button type="button" onClick={onClear} className="inline-flex h-11 items-center justify-center rounded-md border border-line bg-surface px-5 text-sm font-semibold text-muted transition hover:text-ink active:scale-95">Clear</button>
+                      <button type="button" onClick={saveSlip} disabled={!legs.length || busy} className="inline-flex h-11 flex-1 items-center justify-center rounded-md bg-header text-sm font-semibold text-white transition active:scale-95 disabled:opacity-50">{busy ? 'Saving…' : 'Save slip'}</button>
+                    </div>
+                  </>
+                )}
+              </>
+            )}
+
+            {tab === 'history' && (
+              <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
+                {slipsLoading ? (
+                  <p className="text-sm text-muted">Loading slips…</p>
+                ) : !slips.length ? (
+                  <p className="text-sm text-muted">No saved slips yet. Build one in Current and tap Save slip.</p>
+                ) : (
+                  <ul className="space-y-3">
+                    {slips.map((slip) => {
+                      const tone = slip.status === 'won' ? 'border-emerald-500/40 bg-emerald-500/5'
+                        : slip.status === 'lost' ? 'border-red-500/40 bg-red-500/5'
+                          : slip.status === 'void' ? 'border-line bg-field'
+                            : 'border-line bg-surface';
+                      const slipReturns = slip.status === 'won' ? Number(slip.stake) * Number(slip.combinedOdds || 0) : 0;
+                      return (
+                        <li key={slip.id} className={`rounded-lg border ${tone} p-3`}>
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-xs font-semibold uppercase tracking-wide text-muted">
+                              {slip.legs.length} legs · {Number(slip.combinedOdds || 0).toFixed(2)}
+                            </span>
+                            <span className="flex items-center gap-2">
+                              <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${statusBadge(slip.status)}`}>{String(slip.status || 'pending').toUpperCase()}</span>
+                              <button type="button" onClick={() => deleteSlip(slip.id)} aria-label="Delete slip" className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-line text-muted transition hover:text-red-500">
+                                <X className="h-3.5 w-3.5" aria-hidden="true" />
+                              </button>
+                            </span>
+                          </div>
+                          <ul className="mt-2 space-y-1">
+                            {slip.legs.map((l, i) => (
+                              <li key={`${l.matchId}-${i}`} className="flex items-center justify-between gap-2 text-[12px]">
+                                <span className="min-w-0 truncate text-muted">
+                                  <span className="text-ink">{l.matchLabel}</span> · {l.label} {l.pick}{l.priceEstimated ? ' (est.)' : ''} @ {Number(l.book).toFixed(2)}
+                                </span>
+                                <span className={`shrink-0 font-semibold ${legResultClass(l.result)}`}>{l.result || 'pending'}</span>
+                              </li>
+                            ))}
+                          </ul>
+                          {slip.status === 'won' && (
+                            <p className="mt-2 text-[12px] text-muted">Returns <span className="font-mono font-semibold text-ink">{slipReturns.toFixed(2)}</span> from stake {Number(slip.stake).toFixed(0)}</p>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
               </div>
             )}
 
-            <div className="flex items-center gap-3 border-t border-line px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
-              <button type="button" onClick={onClear} className="inline-flex h-11 items-center justify-center rounded-md border border-line bg-surface px-5 text-sm font-semibold text-muted transition hover:text-ink active:scale-95">Clear</button>
-              <button type="button" onClick={() => setOpen(false)} className="inline-flex h-11 flex-1 items-center justify-center rounded-md bg-header text-sm font-semibold text-white transition active:scale-95">Done</button>
-            </div>
+            {error && <p className="px-4 pb-2 text-[12px] text-red-500">{error}</p>}
           </div>
         </div>
       )}
@@ -4797,7 +4936,7 @@ function H2HContextPanel({ match, allMatches }) {
   );
 }
 
-function PredictionSummaryCard({ match, allMatches, voteState = null }) {
+function PredictionSummaryCard({ match, allMatches, voteState = null, accaKeys, onToggleLeg }) {
   const matchWithContext = { ...match, __allMatches: allMatches };
   const predictions = match.predictions || {};
   const precomputed = match.display_markets || {};
@@ -4845,12 +4984,12 @@ function PredictionSummaryCard({ match, allMatches, voteState = null }) {
   const expectationSummary = matchExpectationSummary(match, allMatches);
 
   const lines = [
-    { label: 'Winner', voteKey: 'winner', pick: winnerPick, text: winnerText, comparison: winnerComparison, result: winner?.result },
-    { label: 'Draw No Bet', pick: drawNoBet ? formatMarketDetail(drawNoBet) : null, text: drawNoBetText, comparison: drawNoBetComparison, result: drawNoBet?.result },
-    { label: 'BTTS', voteKey: 'btts', pick: displayBtts ? formatMarketDetail(displayBtts) : null, text: bttsRationale(match), comparison: bttsComparison, result: displayBtts?.result },
-    { label: 'Goals', voteKey: 'goals', pick: predictions.ou_goals ? formatMarketDetail(predictions.ou_goals) : null, text: goalsRationale(match, allMatches), comparison: goalsComparison, result: predictions.ou_goals?.result },
-    { label: 'Cards', voteKey: 'cards', pick: displayableCards ? formatMarketDetail(displayableCards) : null, text: cardsRationale(match, allMatches), comparison: cardsComparison, result: displayableCards?.result },
-    { label: 'Corners', voteKey: 'corners', pick: displayableCorners ? formatMarketDetail(displayableCorners) : null, text: cornersRationale(match, allMatches, displayableCorners), comparison: cornersComparison, result: displayableCorners?.result },
+    { label: 'Winner', voteKey: 'winner', pick: winnerPick, text: winnerText, comparison: winnerComparison, result: winner?.result, market: winner, modelProbability: winnerModelProbability(match, winner) },
+    { label: 'Draw No Bet', pick: drawNoBet ? formatMarketDetail(drawNoBet) : null, text: drawNoBetText, comparison: drawNoBetComparison, result: drawNoBet?.result, market: drawNoBet, modelProbability: modelProbabilityForMarket(drawNoBet) },
+    { label: 'BTTS', voteKey: 'btts', pick: displayBtts ? formatMarketDetail(displayBtts) : null, text: bttsRationale(match), comparison: bttsComparison, result: displayBtts?.result, market: displayBtts, modelProbability: precomputed.btts?.modelProbability ?? modelProbabilityForMarket(displayBtts) },
+    { label: 'Goals', voteKey: 'goals', pick: predictions.ou_goals ? formatMarketDetail(predictions.ou_goals) : null, text: goalsRationale(match, allMatches), comparison: goalsComparison, result: predictions.ou_goals?.result, market: predictions.ou_goals, modelProbability: precomputed.goals?.modelProbability ?? modelProbabilityForMarket(predictions.ou_goals) },
+    { label: 'Cards', voteKey: 'cards', pick: displayableCards ? formatMarketDetail(displayableCards) : null, text: cardsRationale(match, allMatches), comparison: cardsComparison, result: displayableCards?.result, market: displayableCards, modelProbability: precomputed.cards?.modelProbability ?? modelProbabilityForMarket(displayableCards) },
+    { label: 'Corners', voteKey: 'corners', pick: displayableCorners ? formatMarketDetail(displayableCorners) : null, text: cornersRationale(match, allMatches, displayableCorners), comparison: cornersComparison, result: displayableCorners?.result, market: displayableCorners, modelProbability: precomputed.corners?.modelProbability ?? modelProbabilityForMarket(displayableCorners) },
   ].filter((row) => row.pick && (row.text || row.comparison));
   const voteCutoff = formatVoteCutoff(voteState?.data?.cutoffAt);
 
@@ -4883,12 +5022,35 @@ function PredictionSummaryCard({ match, allMatches, voteState = null }) {
         {lines.map((row) => (
           <li key={row.label} className={`grid gap-3 rounded-md px-3 py-3 sm:grid-cols-[24rem_minmax(0,1fr)] sm:items-start ${summaryRowClass(row.result)}`}>
             <span className="min-w-0">
-              <span className="grid min-h-6 grid-cols-[7rem_minmax(0,1fr)] items-center gap-2">
+              <span className="grid min-h-6 grid-cols-[7rem_minmax(0,1fr)_auto] items-center gap-2">
                 <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted">
                   {row.result && resultIcon(row.result)}
                   <span>{row.label}</span>
                 </span>
                 <span className="min-w-0 truncate font-semibold leading-5 text-ink">{row.pick}</span>
+                {onToggleLeg && (() => {
+                  const leg = legFromMarketRow({
+                    label: row.label,
+                    pick: row.pick,
+                    book: Number(row.comparison?.bookmaker?.odds),
+                    modelOdds: Number(row.comparison?.model?.odds),
+                    prob: row.modelProbability,
+                    line: row.market?.line ?? null,
+                  }, match);
+                  if (!leg) return null;
+                  const inSlip = accaKeys?.has(accaLegKey(match.id, row.label));
+                  return (
+                    <button
+                      type="button"
+                      onClick={() => onToggleLeg(leg)}
+                      aria-pressed={inSlip}
+                      aria-label={inSlip ? 'Remove from bet slip' : 'Add to bet slip'}
+                      className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-sm font-bold transition active:scale-90 ${inSlip ? 'border-accent bg-accent text-white' : 'border-line bg-surface text-muted hover:text-ink'}`}
+                    >
+                      {inSlip ? <CheckCircle2 className="h-4 w-4" aria-hidden="true" /> : '+'}
+                    </button>
+                  );
+                })()}
               </span>
               <span className="mt-2 block">
                 <ModelVsBookmakerComparison comparison={row.comparison} />
@@ -5618,7 +5780,7 @@ function EspnStatsSection({ espnStats, homeName, awayName }) {
   );
 }
 
-function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerChange, favoriteTeams = [], onToggleFavoriteTeam, isPlatformOwner = false, onMatchImported, onVoteSaved, embedded = false }) {
+function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerChange, favoriteTeams = [], onToggleFavoriteTeam, isPlatformOwner = false, onMatchImported, onVoteSaved, embedded = false, accaKeys, onToggleLeg }) {
   const predictions = match.predictions || {};
   const odds = displayThreeWayOdds(match);
   const actuals = match.actuals || {};
@@ -5849,7 +6011,7 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
           </div>
         )}
 
-        <PredictionSummaryCard match={match} allMatches={allMatches} voteState={voteState} />
+        <PredictionSummaryCard match={match} allMatches={allMatches} voteState={voteState} accaKeys={accaKeys} onToggleLeg={onToggleLeg} />
         <ScorelinePanel match={match} />
         <QualityDetailPanel confidence={confidence} />
 
@@ -6269,7 +6431,7 @@ function CompactMatchRow({ match, allMatches, selected, onSelect }) {
   );
 }
 
-function SplitView({ groups, selectedMatch, onSelectRow, bookmakerId, allMatches, onBookmakerChange, favoriteTeams, onToggleFavoriteTeam, isPlatformOwner, onMatchImported, onVoteSaved }) {
+function SplitView({ groups, selectedMatch, onSelectRow, bookmakerId, allMatches, onBookmakerChange, favoriteTeams, onToggleFavoriteTeam, isPlatformOwner, onMatchImported, onVoteSaved, accaKeys, onToggleLeg }) {
   return (
     <div className="grid grid-cols-1 gap-3 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:items-start lg:gap-4">
       <div className="overflow-hidden rounded-xl border border-line bg-surface shadow-sm lg:sticky lg:top-[8.5rem] lg:max-h-[calc(100dvh-9.5rem)] lg:overflow-y-auto">
@@ -6314,6 +6476,8 @@ function SplitView({ groups, selectedMatch, onSelectRow, bookmakerId, allMatches
             isPlatformOwner={isPlatformOwner}
             onMatchImported={onMatchImported}
             onVoteSaved={onVoteSaved}
+            accaKeys={accaKeys}
+            onToggleLeg={onToggleLeg}
           />
         ) : (
           <div className="rounded-xl border border-line bg-surface p-10 text-center text-sm text-muted">Select a match to see details.</div>
@@ -6589,18 +6753,44 @@ function HomeInner() {
     return () => { document.body.style.overflow = prev; };
   }, [filtersOpen]);
 
-  // Bet slip (accumulator) — persisted across refreshes.
+  // Bet slip (accumulator) — persisted to the user's account (draft doc).
+  const draftLoadedRef = useRef(false);
+  const draftSaveTimer = useRef(null);
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(ACCA_LEGS_STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) setAccaLegs(parsed);
-      }
-    } catch {}
+    let active = true;
+    (async () => {
+      try {
+        const { getFirebaseAuth } = await import('../firebase');
+        const token = await getFirebaseAuth().currentUser?.getIdToken();
+        if (!token) return;
+        const res = await fetch('/api/bet-slips', { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' });
+        // Only enable draft saving once we've conclusively read the server draft
+        // (ok, or 404 = no draft yet). On a transient 5xx, leave saving disabled
+        // so the next edit can't overwrite the real draft with an empty array.
+        if (!res.ok && res.status !== 404) return;
+        const data = await res.json().catch(() => ({}));
+        if (active && Array.isArray(data?.draft?.legs)) setAccaLegs(data.draft.legs);
+        if (active) draftLoadedRef.current = true;
+      } catch {}
+    })();
+    return () => { active = false; };
   }, []);
   useEffect(() => {
-    try { localStorage.setItem(ACCA_LEGS_STORAGE_KEY, JSON.stringify(accaLegs)); } catch {}
+    if (!draftLoadedRef.current) return undefined; // don't clobber the server draft before it loads
+    if (draftSaveTimer.current) clearTimeout(draftSaveTimer.current);
+    draftSaveTimer.current = setTimeout(async () => {
+      try {
+        const { getFirebaseAuth } = await import('../firebase');
+        const token = await getFirebaseAuth().currentUser?.getIdToken();
+        if (!token) return;
+        await fetch('/api/bet-slips', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ action: 'saveDraft', legs: accaLegs, stake: 10 }),
+        });
+      } catch {}
+    }, 800);
+    return () => { if (draftSaveTimer.current) clearTimeout(draftSaveTimer.current); };
   }, [accaLegs]);
   const accaKeys = useMemo(() => new Set(accaLegs.map((l) => accaLegKey(l.matchId, l.label))), [accaLegs]);
   const toggleAccaLeg = useCallback((leg) => {
@@ -7277,6 +7467,8 @@ function HomeInner() {
         isPlatformOwner={isPlatformOwner}
         onMatchImported={refreshMatchData}
         onVoteSaved={refreshVoteLeaderboard}
+        accaKeys={accaKeys}
+        onToggleLeg={toggleAccaLeg}
       />
     );
   }
@@ -7721,6 +7913,8 @@ function HomeInner() {
               isPlatformOwner={isPlatformOwner}
               onMatchImported={refreshMatchData}
               onVoteSaved={refreshVoteLeaderboard}
+              accaKeys={accaKeys}
+              onToggleLeg={toggleAccaLeg}
             />
           ) : (
             displayedGroups.map((group) => (
@@ -7753,7 +7947,7 @@ function HomeInner() {
         </div>
 
       </section>
-      <AccaSlip legs={accaLegs} onRemoveLeg={removeAccaLeg} onClear={clearAcca} />
+      <AccaSlip legs={accaLegs} onRemoveLeg={removeAccaLeg} onClear={clearAcca} onSaved={() => setAccaLegs([])} />
       <MobileBottomNav
         active={mobileNavActive}
         onDashboard={openDashboardSection}

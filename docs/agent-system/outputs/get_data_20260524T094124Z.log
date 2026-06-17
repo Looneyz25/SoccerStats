@@ -1,0 +1,10 @@
+# get:data transcript 20260524T094124Z
+root=C:\Betting\Soccer Stats
+mode=results-only
+started_at=2026-05-24T09:41:24.063Z
+npm_command=npm.cmd
+decision_action=skip
+decision_reason=7-day horizon already topped up for 2026-05-24
+
+completed_at=2026-05-24T09:41:24.076Z
+status=ok

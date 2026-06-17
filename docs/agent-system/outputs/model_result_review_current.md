@@ -1,18 +1,18 @@
 # Model Result Review
 
-Generated: 2026-06-17 07:36:40 ACST
+Generated: 2026-06-18 03:05:16 ACST
 Prediction tracking start: 2026-04-22
-Settled market rows: 2732
+Settled market rows: 2757
 
 ## Market Summary
 
 | Market | Settled | Hits | Misses | Hit Rate | Odds Hit | Odds Loss | Odds Net |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| BTTS | 645 | 370 | 275 | 57.4% | 351.95 | 242.41 | 109.54 |
-| Cards | 602 | 396 | 206 | 65.8% | 255.86 | 189.03 | 66.83 |
-| Corners | 195 | 128 | 67 | 65.6% | 15.11 | 14.01 | 1.1 |
-| Goals | 645 | 365 | 280 | 56.6% | 344.0 | 274.66 | 69.34 |
-| Winner | 645 | 323 | 322 | 50.1% | 344.58 | 459.6 | -115.02 |
+| BTTS | 648 | 372 | 276 | 57.4% | 356.35 | 244.61 | 111.74 |
+| Cards | 612 | 405 | 207 | 66.2% | 260.45 | 191.03 | 69.42 |
+| Corners | 201 | 133 | 68 | 66.2% | 15.11 | 14.01 | 1.1 |
+| Goals | 648 | 368 | 280 | 56.8% | 349.07 | 274.66 | 74.41 |
+| Winner | 648 | 326 | 322 | 50.3% | 348.41 | 459.6 | -111.19 |
 
 ## League Summary
 
@@ -22,13 +22,13 @@ Settled market rows: 2732
 | Allsvenskan | 35 | 25 | 10 | 71.4% | 21.42 |
 | Brasileirão Betano | 100 | 53 | 47 | 53.0% | 8.1 |
 | Bundesliga | 153 | 81 | 72 | 52.9% | -2.06 |
-| CONMEBOL Libertadores | 77 | 44 | 33 | 57.1% | 4.93 |
+| CONMEBOL Libertadores | 80 | 46 | 34 | 57.5% | 4.76 |
 | Championship | 114 | 72 | 42 | 63.2% | -2.63 |
 | Eliteserien | 35 | 23 | 12 | 65.7% | 4.35 |
 | Eredivisie | 188 | 101 | 87 | 53.7% | -5.56 |
-| FIFA World Cup | 85 | 57 | 28 | 67.1% | 51.51 |
-| International Friendly Games | 333 | 222 | 111 | 66.7% | 7.24 |
-| J1 League | 180 | 114 | 66 | 63.3% | 1.06 |
+| FIFA World Cup | 100 | 71 | 29 | 71.0% | 65.37 |
+| International Friendly Games | 339 | 227 | 112 | 67.0% | 7.24 |
+| J1 League | 181 | 115 | 66 | 63.5% | 1.06 |
 | LaLiga | 246 | 133 | 113 | 54.1% | -3.41 |
 | League One | 126 | 74 | 52 | 58.7% | 7.89 |
 | League Two | 112 | 64 | 48 | 57.1% | -10.07 |
@@ -53,10 +53,10 @@ Settled market rows: 2732
 | League One | BTTS | 32 | 37.5% | 1.67 | review_weighting |
 | Brasileirão Betano | Goals | 20 | 40.0% | -7.88 | review_weighting |
 | UEFA Champions League | BTTS | 5 | 40.0% | -2.65 | review_weighting |
-| FIFA World Cup | Winner | 17 | 41.2% | 5.26 | review_weighting |
 | Eliteserien | Corners | 7 | 42.9% | 0 | review_weighting |
 | Bundesliga | Cards | 37 | 43.2% | -19.22 | review_weighting |
 | LaLiga | Winner | 60 | 43.3% | -33.84 | review_weighting |
+| MLS | Winner | 89 | 43.8% | -13.59 | review_weighting |
 
 ## Recommendations
 
@@ -68,8 +68,8 @@ Settled market rows: 2732
 
 | Flag | Count |
 | --- | ---: |
-| none | 1798 |
+| none | 1816 |
 | missing_model_probability | 641 |
-| high_edge_miss | 130 |
-| low_edge_hit | 125 |
+| high_edge_miss | 131 |
+| low_edge_hit | 131 |
 | draw_pick | 38 |
