@@ -1,0 +1,72 @@
+# get:data transcript 20260612T064133Z
+root=C:\Betting\Soccer Stats
+mode=results-only
+started_at=2026-06-12T06:41:33.118Z
+npm_command=npm.cmd
+decision_action=results
+decision_reason=4 progress pending matches past expected finish
+
+## Apply manual result imports
+$ node scripts/apply_manual_result_imports.mjs
+started_at=2026-06-12T06:41:33.265Z
+Manual result imports reapplied to match_data.json: 20/20
+
+completed_at=2026-06-12T06:41:35.825Z
+exit_code=0
+
+## Settle due results
+$ node scripts/run-python.js scripts/soccer_routine.py --results-only
+started_at=2026-06-12T06:41:35.910Z
+=== soccer_routine.py results-only � 2026-06-12 (Adelaide) ===
+  result_check_buffer_minutes=150
+  result_backfill_dates=2026-06-09, 2026-06-10, 2026-06-11, 2026-06-12
+  due_for_result_check=3
+
+[Results A] settle due pending matches
+  flashscore_fallback_source=https://www.flashscore.com.au/x/feed/f_1_0_3_en-au_1
+  settled=1  skipped=2  not_due=24  flashscore_settled=1  livescore_settled=0  closed=0
+
+[Results B] backfill finished + enrich recent FT
+  added=0  enriched=19  merged=0  removed_shells=0
+
+[Results B.5] today new-league calibration exception
+  created=0  settled_matches=0
+
+[Results C] protect resulted predictions
+  protected=709
+
+[Results D] prune stale unresolved matches
+  pruned=0
+  result_schedule=docs\agent-system\outputs\result_check_schedule_20260612T161207+0930.md
+
+=== TOTAL: 738  FT: 709  upcoming: 29  | winner hit: 334  miss: 332  pending: 72 ===
+
+completed_at=2026-06-12T06:42:07.788Z
+exit_code=0
+
+## Run result review
+$ node scripts/run-python.js scripts/soccer_result_review_agent.py
+started_at=2026-06-12T06:42:07.911Z
+Result review written: C:\Betting\Soccer Stats\docs\agent-system\outputs\model_result_review_current.md
+CSV: C:\Betting\Soccer Stats\docs\agent-system\outputs\model_result_review_current.csv
+settled_market_rows=2826 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the review agent can compare confidence bands to actual hit rate.
+
+completed_at=2026-06-12T06:42:08.145Z
+exit_code=0
+
+## Run model calibration
+$ node scripts/run-python.js scripts/soccer_model_calibration_agent.py
+started_at=2026-06-12T06:42:08.271Z
+Model calibration written: C:\Betting\Soccer Stats\docs\agent-system\outputs\model_calibration.json
+Markdown: C:\Betting\Soccer Stats\docs\agent-system\outputs\model_calibration.md
+market_adjustments=3 league_market_adjustments=7
+
+completed_at=2026-06-12T06:42:08.386Z
+exit_code=0
+
+agent_intervention_required=2 pending matches still past expected finish after get:data results check
+agent_intervention_match=2026-06-12 01:30 Eliteserien FC Elva vs FC Maardu (2026-06-12 04:00 Adelaide)
+agent_intervention_match=2026-06-12 02:45 International Friendly Games Zanzibar vs Uganda (2026-06-12 05:15 Adelaide)
+
+completed_at=2026-06-12T06:42:08.583Z
+status=failed

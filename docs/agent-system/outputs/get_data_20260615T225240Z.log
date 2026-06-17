@@ -1,0 +1,72 @@
+# get:data transcript 20260615T225240Z
+root=C:\Betting\Soccer Stats
+mode=results-only
+started_at=2026-06-15T22:52:40.594Z
+npm_command=npm.cmd
+decision_action=results
+decision_reason=1 finished match awaiting cards/corners settlement
+
+## Apply manual result imports
+$ node scripts/apply_manual_result_imports.mjs
+started_at=2026-06-15T22:52:40.727Z
+Manual result imports reapplied to match_data.json: 24/25
+
+Manual result imports missed: 2026-06-12 International Friendly Games Zanzibar vs Uganda
+
+completed_at=2026-06-15T22:52:41.967Z
+exit_code=0
+
+## Settle due results
+$ node scripts/run-python.js scripts/soccer_routine.py --results-only
+started_at=2026-06-15T22:52:42.047Z
+=== soccer_routine.py results-only � 2026-06-16 (Adelaide) ===
+  result_check_buffer_minutes=180
+  due_for_result_check=0
+
+[Results A] quick fetch due matches
+  settled=0  skipped=0  not_due=0  flashscore_settled=0  livescore_settled=0  closed=0
+
+[Results B] backfill stat actuals for recent FT matches
+  stat_backfill attempted=1 refetched=0 settled=0 still_pending=2
+  stat still pending (will retry next run): FIFA World Cup: Belgium vs Egypt cards (attempt 11)
+  stat still pending (will retry next run): FIFA World Cup: Belgium vs Egypt corners (attempt 11)
+  result_schedule=docs\agent-system\outputs\result_check_schedule_20260616T082246+0930.md
+
+=== TOTAL: 700  FT: 682  upcoming: 18  | winner hit: 322  miss: 320  pending: 58 ===
+
+completed_at=2026-06-15T22:52:46.116Z
+exit_code=0
+
+## Run result review
+$ node scripts/run-python.js scripts/soccer_result_review_agent.py
+started_at=2026-06-15T22:52:46.199Z
+Result review written: C:\Betting\Soccer Stats\docs\agent-system\outputs\model_result_review_current.md
+CSV: C:\Betting\Soccer Stats\docs\agent-system\outputs\model_result_review_current.csv
+settled_market_rows=2715 weak_spots=12 top_action=Persist model probabilities per market in match_data.json so the review agent can compare confidence bands to actual hit rate.
+
+completed_at=2026-06-15T22:52:46.415Z
+exit_code=0
+
+## Run model calibration
+$ node scripts/run-python.js scripts/soccer_model_calibration_agent.py
+started_at=2026-06-15T22:52:46.490Z
+Model calibration written: C:\Betting\Soccer Stats\docs\agent-system\outputs\model_calibration.json
+Markdown: C:\Betting\Soccer Stats\docs\agent-system\outputs\model_calibration.md
+market_adjustments=3 league_market_adjustments=6
+
+completed_at=2026-06-15T22:52:46.603Z
+exit_code=0
+
+## Verify and repair settled markets
+$ node scripts/verify_market_settlement.mjs
+started_at=2026-06-15T22:52:46.676Z
+Market settlement verification 2026-06-16: FT=2 repaired=0 unresolved=2
+
+2026-06-16 FT FIFA World Cup Belgium vs Egypt [15186837] cards: missing cards_total actual
+2026-06-16 FT FIFA World Cup Belgium vs Egypt [15186837] corners: missing corners_total actual
+
+completed_at=2026-06-15T22:52:46.860Z
+exit_code=1
+
+completed_at=2026-06-15T22:52:46.896Z
+status=failed

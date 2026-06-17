@@ -1,0 +1,21 @@
+# get:data transcript 20260615T232335Z
+root=C:\Betting\Soccer Stats
+mode=results-only
+started_at=2026-06-15T23:23:35.661Z
+npm_command=npm.cmd
+decision_action=retry-upload
+decision_reason=previous local data run needs Firestore upload retry (upload step failed after local data changed)
+
+## Verify and repair settled markets
+$ node scripts/verify_market_settlement.mjs
+started_at=2026-06-15T23:23:35.795Z
+Market settlement verification 2026-06-16: FT=2 repaired=0 unresolved=2
+
+2026-06-16 FT FIFA World Cup Belgium vs Egypt [15186837] cards: missing cards_total actual
+2026-06-16 FT FIFA World Cup Belgium vs Egypt [15186837] corners: missing corners_total actual
+
+completed_at=2026-06-15T23:23:35.982Z
+exit_code=1
+
+completed_at=2026-06-15T23:23:36.021Z
+status=failed

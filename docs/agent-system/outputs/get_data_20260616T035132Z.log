@@ -1,0 +1,10 @@
+# get:data transcript 20260616T035132Z
+root=C:\Betting\Soccer Stats
+mode=results-only
+started_at=2026-06-16T03:51:32.752Z
+npm_command=npm.cmd
+decision_action=skip
+decision_reason=routine progress has no pending matches past expected finish and +6 forecast is collected
+
+completed_at=2026-06-16T03:51:32.887Z
+status=ok

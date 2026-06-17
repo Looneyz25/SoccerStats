@@ -1,0 +1,11 @@
+{
+  "format": "market_settlement_verification_v1",
+  "agent": "codex 5.3",
+  "generatedAt": "2026-06-17T18:37:52.963Z",
+  "date": "2026-06-18",
+  "status": "ok",
+  "ftMatchesChecked": 0,
+  "marketsRepaired": 0,
+  "repairedRows": [],
+  "unresolvedMarkets": []
+}

@@ -1,57 +1,57 @@
 {
-  "generated_at": "2026-06-17 07:36:40 ACST",
+  "generated_at": "2026-06-18 03:05:16 ACST",
   "prediction_tracking_start_date": "2026-04-22",
-  "settled_market_rows": 2732,
+  "settled_market_rows": 2757,
   "market_summary": [
     {
       "market": "BTTS",
-      "settled": 645,
-      "hits": 370,
-      "misses": 275,
-      "hit_rate": 0.5736,
-      "odds_hit": 351.95,
-      "odds_loss": 242.41,
-      "odds_net": 109.54
+      "settled": 648,
+      "hits": 372,
+      "misses": 276,
+      "hit_rate": 0.5741,
+      "odds_hit": 356.35,
+      "odds_loss": 244.61,
+      "odds_net": 111.74
     },
     {
       "market": "Cards",
-      "settled": 602,
-      "hits": 396,
-      "misses": 206,
-      "hit_rate": 0.6578,
-      "odds_hit": 255.86,
-      "odds_loss": 189.03,
-      "odds_net": 66.83
+      "settled": 612,
+      "hits": 405,
+      "misses": 207,
+      "hit_rate": 0.6618,
+      "odds_hit": 260.45,
+      "odds_loss": 191.03,
+      "odds_net": 69.42
     },
     {
       "market": "Corners",
-      "settled": 195,
-      "hits": 128,
-      "misses": 67,
-      "hit_rate": 0.6564,
+      "settled": 201,
+      "hits": 133,
+      "misses": 68,
+      "hit_rate": 0.6617,
       "odds_hit": 15.11,
       "odds_loss": 14.01,
       "odds_net": 1.1
     },
     {
       "market": "Goals",
-      "settled": 645,
-      "hits": 365,
+      "settled": 648,
+      "hits": 368,
       "misses": 280,
-      "hit_rate": 0.5659,
-      "odds_hit": 344.0,
+      "hit_rate": 0.5679,
+      "odds_hit": 349.07,
       "odds_loss": 274.66,
-      "odds_net": 69.34
+      "odds_net": 74.41
     },
     {
       "market": "Winner",
-      "settled": 645,
-      "hits": 323,
+      "settled": 648,
+      "hits": 326,
       "misses": 322,
-      "hit_rate": 0.5008,
-      "odds_hit": 344.58,
+      "hit_rate": 0.5031,
+      "odds_hit": 348.41,
       "odds_loss": 459.6,
-      "odds_net": -115.02
+      "odds_net": -111.19
     }
   ],
   "league_summary": [
@@ -97,13 +97,13 @@
     },
     {
       "league": "CONMEBOL Libertadores",
-      "settled": 77,
-      "hits": 44,
-      "misses": 33,
-      "hit_rate": 0.5714,
-      "odds_hit": 56.67,
-      "odds_loss": 51.74,
-      "odds_net": 4.93
+      "settled": 80,
+      "hits": 46,
+      "misses": 34,
+      "hit_rate": 0.575,
+      "odds_hit": 58.5,
+      "odds_loss": 53.74,
+      "odds_net": 4.76
     },
     {
       "league": "Championship",
@@ -137,30 +137,30 @@
     },
     {
       "league": "FIFA World Cup",
-      "settled": 85,
-      "hits": 57,
-      "misses": 28,
-      "hit_rate": 0.6706,
-      "odds_hit": 85.5,
-      "odds_loss": 33.99,
-      "odds_net": 51.51
+      "settled": 100,
+      "hits": 71,
+      "misses": 29,
+      "hit_rate": 0.71,
+      "odds_hit": 101.56,
+      "odds_loss": 36.19,
+      "odds_net": 65.37
     },
     {
       "league": "International Friendly Games",
-      "settled": 333,
-      "hits": 222,
-      "misses": 111,
-      "hit_rate": 0.6667,
+      "settled": 339,
+      "hits": 227,
+      "misses": 112,
+      "hit_rate": 0.6696,
       "odds_hit": 29.28,
       "odds_loss": 22.04,
       "odds_net": 7.24
     },
     {
       "league": "J1 League",
-      "settled": 180,
-      "hits": 114,
+      "settled": 181,
+      "hits": 115,
       "misses": 66,
-      "hit_rate": 0.6333,
+      "hit_rate": 0.6354,
       "odds_hit": 118.06,
       "odds_loss": 117.0,
       "odds_net": 1.06
@@ -342,14 +342,6 @@
       "action": "review_weighting"
     },
     {
-      "league": "FIFA World Cup",
-      "market": "Winner",
-      "settled": 17,
-      "hit_rate": 0.4118,
-      "odds_net": 5.26,
-      "action": "review_weighting"
-    },
-    {
       "league": "Eliteserien",
       "market": "Corners",
       "settled": 7,
@@ -371,6 +363,14 @@
       "settled": 60,
       "hit_rate": 0.4333,
       "odds_net": -33.84,
+      "action": "review_weighting"
+    },
+    {
+      "league": "MLS",
+      "market": "Winner",
+      "settled": 89,
+      "hit_rate": 0.4382,
+      "odds_net": -13.59,
       "action": "review_weighting"
     }
   ],

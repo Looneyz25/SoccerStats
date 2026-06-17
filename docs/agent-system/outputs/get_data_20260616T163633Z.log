@@ -1,0 +1,10 @@
+# get:data transcript 20260616T163633Z
+root=C:\Betting\Soccer Stats
+mode=results-only
+started_at=2026-06-16T16:36:33.103Z
+npm_command=npm.cmd
+decision_action=skip
+decision_reason=routine progress marks in progress 2026-06-17 completed
+
+completed_at=2026-06-16T16:36:33.253Z
+status=ok

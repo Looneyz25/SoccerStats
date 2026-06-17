@@ -1,0 +1,80 @@
+# get:data transcript 20260617T030636Z
+root=C:\Betting\Soccer Stats
+mode=results-only
+started_at=2026-06-17T03:06:36.760Z
+npm_command=npm.cmd
+decision_action=retry-upload
+decision_reason=previous local data run needs Firestore upload retry (live update changed data (live=0, settled=1))
+
+## Verify and repair settled markets
+$ node scripts/verify_market_settlement.mjs
+started_at=2026-06-17T03:06:36.985Z
+Market settlement verification 2026-06-17: FT=3 repaired=0 unresolved=0
+
+completed_at=2026-06-17T03:06:37.229Z
+exit_code=0
+
+## Cache badges to Firebase Storage
+$ node scripts/cache_badges_to_firebase.mjs
+started_at=2026-06-17T03:06:37.332Z
+match_data.json: cached=0 skipped=1425 failed=0
+predictions_2026-06-17.json: cached=0 skipped=1425 failed=0
+
+completed_at=2026-06-17T03:24:06.274Z
+exit_code=0
+
+## Upload league docs to Firestore
+$ node scripts/upload_match_data_to_firestore.mjs
+started_at=2026-06-17T03:24:06.392Z
+Manual result imports reapplied: 24/25
+
+Manual result imports missed: 2026-06-12 International Friendly Games Zanzibar vs Uganda
+
+Fast doc payload 1366.8 KB at 14d window, retrying with smaller window
+
+Committed Firestore upload batch 1
+
+Committed Firestore upload batch 2
+
+Committed Firestore upload batch 3
+
+Committed Firestore upload batch 4
+
+Committed Firestore upload batch 5
+
+Committed Firestore upload batch 6
+
+Committed Firestore upload batch 7
+
+Committed Firestore upload batch 8
+
+Committed Firestore upload batch 9
+
+Committed Firestore upload batch 10
+
+Committed Firestore upload batch 11
+
+Committed Firestore upload batch 12
+
+Committed Firestore upload batch 13
+
+Committed Firestore upload batch 14
+
+Committed Firestore upload batch 15
+
+Committed Firestore upload batch 16
+
+Committed Firestore upload batch 17
+
+Firestore day-market verification 2026-06-17: matches=4 FT=3 unsettled=0
+
+Firestore fast-doc market verification 2026-06-17: matches=4 unsettled=0
+Uploaded C:\Betting\Soccer Stats\match_data.json to Firestore dashboardData/match_data as 23 league docs and 60 date docs.
+
+Uploaded fast dashboard doc dashboardData/match_data_fast (7-day window from 2026-06-10, 542.1 KB).
+
+completed_at=2026-06-17T03:26:18.589Z
+exit_code=0
+
+completed_at=2026-06-17T03:26:18.641Z
+status=ok

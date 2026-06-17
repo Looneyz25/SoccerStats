@@ -1,0 +1,32 @@
+# get:data transcript 20260614T054934Z
+root=/sessions/pensive-tender-hopper/mnt/Soccer Stats
+mode=results-only
+started_at=2026-06-14T05:49:34.466Z
+npm_command=npm
+decision_action=results
+decision_reason=1 match due for result check
+
+## Apply manual result imports
+$ node scripts/apply_manual_result_imports.mjs
+started_at=2026-06-14T05:49:34.819Z
+Manual result imports reapplied to match_data.json: 23/24
+
+Manual result imports missed: 2026-06-12 International Friendly Games Zanzibar vs Uganda
+
+completed_at=2026-06-14T05:49:39.277Z
+exit_code=0
+
+## Settle due results
+$ node scripts/run-python.js scripts/soccer_routine.py --results-only
+started_at=2026-06-14T05:49:39.506Z
+Traceback (most recent call last):
+  File "/sessions/pensive-tender-hopper/mnt/Soccer Stats/scripts/soccer_routine.py", line 51, in <module>
+
+    from curl_cffi import requests
+ModuleNotFoundError: No module named 'curl_cffi'
+
+completed_at=2026-06-14T05:49:39.611Z
+exit_code=1
+
+completed_at=2026-06-14T05:49:39.719Z
+status=failed
