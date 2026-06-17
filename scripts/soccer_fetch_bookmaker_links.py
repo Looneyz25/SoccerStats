@@ -505,6 +505,77 @@ def scrape_bookmaker_links(store: dict, dry_run: bool, target_dates: set[str]) -
     return counts
 
 
+def _index_entain_prices(prices: dict) -> dict[str, float]:
+    """Entain price keys are '<entrant_id>:<price_type_id>:'. Index the first (main) price
+    per entrant as decimal odds (AU fractional numerator/denominator -> num/den + 1)."""
+    idx: dict[str, float] = {}
+    for key, val in (prices or {}).items():
+        entrant_id = key.split(":", 1)[0]
+        if not entrant_id or entrant_id in idx:
+            continue
+        odds = (val or {}).get("odds") or {}
+        num, den = odds.get("numerator"), odds.get("denominator")
+        if isinstance(num, (int, float)) and isinstance(den, (int, float)) and den:
+            idx[entrant_id] = round(num / den + 1.0, 2)
+    return idx
+
+
+_ENTAIN_1X2_MARKETS = ("Match Result", "Match Betting")
+
+
+def _entain_match_result_odds(event: dict, markets: dict, entrants: dict, price_by_entrant: dict) -> dict | None:
+    """1X2 decimals from an event's Match Result / Match Betting market, or None."""
+    ev_markets = [m for m in markets.values() if m.get("event_id") == event.get("id")]
+    market = next((m for m in ev_markets if (m.get("name") or "") in _ENTAIN_1X2_MARKETS), None)
+    if not market:
+        return None
+    entrant_ids = market.get("entrant_ids") or [e["id"] for e in entrants.values() if e.get("market_id") == market.get("id")]
+    out: dict[str, float] = {}
+    for entrant_id in entrant_ids:
+        entrant = entrants.get(entrant_id) or {}
+        price = price_by_entrant.get(entrant_id)
+        if price is None:
+            continue
+        home_away = (entrant.get("home_away") or "").upper()
+        name = (entrant.get("name") or "").lower()
+        if home_away == "HOME":
+            out["home"] = price
+        elif home_away == "AWAY":
+            out["away"] = price
+        elif "draw" in name or "tie" in name:
+            out["draw"] = price
+    return out if ("home" in out and "away" in out) else None
+
+
+def enrich_ladbrokes_odds(store: dict, target_dates: set[str] | None) -> int:
+    """Attach Ladbrokes 1X2 odds (`ladbrokes_odds`) from the bulk event-request feed. Entain
+    is a real JSON API (cleaner/steadier than the Sportsbet HTML scrape); a second platform
+    makes the odds layer resilient and enables best-price. Deep markets (BTTS/totals) aren't
+    in the bulk feed — they'd need per-event calls (a later step)."""
+    cfg = ENTAIN_BOOKMAKERS["ladbrokes"]
+    payload = fetch_json(cfg["api"], cfg["origin"]) or {}
+    events = payload.get("events") or {}
+    markets = payload.get("markets") or {}
+    entrants = payload.get("entrants") or {}
+    prices = payload.get("prices") or {}
+    if not events or not prices:
+        return 0
+    price_by_entrant = _index_entain_prices(prices)
+    soccer_events = [e for e in events.values() if e.get("category_id") == ENTAIN_SOCCER_CATEGORY_ID]
+    attached = 0
+    for _, match in iter_matches(store, target_dates):
+        scored = [(entain_match_score(match, event), event) for event in soccer_events]
+        scored = [(score, event) for score, event in scored if score > 0]
+        if not scored:
+            continue
+        scored.sort(key=lambda item: item[0], reverse=True)
+        odds = _entain_match_result_odds(scored[0][1], markets, entrants, price_by_entrant)
+        if odds:
+            match["ladbrokes_odds"] = odds
+            attached += 1
+    return attached
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dry-run", action="store_true", help="Scan without writing match_data.json")
@@ -518,11 +589,13 @@ def main() -> int:
     entain_removed = 0 if args.dry_run else clear_entain_links(store, target_dates)
     non_direct_removed = 0 if args.dry_run else clear_non_direct_bookmaker_links(store, target_dates)
     entain_counts = enrich_entain_links(store, dry_run=args.dry_run, target_dates=target_dates)
+    ladbrokes_odds_count = 0 if args.dry_run else enrich_ladbrokes_odds(store, target_dates)
     counts = scrape_bookmaker_links(store, dry_run=args.dry_run, target_dates=target_dates)
 
     if not args.dry_run:
         STORE_PATH.write_text(json.dumps(store, indent=2, ensure_ascii=False), encoding="utf-8")
 
+    print(f"[ladbrokes] 1X2 odds attached: {ladbrokes_odds_count}")
     print(f"[sportsbet] mirrored direct links: {sportsbet_count}")
     if not args.dry_run:
         print(f"[entain] cleared generated links: {entain_removed}")

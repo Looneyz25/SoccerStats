@@ -245,6 +245,7 @@ const MATCH_KEEP_FIELDS = [
   'venue',
   'referee',
   'espn_stats',
+  'ladbrokes_odds',
 ];
 
 // Fields present on source matches that are intentionally not uploaded (pipeline-internal
