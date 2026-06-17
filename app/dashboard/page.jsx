@@ -1105,34 +1105,6 @@ function poissonMarketProbabilities(lh, la, rho = 0, line = 2.5) {
   return { home, draw, away, bttsYes, overGoals };
 }
 
-// Full normalised Dixon-Coles scoreline matrix for the correct-score heatmap.
-// Returns the 0..MAX grid (rows = home goals, cols = away goals), the most-likely
-// scorelines, and the model's expected goals (lambda) per side.
-function poissonScoreGrid(lh, la, rho = 0, max = 5) {
-  if (!Number.isFinite(lh) || !Number.isFinite(la) || lh <= 0 || la <= 0) return null;
-  const fact = [1, 1, 2, 6, 24, 120, 720, 5040];
-  const pmf = (k, l) => Math.exp(-l) * Math.pow(l, k) / fact[k];
-  const grid = Array.from({ length: max + 1 }, (_, i) => Array.from({ length: max + 1 }, (_, j) => pmf(i, lh) * pmf(j, la)));
-  grid[0][0] *= 1 - lh * la * rho;
-  grid[1][0] *= 1 + la * rho;
-  grid[0][1] *= 1 + lh * rho;
-  grid[1][1] *= 1 - rho;
-  let total = 0;
-  for (const row of grid) for (const v of row) total += v;
-  if (total <= 0) return null;
-  const norm = grid.map((row) => row.map((v) => v / total));
-  const scores = [];
-  let peak = 0;
-  for (let i = 0; i <= max; i++) {
-    for (let j = 0; j <= max; j++) {
-      scores.push({ h: i, a: j, p: norm[i][j] });
-      if (norm[i][j] > peak) peak = norm[i][j];
-    }
-  }
-  scores.sort((a, b) => b.p - a.p);
-  return { grid: norm, top: scores.slice(0, 5), peak, xgHome: lh, xgAway: la };
-}
-
 // Bucket every settled headline pick by the model's stated probability and measure how
 // often it actually hit — the basis for a reliability/calibration curve.
 function calibrationBuckets(matches) {
@@ -1332,67 +1304,39 @@ function ValueBoard({ matches, onSelectMatch }) {
   );
 }
 
+// Compact expected-goals (model lambda) readout. Deliberately no single predicted
+// scoreline: the modal exact score is ~11% likely and clusters on 1-1, so it reads as
+// a wrong "prediction". The xG split is the model's honest, differentiated signal.
 function ScorelinePanel({ match }) {
   const f = match?.predictions?.factors || {};
-  const model = poissonScoreGrid(Number(f.lambda_home), Number(f.lambda_away), Number(f.dixon_coles_rho) || 0);
-  if (!model) return null;
-  const { grid, top, peak, xgHome, xgAway } = model;
-  const topScore = top[0];
-  const n = grid.length;
-
-  const cells = [];
-  cells.push(<div key="corner" />);
-  for (let j = 0; j < n; j++) {
-    cells.push(<div key={`ch${j}`} className="px-1 pb-1 text-center text-[10px] font-semibold text-muted">{j}</div>);
-  }
-  for (let i = 0; i < n; i++) {
-    cells.push(<div key={`rl${i}`} className="flex items-center justify-end pr-1 text-[10px] font-semibold text-muted">{i}</div>);
-    for (let j = 0; j < n; j++) {
-      const p = grid[i][j];
-      const intensity = peak > 0 ? p / peak : 0;
-      const isTop = topScore && topScore.h === i && topScore.a === j;
-      cells.push(
-        <div
-          key={`${i}-${j}`}
-          title={`${i}-${j}: ${(p * 100).toFixed(1)}%`}
-          className={`m-px flex aspect-square items-center justify-center rounded text-[9px] font-mono ${isTop ? 'ring-1 ring-accent' : ''}`}
-          style={{ backgroundColor: `rgba(52,214,200,${(0.06 + intensity * 0.85).toFixed(3)})`, color: intensity > 0.5 ? '#0b1417' : undefined }}
-        >
-          {p >= 0.04 ? (p * 100).toFixed(0) : ''}
-        </div>,
-      );
-    }
-  }
+  const xgHome = Number(f.lambda_home);
+  const xgAway = Number(f.lambda_away);
+  if (!Number.isFinite(xgHome) || !Number.isFinite(xgAway) || xgHome <= 0 || xgAway <= 0) return null;
+  const total = xgHome + xgAway;
+  const homePct = (xgHome / total) * 100;
 
   return (
     <div className="rounded-lg border border-line bg-surface p-4 shadow-panel">
       <div className="flex items-center justify-between gap-2">
         <h3 className="flex items-center gap-2 text-sm font-semibold text-ink">
           <Goal className="h-4 w-4" aria-hidden="true" />
-          Scoreline model
+          Expected goals
         </h3>
-        <span className="text-xs text-muted">
-          xG <span className="font-mono font-semibold text-ink">{xgHome.toFixed(1)}</span>
-          <span className="px-1">–</span>
-          <span className="font-mono font-semibold text-ink">{xgAway.toFixed(1)}</span>
-        </span>
+        <span className="text-xs text-muted">Model xG · {total.toFixed(1)} total</span>
       </div>
-      <div className="mt-3 flex flex-wrap gap-1.5">
-        {top.map((s, i) => (
-          <span key={`${s.h}-${s.a}`} className={`inline-flex items-center gap-1 rounded-md border px-2 py-1 text-xs font-semibold ${i === 0 ? 'border-accent/50 bg-accent-soft text-accent' : 'border-line bg-field text-ink'}`}>
-            {s.h}-{s.a}
-            <span className="font-normal text-muted">{(s.p * 100).toFixed(0)}%</span>
-          </span>
-        ))}
+      <div className="mt-3 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+        <div className="min-w-0 text-center">
+          <div className="font-mono text-2xl font-semibold text-ink">{xgHome.toFixed(1)}</div>
+          <div className="mt-0.5 truncate text-xs text-muted">{match.home?.name}</div>
+        </div>
+        <div className="text-[11px] font-semibold uppercase tracking-wide text-faint">xG</div>
+        <div className="min-w-0 text-center">
+          <div className="font-mono text-2xl font-semibold text-ink">{xgAway.toFixed(1)}</div>
+          <div className="mt-0.5 truncate text-xs text-muted">{match.away?.name}</div>
+        </div>
       </div>
-      <div className="mt-4">
-        <div className="inline-grid w-full" style={{ gridTemplateColumns: `1rem repeat(${n}, minmax(0, 1fr))` }}>
-          {cells}
-        </div>
-        <div className="mt-1.5 flex justify-between text-[10px] text-muted">
-          <span className="truncate">↓ {match.home?.name} goals</span>
-          <span className="truncate">{match.away?.name} goals →</span>
-        </div>
+      <div className="mt-3 flex h-1.5 overflow-hidden rounded-full bg-white/15">
+        <div className="h-full rounded-full bg-[#34d6c8] transition-all" style={{ width: `${homePct}%` }} />
       </div>
     </div>
   );
