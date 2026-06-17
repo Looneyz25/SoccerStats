@@ -1059,6 +1059,15 @@ def rows_from_thesportsdb(start_date, days, run_ts):
 
             matched = 0
             for event in events:
+                # Exact provider-league-id gate. TheSportsDB's free eventsday feed can
+                # return events outside the requested league, and the name hints below
+                # match loosely (e.g. "USL Championship" contains "championship", which
+                # would otherwise leak into the EFL "Championship"). Require the event's
+                # own league id to equal the one we queried so same-named competitions
+                # never cross-contaminate.
+                event_league_id = str(event.get("idLeague") or "").strip()
+                if event_league_id and event_league_id != str(provider_league_id):
+                    continue
                 if not thesportsdb_league_matches(league["name"], event.get("strLeague", "")):
                     continue
                 if is_women_team(event.get("strHomeTeam")) or is_women_team(event.get("strAwayTeam")):

@@ -31,6 +31,7 @@ import {
   UserRound,
   XCircle,
   ChevronDown,
+  X,
 } from 'lucide-react';
 
 const GAMBLING_HELP_URL = 'https://www.gamblinghelponline.org.au/';
@@ -680,6 +681,62 @@ function marketResultFromActual(market, actual) {
   if (market.pick === 'Over') return Number(actual) > line ? 'hit' : 'miss';
   if (market.pick === 'Under') return Number(actual) < line ? 'hit' : 'miss';
   return undefined;
+}
+
+// Live "locked" totals. Goals come from the scoreline; cards/corners from the in-play
+// ESPN stats collected by the routine (falling back to any partial actuals). Returns
+// null when the live tally isn't available yet.
+function liveMarketTotal(match, kind) {
+  if (kind === 'goals') {
+    const h = Number(match?.home?.goals);
+    const a = Number(match?.away?.goals);
+    return Number.isFinite(h) && Number.isFinite(a) ? h + a : null;
+  }
+  const es = match?.espn_stats || {};
+  if (kind === 'corners') {
+    const h = Number(es.home?.corners);
+    const a = Number(es.away?.corners);
+    if (Number.isFinite(h) && Number.isFinite(a)) return h + a;
+    const total = Number(match?.actuals?.corners_total);
+    return Number.isFinite(total) ? total : null;
+  }
+  if (kind === 'cards') {
+    const h = Number(es.home?.yellow_cards) + Number(es.home?.red_cards);
+    const a = Number(es.away?.yellow_cards) + Number(es.away?.red_cards);
+    if (Number.isFinite(h) && Number.isFinite(a)) return h + a;
+    const total = Number(match?.actuals?.cards_total);
+    return Number.isFinite(total) ? total : null;
+  }
+  return null;
+}
+
+// During a live match an Over/Yes pick locks a hit the instant the live tally passes the
+// line (totals can only climb), and the opposite Under/No pick is then a certain miss.
+// Under/No only *win* at full time, so they never get a premature hit here.
+function liveLockedResult(match, kind, market) {
+  if (!market || match?.status !== 'live') return undefined;
+  if (kind === 'btts') {
+    const both = Number(match?.home?.goals) > 0 && Number(match?.away?.goals) > 0;
+    if (!both) return undefined;
+    if (market.pick === 'Yes') return 'hit';
+    if (market.pick === 'No') return 'miss';
+    return undefined;
+  }
+  const total = liveMarketTotal(match, kind);
+  if (total === null) return undefined;
+  const line = Number(market.line);
+  if (!Number.isFinite(line)) return undefined;
+  if (total > line) {
+    if (market.pick === 'Over') return 'hit';
+    if (market.pick === 'Under') return 'miss';
+  }
+  return undefined;
+}
+
+// Returns the market with a live-locked result applied, or the original untouched.
+function withLiveResult(match, kind, market) {
+  const result = liveLockedResult(match, kind, market);
+  return result ? { ...market, result } : market;
 }
 
 function factorial(n) {
@@ -5018,62 +5075,42 @@ function EspnStatBar({ label, homeVal, awayVal, homeRaw, awayRaw }) {
   );
 }
 
-function EspnStatsSection({ espnData, loading, error, homeName, awayName }) {
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center gap-2 py-16 text-sm text-muted">
-        <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-        Loading ESPN stats…
-      </div>
-    );
-  }
-  if (error || !espnData) {
+function EspnStatsSection({ espnStats, homeName, awayName }) {
+  if (!espnStats) {
     return (
       <div className="rounded-xl border border-line bg-surface p-6 text-center text-sm text-muted">
-        {error || 'ESPN stats not available for this match.'}
+        Stats not yet available — check back after the match starts.
       </div>
     );
   }
 
-  const { stats, keyEvents = [], h2h = [], lastFiveHome = [], lastFiveAway = [] } = espnData;
-  const hasAnyStats = stats || keyEvents.length || h2h.length || lastFiveHome.length || lastFiveAway.length;
-
-  function resultChip(r) {
-    return (
-      <span className={`inline-flex h-6 w-6 items-center justify-center rounded text-xs font-bold ${r === 'W' ? 'bg-emerald-500/20 text-emerald-400' : r === 'L' ? 'bg-red-500/20 text-red-400' : 'bg-white/10 text-muted'}`}>
-        {r}
-      </span>
-    );
-  }
+  const home = espnStats.home || {};
+  const away = espnStats.away || {};
+  const keyEvents = espnStats.key_events || [];
+  const h2h = espnStats.h2h || [];
 
   return (
     <div className="space-y-4">
       {/* Match stats */}
-      {stats && (
-        <div className="rounded-xl border border-line bg-surface p-4 shadow-sm">
-          <div className="mb-1 flex items-center justify-between text-xs font-semibold text-muted">
-            <span className="truncate">{homeName}</span>
-            <span className="shrink-0 px-3">vs</span>
-            <span className="truncate text-right">{awayName}</span>
-          </div>
-          <div className="mb-4 flex items-center justify-between text-xs font-bold uppercase tracking-wide text-muted">
-            <span />
-            <span>Match Statistics</span>
-            <span />
-          </div>
-          <div className="space-y-3">
-            {stats.possession?.home != null && <EspnStatBar label="Possession" homeVal={`${stats.possession.home}%`} awayVal={`${stats.possession.away}%`} homeRaw={parseFloat(stats.possession.home)} awayRaw={parseFloat(stats.possession.away)} />}
-            {stats.shots?.home != null && <EspnStatBar label="Shots" homeVal={stats.shots.home} awayVal={stats.shots.away} homeRaw={stats.shots.home} awayRaw={stats.shots.away} />}
-            {stats.shotsOnTarget?.home != null && <EspnStatBar label="On target" homeVal={stats.shotsOnTarget.home} awayVal={stats.shotsOnTarget.away} homeRaw={stats.shotsOnTarget.home} awayRaw={stats.shotsOnTarget.away} />}
-            {stats.corners?.home != null && <EspnStatBar label="Corners" homeVal={stats.corners.home} awayVal={stats.corners.away} homeRaw={stats.corners.home} awayRaw={stats.corners.away} />}
-            {stats.fouls?.home != null && <EspnStatBar label="Fouls" homeVal={stats.fouls.home} awayVal={stats.fouls.away} homeRaw={stats.fouls.home} awayRaw={stats.fouls.away} />}
-            {stats.yellowCards?.home != null && <EspnStatBar label="Yellow cards" homeVal={stats.yellowCards.home} awayVal={stats.yellowCards.away} homeRaw={stats.yellowCards.home} awayRaw={stats.yellowCards.away} />}
-            {stats.redCards?.home != null && <EspnStatBar label="Red cards" homeVal={stats.redCards.home} awayVal={stats.redCards.away} homeRaw={stats.redCards.home} awayRaw={stats.redCards.away} />}
-            {stats.saves?.home != null && <EspnStatBar label="Saves" homeVal={stats.saves.home} awayVal={stats.saves.away} homeRaw={stats.saves.home} awayRaw={stats.saves.away} />}
-            {stats.offsides?.home != null && <EspnStatBar label="Offsides" homeVal={stats.offsides.home} awayVal={stats.offsides.away} homeRaw={stats.offsides.home} awayRaw={stats.offsides.away} />}
-          </div>
+      <div className="rounded-xl border border-line bg-surface p-4 shadow-sm">
+        <div className="mb-1 flex items-center justify-between text-xs font-semibold text-muted">
+          <span className="truncate">{homeName}</span>
+          <span className="shrink-0 px-3">vs</span>
+          <span className="truncate text-right">{awayName}</span>
         </div>
-      )}
+        <div className="mb-4 text-center text-xs font-bold uppercase tracking-wide text-muted">Match Statistics</div>
+        <div className="space-y-3">
+          {home.possession != null && <EspnStatBar label="Possession" homeVal={`${home.possession}%`} awayVal={`${away.possession}%`} homeRaw={home.possession} awayRaw={away.possession} />}
+          {home.shots != null && <EspnStatBar label="Shots" homeVal={home.shots} awayVal={away.shots} homeRaw={home.shots} awayRaw={away.shots} />}
+          {home.shots_on_target != null && <EspnStatBar label="On target" homeVal={home.shots_on_target} awayVal={away.shots_on_target} homeRaw={home.shots_on_target} awayRaw={away.shots_on_target} />}
+          {home.corners != null && <EspnStatBar label="Corners" homeVal={home.corners} awayVal={away.corners} homeRaw={home.corners} awayRaw={away.corners} />}
+          {home.fouls != null && <EspnStatBar label="Fouls" homeVal={home.fouls} awayVal={away.fouls} homeRaw={home.fouls} awayRaw={away.fouls} />}
+          {home.yellow_cards != null && <EspnStatBar label="Yellow cards" homeVal={home.yellow_cards} awayVal={away.yellow_cards} homeRaw={home.yellow_cards} awayRaw={away.yellow_cards} />}
+          {home.red_cards != null && <EspnStatBar label="Red cards" homeVal={home.red_cards} awayVal={away.red_cards} homeRaw={home.red_cards} awayRaw={away.red_cards} />}
+          {home.saves != null && <EspnStatBar label="Saves" homeVal={home.saves} awayVal={away.saves} homeRaw={home.saves} awayRaw={away.saves} />}
+          {home.offsides != null && <EspnStatBar label="Offsides" homeVal={home.offsides} awayVal={away.offsides} homeRaw={home.offsides} awayRaw={away.offsides} />}
+        </div>
+      </div>
 
       {/* Key events */}
       {keyEvents.length > 0 && (
@@ -5096,27 +5133,6 @@ function EspnStatsSection({ espnData, loading, error, homeName, awayName }) {
         </div>
       )}
 
-      {/* Form guide */}
-      {(lastFiveHome.length > 0 || lastFiveAway.length > 0) && (
-        <div className="rounded-xl border border-line bg-surface p-4 shadow-sm">
-          <h3 className="mb-3 text-sm font-semibold text-ink">Recent Form</h3>
-          <div className="space-y-3">
-            {lastFiveHome.length > 0 && (
-              <div className="flex items-center justify-between gap-3">
-                <span className="min-w-0 truncate text-xs font-semibold text-ink">{homeName}</span>
-                <div className="flex shrink-0 gap-1">{lastFiveHome.map((g, i) => <span key={i}>{resultChip(g.result)}</span>)}</div>
-              </div>
-            )}
-            {lastFiveAway.length > 0 && (
-              <div className="flex items-center justify-between gap-3">
-                <span className="min-w-0 truncate text-xs font-semibold text-ink">{awayName}</span>
-                <div className="flex shrink-0 gap-1">{lastFiveAway.map((g, i) => <span key={i}>{resultChip(g.result)}</span>)}</div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
       {/* H2H */}
       {h2h.length > 0 && (
         <div className="rounded-xl border border-line bg-surface p-4 shadow-sm">
@@ -5125,20 +5141,14 @@ function EspnStatsSection({ espnData, loading, error, homeName, awayName }) {
             {h2h.map((g, i) => (
               <div key={i} className="flex items-center gap-2 rounded-md bg-field px-3 py-2 text-sm">
                 <span className="w-20 shrink-0 text-xs text-muted">{g.date}</span>
-                <span className="min-w-0 flex-1 text-center font-semibold text-ink">{g.homeTeam} {g.homeScore ?? '?'} – {g.awayScore ?? '?'} {g.awayTeam}</span>
+                <span className="min-w-0 flex-1 text-center font-semibold text-ink">{g.home_team} {g.home_score ?? '?'} – {g.away_score ?? '?'} {g.away_team}</span>
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {!hasAnyStats && (
-        <div className="rounded-xl border border-line bg-surface p-6 text-center text-sm text-muted">
-          No detailed stats available yet. Check back after the match starts.
-        </div>
-      )}
-
-      <p className="text-center text-xs text-muted opacity-60">Stats provided by ESPN</p>
+      <p className="text-center text-xs text-muted opacity-60">Stats via ESPN</p>
     </div>
   );
 }
@@ -5162,9 +5172,6 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
   const [voteError, setVoteError] = useState('');
   const [voteMessage, setVoteMessage] = useState('');
   const [activeTab, setActiveTab] = useState('overview');
-  const [espnData, setEspnData] = useState(null);
-  const [espnLoading, setEspnLoading] = useState(false);
-  const [espnError, setEspnError] = useState('');
 
   useEffect(() => {
     let active = true;
@@ -5266,33 +5273,7 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
 
   useEffect(() => {
     setActiveTab('overview');
-    setEspnData(null);
-    setEspnLoading(false);
-    setEspnError('');
   }, [match.id, match.date]);
-
-  useEffect(() => {
-    if (activeTab !== 'stats' || espnData || espnLoading) return;
-    let active = true;
-    setEspnLoading(true);
-    setEspnError('');
-    const params = new URLSearchParams({
-      home: match.home?.name || '',
-      away: match.away?.name || '',
-      date: match.date || '',
-      league: match.league || '',
-    });
-    fetch(`/api/espn-stats?${params}`)
-      .then((r) => r.json())
-      .catch(() => ({ found: false }))
-      .then((data) => {
-        if (!active) return;
-        if (data?.found) setEspnData(data);
-        else setEspnError(data?.reason === 'league_not_mapped' ? 'ESPN Stats not available for this league.' : 'ESPN Stats not available for this match.');
-      })
-      .finally(() => { if (active) setEspnLoading(false); });
-    return () => { active = false; };
-  }, [activeTab, espnData, espnLoading, match.home?.name, match.away?.name, match.date, match.league]);
 
   return (
     <div className={embedded ? 'overflow-hidden rounded-xl border border-line bg-surface shadow-sm' : 'min-h-screen bg-field'}>
@@ -5321,7 +5302,7 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
           </div>
         </div>
         <div className={`mx-auto flex border-t border-line/40 px-3 sm:px-5 ${embedded ? 'max-w-none' : 'max-w-3xl'}`}>
-          {[['overview', 'Overview'], ['stats', 'ESPN Stats']].map(([id, label]) => (
+          {[['overview', 'Overview'], ['stats', 'Stats']].map(([id, label]) => (
             <button
               key={id}
               type="button"
@@ -5425,7 +5406,7 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
 
         <StreakList title="Team streaks" streaks={match.team_streaks} match={match} />
         </>) : (
-          <EspnStatsSection espnData={espnData} loading={espnLoading} error={espnError} homeName={match.home?.name} awayName={match.away?.name} />
+          <EspnStatsSection espnStats={match.espn_stats} homeName={match.home?.name} awayName={match.away?.name} />
         )}
       </div>
     </div>
@@ -5458,16 +5439,20 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
   const edgeBadgeFor = (comparison) =>
     comparison?.badge?.tone === 'positive' && comparison.edgePoints > 0 ? comparison.badge.label : null;
   const isFinished = match.status === 'FT';
-  const compactPick = suggestedPickForMatch(match, allMatches);
+  const rawCompactPick = suggestedPickForMatch(match, allMatches);
+  const compactPickKind = { BTTS: 'btts', Goals: 'goals', Cards: 'cards', Corners: 'corners' }[rawCompactPick?.label];
+  const compactPick = compactPickKind
+    ? { ...rawCompactPick, market: withLiveResult(match, compactPickKind, rawCompactPick.market) }
+    : rawCompactPick;
   const secondaryTips = secondaryTipRowsForMatch({
     compactPick,
-    displayBtts,
+    displayBtts: withLiveResult(match, 'btts', displayBtts),
     bttsComparison,
-    goalsMarket: predictions.ou_goals,
+    goalsMarket: withLiveResult(match, 'goals', predictions.ou_goals),
     goalsComparison,
-    displayCards: displayableCards,
+    displayCards: withLiveResult(match, 'cards', displayableCards),
     cardsComparison,
-    cornerMarket: displayableCorners,
+    cornerMarket: withLiveResult(match, 'corners', displayableCorners),
     cornersComparison,
     drawNoBet,
     drawNoBetComparison,
@@ -5767,7 +5752,11 @@ function ViewModeToggle({ value, onChange }) {
 }
 
 function CompactMatchRow({ match, allMatches, selected, onSelect }) {
-  const compactPick = suggestedPickForMatch(match, allMatches);
+  const rawPick = suggestedPickForMatch(match, allMatches);
+  const pickKind = { BTTS: 'btts', Goals: 'goals', Cards: 'cards', Corners: 'corners' }[rawPick?.label];
+  const compactPick = pickKind
+    ? { ...rawPick, market: withLiveResult(match, pickKind, rawPick.market) }
+    : rawPick;
   const settled = compactPick?.market?.result;
   return (
     <button
@@ -5858,6 +5847,69 @@ function SplitView({ groups, selectedMatch, onSelectRow, bookmakerId, allMatches
   );
 }
 
+// Mobile compact list: a league heading mirroring the row format, then dense
+// CompactMatchRows. Tapping a row opens the full match detail (same as the cards).
+// Header is intentionally non-sticky — the date-swipe wrapper applies a translateX
+// transform, under which position:sticky breaks.
+function CompactLeagueSection({ group, allMatches, onSelectMatch, isFavorite = false, onToggleFavorite, sectionRef = null }) {
+  const isFavoriteTeamGroup = Boolean(group.isFavoriteTeamGroup);
+  const [collapsed, setCollapsed] = useState(false);
+  return (
+    <section ref={sectionRef} className="overflow-hidden rounded-xl border border-line bg-surface shadow-sm scroll-mt-4 dark:shadow-[0_18px_40px_-22px_rgba(0,0,0,0.8)]">
+      <div className="flex items-center justify-between gap-2 border-b border-line bg-header px-3 py-2 text-header-fg">
+        <span className="flex min-w-0 items-center gap-2">
+          {isFavoriteTeamGroup ? (
+            <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-amber-300/40 bg-amber-400/15 text-amber-200">
+              <Star className="h-3.5 w-3.5 fill-amber-300" aria-hidden="true" />
+            </span>
+          ) : (
+            <LeagueBadge src={group.logo} name={group.league} />
+          )}
+          <span className="truncate text-sm font-semibold">{group.league}</span>
+          {!isFavoriteTeamGroup && (
+            <button
+              type="button"
+              onClick={() => onToggleFavorite(group.league)}
+              className={`inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-md border transition duration-150 ease-out-soft active:scale-95 ${
+                isFavorite
+                  ? 'border-amber-300 bg-amber-400/15 text-amber-300'
+                  : 'border-white/15 bg-white/5 text-white/65 hover:bg-white/10 hover:text-white'
+              }`}
+              aria-label={`${isFavorite ? 'Remove' : 'Add'} ${group.league} as favourite league`}
+              title={`${isFavorite ? 'Remove from' : 'Add to'} favourite leagues`}
+            >
+              <Star className={`h-3.5 w-3.5 ${isFavorite ? 'fill-amber-300' : ''}`} aria-hidden="true" />
+            </button>
+          )}
+        </span>
+        <button
+          type="button"
+          onClick={() => setCollapsed((c) => !c)}
+          aria-expanded={!collapsed}
+          aria-label={`${collapsed ? 'Expand' : 'Collapse'} ${group.league}`}
+          className="flex shrink-0 items-center gap-2 rounded-full py-0.5 pl-2 text-header-fg transition active:scale-95"
+        >
+          <span className="rounded-full bg-white/15 px-2 py-0.5 text-[11px] font-semibold">{group.matches.length}</span>
+          <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${collapsed ? '' : 'rotate-180'}`} aria-hidden="true" />
+        </button>
+      </div>
+      {!collapsed && (
+        <div>
+          {group.matches.map((m) => (
+            <CompactMatchRow
+              key={`${m.league}-${m.id}`}
+              match={m}
+              allMatches={allMatches}
+              selected={false}
+              onSelect={onSelectMatch}
+            />
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
 function LeagueSection({ group, onSelectMatch, bookmakerId, allMatches, isFavorite = false, onToggleFavorite, favoriteTeams = [], onToggleFavoriteTeam, sectionRef = null }) {
   const isFavoriteTeamGroup = Boolean(group.isFavoriteTeamGroup);
   const finished = group.matches.filter((match) => match.status === 'FT').length;
@@ -5934,6 +5986,7 @@ function HomeInner() {
   const [isPlatformOwner, setIsPlatformOwner] = useState(false);
   const [mobileNavActive, setMobileNavActive] = useState('dashboard');
   const [viewMode, setViewMode] = useState('cards');
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [splitSelectedId, setSplitSelectedId] = useState(null);
   const [isLg, setIsLg] = useState(false);
   const [voteLeaderboard, setVoteLeaderboard] = useState(null);
@@ -6040,6 +6093,14 @@ function HomeInner() {
     document.documentElement.style.overflowY = isSplit ? 'hidden' : '';
     return () => { document.documentElement.style.overflowY = ''; };
   }, [viewMode, mobileNavActive, isLg]);
+
+  // Lock background scroll while the mobile filters modal is open.
+  useEffect(() => {
+    if (!filtersOpen) return undefined;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, [filtersOpen]);
 
   useEffect(() => {
     let active = true;
@@ -6302,21 +6363,32 @@ function HomeInner() {
     setSlideDir(nextDirection);
     setSelectedDate(todayDate);
   }, [selectedDateIndex, todayDate, todayDateIndex]);
+  // Reset every match filter back to its default (today / all leagues / all statuses / no search).
+  const resetFilters = useCallback(() => {
+    setLeague('all');
+    setStatus('all');
+    setQuery('');
+    setSlideDir(0);
+    setSelectedDate(todayDate);
+  }, [todayDate]);
 
   const moveDate = useCallback(
     (direction) => {
       if (!dateOptions.length) return;
       setSlideDir(direction > 0 ? 1 : -1);
 
-      if (selectedDateIndex === -1) {
+      // With no specific date selected (e.g. "All dates"), step relative to today so a
+      // forward swipe lands on tomorrow — not the oldest/newest extreme.
+      const anchorIndex = selectedDateIndex === -1 ? todayDateIndex : selectedDateIndex;
+      if (anchorIndex === -1) {
         setSelectedDate(direction > 0 ? dateOptions[0] : dateOptions[dateOptions.length - 1]);
         return;
       }
 
-      const nextIndex = Math.min(Math.max(selectedDateIndex + direction, 0), dateOptions.length - 1);
+      const nextIndex = Math.min(Math.max(anchorIndex + direction, 0), dateOptions.length - 1);
       setSelectedDate(dateOptions[nextIndex]);
     },
-    [dateOptions, selectedDateIndex],
+    [dateOptions, selectedDateIndex, todayDateIndex],
   );
 
   const reviewDate = selectedDate && selectedDate !== 'all' ? selectedDate : todayDate;
@@ -6357,6 +6429,7 @@ function HomeInner() {
       .filter((match) => {
         if (status === 'all') return true;
         if (status === 'FT') return match.status === 'FT';
+        if (status === 'live') return match.status === 'live';
         return match.status !== 'FT';
       })
       .filter((match) => matchHasReviewFilter(match, reviewFilter, matches))
@@ -6369,6 +6442,8 @@ function HomeInner() {
   const groupedMatches = useMemo(() => groupMatchesForDisplay(filtered, favoriteLeagues, favoriteTeams), [favoriteLeagues, favoriteTeams, filtered]);
   const favoriteGroups = useMemo(() => groupFavoriteMatches(filtered, favoriteLeagues, favoriteTeams), [favoriteLeagues, favoriteTeams, filtered]);
   const displayedGroups = mobileNavActive === 'watchlist' ? favoriteGroups : groupedMatches;
+  // Count of active non-default filters (date stepper and Live are their own controls).
+  const activeFilterCount = (league !== 'all' ? 1 : 0) + (status !== 'all' && status !== 'live' ? 1 : 0) + (query.trim() ? 1 : 0);
 
   // Look up the selected match across the entire dataset so detail view works
   // even when the current filters would exclude it.
@@ -6796,81 +6871,188 @@ function HomeInner() {
           />
         </div>
 
-        <div className={`${mobileNavActive === 'matches' || mobileNavActive === 'watchlist' ? 'block' : 'hidden'} mt-3 rounded-lg border border-line bg-surface p-3 sm:hidden`}>
-          <div className="flex items-center justify-between gap-2">
+        <div className={`${mobileNavActive === 'matches' || mobileNavActive === 'watchlist' ? 'block' : 'hidden'} sticky top-0 z-30 -mx-2 bg-field px-2 pb-2 pt-3 sm:hidden`}>
+          <div className="flex items-center gap-2">
+            {/* Left/right date stepper — tap the centre to jump to today */}
+            <div className="flex min-w-0 flex-1 items-center rounded-full border border-line bg-surface">
+              <button
+                type="button"
+                onClick={() => moveDate(-1)}
+                disabled={!dateOptions.length || selectedDateIndex === 0}
+                className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-muted disabled:opacity-30"
+                aria-label="Previous match date"
+              >
+                <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                onClick={selectToday}
+                className="min-w-0 flex-1 truncate px-1 text-center text-sm font-semibold text-ink"
+                aria-label="Show today's matches"
+              >
+                {!selectedDate || selectedDate === todayDate
+                  ? 'Today'
+                  : selectedDate === 'all'
+                    ? 'All dates'
+                    : formatDateDMY(selectedDate)}
+              </button>
+              <button
+                type="button"
+                onClick={() => moveDate(1)}
+                disabled={!dateOptions.length || selectedDateIndex === dateOptions.length - 1}
+                className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-muted disabled:opacity-30"
+                aria-label="Next match date"
+              >
+                <ChevronRight className="h-5 w-5" aria-hidden="true" />
+              </button>
+            </div>
+            {/* Live quick-filter */}
             <button
               type="button"
-              onClick={() => moveDate(-1)}
-              disabled={!dateOptions.length || selectedDateIndex === 0}
-              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-line bg-surface text-muted disabled:cursor-not-allowed disabled:opacity-40"
-              aria-label="Previous match date"
+              onClick={() => setStatus((s) => (s === 'live' ? 'all' : 'live'))}
+              aria-pressed={status === 'live'}
+              className={`inline-flex h-10 shrink-0 items-center gap-1.5 rounded-full border px-3 text-sm font-semibold transition ${
+                status === 'live' ? 'border-red-500 bg-red-600 text-white' : 'border-line bg-surface text-muted'
+              }`}
             >
-              <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+              <span className={`h-2 w-2 rounded-full ${status === 'live' ? 'animate-pulse bg-white' : 'bg-red-500'}`} aria-hidden="true" />
+              Live
             </button>
+            {/* All-in-one filters */}
             <button
               type="button"
-              onClick={selectToday}
-              className="inline-flex flex-1 items-center justify-center text-base font-semibold text-ink"
-              aria-label="Show today's matches"
+              onClick={() => setFiltersOpen((open) => !open)}
+              aria-expanded={filtersOpen}
+              aria-label="Filters"
+              className={`relative inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition ${
+                filtersOpen || activeFilterCount > 0 ? 'border-accent/50 bg-accent-soft text-accent' : 'border-line bg-surface text-muted'
+              }`}
             >
-              {!selectedDate || selectedDate === todayDate
-                ? 'Today'
-                : selectedDate === 'all'
-                  ? 'All dates'
-                  : formatDateDMY(selectedDate)}
-            </button>
-            <button
-              type="button"
-              onClick={() => moveDate(1)}
-              disabled={!dateOptions.length || selectedDateIndex === dateOptions.length - 1}
-              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-line bg-surface text-muted disabled:cursor-not-allowed disabled:opacity-40"
-              aria-label="Next match date"
-            >
-              <ChevronRight className="h-5 w-5" aria-hidden="true" />
+              <ListFilter className="h-5 w-5" aria-hidden="true" />
+              {activeFilterCount > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 inline-flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-white">
+                  {activeFilterCount}
+                </span>
+              )}
             </button>
           </div>
-          <div className="mt-3 flex items-center justify-center gap-2">
-            <button
-              type="button"
-              onClick={selectAllDates}
-              disabled={selectedDate === 'all'}
-              className="inline-flex h-9 shrink-0 items-center rounded-full border border-line bg-surface px-4 text-sm font-semibold text-muted transition hover:bg-field disabled:border-ink disabled:bg-header disabled:text-white disabled:opacity-100"
-            >
-              All dates
-            </button>
-            <button
-              type="button"
-              onClick={selectToday}
-              disabled={selectedDate === todayDate}
-              className="inline-flex h-9 shrink-0 items-center rounded-full border border-line bg-surface px-4 text-sm font-semibold text-muted transition hover:bg-field disabled:border-ink disabled:bg-header disabled:text-white disabled:opacity-100"
-            >
-              Today
-            </button>
-          </div>
-          <div className="mt-3 flex items-center justify-center gap-2 overflow-x-auto sm:justify-start">
-            {[
-              { value: 'all', label: 'All' },
-              { value: 'FT', label: 'Finished' },
-              { value: 'upcoming', label: 'Upcoming' },
-            ].map(({ value, label }) => {
-              const active = status === value;
-              return (
-                <button
-                  key={value}
-                  type="button"
-                  onClick={() => setStatus(value)}
-                  aria-pressed={active}
-                  className={`inline-flex h-9 shrink-0 items-center rounded-full px-4 text-sm font-semibold transition ${active ? 'border border-ink bg-header text-white' : 'border border-line bg-surface text-muted'}`}
-                >
-                  {label}
-                </button>
-              );
-            })}
-          </div>
+
         </div>
 
-        <div className={`${mobileNavActive === 'matches' || mobileNavActive === 'watchlist' ? 'sticky top-0 z-30 -mx-2 bg-field px-2 pb-2 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8' : ''}`}>
-        <div ref={matchesRef} className={`${mobileNavActive === 'matches' || mobileNavActive === 'watchlist' ? 'grid' : 'hidden'} mt-3 scroll-mt-4 gap-2 rounded-lg border border-line bg-surface p-3 sm:mt-5 sm:grid-cols-[12rem_10rem_minmax(18rem,1fr)_minmax(16rem,1fr)] sm:items-center sm:gap-3`}>
+        {/* Mobile filters modal — multiple filters, reset and close */}
+        {filtersOpen && (
+          <div className="fixed inset-0 z-50 flex items-end justify-center sm:hidden" role="dialog" aria-modal="true" aria-label="Filters">
+            <button
+              type="button"
+              aria-label="Close filters"
+              onClick={() => setFiltersOpen(false)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+            <div className="relative z-10 flex max-h-[85vh] w-full flex-col rounded-t-2xl border-t border-line bg-surface shadow-2xl">
+              <div className="flex items-center justify-between border-b border-line px-4 py-3">
+                <h2 className="text-base font-semibold text-ink">Filters</h2>
+                <button
+                  type="button"
+                  onClick={() => setFiltersOpen(false)}
+                  aria-label="Close"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-line text-muted transition hover:text-ink active:scale-95"
+                >
+                  <X className="h-5 w-5" aria-hidden="true" />
+                </button>
+              </div>
+
+              <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-4 py-4">
+                <div>
+                  <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-faint">Date</h3>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={selectToday}
+                      aria-pressed={selectedDate === todayDate}
+                      className={`inline-flex h-10 items-center rounded-full border px-4 text-sm font-semibold transition ${selectedDate === todayDate ? 'border-ink bg-header text-white' : 'border-line bg-surface text-muted'}`}
+                    >
+                      Today
+                    </button>
+                    <button
+                      type="button"
+                      onClick={selectAllDates}
+                      aria-pressed={selectedDate === 'all'}
+                      className={`inline-flex h-10 items-center rounded-full border px-4 text-sm font-semibold transition ${selectedDate === 'all' ? 'border-ink bg-header text-white' : 'border-line bg-surface text-muted'}`}
+                    >
+                      All dates
+                    </button>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-faint">Status</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { value: 'all', label: 'All' },
+                      { value: 'upcoming', label: 'Upcoming' },
+                      { value: 'live', label: 'Live' },
+                      { value: 'FT', label: 'Finished' },
+                    ].map(({ value, label }) => (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() => setStatus(value)}
+                        aria-pressed={status === value}
+                        className={`inline-flex h-10 items-center rounded-full border px-4 text-sm font-semibold transition ${status === value ? 'border-ink bg-header text-white' : 'border-line bg-surface text-muted'}`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-faint">League</h3>
+                  <select
+                    value={league}
+                    onChange={(event) => setLeague(event.target.value)}
+                    className="h-11 w-full rounded-md border border-line bg-surface px-3 text-sm"
+                    aria-label="League"
+                  >
+                    <option value="all">All leagues</option>
+                    {leagues.map((item) => (
+                      <option key={item} value={item}>
+                        {item}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-faint">Search</h3>
+                  <input
+                    value={query}
+                    onChange={(event) => setQuery(event.target.value)}
+                    placeholder="Search teams or league"
+                    className="h-11 w-full rounded-md border border-line bg-surface px-3 text-sm"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 border-t border-line px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
+                <button
+                  type="button"
+                  onClick={resetFilters}
+                  className="inline-flex h-11 items-center justify-center rounded-md border border-line bg-surface px-5 text-sm font-semibold text-muted transition hover:text-ink active:scale-95"
+                >
+                  Reset
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFiltersOpen(false)}
+                  className="inline-flex h-11 flex-1 items-center justify-center rounded-md bg-header text-sm font-semibold text-white transition active:scale-95"
+                >
+                  Show {displayedGroups.reduce((total, group) => total + (group.matches?.length || 0), 0)} matches
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div ref={matchesRef} className={`scroll-mt-4 ${mobileNavActive === 'matches' || mobileNavActive === 'watchlist' ? 'sm:sticky sm:top-0 z-30 -mx-2 bg-field px-2 pb-2 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8' : ''}`}>
+        <div className={`${mobileNavActive === 'matches' || mobileNavActive === 'watchlist' ? 'hidden sm:grid' : 'hidden'} mt-3 scroll-mt-4 gap-2 rounded-lg border border-line bg-surface p-3 sm:mt-5 sm:grid-cols-[12rem_10rem_minmax(18rem,1fr)_minmax(16rem,1fr)] sm:items-center sm:gap-3`}>
           <select
             value={league}
             onChange={(event) => setLeague(event.target.value)}
@@ -6891,6 +7073,7 @@ function HomeInner() {
             aria-label="Status"
           >
             <option value="upcoming">Upcoming</option>
+            <option value="live">Live</option>
             <option value="FT">Finished</option>
             <option value="all">All statuses</option>
           </select>
@@ -6987,7 +7170,20 @@ function HomeInner() {
             className={`space-y-4 sm:space-y-5 ${slideDir > 0 ? 'date-slide-next' : slideDir < 0 ? 'date-slide-prev' : ''}${dragActive ? ' date-slide-dragging' : ''}${snapBack ? ' date-slide-snapback' : ''}`}
             style={dragActive || snapBack ? { transform: `translateX(${dragOffset}px)` } : undefined}
           >
-          {viewMode === 'split' && isLg ? (
+          {!isLg ? (
+            // Mobile: dense compact list (cards are desktop-only).
+            displayedGroups.map((group) => (
+              <CompactLeagueSection
+                key={group.leagueId || group.league}
+                group={group}
+                allMatches={matches}
+                onSelectMatch={handleSelectMatch}
+                isFavorite={favoriteLeagueSet.has(group.league)}
+                onToggleFavorite={handleFavoriteLeagueToggle}
+                sectionRef={group.isFavoriteTeamGroup || group.isFavoriteLeagueGroup ? watchlistRef : null}
+              />
+            ))
+          ) : viewMode === 'split' ? (
             <SplitView
               groups={displayedGroups}
               selectedMatch={splitSelectedMatch}

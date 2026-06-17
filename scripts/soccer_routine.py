@@ -1663,6 +1663,10 @@ def backfill_stat_actuals(store):
                 continue
             if not ft_recent_enough_for_results_mode(m):
                 continue
+            # Backfill the full ESPN boxscore for the Stats tab once per match,
+            # independent of whether cards/corners markets are still pending.
+            if not m.get("espn_stats"):
+                espn_actuals_for_match(L.get("name", ""), m)
             pending = stat_markets_pending(m)
             if not pending:
                 continue
@@ -3377,32 +3381,118 @@ def fetch_current_season(unique_tournament_id):
     return season_id
 
 
+def compute_standings_from_matches(league):
+    """Build a standings table from a competition's own finished matches when no
+    external (SofaScore) standings exist — e.g. cups in the group stage. Teams are
+    partitioned into connected components of the played-against graph (each component
+    is a group during the group stage), and ranked within their component by
+    points → goal difference → goals for. Only FT matches count; in-play and upcoming
+    games do not move the table. Returns {team_id|name: {"rank", "pts"}}.
+    """
+    teams = {}
+
+    # Key by normalised name, not team_id: the same national team can carry different
+    # provider team_ids across sources (SofaScore vs TheSportsDB), which would otherwise
+    # split one team into several nodes and fragment its group. Every team_id seen is
+    # recorded so the table can still be looked up by id during attachment.
+    def keyfor(team):
+        return (team.get("name") or "").strip().lower()
+
+    def ensure(team):
+        k = keyfor(team)
+        if k not in teams:
+            teams[k] = {"name": k, "ids": set(), "pts": 0, "gd": 0, "gf": 0, "opps": set()}
+        tid = team.get("team_id")
+        if tid is not None and tid != "":
+            teams[k]["ids"].add(tid)
+        return k
+
+    for m in league.get("matches", []):
+        h = m.get("home") or {}
+        a = m.get("away") or {}
+        if not (h.get("name") and a.get("name")):
+            continue
+        kh, ka = ensure(h), ensure(a)
+        # Group membership comes from every scheduled fixture (teams in a group all
+        # play each other), so the table covers the full group before all games finish.
+        teams[kh]["opps"].add(ka)
+        teams[ka]["opps"].add(kh)
+        # Points only accrue from finished matches.
+        if str(m.get("status") or "").lower() != "ft":
+            continue
+        hg, ag = h.get("goals"), a.get("goals")
+        if hg is None or ag is None:
+            continue
+        try:
+            hg, ag = int(hg), int(ag)
+        except (TypeError, ValueError):
+            continue
+        teams[kh]["gf"] += hg
+        teams[ka]["gf"] += ag
+        teams[kh]["gd"] += hg - ag
+        teams[ka]["gd"] += ag - hg
+        if hg > ag:
+            teams[kh]["pts"] += 3
+        elif ag > hg:
+            teams[ka]["pts"] += 3
+        else:
+            teams[kh]["pts"] += 1
+            teams[ka]["pts"] += 1
+
+    out = {}
+    seen = set()
+    for start in list(teams.keys()):
+        if start in seen:
+            continue
+        comp, stack = [], [start]
+        seen.add(start)
+        while stack:
+            x = stack.pop()
+            comp.append(x)
+            for y in teams[x]["opps"]:
+                if y in teams and y not in seen:
+                    seen.add(y)
+                    stack.append(y)
+        comp.sort(key=lambda k: (-teams[k]["pts"], -teams[k]["gd"], -teams[k]["gf"], teams[k]["name"]))
+        for rank, k in enumerate(comp, start=1):
+            entry = {"rank": rank, "pts": teams[k]["pts"]}
+            if teams[k]["name"]:
+                out[teams[k]["name"]] = entry
+            for tid in teams[k]["ids"]:
+                out[tid] = entry
+    return out
+
+
 def phase_b3_attach_standings(store):
     """Attach rank/pts to every match's home/away from the current league table.
-    One standings fetch per league per run (cached). Safe to call repeatedly.
+    Prefers SofaScore standings (one fetch per league per run, cached); when a
+    competition has no external standings (e.g. a cup group stage), falls back to a
+    table computed from the slate's own finished matches. Safe to call repeatedly.
     """
     name_to_ut = {v: k for k, v in TOURNAMENTS.items()}
     attached = 0
     for L in store["leagues"]:
         ut_id = name_to_ut.get(L["name"])
-        if not ut_id:
-            continue
-        season_id = fetch_current_season(ut_id)
-        if not season_id:
-            continue
-        stand = fetch_standings(ut_id, season_id)
-        if not stand:
+        stand = {}
+        if ut_id:
+            season_id = fetch_current_season(ut_id)
+            if season_id:
+                stand = fetch_standings(ut_id, season_id) or {}
+        # No external standings for this competition → compute a group/league table
+        # from its own finished matches (cups, group stages, simulated slates).
+        computed = compute_standings_from_matches(L) if not stand else {}
+        if not stand and not computed:
             continue
         for m in L["matches"]:
             for side in ("home", "away"):
                 team = m.get(side) or {}
                 tid = team.get("team_id")
-                row = stand.get(tid)
+                tname = (team.get("name") or "").strip().lower()
                 # Name-based fallback for Phase 1 fixtures whose team_id is an ESPN/
                 # Flashscore ID and won't match SofaScore standings keys.
-                if not row:
-                    tname = (team.get("name") or "").strip().lower()
-                    row = stand.get(tname) if tname else None
+                row = stand.get(tid) or (stand.get(tname) if tname else None)
+                if not row and computed:
+                    row = computed.get(tid) or (computed.get(tname) if tname else None)
                 if row and row.get("rank") is not None:
                     team["rank"] = row.get("rank")
                     team["pts"] = row.get("pts")
@@ -4301,7 +4391,9 @@ def espn_state_for_match(league_name, match):
 
 def espn_actuals_for_match(league_name, match):
     """Return corners and/or cards from ESPN, or None.
-    Corners come from the scoreboard; cards come from /summary (yellowCards + redCards)."""
+    Corners come from the scoreboard; cards come from /summary (yellowCards + redCards).
+    Also populates match['espn_stats'] with full boxscore for live and completed matches
+    so the Stats tab can read directly from Firestore without a runtime API call."""
     import soccer_phase1_fixtures as espnsource
     ev = espn_event_for_match(league_name, match)
     if not ev:
@@ -4318,16 +4410,19 @@ def espn_actuals_for_match(league_name, match):
     except (TypeError, ValueError):
         pass
 
-    # Cards — need /summary endpoint; only worth calling for completed matches
+    # Cards + full stats — fetch /summary for completed and live matches
     event_id = ev.get("event_id")
     slug = espnsource.ESPN_LEAGUE_SLUGS.get(league_name)
-    if event_id and slug and (ev.get("state") == "post" or ev.get("completed")):
+    is_post = ev.get("state") == "post" or ev.get("completed")
+    is_live = ev.get("state") == "in"
+
+    if event_id and slug and (is_post or is_live):
         summary = _fetch_espn_summary(slug, event_id)
         teams = ((summary or {}).get("boxscore") or {}).get("teams") or []
         home_team = next((t for t in teams if (t.get("homeAway") or "").lower() == "home"), None)
         away_team = next((t for t in teams if (t.get("homeAway") or "").lower() == "away"), None)
 
-        def _card_stat(team_entry, name):
+        def _int_stat(team_entry, name):
             for stat in (team_entry or {}).get("statistics") or []:
                 if stat.get("name") == name:
                     try:
@@ -4336,27 +4431,94 @@ def espn_actuals_for_match(league_name, match):
                         return 0
             return 0
 
+        def _float_stat(team_entry, name):
+            for stat in (team_entry or {}).get("statistics") or []:
+                if stat.get("name") == name:
+                    try:
+                        return float(stat.get("displayValue", 0))
+                    except (TypeError, ValueError):
+                        return None
+            return None
+
         if home_team is not None and away_team is not None:
-            home_yellow = _card_stat(home_team, "yellowCards")
-            away_yellow = _card_stat(away_team, "yellowCards")
-            home_red = _card_stat(home_team, "redCards")
-            away_red = _card_stat(away_team, "redCards")
-            home_cards = home_yellow + home_red
-            away_cards = away_yellow + away_red
-            out["home_cards"] = home_cards
-            out["away_cards"] = away_cards
-            out["cards_total"] = home_cards + away_cards
-            # Corners from summary — fills the gap when scoreboard is stale/out-of-window.
+            # Cards actuals (completed matches only)
+            if is_post:
+                home_yellow = _int_stat(home_team, "yellowCards")
+                away_yellow = _int_stat(away_team, "yellowCards")
+                home_red = _int_stat(home_team, "redCards")
+                away_red = _int_stat(away_team, "redCards")
+                out["home_cards"] = home_yellow + home_red
+                out["away_cards"] = away_yellow + away_red
+                out["cards_total"] = out["home_cards"] + out["away_cards"]
+
+            # Corners from summary — fills gap when scoreboard is stale/out-of-window
             if "corners_total" not in out:
                 try:
-                    hc = int(_card_stat(home_team, "wonCorners") or 0)
-                    ac = int(_card_stat(away_team, "wonCorners") or 0)
+                    hc = int(_int_stat(home_team, "wonCorners") or 0)
+                    ac = int(_int_stat(away_team, "wonCorners") or 0)
                     if hc > 0 or ac > 0:
                         out["home_corners"] = hc
                         out["away_corners"] = ac
                         out["corners_total"] = hc + ac
                 except (TypeError, ValueError):
                     pass
+
+            # Full boxscore stored on the match dict for the Stats tab
+            espn_stats = {
+                "home": {
+                    "possession": _float_stat(home_team, "possessionPct"),
+                    "shots": _int_stat(home_team, "totalShots"),
+                    "shots_on_target": _int_stat(home_team, "shotsOnTarget"),
+                    "corners": _int_stat(home_team, "wonCorners"),
+                    "fouls": _int_stat(home_team, "foulsCommitted"),
+                    "yellow_cards": _int_stat(home_team, "yellowCards"),
+                    "red_cards": _int_stat(home_team, "redCards"),
+                    "saves": _int_stat(home_team, "saves"),
+                    "offsides": _int_stat(home_team, "offsides"),
+                },
+                "away": {
+                    "possession": _float_stat(away_team, "possessionPct"),
+                    "shots": _int_stat(away_team, "totalShots"),
+                    "shots_on_target": _int_stat(away_team, "shotsOnTarget"),
+                    "corners": _int_stat(away_team, "wonCorners"),
+                    "fouls": _int_stat(away_team, "foulsCommitted"),
+                    "yellow_cards": _int_stat(away_team, "yellowCards"),
+                    "red_cards": _int_stat(away_team, "redCards"),
+                    "saves": _int_stat(away_team, "saves"),
+                    "offsides": _int_stat(away_team, "offsides"),
+                },
+            }
+            plays = (summary or {}).get("keyEvents") or (summary or {}).get("scoringPlays") or []
+            key_events = []
+            for p in plays:
+                entry = {
+                    "type": ((p.get("type") or {}).get("text") or (p.get("type") or {}).get("id") or ""),
+                    "clock": ((p.get("clock") or {}).get("displayValue") or ""),
+                    "team": ((p.get("team") or {}).get("displayName") or (p.get("team") or {}).get("name") or ""),
+                    "participant": (((p.get("participants") or [{}])[0]).get("athlete") or {}).get("displayName") or "",
+                    "text": p.get("text") or p.get("shortText") or "",
+                }
+                if entry["text"] or entry["participant"]:
+                    key_events.append(entry)
+            if key_events:
+                espn_stats["key_events"] = key_events
+            h2h_raw = (summary or {}).get("headToHeadGames") or []
+            h2h = []
+            for g in h2h_raw[:5]:
+                comps = ((g.get("competitions") or [{}])[0]).get("competitors") or []
+                hc = next((c for c in comps if c.get("homeAway") == "home"), {})
+                ac = next((c for c in comps if c.get("homeAway") == "away"), {})
+                h2h.append({
+                    "date": (g.get("date") or "")[:10],
+                    "home_team": (hc.get("team") or {}).get("displayName") or "",
+                    "away_team": (ac.get("team") or {}).get("displayName") or "",
+                    "home_score": hc.get("score"),
+                    "away_score": ac.get("score"),
+                })
+            if h2h:
+                espn_stats["h2h"] = h2h
+            if any(v for v in espn_stats["home"].values() if v):
+                match["espn_stats"] = espn_stats
 
     return out if len(out) > 1 else None
 
@@ -4435,6 +4597,8 @@ def update_live_and_settle(store):
             elif kind == "live":
                 if apply_live_state(m, h, a, minute):
                     live_set.append(f"{label} {h}-{a} ({minute or 'live'})")
+                # Collect live ESPN stats for the Stats tab (summary cached; low overhead).
+                espn_actuals_for_match(league_name, m)
             elif mins >= STUCK_UPCOMING_MINUTES:
                 stuck.append({"label": label, "minutes_since_kickoff": round(mins), "id": eid,
                               "date": m.get("date"), "time": m.get("time"), "status": m.get("status")})

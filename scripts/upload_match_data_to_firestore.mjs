@@ -242,6 +242,7 @@ function slimMatch(match) {
     'manual_result_import',
     'venue',
     'referee',
+    'espn_stats',
   ];
   return Object.fromEntries(
     keep
