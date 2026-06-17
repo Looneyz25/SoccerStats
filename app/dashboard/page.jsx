@@ -1105,6 +1105,299 @@ function poissonMarketProbabilities(lh, la, rho = 0, line = 2.5) {
   return { home, draw, away, bttsYes, overGoals };
 }
 
+// Full normalised Dixon-Coles scoreline matrix for the correct-score heatmap.
+// Returns the 0..MAX grid (rows = home goals, cols = away goals), the most-likely
+// scorelines, and the model's expected goals (lambda) per side.
+function poissonScoreGrid(lh, la, rho = 0, max = 5) {
+  if (!Number.isFinite(lh) || !Number.isFinite(la) || lh <= 0 || la <= 0) return null;
+  const fact = [1, 1, 2, 6, 24, 120, 720, 5040];
+  const pmf = (k, l) => Math.exp(-l) * Math.pow(l, k) / fact[k];
+  const grid = Array.from({ length: max + 1 }, (_, i) => Array.from({ length: max + 1 }, (_, j) => pmf(i, lh) * pmf(j, la)));
+  grid[0][0] *= 1 - lh * la * rho;
+  grid[1][0] *= 1 + la * rho;
+  grid[0][1] *= 1 + lh * rho;
+  grid[1][1] *= 1 - rho;
+  let total = 0;
+  for (const row of grid) for (const v of row) total += v;
+  if (total <= 0) return null;
+  const norm = grid.map((row) => row.map((v) => v / total));
+  const scores = [];
+  let peak = 0;
+  for (let i = 0; i <= max; i++) {
+    for (let j = 0; j <= max; j++) {
+      scores.push({ h: i, a: j, p: norm[i][j] });
+      if (norm[i][j] > peak) peak = norm[i][j];
+    }
+  }
+  scores.sort((a, b) => b.p - a.p);
+  return { grid: norm, top: scores.slice(0, 5), peak, xgHome: lh, xgAway: la };
+}
+
+// Bucket every settled headline pick by the model's stated probability and measure how
+// often it actually hit — the basis for a reliability/calibration curve.
+function calibrationBuckets(matches) {
+  const bands = [[0.45, 0.5], [0.5, 0.55], [0.55, 0.6], [0.6, 0.65], [0.65, 0.7], [0.7, 0.8], [0.8, 1.01]];
+  const stats = bands.map(([lo, hi]) => ({ lo, hi, hit: 0, total: 0 }));
+  for (const m of arrayValue(matches)) {
+    const headline = m?.display_summary?.headlineMarkets;
+    if (!Array.isArray(headline)) continue;
+    for (const mk of headline) {
+      const p = Number(mk?.probability);
+      const r = mk?.result;
+      if (!Number.isFinite(p) || (r !== 'hit' && r !== 'miss')) continue;
+      const band = stats.find((s) => p >= s.lo && p < s.hi);
+      if (!band) continue;
+      band.total += 1;
+      if (r === 'hit') band.hit += 1;
+    }
+  }
+  return stats
+    .filter((s) => s.total > 0)
+    .map((s) => ({ ...s, mid: (s.lo + s.hi) / 2, observed: s.hit / s.total }));
+}
+
+function CalibrationPanel({ matches }) {
+  const buckets = useMemo(() => calibrationBuckets(matches), [matches]);
+  const totalSamples = buckets.reduce((sum, b) => sum + b.total, 0);
+  if (totalSamples < 40) return null;
+  const mae = buckets.reduce((sum, b) => sum + Math.abs(b.observed - b.mid) * b.total, 0) / totalSamples;
+  const verdict = mae < 0.04 ? 'Well calibrated' : mae < 0.08 ? 'Reasonably calibrated' : 'Slightly optimistic';
+  const verdictTone = mae < 0.04 ? 'text-emerald-600 dark:text-emerald-400' : mae < 0.08 ? 'text-muted' : 'text-amber-600 dark:text-amber-400';
+  const fmtBand = (b) => `${Math.round(b.lo * 100)}–${Math.round(b.hi > 1 ? 100 : b.hi * 100)}%`;
+
+  return (
+    <section className="rounded-lg border border-line bg-surface p-4 shadow-panel">
+      <div className="flex items-center justify-between gap-2">
+        <h3 className="text-sm font-semibold text-ink">Model reliability</h3>
+        <span className={`text-xs font-semibold ${verdictTone}`}>{verdict}</span>
+      </div>
+      <p className="mt-1 text-xs text-muted">
+        Across {totalSamples.toLocaleString()} settled picks, grouped by the probability we stated. The bar is how often they actually hit; the tick is what we predicted — close together means honest probabilities.
+      </p>
+      <div className="mt-3 space-y-2">
+        {buckets.map((b) => {
+          const observedPct = b.observed * 100;
+          const predictedPct = b.mid * 100;
+          const good = b.observed >= b.mid - 0.02;
+          return (
+            <div key={`${b.lo}`} className="grid grid-cols-[3.75rem_1fr_4.5rem] items-center gap-2 text-xs">
+              <span className="font-mono text-muted">{fmtBand(b)}</span>
+              <span className="relative h-4 overflow-hidden rounded-full bg-field">
+                <span
+                  className={`absolute inset-y-0 left-0 rounded-full ${good ? 'bg-emerald-500/70' : 'bg-amber-500/70'}`}
+                  style={{ width: `${Math.min(100, observedPct)}%` }}
+                />
+                <span className="absolute inset-y-0 w-px bg-ink/70" style={{ left: `${Math.min(100, predictedPct)}%` }} title={`Predicted ${predictedPct.toFixed(0)}%`} />
+              </span>
+              <span className="text-right font-mono text-ink">
+                {observedPct.toFixed(0)}% <span className="text-faint">({b.hit}/{b.total})</span>
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+// Cross-match value feed: every positive-edge pick on an upcoming match whose EV clears
+// a threshold, ranked by EV. Reuses the same fair-vs-book odds the value tiles show.
+function valueBoardPicks(matches, limit = 8, minEv = 0.03) {
+  const picks = [];
+  for (const m of arrayValue(matches)) {
+    if (m?.status !== 'upcoming') continue;
+    for (const row of positiveEdgesForMatch(m, matches)) {
+      const fair = Number(row.comparison?.model?.odds);
+      const book = Number(row.comparison?.bookmaker?.odds);
+      if (!(fair > 1 && book > 1)) continue;
+      const prob = 1 / fair;
+      const ev = prob * book - 1;
+      if (ev < minEv) continue;
+      const kelly = Math.max(0, ((prob * book - 1) / (book - 1)) * 0.25);
+      picks.push({ match: m, label: row.label, pick: formatMarketDetail(row.market), book, ev, kelly });
+    }
+  }
+  picks.sort((a, b) => b.ev - a.ev);
+  return picks.slice(0, limit);
+}
+
+// Flat-stake (1u) P&L over every settled suggested pick, chronologically — the equity
+// curve that shows whether the model's edge actually pays out.
+function bankrollSimulation(matches) {
+  const bets = [];
+  for (const m of arrayValue(matches)) {
+    if (m?.status !== 'FT') continue;
+    const cm = m?.display_summary?.compactMarket?.market;
+    const odds = Number(cm?.odds);
+    const res = cm?.result;
+    if (!(odds > 1) || (res !== 'hit' && res !== 'miss')) continue;
+    bets.push({ date: m.date || '', odds, win: res === 'hit' });
+  }
+  bets.sort((a, b) => String(a.date).localeCompare(String(b.date)));
+  let equity = 0;
+  let wins = 0;
+  let peak = 0;
+  let maxDrawdown = 0;
+  const curve = [];
+  for (const b of bets) {
+    equity += b.win ? b.odds - 1 : -1;
+    if (b.win) wins += 1;
+    peak = Math.max(peak, equity);
+    maxDrawdown = Math.min(maxDrawdown, equity - peak);
+    curve.push(equity);
+  }
+  const n = bets.length;
+  if (!n) return null;
+  return { n, net: equity, roi: equity / n, winRate: wins / n, maxDrawdown, curve };
+}
+
+function BankrollPanel({ matches }) {
+  const sim = useMemo(() => bankrollSimulation(matches), [matches]);
+  if (!sim || sim.n < 30) return null;
+  const { n, net, roi, winRate, maxDrawdown, curve } = sim;
+  const positive = net >= 0;
+  const W = 320;
+  const H = 64;
+  const min = Math.min(0, ...curve);
+  const max = Math.max(0, ...curve);
+  const range = max - min || 1;
+  const x = (i) => (curve.length > 1 ? (i / (curve.length - 1)) * W : 0);
+  const y = (v) => H - ((v - min) / range) * H;
+  const path = curve.map((v, i) => `${i === 0 ? 'M' : 'L'}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+  const zeroY = y(0).toFixed(1);
+
+  return (
+    <section className="rounded-lg border border-line bg-surface p-4 shadow-panel">
+      <div className="flex items-center justify-between gap-2">
+        <h3 className="text-sm font-semibold text-ink">Bankroll simulator</h3>
+        <span className="text-xs text-muted">1u flat on every suggested pick</span>
+      </div>
+      <div className="mt-3 grid grid-cols-3 gap-2 text-center">
+        <div>
+          <div className={`font-mono text-lg font-semibold ${positive ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>{positive ? '+' : ''}{net.toFixed(1)}u</div>
+          <div className="text-[11px] uppercase tracking-wide text-faint">Profit</div>
+        </div>
+        <div>
+          <div className={`font-mono text-lg font-semibold ${roi >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>{roi >= 0 ? '+' : ''}{(roi * 100).toFixed(1)}%</div>
+          <div className="text-[11px] uppercase tracking-wide text-faint">ROI</div>
+        </div>
+        <div>
+          <div className="font-mono text-lg font-semibold text-ink">{(winRate * 100).toFixed(0)}%</div>
+          <div className="text-[11px] uppercase tracking-wide text-faint">{n} bets</div>
+        </div>
+      </div>
+      <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className="mt-3 h-16 w-full" aria-hidden="true">
+        <line x1="0" y1={zeroY} x2={W} y2={zeroY} stroke="currentColor" strokeWidth="0.5" className="text-line" strokeDasharray="3 3" />
+        <path d={path} fill="none" stroke={positive ? '#34d6c8' : '#ef4444'} strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
+      </svg>
+      <p className="mt-1 text-[11px] text-muted">Max drawdown {maxDrawdown.toFixed(1)}u. Settled picks only, chronological, level stakes — not betting advice.</p>
+    </section>
+  );
+}
+
+function ValueBoard({ matches, onSelectMatch }) {
+  const picks = useMemo(() => valueBoardPicks(matches), [matches]);
+  if (!picks.length) return null;
+  return (
+    <section className="overflow-hidden rounded-lg border border-line bg-surface shadow-panel">
+      <div className="flex items-center justify-between gap-2 border-b border-line px-4 py-3">
+        <h3 className="flex items-center gap-2 text-sm font-semibold text-ink">
+          <Star className="h-4 w-4 fill-amber-400 text-amber-500" aria-hidden="true" />
+          Today's value
+        </h3>
+        <span className="rounded-full bg-field px-2 py-0.5 text-[11px] font-semibold text-muted">{picks.length}</span>
+      </div>
+      <ul className="divide-y divide-line">
+        {picks.map((p, i) => (
+          <li key={`${p.match.id}-${p.label}`}>
+            <button
+              type="button"
+              onClick={() => onSelectMatch(p.match)}
+              className="flex w-full items-center gap-3 px-3 py-2.5 text-left transition hover:bg-surface-2"
+            >
+              <span className="w-4 shrink-0 text-center font-mono text-xs font-semibold text-faint">{i + 1}</span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-sm font-semibold text-ink">{p.match.home?.name} v {p.match.away?.name}</span>
+                <span className="block truncate text-[11px] text-muted">{p.match.league} · {matchDisplayTime(p.match)} · <span className="font-semibold text-ink">{p.label} {p.pick}</span> @ {p.book.toFixed(2)}</span>
+              </span>
+              <span className="shrink-0 text-right">
+                <span className="block font-mono text-sm font-semibold text-emerald-600 dark:text-emerald-400">+{(p.ev * 100).toFixed(0)}%</span>
+                <span className="block text-[10px] text-faint">¼K {(p.kelly * 100).toFixed(1)}%</span>
+              </span>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+function ScorelinePanel({ match }) {
+  const f = match?.predictions?.factors || {};
+  const model = poissonScoreGrid(Number(f.lambda_home), Number(f.lambda_away), Number(f.dixon_coles_rho) || 0);
+  if (!model) return null;
+  const { grid, top, peak, xgHome, xgAway } = model;
+  const topScore = top[0];
+  const n = grid.length;
+
+  const cells = [];
+  cells.push(<div key="corner" />);
+  for (let j = 0; j < n; j++) {
+    cells.push(<div key={`ch${j}`} className="px-1 pb-1 text-center text-[10px] font-semibold text-muted">{j}</div>);
+  }
+  for (let i = 0; i < n; i++) {
+    cells.push(<div key={`rl${i}`} className="flex items-center justify-end pr-1 text-[10px] font-semibold text-muted">{i}</div>);
+    for (let j = 0; j < n; j++) {
+      const p = grid[i][j];
+      const intensity = peak > 0 ? p / peak : 0;
+      const isTop = topScore && topScore.h === i && topScore.a === j;
+      cells.push(
+        <div
+          key={`${i}-${j}`}
+          title={`${i}-${j}: ${(p * 100).toFixed(1)}%`}
+          className={`m-px flex aspect-square items-center justify-center rounded text-[9px] font-mono ${isTop ? 'ring-1 ring-accent' : ''}`}
+          style={{ backgroundColor: `rgba(52,214,200,${(0.06 + intensity * 0.85).toFixed(3)})`, color: intensity > 0.5 ? '#0b1417' : undefined }}
+        >
+          {p >= 0.04 ? (p * 100).toFixed(0) : ''}
+        </div>,
+      );
+    }
+  }
+
+  return (
+    <div className="rounded-lg border border-line bg-surface p-4 shadow-panel">
+      <div className="flex items-center justify-between gap-2">
+        <h3 className="flex items-center gap-2 text-sm font-semibold text-ink">
+          <Goal className="h-4 w-4" aria-hidden="true" />
+          Scoreline model
+        </h3>
+        <span className="text-xs text-muted">
+          xG <span className="font-mono font-semibold text-ink">{xgHome.toFixed(1)}</span>
+          <span className="px-1">–</span>
+          <span className="font-mono font-semibold text-ink">{xgAway.toFixed(1)}</span>
+        </span>
+      </div>
+      <div className="mt-3 flex flex-wrap gap-1.5">
+        {top.map((s, i) => (
+          <span key={`${s.h}-${s.a}`} className={`inline-flex items-center gap-1 rounded-md border px-2 py-1 text-xs font-semibold ${i === 0 ? 'border-accent/50 bg-accent-soft text-accent' : 'border-line bg-field text-ink'}`}>
+            {s.h}-{s.a}
+            <span className="font-normal text-muted">{(s.p * 100).toFixed(0)}%</span>
+          </span>
+        ))}
+      </div>
+      <div className="mt-4">
+        <div className="inline-grid w-full" style={{ gridTemplateColumns: `1rem repeat(${n}, minmax(0, 1fr))` }}>
+          {cells}
+        </div>
+        <div className="mt-1.5 flex justify-between text-[10px] text-muted">
+          <span className="truncate">↓ {match.home?.name} goals</span>
+          <span className="truncate">{match.away?.name} goals →</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function comparisonFromPrices({ title, modelProb, marketOdds, fallbackLabel = null, marketOddsEstimated = false, noOddsNote = null }) {
   const bookmakerLabel = marketOddsEstimated ? 'Book est.' : 'Bookmaker';
   if (!Number.isFinite(modelProb)) {
@@ -3995,6 +4288,21 @@ function ModelVsBookmakerComparison({ comparison }) {
     : bookmakerFavoured
       ? 'bg-amber-50 text-amber-950 ring-1 ring-amber-400 dark:bg-amber-500/15 dark:text-amber-200 dark:ring-amber-500/40'
       : 'bg-surface text-muted ring-1 ring-slate-300 dark:ring-line';
+
+  // Expected value and quarter-Kelly, derived from the displayed fair (model) and
+  // bookmaker prices. fmtPrice rounds odds to 2dp, which is fine for a displayed EV.
+  const fairOdds = Number(comparison.model?.odds);
+  const bookOdds = Number(comparison.bookmaker?.odds);
+  const oddsEstimated = bookmakerLabel === 'Book est.';
+  let evPct = null;
+  let quarterKellyPct = null;
+  if (Number.isFinite(fairOdds) && fairOdds > 1 && Number.isFinite(bookOdds) && bookOdds > 1) {
+    const modelProb = 1 / fairOdds;
+    evPct = (modelProb * bookOdds - 1) * 100;
+    const kelly = (modelProb * bookOdds - 1) / (bookOdds - 1);
+    quarterKellyPct = Math.max(0, kelly * 0.25) * 100;
+  }
+
   return (
     <div className="w-full rounded-md border border-line bg-surface p-2 text-xs shadow-panel">
       <div className="mb-1.5 flex items-center justify-between gap-2">
@@ -4020,6 +4328,26 @@ function ModelVsBookmakerComparison({ comparison }) {
             {comparison.note}
           </div>
         </div>
+        {evPct !== null && (
+          <div className="flex items-center justify-between gap-2 rounded px-1.5 py-1">
+            <span className="flex items-center gap-1 text-muted">
+              Value{oddsEstimated && <span className="text-faint">(est.)</span>}
+            </span>
+            <span className="flex items-center gap-2 font-mono">
+              <span
+                className={`font-semibold ${evPct > 0.5 ? 'text-emerald-700 dark:text-emerald-300' : evPct < -0.5 ? 'text-amber-700 dark:text-amber-300' : 'text-muted'}`}
+                title="Expected value per unit staked = model probability × bookmaker odds − 1"
+              >
+                EV {evPct >= 0 ? '+' : ''}{evPct.toFixed(1)}%
+              </span>
+              {quarterKellyPct > 0 && (
+                <span className="text-muted" title="Suggested stake: quarter-Kelly, as a % of bankroll">
+                  · ¼-Kelly {quarterKellyPct.toFixed(1)}%
+                </span>
+              )}
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -5385,6 +5713,7 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
         )}
 
         <PredictionSummaryCard match={match} allMatches={allMatches} voteState={voteState} />
+        <ScorelinePanel match={match} />
         <QualityDetailPanel confidence={confidence} />
 
         {Object.keys(actuals).length > 0 && (
@@ -6850,6 +7179,9 @@ function HomeInner() {
         </div>
 
         <div ref={resultsRef} className={`${mobileNavActive === 'dashboard' || mobileNavActive === 'results' ? 'block' : 'hidden'} scroll-mt-4`}>
+          <div className="mb-4">
+            <ValueBoard matches={matches} onSelectMatch={handleSelectMatch} />
+          </div>
           <ResultsReview
             matches={matches}
             selectedDate={selectedDate}
@@ -6869,6 +7201,12 @@ function HomeInner() {
             followBusyUid={followBusyUid}
             followError={followError}
           />
+          <div className="mt-4">
+            <BankrollPanel matches={matches} />
+          </div>
+          <div className="mt-4">
+            <CalibrationPanel matches={matches} />
+          </div>
         </div>
 
         <div className={`${mobileNavActive === 'matches' || mobileNavActive === 'watchlist' ? 'block' : 'hidden'} sticky top-0 z-30 -mx-2 bg-field px-2 pb-2 pt-3 sm:hidden`}>
