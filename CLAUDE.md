@@ -48,7 +48,12 @@ The frontend lives in [app/page.jsx](app/page.jsx) (App Router) with Tailwind st
 
 ## Deploy
 
-**Live site uses Firebase App Hosting** — deploys automatically on `git push origin main`.
+**Live site uses Firebase App Hosting** (backend `soocer-stats`, region `us-east4`, custom domain `lvrstats.com`).
+- **Auto-deploy (ABIU) is currently DISABLED**, so `git push origin main` does NOT deploy on its own. After pushing, trigger a rollout manually:
+  ```
+  npx firebase-tools apphosting:rollouts:create soocer-stats --git-branch main --force --project sports-predictions-f91fd
+  ```
+  `--force` skips the confirm prompt (which hangs non-interactively). A transient `409 unable to queue` means a build is mid-flight — wait and retry. Re-enabling ABIU is a Firebase Console action (App Hosting → `soocer-stats` → Settings → automatic rollouts); the installed firebase-tools has no `backends:update` command.
 - `apphosting.yaml` injects `NEXT_PUBLIC_APP_URL` and `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` at build/runtime.
 - The Next.js API routes under `app/api/stripe/` proxy to the Cloud Function.
 - Do NOT use `firebase deploy --only hosting` for the primary site (that targets static Hosting, not App Hosting).
