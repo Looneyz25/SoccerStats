@@ -1,6 +1,6 @@
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
 import { getAdminApp, verifyAccess, loadMatch } from '../_lib/firebase-admin.mjs';
-import { parseNumber, marketLine, marketActualResult, adelaideLocalToUtc } from '../_lib/match-scoring.mjs';
+import { marketLine, marketActualResult, adelaideLocalToUtc } from '../_lib/match-scoring.mjs';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
