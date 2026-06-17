@@ -65,16 +65,17 @@ const FULL_REFRESH_STEPS = [
     args: ['scripts/verify_market_settlement.mjs'],
   },
   {
-    id: 'cache_badges',
-    label: 'Cache badges to Firebase Storage',
-    command: 'node',
-    args: ['scripts/cache_badges_to_firebase.mjs'],
-  },
-  {
     id: 'upload_firestore',
     label: 'Upload league docs to Firestore',
     command: 'node',
     args: ['scripts/upload_match_data_to_firestore.mjs'],
+  },
+  {
+    id: 'cache_badges',
+    label: 'Cache badges to Firebase Storage',
+    command: 'node',
+    args: ['scripts/cache_badges_to_firebase.mjs'],
+    timeoutMs: 240000,
   },
 ];
 
@@ -110,16 +111,17 @@ const RESULTS_ONLY_STEPS = [
     args: ['scripts/verify_market_settlement.mjs'],
   },
   {
-    id: 'cache_badges',
-    label: 'Cache badges to Firebase Storage',
-    command: 'node',
-    args: ['scripts/cache_badges_to_firebase.mjs'],
-  },
-  {
     id: 'upload_firestore',
     label: 'Upload league docs to Firestore',
     command: 'node',
     args: ['scripts/upload_match_data_to_firestore.mjs'],
+  },
+  {
+    id: 'cache_badges',
+    label: 'Cache badges to Firebase Storage',
+    command: 'node',
+    args: ['scripts/cache_badges_to_firebase.mjs'],
+    timeoutMs: 240000,
   },
 ];
 
@@ -156,16 +158,17 @@ const TOP_UP_ONLY_STEPS = [
     args: ['scripts/verify_market_settlement.mjs'],
   },
   {
-    id: 'cache_badges',
-    label: 'Cache badges to Firebase Storage',
-    command: 'node',
-    args: ['scripts/cache_badges_to_firebase.mjs'],
-  },
-  {
     id: 'upload_firestore',
     label: 'Upload league docs to Firestore',
     command: 'node',
     args: ['scripts/upload_match_data_to_firestore.mjs'],
+  },
+  {
+    id: 'cache_badges',
+    label: 'Cache badges to Firebase Storage',
+    command: 'node',
+    args: ['scripts/cache_badges_to_firebase.mjs'],
+    timeoutMs: 240000,
   },
 ];
 
@@ -177,16 +180,17 @@ const UPLOAD_RETRY_STEPS = [
     args: ['scripts/verify_market_settlement.mjs'],
   },
   {
-    id: 'cache_badges',
-    label: 'Cache badges to Firebase Storage',
-    command: 'node',
-    args: ['scripts/cache_badges_to_firebase.mjs'],
-  },
-  {
     id: 'upload_firestore',
     label: 'Upload league docs to Firestore',
     command: 'node',
     args: ['scripts/upload_match_data_to_firestore.mjs'],
+  },
+  {
+    id: 'cache_badges',
+    label: 'Cache badges to Firebase Storage',
+    command: 'node',
+    args: ['scripts/cache_badges_to_firebase.mjs'],
+    timeoutMs: 240000,
   },
 ];
 
@@ -222,16 +226,17 @@ const SPORTSBET_SOURCE_STEPS = [
     args: ['scripts/verify_market_settlement.mjs'],
   },
   {
-    id: 'cache_badges',
-    label: 'Cache badges to Firebase Storage',
-    command: 'node',
-    args: ['scripts/cache_badges_to_firebase.mjs'],
-  },
-  {
     id: 'upload_firestore',
     label: 'Upload league docs to Firestore',
     command: 'node',
     args: ['scripts/upload_match_data_to_firestore.mjs'],
+  },
+  {
+    id: 'cache_badges',
+    label: 'Cache badges to Firebase Storage',
+    command: 'node',
+    args: ['scripts/cache_badges_to_firebase.mjs'],
+    timeoutMs: 240000,
   },
 ];
 
@@ -249,16 +254,17 @@ const BET365_SOURCE_STEPS = [
     args: ['scripts/verify_market_settlement.mjs'],
   },
   {
-    id: 'cache_badges',
-    label: 'Cache badges to Firebase Storage',
-    command: 'node',
-    args: ['scripts/cache_badges_to_firebase.mjs'],
-  },
-  {
     id: 'upload_firestore',
     label: 'Upload league docs to Firestore',
     command: 'node',
     args: ['scripts/upload_match_data_to_firestore.mjs'],
+  },
+  {
+    id: 'cache_badges',
+    label: 'Cache badges to Firebase Storage',
+    command: 'node',
+    args: ['scripts/cache_badges_to_firebase.mjs'],
+    timeoutMs: 240000,
   },
 ];
 
@@ -323,6 +329,18 @@ function runStep(step, transcript) {
       env: { ...DEFAULT_ENV, ...process.env, ...(step.env || {}) },
     });
 
+    // Hard cap per step so a slow/hung worker (e.g. the badge cache making thousands of
+    // Storage round-trips) can't hold the no-touch loop and trip the overlap guard.
+    let timer = null;
+    if (step.timeoutMs) {
+      timer = setTimeout(() => {
+        const msg = `[${step.label}] timed out after ${step.timeoutMs}ms — killing`;
+        console.error(msg);
+        appendTranscript(transcript, `${msg}\n`);
+        try { child.kill('SIGKILL'); } catch {}
+      }, step.timeoutMs);
+    }
+
     child.stdout.on('data', (chunk) => {
       const text = chunk.toString();
       stdout += text;
@@ -338,6 +356,7 @@ function runStep(step, transcript) {
     });
 
     child.on('error', (error) => {
+      if (timer) clearTimeout(timer);
       stderr += `${error.message}\n`;
       transcript.push(error.message);
       resolve({
@@ -355,6 +374,7 @@ function runStep(step, transcript) {
     });
 
     child.on('close', (code) => {
+      if (timer) clearTimeout(timer);
       const completedAt = nowIso();
       const status = code === 0 ? 'ok' : 'failed';
       transcript.push(`completed_at=${completedAt}`);
