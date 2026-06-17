@@ -1382,20 +1382,98 @@ function ValueBoard({ matches, onSelectMatch, accaKeys, onToggleLeg }) {
   );
 }
 
-function AccaSlip({ legs, onRemoveLeg, onClear }) {
+function AccaSlip({ legs, onRemoveLeg, onClear, onSaved }) {
   const [open, setOpen] = useState(false);
   const [stake, setStake] = useState(10);
+  const [tab, setTab] = useState('current');
+  const [slips, setSlips] = useState([]);
+  const [slipsLoading, setSlipsLoading] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+
   useEffect(() => {
     if (!open) return undefined;
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = prev; };
   }, [open]);
-  if (!legs.length) return null;
+
+  const getToken = useCallback(async () => {
+    const { getFirebaseAuth } = await import('../firebase');
+    return getFirebaseAuth().currentUser?.getIdToken();
+  }, []);
+
+  const loadSlips = useCallback(async () => {
+    setSlipsLoading(true);
+    setError('');
+    try {
+      const token = await getToken();
+      if (!token) throw new Error('Sign in again to load slips.');
+      const res = await fetch('/api/bet-slips', { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error || 'Could not load slips.');
+      setSlips(Array.isArray(data.slips) ? data.slips : []);
+    } catch (e) {
+      setError(e.message || 'Could not load slips.');
+    } finally {
+      setSlipsLoading(false);
+    }
+  }, [getToken]);
+
+  useEffect(() => { if (open) loadSlips(); }, [open, loadSlips]);
+
+  const saveSlip = useCallback(async () => {
+    setBusy(true);
+    setError('');
+    try {
+      const token = await getToken();
+      if (!token) throw new Error('Sign in again to save.');
+      const res = await fetch('/api/bet-slips', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ action: 'saveSlip', legs, stake: Number(stake) || 0 }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data?.error || 'Could not save slip.');
+      setSlips(Array.isArray(data.slips) ? data.slips : []);
+      onSaved?.();
+      setTab('history');
+    } catch (e) {
+      setError(e.message || 'Could not save slip.');
+    } finally {
+      setBusy(false);
+    }
+  }, [getToken, legs, stake, onSaved]);
+
+  const deleteSlip = useCallback(async (slipId) => {
+    try {
+      const token = await getToken();
+      if (!token) return;
+      const res = await fetch('/api/bet-slips', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ action: 'deleteSlip', slipId }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) setSlips(Array.isArray(data.slips) ? data.slips : []);
+    } catch {}
+  }, [getToken]);
+
   const combined = combinedFromLegs(legs);
   const stakeNum = Number(stake) || 0;
   const returns = combined ? stakeNum * combined.odds : 0;
   const evPositive = combined && combined.ev > 0;
+  const hasEstimated = legs.some((l) => l.priceEstimated);
+
+  const statusBadge = (status) =>
+    status === 'won' ? 'bg-emerald-500 text-white'
+      : status === 'lost' ? 'bg-red-500 text-white'
+        : status === 'void' ? 'bg-field text-muted'
+          : 'bg-amber-500/80 text-white';
+  const legResultClass = (result) =>
+    result === 'hit' ? 'text-emerald-500'
+      : result === 'miss' ? 'text-red-500'
+        : result === 'void' ? 'text-muted' : 'text-amber-500';
 
   return (
     <>
@@ -1406,7 +1484,9 @@ function AccaSlip({ legs, onRemoveLeg, onClear }) {
         aria-label={`Open bet slip, ${legs.length} legs`}
       >
         Bet slip
-        <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs font-bold text-white">{legs.length}</span>
+        {legs.length > 0 && (
+          <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-xs font-bold text-white">{legs.length}</span>
+        )}
       </button>
 
       {open && (
@@ -1414,66 +1494,137 @@ function AccaSlip({ legs, onRemoveLeg, onClear }) {
           <button type="button" aria-label="Close bet slip" onClick={() => setOpen(false)} className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
           <div className="relative z-10 flex max-h-[85vh] w-full flex-col rounded-t-2xl border-t border-line bg-surface shadow-2xl sm:max-w-md sm:rounded-2xl">
             <div className="flex items-center justify-between border-b border-line px-4 py-3">
-              <h2 className="text-base font-semibold text-ink">Bet slip <span className="text-muted">· {legs.length}</span></h2>
+              <h2 className="text-base font-semibold text-ink">Bet slip</h2>
               <button type="button" onClick={() => setOpen(false)} aria-label="Close" className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-line text-muted transition hover:text-ink active:scale-95">
                 <X className="h-5 w-5" aria-hidden="true" />
               </button>
             </div>
 
-            <ul className="min-h-0 flex-1 divide-y divide-line overflow-y-auto">
-              {legs.map((l) => (
-                <li key={accaLegKey(l.matchId, l.label)} className="flex items-center gap-2 px-4 py-2.5">
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-semibold text-ink">{l.matchLabel}</span>
-                    <span className="block truncate text-[11px] text-muted">{l.label} {l.pick} @ <span className="font-mono font-semibold text-ink">{Number(l.book).toFixed(2)}</span> · model {(Number(l.prob) * 100).toFixed(0)}%</span>
-                  </span>
-                  <button type="button" onClick={() => onRemoveLeg(l)} aria-label="Remove leg" className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-line text-muted transition hover:text-red-500 active:scale-90">
-                    <X className="h-4 w-4" aria-hidden="true" />
-                  </button>
-                </li>
+            <div className="flex border-b border-line px-4">
+              {[['current', `Current${legs.length ? ` · ${legs.length}` : ''}`], ['history', 'History']].map(([id, label]) => (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => setTab(id)}
+                  className={`-mb-px border-b-2 px-3 py-2 text-xs font-semibold uppercase tracking-wide transition ${tab === id ? 'border-[#34d6c8] text-[#34d6c8]' : 'border-transparent text-muted hover:text-ink'}`}
+                >
+                  {label}
+                </button>
               ))}
-            </ul>
+            </div>
 
-            {combined && (
-              <div className="border-t border-line px-4 py-3">
-                <div className="grid grid-cols-3 gap-2 text-center">
-                  <div>
-                    <div className="font-mono text-lg font-semibold text-ink">{combined.odds.toFixed(2)}</div>
-                    <div className="text-[11px] uppercase tracking-wide text-faint">Odds</div>
-                  </div>
-                  <div>
-                    <div className="font-mono text-lg font-semibold text-ink">{(combined.prob * 100).toFixed(1)}%</div>
-                    <div className="text-[11px] uppercase tracking-wide text-faint">Model</div>
-                  </div>
-                  <div>
-                    <div className={`font-mono text-lg font-semibold ${evPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}`}>{combined.ev >= 0 ? '+' : ''}{(combined.ev * 100).toFixed(0)}%</div>
-                    <div className="text-[11px] uppercase tracking-wide text-faint">EV</div>
-                  </div>
-                </div>
-                <div className="mt-3 flex items-center gap-3">
-                  <label className="flex items-center gap-2 text-sm text-muted">
-                    Stake
-                    <input
-                      type="number"
-                      min="0"
-                      inputMode="decimal"
-                      value={stake}
-                      onChange={(e) => setStake(e.target.value)}
-                      className="h-10 w-20 rounded-md border border-line bg-surface px-2 text-right font-mono text-sm text-ink"
-                    />
-                  </label>
-                  <span className="ml-auto text-sm text-muted">
-                    Returns <span className="font-mono text-base font-semibold text-ink">{returns.toFixed(2)}</span>
-                  </span>
-                </div>
-                <p className="mt-2 text-[11px] text-muted">Combined model probability assumes independent legs (one per match). Not betting advice.</p>
+            {tab === 'current' && (
+              <>
+                {!legs.length ? (
+                  <div className="px-4 py-10 text-center text-sm text-muted">Your slip is empty. Add markets from the value board or a match's detail view.</div>
+                ) : (
+                  <>
+                    <ul className="min-h-0 flex-1 divide-y divide-line overflow-y-auto">
+                      {legs.map((l) => (
+                        <li key={accaLegKey(l.matchId, l.label)} className="flex items-center gap-2 px-4 py-2.5">
+                          <span className="min-w-0 flex-1">
+                            <span className="block truncate text-sm font-semibold text-ink">{l.matchLabel}</span>
+                            <span className="block truncate text-[11px] text-muted">{l.label} {l.pick}{l.priceEstimated ? ' (est.)' : ''} @ <span className="font-mono font-semibold text-ink">{Number(l.book).toFixed(2)}</span>{Number.isFinite(Number(l.prob)) ? <> · model {(Number(l.prob) * 100).toFixed(0)}%</> : null}</span>
+                          </span>
+                          <button type="button" onClick={() => onRemoveLeg(l)} aria-label="Remove leg" className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-line text-muted transition hover:text-red-500 active:scale-90">
+                            <X className="h-4 w-4" aria-hidden="true" />
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                    {combined && (
+                      <div className="border-t border-line px-4 py-3">
+                        <div className="grid grid-cols-3 gap-2 text-center">
+                          <div>
+                            <div className="font-mono text-lg font-semibold text-ink">{combined.odds.toFixed(2)}</div>
+                            <div className="text-[11px] uppercase tracking-wide text-faint">Odds</div>
+                          </div>
+                          <div>
+                            <div className="font-mono text-lg font-semibold text-ink">{(combined.prob * 100).toFixed(1)}%</div>
+                            <div className="text-[11px] uppercase tracking-wide text-faint">Model</div>
+                          </div>
+                          <div>
+                            <div className={`font-mono text-lg font-semibold ${evPositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'}`}>{combined.ev >= 0 ? '+' : ''}{(combined.ev * 100).toFixed(0)}%</div>
+                            <div className="text-[11px] uppercase tracking-wide text-faint">EV</div>
+                          </div>
+                        </div>
+                        <div className="mt-3 flex items-center gap-3">
+                          <label className="flex items-center gap-2 text-sm text-muted">
+                            Stake
+                            <input
+                              type="number"
+                              min="0"
+                              inputMode="decimal"
+                              value={stake}
+                              onChange={(e) => setStake(e.target.value)}
+                              className="h-10 w-20 rounded-md border border-line bg-surface px-2 text-right font-mono text-sm text-ink"
+                            />
+                          </label>
+                          <span className="ml-auto text-sm text-muted">
+                            Returns <span className="font-mono text-base font-semibold text-ink">{returns.toFixed(2)}</span>
+                          </span>
+                        </div>
+                        <p className="mt-2 text-[11px] text-muted">Combined model probability assumes independent legs (one per match).{hasEstimated ? ' Includes model-estimated prices (est.).' : ''} Not betting advice.</p>
+                      </div>
+                    )}
+                    <div className="flex items-center gap-3 border-t border-line px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
+                      <button type="button" onClick={onClear} className="inline-flex h-11 items-center justify-center rounded-md border border-line bg-surface px-5 text-sm font-semibold text-muted transition hover:text-ink active:scale-95">Clear</button>
+                      <button type="button" onClick={saveSlip} disabled={!legs.length || busy} className="inline-flex h-11 flex-1 items-center justify-center rounded-md bg-header text-sm font-semibold text-white transition active:scale-95 disabled:opacity-50">{busy ? 'Saving…' : 'Save slip'}</button>
+                    </div>
+                  </>
+                )}
+              </>
+            )}
+
+            {tab === 'history' && (
+              <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
+                {slipsLoading ? (
+                  <p className="text-sm text-muted">Loading slips…</p>
+                ) : !slips.length ? (
+                  <p className="text-sm text-muted">No saved slips yet. Build one in Current and tap Save slip.</p>
+                ) : (
+                  <ul className="space-y-3">
+                    {slips.map((slip) => {
+                      const tone = slip.status === 'won' ? 'border-emerald-500/40 bg-emerald-500/5'
+                        : slip.status === 'lost' ? 'border-red-500/40 bg-red-500/5'
+                          : slip.status === 'void' ? 'border-line bg-field'
+                            : 'border-line bg-surface';
+                      const slipReturns = slip.status === 'won' ? Number(slip.stake) * Number(slip.combinedOdds || 0) : 0;
+                      return (
+                        <li key={slip.id} className={`rounded-lg border ${tone} p-3`}>
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-xs font-semibold uppercase tracking-wide text-muted">
+                              {slip.legs.length} legs · {Number(slip.combinedOdds || 0).toFixed(2)}
+                            </span>
+                            <span className="flex items-center gap-2">
+                              <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${statusBadge(slip.status)}`}>{String(slip.status || 'pending').toUpperCase()}</span>
+                              <button type="button" onClick={() => deleteSlip(slip.id)} aria-label="Delete slip" className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-line text-muted transition hover:text-red-500">
+                                <X className="h-3.5 w-3.5" aria-hidden="true" />
+                              </button>
+                            </span>
+                          </div>
+                          <ul className="mt-2 space-y-1">
+                            {slip.legs.map((l, i) => (
+                              <li key={`${l.matchId}-${i}`} className="flex items-center justify-between gap-2 text-[12px]">
+                                <span className="min-w-0 truncate text-muted">
+                                  <span className="text-ink">{l.matchLabel}</span> · {l.label} {l.pick}{l.priceEstimated ? ' (est.)' : ''} @ {Number(l.book).toFixed(2)}
+                                </span>
+                                <span className={`shrink-0 font-semibold ${legResultClass(l.result)}`}>{l.result || 'pending'}</span>
+                              </li>
+                            ))}
+                          </ul>
+                          {slip.status === 'won' && (
+                            <p className="mt-2 text-[12px] text-muted">Returns <span className="font-mono font-semibold text-ink">{slipReturns.toFixed(2)}</span> from stake {Number(slip.stake).toFixed(0)}</p>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
               </div>
             )}
 
-            <div className="flex items-center gap-3 border-t border-line px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
-              <button type="button" onClick={onClear} className="inline-flex h-11 items-center justify-center rounded-md border border-line bg-surface px-5 text-sm font-semibold text-muted transition hover:text-ink active:scale-95">Clear</button>
-              <button type="button" onClick={() => setOpen(false)} className="inline-flex h-11 flex-1 items-center justify-center rounded-md bg-header text-sm font-semibold text-white transition active:scale-95">Done</button>
-            </div>
+            {error && <p className="px-4 pb-2 text-[12px] text-red-500">{error}</p>}
           </div>
         </div>
       )}
@@ -7763,7 +7914,7 @@ function HomeInner() {
         </div>
 
       </section>
-      <AccaSlip legs={accaLegs} onRemoveLeg={removeAccaLeg} onClear={clearAcca} />
+      <AccaSlip legs={accaLegs} onRemoveLeg={removeAccaLeg} onClear={clearAcca} onSaved={() => setAccaLegs([])} />
       <MobileBottomNav
         active={mobileNavActive}
         onDashboard={openDashboardSection}
