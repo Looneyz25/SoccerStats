@@ -4936,7 +4936,7 @@ function H2HContextPanel({ match, allMatches }) {
   );
 }
 
-function PredictionSummaryCard({ match, allMatches, voteState = null }) {
+function PredictionSummaryCard({ match, allMatches, voteState = null, accaKeys, onToggleLeg }) {
   const matchWithContext = { ...match, __allMatches: allMatches };
   const predictions = match.predictions || {};
   const precomputed = match.display_markets || {};
@@ -4984,12 +4984,12 @@ function PredictionSummaryCard({ match, allMatches, voteState = null }) {
   const expectationSummary = matchExpectationSummary(match, allMatches);
 
   const lines = [
-    { label: 'Winner', voteKey: 'winner', pick: winnerPick, text: winnerText, comparison: winnerComparison, result: winner?.result },
-    { label: 'Draw No Bet', pick: drawNoBet ? formatMarketDetail(drawNoBet) : null, text: drawNoBetText, comparison: drawNoBetComparison, result: drawNoBet?.result },
-    { label: 'BTTS', voteKey: 'btts', pick: displayBtts ? formatMarketDetail(displayBtts) : null, text: bttsRationale(match), comparison: bttsComparison, result: displayBtts?.result },
-    { label: 'Goals', voteKey: 'goals', pick: predictions.ou_goals ? formatMarketDetail(predictions.ou_goals) : null, text: goalsRationale(match, allMatches), comparison: goalsComparison, result: predictions.ou_goals?.result },
-    { label: 'Cards', voteKey: 'cards', pick: displayableCards ? formatMarketDetail(displayableCards) : null, text: cardsRationale(match, allMatches), comparison: cardsComparison, result: displayableCards?.result },
-    { label: 'Corners', voteKey: 'corners', pick: displayableCorners ? formatMarketDetail(displayableCorners) : null, text: cornersRationale(match, allMatches, displayableCorners), comparison: cornersComparison, result: displayableCorners?.result },
+    { label: 'Winner', voteKey: 'winner', pick: winnerPick, text: winnerText, comparison: winnerComparison, result: winner?.result, market: winner, modelProbability: winnerModelProbability(match, winner) },
+    { label: 'Draw No Bet', pick: drawNoBet ? formatMarketDetail(drawNoBet) : null, text: drawNoBetText, comparison: drawNoBetComparison, result: drawNoBet?.result, market: drawNoBet, modelProbability: modelProbabilityForMarket(drawNoBet) },
+    { label: 'BTTS', voteKey: 'btts', pick: displayBtts ? formatMarketDetail(displayBtts) : null, text: bttsRationale(match), comparison: bttsComparison, result: displayBtts?.result, market: displayBtts, modelProbability: precomputed.btts?.modelProbability ?? modelProbabilityForMarket(displayBtts) },
+    { label: 'Goals', voteKey: 'goals', pick: predictions.ou_goals ? formatMarketDetail(predictions.ou_goals) : null, text: goalsRationale(match, allMatches), comparison: goalsComparison, result: predictions.ou_goals?.result, market: predictions.ou_goals, modelProbability: precomputed.goals?.modelProbability ?? modelProbabilityForMarket(predictions.ou_goals) },
+    { label: 'Cards', voteKey: 'cards', pick: displayableCards ? formatMarketDetail(displayableCards) : null, text: cardsRationale(match, allMatches), comparison: cardsComparison, result: displayableCards?.result, market: displayableCards, modelProbability: precomputed.cards?.modelProbability ?? modelProbabilityForMarket(displayableCards) },
+    { label: 'Corners', voteKey: 'corners', pick: displayableCorners ? formatMarketDetail(displayableCorners) : null, text: cornersRationale(match, allMatches, displayableCorners), comparison: cornersComparison, result: displayableCorners?.result, market: displayableCorners, modelProbability: precomputed.corners?.modelProbability ?? modelProbabilityForMarket(displayableCorners) },
   ].filter((row) => row.pick && (row.text || row.comparison));
   const voteCutoff = formatVoteCutoff(voteState?.data?.cutoffAt);
 
@@ -5022,12 +5022,35 @@ function PredictionSummaryCard({ match, allMatches, voteState = null }) {
         {lines.map((row) => (
           <li key={row.label} className={`grid gap-3 rounded-md px-3 py-3 sm:grid-cols-[24rem_minmax(0,1fr)] sm:items-start ${summaryRowClass(row.result)}`}>
             <span className="min-w-0">
-              <span className="grid min-h-6 grid-cols-[7rem_minmax(0,1fr)] items-center gap-2">
+              <span className="grid min-h-6 grid-cols-[7rem_minmax(0,1fr)_auto] items-center gap-2">
                 <span className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted">
                   {row.result && resultIcon(row.result)}
                   <span>{row.label}</span>
                 </span>
                 <span className="min-w-0 truncate font-semibold leading-5 text-ink">{row.pick}</span>
+                {onToggleLeg && (() => {
+                  const leg = legFromMarketRow({
+                    label: row.label,
+                    pick: row.pick,
+                    book: Number(row.comparison?.bookmaker?.odds),
+                    modelOdds: Number(row.comparison?.model?.odds),
+                    prob: row.modelProbability,
+                    line: row.market?.line ?? null,
+                  }, match);
+                  if (!leg) return null;
+                  const inSlip = accaKeys?.has(accaLegKey(match.id, row.label));
+                  return (
+                    <button
+                      type="button"
+                      onClick={() => onToggleLeg(leg)}
+                      aria-pressed={inSlip}
+                      aria-label={inSlip ? 'Remove from bet slip' : 'Add to bet slip'}
+                      className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-sm font-bold transition active:scale-90 ${inSlip ? 'border-accent bg-accent text-white' : 'border-line bg-surface text-muted hover:text-ink'}`}
+                    >
+                      {inSlip ? <CheckCircle2 className="h-4 w-4" aria-hidden="true" /> : '+'}
+                    </button>
+                  );
+                })()}
               </span>
               <span className="mt-2 block">
                 <ModelVsBookmakerComparison comparison={row.comparison} />
@@ -5757,7 +5780,7 @@ function EspnStatsSection({ espnStats, homeName, awayName }) {
   );
 }
 
-function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerChange, favoriteTeams = [], onToggleFavoriteTeam, isPlatformOwner = false, onMatchImported, onVoteSaved, embedded = false }) {
+function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerChange, favoriteTeams = [], onToggleFavoriteTeam, isPlatformOwner = false, onMatchImported, onVoteSaved, embedded = false, accaKeys, onToggleLeg }) {
   const predictions = match.predictions || {};
   const odds = displayThreeWayOdds(match);
   const actuals = match.actuals || {};
@@ -5988,7 +6011,7 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
           </div>
         )}
 
-        <PredictionSummaryCard match={match} allMatches={allMatches} voteState={voteState} />
+        <PredictionSummaryCard match={match} allMatches={allMatches} voteState={voteState} accaKeys={accaKeys} onToggleLeg={onToggleLeg} />
         <ScorelinePanel match={match} />
         <QualityDetailPanel confidence={confidence} />
 
@@ -6408,7 +6431,7 @@ function CompactMatchRow({ match, allMatches, selected, onSelect }) {
   );
 }
 
-function SplitView({ groups, selectedMatch, onSelectRow, bookmakerId, allMatches, onBookmakerChange, favoriteTeams, onToggleFavoriteTeam, isPlatformOwner, onMatchImported, onVoteSaved }) {
+function SplitView({ groups, selectedMatch, onSelectRow, bookmakerId, allMatches, onBookmakerChange, favoriteTeams, onToggleFavoriteTeam, isPlatformOwner, onMatchImported, onVoteSaved, accaKeys, onToggleLeg }) {
   return (
     <div className="grid grid-cols-1 gap-3 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:items-start lg:gap-4">
       <div className="overflow-hidden rounded-xl border border-line bg-surface shadow-sm lg:sticky lg:top-[8.5rem] lg:max-h-[calc(100dvh-9.5rem)] lg:overflow-y-auto">
@@ -6453,6 +6476,8 @@ function SplitView({ groups, selectedMatch, onSelectRow, bookmakerId, allMatches
             isPlatformOwner={isPlatformOwner}
             onMatchImported={onMatchImported}
             onVoteSaved={onVoteSaved}
+            accaKeys={accaKeys}
+            onToggleLeg={onToggleLeg}
           />
         ) : (
           <div className="rounded-xl border border-line bg-surface p-10 text-center text-sm text-muted">Select a match to see details.</div>
@@ -7442,6 +7467,8 @@ function HomeInner() {
         isPlatformOwner={isPlatformOwner}
         onMatchImported={refreshMatchData}
         onVoteSaved={refreshVoteLeaderboard}
+        accaKeys={accaKeys}
+        onToggleLeg={toggleAccaLeg}
       />
     );
   }
@@ -7886,6 +7913,8 @@ function HomeInner() {
               isPlatformOwner={isPlatformOwner}
               onMatchImported={refreshMatchData}
               onVoteSaved={refreshVoteLeaderboard}
+              accaKeys={accaKeys}
+              onToggleLeg={toggleAccaLeg}
             />
           ) : (
             displayedGroups.map((group) => (
