@@ -20,4 +20,5 @@ NATIONAL_TEAM_ALIASES = {
     "caboverde": "capeverde",         # Sportsbet uses "Cape Verde"
     "czechrepublic": "czechia",       # feeds use "Czech Republic"; SofaScore "Czechia"
     "korearepublic": "southkorea",    # FIFA "Korea Republic" vs feeds "South Korea"
+    "unitedstates": "usa",            # ESPN uses "United States"; Sportsbet "USA"
 }
