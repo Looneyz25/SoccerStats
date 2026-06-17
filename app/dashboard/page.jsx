@@ -6584,10 +6584,14 @@ function HomeInner() {
         const token = await getFirebaseAuth().currentUser?.getIdToken();
         if (!token) return;
         const res = await fetch('/api/bet-slips', { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' });
+        // Only enable draft saving once we've conclusively read the server draft
+        // (ok, or 404 = no draft yet). On a transient 5xx, leave saving disabled
+        // so the next edit can't overwrite the real draft with an empty array.
+        if (!res.ok && res.status !== 404) return;
         const data = await res.json().catch(() => ({}));
-        if (active && res.ok && Array.isArray(data?.draft?.legs)) setAccaLegs(data.draft.legs);
+        if (active && Array.isArray(data?.draft?.legs)) setAccaLegs(data.draft.legs);
+        if (active) draftLoadedRef.current = true;
       } catch {}
-      finally { if (active) draftLoadedRef.current = true; }
     })();
     return () => { active = false; };
   }, []);
