@@ -1446,17 +1446,21 @@ function AccaSlip({ legs, onRemoveLeg, onClear, onSaved }) {
   }, [getToken, legs, stake, onSaved]);
 
   const deleteSlip = useCallback(async (slipId) => {
+    setError('');
     try {
       const token = await getToken();
-      if (!token) return;
+      if (!token) throw new Error('Sign in again to delete.');
       const res = await fetch('/api/bet-slips', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ action: 'deleteSlip', slipId }),
       });
       const data = await res.json().catch(() => ({}));
-      if (res.ok) setSlips(Array.isArray(data.slips) ? data.slips : []);
-    } catch {}
+      if (!res.ok) throw new Error(data?.error || 'Could not delete slip.');
+      setSlips(Array.isArray(data.slips) ? data.slips : []);
+    } catch (e) {
+      setError(e.message || 'Could not delete slip.');
+    }
   }, [getToken]);
 
   const combined = combinedFromLegs(legs);
