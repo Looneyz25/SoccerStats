@@ -4,6 +4,7 @@ import { Component, Suspense, useCallback, useEffect, useMemo, useRef, useState 
 import { useRouter, useSearchParams } from 'next/navigation';
 import AuthGate from '../auth-gate';
 import { loadMatchDataFromFirestore, readMatchDataCache } from '../firestore-data';
+import { accaLegKey, legFromMarketRow, combinedFromLegs } from './bet-slip-utils.mjs';
 import {
   Activity,
   AlertTriangle,
@@ -73,7 +74,6 @@ const BETSTOP_URL = 'https://www.betstop.gov.au/';
 const SUPPORT_EMAIL = process.env.NEXT_PUBLIC_SUPPORT_EMAIL || 'lvrstats.com@gmail.com';
 const FAVORITE_LEAGUES_STORAGE_KEY = 'favoriteLeagues';
 const FAVORITE_TEAMS_STORAGE_KEY = 'favoriteTeams';
-const ACCA_LEGS_STORAGE_KEY = 'accaLegs';
 const MAX_FAVORITE_TEAMS = 100;
 const PREDICTION_TRACKING_START_DATE = '2026-04-22';
 const DRAW_NO_BET_TRACKING_START_DATE = '2026-05-25';
@@ -1243,25 +1243,11 @@ function valueBoardPicks(matches, limit = 8, minEv = 0.03) {
       const ev = prob * book - 1;
       if (ev < minEv) continue;
       const kelly = Math.max(0, ((prob * book - 1) / (book - 1)) * 0.25);
-      picks.push({ match: m, label: row.label, pick: formatMarketDetail(row.market), book, prob, ev, kelly });
+      picks.push({ match: m, label: row.label, pick: formatMarketDetail(row.market), book, prob, ev, kelly, line: row.market?.line ?? null });
     }
   }
   picks.sort((a, b) => b.ev - a.ev);
   return picks.slice(0, limit);
-}
-
-// One acca leg per match keeps legs independent, so the combined model probability
-// (product of leg probabilities) is valid. Adding a second pick from a match replaces
-// the first; clicking the same pick again removes it.
-function accaLegKey(matchId, label) {
-  return `${matchId}::${label}`;
-}
-
-function accaCombined(legs) {
-  if (!legs.length) return null;
-  const odds = legs.reduce((p, l) => p * Number(l.book), 1);
-  const prob = legs.reduce((p, l) => p * Number(l.prob), 1);
-  return { odds, prob, ev: prob * odds - 1 };
 }
 
 // Flat-stake (1u) P&L over every settled suggested pick, chronologically — the equity
@@ -1373,15 +1359,13 @@ function ValueBoard({ matches, onSelectMatch, accaKeys, onToggleLeg }) {
               </button>
               <button
                 type="button"
-                onClick={() => onToggleLeg({
-                  matchId: p.match.id,
-                  label: p.label,
-                  pick: p.pick,
-                  matchLabel: `${p.match.home?.name} v ${p.match.away?.name}`,
-                  league: p.match.league,
-                  book: p.book,
-                  prob: p.prob,
-                })}
+                onClick={() => {
+                  const leg = legFromMarketRow(
+                    { label: p.label, pick: p.pick, book: p.book, prob: p.prob, line: p.line ?? p.market?.line ?? null },
+                    p.match,
+                  );
+                  if (leg) onToggleLeg(leg);
+                }}
                 aria-pressed={inSlip}
                 aria-label={inSlip ? 'Remove from bet slip' : 'Add to bet slip'}
                 className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-sm font-bold transition active:scale-90 ${
@@ -1408,7 +1392,7 @@ function AccaSlip({ legs, onRemoveLeg, onClear }) {
     return () => { document.body.style.overflow = prev; };
   }, [open]);
   if (!legs.length) return null;
-  const combined = accaCombined(legs);
+  const combined = combinedFromLegs(legs);
   const stakeNum = Number(stake) || 0;
   const returns = combined ? stakeNum * combined.odds : 0;
   const evPositive = combined && combined.ev > 0;
@@ -6589,18 +6573,40 @@ function HomeInner() {
     return () => { document.body.style.overflow = prev; };
   }, [filtersOpen]);
 
-  // Bet slip (accumulator) — persisted across refreshes.
+  // Bet slip (accumulator) — persisted to the user's account (draft doc).
+  const draftLoadedRef = useRef(false);
+  const draftSaveTimer = useRef(null);
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(ACCA_LEGS_STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) setAccaLegs(parsed);
-      }
-    } catch {}
+    let active = true;
+    (async () => {
+      try {
+        const { getFirebaseAuth } = await import('../firebase');
+        const token = await getFirebaseAuth().currentUser?.getIdToken();
+        if (!token) return;
+        const res = await fetch('/api/bet-slips', { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' });
+        const data = await res.json().catch(() => ({}));
+        if (active && res.ok && Array.isArray(data?.draft?.legs)) setAccaLegs(data.draft.legs);
+      } catch {}
+      finally { if (active) draftLoadedRef.current = true; }
+    })();
+    return () => { active = false; };
   }, []);
   useEffect(() => {
-    try { localStorage.setItem(ACCA_LEGS_STORAGE_KEY, JSON.stringify(accaLegs)); } catch {}
+    if (!draftLoadedRef.current) return undefined; // don't clobber the server draft before it loads
+    if (draftSaveTimer.current) clearTimeout(draftSaveTimer.current);
+    draftSaveTimer.current = setTimeout(async () => {
+      try {
+        const { getFirebaseAuth } = await import('../firebase');
+        const token = await getFirebaseAuth().currentUser?.getIdToken();
+        if (!token) return;
+        await fetch('/api/bet-slips', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ action: 'saveDraft', legs: accaLegs, stake: 10 }),
+        });
+      } catch {}
+    }, 800);
+    return () => { if (draftSaveTimer.current) clearTimeout(draftSaveTimer.current); };
   }, [accaLegs]);
   const accaKeys = useMemo(() => new Set(accaLegs.map((l) => accaLegKey(l.matchId, l.label))), [accaLegs]);
   const toggleAccaLeg = useCallback((leg) => {
