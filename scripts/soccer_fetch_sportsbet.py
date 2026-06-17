@@ -107,13 +107,31 @@ def url_slug(s):
     slug = re.sub(r'[^a-z0-9]+', '-', folded.lower()).strip('-')
     return slug
 
+# Significant tokens of a name, order-independent. Drops connective/suffix words so
+# "Bosnia & Herzegovina" == "Bosnia-Herzegovina" and "DR Congo" == "Congo DR".
+_NAME_STOPWORDS = {"fc", "afc", "cf", "sc", "and", "the", "of", "club"}
+_NAME_TOKEN_ALIASES = {"utd": "united", "st": "saint", "dr": "dr"}
+
+def name_tokens(s):
+    folded = unicodedata.normalize('NFKD', s or '').encode('ascii', 'ignore').decode('ascii').lower()
+    out = set()
+    for tok in re.split(r'[^a-z0-9]+', folded):
+        if not tok or tok in _NAME_STOPWORDS:
+            continue
+        out.add(_NAME_TOKEN_ALIASES.get(tok, tok))
+    return out
+
 def names_match(a, b):
-    a, b = norm(a), norm(b)
-    if not a or not b: return False
-    if a == b or a in b or b in a: return True
+    na, nb = norm(a), norm(b)
+    if not na or not nb: return False
+    if na == nb or na in nb or nb in na: return True
     for tok, exp in ABBREV.items():
-        if tok in a and exp in b: return True
-        if tok in b and exp in a: return True
+        if tok in na and exp in nb: return True
+        if tok in nb and exp in na: return True
+    # Order-insensitive exact token-set match (additive — requires the full significant
+    # token set to be equal, so it can't loosen existing matches into false positives).
+    ta, tb = name_tokens(a), name_tokens(b)
+    if ta and ta == tb: return True
     return False
 
 def fetch_page_data(slug):
