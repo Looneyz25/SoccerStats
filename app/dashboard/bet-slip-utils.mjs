@@ -30,6 +30,10 @@ export function selectionForRow(marketKey, market, match) {
     const home = String(match?.home?.name || '').toLowerCase();
     const away = String(match?.away?.name || '').toLowerCase();
     const cleaned = lower.replace(/\s+dnb$/, '').trim();
+    // Exact match first so one club name being a substring of the other
+    // (e.g. "Congo" vs "Congo DR", "Madrid" in both) can't mis-resolve.
+    if (home && cleaned === home) return 'home';
+    if (away && cleaned === away) return 'away';
     if (home && cleaned.includes(home)) return 'home';
     if (away && cleaned.includes(away)) return 'away';
     return null;
@@ -67,7 +71,13 @@ export function legFromMarketRow(row, match) {
 
 export function combinedFromLegs(legs) {
   if (!legs.length) return null;
-  const odds = legs.reduce((p, l) => p * Number(l.book), 1);
-  const prob = legs.reduce((p, l) => p * Number(l.prob), 1);
+  // A leg without a model probability (e.g. a model-only estimated price) is
+  // unknown, not impossible — use the neutral multiplier (1) so it doesn't
+  // collapse the combined probability to 0. Mirrors the route's combinedProb.
+  const odds = legs.reduce((p, l) => p * (Number(l.book) || 1), 1);
+  const prob = legs.reduce((p, l) => {
+    const legProb = Number(l.prob);
+    return p * (Number.isFinite(legProb) && legProb > 0 ? legProb : 1);
+  }, 1);
   return { odds, prob, ev: prob * odds - 1 };
 }

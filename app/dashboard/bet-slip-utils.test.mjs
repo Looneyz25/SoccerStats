@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { accaLegKey, marketKeyForLabel, selectionForRow, legFromMarketRow } from './bet-slip-utils.mjs';
+import { accaLegKey, marketKeyForLabel, selectionForRow, legFromMarketRow, combinedFromLegs } from './bet-slip-utils.mjs';
 
 const match = { id: 'm1', date: '2026-06-18', league: 'FIFA World Cup', home: { name: 'Portugal' }, away: { name: 'Congo DR' } };
 
@@ -46,4 +46,25 @@ test('legFromMarketRow flags estimated price when only model odds exist', () => 
 
 test('legFromMarketRow returns null for an unscorable row', () => {
   assert.equal(legFromMarketRow({ label: 'Mystery', pick: 'x' }, match), null);
+});
+
+test('selectionForRow disambiguates when one team name is a substring of the other', () => {
+  const m = { id: 'm2', home: { name: 'Congo' }, away: { name: 'Congo DR' } };
+  assert.equal(selectionForRow('winner', { pick: 'Congo DR' }, m), 'away');
+  assert.equal(selectionForRow('winner', { pick: 'Congo' }, m), 'home');
+  assert.equal(selectionForRow('draw_no_bet', { pick: 'Congo DR DNB' }, m), 'away');
+});
+
+test('combinedFromLegs multiplies odds/prob and computes ev; null on empty', () => {
+  assert.equal(combinedFromLegs([]), null);
+  const c = combinedFromLegs([{ book: 2, prob: 0.5 }, { book: 1.5, prob: 0.6 }]);
+  assert.equal(c.odds, 3);
+  assert.equal(Math.round(c.prob * 100) / 100, 0.3);
+  assert.equal(Math.round(c.ev * 100) / 100, -0.1); // 0.3 * 3 - 1
+});
+
+test('combinedFromLegs treats a missing leg prob as neutral (no zero-collapse)', () => {
+  const c = combinedFromLegs([{ book: 2, prob: 0.5 }, { book: 1.5, prob: null }]);
+  assert.equal(c.odds, 3);
+  assert.equal(c.prob, 0.5); // null prob → neutral multiplier 1, not 0
 });
