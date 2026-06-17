@@ -1058,6 +1058,28 @@ function displayThreeWayOdds(match) {
   return originalOdds;
 }
 
+// Best price per outcome across Sportsbet and Ladbrokes (higher decimal = better for the
+// bettor), with the winning book tagged so the card can show where to get it.
+function bestThreeWayOdds(match) {
+  const display = displayThreeWayOdds(match) || {};
+  const sb = match?.sportsbet_odds || {};
+  const lad = match?.ladbrokes_odds || {};
+  const out = {};
+  for (const key of ['home', 'draw', 'away']) {
+    const dispv = Number(display[key]);
+    let best = Number.isFinite(dispv) && dispv > 1.01
+      ? { v: dispv, book: hasThreeWayOdds(sb) ? 'Sportsbet' : null }
+      : null;
+    const sbv = Number(sb[key]);
+    if (Number.isFinite(sbv) && sbv > 1.01 && (!best || sbv > best.v)) best = { v: sbv, book: 'Sportsbet' };
+    const ladv = Number(lad[key]);
+    if (Number.isFinite(ladv) && ladv > 1.01 && (!best || ladv > best.v)) best = { v: ladv, book: 'Ladbrokes' };
+    out[key] = best ? best.v : undefined;
+    out[`${key}_book`] = best ? best.book : null;
+  }
+  return out;
+}
+
 function derivedDoubleChanceOdds(match, keys) {
   const odds = displayThreeWayOdds(match);
   const probability = keys
@@ -5860,6 +5882,7 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
 function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [], onToggleFavoriteTeam }) {
   const predictions = match.predictions || {};
   const odds = displayThreeWayOdds(match);
+  const bestOdds = bestThreeWayOdds(match);
   const actuals = match.actuals || {};
   const precomputed = match.display_markets || {};
   const displayWinner = displayWinnerMarket(match, allMatches);
@@ -6046,18 +6069,22 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
 
         <WinProbabilityBar rows={winnerBreakdown} />
 
-        <div className="mt-3 grid grid-cols-3 gap-1 rounded-md bg-field p-2 text-center sm:mt-4 sm:gap-2">
-          <div>
-            <div className="text-[11px] font-medium uppercase tracking-wide text-muted">Home</div>
-            <div className="font-mono text-sm font-semibold sm:text-base">{formatOdds(odds.home)}</div>
-          </div>
-          <div className="border-x border-line">
-            <div className="text-[11px] font-medium uppercase tracking-wide text-muted">Draw</div>
-            <div className="font-mono text-sm font-semibold sm:text-base">{formatOdds(odds.draw)}</div>
-          </div>
-          <div>
-            <div className="text-[11px] font-medium uppercase tracking-wide text-muted">Away</div>
-            <div className="font-mono text-sm font-semibold sm:text-base">{formatOdds(odds.away)}</div>
+        <div className="mt-3 sm:mt-4">
+          {match.ladbrokes_odds && (
+            <div className="mb-1 text-center text-[10px] font-semibold uppercase tracking-wide text-faint">Best price · Sportsbet + Ladbrokes</div>
+          )}
+          <div className="grid grid-cols-3 gap-1 rounded-md bg-field p-2 text-center sm:gap-2">
+            {[['home', 'Home'], ['draw', 'Draw'], ['away', 'Away']].map(([key, label], i) => (
+              <div key={key} className={i === 1 ? 'border-x border-line' : ''}>
+                <div className="text-[11px] font-medium uppercase tracking-wide text-muted">{label}</div>
+                <div className="flex items-center justify-center gap-1 font-mono text-sm font-semibold sm:text-base">
+                  {formatOdds(bestOdds[key])}
+                  {bestOdds[`${key}_book`] === 'Ladbrokes' && (
+                    <span className="rounded bg-amber-500/20 px-1 text-[9px] font-bold leading-none text-amber-600 dark:text-amber-400" title="Best price at Ladbrokes">L</span>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
