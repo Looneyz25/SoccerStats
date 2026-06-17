@@ -1494,9 +1494,9 @@ function AccaSlip({ legs, onRemoveLeg, onClear, onSaved }) {
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center" role="dialog" aria-modal="true" aria-label="Bet slip">
+        <div className="fixed inset-0 z-50 flex items-center justify-center" role="dialog" aria-modal="true" aria-label="Bet slip">
           <button type="button" aria-label="Close bet slip" onClick={() => setOpen(false)} className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-          <div className="relative z-10 flex max-h-[85vh] w-full flex-col rounded-t-2xl border-t border-line bg-surface shadow-2xl sm:max-w-md sm:rounded-2xl">
+          <div className="relative z-10 flex h-[100dvh] w-full flex-col border-line bg-surface shadow-2xl sm:h-auto sm:max-h-[85vh] sm:max-w-md sm:rounded-2xl sm:border">
             <div className="flex items-center justify-between border-b border-line px-4 py-3">
               <h2 className="text-base font-semibold text-ink">Bet slip</h2>
               <button type="button" onClick={() => setOpen(false)} aria-label="Close" className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-line text-muted transition hover:text-ink active:scale-95">
