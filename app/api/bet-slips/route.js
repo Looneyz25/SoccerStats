@@ -1,6 +1,6 @@
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
 import { getAdminApp, verifyAccess, loadMatch } from '../_lib/firebase-admin.mjs';
-import { scoreLeg, computeSlipStatus } from '../_lib/match-scoring.mjs';
+import { scoreLeg, computeSlipStatus, isFinishedMatch } from '../_lib/match-scoring.mjs';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -95,24 +95,30 @@ function serializeSlip(doc) {
 // the slip fully resolves. Returns the up-to-date serialized slip.
 async function settleSlip(db, ref, doc) {
   const data = doc.data() || {};
-  if (data.status && data.status !== 'pending') return serializeSlip(doc);
   const legs = data.legs || [];
+  // Frozen once every leg has a result — even after the overall bet is decided
+  // (e.g. lost on one leg) we keep scoring the other legs until none are pending,
+  // so each leg shows its own outcome. Only short-circuit when all legs are in.
+  if (!legs.some((l) => l.result == null)) return serializeSlip(doc);
   let changed = false;
   const nextLegs = [];
   for (const leg of legs) {
     if (leg.result != null) { nextLegs.push(leg); continue; }
     const match = await loadMatch(db, leg.matchId, leg.date);
-    const result = match ? scoreLeg(match, leg) : null;
+    // Only settle a leg once its match is confirmed full time. A live/partial
+    // score must not freeze a wrong result.
+    const result = match && isFinishedMatch(match) ? scoreLeg(match, leg) : null;
     if (result) { changed = true; nextLegs.push({ ...leg, result }); }
     else nextLegs.push(leg);
   }
   const status = computeSlipStatus(nextLegs);
+  const stillPending = nextLegs.some((l) => l.result == null);
   if (changed || status !== data.status) {
     const update = { legs: nextLegs, status };
-    if (status !== 'pending') update.settledAt = FieldValue.serverTimestamp();
+    if (!stillPending) update.settledAt = FieldValue.serverTimestamp();
     await ref.set(update, { merge: true });
     return { ...serializeSlip(doc), legs: nextLegs, status,
-      settledAt: status !== 'pending' ? new Date().toISOString() : null };
+      settledAt: !stillPending ? new Date().toISOString() : (data.settledAt?.toDate?.()?.toISOString?.() || null) };
   }
   return serializeSlip(doc);
 }

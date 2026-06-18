@@ -106,6 +106,13 @@ export function scoreLeg(match, leg) {
   return (selection === 'over' ? over : !over) ? 'hit' : 'miss';
 }
 
+// A match is settleable only when it has reached confirmed full time. The whole
+// codebase keys settlement off status === 'FT'; a live/partial score must never
+// freeze a leg result.
+export function isFinishedMatch(match) {
+  return match?.status === 'FT';
+}
+
 // Overall slip status from per-leg results.
 // A single miss settles the slip as lost even if other legs are still pending.
 export function computeSlipStatus(legs) {

@@ -6,6 +6,7 @@ import {
   marketActualResult,
   scoreLeg,
   computeSlipStatus,
+  isFinishedMatch,
 } from './match-scoring.mjs';
 
 const matchHomeWin = { home: { goals: 2 }, away: { goals: 0 }, actuals: { cards_total: 5, corners_total: 11 } };
@@ -53,6 +54,14 @@ test('scoreLeg: over/under uses the leg-captured line (incl. integer push)', () 
   assert.equal(scoreLeg(matchHomeWin, { marketKey: 'cards', selection: 'under', line: 5.5 }), 'hit'); // 5 cards
   assert.equal(scoreLeg(matchAwayWin, { marketKey: 'corners', selection: 'over', line: 10.5 }), 'hit'); // 12 corners
   assert.equal(scoreLeg(matchUpcoming, { marketKey: 'corners', selection: 'over', line: 10.5 }), null);
+});
+
+test('isFinishedMatch is true only at FT', () => {
+  assert.equal(isFinishedMatch({ status: 'FT' }), true);
+  assert.equal(isFinishedMatch({ status: 'live' }), false);
+  assert.equal(isFinishedMatch({ status: 'upcoming' }), false);
+  assert.equal(isFinishedMatch(null), false);
+  assert.equal(isFinishedMatch({}), false);
 });
 
 test('computeSlipStatus', () => {
