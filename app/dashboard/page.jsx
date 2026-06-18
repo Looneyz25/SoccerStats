@@ -5155,15 +5155,16 @@ function PredictionSummaryCard({ match, allMatches, voteState = null, accaKeys, 
   const winnerComparison = displayWinnerComparison(matchWithContext, allMatches, winner);
   const drawNoBet = drawNoBetMarket(match);
   const drawNoBetComparison = precomputed.draw_no_bet?.comparison || modelVsBookmakerComparison(match, 'draw_no_bet', drawNoBet);
-  const displayBtts = precomputed.btts?.market || displayBttsMarket(predictions.btts, match);
+  const displayBtts = withLiveResult(match, 'btts', precomputed.btts?.market || displayBttsMarket(predictions.btts, match));
   const bttsComparison = precomputed.btts?.comparison || modelVsBookmakerComparison(match, 'btts', displayBtts);
   const goalsComparison = precomputed.goals?.comparison || modelVsBookmakerComparison(match, 'ou_goals', predictions.ou_goals);
+  const goalsMarket = withLiveResult(match, 'goals', predictions.ou_goals);
   const displayCards = precomputed.cards?.market || cardsMarketWithModelProbability(match, allMatches);
   const cardsComparison = precomputed.cards?.comparison || modelVsBookmakerComparison(match, 'ou_cards', displayCards);
   const cornerMarket = withCornerBookmakerOdds(match, capGenericCornerMarket(match, precomputed.corners?.market || cornerMarketFromStreaks(match, allMatches)));
   const cornersComparison = comparisonForMarket(match, 'ou_corners', cornerMarket, precomputed.corners?.comparison);
-  const displayableCards = displayableMarketForKey(match, 'ou_cards', displayCards) ? displayCards : null;
-  const displayableCorners = displayableMarketForKey(match, 'ou_corners', cornerMarket) ? cornerMarket : null;
+  const displayableCards = displayableMarketForKey(match, 'ou_cards', displayCards) ? withLiveResult(match, 'cards', displayCards) : null;
+  const displayableCorners = displayableMarketForKey(match, 'ou_corners', cornerMarket) ? withLiveResult(match, 'corners', cornerMarket) : null;
 
   const winnerPick = winner ? formatMarketDetail(winner) : null;
   const rawWinner = predictions.winner;
@@ -5196,7 +5197,7 @@ function PredictionSummaryCard({ match, allMatches, voteState = null, accaKeys, 
     { label: 'Winner', voteKey: 'winner', pick: winnerPick, text: winnerText, comparison: winnerComparison, result: winner?.result, market: winner, modelProbability: winnerModelProbability(match, winner) },
     { label: 'Draw No Bet', pick: drawNoBet ? formatMarketDetail(drawNoBet) : null, text: drawNoBetText, comparison: drawNoBetComparison, result: drawNoBet?.result, market: drawNoBet, modelProbability: modelProbabilityForMarket(drawNoBet) },
     { label: 'BTTS', voteKey: 'btts', pick: displayBtts ? formatMarketDetail(displayBtts) : null, text: bttsRationale(match), comparison: bttsComparison, result: displayBtts?.result, market: displayBtts, modelProbability: precomputed.btts?.modelProbability ?? modelProbabilityForMarket(displayBtts) },
-    { label: 'Goals', voteKey: 'goals', pick: predictions.ou_goals ? formatMarketDetail(predictions.ou_goals) : null, text: goalsRationale(match, allMatches), comparison: goalsComparison, result: predictions.ou_goals?.result, market: predictions.ou_goals, modelProbability: precomputed.goals?.modelProbability ?? modelProbabilityForMarket(predictions.ou_goals) },
+    { label: 'Goals', voteKey: 'goals', pick: goalsMarket ? formatMarketDetail(goalsMarket) : null, text: goalsRationale(match, allMatches), comparison: goalsComparison, result: goalsMarket?.result, market: goalsMarket, modelProbability: precomputed.goals?.modelProbability ?? modelProbabilityForMarket(goalsMarket) },
     { label: 'Cards', voteKey: 'cards', pick: displayableCards ? formatMarketDetail(displayableCards) : null, text: cardsRationale(match, allMatches), comparison: cardsComparison, result: displayableCards?.result, market: displayableCards, modelProbability: precomputed.cards?.modelProbability ?? modelProbabilityForMarket(displayableCards) },
     { label: 'Corners', voteKey: 'corners', pick: displayableCorners ? formatMarketDetail(displayableCorners) : null, text: cornersRationale(match, allMatches, displayableCorners), comparison: cornersComparison, result: displayableCorners?.result, market: displayableCorners, modelProbability: precomputed.corners?.modelProbability ?? modelProbabilityForMarket(displayableCorners) },
   ].filter((row) => row.pick && (row.text || row.comparison));
