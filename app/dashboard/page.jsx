@@ -1680,7 +1680,7 @@ function AccaSlip({ legs, onRemoveLeg, onClear, onSaved }) {
       {open && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center" role="dialog" aria-modal="true" aria-label="Bet slip">
           <button type="button" aria-label="Close bet slip" onClick={() => setOpen(false)} className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-          <div className="relative z-10 flex h-[100dvh] w-full flex-col border-line bg-surface shadow-2xl sm:h-auto sm:max-h-[85vh] sm:max-w-md sm:rounded-2xl sm:border">
+          <div className="relative z-10 flex h-[100dvh] w-full flex-col border-line bg-surface shadow-2xl sm:h-[82vh] sm:w-[42rem] sm:max-w-[92vw] sm:rounded-2xl sm:border">
             <div className="flex items-center justify-between border-b border-line px-4 py-3">
               <h2 className="text-base font-semibold text-ink">Bet slip</h2>
               <button type="button" onClick={() => setOpen(false)} aria-label="Close" className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-line text-muted transition hover:text-ink active:scale-95">
@@ -1708,7 +1708,7 @@ function AccaSlip({ legs, onRemoveLeg, onClear, onSaved }) {
             {tab === 'current' && (
               <>
                 {!legs.length ? (
-                  <div className="px-4 py-10 text-center text-sm text-muted">Your slip is empty. Add markets from the value board or a match's detail view.</div>
+                  <div className="flex flex-1 items-center justify-center px-6 py-10 text-center text-sm text-muted">Your slip is empty. Add markets from the value board or a match's detail view.</div>
                 ) : (
                   <>
                     <ul className="min-h-0 flex-1 divide-y divide-line overflow-y-auto">
