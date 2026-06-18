@@ -7,6 +7,7 @@ import {
   scoreLeg,
   computeSlipStatus,
   isFinishedMatch,
+  settleLegResult,
 } from './match-scoring.mjs';
 
 const matchHomeWin = { home: { goals: 2 }, away: { goals: 0 }, actuals: { cards_total: 5, corners_total: 11 } };
@@ -62,6 +63,35 @@ test('isFinishedMatch is true only at FT', () => {
   assert.equal(isFinishedMatch({ status: 'upcoming' }), false);
   assert.equal(isFinishedMatch(null), false);
   assert.equal(isFinishedMatch({}), false);
+});
+
+test('settleLegResult: live only locks Over-goals-met and BTTS-yes-met as hit', () => {
+  // 2-1 live: 3 goals total, both scored
+  const live21 = { status: 'live', home: { goals: 2 }, away: { goals: 1 }, actuals: {} };
+  const live10 = { status: 'live', home: { goals: 1 }, away: { goals: 0 }, actuals: {} };
+  // Over goals locks once total is past the line
+  assert.equal(settleLegResult(live21, { marketKey: 'goals', selection: 'over', line: 2.5 }), 'hit');
+  assert.equal(settleLegResult(live10, { marketKey: 'goals', selection: 'over', line: 2.5 }), null);
+  // Under never settles live
+  assert.equal(settleLegResult(live10, { marketKey: 'goals', selection: 'under', line: 2.5 }), null);
+  // BTTS yes locks once both scored; not before
+  assert.equal(settleLegResult(live21, { marketKey: 'btts', selection: 'yes' }), 'hit');
+  assert.equal(settleLegResult(live10, { marketKey: 'btts', selection: 'yes' }), null);
+  assert.equal(settleLegResult(live21, { marketKey: 'btts', selection: 'no' }), null);
+  // Winner / DNB never settle live even with a lead
+  assert.equal(settleLegResult(live21, { marketKey: 'winner', selection: 'home' }), null);
+  assert.equal(settleLegResult(live21, { marketKey: 'draw_no_bet', selection: 'home' }), null);
+  // Corners / cards never settle live (still accumulating)
+  assert.equal(settleLegResult(live21, { marketKey: 'corners', selection: 'over', line: 1.5 }), null);
+  assert.equal(settleLegResult(live21, { marketKey: 'cards', selection: 'over', line: 0.5 }), null);
+});
+
+test('settleLegResult: FT delegates to full scoreLeg; upcoming is pending', () => {
+  const ft = { status: 'FT', home: { goals: 1 }, away: { goals: 3 }, actuals: { cards_total: 2, corners_total: 7 } };
+  assert.equal(settleLegResult(ft, { marketKey: 'btts', selection: 'yes' }), 'hit');
+  assert.equal(settleLegResult(ft, { marketKey: 'winner', selection: 'home' }), 'miss');
+  assert.equal(settleLegResult(ft, { marketKey: 'goals', selection: 'under', line: 2.5 }), 'miss'); // 4 goals
+  assert.equal(settleLegResult({ status: 'upcoming', home: {}, away: {} }, { marketKey: 'goals', selection: 'over', line: 2.5 }), null);
 });
 
 test('computeSlipStatus', () => {

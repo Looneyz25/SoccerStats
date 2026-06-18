@@ -1,6 +1,6 @@
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
 import { getAdminApp, verifyAccess, loadMatch } from '../_lib/firebase-admin.mjs';
-import { scoreLeg, computeSlipStatus, isFinishedMatch } from '../_lib/match-scoring.mjs';
+import { settleLegResult, computeSlipStatus } from '../_lib/match-scoring.mjs';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -105,9 +105,10 @@ async function settleSlip(db, ref, doc) {
   for (const leg of legs) {
     if (leg.result != null) { nextLegs.push(leg); continue; }
     const match = await loadMatch(db, leg.matchId, leg.date);
-    // Only settle a leg once its match is confirmed full time. A live/partial
-    // score must not freeze a wrong result.
-    const result = match && isFinishedMatch(match) ? scoreLeg(match, leg) : null;
+    // settleLegResult settles at FT (full hit/miss/void) and, while live, only
+    // locks in a guaranteed hit (Over goals met, BTTS Yes met) — never a result
+    // that still has time to flip to a miss.
+    const result = settleLegResult(match, leg);
     if (result) { changed = true; nextLegs.push({ ...leg, result }); }
     else nextLegs.push(leg);
   }

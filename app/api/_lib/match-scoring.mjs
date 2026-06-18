@@ -113,6 +113,31 @@ export function isFinishedMatch(match) {
   return match?.status === 'FT';
 }
 
+// Result to persist for a leg given the match's current state.
+//  - At full time: the full scoreLeg (hit | miss | void | null).
+//  - While live: ONLY lock in a guaranteed hit that cannot become a miss with
+//    time remaining. The two markets that can lock live off the goal feed are
+//    Over goals (total already past the line) and BTTS Yes (both teams scored).
+//    Everything else — Winner/Draw No Bet (a lead isn't final), any Under, and
+//    corners/cards (still accumulating) — stays pending (null) until FT.
+//  - Upcoming: null.
+export function settleLegResult(match, leg) {
+  if (!match || !leg) return null;
+  if (isFinishedMatch(match)) return scoreLeg(match, leg);
+  if (String(match.status) !== 'live') return null;
+  const h = parseNumber(match?.home?.goals);
+  const a = parseNumber(match?.away?.goals);
+  if (h === null || a === null) return null;
+  if (leg.marketKey === 'goals' && leg.selection === 'over') {
+    const line = Number(leg.line);
+    return Number.isFinite(line) && h + a > line ? 'hit' : null;
+  }
+  if (leg.marketKey === 'btts' && leg.selection === 'yes') {
+    return h > 0 && a > 0 ? 'hit' : null;
+  }
+  return null;
+}
+
 // Overall slip status from per-leg results.
 // A single miss settles the slip as lost even if other legs are still pending.
 export function computeSlipStatus(legs) {
