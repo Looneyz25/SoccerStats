@@ -138,7 +138,7 @@ The webhook updates `users/{uid}` with `hasAccess`, `accessSource`, `stripeCusto
 
 The live app reads Firestore from `dashboardData/match_data/leagues/*` and does not fall back to generated JSON files.
 
-Scheduled daily runs use `run_daily.bat`, which runs the routine, uploads to Firestore, and then commits/pushes data changes.
+Scheduled runs use `run_notouch.bat` (Task Scheduler job `SoccerStats NoTouch`, every 15 min), which runs the routine and uploads to Firestore. It does not commit or push — data changes are committed manually.
 
 Fixture source order:
 

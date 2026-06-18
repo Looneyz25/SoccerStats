@@ -6,8 +6,7 @@ Run, debug, and harden scheduled update workflows.
 
 ## Reads
 
-- `run_daily.bat`
-- `auto_push.bat`
+- `run_notouch.bat`
 - `logs/run_*.log`
 - Git status
 

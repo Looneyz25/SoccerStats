@@ -13,7 +13,7 @@ Runs the full pipeline against a fixed 10-tournament whitelist:
 - Phase B.7: attach odds to each prediction (sportsbet first, SofaScore fallback)
 - Phase C:   write match_data.json, dated predictions snapshot + markdown report
 
-DOES NOT touch git. `auto_push.bat` (Windows Task Scheduler) handles commits + push.
+DOES NOT touch git. Commits and pushes are manual — there is no auto-push job.
 
 Usage:
     python3 scripts/soccer_routine.py
