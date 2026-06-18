@@ -8,6 +8,14 @@ export const dynamic = 'force-dynamic';
 // NOTE: must NOT match Firestore's reserved id pattern /^__.*__$/ — an id like
 // '__draft__' throws INVALID_ARGUMENT ("reserved") on every read/write.
 const DRAFT_ID = 'draft';
+const PAGE_SIZE = 50;            // default saved slips returned per fetch (#1 pagination)
+const MAX_PAGE = 500;            // hard cap on a single fetch (#1)
+const MAX_SAVED_SLIPS = 200;     // per-user retention cap; oldest trimmed on save (#3)
+const STALE_PENDING_DAYS = 7;    // void a still-unsettled leg after this many days (#2)
+const CACHE_TTL_MS = 20 * 1000;  // short per-user GET cache (#4)
+// GET payloads change only on a write, so cache them briefly per uid+limit and
+// clear the whole cache on any POST.
+const slipsCache = new Map();
 const MAX_LEGS = 20;
 const VALID_MARKETS = new Set(['winner', 'draw_no_bet', 'btts', 'goals', 'cards', 'corners']);
 
@@ -100,6 +108,13 @@ async function settleSlip(db, ref, doc) {
   // (e.g. lost on one leg) we keep scoring the other legs until none are pending,
   // so each leg shows its own outcome. Only short-circuit when all legs are in.
   if (!legs.some((l) => l.result == null)) return serializeSlip(doc);
+  // Stale-pending guard (#2): a slip whose legs never reach FT (postponed,
+  // abandoned, or match data rolled off the slate) would otherwise re-scan
+  // Firestore on every open forever. After STALE_PENDING_DAYS, void whatever is
+  // still unsettled so the slip freezes.
+  const savedMs = data.savedAt?.toMillis?.()
+    ?? (data.savedAt ? new Date(data.savedAt).getTime() : null);
+  const expired = savedMs != null && Date.now() - savedMs > STALE_PENDING_DAYS * 86400000;
   let changed = false;
   const nextLegs = [];
   for (const leg of legs) {
@@ -108,7 +123,8 @@ async function settleSlip(db, ref, doc) {
     // settleLegResult settles at FT (full hit/miss/void) and, while live, only
     // locks in a guaranteed hit (Over goals met, BTTS Yes met) — never a result
     // that still has time to flip to a miss.
-    const result = settleLegResult(match, leg);
+    let result = settleLegResult(match, leg);
+    if (!result && expired) result = 'void';
     if (result) { changed = true; nextLegs.push({ ...leg, result }); }
     else nextLegs.push(leg);
   }
@@ -130,16 +146,38 @@ async function loadDraft(db, uid) {
   return { legs: data.legs || [], stake: data.stake ?? 10 };
 }
 
-async function listSlips(db, uid) {
-  const snap = await slipsCollection(db, uid).get();
+// Newest-first, capped to `limit` (#1). Ordering by savedAt excludes the draft
+// doc (no savedAt) automatically; we still filter by id defensively. Fetch one
+// extra to report hasMore. Only the returned page is settled — older slips are
+// frozen so they need no settlement work.
+async function listSlips(db, uid, limit) {
+  const snap = await slipsCollection(db, uid)
+    .orderBy('savedAt', 'desc')
+    .limit(limit + 1)
+    .get();
   const docs = snap.docs.filter((d) => d.id !== DRAFT_ID);
-  const settled = await Promise.all(docs.map((d) => settleSlip(db, d.ref, d)));
-  return settled.sort((a, b) => String(b.savedAt || '').localeCompare(String(a.savedAt || '')));
+  const hasMore = docs.length > limit;
+  const page = docs.slice(0, limit);
+  const slips = await Promise.all(page.map((d) => settleSlip(db, d.ref, d)));
+  return { slips, hasMore };
 }
 
-async function payload(db, uid) {
-  const [draft, slips] = await Promise.all([loadDraft(db, uid), listSlips(db, uid)]);
-  return { draft, slips };
+// Keep only the newest MAX_SAVED_SLIPS per user (#3); delete the oldest beyond it.
+async function trimSavedSlips(db, uid) {
+  const snap = await slipsCollection(db, uid).orderBy('savedAt', 'desc').get();
+  const docs = snap.docs.filter((d) => d.id !== DRAFT_ID);
+  if (docs.length <= MAX_SAVED_SLIPS) return;
+  await Promise.all(docs.slice(MAX_SAVED_SLIPS).map((d) => d.ref.delete()));
+}
+
+async function payload(db, uid, limit) {
+  const [draft, listed] = await Promise.all([loadDraft(db, uid), listSlips(db, uid, limit)]);
+  return { draft, slips: listed.slips, hasMore: listed.hasMore };
+}
+
+function clampLimit(value) {
+  const n = Math.floor(Number(value));
+  return Number.isFinite(n) && n > 0 ? Math.min(MAX_PAGE, n) : PAGE_SIZE;
 }
 
 export async function GET(request) {
@@ -147,7 +185,13 @@ export async function GET(request) {
   try { user = await verifyAccess(request); }
   catch (err) { return jsonResponse({ error: err.message || 'unauthorized' }, err.status || 401); }
   const db = getFirestore(getAdminApp());
-  return jsonResponse(await payload(db, user.uid));
+  const limit = clampLimit(request.nextUrl.searchParams.get('limit'));
+  const cacheKey = `${user.uid}:${limit}`;
+  const cached = slipsCache.get(cacheKey);
+  if (cached && Date.now() - cached.at < CACHE_TTL_MS) return jsonResponse(cached.payload);
+  const result = await payload(db, user.uid, limit);
+  slipsCache.set(cacheKey, { payload: result, at: Date.now() });
+  return jsonResponse(result);
 }
 
 export async function POST(request) {
@@ -157,6 +201,8 @@ export async function POST(request) {
   const db = getFirestore(getAdminApp());
   const body = await request.json().catch(() => ({}));
   const col = slipsCollection(db, user.uid);
+  // Any write changes the slip set — drop the GET cache so the next read recomputes.
+  slipsCache.clear();
 
   if (body.action === 'saveDraft') {
     const legs = sanitizeLegs(body.legs);
@@ -165,7 +211,7 @@ export async function POST(request) {
       stake: clampStake(body.stake),
       updatedAt: FieldValue.serverTimestamp(),
     }, { merge: true });
-    return jsonResponse(await payload(db, user.uid));
+    return jsonResponse(await payload(db, user.uid, PAGE_SIZE));
   }
 
   if (body.action === 'saveSlip') {
@@ -181,14 +227,15 @@ export async function POST(request) {
       settledAt: null,
     });
     await col.doc(DRAFT_ID).set({ legs: [], stake: 10, updatedAt: FieldValue.serverTimestamp() }, { merge: true });
-    return jsonResponse(await payload(db, user.uid));
+    await trimSavedSlips(db, user.uid);
+    return jsonResponse(await payload(db, user.uid, PAGE_SIZE));
   }
 
   if (body.action === 'deleteSlip') {
     const slipId = String(body.slipId || '');
     if (!slipId || slipId === DRAFT_ID) return jsonResponse({ error: 'invalid-slip' }, 400);
     await col.doc(slipId).delete();
-    return jsonResponse(await payload(db, user.uid));
+    return jsonResponse(await payload(db, user.uid, PAGE_SIZE));
   }
 
   return jsonResponse({ error: 'unknown-action' }, 400);

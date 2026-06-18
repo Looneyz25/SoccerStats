@@ -1560,6 +1560,8 @@ function AccaSlip({ legs, onRemoveLeg, onClear, onSaved }) {
   const [slipsLoading, setSlipsLoading] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [limit, setLimit] = useState(50);
+  const [hasMore, setHasMore] = useState(false);
 
   useEffect(() => {
     if (!open) return undefined;
@@ -1579,16 +1581,17 @@ function AccaSlip({ legs, onRemoveLeg, onClear, onSaved }) {
     try {
       const token = await getToken();
       if (!token) throw new Error('Sign in again to load slips.');
-      const res = await fetch('/api/bet-slips', { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' });
+      const res = await fetch(`/api/bet-slips?limit=${limit}`, { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data?.error || 'Could not load slips.');
       setSlips(Array.isArray(data.slips) ? data.slips : []);
+      setHasMore(Boolean(data.hasMore));
     } catch (e) {
       setError(e.message || 'Could not load slips.');
     } finally {
       setSlipsLoading(false);
     }
-  }, [getToken]);
+  }, [getToken, limit]);
 
   useEffect(() => { if (open) loadSlips(); }, [open, loadSlips]);
 
@@ -1606,6 +1609,7 @@ function AccaSlip({ legs, onRemoveLeg, onClear, onSaved }) {
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data?.error || 'Could not save slip.');
       setSlips(Array.isArray(data.slips) ? data.slips : []);
+      setHasMore(Boolean(data.hasMore));
       onSaved?.();
       setTab('pending');
     } catch (e) {
@@ -1628,6 +1632,7 @@ function AccaSlip({ legs, onRemoveLeg, onClear, onSaved }) {
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data?.error || 'Could not delete slip.');
       setSlips(Array.isArray(data.slips) ? data.slips : []);
+      setHasMore(Boolean(data.hasMore));
     } catch (e) {
       setError(e.message || 'Could not delete slip.');
     }
@@ -1815,6 +1820,15 @@ function AccaSlip({ legs, onRemoveLeg, onClear, onSaved }) {
                       );
                     })}
                   </ul>
+                )}
+                {hasMore && !slipsLoading && (
+                  <button
+                    type="button"
+                    onClick={() => setLimit((l) => l + 50)}
+                    className="mt-3 w-full rounded-md border border-line bg-surface py-2 text-xs font-semibold text-muted transition hover:text-ink active:scale-95"
+                  >
+                    Load more
+                  </button>
                 )}
               </div>
             )}
