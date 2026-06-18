@@ -168,6 +168,9 @@ function AdminDashboard() {
   const [syncingStripe, setSyncingStripe] = useState(false);
   const [query, setQuery] = useState('');
   const [selectedUid, setSelectedUid] = useState('');
+  // On mobile the list and detail are one column; this toggles between them
+  // (compact list -> tap -> detail with a back button), like the matches view.
+  const [mobileDetail, setMobileDetail] = useState(false);
   const [groups, setGroups] = useState([]);
   const [groupAssignments, setGroupAssignments] = useState({});
   const [groupDraft, setGroupDraft] = useState('');
@@ -629,7 +632,7 @@ function AdminDashboard() {
 
         {activeModule === 'users' && (
         <div className="grid gap-3 sm:gap-4 lg:grid-cols-[minmax(21rem,0.8fr)_minmax(28rem,1.2fr)]">
-          <section className="order-2 rounded-lg border border-line bg-surface shadow-panel lg:order-1">
+          <section className={`order-2 rounded-lg border border-line bg-surface shadow-panel lg:order-1 ${mobileDetail ? 'hidden lg:block' : ''}`}>
             <div className="border-b border-line px-4 py-3">
               <h2 className="text-base font-semibold text-ink">Users</h2>
               <p className="text-base text-muted">{filteredUsers.length} shown of {users.length}</p>
@@ -683,7 +686,7 @@ function AdminDashboard() {
                   <button
                     type="button"
                     key={user.uid}
-                    onClick={() => setSelectedUid(user.uid)}
+                    onClick={() => { setSelectedUid(user.uid); setMobileDetail(true); }}
                     className={`w-full px-4 py-3 text-left transition hover:bg-surface-2 ${isSelected ? 'bg-surface-2/80' : ''}`}
                   >
                     <div className="flex items-start justify-between gap-3">
@@ -695,7 +698,10 @@ function AdminDashboard() {
                         {access.label}
                       </span>
                     </div>
-                    <div className="mt-2 flex flex-wrap gap-1">
+                    <div className="mt-2 flex flex-wrap items-center gap-1">
+                      <span className={`rounded-full px-2 py-0.5 text-sm font-semibold capitalize ring-1 ${stripeStatusClass(user.subscriptionStatus)}`}>
+                        {normalizeStatus(user.subscriptionStatus)}
+                      </span>
                       {groupsForUser.length ? groupsForUser.map((group) => (
                         <span key={group} className="rounded-full border border-line bg-field px-2 py-0.5 text-sm text-muted">{group}</span>
                       )) : <span className="text-sm text-faint">No groups</span>}
@@ -709,7 +715,14 @@ function AdminDashboard() {
             </div>
           </section>
 
-          <section className="order-1 rounded-lg border border-line bg-surface p-3 shadow-panel sm:p-4 lg:order-2">
+          <section className={`order-1 rounded-lg border border-line bg-surface p-3 shadow-panel sm:p-4 lg:order-2 ${mobileDetail ? '' : 'hidden lg:block'}`}>
+            <button
+              type="button"
+              onClick={() => setMobileDetail(false)}
+              className="mb-3 inline-flex items-center gap-1 text-base font-semibold text-muted transition hover:text-ink lg:hidden"
+            >
+              <span aria-hidden="true">←</span> Back to users
+            </button>
             {!selectedUser ? (
               <div className="py-20 text-center text-base text-muted">Select a user to view details.</div>
             ) : (() => {
