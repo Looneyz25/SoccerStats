@@ -21,6 +21,16 @@ const accessCache = new Map();
 // reads on repeat requests. Keyed by date ('fast' for the default slate).
 const DATA_CACHE_TTL_MS = 60 * 1000;
 const dataCache = new Map();
+const CACHE_MAX = 2000; // bound the in-memory caches (#5)
+
+// Bound an insertion-ordered Map to `max` entries (FIFO eviction of oldest).
+function capMap(map, max) {
+  if (map.size <= max) return;
+  for (const key of map.keys()) {
+    if (map.size <= max) break;
+    map.delete(key);
+  }
+}
 
 function pricedMarketOdds(market) {
   if (market?.odds_estimated) return null;
@@ -94,6 +104,7 @@ async function verifyAccess(idToken) {
       (userSnap.get('hasAccess') || userSnap.get('isPlatformOwner') || userSnap.get('manualAccess')),
   );
   accessCache.set(uid, { allowed, at: Date.now() });
+  capMap(accessCache, CACHE_MAX);
   return { uid, allowed };
 }
 
@@ -265,6 +276,7 @@ export async function GET(request) {
       payload = requestedDate ? await loadDateDoc(requestedDate) : null;
       if (!payload) payload = await loadFastDoc();
       dataCache.set(cacheKey, { payload, at: Date.now() });
+      capMap(dataCache, CACHE_MAX);
     }
   } catch (err) {
     return new Response(JSON.stringify({ error: 'data-unavailable', detail: err.message }), {

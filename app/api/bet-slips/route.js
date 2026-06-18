@@ -1,5 +1,5 @@
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
-import { getAdminApp, verifyAccess, loadMatch } from '../_lib/firebase-admin.mjs';
+import { getAdminApp, verifyAccess, loadMatch, capMap } from '../_lib/firebase-admin.mjs';
 import { settleLegResult, computeSlipStatus } from '../_lib/match-scoring.mjs';
 
 export const runtime = 'nodejs';
@@ -13,6 +13,7 @@ const MAX_PAGE = 500;            // hard cap on a single fetch (#1)
 const MAX_SAVED_SLIPS = 200;     // per-user retention cap; oldest trimmed on save (#3)
 const STALE_PENDING_DAYS = 7;    // void a still-unsettled leg after this many days (#2)
 const CACHE_TTL_MS = 20 * 1000;  // short per-user GET cache (#4)
+const CACHE_MAX = 2000;          // bound the GET cache (#5)
 // GET payloads change only on a write, so cache them briefly per uid+limit and
 // clear the whole cache on any POST.
 const slipsCache = new Map();
@@ -191,6 +192,7 @@ export async function GET(request) {
   if (cached && Date.now() - cached.at < CACHE_TTL_MS) return jsonResponse(cached.payload);
   const result = await payload(db, user.uid, limit);
   slipsCache.set(cacheKey, { payload: result, at: Date.now() });
+  capMap(slipsCache, CACHE_MAX);
   return jsonResponse(result);
 }
 

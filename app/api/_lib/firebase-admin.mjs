@@ -15,6 +15,25 @@ const DEFAULT_SERVICE_ACCOUNT_PATH = path.join(process.cwd(), '.secrets', 'fireb
 
 let adminApp = null;
 
+// Bound an insertion-ordered Map to `max` entries (FIFO eviction of oldest).
+// Keeps the in-memory caches from growing without limit on a long-lived instance.
+export function capMap(map, max) {
+  if (map.size <= max) return;
+  for (const key of map.keys()) {
+    if (map.size <= max) break;
+    map.delete(key);
+  }
+}
+
+// Cache the access decision per uid for a short window so we don't re-read the
+// user doc on every request. The ID token is STILL verified on every call
+// (verifyIdToken below) — only the Firestore profile/access lookup is cached, so
+// an expired/revoked token is always rejected; at most a recently-changed access
+// flag is stale for ACCESS_CACHE_TTL_MS.
+const ACCESS_CACHE_TTL_MS = 60 * 1000;
+const ACCESS_CACHE_MAX = 5000;
+const accessCache = new Map();
+
 export function getAdminApp() {
   if (adminApp) return adminApp;
   if (getApps().length) {
@@ -36,10 +55,16 @@ export async function verifyAccess(request) {
   if (!match) throw Object.assign(new Error('missing-token'), { status: 401 });
 
   const decoded = await getAuth(getAdminApp()).verifyIdToken(match[1]);
+
+  // Token is verified above on every call; the profile/access read is cached.
+  const cached = accessCache.get(decoded.uid);
+  if (cached && Date.now() - cached.at < ACCESS_CACHE_TTL_MS) return cached.user;
+
   const userSnap = await getFirestore(getAdminApp()).collection('users').doc(decoded.uid).get();
   const profile = userSnap.exists ? userSnap.data() || {} : {};
+  let user;
   if (decoded.email === OWNER_EMAIL) {
-    return {
+    user = {
       uid: decoded.uid,
       email: decoded.email || '',
       displayName: profile.displayName || decoded.name || '',
@@ -47,20 +72,25 @@ export async function verifyAccess(request) {
       allowed: true,
       isPlatformOwner: true,
     };
+  } else {
+    const allowed = Boolean(
+      userSnap.exists &&
+        (userSnap.get('hasAccess') || userSnap.get('isPlatformOwner') || userSnap.get('manualAccess')),
+    );
+    // Don't cache denials — a user who just gained access should not wait out the TTL.
+    if (!allowed) throw Object.assign(new Error('no-access'), { status: 403 });
+    user = {
+      uid: decoded.uid,
+      email: decoded.email || profile.email || '',
+      displayName: profile.displayName || decoded.name || '',
+      nickname: profile.nickname || '',
+      allowed,
+      isPlatformOwner: Boolean(profile.isPlatformOwner),
+    };
   }
-  const allowed = Boolean(
-    userSnap.exists &&
-      (userSnap.get('hasAccess') || userSnap.get('isPlatformOwner') || userSnap.get('manualAccess')),
-  );
-  if (!allowed) throw Object.assign(new Error('no-access'), { status: 403 });
-  return {
-    uid: decoded.uid,
-    email: decoded.email || profile.email || '',
-    displayName: profile.displayName || decoded.name || '',
-    nickname: profile.nickname || '',
-    allowed,
-    isPlatformOwner: Boolean(profile.isPlatformOwner),
-  };
+  accessCache.set(decoded.uid, { user, at: Date.now() });
+  capMap(accessCache, ACCESS_CACHE_MAX);
+  return user;
 }
 
 export async function loadMatch(db, matchId, date) {

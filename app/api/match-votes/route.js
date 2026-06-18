@@ -1,5 +1,5 @@
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
-import { getAdminApp, verifyAccess, loadMatch } from '../_lib/firebase-admin.mjs';
+import { getAdminApp, verifyAccess, loadMatch, capMap } from '../_lib/firebase-admin.mjs';
 import { marketLine, marketActualResult, adelaideLocalToUtc } from '../_lib/match-scoring.mjs';
 
 export const runtime = 'nodejs';
@@ -13,6 +13,7 @@ const VOTE_CUTOFF_MINUTES = 5;
 // clear them on any write. Leaderboard is per-user (personalised flags).
 const LEADERBOARD_CACHE_TTL_MS = 30 * 1000;
 const MATCH_VOTE_CACHE_TTL_MS = 20 * 1000;
+const CACHE_MAX = 2000; // bound the in-memory caches (#5)
 const leaderboardCache = new Map();
 const matchVoteCache = new Map();
 
@@ -481,6 +482,7 @@ export async function GET(request) {
     }
     const payload = await leaderboardPayload(db, user);
     leaderboardCache.set(user.uid, { payload, at: Date.now() });
+    capMap(leaderboardCache, CACHE_MAX);
     return jsonResponse(payload);
   }
 
@@ -496,6 +498,7 @@ export async function GET(request) {
 
   const votePayload = await responsePayload(db, user, match);
   matchVoteCache.set(voteCacheKey, { payload: votePayload, at: Date.now() });
+  capMap(matchVoteCache, CACHE_MAX);
   return jsonResponse(votePayload);
 }
 
