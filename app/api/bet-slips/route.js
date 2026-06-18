@@ -5,7 +5,9 @@ import { scoreLeg, computeSlipStatus } from '../_lib/match-scoring.mjs';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-const DRAFT_ID = '__draft__';
+// NOTE: must NOT match Firestore's reserved id pattern /^__.*__$/ — an id like
+// '__draft__' throws INVALID_ARGUMENT ("reserved") on every read/write.
+const DRAFT_ID = 'draft';
 const MAX_LEGS = 20;
 const VALID_MARKETS = new Set(['winner', 'draw_no_bet', 'btts', 'goals', 'cards', 'corners']);
 
