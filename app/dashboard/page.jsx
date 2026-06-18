@@ -5062,9 +5062,9 @@ function PredictionSummaryCard({ match, allMatches, voteState = null, accaKeys, 
                       onClick={() => onToggleLeg(leg)}
                       aria-pressed={inSlip}
                       aria-label={inSlip ? 'Remove from bet slip' : 'Add to bet slip'}
-                      className={`inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-sm font-bold transition active:scale-90 ${inSlip ? 'border-accent bg-accent text-white' : 'border-line bg-surface text-muted hover:text-ink'}`}
+                      className={`inline-flex shrink-0 items-center justify-center gap-1 whitespace-nowrap rounded-md px-3 py-1.5 text-xs font-semibold transition active:scale-95 ${inSlip ? 'border border-[#34d6c8] bg-[#34d6c8]/10 text-[#34d6c8]' : 'bg-[#34d6c8] text-[#06231f] shadow-sm hover:brightness-110'}`}
                     >
-                      {inSlip ? <CheckCircle2 className="h-4 w-4" aria-hidden="true" /> : '+'}
+                      {inSlip ? <><CheckCircle2 className="h-4 w-4" aria-hidden="true" /> In slip</> : <><span aria-hidden="true" className="text-sm font-bold leading-none">+</span> Add to slip</>}
                     </button>
                   );
                 })()}
