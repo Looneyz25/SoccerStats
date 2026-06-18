@@ -26,6 +26,7 @@ import {
   MapPin,
   ExternalLink,
   Settings,
+  Share2,
   ShieldCheck,
   Star,
   UploadCloud,
@@ -1382,6 +1383,175 @@ function ValueBoard({ matches, onSelectMatch, accaKeys, onToggleLeg }) {
   );
 }
 
+// Trim text to fit a pixel width on a canvas, adding an ellipsis.
+function fitCanvasText(ctx, text, maxWidth) {
+  const str = String(text ?? '');
+  if (ctx.measureText(str).width <= maxWidth) return str;
+  let t = str;
+  while (t.length > 1 && ctx.measureText(`${t}…`).width > maxWidth) t = t.slice(0, -1);
+  return `${t}…`;
+}
+
+// Render a bet slip to a shareable PNG canvas (no external deps). Dark, branded
+// card sized to the number of legs.
+function drawBetSlipCanvas(slip) {
+  const legs = Array.isArray(slip?.legs) ? slip.legs : [];
+  const W = 660;
+  const padX = 28;
+  const headerH = 104;
+  const legH = 60;
+  const footerH = 96;
+  const H = headerH + Math.max(1, legs.length) * legH + footerH;
+  const dpr = 2;
+  const canvas = document.createElement('canvas');
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr, dpr);
+  ctx.textBaseline = 'alphabetic';
+
+  const ACCENT = '#34d6c8';
+  const INK = '#e6eaf0';
+  const MUTED = '#8b95a3';
+  const FAINT = '#5b6573';
+  const statusColors = {
+    won: ['#10b981', '#ffffff'],
+    lost: ['#ef4444', '#ffffff'],
+    void: ['#39424d', '#c5ccd5'],
+    pending: ['#f59e0b', '#1a1300'],
+  };
+  const legColor = { hit: '#34d399', miss: '#f87171', void: '#9aa4b0', pending: '#fbbf24' };
+  const status = slip?.status || 'pending';
+
+  // Background + accent stripe + border.
+  ctx.fillStyle = '#0f1318';
+  ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = ACCENT;
+  ctx.fillRect(0, 0, W, 6);
+  ctx.strokeStyle = '#222a33';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(0.5, 0.5, W - 1, H - 1);
+
+  // Header: brand + status pill.
+  ctx.fillStyle = ACCENT;
+  ctx.font = '700 22px system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
+  ctx.fillText('LVRstats', padX, 44);
+  ctx.fillStyle = MUTED;
+  ctx.font = '600 13px system-ui, sans-serif';
+  ctx.fillText('BET SLIP', padX, 66);
+
+  const [pillBg, pillFg] = statusColors[status] || statusColors.pending;
+  const pillLabel = String(status).toUpperCase();
+  ctx.font = '700 13px system-ui, sans-serif';
+  const pillW = ctx.measureText(pillLabel).width + 24;
+  const pillX = W - padX - pillW;
+  ctx.fillStyle = pillBg;
+  const pr = 13;
+  ctx.beginPath();
+  ctx.roundRect(pillX, 30, pillW, 26, pr);
+  ctx.fill();
+  ctx.fillStyle = pillFg;
+  ctx.fillText(pillLabel, pillX + 12, 47);
+
+  // Combined odds (big, header right under brand).
+  const combinedOdds = Number(slip?.combinedOdds || 0);
+  ctx.fillStyle = INK;
+  ctx.font = '700 16px system-ui, sans-serif';
+  ctx.textAlign = 'right';
+  ctx.fillText(`${legs.length} leg${legs.length === 1 ? '' : 's'} · ${combinedOdds.toFixed(2)}`, W - padX, 78);
+  ctx.textAlign = 'left';
+
+  // Legs.
+  let y = headerH;
+  ctx.strokeStyle = '#1d242c';
+  legs.forEach((l) => {
+    ctx.beginPath();
+    ctx.moveTo(padX, y);
+    ctx.lineTo(W - padX, y);
+    ctx.stroke();
+    const result = l.result || 'pending';
+    // Match label.
+    ctx.fillStyle = INK;
+    ctx.font = '600 15px system-ui, sans-serif';
+    ctx.fillText(fitCanvasText(ctx, l.matchLabel || '', W - padX * 2 - 70), padX, y + 26);
+    // Market + pick + odds.
+    ctx.fillStyle = MUTED;
+    ctx.font = '400 13px system-ui, sans-serif';
+    const sub = `${l.label} ${l.pick}${l.priceEstimated ? ' (est.)' : ''} @ ${Number(l.book).toFixed(2)}`;
+    ctx.fillText(fitCanvasText(ctx, sub, W - padX * 2 - 70), padX, y + 46);
+    // Result (right).
+    ctx.fillStyle = legColor[result] || legColor.pending;
+    ctx.font = '700 13px system-ui, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(result, W - padX, y + 30);
+    ctx.textAlign = 'left';
+    y += legH;
+  });
+
+  // Footer.
+  ctx.beginPath();
+  ctx.moveTo(padX, y);
+  ctx.lineTo(W - padX, y);
+  ctx.stroke();
+  const stake = Number(slip?.stake);
+  const hasStake = Number.isFinite(stake) && stake > 0;
+  ctx.fillStyle = MUTED;
+  ctx.font = '400 13px system-ui, sans-serif';
+  if (hasStake) {
+    const potential = stake * combinedOdds;
+    const retLabel = status === 'won' ? 'Returned' : 'Potential';
+    ctx.fillText(`Stake ${stake.toFixed(0)}`, padX, y + 30);
+    ctx.fillStyle = INK;
+    ctx.font = '700 15px system-ui, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(`${retLabel} ${potential.toFixed(2)}`, W - padX, y + 30);
+    ctx.textAlign = 'left';
+  }
+  ctx.fillStyle = FAINT;
+  ctx.font = '400 12px system-ui, sans-serif';
+  ctx.fillText('lvrstats.com · not betting advice', padX, y + 58);
+  return canvas;
+}
+
+function betSlipShareText(slip) {
+  const legs = Array.isArray(slip?.legs) ? slip.legs : [];
+  const odds = Number(slip?.combinedOdds || 0).toFixed(2);
+  const status = slip?.status && slip.status !== 'pending' ? ` · ${String(slip.status).toUpperCase()}` : '';
+  const head = `LVRstats bet slip — ${legs.length} leg${legs.length === 1 ? '' : 's'} @ ${odds}${status}`;
+  const rows = legs.map((l) => `• ${l.matchLabel}: ${l.label} ${l.pick} @ ${Number(l.book).toFixed(2)}${l.result ? ` (${l.result})` : ''}`);
+  return [head, ...rows, 'lvrstats.com'].join('\n');
+}
+
+// Share a bet slip as an image via the Web Share API, falling back to a download.
+async function shareBetSlip(slip, onError) {
+  try {
+    const canvas = drawBetSlipCanvas(slip);
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+    if (!blob) throw new Error('Could not render the slip image.');
+    const file = new File([blob], 'lvrstats-betslip.png', { type: 'image/png' });
+    const text = betSlipShareText(slip);
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], title: 'LVRstats bet slip', text });
+      return;
+    }
+    if (navigator.share) {
+      await navigator.share({ title: 'LVRstats bet slip', text });
+      return;
+    }
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'lvrstats-betslip.png';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  } catch (e) {
+    if (e?.name === 'AbortError') return; // user dismissed the share sheet
+    onError?.(e?.message || 'Could not share the slip.');
+  }
+}
+
 function AccaSlip({ legs, onRemoveLeg, onClear, onSaved }) {
   const [open, setOpen] = useState(false);
   const [stake, setStake] = useState(10);
@@ -1585,7 +1755,8 @@ function AccaSlip({ legs, onRemoveLeg, onClear, onSaved }) {
                       </div>
                     )}
                     <div className="flex items-center gap-3 border-t border-line px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
-                      <button type="button" onClick={onClear} className="inline-flex h-11 items-center justify-center rounded-md border border-line bg-surface px-5 text-sm font-semibold text-muted transition hover:text-ink active:scale-95">Clear</button>
+                      <button type="button" onClick={onClear} className="inline-flex h-11 items-center justify-center rounded-md border border-line bg-surface px-4 text-sm font-semibold text-muted transition hover:text-ink active:scale-95">Clear</button>
+                      <button type="button" onClick={() => shareBetSlip({ legs, combinedOdds: combined?.odds, stake: Number(stake) || 0, status: 'pending' }, setError)} disabled={!legs.length} className="inline-flex h-11 items-center justify-center gap-1.5 rounded-md border border-[#34d6c8] px-4 text-sm font-semibold text-[#34d6c8] transition hover:bg-[#34d6c8]/10 active:scale-95 disabled:opacity-50"><Share2 className="h-4 w-4" aria-hidden="true" />Share</button>
                       <button type="button" onClick={saveSlip} disabled={!legs.length || busy} className="inline-flex h-11 flex-1 items-center justify-center rounded-md bg-header text-sm font-semibold text-white transition active:scale-95 disabled:opacity-50">{busy ? 'Saving…' : 'Save slip'}</button>
                     </div>
                   </>
@@ -1619,6 +1790,9 @@ function AccaSlip({ legs, onRemoveLeg, onClear, onSaved }) {
                             </span>
                             <span className="flex items-center gap-2">
                               <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${statusBadge(slip.status)}`}>{String(slip.status || 'pending').toUpperCase()}</span>
+                              <button type="button" onClick={() => shareBetSlip(slip, setError)} aria-label="Share slip" className="inline-flex items-center gap-1 rounded-md border border-[#34d6c8] px-2 py-1 text-[11px] font-semibold text-[#34d6c8] transition hover:bg-[#34d6c8]/10 active:scale-95">
+                                <Share2 className="h-3.5 w-3.5" aria-hidden="true" />Share
+                              </button>
                               <button type="button" onClick={() => deleteSlip(slip.id)} aria-label="Delete slip" className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-line text-muted transition hover:text-red-500">
                                 <X className="h-3.5 w-3.5" aria-hidden="true" />
                               </button>
