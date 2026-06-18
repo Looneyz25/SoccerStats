@@ -2123,6 +2123,10 @@ function WinnerProbabilityBreakdown({ match, comparison }) {
 }
 
 function winnerActualType(match) {
+  // Only completed matches are graded. A live scoreline (e.g. 1-0 at HT) is not a
+  // settled result, so winner/DNB/double-chance must stay ungraded until status "FT"
+  // — see hasScoreline: every settlement check keys off status === 'FT'.
+  if (match?.status !== 'FT') return null;
   const homeGoals = Number(match.home?.goals);
   const awayGoals = Number(match.away?.goals);
   if (!Number.isFinite(homeGoals) || !Number.isFinite(awayGoals)) return null;
@@ -5951,7 +5955,12 @@ function EspnStatsSection({ espnStats, homeName, awayName }) {
           <div className="space-y-2">
             {keyEvents.map((ev, i) => {
               const typeL = (ev.type || '').toLowerCase();
-              const icon = typeL.includes('goal') ? '⚽' : typeL.includes('yellow') ? '🟨' : typeL.includes('red') ? '🟥' : typeL.includes('sub') ? '🔄' : '•';
+              // Match cards by the word "card" — "Penalty - Scored" contains "red" and
+              // must not be read as a red card. Scored penalties are goals.
+              const icon = typeL.includes('card')
+                ? (typeL.includes('yellow') && !typeL.includes('red') ? '🟨' : '🟥')
+                : typeL.includes('goal') || typeL.includes('scored') ? '⚽'
+                  : typeL.includes('sub') ? '🔄' : '•';
               return (
                 <div key={i} className="flex items-center gap-3 text-sm">
                   <span className="w-12 shrink-0 text-right font-mono text-xs text-muted">{ev.clock}</span>
