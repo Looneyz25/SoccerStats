@@ -1437,7 +1437,7 @@ function AccaSlip({ legs, onRemoveLeg, onClear, onSaved }) {
       if (!res.ok) throw new Error(data?.error || 'Could not save slip.');
       setSlips(Array.isArray(data.slips) ? data.slips : []);
       onSaved?.();
-      setTab('history');
+      setTab('pending');
     } catch (e) {
       setError(e.message || 'Could not save slip.');
     } finally {
@@ -1479,6 +1479,15 @@ function AccaSlip({ legs, onRemoveLeg, onClear, onSaved }) {
       : result === 'miss' ? 'text-red-500'
         : result === 'void' ? 'text-muted' : 'text-amber-500';
 
+  const pendingSlips = slips.filter((s) => (s.status || 'pending') === 'pending');
+  const resultedSlips = slips.filter((s) => s.status && s.status !== 'pending');
+  const tabSlips = tab === 'pending' ? pendingSlips : resultedSlips;
+  const formatPlaced = (iso) => {
+    if (!iso) return null;
+    const d = new Date(iso);
+    return Number.isNaN(d.getTime()) ? null : d.toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' });
+  };
+
   return (
     <>
       <button
@@ -1505,7 +1514,11 @@ function AccaSlip({ legs, onRemoveLeg, onClear, onSaved }) {
             </div>
 
             <div className="flex border-b border-line px-4">
-              {[['current', `Current${legs.length ? ` · ${legs.length}` : ''}`], ['history', 'History']].map(([id, label]) => (
+              {[
+                ['current', `Current${legs.length ? ` · ${legs.length}` : ''}`],
+                ['pending', `Pending${pendingSlips.length ? ` · ${pendingSlips.length}` : ''}`],
+                ['resulted', `Resulted${resultedSlips.length ? ` · ${resultedSlips.length}` : ''}`],
+              ].map(([id, label]) => (
                 <button
                   key={id}
                   type="button"
@@ -1580,25 +1593,29 @@ function AccaSlip({ legs, onRemoveLeg, onClear, onSaved }) {
               </>
             )}
 
-            {tab === 'history' && (
+            {(tab === 'pending' || tab === 'resulted') && (
               <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))]">
                 {slipsLoading ? (
                   <p className="text-sm text-muted">Loading slips…</p>
-                ) : !slips.length ? (
-                  <p className="text-sm text-muted">No saved slips yet. Build one in Current and tap Save slip.</p>
+                ) : !tabSlips.length ? (
+                  <p className="text-sm text-muted">{tab === 'pending' ? 'No open slips. Build one in Current and tap Save slip.' : 'No resulted slips yet.'}</p>
                 ) : (
                   <ul className="space-y-3">
-                    {slips.map((slip) => {
+                    {tabSlips.map((slip) => {
                       const tone = slip.status === 'won' ? 'border-emerald-500/40 bg-emerald-500/5'
                         : slip.status === 'lost' ? 'border-red-500/40 bg-red-500/5'
                           : slip.status === 'void' ? 'border-line bg-field'
                             : 'border-line bg-surface';
                       const slipReturns = slip.status === 'won' ? Number(slip.stake) * Number(slip.combinedOdds || 0) : 0;
+                      const placed = formatPlaced(slip.savedAt);
                       return (
                         <li key={slip.id} className={`rounded-lg border ${tone} p-3`}>
                           <div className="flex items-center justify-between gap-2">
-                            <span className="text-xs font-semibold uppercase tracking-wide text-muted">
-                              {slip.legs.length} legs · {Number(slip.combinedOdds || 0).toFixed(2)}
+                            <span className="min-w-0">
+                              <span className="block text-xs font-semibold uppercase tracking-wide text-muted">
+                                {slip.legs.length} legs · {Number(slip.combinedOdds || 0).toFixed(2)}
+                              </span>
+                              {placed && <span className="block text-[11px] text-faint">Placed {placed}</span>}
                             </span>
                             <span className="flex items-center gap-2">
                               <span className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${statusBadge(slip.status)}`}>{String(slip.status || 'pending').toUpperCase()}</span>
