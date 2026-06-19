@@ -1648,6 +1648,34 @@ def stat_markets_pending(match):
     return pending
 
 
+def espn_stats_actuals(match):
+    """Derive cards/corners totals from the ESPN boxscore already stored on the match
+    (match['espn_stats']), without a network refetch.
+
+    ESPN is an approved settlement source, and every ESPN-id fixture carries its full
+    final boxscore once collected. SofaScore-keyed `actuals_for` is skipped for ESPN ids
+    and Flashscore can miss the fixture, so this promotes the stored boxscore into actuals
+    rather than leaving cards/corners pending. Counts each card (yellow + red), matching
+    `actuals_for` / `espn_actuals_for_match`."""
+    es = match.get("espn_stats") or {}
+    home = es.get("home") or {}
+    away = es.get("away") or {}
+    out = {}
+    try:
+        hc = int(home.get("corners"))
+        ac = int(away.get("corners"))
+        out.update(home_corners=hc, away_corners=ac, corners_total=hc + ac)
+    except (TypeError, ValueError):
+        pass
+    try:
+        home_cards = int(home.get("yellow_cards") or 0) + int(home.get("red_cards") or 0)
+        away_cards = int(away.get("yellow_cards") or 0) + int(away.get("red_cards") or 0)
+        out.update(home_cards=home_cards, away_cards=away_cards, cards_total=home_cards + away_cards)
+    except (TypeError, ValueError):
+        pass
+    return out or None
+
+
 def backfill_stat_actuals(store):
     """Re-fetch and settle cards/corners actuals for recently finished FT matches that are
     still missing them. Markets that still cannot be settled are left pending for the next
@@ -1687,6 +1715,10 @@ def backfill_stat_actuals(store):
                 flash_act = flashscore_actuals_for_match(L.get("name", ""), m)
                 if flash_act:
                     act = {**flash_act, **(act or {})}
+            if not act or any(spec[1] not in act for spec in pending):
+                espn_act = espn_stats_actuals(m)
+                if espn_act:
+                    act = {**espn_act, **(act or {})}
             if act:
                 merged = {**(m.get("actuals") or {}), **act}
                 if merged != (m.get("actuals") or {}):
