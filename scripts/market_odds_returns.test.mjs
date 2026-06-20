@@ -2,14 +2,14 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { marketReturnTotals, pricedMarketOdds } from './market_odds_returns.mjs';
 
-test('losing priced markets count one stake, not the losing decimal price', () => {
+test('winners bank profit (odds - 1) and losers forfeit one stake', () => {
   const totals = marketReturnTotals([
     { result: 'hit', odds: 2.4 },
     { result: 'miss', odds: 201 },
     { result: 'miss', odds: 3.25 },
   ]);
 
-  assert.deepEqual(totals, { hit: 2.4, loss: 2, priced: 3 });
+  assert.deepEqual(totals, { hit: 1.4, loss: 2, priced: 3 });
 });
 
 test('estimated odds are not treated as priced bookmaker returns', () => {

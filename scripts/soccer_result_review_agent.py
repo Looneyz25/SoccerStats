@@ -53,6 +53,12 @@ def to_float(value):
         return None
 
 
+def priced_odds(value):
+    """Decimal odds usable for P&L, else None (mirrors the dashboard rule)."""
+    odds = to_float(value)
+    return odds if odds and odds > 1 else None
+
+
 def flatten_matches(data):
     rows = []
     for league in data.get("leagues", []):
@@ -196,8 +202,19 @@ def summarize(rows, group_key):
     for key, items in sorted(grouped.items()):
         hits = sum(1 for item in items if item["result"] == "hit")
         misses = sum(1 for item in items if item["result"] == "miss")
-        odds_hit = sum(to_float(item["odds"]) or 0 for item in items if item["result"] == "hit")
-        odds_loss = sum(to_float(item["odds"]) or 0 for item in items if item["result"] == "miss")
+        # Flat 1-unit stake P&L: a priced winner banks (odds - 1) profit, a
+        # priced loser forfeits its 1-unit stake. Unpriced markets count for
+        # nothing, so odds_net is a true net return matching the dashboard.
+        odds_hit = sum(
+            priced_odds(item["odds"]) - 1
+            for item in items
+            if item["result"] == "hit" and priced_odds(item["odds"])
+        )
+        odds_loss = sum(
+            1
+            for item in items
+            if item["result"] == "miss" and priced_odds(item["odds"])
+        )
         summary.append({
             group_key: key,
             "settled": hits + misses,

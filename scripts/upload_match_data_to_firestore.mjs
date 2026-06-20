@@ -564,10 +564,17 @@ function unsettledMarketsForMatch(match) {
     .map(([key]) => marketLabelForIssue(match, key));
 }
 
-async function verifyFirestoreDayMarketsSettled(db, date) {
+async function verifyFirestoreDayMarketsSettled(db, date, uploadedDates) {
   const dateRef = db.collection('dashboardData').doc(DOC_ID).collection('dates').doc(slugify(date, 'unknown'));
   const dateSnap = await dateRef.get();
   if (!dateSnap.exists) {
+    // No bucket was uploaded for this date because the slate has no fixtures
+    // today (common on quiet days) — nothing to verify, so skip cleanly. A
+    // missing doc is only a failure when we did upload a bucket for the date.
+    if (uploadedDates && !uploadedDates.has(date)) {
+      console.log(`Firestore day-market verification ${date}: no fixtures scheduled, skipping.`);
+      return;
+    }
     throw new Error(`Firestore day-market verification failed: date doc ${date} is missing.`);
   }
 
@@ -782,7 +789,7 @@ async function main() {
   operations.push({ type: 'set', ref: fastRef, payload: fastPayload });
 
   await commitUploadOperations(db, operations);
-  await verifyFirestoreDayMarketsSettled(db, adelaideTodayIso());
+  await verifyFirestoreDayMarketsSettled(db, adelaideTodayIso(), new Set(dateBuckets.keys()));
   console.log(`Uploaded ${dataPath} to Firestore dashboardData/${DOC_ID} as ${leagues.length} league docs and ${dateBuckets.size} date docs.`);
   if (fastOverflow) {
     console.log(`Uploaded fast dashboard doc dashboardData/${FAST_DOC_ID} as metadata-only fallback (${(fastByteLength / 1024).toFixed(1)} KB); app will use date/league docs.`);

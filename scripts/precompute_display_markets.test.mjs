@@ -36,6 +36,6 @@ test('precompute attaches stored bookmaker odds to finished display markets', ()
   assert.equal(match.display_markets.winner.market.odds, 1.25);
   assert.equal(match.display_markets.btts.market.odds, 2);
   assert.equal(match.display_markets.goals.market.odds, 1.59);
-  assert.equal(match.display_summary.headlineSummary.oddsHit, 4.8);
+  assert.equal(match.display_summary.headlineSummary.oddsHit, 1.8);
   assert.equal(match.display_summary.headlineSummary.oddsPriced, 3);
 });
