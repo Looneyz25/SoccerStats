@@ -4879,7 +4879,11 @@ function ResultsReview({
   onReviewFilterChange,
   onSelectToday,
   onMoveDate,
+  onMoveWeek,
   canMovePreviousDate = true,
+  canMoveNextDate = true,
+  canMovePreviousWeek = true,
+  canMoveNextWeek = true,
 }) {
   const [reviewScope, setReviewScope] = useState('week');
   const effectiveSelectedDate = selectedDate && selectedDate !== 'all' ? selectedDate : localTodayDate();
@@ -4909,19 +4913,12 @@ function ResultsReview({
   if (!rows.length && !scopeRows.all.length) return null;
   const best = [...rows].sort((a, b) => b.hitRate - a.hitRate)[0];
   const worst = [...rows].sort((a, b) => a.hitRate - b.hitRate)[0];
-  const scopeOptions = [
-    { key: 'date', label: formatDateDMY(effectiveSelectedDate) },
-    { key: 'week', label: 'This week' },
-    { key: 'all', label: 'All time' },
-  ];
-  const activeScope = scopeOptions.find((option) => option.key === reviewScope) || scopeOptions[0];
   const weekEnd = selectedWeek ? addDaysToIsoDate(selectedWeek, 6) : '';
-  const rangeLabel =
-    reviewScope === 'date'
-      ? formatDateDMY(effectiveSelectedDate)
-      : reviewScope === 'week' && selectedWeek
-        ? `${formatDateDMY(selectedWeek)} to ${formatDateDMY(weekEnd)}`
-        : 'All time';
+  const isToday = effectiveSelectedDate === localTodayDate();
+  const dayLabel = isToday ? 'Today' : formatDateDMY(effectiveSelectedDate);
+  const weekLabel = selectedWeek
+    ? `${formatDateDMY(selectedWeek).slice(0, 5)} – ${formatDateDMY(weekEnd).slice(0, 5)}`
+    : 'This week';
   const insightPrefix = reviewScope === 'date' ? 'Date read' : reviewScope === 'week' ? 'Week read' : 'All-time read';
   const insight = best && worst
     ? `${insightPrefix}: ${best.label} is strongest at ${best.hitRate}%; ${worst.label} is weakest at ${worst.hitRate}%.`
@@ -4976,8 +4973,8 @@ function ResultsReview({
           <h2 className="text-base font-semibold text-ink">Results review</h2>
           <p className="mt-1 text-xs font-semibold text-muted">Tracked from {formatDateDMY(PREDICTION_TRACKING_START_DATE)}</p>
         </div>
-        <div className="flex shrink-0 flex-col gap-2 sm:min-w-[26rem]">
-          <div className="grid grid-cols-[2.5rem_minmax(0,1fr)] gap-1 text-xs font-semibold">
+        <div className="flex shrink-0 flex-col gap-1.5 sm:min-w-[26rem]">
+          <div className="grid grid-cols-[2.5rem_minmax(0,1fr)_2.5rem] gap-1 text-xs font-semibold">
             <button
               type="button"
               onClick={() => {
@@ -4997,28 +4994,77 @@ function ResultsReview({
                 setReviewScope('date');
                 onSelectToday?.();
               }}
-              className="h-9 rounded-md border border-line bg-surface px-3 text-muted transition hover:bg-field"
+              aria-pressed={reviewScope === 'date'}
+              title="Jump to today"
+              className={`inline-flex h-9 items-center justify-center rounded-md border px-3 transition ${
+                reviewScope === 'date' ? 'border-ink bg-header text-white' : 'border-line bg-surface text-muted hover:bg-field'
+              }`}
             >
-              Today
+              <span className="truncate">{dayLabel}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setReviewScope('date');
+                onMoveDate?.(1);
+              }}
+              disabled={!canMoveNextDate}
+              className="inline-flex h-9 items-center justify-center rounded-md border border-line bg-surface text-muted transition hover:bg-field disabled:cursor-not-allowed disabled:opacity-40"
+              aria-label="Next results day"
+              title="Next day"
+            >
+              <ChevronRight className="h-4 w-4" aria-hidden="true" />
             </button>
           </div>
-          <div className="grid grid-cols-3 gap-1 text-xs font-semibold">
-          {scopeOptions.map((option) => {
-            const active = reviewScope === option.key;
-            return (
-              <button
-                key={option.key}
-                type="button"
-                onClick={() => setReviewScope(option.key)}
-                className={`rounded-md border px-2 py-1 ${
-                  active ? 'border-ink bg-header text-white' : 'border-line bg-surface text-muted hover:bg-field'
-                }`}
-              >
-                {option.label}
-              </button>
-            );
-          })}
+          <div className="grid grid-cols-[2.5rem_minmax(0,1fr)_2.5rem] gap-1 text-xs font-semibold">
+            <button
+              type="button"
+              onClick={() => {
+                setReviewScope('week');
+                onMoveWeek?.(-1);
+              }}
+              disabled={!canMovePreviousWeek}
+              className="inline-flex h-9 items-center justify-center rounded-md border border-line bg-surface text-muted transition hover:bg-field disabled:cursor-not-allowed disabled:opacity-40"
+              aria-label="Previous results week"
+              title="Previous week"
+            >
+              <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setReviewScope('week')}
+              aria-pressed={reviewScope === 'week'}
+              title="This week"
+              className={`inline-flex h-9 items-center justify-center rounded-md border px-3 transition ${
+                reviewScope === 'week' ? 'border-ink bg-header text-white' : 'border-line bg-surface text-muted hover:bg-field'
+              }`}
+            >
+              <span className="truncate">Week {weekLabel}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setReviewScope('week');
+                onMoveWeek?.(1);
+              }}
+              disabled={!canMoveNextWeek}
+              className="inline-flex h-9 items-center justify-center rounded-md border border-line bg-surface text-muted transition hover:bg-field disabled:cursor-not-allowed disabled:opacity-40"
+              aria-label="Next results week"
+              title="Next week"
+            >
+              <ChevronRight className="h-4 w-4" aria-hidden="true" />
+            </button>
           </div>
+          <button
+            type="button"
+            onClick={() => setReviewScope('all')}
+            aria-pressed={reviewScope === 'all'}
+            className={`h-9 rounded-md border px-3 text-xs font-semibold transition ${
+              reviewScope === 'all' ? 'border-ink bg-header text-white' : 'border-line bg-surface text-muted hover:bg-field'
+            }`}
+          >
+            All time
+          </button>
         </div>
       </div>
       {insight && (
@@ -7316,19 +7362,44 @@ function HomeInner() {
   );
 
   const reviewDate = selectedDate && selectedDate !== 'all' ? selectedDate : todayDate;
-  const reviewDateIndex = dateOptions.indexOf(reviewDate);
-  const canMoveReviewDatePrevious = dateOptions.length > 0 && (reviewDateIndex === -1 || reviewDateIndex > 0);
+  const earliestReviewDate = dateOptions[0] || '';
+  const latestReviewDate = dateOptions[dateOptions.length - 1] || '';
+  const reviewWeek = weekStartMonday(reviewDate);
+  const canMoveReviewDatePrevious = dateOptions.length > 0 && reviewDate > earliestReviewDate;
+  const canMoveReviewDateNext = dateOptions.length > 0 && reviewDate < latestReviewDate;
+  const canMoveReviewWeekPrevious = dateOptions.length > 0 && reviewWeek > weekStartMonday(earliestReviewDate);
+  const canMoveReviewWeekNext = dateOptions.length > 0 && reviewWeek < weekStartMonday(latestReviewDate);
   const moveReviewDate = useCallback(
     (direction) => {
       if (!dateOptions.length) return;
       const anchor = selectedDate && selectedDate !== 'all' ? selectedDate : todayDate;
       const anchorIndex = dateOptions.indexOf(anchor);
-      const safeAnchorIndex = anchorIndex === -1
-        ? (direction < 0 ? dateOptions.length - 1 : 0)
-        : anchorIndex;
-      const nextIndex = Math.min(Math.max(safeAnchorIndex + direction, 0), dateOptions.length - 1);
+      let target;
+      if (anchorIndex !== -1) {
+        const nextIndex = Math.min(Math.max(anchorIndex + direction, 0), dateOptions.length - 1);
+        target = dateOptions[nextIndex];
+      } else if (direction > 0) {
+        // Anchor is between match days (e.g. after a week jump) — step to the
+        // nearest available date in the requested direction.
+        target = dateOptions.find((date) => date > anchor) || dateOptions[dateOptions.length - 1];
+      } else {
+        target = [...dateOptions].reverse().find((date) => date < anchor) || dateOptions[0];
+      }
       setSlideDir(direction > 0 ? 1 : -1);
-      setSelectedDate(dateOptions[nextIndex]);
+      setSelectedDate(target);
+    },
+    [dateOptions, selectedDate, todayDate],
+  );
+  const moveReviewWeek = useCallback(
+    (direction) => {
+      if (!dateOptions.length) return;
+      const anchor = selectedDate && selectedDate !== 'all' ? selectedDate : todayDate;
+      let target = addDaysToIsoDate(anchor, direction * 7);
+      if (!target) return;
+      if (target < dateOptions[0]) target = dateOptions[0];
+      if (target > dateOptions[dateOptions.length - 1]) target = dateOptions[dateOptions.length - 1];
+      setSlideDir(direction > 0 ? 1 : -1);
+      setSelectedDate(target);
     },
     [dateOptions, selectedDate, todayDate],
   );
@@ -7787,7 +7858,11 @@ function HomeInner() {
             onReviewFilterChange={handleReviewFilterChange}
             onSelectToday={selectToday}
             onMoveDate={moveReviewDate}
+            onMoveWeek={moveReviewWeek}
             canMovePreviousDate={canMoveReviewDatePrevious}
+            canMoveNextDate={canMoveReviewDateNext}
+            canMovePreviousWeek={canMoveReviewWeekPrevious}
+            canMoveNextWeek={canMoveReviewWeekNext}
           />
           <VoteLeaderboard
             data={voteLeaderboard}
