@@ -1,6 +1,0 @@
-
-> soccer-stats@1.0.0 data:badges
-> node scripts/cache_badges_to_firebase.mjs
-
-match_data.json: cached=5 skipped=1514 failed=0
-predictions_2026-06-10.json: cached=0 skipped=1435 failed=0

@@ -38,11 +38,11 @@ logs/
 .idea/
 .firecrawl/
 
-# Per-run pipeline diagnostics + daily snapshots (regenerated every run; the live
-# site reads Firestore, not these). Other outputs (routine_progress_latest.*,
-# result_check_*, phase slates, model_calibration.json — a routine input) stay tracked.
-docs/agent-system/outputs/get_data_*.json
-docs/agent-system/outputs/get_data_*.log
-docs/agent-system/outputs/get_data_*.md
+# Generated pipeline outputs — the whole agent-system outputs dir regenerates
+# every run (review CSVs, slates, schedules, calibration, run logs, snapshots),
+# producing thousands of lines of churn. The live site reads Firestore and the
+# routine reads these from disk, so tracking isn't needed. Hand-authored agent
+# docs live in docs/agent-system/ (PHASE_*.md, agents/) and stay tracked.
+docs/agent-system/outputs/
 predictions_*.json
 predictions_*.md
