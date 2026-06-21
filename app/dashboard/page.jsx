@@ -5811,11 +5811,17 @@ function EspnStatBar({ label, homeVal, awayVal, homeRaw, awayRaw }) {
   );
 }
 
-function EspnStatsSection({ espnStats, homeName, awayName }) {
+function EspnStatsSection({ espnStats, homeName, awayName, status }) {
   if (!espnStats) {
+    const s = String(status || '').toLowerCase();
+    const message = s === 'ft'
+      ? 'Detailed stats aren’t available for this match.'
+      : s === 'live'
+        ? 'Live stats aren’t available yet — check back shortly.'
+        : 'Stats not yet available — check back after the match starts.';
     return (
       <div className="rounded-xl border border-line bg-surface p-6 text-center text-sm text-muted">
-        Stats not yet available — check back after the match starts.
+        {message}
       </div>
     );
   }
@@ -6147,7 +6153,7 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
 
         <StreakList title="Team streaks" streaks={match.team_streaks} match={match} />
         </>) : (
-          <EspnStatsSection espnStats={match.espn_stats} homeName={match.home?.name} awayName={match.away?.name} />
+          <EspnStatsSection espnStats={match.espn_stats} homeName={match.home?.name} awayName={match.away?.name} status={match.status} />
         )}
       </div>
     </div>
