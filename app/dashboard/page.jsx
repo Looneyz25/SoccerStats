@@ -29,7 +29,6 @@ import {
   Share2,
   ShieldCheck,
   Star,
-  UploadCloud,
   UserRound,
   XCircle,
   ChevronDown,
@@ -82,7 +81,6 @@ const WINNER_CONFIDENCE_THRESHOLD = 0.40;
 const BOOKMAKER_WINNER_GUARD_THRESHOLD = 0.65;
 const CORNER_MODEL_PROBABILITY_CAP = 0.72;
 const NO_ODDS_CORNER_PROBABILITY_CAP = 0.55;
-const RESULT_IMPORT_TIMEOUT_MS = 30000;
 
 async function loadMatchData(date = '') {
   return loadMatchDataFromFirestore(date);
@@ -92,37 +90,6 @@ function wait(ms) {
   return new Promise((resolve) => {
     setTimeout(resolve, ms);
   });
-}
-
-function parsePastedJson(text) {
-  const trimmed = String(text || '').trim().replace(/^```(?:json)?/i, '').replace(/```$/i, '').trim();
-  const objectStart = trimmed.indexOf('{');
-  const arrayStart = trimmed.indexOf('[');
-  const start = [objectStart, arrayStart].filter((index) => index >= 0).sort((a, b) => a - b)[0] ?? 0;
-  const end = Math.max(trimmed.lastIndexOf('}'), trimmed.lastIndexOf(']'));
-  const json = end >= start ? trimmed.slice(start, end + 1) : trimmed;
-  try {
-    return JSON.parse(json);
-  } catch (error) {
-    const repaired = json
-      .replace(/}\s*(?="[^"]+"\s*:)/g, '},')
-      .replace(/]\s*(?="[^"]+"\s*:)/g, '],')
-      .replace(/,\s*([}\]])/g, '$1');
-    try {
-      return JSON.parse(repaired);
-    } catch {
-      throw error;
-    }
-  }
-}
-
-function ownerImportErrorMessage(result, fallback = 'Result import failed.') {
-  const raw = result?.detail || result?.error || fallback;
-  if (raw === 'platform-owner-required') return 'Only the platform owner can import match results.';
-  if (raw === 'missing-token' || raw === 'invalid-token') return 'Sign in again before importing results.';
-  if (raw === 'no-matching-firestore-match') return 'No matching Firestore match was found for this card.';
-  if (raw === 'invalid-import-json') return result?.detail || 'The pasted JSON could not be read.';
-  return raw;
 }
 
 function arrayValue(value) {
@@ -5333,123 +5300,6 @@ function PredictionSummaryCard({ match, allMatches, voteState = null, accaKeys, 
   );
 }
 
-function MatchResultImportPanel({ match, onImported }) {
-  const [open, setOpen] = useState(false);
-  const [jsonText, setJsonText] = useState('');
-  const [busy, setBusy] = useState(false);
-  const [busyStage, setBusyStage] = useState('');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
-
-  async function submitImport(event) {
-    event.preventDefault();
-    setBusy(true);
-    setBusyStage('Checking JSON...');
-    setMessage('');
-    setError('');
-    const controller = new AbortController();
-    const timeoutId = window.setTimeout(() => controller.abort(), RESULT_IMPORT_TIMEOUT_MS);
-    try {
-      if (!jsonText.trim()) throw new Error('Paste the JSON result first.');
-      const parsedRaw = parsePastedJson(jsonText);
-      const parsed = Array.isArray(parsedRaw) ? parsedRaw[0] : parsedRaw;
-      if (!parsed || typeof parsed !== 'object') throw new Error('Paste one JSON result object for this match.');
-      const payload = {
-        ...parsed,
-        id: match.id,
-        date: match.date,
-        league: match.league,
-        home: match.home?.name,
-        away: match.away?.name,
-        status: 'FT',
-      };
-      const { getFirebaseAuth } = await import('../firebase');
-      setBusyStage('Checking owner access...');
-      const token = await getFirebaseAuth().currentUser?.getIdToken();
-      if (!token) throw new Error('Sign in again before importing results.');
-
-      setBusyStage('Updating Firestore...');
-      const response = await fetch('/api/admin/import-result', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-        signal: controller.signal,
-      });
-      const result = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(ownerImportErrorMessage(result));
-      const updated = result.updated?.[0];
-      setBusyStage('Refreshing match...');
-      try {
-        await onImported?.(match.date);
-        setJsonText('');
-        setOpen(false);
-        setMessage(updated ? `Updated ${updated.home} ${updated.score} ${updated.away}. Card refreshed.` : 'Match updated and refreshed.');
-      } catch {
-        setMessage(updated ? `Updated ${updated.home} ${updated.score} ${updated.away}. Refresh the page if the card has not changed yet.` : 'Match updated. Refresh the page if the card has not changed yet.');
-      }
-    } catch (err) {
-      if (err.name === 'AbortError') {
-        setError('Upload timed out after 30 seconds. Refresh and check the match before trying again.');
-      } else {
-        setError(err.message || 'Could not import this result.');
-      }
-    } finally {
-      window.clearTimeout(timeoutId);
-      setBusy(false);
-      setBusyStage('');
-    }
-  }
-
-  return (
-    <div className="rounded-md border border-amber-200 bg-amber-50/70 p-3 shadow-panel dark:border-amber-500/40 dark:bg-amber-500/10">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <div className="text-sm font-semibold text-ink">Owner result import</div>
-          <div className="mt-0.5 text-xs text-muted">Paste the JSON from ChatGPT for this match only. The match id, teams, date and league are filled in automatically.</div>
-        </div>
-        <button
-          type="button"
-          onClick={() => setOpen((current) => !current)}
-          className="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-amber-300 bg-surface px-3 text-xs font-semibold text-amber-800 transition hover:bg-amber-100 dark:border-amber-500/40 dark:text-amber-300 dark:hover:bg-amber-500/20"
-        >
-          <UploadCloud className="h-4 w-4" aria-hidden="true" />
-          {open ? 'Close import' : 'Import result'}
-        </button>
-      </div>
-
-      {open && (
-        <form onSubmit={submitImport} className="mt-3 space-y-3">
-          <textarea
-            value={jsonText}
-            onChange={(event) => setJsonText(event.target.value)}
-            spellCheck={false}
-            placeholder="Paste the JSON result here"
-            className="min-h-60 w-full rounded-md border border-amber-200 bg-surface p-3 font-mono text-xs leading-5 text-ink outline-none focus:border-amber-400 dark:border-amber-500/40 dark:focus:border-amber-400/70"
-          />
-          <div className="grid gap-2 sm:grid-cols-[1fr_auto] sm:items-center">
-            <div className="text-xs text-muted">
-              Needs final score. Stats can include corners, fouls, shotsOnTarget, yellowCards, redCards and firstToScore.
-            </div>
-            <button
-              type="submit"
-              disabled={busy || !jsonText.trim()}
-              className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-header px-4 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-wait disabled:bg-slate-500"
-            >
-              {busy ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> : <UploadCloud className="h-4 w-4" aria-hidden="true" />}
-              {busy ? busyStage || 'Updating...' : 'Update Firestore'}
-            </button>
-          </div>
-          {message && <div className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-xs font-semibold text-emerald-700 dark:border-emerald-500/40 dark:bg-emerald-500/10 dark:text-emerald-300">{message}</div>}
-          {error && <div className="rounded-md border border-red-200 bg-red-50 p-3 text-xs font-semibold text-red-700 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-300">{error}</div>}
-        </form>
-      )}
-    </div>
-  );
-}
-
 function formatVoteCutoff(value) {
   if (!value) return '';
   const date = new Date(value);
@@ -6044,7 +5894,7 @@ function EspnStatsSection({ espnStats, homeName, awayName }) {
   );
 }
 
-function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerChange, favoriteTeams = [], onToggleFavoriteTeam, isPlatformOwner = false, onMatchImported, onVoteSaved, embedded = false, accaKeys, onToggleLeg }) {
+function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerChange, favoriteTeams = [], onToggleFavoriteTeam, isPlatformOwner = false, onVoteSaved, embedded = false, accaKeys, onToggleLeg }) {
   const predictions = match.predictions || {};
   const odds = displayThreeWayOdds(match);
   const actuals = match.actuals || {};
@@ -6252,7 +6102,6 @@ function MatchDetailView({ match, onBack, allMatches, bookmakerId, onBookmakerCh
                 Open SofaScore match id {match.id}
               </a>
             )}
-            <MatchResultImportPanel match={match} onImported={onMatchImported} />
           </div>
         )}
 
@@ -6695,7 +6544,7 @@ function CompactMatchRow({ match, allMatches, selected, onSelect }) {
   );
 }
 
-function SplitView({ groups, selectedMatch, onSelectRow, bookmakerId, allMatches, onBookmakerChange, favoriteTeams, onToggleFavoriteTeam, isPlatformOwner, onMatchImported, onVoteSaved, accaKeys, onToggleLeg }) {
+function SplitView({ groups, selectedMatch, onSelectRow, bookmakerId, allMatches, onBookmakerChange, favoriteTeams, onToggleFavoriteTeam, isPlatformOwner, onVoteSaved, accaKeys, onToggleLeg }) {
   return (
     <div className="grid grid-cols-1 gap-3 lg:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] lg:items-start lg:gap-4">
       <div className="overflow-hidden rounded-xl border border-line bg-surface shadow-sm lg:sticky lg:top-[8.5rem] lg:max-h-[calc(100dvh-9.5rem)] lg:overflow-y-auto">
@@ -6738,7 +6587,6 @@ function SplitView({ groups, selectedMatch, onSelectRow, bookmakerId, allMatches
             favoriteTeams={favoriteTeams}
             onToggleFavoriteTeam={onToggleFavoriteTeam}
             isPlatformOwner={isPlatformOwner}
-            onMatchImported={onMatchImported}
             onVoteSaved={onVoteSaved}
             accaKeys={accaKeys}
             onToggleLeg={onToggleLeg}
@@ -7754,7 +7602,6 @@ function HomeInner() {
         favoriteTeams={favoriteTeams}
         onToggleFavoriteTeam={handleFavoriteTeamToggle}
         isPlatformOwner={isPlatformOwner}
-        onMatchImported={refreshMatchData}
         onVoteSaved={refreshVoteLeaderboard}
         accaKeys={accaKeys}
         onToggleLeg={toggleAccaLeg}
@@ -8204,7 +8051,6 @@ function HomeInner() {
               favoriteTeams={favoriteTeams}
               onToggleFavoriteTeam={handleFavoriteTeamToggle}
               isPlatformOwner={isPlatformOwner}
-              onMatchImported={refreshMatchData}
               onVoteSaved={refreshVoteLeaderboard}
               accaKeys={accaKeys}
               onToggleLeg={toggleAccaLeg}
