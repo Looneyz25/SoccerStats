@@ -37,3 +37,12 @@ logs/
 .vscode/
 .idea/
 .firecrawl/
+
+# Per-run pipeline diagnostics + daily snapshots (regenerated every run; the live
+# site reads Firestore, not these). Other outputs (routine_progress_latest.*,
+# result_check_*, phase slates, model_calibration.json — a routine input) stay tracked.
+docs/agent-system/outputs/get_data_*.json
+docs/agent-system/outputs/get_data_*.log
+docs/agent-system/outputs/get_data_*.md
+predictions_*.json
+predictions_*.md
