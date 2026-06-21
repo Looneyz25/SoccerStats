@@ -390,6 +390,10 @@ def is_sofascore_event_id(event_id):
     return isinstance(event_id, int) or (isinstance(event_id, str) and event_id.isdigit())
 
 
+def is_espn_event_id(event_id):
+    return isinstance(event_id, str) and event_id.lower().startswith("espn:")
+
+
 def is_bookmaker_fixture_id(event_id):
     return isinstance(event_id, str) and event_id.lower().startswith(BOOKMAKER_MATCH_ID_PREFIXES)
 
@@ -761,6 +765,13 @@ def phase_0_validate(store):
             if not eid:
                 drops_no_id += 1; continue
             if not is_sofascore_event_id(eid):
+                # ESPN is a primary fixture source; ESPN-id matches have no SofaScore
+                # event to validate against, so keep them instead of dropping as
+                # "foreign". Dropping them here then re-promoting from the phase slate
+                # silently wiped predictions off ESPN matches that had already
+                # finished (re-promotion brings finished matches back as bare shells).
+                if is_espn_event_id(eid):
+                    keep.append(m); continue
                 drops_foreign += 1; continue
             ev = cache.get(eid)
             if ev is None:
