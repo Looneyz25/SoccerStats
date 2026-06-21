@@ -4474,11 +4474,19 @@ def _espn_date_close(ev_date, match_date):
 
 
 def espn_event_for_match(league_name, match):
-    # Fast path: use cached event_id to skip fuzzy matching on repeat calls.
+    # Fast path: use the known ESPN event id to skip fuzzy matching. Prefer the
+    # cached field, else derive it from the espn:<id> match id that every
+    # ESPN-promoted fixture carries. This keeps boxscore/stats enrichment working
+    # after the event scrolls off the scoreboard window — otherwise a finished
+    # match that was never name-matched while live can never be re-found.
     cached_id = match.get("espn_event_id")
+    if not cached_id:
+        mid = str(match.get("id") or "")
+        if mid.lower().startswith("espn:"):
+            cached_id = mid.split(":", 1)[1]
     if cached_id:
         for ev in espn_scoreboard_events(league_name):
-            if ev.get("event_id") == cached_id:
+            if str(ev.get("event_id")) == str(cached_id):
                 return ev
         # Event has scrolled off the scoreboard window; return a minimal stub so
         # espn_actuals_for_match() can still call the /summary endpoint by event_id.
