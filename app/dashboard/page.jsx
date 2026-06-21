@@ -3868,21 +3868,22 @@ function Stat({ icon: Icon, label, value, tone = 'text-ink', sublabel = '', clas
   );
 }
 
-function MarketPill({ label, market, edgeBadge, modelProbability }) {
+function MarketPill({ label, market, edgeBadge, modelProbability, record }) {
+  const showRecord = Boolean(record);
   const detail = market ? formatMarketDetail(market) : 'No pick';
   return (
-    <div className={`flex min-h-11 items-center gap-2 rounded-md border px-2.5 py-2 sm:px-3 ${market ? marketPillClass(market.result) : 'border-line bg-surface-2 text-faint'}`}>
+    <div className={`flex min-h-11 items-center gap-2 rounded-md border px-2.5 py-2 sm:px-3 ${showRecord ? 'border-line bg-surface-2' : market ? marketPillClass(market.result) : 'border-line bg-surface-2 text-faint'}`}>
       <span className="shrink-0 text-xs font-medium text-muted">{label}</span>
       <span className="flex min-w-0 flex-1 items-center justify-end gap-1.5">
-        {edgeBadge && (
+        {edgeBadge && !showRecord && (
           <span className="hidden items-center gap-1 rounded-md border border-amber-300 bg-amber-50 px-1.5 py-0.5 text-[11px] font-semibold leading-none text-amber-700 dark:border-amber-500/40 dark:bg-amber-500/15 dark:text-amber-300 sm:inline-flex">
             <Star className="h-3 w-3 fill-amber-400 text-amber-500" aria-hidden="true" />
             <span>{edgeBadge}</span>
           </span>
         )}
-        <span className={`flex min-w-0 items-center justify-end gap-1 text-right text-sm font-semibold leading-5 ${market ? marketValueClass(market.result) : 'text-faint'}`}>
-          {(market?.result === 'hit' || market?.result === 'miss') && resultIcon(market.result)}
-          <span className="min-w-0 truncate">{detail || '-'}</span>
+        <span className={`flex min-w-0 items-center justify-end gap-1 text-right text-sm font-semibold leading-5 ${showRecord ? 'text-ink' : market ? marketValueClass(market.result) : 'text-faint'}`}>
+          {!showRecord && (market?.result === 'hit' || market?.result === 'miss') && resultIcon(market.result)}
+          <span className="min-w-0 truncate">{showRecord ? `${record.hits}/${record.total} hit` : detail || '-'}</span>
         </span>
       </span>
     </div>
@@ -6188,7 +6189,6 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
     comparison?.badge?.tone === 'positive' && comparison.edgePoints > 0 ? comparison.badge.label : null;
   const isFinished = match.status === 'FT';
   const cardsRecord = match.display_summary?.cardsRecord;
-  const showCardsRecord = isFinished && cardsRecord;
   const rawCompactPick = suggestedPickForMatch(match, allMatches);
   const compactPickKind = { BTTS: 'btts', Goals: 'goals', Cards: 'cards', Corners: 'corners' }[rawCompactPick?.label];
   const compactPick = compactPickKind
@@ -6346,6 +6346,7 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
               market={row.market}
               edgeBadge={row.edgeBadge}
               modelProbability={row.modelProbability}
+              record={row.key === 'cards' ? cardsRecord : undefined}
             />
           ))}
         </div>
@@ -6378,7 +6379,6 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
 
         {match.status === 'FT' && (
           <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted">
-            {showCardsRecord && <span className="rounded bg-field px-2 py-1">Cards predictions {cardsRecord.hits}/{cardsRecord.total} hit</span>}
             {'corners_total' in actuals && <span className="rounded bg-field px-2 py-1">Corners {actuals.corners_total}</span>}
             {'fouls_total' in actuals && <span className="rounded bg-field px-2 py-1">Fouls {actuals.fouls_total}</span>}
             {'first_scorer' in actuals && <span className="rounded bg-field px-2 py-1">First scorer {actuals.first_scorer}</span>}
