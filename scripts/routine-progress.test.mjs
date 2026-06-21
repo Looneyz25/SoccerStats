@@ -56,6 +56,52 @@ test('short forecast coverage recommends the light top-up path, not a full refre
   assert.doesNotMatch(progress.actions.join('\n'), /Run npm\.cmd run get:data because/);
 });
 
+test('forecast coverage is gap-aware when the fixture slate lists intermediate days', () => {
+  const progress = buildRoutineProgress({
+    now: NOW,
+    previousProgress: null,
+    log: { runId: 'run-1', mode: 'results-only', status: 'ok' },
+    schedule: { result_check_buffer_minutes: 150, matches: [] },
+    // Store has only today and the far edge (06-17); the days between are missing.
+    matchData: {
+      captured_at: '2026-06-11',
+      leagues: [{ name: 'Test League', matches: [
+        match({ id: 'm1', date: '2026-06-11', time: '23:00' }),
+        match({ id: 'm2', date: '2026-06-17' }),
+      ] }],
+    },
+    // The ESPN slate knows fixtures also exist on 06-13 and 06-15.
+    fixtureSlateDates: ['2026-06-11', '2026-06-13', '2026-06-15', '2026-06-17'],
+  });
+
+  assert.equal(progress.hasSevenDayForecast, false);
+  assert.deepEqual(progress.missingForecastDates, ['2026-06-13', '2026-06-15']);
+
+  const decision = progressMaintenanceDecision(progress);
+  assert.equal(decision.action, 'top-up-horizon');
+  assert.deepEqual(decision.targetDates, ['2026-06-13', '2026-06-15']);
+});
+
+test('a fixture slate covering the full horizon stays healthy', () => {
+  const progress = buildRoutineProgress({
+    now: NOW,
+    previousProgress: null,
+    log: { runId: 'run-1', mode: 'results-only', status: 'ok' },
+    schedule: { result_check_buffer_minutes: 150, matches: [] },
+    matchData: {
+      captured_at: '2026-06-11',
+      leagues: [{ name: 'Test League', matches: [
+        match({ id: 'm1', date: '2026-06-13' }),
+        match({ id: 'm2', date: '2026-06-17' }),
+      ] }],
+    },
+    fixtureSlateDates: ['2026-06-13', '2026-06-17'],
+  });
+
+  assert.equal(progress.hasSevenDayForecast, true);
+  assert.deepEqual(progress.missingForecastDates, []);
+});
+
 test('maintenance decision uses progress overdue pending before broader work', () => {
   const progress = progressFor([
     match({ id: 'm1', date: '2026-06-11', time: '01:00', home: 'Late' }),

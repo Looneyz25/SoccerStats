@@ -47,6 +47,12 @@ const DEFAULT_ENV = {
 
 const FULL_REFRESH_STEPS = [
   {
+    id: 'collect_fixture_slate',
+    label: 'Collect fixture + odds slate',
+    command: 'node',
+    args: ['scripts/run-python.js', 'scripts/soccer_phases_routine.py', '--phases', 'fixtures'],
+  },
+  {
     id: 'collect_dashboard_data',
     label: 'Collect dashboard data',
     command: 'node',
@@ -56,7 +62,7 @@ const FULL_REFRESH_STEPS = [
     id: 'run_phase_pipeline',
     label: 'Run phase pipeline',
     command: 'node',
-    args: ['scripts/run-python.js', 'scripts/soccer_phases_routine.py'],
+    args: ['scripts/run-python.js', 'scripts/soccer_phases_routine.py', '--phases', 'review'],
   },
   {
     id: 'verify_market_settlement',
@@ -558,11 +564,31 @@ async function pendingUploadDecision() {
   };
 }
 
+async function readFixtureSlateDates() {
+  // Dates the ESPN fixture slate knows about — the ground truth for forecast coverage.
+  // Only the date column (col 0) is read so a comma in a later column can't misalign it;
+  // past dates are filtered out downstream by the [today, +6] window in routine-progress.
+  try {
+    const raw = await readFile(path.join(OUT_DIR, 'phase1_fixture_slate_current.csv'), 'utf8');
+    const lines = raw.split(/\r?\n/).filter(Boolean);
+    if (lines.length < 2) return [];
+    const dates = new Set();
+    for (const line of lines.slice(1)) {
+      const date = (line.split(',')[0] || '').trim();
+      if (/^\d{4}-\d{2}-\d{2}$/.test(date)) dates.add(date);
+    }
+    return [...dates].sort();
+  } catch {
+    return [];
+  }
+}
+
 async function writeRoutineProgress(log) {
   const matchData = await readJsonSafe(path.join(ROOT, 'match_data.json'));
   const schedule = await readJsonSafe(path.join(OUT_DIR, 'result_check_schedule_latest.json'));
   const previousProgress = await readJsonSafe(PROGRESS_JSON_PATH);
-  const progress = buildRoutineProgress({ matchData, schedule, log, previousProgress });
+  const fixtureSlateDates = await readFixtureSlateDates();
+  const progress = buildRoutineProgress({ matchData, schedule, log, previousProgress, fixtureSlateDates });
   await writeFile(PROGRESS_JSON_PATH, `${JSON.stringify(progress, null, 2)}\n`, 'utf8');
   await writeFile(PROGRESS_MD_PATH, renderRoutineProgressMarkdown(progress), 'utf8');
   return progress;
@@ -584,7 +610,8 @@ async function readRoutineProgressSnapshot(log = null) {
   const matchData = await readJsonSafe(path.join(ROOT, 'match_data.json'));
   const schedule = await readJsonSafe(path.join(OUT_DIR, 'result_check_schedule_latest.json'));
   const previousProgress = await readJsonSafe(PROGRESS_JSON_PATH);
-  return buildRoutineProgress({ matchData, schedule, log, previousProgress });
+  const fixtureSlateDates = await readFixtureSlateDates();
+  return buildRoutineProgress({ matchData, schedule, log, previousProgress, fixtureSlateDates });
 }
 
 function parseDueAt(row) {
@@ -719,7 +746,11 @@ async function planResultsRun({ forceResultsOnly = false } = {}) {
   }
 
   if (!forceResultsOnly && progressDecision?.action === 'top-up-horizon') {
-    const targetDates = dateRangeAfter(progress.latestCollectedDate, progressDecision.targetDate);
+    // Prefer the slate-derived missing dates (gap-aware); fall back to the contiguous
+    // after-latest range when the decision has no explicit list (no slate available).
+    const targetDates = Array.isArray(progressDecision.targetDates) && progressDecision.targetDates.length
+      ? progressDecision.targetDates
+      : dateRangeAfter(progress.latestCollectedDate, progressDecision.targetDate);
     return {
       action: 'top-up-horizon',
       reason: progressDecision.reason,

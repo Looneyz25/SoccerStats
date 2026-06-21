@@ -143,14 +143,26 @@ function describeProgressMatch(match) {
   return `${match.date || '?'} ${match.time || '?'} ${match.league || '?'} ${match.home || '?'} vs ${match.away || '?'} (${match.expectedFinish || 'expected finish unknown'})`;
 }
 
-export function buildRoutineProgress({ matchData, schedule, log, previousProgress = null, now = new Date() }) {
+export function buildRoutineProgress({ matchData, schedule, log, previousProgress = null, fixtureSlateDates = [], now = new Date() }) {
   const bufferMinutes = Number(schedule?.result_check_buffer_minutes || 150);
   const today = isoDateInAdelaide(now);
   const requiredLatestDate = addIsoDays(today, 6);
   const storeMatches = flattenMatches(matchData, bufferMinutes);
   const dates = sortedUniqueDates(storeMatches);
+  const collectedDateSet = new Set(dates);
   const latestCollectedDate = dates.at(-1) || null;
-  const hasSevenDayForecast = Boolean(latestCollectedDate && latestCollectedDate >= requiredLatestDate);
+  // Gap-aware forecast coverage. The ESPN fixture slate is the source of truth for
+  // which days inside the horizon actually have fixtures, so when it is available the
+  // forecast is "complete" only if every slate day in [today, +6] is present in the
+  // store. This stops a far-edge fixture (e.g. a knockout date) from masking missing
+  // intermediate days. Without a slate we fall back to the latest-date edge check.
+  const slateForecastDates = [...new Set((fixtureSlateDates || []).filter(Boolean))]
+    .filter((date) => date >= today && date <= requiredLatestDate)
+    .sort();
+  const missingForecastDates = slateForecastDates.filter((date) => !collectedDateSet.has(date));
+  const hasSevenDayForecast = slateForecastDates.length
+    ? missingForecastDates.length === 0
+    : Boolean(latestCollectedDate && latestCollectedDate >= requiredLatestDate);
   const nowMinute = adelaideMinuteValue(now);
 
   const byKey = new Map();
@@ -198,7 +210,10 @@ export function buildRoutineProgress({ matchData, schedule, log, previousProgres
     : 'active';
   const completedForDate = progressState === 'completed' ? today : null;
   const actions = [];
-  if (!hasSevenDayForecast) actions.push('Run npm.cmd run get:data:topup to fill the missing forecast horizon; do not run a full refresh unless the agent check finds broken base data.');
+  if (!hasSevenDayForecast) {
+    const missingNote = missingForecastDates.length ? ` (missing ${missingForecastDates.join(', ')})` : '';
+    actions.push(`Run npm.cmd run get:data:topup to fill the missing forecast horizon${missingNote}; do not run a full refresh unless the agent check finds broken base data.`);
+  }
   if (overduePending.length) actions.push('Manual result check required for pending matches past expected finish.');
   if (!actions.length) actions.push('No manual action required.');
 
@@ -216,6 +231,7 @@ export function buildRoutineProgress({ matchData, schedule, log, previousProgres
     latestCollectedDate,
     requiredLatestDate,
     hasSevenDayForecast,
+    missingForecastDates,
     totalMatches: storeMatches.length,
     pendingCount: pending.length,
     resultedCount: matches.length - pending.length,
@@ -257,10 +273,12 @@ export function progressMaintenanceDecision(progress) {
     };
   }
   if (progress.hasSevenDayForecast === false) {
+    const missing = Array.isArray(progress.missingForecastDates) ? progress.missingForecastDates : [];
     return {
       action: 'top-up-horizon',
-      reason: `routine progress is missing forecast horizon through ${progress.requiredLatestDate || '+6 days'}`,
+      reason: `routine progress is missing forecast horizon through ${progress.requiredLatestDate || '+6 days'}${missing.length ? ` (missing ${missing.join(', ')})` : ''}`,
       targetDate: progress.requiredLatestDate || null,
+      targetDates: missing,
     };
   }
   return null;
@@ -279,6 +297,7 @@ export function renderRoutineProgressMarkdown(progress) {
     `Latest / last day of data collected: ${progress.latestCollectedDate || 'n/a'}`,
     `7-day forecast required through: ${progress.requiredLatestDate}`,
     `7-day forecast present: ${progress.hasSevenDayForecast ? 'yes' : 'no'}`,
+    ...(progress.missingForecastDates?.length ? [`Forecast days missing: ${progress.missingForecastDates.join(', ')}`] : []),
     `Published match rows checked: ${progress.totalMatches}`,
     `Tracked pending: ${progress.pendingCount}`,
     `Tracked resulted: ${progress.resultedCount}`,

@@ -257,14 +257,29 @@ def write_summary(run_results):
     SUMMARY_PATH.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
+FIXTURE_PHASE_LABELS = {"1 Fixtures", "2 Odds"}
+REVIEW_PHASE_LABELS = {"Result Review", "Model Calibration"}
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--update-html", action="store_true",
                         help="(legacy no-op) The dashboard reads Firestore only.")
+    parser.add_argument("--phases", choices=["all", "fixtures", "review"], default="all",
+                        help="Which phase group to run: 'fixtures' (1 Fixtures, 2 Odds) before the "
+                             "dashboard routine so it promotes a fresh slate; 'review' (Result Review, "
+                             "Model Calibration) after it; 'all' (default) runs every phase.")
     args = parser.parse_args()
 
+    if args.phases == "fixtures":
+        selected_phases = [p for p in PHASES if p[0] in FIXTURE_PHASE_LABELS]
+    elif args.phases == "review":
+        selected_phases = [p for p in PHASES if p[0] in REVIEW_PHASE_LABELS]
+    else:
+        selected_phases = PHASES
+
     run_results = []
-    for label, script, required in PHASES:
+    for label, script, required in selected_phases:
         result = run_phase(label, script, required)
         run_results.append(result)
         last = result.get("last_line") or result.get("reason") or ""
