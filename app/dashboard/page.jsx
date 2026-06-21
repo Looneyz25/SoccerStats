@@ -6187,6 +6187,8 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
   const edgeBadgeFor = (comparison) =>
     comparison?.badge?.tone === 'positive' && comparison.edgePoints > 0 ? comparison.badge.label : null;
   const isFinished = match.status === 'FT';
+  const cardsRecord = match.display_summary?.cardsRecord;
+  const showCardsRecord = isFinished && cardsRecord;
   const rawCompactPick = suggestedPickForMatch(match, allMatches);
   const compactPickKind = { BTTS: 'btts', Goals: 'goals', Cards: 'cards', Corners: 'corners' }[rawCompactPick?.label];
   const compactPick = compactPickKind
@@ -6376,6 +6378,7 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
 
         {match.status === 'FT' && (
           <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted">
+            {showCardsRecord && <span className="rounded bg-field px-2 py-1">Cards predictions {cardsRecord.hits}/{cardsRecord.total} hit</span>}
             {'corners_total' in actuals && <span className="rounded bg-field px-2 py-1">Corners {actuals.corners_total}</span>}
             {'fouls_total' in actuals && <span className="rounded bg-field px-2 py-1">Fouls {actuals.fouls_total}</span>}
             {'first_scorer' in actuals && <span className="rounded bg-field px-2 py-1">First scorer {actuals.first_scorer}</span>}
@@ -6510,6 +6513,9 @@ function CompactMatchRow({ match, allMatches, selected, onSelect }) {
     ? { ...rawPick, market: withLiveResult(match, pickKind, rawPick.market) }
     : rawPick;
   const settled = compactPick?.market?.result;
+  // The cards column shows the two teams' precomputed cards prediction record (X/Y hit) in
+  // place of the per-match line, alongside the suggested pick.
+  const cardsRecord = match.display_summary?.cardsRecord;
   return (
     <button
       type="button"
@@ -6537,13 +6543,25 @@ function CompactMatchRow({ match, allMatches, selected, onSelect }) {
           <span className="min-w-0 truncate text-sm font-semibold text-ink">{match.away?.name}</span>
         </div>
       </div>
-      {compactPick && (
-        <div className="flex w-24 shrink-0 flex-col items-end justify-center gap-1 text-right">
-          <span className="text-[9px] font-semibold uppercase tracking-wide text-faint">Pick</span>
-          <span className={`inline-flex max-w-full items-center gap-1 rounded px-1.5 py-0.5 text-[11px] font-semibold ${settled ? resultBadgeClass(settled) : 'bg-surface-3 text-ink'}`}>
-            {settled && resultIcon(settled)}
-            <span className="truncate">{compactPick.label}</span>
-          </span>
+      {(compactPick || cardsRecord) && (
+        <div className="flex w-28 shrink-0 flex-col items-end justify-center gap-2 text-right">
+          {compactPick && (
+            <div className="flex flex-col items-end gap-1">
+              <span className="text-[9px] font-semibold uppercase tracking-wide text-faint">Pick</span>
+              <span className={`inline-flex max-w-full items-center gap-1 rounded px-1.5 py-0.5 text-[11px] font-semibold ${settled ? resultBadgeClass(settled) : 'bg-surface-3 text-ink'}`}>
+                {settled && resultIcon(settled)}
+                <span className="truncate">{compactPick.label}</span>
+              </span>
+            </div>
+          )}
+          {cardsRecord && (
+            <div className="flex flex-col items-end gap-1">
+              <span className="text-[9px] font-semibold uppercase tracking-wide text-faint">Cards</span>
+              <span className="inline-flex max-w-full items-center gap-1 rounded bg-surface-3 px-1.5 py-0.5 text-[11px] font-semibold text-ink">
+                {cardsRecord.hits}/{cardsRecord.total} hit
+              </span>
+            </div>
+          )}
         </div>
       )}
     </button>

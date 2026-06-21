@@ -1,0 +1,5 @@
+# Soccer Stats — GOTCHAS (don't repeat these coding mistakes)
+
+2026-06-22 — Dashboard `allMatches`/`matches` is only the loaded slate (current view), NOT full history; never compute multi-match aggregates (per-team records, all-time tallies) by scanning it client-side — precompute into `display_summary` server-side (see `cardsRecord` in precompute_display_markets.mjs) or read `data.allTimeSummary` — app/dashboard/page.jsx
+2026-06-22 — Same team has DIFFERENT `team_id` across providers (ESPN Spain=164 vs SofaScore Spain=4698); matching team history by `team_id` alone drops most of it (gave 1/1 instead of 5/6) — match by id OR normalized name — scripts/precompute_display_markets.mjs
+2026-06-22 — Precomputed `allTimeSummary.review.all` keys the cards row `'cards'` (upload_match_data_to_firestore.mjs `summarizeReviewRows`), but client `summarizeResultsByMarket` uses `'ou_cards'`; match either key when reading review rows — app/dashboard/page.jsx ↔ scripts/upload_match_data_to_firestore.mjs
