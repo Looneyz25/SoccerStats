@@ -79,7 +79,7 @@ DIXON_COLES_RHO = -0.10
 # Football Elo. K=20 matches the eloratings.net "ordinary match" weight and
 # the Opisthokonta tuning study (best K ~= 19.5). HOME_ADV=50 is at the
 # conservative end of the 50-100 range published for club football and lines
-# up with the +0.20 home lambda boost already in the predictor (we don't want
+# up with the home lambda boost already in the predictor (we don't want
 # to double-count home advantage by piling a 100-point Elo gap on top of it).
 ELO_INIT = 1500.0
 ELO_K = 20.0
@@ -88,12 +88,29 @@ ELO_HOME_ADV = 50.0
 # previous rank/pts table_adj magnitude so behaviour stays in the same range.
 ELO_LAMBDA_SCALE = 400.0
 ELO_LAMBDA_CAP = 0.4
+# Per-match home-field advantage baked into the goal expectations (lambdas).
+# Recalibrated 2026-06-23 against 660 settled matches: the prior +0.20 home /
+# -0.05 away (net +0.25 goals) under-weighted home, leaving the winner model
+# ~3-4pts low on home and ~4-6pts high on away (skew confirmed in both club and
+# neutral-venue international fixtures). Net +0.45 goals (+0.30 home / -0.15
+# away) closes the home/away calibration gap and lowers winner log-loss while
+# nudging pick accuracy up. Re-tune via scripts/winner_calibration_backtest.mjs.
+HOME_LAMBDA_ADV = 0.30
+AWAY_LAMBDA_ADJ = -0.15
 BTTS_YES_THRESHOLD = 0.56
 WINNER_BOOKMAKER_BLEND = 0.40
 DRAW_MIN_PROBABILITY = 0.28
 DRAW_MAX_HOME_AWAY_GAP = 0.15
 DRAW_MAX_FAVOURITE_GAP = 0.15
 CARDS_OVER_THRESHOLD = 0.68
+# Informative Beta prior for the streak-based Over 4.5 cards estimate.
+# Recalibrated 2026-06-23: the old symmetric Beta(1,1) prior centred Over at
+# 50% while the real Over-4.5 rate is ~23% over 272 settled matches, so sparse
+# or tied streaks badly over-predicted Over. Beta(1,3) (centre 25%) matches the
+# base rate and cuts cards Brier 0.199 -> 0.157; the streak signal still lifts
+# Over when over-streaks dominate (over>under streaks settle ~54% Over).
+CARDS_OVER_PRIOR_ALPHA = 1.0
+CARDS_OVER_PRIOR_BETA = 3.0
 DEFAULT_PREMATCH_TEAM_GOALS = 1.35
 DEFAULT_PREMATCH_CORNERS_TOTAL = 10.2
 CORNER_MODEL_PROBABILITY_CAP = 0.72
@@ -2365,8 +2382,8 @@ def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
     context_adj = market_context_adjustment(market_context)
 
     # Final lambdas
-    lh = max(0.20, base_h + 0.20 + h2h_delta_h + elo_adj_h + context_adj["home_lambda"])
-    la = max(0.20, base_a - 0.05 + h2h_delta_a + elo_adj_a + context_adj["away_lambda"])
+    lh = max(0.20, base_h + HOME_LAMBDA_ADV + h2h_delta_h + elo_adj_h + context_adj["home_lambda"])
+    la = max(0.20, base_a + AWAY_LAMBDA_ADJ + h2h_delta_a + elo_adj_a + context_adj["away_lambda"])
 
     pmf = lambda k, l: math.exp(-l) * (l ** k) / math.factorial(k)
     grid = [[pmf(i, lh) * pmf(j, la) for j in range(7)] for i in range(7)]
@@ -2455,7 +2472,9 @@ def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
 
     over = sum(1 for s in (streaks or []) if "more than 4.5 cards" in (s.get("label") or "").lower())
     under = sum(1 for s in (streaks or []) if "less than 4.5 cards" in (s.get("label") or "").lower())
-    card_raw_over_probability = (over + 1) / (over + under + 2)
+    card_raw_over_probability = (over + CARDS_OVER_PRIOR_ALPHA) / (
+        over + under + CARDS_OVER_PRIOR_ALPHA + CARDS_OVER_PRIOR_BETA
+    )
     if context_adj.get("cards_over_prior") is not None:
         card_raw_over_probability = (
             card_raw_over_probability * (1 - BOOKMAKER_CONTEXT_CARDS_WEIGHT)
