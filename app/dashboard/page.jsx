@@ -3868,22 +3868,21 @@ function Stat({ icon: Icon, label, value, tone = 'text-ink', sublabel = '', clas
   );
 }
 
-function MarketPill({ label, market, edgeBadge, modelProbability, record }) {
-  const showRecord = Boolean(record);
+function MarketPill({ label, market, edgeBadge, modelProbability }) {
   const detail = market ? formatMarketDetail(market) : 'No pick';
   return (
-    <div className={`flex min-h-11 items-center gap-2 rounded-md border px-2.5 py-2 sm:px-3 ${showRecord ? 'border-line bg-surface-2' : market ? marketPillClass(market.result) : 'border-line bg-surface-2 text-faint'}`}>
+    <div className={`flex min-h-11 items-center gap-2 rounded-md border px-2.5 py-2 sm:px-3 ${market ? marketPillClass(market.result) : 'border-line bg-surface-2 text-faint'}`}>
       <span className="shrink-0 text-xs font-medium text-muted">{label}</span>
       <span className="flex min-w-0 flex-1 items-center justify-end gap-1.5">
-        {edgeBadge && !showRecord && (
+        {edgeBadge && (
           <span className="hidden items-center gap-1 rounded-md border border-amber-300 bg-amber-50 px-1.5 py-0.5 text-[11px] font-semibold leading-none text-amber-700 dark:border-amber-500/40 dark:bg-amber-500/15 dark:text-amber-300 sm:inline-flex">
             <Star className="h-3 w-3 fill-amber-400 text-amber-500" aria-hidden="true" />
             <span>{edgeBadge}</span>
           </span>
         )}
-        <span className={`flex min-w-0 items-center justify-end gap-1 text-right text-sm font-semibold leading-5 ${showRecord ? 'text-ink' : market ? marketValueClass(market.result) : 'text-faint'}`}>
-          {!showRecord && (market?.result === 'hit' || market?.result === 'miss') && resultIcon(market.result)}
-          <span className="min-w-0 truncate">{showRecord ? `${record.hits}/${record.total} hit` : detail || '-'}</span>
+        <span className={`flex min-w-0 items-center justify-end gap-1 text-right text-sm font-semibold leading-5 ${market ? marketValueClass(market.result) : 'text-faint'}`}>
+          {(market?.result === 'hit' || market?.result === 'miss') && resultIcon(market.result)}
+          <span className="min-w-0 truncate">{detail || '-'}</span>
         </span>
       </span>
     </div>
@@ -6188,7 +6187,6 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
   const edgeBadgeFor = (comparison) =>
     comparison?.badge?.tone === 'positive' && comparison.edgePoints > 0 ? comparison.badge.label : null;
   const isFinished = match.status === 'FT';
-  const cardsRecord = match.display_summary?.cardsRecord;
   const rawCompactPick = suggestedPickForMatch(match, allMatches);
   const compactPickKind = { BTTS: 'btts', Goals: 'goals', Cards: 'cards', Corners: 'corners' }[rawCompactPick?.label];
   const compactPick = compactPickKind
@@ -6346,7 +6344,6 @@ function MatchCard({ match, onSelect, bookmakerId, allMatches, favoriteTeams = [
               market={row.market}
               edgeBadge={row.edgeBadge}
               modelProbability={row.modelProbability}
-              record={row.key === 'cards' ? cardsRecord : undefined}
             />
           ))}
         </div>
@@ -6513,9 +6510,11 @@ function CompactMatchRow({ match, allMatches, selected, onSelect }) {
     ? { ...rawPick, market: withLiveResult(match, pickKind, rawPick.market) }
     : rawPick;
   const settled = compactPick?.market?.result;
-  // The cards column shows the two teams' precomputed cards prediction record (X/Y hit) in
-  // place of the per-match line, alongside the suggested pick.
-  const cardsRecord = match.display_summary?.cardsRecord;
+  // Per-match prediction scorecard: how many of THIS match's standard predictions
+  // (winner, BTTS, goals, cards, corners) hit, out of those settled — from the
+  // precomputed headlineSummary, shown alongside the suggested pick.
+  const predictionRecord = match.display_summary?.headlineSummary;
+  const showRecord = Boolean(predictionRecord && predictionRecord.settled > 0);
   return (
     <button
       type="button"
@@ -6543,7 +6542,7 @@ function CompactMatchRow({ match, allMatches, selected, onSelect }) {
           <span className="min-w-0 truncate text-sm font-semibold text-ink">{match.away?.name}</span>
         </div>
       </div>
-      {(compactPick || cardsRecord) && (
+      {(compactPick || showRecord) && (
         <div className="flex w-28 shrink-0 flex-col items-end justify-center gap-2 text-right">
           {compactPick && (
             <div className="flex flex-col items-end gap-1">
@@ -6554,11 +6553,11 @@ function CompactMatchRow({ match, allMatches, selected, onSelect }) {
               </span>
             </div>
           )}
-          {cardsRecord && (
+          {showRecord && (
             <div className="flex flex-col items-end gap-1">
-              <span className="text-[9px] font-semibold uppercase tracking-wide text-faint">Cards</span>
+              <span className="text-[9px] font-semibold uppercase tracking-wide text-faint">Hits</span>
               <span className="inline-flex max-w-full items-center gap-1 rounded bg-surface-3 px-1.5 py-0.5 text-[11px] font-semibold text-ink">
-                {cardsRecord.hits}/{cardsRecord.total} hit
+                {predictionRecord.hits}/{predictionRecord.settled} hit
               </span>
             </div>
           )}

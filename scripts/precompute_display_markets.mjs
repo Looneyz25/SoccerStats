@@ -909,38 +909,6 @@ function summarizeHeadline(markets) {
   };
 }
 
-// Per-match cards prediction record: how many of this match's two teams' settled, tracked
-// cards calls hit, out of total. Computed server-side over the full dataset so the client
-// (which only loads the current slate) can show a per-match figure, not an all-time one.
-// Teams are matched by id OR normalized name because the same national team carries a
-// different team_id across providers (e.g. ESPN Spain=164 vs SofaScore Spain=4698), so a
-// team_id-only match drops most of a team's history.
-function normalizeTeamName(name) {
-  return String(name || '').trim().toLowerCase();
-}
-
-function cardsTeamRecord(allMatches, match) {
-  const ids = new Set([match.home?.team_id, match.away?.team_id].filter((value) => value != null));
-  const names = new Set([match.home?.name, match.away?.name].map(normalizeTeamName).filter(Boolean));
-  if (!ids.size && !names.size) return null;
-  const involves = (team) =>
-    (team?.team_id != null && ids.has(team.team_id)) || names.has(normalizeTeamName(team?.name));
-  let hits = 0;
-  let total = 0;
-  for (const m of allMatches) {
-    if (m.status !== 'FT' || String(m.date || '') < PREDICTION_TRACKING_START_DATE) continue;
-    if (!involves(m.home) && !involves(m.away)) continue;
-    const result = m.display_markets?.cards?.market?.result ?? m.predictions?.ou_cards?.result;
-    if (result === 'hit') {
-      hits += 1;
-      total += 1;
-    } else if (result === 'miss') {
-      total += 1;
-    }
-  }
-  return total ? { hits, total } : null;
-}
-
 function precomputeMatch(match, allMatches) {
   const winner = winnerMarketWithGuidance(match, allMatches);
   const btts = displayBttsMarket(match.predictions?.btts, match);
@@ -983,7 +951,6 @@ function precomputeMatch(match, allMatches) {
       compactMarket,
       headlineMarkets: headline,
       headlineSummary: summarizeHeadline(headline),
-      cardsRecord: cardsTeamRecord(allMatches, match),
     },
   };
 }
