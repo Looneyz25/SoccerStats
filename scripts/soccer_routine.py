@@ -98,6 +98,8 @@ ELO_LAMBDA_CAP = 0.4
 HOME_LAMBDA_ADV = 0.30
 AWAY_LAMBDA_ADJ = -0.15
 BTTS_YES_THRESHOLD = 0.56
+GOAL_MARKET_BOOKMAKER_BLEND = 0.50
+GOALS_OVER_PICK_THRESHOLD = 0.50
 WINNER_BOOKMAKER_BLEND = 0.40
 DRAW_MIN_PROBABILITY = 0.28
 DRAW_MAX_HOME_AWAY_GAP = 0.15
@@ -177,7 +179,6 @@ TOURNAMENTS = {
     23:  "Serie A",
     34:  "Ligue 1",
     17015: "UEFA Conference League",
-    325: "Brasileirão Betano",
     384: "CONMEBOL Libertadores",
     136: "A-League Men",
     16:  "FIFA World Cup",
@@ -196,7 +197,7 @@ TOURNAMENTS = {
 }
 ORDER = ["UEFA Champions League","UEFA Europa League","Premier League","LaLiga",
          "Bundesliga","Serie A","Ligue 1","UEFA Conference League",
-         "Brasileirão Betano","CONMEBOL Libertadores","A-League Men","FIFA World Cup",
+         "CONMEBOL Libertadores","A-League Men","FIFA World Cup",
          "International Friendly Games","Eredivisie","Primeira Liga","MLS",
          "Scottish Premiership","J1 League","Championship","League One","League Two",
          "Allsvenskan","Eliteserien"]
@@ -353,6 +354,14 @@ def match_kickoff_datetime(match):
         return None
     hour, minute = [int(part) for part in t.split(":")]
     return datetime(d.year, d.month, d.day, hour, minute, tzinfo=ADL)
+
+
+def has_match_started(match, now=None):
+    status = str(match.get("status") or "").lower()
+    if status in ("live", "ft"):
+        return True
+    kickoff = match_kickoff_datetime(match)
+    return bool(kickoff and (now or datetime.now(ADL)) >= kickoff)
 
 
 def result_due_datetime(match):
@@ -590,7 +599,6 @@ LEAGUE_LOGO_OVERRIDES = {
     "A-League Men": "https://media.api-sports.io/football/leagues/188.png",
     "Scottish Premiership": "https://media.api-sports.io/football/leagues/179.png",
     "J1 League": "https://media.api-sports.io/football/leagues/98.png",
-    "Brasileirão Betano": "https://media.api-sports.io/football/leagues/71.png",
     "CONMEBOL Libertadores": "https://media.api-sports.io/football/leagues/13.png",
     "FIFA World Cup": "https://media.api-sports.io/football/leagues/1.png",
     "International Friendly Games": "https://media.api-sports.io/football/leagues/10.png",
@@ -875,7 +883,6 @@ FLASH_LEAGUE_ALIASES = {
     "UEFA Europa League": ("europe", {"europa league"}),
     "UEFA Conference League": ("europe", {"conference league", "europa conference league"}),
     "MLS": ("usa", {"mls", "major league soccer"}),
-    "Brasileirão Betano": ("brazil", {"brasileirao betano", "brasileirão betano", "serie a betano", "serie a"}),
     "CONMEBOL Libertadores": ("south america", {"conmebol libertadores", "copa libertadores", "libertadores"}),
     "FIFA World Cup": ("world", {"world cup", "world championship", "men's world cup", "mens world cup"}),
     "International Friendly Games": ("", {"international friendlies", "friendly international", "friendlies", "friendly games"}),
@@ -2419,6 +2426,9 @@ def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
         w = {"pick": a_name, "type": "away", "probability": round(p_a, 4), "raw_probability": round(raw_p_a, 4)}
     else:
         w = {"pick": "Draw", "type": "draw", "probability": round(p_d, 4), "raw_probability": round(raw_p_d, 4)}
+    winner_odds = to_float((market_odds or {}).get(w["type"]))
+    if winner_odds is not None:
+        w["odds"] = winner_odds
     w["probabilities"] = {"home": round(p_h, 4), "draw": round(p_d, 4), "away": round(p_a, 4)}
     w["model_probabilities"] = {side: round(value, 4) for side, value in model_probabilities.items()}
     w["raw_probabilities"] = {"home": round(raw_p_h, 4), "draw": round(raw_p_d, 4), "away": round(raw_p_a, 4)}
@@ -2456,7 +2466,7 @@ def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
 
     goals_cal = calibration_adjustment(league, "ou_goals")
     p_over_25_cal = shrink_probability(p_over_25, goals_cal["trust_factor"], 0.5)
-    goals_pick = "Over" if p_over_25_cal >= 0.55 else "Under"
+    goals_pick = "Over" if p_over_25_cal >= GOALS_OVER_PICK_THRESHOLD else "Under"
     goals_probability = p_over_25_cal if goals_pick == "Over" else 1 - p_over_25_cal
     goals_raw_probability = p_over_25 if goals_pick == "Over" else 1 - p_over_25
     ou_goals = {
@@ -2496,6 +2506,10 @@ def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
     }
     if cards_cal["sources"]:
         cards["calibration"] = cards_cal
+    # Zero observed cards streaks for either side and no bookmaker cards context leaves
+    # (0+alpha)/(0+alpha+beta) — the Beta(1,3) prior alone, identical on every such row.
+    if not (over + under) and context_adj.get("cards_over_prior") is None:
+        suppress_market_without_evidence(cards, CARDS_SUPPRESSION_REASON)
     factors = {
         "lambda_home": round(lh, 3),
         "lambda_away": round(la, 3),
@@ -2527,6 +2541,135 @@ def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
     }
     return {"winner": w, "btts": btts, "ou_goals": ou_goals, "ou_cards": cards,
             "factors": factors}
+
+
+def implied_probability_from_odds(value):
+    number = to_float(value)
+    if number is None or number <= 1.01:
+        return None
+    return 1.0 / number
+
+
+def no_vig_two_way_probability(prices, positive_key, negative_key):
+    positive = implied_probability_from_odds((prices or {}).get(positive_key))
+    negative = implied_probability_from_odds((prices or {}).get(negative_key))
+    if positive is None or negative is None:
+        return None
+    total = positive + negative
+    if total <= 0:
+        return None
+    return positive / total
+
+
+CARDS_SUPPRESSION_REASON = "No cards history for either team and no bookmaker cards market."
+CORNERS_SUPPRESSION_REASON = "No bookmaker corners market for this side/line; the number would be the no-odds cap, not a read."
+
+
+def suppress_market_without_evidence(market, reason):
+    """Stop publishing a number the data cannot support, keeping the row for structure.
+
+    A prior with zero observations and a cap that binds on every fixture are not reads;
+    published as probabilities they cost real money (cards Over stated 66%, landed 44%
+    across 145 settled picks). Clearing `pick` also keeps settlement from scoring the
+    market into hit rates. Computed values are kept under `suppressed_*` for backtests.
+    """
+    if not isinstance(market, dict) or market.get("insufficient_evidence"):
+        return False
+    if market.get("pick") is not None:
+        market["suppressed_pick"] = market.get("pick")
+    if market.get("probability") is not None:
+        market["suppressed_probability"] = market.get("probability")
+    market["pick"] = None
+    market["probability"] = None
+    market["insufficient_evidence"] = True
+    market["evidence_reason"] = reason
+    return True
+
+
+def republish_market_with_evidence(market, probability):
+    """Undo suppression once a real basis (a bookmaker price) arrives."""
+    if not isinstance(market, dict) or not market.get("insufficient_evidence"):
+        return False
+    market["pick"] = market.pop("suppressed_pick", None) or market.get("pick")
+    market["probability"] = probability
+    market.pop("suppressed_probability", None)
+    market.pop("insufficient_evidence", None)
+    market.pop("evidence_reason", None)
+    return True
+
+
+def apply_bookmaker_goal_market_blend(match, predictions):
+    """Blend BTTS/goals picks with matching pre-kickoff Sportsbet two-way markets.
+
+    The Poisson model can run hot when a fixture only has weak/default context.
+    When Sportsbet has the exact BTTS or Match goals 2.5 market, use its no-vig
+    side probability as a sanity guard for unlocked pre-match predictions.
+    """
+    markets = match.get("sportsbet_markets") or {}
+    changed = False
+
+    btts = predictions.get("btts") or {}
+    btts_prices = markets.get("Both teams to score")
+    book_btts_yes = no_vig_two_way_probability(btts_prices, "Yes", "No")
+    model_btts_yes = probability_for_yes_or_over(btts, "Yes")
+    if book_btts_yes is not None and model_btts_yes is not None:
+        blended_yes = (
+            model_btts_yes * (1 - GOAL_MARKET_BOOKMAKER_BLEND)
+            + book_btts_yes * GOAL_MARKET_BOOKMAKER_BLEND
+        )
+        pick = "Yes" if blended_yes > BTTS_YES_THRESHOLD else "No"
+        probability = blended_yes if pick == "Yes" else 1 - blended_yes
+        model_side_probability = model_btts_yes if pick == "Yes" else 1 - model_btts_yes
+        book_side_probability = book_btts_yes if pick == "Yes" else 1 - book_btts_yes
+        next_btts = {
+            **btts,
+            "pick": pick,
+            "probability": round(probability, 4),
+            "raw_probability": round(model_side_probability, 4),
+            "bookmaker_probability": round(book_side_probability, 4),
+            "bookmaker_blend_weight": GOAL_MARKET_BOOKMAKER_BLEND,
+        }
+        pick_odds = to_float((btts_prices or {}).get(pick))
+        if pick_odds is not None:
+            next_btts["odds"] = pick_odds
+        if next_btts != btts:
+            predictions["btts"] = next_btts
+            changed = True
+
+    goals = predictions.get("ou_goals") or {}
+    line = goals.get("line", 2.5)
+    goal_prices = markets.get(f"Match goals {line}")
+    book_over = no_vig_two_way_probability(goal_prices, "Over", "Under")
+    model_over = probability_for_yes_or_over(goals, "Over")
+    if book_over is not None and model_over is not None:
+        blended_over = (
+            model_over * (1 - GOAL_MARKET_BOOKMAKER_BLEND)
+            + book_over * GOAL_MARKET_BOOKMAKER_BLEND
+        )
+        pick = "Over" if blended_over >= GOALS_OVER_PICK_THRESHOLD else "Under"
+        probability = blended_over if pick == "Over" else 1 - blended_over
+        model_side_probability = model_over if pick == "Over" else 1 - model_over
+        book_side_probability = book_over if pick == "Over" else 1 - book_over
+        next_goals = {
+            **goals,
+            "pick": pick,
+            "line": line,
+            "probability": round(probability, 4),
+            "raw_probability": round(model_side_probability, 4),
+            "bookmaker_probability": round(book_side_probability, 4),
+            "bookmaker_blend_weight": GOAL_MARKET_BOOKMAKER_BLEND,
+        }
+        pick_odds = to_float((goal_prices or {}).get(pick))
+        if pick_odds is not None:
+            next_goals["odds"] = pick_odds
+        if next_goals != goals:
+            predictions["ou_goals"] = next_goals
+            changed = True
+
+    if changed:
+        factors = predictions.setdefault("factors", {})
+        factors["goal_market_bookmaker_blend"] = GOAL_MARKET_BOOKMAKER_BLEND
+    return changed
 
 
 # Backwards-compat shim — keeps phase_a6_retro working without an explicit
@@ -3009,6 +3152,7 @@ def pre_corners_prediction(match, league_matches, all_matches):
             "no_sportsbet_corner_odds": True,
             "no_odds_probability_cap": NO_SPORTSBET_CORNER_PROBABILITY_CAP,
         })
+        suppress_market_without_evidence(market, CORNERS_SUPPRESSION_REASON)
     return market
 
 
@@ -3061,7 +3205,7 @@ def apply_league_goal_profile_to_existing_predictions(match, league_name):
             changed = True
 
     if adjusted_over is not None:
-        goals_pick = "Over" if adjusted_over >= 0.55 else "Under"
+        goals_pick = "Over" if adjusted_over >= GOALS_OVER_PICK_THRESHOLD else "Under"
         goals_probability = adjusted_over if goals_pick == "Over" else 1 - adjusted_over
         if goals.get("pick") != goals_pick or round(to_float(goals.get("probability")) or 0.0, 4) != round(goals_probability, 4):
             goals.update({
@@ -3079,6 +3223,34 @@ def apply_league_goal_profile_to_existing_predictions(match, league_name):
     return changed
 
 
+def match_has_cards_evidence(match):
+    """True when this fixture has real cards data behind an ou_cards number.
+
+    Either team-level cards streaks ("more/less than 4.5 cards") or a bookmaker cards
+    market. Without one of those, the stored probability is only the Beta prior.
+    """
+    for streak in (match.get("team_streaks") or []):
+        label = (streak.get("label") or "").lower()
+        if "than 4.5 cards" in label:
+            return True
+    markets = match.get("sportsbet_markets") or {}
+    return any(str(key).startswith("Cards in match") for key in markets)
+
+
+def apply_cards_evidence_gate_to_existing_prediction(match):
+    if match.get("status") == "FT" or match.get("prediction_locked"):
+        return False
+    cards = (match.get("predictions") or {}).get("ou_cards")
+    if not isinstance(cards, dict):
+        return False
+    if match_has_cards_evidence(match):
+        probability = to_float(cards.get("suppressed_probability"))
+        if probability is None:
+            return False
+        return republish_market_with_evidence(cards, probability)
+    return suppress_market_without_evidence(cards, CARDS_SUPPRESSION_REASON)
+
+
 def apply_corner_probability_cap_to_existing_prediction(match):
     if match.get("status") == "FT" or match.get("prediction_locked"):
         return False
@@ -3086,7 +3258,10 @@ def apply_corner_probability_cap_to_existing_prediction(match):
     corners = predictions.get("ou_corners")
     if not isinstance(corners, dict):
         return False
-    odds = corner_odds_for_prediction(match, corners.get("line", 10.5), corners.get("pick"))
+    # A suppressed market has no pick, so the price lookup has to fall back to the side
+    # it would have taken — otherwise it can never see odds arrive and republish.
+    pick_for_odds = corners.get("pick") or corners.get("suppressed_pick")
+    odds = corner_odds_for_prediction(match, corners.get("line", 10.5), pick_for_odds)
     probability = to_float(corners.get("model_probability"))
     if probability is None:
         probability = to_float(corners.get("probability"))
@@ -3095,11 +3270,15 @@ def apply_corner_probability_cap_to_existing_prediction(match):
 
     cap = CORNER_MODEL_PROBABILITY_CAP if odds else NO_SPORTSBET_CORNER_PROBABILITY_CAP
     changed = False
-    if probability > cap:
-        corners["probability"] = cap
-        corners["model_probability"] = cap
-        changed = True
+    capped = round(min(probability, cap), 4)
     if odds:
+        # A real price is the basis the market was missing — republish it.
+        if republish_market_with_evidence(corners, capped):
+            changed = True
+        if to_float(corners.get("probability")) != capped:
+            corners["probability"] = capped
+            changed = True
+        corners["model_probability"] = capped
         corners["model_probability_cap"] = CORNER_MODEL_PROBABILITY_CAP
         for key in ("confidence_hidden", "confidence_reason", "no_sportsbet_corner_odds", "no_odds_probability_cap"):
             if key in corners:
@@ -3110,9 +3289,40 @@ def apply_corner_probability_cap_to_existing_prediction(match):
         corners["confidence_reason"] = "No Sportsbet corner odds for this side/line."
         corners["no_sportsbet_corner_odds"] = True
         corners["no_odds_probability_cap"] = NO_SPORTSBET_CORNER_PROBABILITY_CAP
+        suppress_market_without_evidence(corners, CORNERS_SUPPRESSION_REASON)
         changed = True
     corners["model_probability_cap"] = cap
     return changed
+
+
+def has_two_way_goal_markets(match):
+    markets = match.get("sportsbet_markets") or {}
+    return bool(markets.get("Both teams to score") or markets.get("Match goals 2.5"))
+
+
+def pre_match_prediction_refresh_reason(match, predictions, odds, market_context):
+    factors = predictions.get("factors") or {}
+    if factors.get("source") != "pre_match_prefill":
+        return None
+    goals = predictions.get("ou_goals") or {}
+    if goals.get("pick") in ("Over", "Under"):
+        goals_probability = to_float(goals.get("probability"))
+        if goals_probability is not None and goals_probability < 0.5:
+            return "weak_goals_side"
+    if factors.get("model_seed_odds") and odds:
+        return "bookmaker_odds_arrived"
+    winner = predictions.get("winner") or {}
+    winner_type = winner.get("type")
+    if winner_type in ("home", "draw", "away"):
+        expected_winner_odds = to_float((odds or {}).get(winner_type))
+        current_winner_odds = to_float(winner.get("odds"))
+        if expected_winner_odds is not None and current_winner_odds is None:
+            return "winner_odds_missing"
+    if has_two_way_goal_markets(match) and factors.get("goal_market_bookmaker_blend") != GOAL_MARKET_BOOKMAKER_BLEND:
+        return "goal_market_bookmaker_blend"
+    if factors.get("data_quality") == "Data weak" and (odds or market_context):
+        return "weak_prefill_refresh"
+    return None
 
 
 def populate_pre_match_predictions(store, target_dates=None):
@@ -3126,6 +3336,8 @@ def populate_pre_match_predictions(store, target_dates=None):
     corner_created = 0
     profiled = 0
     corner_capped = 0
+    cards_suppressed = 0
+    refreshed = 0
     by_league = {}
     for league in store.get("leagues", []):
         league_name = league.get("name") or ""
@@ -3133,7 +3345,7 @@ def populate_pre_match_predictions(store, target_dates=None):
         for match in league_matches:
             if target_dates and match.get("date") not in target_dates:
                 continue
-            if match.get("status") == "FT":
+            if match.get("status") == "FT" or match.get("prediction_locked") or has_match_started(match):
                 continue
             predictions = match.setdefault("predictions", {})
             odds = market_odds_for_match(match)
@@ -3141,10 +3353,12 @@ def populate_pre_match_predictions(store, target_dates=None):
             h_name = (match.get("home") or {}).get("name") or "Home"
             a_name = (match.get("away") or {}).get("name") or "Away"
             before_keys = {key for key, value in predictions.items() if value}
+            market_context = prediction_context_for_match(match, all_matches)
+            has_required = all(predictions.get(key) for key in ("winner", "btts", "ou_goals", "ou_cards"))
+            refresh_reason = pre_match_prediction_refresh_reason(match, predictions, odds, market_context) if has_required else None
 
-            if not all(predictions.get(key) for key in ("winner", "btts", "ou_goals", "ou_cards")):
+            if not has_required or refresh_reason:
                 h_att, h_def, a_att, a_def = pre_prediction_form_inputs(match, league_matches, model_seed_odds)
-                market_context = prediction_context_for_match(match, all_matches)
                 fallback = predict_enhanced(
                     h_att,
                     h_def,
@@ -3177,19 +3391,38 @@ def populate_pre_match_predictions(store, target_dates=None):
                     "bookmaker_odds_available": bool(odds),
                     "model_seed_odds": None if odds else model_seed_odds,
                 })
+                if refresh_reason:
+                    fallback_factors["refresh_reason"] = refresh_reason
+                    fallback_factors["refreshed_at"] = datetime.now(ADL).isoformat()
                 if not odds:
                     fallback_factors["caution"] = "Bookmaker market unavailable; use model-only predictions carefully."
-                fallback["factors"] = {**fallback_factors, **(predictions.get("factors") or {})}
+                    # The 3.0/3.2 seed is a model input, never a quote. Persisting it as
+                    # market.odds fabricates an edge and hides the gap from verify-odds.
+                    for _mk in ("winner", "btts", "ou_goals", "ou_cards"):
+                        _m = fallback.get(_mk)
+                        if isinstance(_m, dict):
+                            _m["odds"] = None
+                            _m["odds_estimated"] = False
+                            _m["no_bookmaker_odds"] = True
+                fallback["factors"] = {**(predictions.get("factors") or {}), **fallback_factors}
+                apply_bookmaker_goal_market_blend(match, fallback)
                 for key in ("winner", "btts", "ou_goals", "ou_cards"):
-                    if not predictions.get(key) and fallback.get(key):
+                    if refresh_reason:
+                        if fallback.get(key):
+                            predictions[key] = fallback[key]
+                    elif not predictions.get(key) and fallback.get(key):
                         predictions[key] = fallback[key]
                 predictions["factors"] = fallback["factors"]
+                if refresh_reason:
+                    refreshed += 1
 
             if not predictions.get("ou_corners"):
                 predictions["ou_corners"] = pre_corners_prediction(match, league_matches, all_matches)
                 corner_created += 1
             if apply_league_goal_profile_to_existing_predictions(match, league_name):
                 profiled += 1
+            if apply_cards_evidence_gate_to_existing_prediction(match):
+                cards_suppressed += 1
             if apply_corner_probability_cap_to_existing_prediction(match):
                 corner_capped += 1
 
@@ -3199,13 +3432,15 @@ def populate_pre_match_predictions(store, target_dates=None):
                 created += delta
                 by_league[league_name] = by_league.get(league_name, 0) + delta
 
-    if created or profiled or corner_capped:
+    if created or profiled or corner_capped or cards_suppressed or refreshed:
         save_store(store)
     return {
         "created": created,
         "corner_created": corner_created,
         "profiled": profiled,
         "corner_capped": corner_capped,
+        "cards_suppressed": cards_suppressed,
+        "refreshed": refreshed,
         "by_league": by_league,
     }
 
@@ -3350,9 +3585,14 @@ def phase_b_forecast(store, seen_ids):
     all_matches = [m for league in store.get("leagues", []) for m in league.get("matches", [])]
     added = 0; add_brk = {}
     forecast_days = fixture_target_dates()
+    unreachable_days = []
     for d in forecast_days:
         data = fetch(f"/api/v1/sport/football/scheduled-events/{d}"); time.sleep(0.6)
-        if not data: continue
+        if not data:
+            # A blocked source (SofaScore now 403s) must never look like "no fixtures today".
+            unreachable_days.append(d)
+            print(f"  WARNING: fixture source returned nothing for {d} (blocked or empty)")
+            continue
         for ev in data.get("events", []):
             eid = ev.get("id")
             if not eid or eid in seen_ids: continue
@@ -3421,7 +3661,7 @@ def phase_b_forecast(store, seen_ids):
                 add_brk[league_name] = add_brk.get(league_name, 0) + 1
             except Exception:
                 pass
-    return {"added": added, "add_brk": add_brk}
+    return {"added": added, "add_brk": add_brk, "unreachable_days": unreachable_days}
 
 
 # ----------------------------------------------------------------------------
@@ -3607,7 +3847,10 @@ def phase_fixture_team(name, team_id=None, logo=None, source=None):
     return payload
 
 
-def phase_fixture_exists(league, row):
+def find_phase_fixture_match(league, row):
+    """Return the stored match this phase-slate row corresponds to (by event id, then
+    by date/time + team-name match), or None. Shared by phase_fixture_exists and the
+    identity refresh so both agree on what "the same fixture" means."""
     event_id = row.get("event_id")
     row_key = (
         row.get("date") or "",
@@ -3617,7 +3860,7 @@ def phase_fixture_exists(league, row):
     )
     for match in league.get("matches", []):
         if event_id and str(match.get("id")) == str(event_id):
-            return True
+            return match
         match_key = (
             match.get("date") or "",
             match.get("time") or "",
@@ -3625,15 +3868,71 @@ def phase_fixture_exists(league, row):
             team_norm((match.get("away") or {}).get("name") or ""),
         )
         if row_key == match_key:
-            return True
+            return match
         if (
             match_key[0] == row_key[0]
             and match_key[1] == row_key[1]
             and team_names_match((match.get("home") or {}).get("name") or "", row.get("home") or "")
             and team_names_match((match.get("away") or {}).get("name") or "", row.get("away") or "")
         ):
-            return True
-    return False
+            return match
+    return None
+
+
+def phase_fixture_exists(league, row):
+    return find_phase_fixture_match(league, row) is not None
+
+
+# Knockout-bracket placeholder names a source shows before a fixture's teams qualify,
+# e.g. "Group A 2nd Place", "Winner Match 49", "Third Place Group A/B/C/D/F", "TBD".
+# Once the bracket resolves, the source swaps these for the real teams while KEEPING
+# the same event id, so a stored placeholder must be upgradeable to the resolved name.
+PLACEHOLDER_TEAM_RE = re.compile(
+    r"\b\d(?:st|nd|rd|th)\s+place\b"        # "2nd Place", "1st Place"
+    r"|\bthird\s+place\b"                    # "Third Place Group A/B/C/D/F"
+    r"|\bgroup\s+[a-l]\b"                    # "Group A ...", "Group E 2nd Place"
+    r"|\bwinner\s+(?:match|group|qf|sf|r16|r32|round|of)\b"  # "Winner Match 49"
+    r"|\brunner[-\s]?up\b"
+    r"|\bto be (?:confirmed|determined)\b"
+    r"|\btbd\b",
+    re.IGNORECASE,
+)
+
+
+def is_placeholder_team_name(name):
+    return bool(PLACEHOLDER_TEAM_RE.search(name or ""))
+
+
+def refresh_phase_fixture_identity(match, row):
+    """Upgrade a stored knockout-placeholder fixture to its resolved teams once the
+    source swaps the bracket slot for real teams under the same event id. Identity
+    fields only (name/short/team_id/logo) — never predictions/status/score/settled.
+    Only fires placeholder -> real, and never on a locked or finished match. Returns
+    True if anything changed."""
+    if match.get("status") == "FT" or match.get("prediction_locked"):
+        return False
+    changed = False
+    for side, name_key, id_key, logo_key in (
+        ("home", "home", "home_team_id", "home_logo"),
+        ("away", "away", "away_team_id", "away_logo"),
+    ):
+        new_name = row.get(name_key) or ""
+        stored = dict(match.get(side) or {})
+        stored_name = stored.get("name") or ""
+        if not new_name or is_placeholder_team_name(new_name):
+            continue
+        if not is_placeholder_team_name(stored_name):
+            continue
+        if team_norm(stored_name) == team_norm(new_name):
+            continue
+        # Drop badge fields tied to the old placeholder so badge enrichment re-resolves
+        # the real team's crest on a later pass; phase_fixture_team repaints name/logo.
+        for stale in ("badge_storage_path", "badge_source", "badge_source_url", "badge_cache_error", "logo"):
+            stored.pop(stale, None)
+        stored.update(phase_fixture_team(new_name, row.get(id_key), row.get(logo_key), row.get("source")))
+        match[side] = stored
+        changed = True
+    return changed
 
 
 def match_prediction_count(match):
@@ -3907,7 +4206,6 @@ def entain_fixture_rows():
         "UEFA Europa League": ("uefa europa league",),
         "UEFA Conference League": ("uefa europa conference league", "uefa conference league"),
         "Serie A": ("italian serie a",),
-        "Brasileirão Betano": ("brazilian serie a",),
         "CONMEBOL Libertadores": ("conmebol copa libertadores", "copa libertadores"),
         "FIFA World Cup": ("men's world cup", "mens world cup", "world cup"),
         "International Friendly Games": ("international friendlies", "friendly international", "international friendly games"),
@@ -4017,6 +4315,7 @@ def promote_phase_fixtures_to_store(store=None):
     by_name = {league.get("name"): league for league in store.get("leagues", [])}
     added = 0
     odds_backfilled = 0
+    identity_refreshed = 0
     for row in rows:
         league_name = row.get("league")
         if league_name not in TOURNAMENTS.values():
@@ -4037,7 +4336,10 @@ def promote_phase_fixtures_to_store(store=None):
             store.setdefault("leagues", []).append(league)
             by_name[league_name] = league
         merged = {**row, **(odds_by_event.get(row.get("event_id")) or {})}
-        if phase_fixture_exists(league, merged):
+        existing = find_phase_fixture_match(league, merged)
+        if existing is not None:
+            if refresh_phase_fixture_identity(existing, merged):
+                identity_refreshed += 1
             if backfill_phase_fixture_odds(league, merged):
                 odds_backfilled += 1
             continue
@@ -4046,10 +4348,10 @@ def promote_phase_fixtures_to_store(store=None):
         league.setdefault("matches", []).append(phase_fixture_record(merged))
         added += 1
     removed = dedupe_phase_fixture_matches(store)
-    if added or removed or odds_backfilled:
+    if added or removed or odds_backfilled or identity_refreshed:
         sort_store(store)
         save_store(store)
-    return {"added": added, "odds_backfilled": odds_backfilled, "removed_duplicates": removed}
+    return {"added": added, "odds_backfilled": odds_backfilled, "identity_refreshed": identity_refreshed, "removed_duplicates": removed}
 
 
 # ----------------------------------------------------------------------------
@@ -4097,7 +4399,8 @@ def run_dashboard_enrichment_helpers():
     pre = populate_pre_match_predictions(store)
     print(
         f"  created={pre['created']}  corners={pre['corner_created']}  "
-        f"profiled={pre.get('profiled', 0)}  corner_capped={pre.get('corner_capped', 0)}"
+        f"profiled={pre.get('profiled', 0)}  corner_capped={pre.get('corner_capped', 0)}  "
+        f"refreshed={pre.get('refreshed', 0)}"
     )
     if pre["by_league"]:
         for league_name, count in sorted(pre["by_league"].items()):
@@ -4138,7 +4441,8 @@ def run_targeted_top_up_helpers(store):
     print(
         f"  target_dates={', '.join(sorted(target_dates)) or 'n/a'}  "
         f"created={pre['created']}  corners={pre['corner_created']}  "
-        f"profiled={pre.get('profiled', 0)}  corner_capped={pre.get('corner_capped', 0)}"
+        f"profiled={pre.get('profiled', 0)}  corner_capped={pre.get('corner_capped', 0)}  "
+        f"refreshed={pre.get('refreshed', 0)}"
     )
     if pre["by_league"]:
         for league_name, count in sorted(pre["by_league"].items()):
@@ -4300,10 +4604,15 @@ def run_full_refresh():
     print(f"\n[Phase B] forecast new upcoming (+{FIXTURE_LOOKAHEAD_DAYS} days)")
     pb = phase_b_forecast(store, seen_ids)
     print(f"  added={pb['added']}")
+    unreachable = pb.get("unreachable_days") or []
+    if unreachable:
+        print(f"  FIXTURE SOURCE FAILURE: {len(unreachable)}/{len(fixture_target_dates())} forecast days unreachable ({', '.join(unreachable)})")
+    if not pb["added"] and unreachable:
+        print("  FIXTURE SOURCE FAILURE: forecast added 0 fixtures for the whole horizon")
 
     print("\n[Phase B.3a] promote phase fixture cards")
     pbf = promote_phase_fixtures_to_store(store)
-    print(f"  added={pbf['added']}")
+    print(f"  added={pbf['added']}  identity_refreshed={pbf['identity_refreshed']}")
 
     # Phase B.3 — attach league-table rank/pts to every match's home/away.
     # Runs AFTER Phase B.3a so newly promoted Phase 1 fixtures are included.
@@ -4403,9 +4712,162 @@ def apply_live_state(match, home, away, minute):
     return True
 
 
+def _int_or_none(value):
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _espn_event_id_from_match(match):
+    cached_id = match.get("espn_event_id")
+    if cached_id:
+        return cached_id
+    mid = str(match.get("id") or "")
+    if mid.lower().startswith("espn:"):
+        return mid.split(":", 1)[1]
+    return None
+
+
+def _linescore_value(entry):
+    if not isinstance(entry, dict):
+        return None
+    for key in ("value", "displayValue"):
+        val = _int_or_none(entry.get(key))
+        if val is not None:
+            return val
+    return None
+
+
+def _regulation_score_from_espn_summary(summary):
+    competitions = ((summary or {}).get("header") or {}).get("competitions") or []
+    comp = competitions[0] if competitions else None
+    if not comp:
+        return None
+    competitors = comp.get("competitors") or []
+    home = next((c for c in competitors if str(c.get("homeAway") or "").lower() == "home"), None)
+    away = next((c for c in competitors if str(c.get("homeAway") or "").lower() == "away"), None)
+    if not home or not away:
+        return None
+
+    home_lines = home.get("linescores") or []
+    away_lines = away.get("linescores") or []
+    if len(home_lines) < 2 or len(away_lines) < 2:
+        return None
+    home_first_two = [_linescore_value(row) for row in home_lines[:2]]
+    away_first_two = [_linescore_value(row) for row in away_lines[:2]]
+    if any(v is None for v in home_first_two + away_first_two):
+        return None
+    home_reg = sum(home_first_two)
+    away_reg = sum(away_first_two)
+    home_final = _int_or_none(home.get("score"))
+    away_final = _int_or_none(away.get("score"))
+    if home_final is None or away_final is None:
+        return None
+
+    status_type = ((comp.get("status") or {}).get("type") or {})
+    status_text = " ".join(
+        str(status_type.get(key) or "")
+        for key in ("name", "detail", "shortDetail", "description")
+    ).lower()
+    has_extra_time = len(home_lines) > 2 or len(away_lines) > 2 or "aet" in status_text or "extra time" in status_text
+    if not has_extra_time or (home_reg, away_reg) == (home_final, away_final):
+        return None
+    return {"home": home_reg, "away": away_reg, "source": "ESPN summary linescore"}
+
+
+def _event_base_minute(clock):
+    match = re.match(r"\s*(\d+)", str(clock or ""))
+    if not match:
+        return None
+    return _int_or_none(match.group(1))
+
+
+def _regulation_score_from_espn_key_events(match, final_home, final_away):
+    key_events = ((match.get("espn_stats") or {}).get("key_events") or [])
+    if not key_events:
+        return None
+    home_name = (match.get("home") or {}).get("name") or ""
+    away_name = (match.get("away") or {}).get("name") or ""
+    home_reg = 0
+    away_reg = 0
+    saw_extra_time = False
+
+    for event in key_events:
+        minute = _event_base_minute(event.get("clock"))
+        event_type = str(event.get("type") or "")
+        text = str(event.get("text") or "")
+        blob = f"{event_type} {text}".lower()
+        if minute is not None and minute > 90:
+            saw_extra_time = True
+        if "extra time" in blob:
+            saw_extra_time = True
+        if "goal" not in blob and "penalty - scored" not in blob:
+            continue
+        if "disallowed" in blob:
+            continue
+        if minute is None or minute > 90:
+            continue
+        team = str(event.get("team") or "")
+        if team_names_match(team, home_name):
+            home_reg += 1
+        elif team_names_match(team, away_name):
+            away_reg += 1
+
+    if not saw_extra_time or (home_reg, away_reg) == (final_home, final_away):
+        return None
+    if home_reg + away_reg <= 0 or home_reg + away_reg > final_home + final_away:
+        return None
+    return {"home": home_reg, "away": away_reg, "source": "ESPN key events"}
+
+
+def full_time_market_score(match, league_name, home, away):
+    """Return the score used by 90-minute/full-time betting markets.
+
+    Provider finals can include extra time in knockout matches. Sportsbook
+    "Full time" markets settle on regulation time, so preserve the AET score
+    separately and keep home.goals/away.goals on the betting-settlement basis.
+    """
+    final_home = _int_or_none(home)
+    final_away = _int_or_none(away)
+    if final_home is None or final_away is None:
+        return home, away, None
+
+    regulation = None
+    event_id = _espn_event_id_from_match(match)
+    if event_id:
+        try:
+            import soccer_phase1_fixtures as espnsource
+            slug = espnsource.ESPN_LEAGUE_SLUGS.get(league_name)
+            summary = _fetch_espn_summary(slug, event_id) if slug else None
+            regulation = _regulation_score_from_espn_summary(summary)
+        except Exception:
+            regulation = None
+    if regulation is None:
+        regulation = _regulation_score_from_espn_key_events(match, final_home, final_away)
+
+    if not regulation:
+        return final_home, final_away, None
+    reg_home = regulation["home"]
+    reg_away = regulation["away"]
+    if (reg_home, reg_away) == (final_home, final_away):
+        return final_home, final_away, None
+    basis = {
+        "home": reg_home,
+        "away": reg_away,
+        "basis": "regulation_time",
+        "source": regulation.get("source"),
+    }
+    return reg_home, reg_away, basis
+
+
 def settle_confirmed_ft(match, league_name, home, away, source):
     """Settle a match whose full time has been confirmed by a real source."""
-    if not settle(match, {"homeScore": {"current": home}, "awayScore": {"current": away}}):
+    market_home, market_away, settlement_basis = full_time_market_score(match, league_name, home, away)
+    if settlement_basis:
+        match["after_extra_time_score"] = {"home": home, "away": away, "source": source}
+        match["settlement_score"] = settlement_basis
+    if not settle(match, {"homeScore": {"current": market_home}, "awayScore": {"current": market_away}}):
         return False
     match["settled_source"] = match.get("settled_source") or source
     match.pop("live_minute", None)
@@ -4467,16 +4929,13 @@ def espn_scoreboard_events(league_name):
 
 def _fetch_espn_summary(slug, event_id):
     """Fetch and cache ESPN /summary for a specific event. Returns raw dict or None."""
-    import urllib.request, json as _json
     cache_key = (slug, event_id)
     if cache_key in _ESPN_SUMMARY_CACHE:
         return _ESPN_SUMMARY_CACHE[cache_key]
     import soccer_phase1_fixtures as espnsource
     url = f"{espnsource.ESPN_BASE}/{slug}/summary?event={event_id}"
-    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"})
     try:
-        with urllib.request.urlopen(req, timeout=20) as resp:
-            result = _json.loads(resp.read().decode("utf-8", errors="replace"))
+        result = espnsource.espn_get_json(url)
     except Exception:
         result = None
     _ESPN_SUMMARY_CACHE[cache_key] = result
@@ -4523,6 +4982,37 @@ def espn_event_for_match(league_name, match):
     return None
 
 
+def espn_ft_from_summary(league_name, ev):
+    """Final score straight from ESPN /summary by event id, or None.
+
+    The scoreboard only spans a short window, so a match that finished while the
+    routine was down comes back from espn_event_for_match() as the id-only stub
+    with no score, and every later settle attempt fails: SofaScore is skipped for
+    an espn: id, and the Sportsbet path only ever closes postponed/cancelled
+    fixtures. /summary stays addressable by event id indefinitely and carries the
+    same competitor shape the scoreboard parses, so the score is identical.
+    Deliberately FT-only — never infer a live or upcoming state from here.
+    """
+    import soccer_phase1_fixtures as espnsource
+    event_id = ev.get("event_id")
+    slug = espnsource.ESPN_LEAGUE_SLUGS.get(league_name)
+    if not (event_id and slug):
+        return None
+    comp = (((_fetch_espn_summary(slug, event_id) or {}).get("header") or {}).get("competitions") or [{}])[0]
+    status_type = (comp.get("status") or {}).get("type") or {}
+    if not status_type.get("completed"):
+        return None
+    scores = {}
+    for competitor in comp.get("competitors") or []:
+        try:
+            scores[(competitor.get("homeAway") or "").lower()] = int(competitor.get("score"))
+        except (TypeError, ValueError):
+            return None
+    if "home" not in scores or "away" not in scores:
+        return None
+    return ("ft", scores["home"], scores["away"], status_type.get("shortDetail") or status_type.get("detail"))
+
+
 def espn_state_for_match(league_name, match):
     """Return (kind, home, away, minute) from ESPN, or None. kind is 'ft'/'live'/'upcoming'."""
     ev = espn_event_for_match(league_name, match)
@@ -4532,7 +5022,7 @@ def espn_state_for_match(league_name, match):
         h = int(ev.get("home_score"))
         a = int(ev.get("away_score"))
     except (TypeError, ValueError):
-        return None
+        return espn_ft_from_summary(league_name, ev)
     if ev.get("state") == "post" or ev.get("completed"):
         return ("ft", h, a, ev.get("detail"))
     if ev.get("state") == "in":
@@ -4744,7 +5234,11 @@ def update_live_and_settle(store):
             kind, h, a, minute = state
             if kind == "ft":
                 if settle_confirmed_ft(m, league_name, h, a, source or "confirmed FT"):
-                    settled.append(f"{label} {h}-{a} [confirmed FT]")
+                    score = f"{m['home']['goals']}-{m['away']['goals']}"
+                    aet = m.get("after_extra_time_score") or {}
+                    if aet:
+                        score = f"{score} (AET {aet.get('home')}-{aet.get('away')})"
+                    settled.append(f"{label} {score} [confirmed FT]")
             elif kind == "live":
                 if apply_live_state(m, h, a, minute):
                     live_set.append(f"{label} {h}-{a} ({minute or 'live'})")
@@ -4870,6 +5364,11 @@ def run_seed_next_day():
     print(f"\n[Seed B] forecast current/tomorrow (+{FIXTURE_LOOKAHEAD_DAYS} days)")
     pb = phase_b_forecast(store, seen_ids)
     print(f"  added={pb['added']}")
+    unreachable = pb.get("unreachable_days") or []
+    if unreachable:
+        print(f"  FIXTURE SOURCE FAILURE: {len(unreachable)}/{len(fixture_target_dates())} forecast days unreachable ({', '.join(unreachable)})")
+    if not pb["added"] and unreachable:
+        print("  FIXTURE SOURCE FAILURE: forecast added 0 fixtures for the whole horizon")
 
     print("\n[Seed C] attach standings to home/away")
     pb3 = phase_b3_attach_standings(store)
@@ -4877,7 +5376,7 @@ def run_seed_next_day():
 
     print("\n[Seed C.5] promote phase fixture cards")
     pbf = promote_phase_fixtures_to_store(store)
-    print(f"  added={pbf['added']}")
+    print(f"  added={pbf['added']}  identity_refreshed={pbf['identity_refreshed']}")
 
     sort_store(store)
     save_store(store)
@@ -4890,16 +5389,37 @@ def run_seed_next_day():
     print_final_tally(store)
 
 
+def run_refresh_predictions():
+    """Re-anchor pre-kickoff predictions to odds that landed after they were built.
+
+    An odds-only pass leaves rows whose predictions were seeded from the 3.0/3.2/3.0
+    placeholder; without this they keep the flat prior while a real price sits beside
+    them (a draw pick displayed next to a 2.03 favourite). No fixture fetching.
+    """
+    print(f"=== soccer_routine.py refresh-predictions — {TODAY.isoformat()} (Adelaide) ===")
+    store = load_store()
+    pre = populate_pre_match_predictions(store)
+    print(f"  created={pre.get('created', 0)}  refreshed={pre.get('refreshed', 0)}  "
+          f"corner_created={pre.get('corner_created', 0)}  corner_capped={pre.get('corner_capped', 0)}  "
+          f"cards_suppressed={pre.get('cards_suppressed', 0)}")
+    sort_store(store)
+    save_store(store)
+    print_final_tally(store)
+
+
 def main():
     parser = argparse.ArgumentParser(description="Run Soccer Stats data routine.")
     parser.add_argument("--results-only", action="store_true", help="Only check due matches for results, enrich recent FT records, and save match_data.json.")
     parser.add_argument("--seed-next-day", action="store_true", help="Lightly seed the current/tomorrow fixture window after a slate has finished.")
     parser.add_argument("--live", action="store_true", help="Update in-play scores and confirm full time early for started matches; never settles by due-time.")
+    parser.add_argument("--refresh-predictions", action="store_true", help="Re-run pre-kickoff predictions against currently stored odds; no fixture collection.")
     args = parser.parse_args()
     if args.live:
         run_live_update()
     elif args.seed_next_day:
         run_seed_next_day()
+    elif args.refresh_predictions:
+        run_refresh_predictions()
     elif args.results_only:
         run_results_only()
     else:
