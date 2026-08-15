@@ -46,3 +46,5 @@ logs/
 docs/agent-system/outputs/
 predictions_*.json
 predictions_*.md
+.claude/triple-pass/
+.tmp-*
