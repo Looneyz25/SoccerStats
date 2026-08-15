@@ -35,6 +35,7 @@ The frontend lives in [app/page.jsx](app/page.jsx) (App Router) with Tailwind st
 
 - Every upcoming match must carry predictions for all five markets: `winner`, `btts`, `ou_goals`, `ou_cards`, `corners`. The routine flags any match missing one or more (e.g. `missing btts,ou_goals,...: LaLiga Celta Vigo vs Sevilla`); these must be filled in, not skipped.
 - If a market is missing because a feed is unavailable, fall back to the model-only prediction with sensible league defaults rather than leaving the slot empty. Bookmaker-odds gaps should only suppress the value/risk tile, never the model probability.
+- **Coverage never outranks evidence.** A market keeps its row, but publishes no number when the number would have no real basis — a prior with zero observations or a cap that binds identically on every fixture is not a read. `suppress_market_without_evidence` (`scripts/soccer_routine.py`) sets `insufficient_evidence`, clears `pick`/`probability`, and keeps the computed values under `suppressed_*` for backtests; display and settlement skip those rows, so they never enter hit rates. This is why `ou_cards` with no cards history and `ou_corners` with no bookmaker corners market publish nothing — do not "restore coverage" by re-emitting the constants. Suppression applies pre-kickoff only; never alter a prediction after kickoff.
 - Treat repeated missing-market warnings as a pipeline regression, not noise — investigate the upstream feed (`scripts/soccer_routine.py`, Phase 3/4) before re-running.
 
 ## Prediction display rules

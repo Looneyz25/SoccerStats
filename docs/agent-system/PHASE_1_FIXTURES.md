@@ -24,7 +24,6 @@ The table below is the active fixture allow-list. When a new league is added her
 | 23 | Serie A |
 | 34 | Ligue 1 |
 | 17015 | UEFA Conference League |
-| 325 | Brasileirão Betano |
 | 384 | CONMEBOL Libertadores |
 | 136 | A-League Men |
 | 16 | FIFA World Cup |
