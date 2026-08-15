@@ -115,7 +115,9 @@ function matchLabel(match) {
 
 function unresolvedRows(match) {
   return requiredMarkets(match)
-    .filter(([, market]) => market && !settledResult(market))
+    // A market suppressed for want of evidence publishes no pick, so it can never settle.
+    // Treating it as unresolved would block the Firestore upload on every fixture.
+    .filter(([, market]) => market && !market.insufficient_evidence && !settledResult(market))
     .map(([market, , reason]) => ({
       matchId: String(match.id || ''),
       date: match.date || null,

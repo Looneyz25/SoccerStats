@@ -55,7 +55,6 @@ const LEAGUE_BADGE_SOURCES = {
   'A-League Men': 'https://media.api-sports.io/football/leagues/188.png',
   'Scottish Premiership': 'https://media.api-sports.io/football/leagues/179.png',
   'J1 League': 'https://media.api-sports.io/football/leagues/98.png',
-  'Brasileirão Betano': 'https://media.api-sports.io/football/leagues/71.png',
   'CONMEBOL Libertadores': 'https://media.api-sports.io/football/leagues/13.png',
   'FIFA World Cup': 'https://media.api-sports.io/football/leagues/1.png',
   'International Friendly Games': 'https://media.api-sports.io/football/leagues/10.png',
@@ -167,7 +166,6 @@ const THESPORTSDB_LEAGUES = {
   'Primeira Liga': 'Portuguese Primeira Liga',
   'Scottish Premiership': 'Scottish Premier League',
   'Serie A': 'Italian Serie A',
-  'Brasileirão Betano': 'Brazilian Serie A',
 };
 
 async function fetchWithTimeout(url, options = {}) {

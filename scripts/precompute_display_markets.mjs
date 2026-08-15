@@ -165,6 +165,11 @@ function formatMarketDetail(market) {
   return market.line ? `${market.pick} ${market.line}` : market.pick || '-';
 }
 
+function winnerLikeMarketWithFinalOnlyResult(match, market) {
+  if (!market || match?.status === 'FT') return market;
+  return { ...market, result: undefined };
+}
+
 function doubleChanceResultFromActual(match, type) {
   const actual = winnerActualType(match);
   if (!actual || !type) return null;
@@ -175,10 +180,10 @@ function doubleChanceResultFromActual(match, type) {
 function doubleChanceMarket(match) {
   const precomputed = match.display_markets?.double_chance?.market;
   if (precomputed) {
-    return {
+    return winnerLikeMarketWithFinalOnlyResult(match, {
       ...precomputed,
       result: precomputed.result || doubleChanceResultFromActual(match, precomputed.type) || undefined,
-    };
+    });
   }
   const rows = winnerProbabilityBreakdown(match);
   if (!Array.isArray(rows) || rows.length < 3) return null;
@@ -233,10 +238,10 @@ function drawNoBetOdds(match, type) {
 function drawNoBetMarket(match) {
   const precomputed = match.display_markets?.draw_no_bet?.market;
   if (precomputed) {
-    return {
+    return winnerLikeMarketWithFinalOnlyResult(match, {
       ...precomputed,
       result: precomputed.result || (String(match.date || '') >= DRAW_NO_BET_TRACKING_START_DATE ? drawNoBetResultFromActual(match, precomputed.type) || undefined : undefined),
-    };
+    });
   }
   const rows = winnerProbabilityBreakdown(match);
   if (!Array.isArray(rows) || rows.length < 3) return null;
@@ -455,6 +460,7 @@ function cardBookmakerOddsInfo(match, line, pick) {
 }
 
 function winnerActualType(match) {
+  if (match?.status !== 'FT') return null;
   const homeGoals = Number(match.home?.goals);
   const awayGoals = Number(match.away?.goals);
   if (!Number.isFinite(homeGoals) || !Number.isFinite(awayGoals)) return null;
@@ -512,7 +518,7 @@ function withWinnerConfidenceGate(match, market) {
 }
 
 function winnerMarketWithGuidance(match, allMatches = []) {
-  const market = match.predictions?.winner;
+  const market = winnerLikeMarketWithFinalOnlyResult(match, match.predictions?.winner);
   if (!market?.type) return market || null;
   const confidenceGated = withWinnerConfidenceGate(match, market);
   if (match.status === 'FT') return confidenceGated;
@@ -804,6 +810,8 @@ function marketHasBookmakerOdds(market) {
 
 function displayableMarketForKey(match, key, market) {
   if (!market) return false;
+  // Suppressed for want of a real basis — never publish it, settled or not.
+  if (market.insufficient_evidence) return false;
   if (['winner', 'draw_no_bet', 'btts', 'ou_goals', 'double_chance'].includes(key)) return true;
   if (match.status === 'FT' && ['hit', 'miss', 'pass'].includes(market.result)) return true;
   if (key === 'ou_cards') return marketHasBookmakerOdds(market);

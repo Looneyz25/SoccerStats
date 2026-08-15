@@ -57,7 +57,6 @@ const LEAGUE_COUNTRY = {
   'UEFA Europa League': 'Europe',
   'UEFA Conference League': 'Europe',
   'MLS': 'USA',
-  'Brasileirão Betano': 'Brazil',
   'CONMEBOL Libertadores': 'South America',
   'FIFA World Cup': 'World',
   'International Friendly Games': 'International',
@@ -175,7 +174,6 @@ const SPORTSBET_LEAGUE_SLUGS = {
   'A-League Men': 'australia/australian-a-league-men',
   'Scottish Premiership': 'united-kingdom/scottish-premiership',
   'J1 League': 'asia/japanese-j1-league',
-  'Brasileirão Betano': 'americas/brazilian-serie-a',
   'CONMEBOL Libertadores': 'americas/conmebol-copa-libertadores',
   'FIFA World Cup': 'world-cup/mens-world-cup',
   'International Friendly Games': 'international-soccer/international-friendlies',
@@ -2315,6 +2313,8 @@ function marketHasBookmakerOdds(market) {
 
 function displayableMarketForKey(match, key, market) {
   if (!market) return false;
+  // Suppressed for want of a real basis — never publish it, settled or not.
+  if (market.insufficient_evidence) return false;
   if (['winner', 'draw_no_bet', 'btts', 'ou_goals', 'double_chance'].includes(key)) return true;
   if (match.status === 'FT' && ['hit', 'miss', 'pass'].includes(market.result)) return true;
   if (key === 'ou_cards') return marketHasBookmakerOdds(market);
@@ -3565,7 +3565,6 @@ const LEAGUE_PRIORITY = [
   'UEFA Champions League',
   'UEFA Europa League',
   'UEFA Conference League',
-  'Brasileirão Betano',
   'CONMEBOL Libertadores',
   'A-League Men',
   'FIFA World Cup',

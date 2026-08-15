@@ -239,6 +239,8 @@ const MATCH_KEEP_FIELDS = [
   'display_markets',
   'display_summary',
   'settled_source',
+  'after_extra_time_score',
+  'settlement_score',
   'void_reason',
   'manual_result_source_url',
   'manual_result_import',
@@ -299,6 +301,8 @@ function slimLeagueDocMatch(match) {
     'away',
     'display_summary',
     'settled_source',
+    'after_extra_time_score',
+    'settlement_score',
     'void_reason',
     'prediction_locked',
   ];
