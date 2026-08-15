@@ -325,5 +325,70 @@ class ResultsOnlyDueScopeTests(unittest.TestCase):
             sr.print_final_tally = original_tally
 
 
+class ExtraTimeSettlementTests(unittest.TestCase):
+    def test_confirmed_ft_uses_regulation_score_for_full_time_market(self):
+        match = {
+            "id": "espn:760493",
+            "date": "2026-07-02",
+            "time": "06:30",
+            "status": "live",
+            "home": {"name": "Belgium"},
+            "away": {"name": "Senegal"},
+            "predictions": {
+                "winner": {"type": "home"},
+                "btts": {"pick": "Yes"},
+                "ou_goals": {"pick": "Under", "line": 2.5},
+            },
+        }
+        summary = {
+            "header": {
+                "competitions": [
+                    {
+                        "status": {
+                            "type": {
+                                "name": "STATUS_FINAL_AET",
+                                "detail": "AET",
+                                "description": "Final Score - After Extra Time",
+                            }
+                        },
+                        "competitors": [
+                            {
+                                "homeAway": "home",
+                                "score": "3",
+                                "linescores": [{"displayValue": "0"}, {"displayValue": "2"}, {"displayValue": "0"}, {"displayValue": "1"}],
+                            },
+                            {
+                                "homeAway": "away",
+                                "score": "2",
+                                "linescores": [{"displayValue": "1"}, {"displayValue": "1"}, {"displayValue": "0"}, {"displayValue": "0"}],
+                            },
+                        ],
+                    }
+                ]
+            }
+        }
+
+        original_fetch_summary = sr._fetch_espn_summary
+        original_actuals = sr.espn_actuals_for_match
+        try:
+            sr._fetch_espn_summary = lambda _slug, _event_id: summary
+            sr.espn_actuals_for_match = lambda *_args, **_kwargs: {}
+
+            settled = sr.settle_confirmed_ft(match, "FIFA World Cup", 3, 2, "ESPN FT")
+
+            self.assertTrue(settled)
+            self.assertEqual(match["home"]["goals"], 2)
+            self.assertEqual(match["away"]["goals"], 2)
+            self.assertEqual(match["after_extra_time_score"], {"home": 3, "away": 2, "source": "ESPN FT"})
+            self.assertEqual(match["settlement_score"]["basis"], "regulation_time")
+            self.assertEqual(match["predictions"]["winner"]["result"], "miss")
+            self.assertEqual(match["predictions"]["btts"]["result"], "hit")
+            self.assertEqual(match["predictions"]["ou_goals"]["actual"], 4)
+            self.assertEqual(match["predictions"]["ou_goals"]["result"], "miss")
+        finally:
+            sr._fetch_espn_summary = original_fetch_summary
+            sr.espn_actuals_for_match = original_actuals
+
+
 if __name__ == "__main__":
     unittest.main()

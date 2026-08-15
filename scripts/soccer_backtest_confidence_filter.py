@@ -27,9 +27,26 @@ ELO_HOME_ADV = sr.ELO_HOME_ADV
 OUT_PATH = ROOT / "docs" / "agent-system" / "outputs" / "backtest_confidence_filter.json"
 
 
-def run(start_date="2026-04-22"):
-    store = json.loads((ROOT / "match_data.json").read_text(encoding="utf-8"))
-    matches = collect_matches(store)
+def update_elo(elo, match):
+    h_id, a_id = match["h_id"], match["a_id"]
+    rh = elo.get(h_id, ELO_INIT)
+    ra = elo.get(a_id, ELO_INIT)
+    e_h = 1.0 / (1.0 + 10 ** ((ra - rh - ELO_HOME_ADV) / 400.0))
+    e_a = 1.0 - e_h
+    if match["hg"] > match["ag"]:
+        s_h, s_a = 1.0, 0.0
+    elif match["hg"] < match["ag"]:
+        s_h, s_a = 0.0, 1.0
+    else:
+        s_h, s_a = 0.5, 0.5
+    elo[h_id] = rh + ELO_K * (s_h - e_h)
+    elo[a_id] = ra + ELO_K * (s_a - e_a)
+
+
+def run(start_date="2026-04-22", matches=None, out_path=None):
+    if matches is None:
+        store = json.loads((ROOT / "match_data.json").read_text(encoding="utf-8"))
+        matches = collect_matches(store)
     eval_set = {m["id"] for m in matches if m["date"] >= start_date}
 
     # Buckets keyed by min-confidence threshold for the picked side
@@ -44,54 +61,33 @@ def run(start_date="2026-04-22"):
     n_total = 0; n_with_odds = 0
 
     for m in matches:
-        h_id, a_id = m["h_id"], m["a_id"]
-        if m["id"] not in eval_set:
-            # Still update elo state from this match
-            rh = elo.get(h_id, ELO_INIT); ra = elo.get(a_id, ELO_INIT)
-            e_h = 1.0 / (1.0 + 10 ** ((ra - rh - ELO_HOME_ADV) / 400.0))
-            e_a = 1.0 - e_h
-            if m["hg"] > m["ag"]: s_h, s_a = 1.0, 0.0
-            elif m["hg"] < m["ag"]: s_h, s_a = 0.0, 1.0
-            else: s_h, s_a = 0.5, 0.5
-            elo[h_id] = rh + ELO_K * (s_h - e_h)
-            elo[a_id] = ra + ELO_K * (s_a - e_a)
-            continue
+        if m["id"] in eval_set:
+            n_total += 1
+            no_vig = no_vig_probs(m["odds"])
+            if no_vig:
+                n_with_odds += 1
+                pick = pick_side(no_vig)
+                pick_prob = no_vig.get(pick, 0)
+                actual = "home" if m["hg"] > m["ag"] else ("away" if m["ag"] > m["hg"] else "draw")
+                hit = (pick == actual)
+                price = m["odds"].get(pick)
+                odds_net = ((price - 1) if (price and hit) else (-1 if price else 0))
 
-        n_total += 1
-        no_vig = no_vig_probs(m["odds"])
-        if not no_vig:
-            continue
-        n_with_odds += 1
-        pick = pick_side(no_vig)
-        pick_prob = no_vig.get(pick, 0)
-        actual = "home" if m["hg"] > m["ag"] else ("away" if m["ag"] > m["hg"] else "draw")
-        hit = (pick == actual)
-        price = (m["odds"] or {}).get(pick)
-        odds_net = ((price - 1) if (price and hit) else (-1 if price else 0))
+                for b in bands:
+                    if pick_prob >= b:
+                        band_stats[b]["n"] += 1
+                        band_stats[b]["hits"] += int(hit)
+                        band_stats[b]["odds_net"] += odds_net
 
-        for b in bands:
-            if pick_prob >= b:
-                band_stats[b]["n"] += 1
-                band_stats[b]["hits"] += int(hit)
-                band_stats[b]["odds_net"] += odds_net
+                decile_key = round(pick_prob * 10) / 10  # 0.3, 0.4, ..., 0.8
+                decile_key = max(0.3, min(0.8, decile_key))
+                ds = decile_stats[decile_key]
+                ds["n"] += 1
+                ds["hits"] += int(hit)
+                ds["odds_net"] += odds_net
+                ds["implied_sum"] += pick_prob
 
-        decile_key = round(pick_prob * 10) / 10  # 0.3, 0.4, ..., 0.8
-        decile_key = max(0.3, min(0.8, decile_key))
-        ds = decile_stats[decile_key]
-        ds["n"] += 1
-        ds["hits"] += int(hit)
-        ds["odds_net"] += odds_net
-        ds["implied_sum"] += pick_prob
-
-        # State update
-        rh = elo.get(h_id, ELO_INIT); ra = elo.get(a_id, ELO_INIT)
-        e_h = 1.0 / (1.0 + 10 ** ((ra - rh - ELO_HOME_ADV) / 400.0))
-        e_a = 1.0 - e_h
-        if m["hg"] > m["ag"]: s_h, s_a = 1.0, 0.0
-        elif m["hg"] < m["ag"]: s_h, s_a = 0.0, 1.0
-        else: s_h, s_a = 0.5, 0.5
-        elo[h_id] = rh + ELO_K * (s_h - e_h)
-        elo[a_id] = ra + ELO_K * (s_a - e_a)
+        update_elo(elo, m)
 
     print(f"Evaluated {n_total} matches; {n_with_odds} had bookmaker odds.\n")
 
@@ -120,8 +116,11 @@ def run(start_date="2026-04-22"):
         "bands": {f"{b:.2f}": band_stats[b] for b in bands},
         "deciles": {str(k): decile_stats[k] for k in sorted(decile_stats)},
     }
-    OUT_PATH.write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"\nWrote {OUT_PATH}")
+    target_path = Path(out_path) if out_path is not None else OUT_PATH
+    target_path.parent.mkdir(parents=True, exist_ok=True)
+    target_path.write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"\nWrote {target_path}")
+    return out
 
 
 def main():

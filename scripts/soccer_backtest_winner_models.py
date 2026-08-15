@@ -12,6 +12,7 @@ blend (45.9% hit, -15.2% ROI on 351 settled matches).
 import argparse
 import json
 import math
+import random
 import sys
 from collections import defaultdict, deque
 from pathlib import Path
@@ -21,7 +22,8 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 import soccer_routine as sr  # noqa: E402
 from soccer_backtest_walkforward import (  # noqa: E402
-    collect_matches, synth_streaks, h2h_rows, empty_bucket, finalize, update_metrics,
+    collect_matches, synth_streaks, h2h_rows, empty_bucket, finalize,
+    multiclass_brier, update_metrics,
 )
 
 FORM_WINDOW = 6
@@ -30,6 +32,8 @@ ELO_K = sr.ELO_K
 ELO_HOME_ADV = sr.ELO_HOME_ADV
 
 OUT_PATH = ROOT / "docs" / "agent-system" / "outputs" / "backtest_winner_models.json"
+BOOTSTRAP_SAMPLES = 5000
+BOOTSTRAP_SEED = 20260713
 
 
 # --------------------------------------------------------------------------
@@ -38,11 +42,15 @@ OUT_PATH = ROOT / "docs" / "agent-system" / "outputs" / "backtest_winner_models.
 
 def no_vig_probs(odds):
     """Return {home, draw, away} no-vig implied probabilities from odds, or None."""
-    if not odds:
+    if not isinstance(odds, dict):
         return None
-    h = odds.get("home"); d = odds.get("draw"); a = odds.get("away")
-    if not (h and d and a) or h <= 0 or d <= 0 or a <= 0:
-        return None
+    values = {}
+    for side in ("home", "draw", "away"):
+        value = odds.get(side)
+        if not isinstance(value, (int, float)) or not math.isfinite(value) or value <= 1:
+            return None
+        values[side] = float(value)
+    h, d, a = values["home"], values["draw"], values["away"]
     raw = {"home": 1 / h, "draw": 1 / d, "away": 1 / a}
     s = sum(raw.values())
     return {k: v / s for k, v in raw.items()}
@@ -83,7 +91,7 @@ def model_status_quo(state, m):
 
 def model_bookmaker_only(state, m):
     """Pure no-vig bookmaker. Ceiling baseline."""
-    return state["no_vig"] or {"home": 1 / 3, "draw": 1 / 3, "away": 1 / 3}
+    return state["no_vig"]
 
 
 def model_elo_two_way_with_draw(state, m):
@@ -153,19 +161,104 @@ def model_logistic_elo_book(state, m, weights):
     via simple weights. weights = (w_elo, w_book). Picks side with max combo.
     """
     elo_probs = model_elo_two_way_with_draw(state, m)
-    book = state["no_vig"] or {"home": 1 / 3, "draw": 1 / 3, "away": 1 / 3}
+    book = state["no_vig"]
     w_elo, w_book = weights
     combo = {k: w_elo * elo_probs.get(k, 0) + w_book * book.get(k, 0) for k in ("home", "draw", "away")}
     return normalize(combo)
+
+
+def paired_bootstrap_differences(rows, samples=BOOTSTRAP_SAMPLES, seed=BOOTSTRAP_SEED):
+    """Return deterministic paired bootstrap CIs for model minus bookmaker."""
+    if not rows:
+        return None
+    metric_names = ("hit_rate", "log_loss", "brier")
+    deltas = {
+        metric: [row["model"][metric] - row["bookmaker"][metric] for row in rows]
+        for metric in metric_names
+    }
+    rng = random.Random(seed)
+    boot = {metric: [] for metric in metric_names}
+    n = len(rows)
+    for _ in range(samples):
+        indices = [rng.randrange(n) for _ in range(n)]
+        for metric in metric_names:
+            boot[metric].append(sum(deltas[metric][i] for i in indices) / n)
+
+    def percentile(values, probability):
+        ordered = sorted(values)
+        index = (len(ordered) - 1) * probability
+        low = math.floor(index)
+        high = math.ceil(index)
+        if low == high:
+            return ordered[low]
+        return ordered[low] + (ordered[high] - ordered[low]) * (index - low)
+
+    return {
+        "model": "status_quo (blend=0.4)",
+        "baseline": "bookmaker_only",
+        "n": n,
+        "method": "paired bootstrap percentile CI",
+        "confidence_level": 0.95,
+        "samples": samples,
+        "seed": seed,
+        "differences_model_minus_bookmaker": {
+            metric: {
+                "estimate": round(sum(values) / n, 6),
+                "ci_low": round(percentile(boot[metric], 0.025), 6),
+                "ci_high": round(percentile(boot[metric], 0.975), 6),
+            }
+            for metric, values in deltas.items()
+        },
+    }
+
+
+def _score_model(probs, actual, odds):
+    sides = ("home", "draw", "away")
+    if not isinstance(probs, dict):
+        return None
+    values = [probs.get(side) for side in sides]
+    if any(
+        not isinstance(value, (int, float))
+        or not math.isfinite(value)
+        or value < 0
+        or value > 1
+        for value in values
+    ):
+        return None
+    total = sum(values)
+    if not math.isclose(total, 1.0, rel_tol=0.0, abs_tol=1e-3):
+        return None
+    normalized = {side: probs[side] / total for side in sides}
+    prob_actual = normalized[actual]
+    if not 0 < prob_actual < 1:
+        return None
+    pick = pick_side(normalized)
+    if pick not in sides:
+        return None
+    result = "hit" if pick == actual else "miss"
+    brier_score = multiclass_brier(normalized, actual)
+    if brier_score is None:
+        return None
+    return {
+        "result": result,
+        "prob_actual": prob_actual,
+        "price": odds[pick],
+        "comparison": {
+            "hit_rate": 1.0 if result == "hit" else 0.0,
+            "log_loss": -math.log(max(prob_actual, 1e-9)),
+            "brier": brier_score,
+        },
+    }
 
 
 # --------------------------------------------------------------------------
 # Walk-forward driver
 
 
-def run(start_date=None):
-    store = json.loads((ROOT / "match_data.json").read_text(encoding="utf-8"))
-    matches = collect_matches(store)
+def run(start_date=None, matches=None, out_path=None):
+    if matches is None:
+        store = json.loads((ROOT / "match_data.json").read_text(encoding="utf-8"))
+        matches = collect_matches(store)
     eval_set = {m["id"] for m in matches if (not start_date) or m["date"] >= start_date}
     print(f"FT matches: {len(matches)}  evaluating: {len(eval_set)}")
 
@@ -189,6 +282,9 @@ def run(start_date=None):
     }
 
     buckets = {name: empty_bucket() for name in models}
+    paired_rows = []
+    valid_odds_candidates = 0
+    skipped_incomplete_model_rows = 0
 
     def avg(q, idx):
         if len(q) < 3:
@@ -235,22 +331,39 @@ def run(start_date=None):
             "no_vig": no_vig_probs(m["odds"]),
         }
 
-        if m["id"] in eval_set:
+        if m["id"] in eval_set and state["no_vig"] is not None:
+            valid_odds_candidates += 1
             actual = "home" if m["hg"] > m["ag"] else ("away" if m["ag"] > m["hg"] else "draw")
-            odds_price = m["odds"]
+            staged_scores = {}
             for name, fn in models.items():
                 try:
                     probs = fn(state, m)
                 except Exception as e:
                     print(f"  model {name} failed on {m['id']}: {e}")
-                    continue
-                if not probs:
-                    continue
-                pick = pick_side(probs)
-                result = "hit" if pick == actual else "miss"
-                prob_actual = probs.get(actual)
-                price = odds_price.get(pick) if (odds_price and pick in odds_price) else None
-                update_metrics(buckets[name], result, prob_actual, price)
+                    staged_scores = {}
+                    break
+                score = _score_model(probs, actual, m["odds"])
+                if score is None:
+                    print(f"  model {name} returned an invalid forecast on {m['id']}")
+                    staged_scores = {}
+                    break
+                staged_scores[name] = score
+
+            if len(staged_scores) == len(models):
+                for name, score in staged_scores.items():
+                    update_metrics(
+                        buckets[name],
+                        score["result"],
+                        score["prob_actual"],
+                        score["price"],
+                        score["comparison"]["brier"],
+                    )
+                paired_rows.append({
+                    "model": staged_scores["status_quo (blend=0.4)"]["comparison"],
+                    "bookmaker": staged_scores["bookmaker_only"]["comparison"],
+                })
+            else:
+                skipped_incomplete_model_rows += 1
 
         # Update state from this match's outcome
         form[h_id].append((m["hg"], m["ag"]))
@@ -275,16 +388,38 @@ def run(start_date=None):
         elo[h_id] = rh + ELO_K * (s_h - e_h)
         elo[a_id] = ra + ELO_K * (s_a - e_a)
 
-    out = {"start_date": start_date,
-           "evaluated": len(eval_set),
-           "models": {name: finalize(b) for name, b in buckets.items()}}
-    OUT_PATH.write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"\nWinner-model leaderboard (n={len(eval_set)}):")
+    paired_matches = len(paired_rows)
+    if any(bucket["n"] != paired_matches for bucket in buckets.values()):
+        raise RuntimeError("winner leaderboard models diverged from the common sample")
+
+    out = {
+        "start_date": start_date,
+        "evaluated": len(eval_set),
+        "valid_odds_candidates": valid_odds_candidates,
+        "skipped_invalid_or_missing_1x2_odds": len(eval_set) - valid_odds_candidates,
+        "common_scored_matches": paired_matches,
+        "paired_matches": paired_matches,
+        "skipped_incomplete_model_rows": skipped_incomplete_model_rows,
+        "odds_contract": "home/draw/away must all be finite decimal odds greater than 1.0",
+        "brier_contract": "Winner uses the full three-class sum of squared probability errors",
+        "models": {name: finalize(b) for name, b in buckets.items()},
+        "paired_comparison": paired_bootstrap_differences(paired_rows),
+    }
+    target_path = Path(out_path) if out_path is not None else OUT_PATH
+    target_path.parent.mkdir(parents=True, exist_ok=True)
+    target_path.write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(
+        f"\nWinner-model leaderboard (common n={paired_matches}; "
+        f"valid odds={valid_odds_candidates}; "
+        f"skipped invalid/missing odds={len(eval_set) - valid_odds_candidates}; "
+        f"skipped incomplete model rows={skipped_incomplete_model_rows}):"
+    )
     rows = [(name, b) for name, b in out["models"].items() if b]
     rows.sort(key=lambda x: -(x[1].get("hit_rate") or 0))
     print(f"  {'model':40s}  {'hit':>6s}  {'log_loss':>9s}  {'brier':>6s}  {'odds_net':>9s}  {'ROI':>7s}")
     for name, b in rows:
         print(f"  {name:40s}  {b['hit_rate']:.3f}  {b.get('log_loss','-'):>9}  {b.get('brier','-'):>6}  {b['odds_net']:+.2f}  {b['roi']*100:+.2f}%")
+    return out
 
 
 def main():

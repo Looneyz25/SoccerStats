@@ -135,16 +135,34 @@ def implied_from_odds(odds):
     return {k: v / s for k, v in raw.items()}
 
 
+def multiclass_brier(probs, actual_side):
+    """Return the full three-class Brier score for a Winner forecast."""
+    sides = ("home", "draw", "away")
+    if actual_side not in sides or not isinstance(probs, dict):
+        return None
+    values = []
+    for side in sides:
+        value = probs.get(side)
+        if not isinstance(value, (int, float)) or not math.isfinite(value):
+            return None
+        values.append(float(value))
+    return sum(
+        (value - (1.0 if side == actual_side else 0.0)) ** 2
+        for side, value in zip(sides, values)
+    )
+
+
 def score_winner(pred, actual_side, odds):
     p = pred.get("winner") or {}
     pick = p.get("type")
     result = "hit" if pick == actual_side else "miss"
     probs = p.get("probabilities") or {}
     prob_actual = probs.get(actual_side)
+    brier_score = multiclass_brier(probs, actual_side)
     odds_price = None
     if odds and pick in odds:
         odds_price = odds.get(pick)
-    return result, prob_actual, odds_price
+    return result, prob_actual, odds_price, brier_score
 
 
 def score_btts(pred, hg, ag):
@@ -185,7 +203,7 @@ def score_cards(pred, cards_total):
     return result, prob_actual
 
 
-def update_metrics(bucket, result, prob_actual, odds_price):
+def update_metrics(bucket, result, prob_actual, odds_price, brier_score=None):
     bucket["n"] += 1
     if result == "hit":
         bucket["hits"] += 1
@@ -193,7 +211,7 @@ def update_metrics(bucket, result, prob_actual, odds_price):
         bucket["misses"] += 1
     if prob_actual is not None and 0 < prob_actual < 1:
         bucket["log_loss_sum"] += -math.log(max(prob_actual, 1e-9))
-        bucket["brier_sum"] += (1 - prob_actual) ** 2
+        bucket["brier_sum"] += brier_score if brier_score is not None else (1 - prob_actual) ** 2
         bucket["prob_n"] += 1
     if odds_price and odds_price > 0:
         if result == "hit":
@@ -295,21 +313,21 @@ def run(disable_calibration=False, start_date=None, blend=None):
             )
             actual_side = "home" if m["hg"] > m["ag"] else ("away" if m["ag"] > m["hg"] else "draw")
 
-            r_w, p_w, o_w = score_winner(pred, actual_side, m["odds"])
+            r_w, p_w, o_w, bs_w = score_winner(pred, actual_side, m["odds"])
             r_b, p_b = score_btts(pred, m["hg"], m["ag"])
             r_g, p_g = score_goals(pred, m["hg"], m["ag"])
             r_c, p_c = score_cards(pred, m["cards_total"])
 
-            for label, result, prob, odds_price in [
-                ("Winner", r_w, p_w, o_w),
-                ("BTTS", r_b, p_b, None),
-                ("Goals", r_g, p_g, None),
-                ("Cards", r_c, p_c, None),
+            for label, result, prob, odds_price, brier_score in [
+                ("Winner", r_w, p_w, o_w, bs_w),
+                ("BTTS", r_b, p_b, None, None),
+                ("Goals", r_g, p_g, None, None),
+                ("Cards", r_c, p_c, None, None),
             ]:
                 if result is None:
                     continue
-                update_metrics(market_buckets[label], result, prob, odds_price)
-                update_metrics(league_market_buckets[m["league"]][label], result, prob, odds_price)
+                update_metrics(market_buckets[label], result, prob, odds_price, brier_score)
+                update_metrics(league_market_buckets[m["league"]][label], result, prob, odds_price, brier_score)
                 update_metrics(league_buckets[m["league"]], result, prob, odds_price)
                 update_metrics(overall, result, prob, odds_price)
 
