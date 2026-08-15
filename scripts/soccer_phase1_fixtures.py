@@ -81,7 +81,6 @@ LEAGUES = [
     {"legacy_id": 23, "api_id": 135, "season": 2025, "sofa_id": 23, "sofa_season_id": 76457, "name": "Serie A"},
     {"legacy_id": 34, "api_id": 61, "season": 2025, "sofa_id": 34, "sofa_season_id": 77356, "name": "Ligue 1"},
     {"legacy_id": 17015, "api_id": 848, "season": 2025, "sofa_id": 17015, "sofa_season_id": 76960, "name": "UEFA Conference League"},
-    {"legacy_id": 325, "api_id": 71, "season": 2026, "sofa_id": 325, "sofa_season_id": 87678, "name": "Brasileirão Betano"},
     {"legacy_id": 384, "api_id": 13, "season": 2026, "sofa_id": 384, "sofa_season_id": 87760, "name": "CONMEBOL Libertadores"},
     {"legacy_id": 136, "api_id": 188, "season": 2025, "sofa_id": 136, "sofa_season_id": 82603, "name": "A-League Men"},
     {"legacy_id": 16, "api_id": 1, "season": 2026, "sofa_id": 16, "sofa_season_id": 58210, "name": "FIFA World Cup"},
@@ -137,7 +136,6 @@ THESPORTSDB_LEAGUE_HINTS = {
     "UEFA Champions League": ("uefa champions league", "champions league"),
     "UEFA Europa League": ("uefa europa league", "europa league"),
     "UEFA Conference League": ("uefa europa conference league", "uefa conference league", "conference league"),
-    "Brasileirão Betano": ("brasileirao betano", "brasileirão betano", "brazilian serie a", "campeonato brasileiro"),
     "CONMEBOL Libertadores": ("conmebol libertadores", "copa libertadores", "libertadores"),
     "FIFA World Cup": ("fifa world cup", "men's world cup", "world cup", "world championship"),
     "International Friendly Games": ("international friendly games", "international friendlies", "friendly international", "friendlies"),
@@ -168,7 +166,6 @@ FLASHSCORE_LEAGUE_NAMES = {
     "UEFA Europa League": ("europe", {"europa league"}),
     "UEFA Conference League": ("europe", {"conference league", "europa conference league"}),
     "MLS": ("usa", {"mls", "major league soccer"}),
-    "Brasileirão Betano": ("brazil", {"brasileirao betano", "brasileirão betano", "serie a betano", "serie a"}),
     "CONMEBOL Libertadores": ("south america", {"conmebol libertadores", "copa libertadores", "libertadores"}),
     "FIFA World Cup": ("world", {"world cup", "world championship", "men's world cup", "mens world cup"}),
     "International Friendly Games": ("", {"international friendlies", "friendly international", "friendlies", "friendly games"}),
@@ -548,7 +545,6 @@ ESPN_LEAGUE_SLUGS = {
     "UEFA Europa League": "uefa.europa",
     "UEFA Conference League": "uefa.europa.conf",
     "MLS": "usa.1",
-    "Brasileirão Betano": "bra.1",
     "CONMEBOL Libertadores": "conmebol.libertadores",
     "Allsvenskan": "swe.1",
     "Eliteserien": "nor.1",
@@ -586,15 +582,23 @@ def parse_espn_events(data):
     return events
 
 
+def espn_get_json(url, timeout=20):
+    """ESPN rejects urllib on TLS fingerprint (403 regardless of headers), so every
+    ESPN call must go through curl_cffi impersonation like the other blocked sources."""
+    from curl_cffi import requests as curl_requests
+
+    resp = curl_requests.get(url, impersonate="chrome", timeout=timeout)
+    if resp.status_code != 200:
+        raise RuntimeError(f"ESPN HTTP {resp.status_code} for {url}")
+    return resp.json() or {}
+
+
 def fetch_espn_scoreboard(slug):
     """Return parsed ESPN scoreboard events for a league slug (current window), or []."""
     if not slug:
         return []
-    url = f"{ESPN_BASE}/{slug}/scoreboard"
-    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"})
     try:
-        with urllib.request.urlopen(req, timeout=20) as resp:
-            data = json.loads(resp.read().decode("utf-8", errors="replace"))
+        data = espn_get_json(f"{ESPN_BASE}/{slug}/scoreboard")
     except Exception:
         return []
     return parse_espn_events(data)
@@ -604,11 +608,7 @@ def fetch_espn_events_for_date(slug, day_compact):
     """Raw ESPN scoreboard events for a league slug on a specific YYYYMMDD UTC date."""
     if not slug:
         return []
-    url = f"{ESPN_BASE}/{slug}/scoreboard?dates={day_compact}"
-    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"})
-    with urllib.request.urlopen(req, timeout=20) as resp:
-        data = json.loads(resp.read().decode("utf-8", errors="replace"))
-    return (data or {}).get("events", [])
+    return espn_get_json(f"{ESPN_BASE}/{slug}/scoreboard?dates={day_compact}").get("events", [])
 
 
 def _espn_status_text(state, completed):

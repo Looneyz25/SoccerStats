@@ -53,7 +53,6 @@ LEAGUE_HINTS = {
     "UEFA Champions League":  ["uefa champions league", "champions league"],
     "UEFA Europa League":     ["uefa europa league", "europa league"],
     "UEFA Conference League": ["uefa europa conference league", "uefa conference league", "conference league"],
-    "Brasileirão Betano":     ["brasileirao betano", "brasileirão betano", "brazilian serie a", "campeonato brasileiro"],
     "CONMEBOL Libertadores":  ["conmebol libertadores", "copa libertadores", "libertadores"],
     "FIFA World Cup":         ["fifa world cup", "men's world cup", "world cup", "world championship"],
     "International Friendly Games": ["international friendly games", "international friendlies", "friendly international", "friendlies"],

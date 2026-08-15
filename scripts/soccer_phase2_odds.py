@@ -79,7 +79,6 @@ LEAGUE_PAGES = {
     "A-League Men":           "australia/australian-a-league-men",
     "Scottish Premiership":   "united-kingdom/scottish-premiership",
     "J1 League":              "asia/japanese-j1-league",
-    "Brasileirão Betano":     "americas/brazilian-serie-a",
     "CONMEBOL Libertadores":  "americas/conmebol-copa-libertadores",
     "FIFA World Cup":         "world-cup/mens-world-cup",
     "International Friendly Games": "international-soccer/international-friendlies",

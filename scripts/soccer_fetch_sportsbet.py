@@ -14,8 +14,15 @@ explicitly excluded.
 """
 import json, os, re, time, pathlib, unicodedata
 import random
+from datetime import datetime, timezone, timedelta
 from curl_cffi import requests
 from team_aliases import NATIONAL_TEAM_ALIASES
+
+try:
+    from zoneinfo import ZoneInfo
+    ADL = ZoneInfo("Australia/Adelaide")
+except Exception:
+    ADL = timezone(timedelta(hours=9, minutes=30))
 
 _PROFILES = ["chrome120","chrome124","chrome131","chrome116","edge101","safari17_0"]
 def _profile(): return random.choice(_PROFILES)
@@ -37,25 +44,40 @@ def fixture_target_dates():
 def match_in_target_dates(match, target_dates):
     return not target_dates or match.get("date") in target_dates
 
+# PRE-KICKOFF only: a match has kicked off once live/FT or its Adelaide-local
+# date+time is at/before now. Skipping kicked-off matches keeps captured odds
+# pre-kickoff and freezes them (a later run won't overwrite with live prices).
+def has_kicked_off(m):
+    status = str(m.get("status") or "").lower()
+    if status in ("live", "ft"):
+        return True
+    d = m.get("date"); t = str(m.get("time") or "")
+    if not d or not re.match(r"^\d{1,2}:\d{2}$", t):
+        return False
+    try:
+        ko = datetime.strptime(d + " " + t, "%Y-%m-%d %H:%M").replace(tzinfo=ADL)
+    except Exception:
+        return False
+    return datetime.now(ADL) >= ko
+
 LEAGUE_PAGES = {
     "Premier League":         "united-kingdom/english-premier-league",
     "Championship":           "united-kingdom/english-championship",
-    "League One":             "united-kingdom/english-league-one",
-    "League Two":             "united-kingdom/english-league-two",
+    "League One":             "united-kingdom/english-league-1",
+    "League Two":             "united-kingdom/english-league-2",
     "LaLiga":                 "spain/spanish-la-liga",
     "Serie A":                "italy/italian-serie-a",
     "Bundesliga":             "germany/german-bundesliga",
     "Ligue 1":                "france/french-ligue-1",
     "Eredivisie":             "rest-of-europe/dutch-eredivisie",
-    "Primeira Liga":          "rest-of-europe/portuguese-primeira-liga",
+    "Primeira Liga":          "portugal/portuguese-primeira-liga",
     "UEFA Champions League":  "uefa-competitions/uefa-champions-league",
     "UEFA Europa League":     "uefa-competitions/uefa-europa-league",
     "UEFA Conference League": "uefa-competitions/uefa-europa-conference-league",
-    "MLS":                    "north-america/usa-major-league-soccer",
+    "MLS":                    "usa/us-major-league-soccer",
     "A-League Men":           "australia/australian-a-league-men",
     "Scottish Premiership":   "united-kingdom/scottish-premiership",
-    "J1 League":              "asia/japanese-j1-league",
-    "Brasileirão Betano":     "americas/brazilian-serie-a",
+    "J1 League":              "asia/japanese-j-league",
     "CONMEBOL Libertadores":  "americas/conmebol-copa-libertadores",
     "FIFA World Cup":         "world-cup/mens-world-cup",
     "International Friendly Games": "international-soccer/international-friendlies",
@@ -139,6 +161,13 @@ def fetch_page_data(slug):
     try:
         r = requests.get(url, impersonate=_profile(), timeout=20)
         if r.status_code != 200: return None
+        # An unknown slug does not 404 — Sportsbet redirects to the parent section (or the
+        # soccer root) and still serves a valid __PRELOADED_STATE__, so a stale slug reads
+        # as a full book for the WRONG competition. Refuse anything that moved.
+        final = str(getattr(r, "url", "") or "").split("?")[0].rstrip("/")
+        if final and not final.endswith(slug):
+            print("  SLUG REDIRECTED: " + slug + " -> " + final + " (wrong competition; treating as no page)")
+            return None
         html = r.text
         return preloaded_state_from_html(html)
     except Exception as e:
@@ -195,11 +224,21 @@ def extract_event_markets(ev, markets, outcomes):
         "Corners 2-Way 9.5"  -> {"Over","Under"}
     """
     out = {}
+    unmapped = set()
     for mid in ev.get("marketIds", []):
         mk = markets.get(str(mid)) or markets.get(mid)
         if not mk:
             continue
         name = (mk.get("name") or "").strip()
+        # Record cards/corners TOTAL-style lines our regexes DON'T recognise, so the
+        # missed-odds reviewer can flag scraper coverage gaps (book offered a market we
+        # didn't capture). Excludes non-O/U card/corner markets (e.g. "Red Card Markets").
+        low = name.lower()
+        if (re.search(r"card|corner", low) and re.search(r"over|under|total", low)
+                and re.search(r"\d", name)
+                and not re.match(r"(home|away|1st half|2nd half|first half|second half)\b", low)
+                and not _CARDS_MARKET_RE.match(name) and not _CORNERS_MARKET_RE.match(name)):
+            unmapped.add(name)
         choices = {}
         for oid in mk.get("outcomeIds", []):
             oc = outcomes.get(str(oid)) or outcomes.get(oid)
@@ -255,14 +294,14 @@ def extract_event_markets(ev, markets, outcomes):
         if m_corners:
             out[f"Corners 2-Way {m_corners.group(1)}"] = choices
             continue
-    return out
+    return out, sorted(unmapped)
 
 
 def fetch_event_markets(event_url):
-    """Fetch a single event page and return its normalized market dict."""
+    """Fetch a single event page; return (normalized market dict, unmapped card/corner names)."""
     data = fetch_event_page_data(event_url)
     if not data:
-        return {}
+        return {}, []
     sb = (data.get("entities") or {}).get("sportsbook") or {}
     events = sb.get("events", {})
     markets = sb.get("markets", {})
@@ -270,20 +309,25 @@ def fetch_event_markets(event_url):
     event_id = sportsbet_event_id_from_url(event_url)
     if event_id:
         ev = find_event(data, event_id=event_id)
-        return extract_event_markets(ev, markets, outcomes) if ev else {}
-    best = {}
+        return extract_event_markets(ev, markets, outcomes) if ev else ({}, [])
+    best, best_unmapped = {}, []
     for ev in events.values():
         if not ev.get("marketIds"):
             continue
-        markets_for_ev = extract_event_markets(ev, markets, outcomes)
+        markets_for_ev, unmapped_ev = extract_event_markets(ev, markets, outcomes)
         if len(markets_for_ev) > len(best):
-            best = markets_for_ev
-    return best
+            best, best_unmapped = markets_for_ev, unmapped_ev
+    return best, best_unmapped
 
 SPORTSBET_TERMINAL_STATUS_WORDS = ("postponed", "cancelled", "canceled", "abandoned")
 
 def sportsbet_event_id_from_url(event_url):
-    m = re.search(r"-(\d+)(?:[/?#].*)?$", event_url or "")
+    # Read the id only from the final path segment. An unanchored search matches the
+    # leftmost "-<digits>" and swallows the rest via [/?#].*, so a league slug that
+    # contains a digit (english-league-1) yields "1" instead of the event id.
+    path = str(event_url or "").split("?")[0].split("#")[0].rstrip("/")
+    segment = path.rsplit("/", 1)[-1]
+    m = re.search(r"-(\d+)$", segment)
     return m.group(1) if m else None
 
 def find_event(data, event_id=None, home=None, away=None):
@@ -453,7 +497,7 @@ def main():
         idx = cache[slug]
         if not idx: continue
         for m in L["matches"]:
-            if m.get("status") == "FT": continue
+            if has_kicked_off(m): continue  # PRE-KICKOFF odds only — skip live/started/FT
             if not match_in_target_dates(m, target_dates): continue
             hit = find_match(idx, m["home"]["name"], m["away"]["name"])
             if hit:
@@ -479,7 +523,7 @@ def main():
         url = (m.get("sportsbet_odds") or {}).get("event_url")
         if not url:
             continue
-        markets_dict = fetch_event_markets(url)
+        markets_dict, unmapped = fetch_event_markets(url)
         time.sleep(0.8)
         if not markets_dict:
             continue
@@ -487,6 +531,12 @@ def main():
             markets_dict,
             bool((m.get("sportsbet_odds") or {}).get("reversed_fixture"))
         )
+        # Cards/corners total lines the book offered but our regexes didn't map —
+        # feeds the missed-odds reviewer (coverage_gap detection).
+        if unmapped:
+            m["sportsbet_unmapped_markets"] = unmapped
+        else:
+            m.pop("sportsbet_unmapped_markets", None)
         deep_hits += 1
 
     STORE_PATH.write_text(json.dumps(store, indent=2, ensure_ascii=False), encoding="utf-8")

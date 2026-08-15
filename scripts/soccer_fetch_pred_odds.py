@@ -9,7 +9,14 @@ the UI can price synthetic safety picks derived from the 1X2 model.
 import json, os, time, pathlib
 import random
 import re
+from datetime import datetime, timezone, timedelta
 from curl_cffi import requests
+
+try:
+    from zoneinfo import ZoneInfo
+    ADL = ZoneInfo("Australia/Adelaide")
+except Exception:
+    ADL = timezone(timedelta(hours=9, minutes=30))
 
 _PROFILES = ["chrome120","chrome124","chrome131","chrome116","edge101","safari17_0"]
 def _profile(): return random.choice(_PROFILES)
@@ -32,6 +39,23 @@ def fixture_target_dates():
 
 def match_in_target_dates(match, target_dates):
     return not target_dates or match.get("date") in target_dates
+
+# Odds must be PRE-KICKOFF only — never capture in-play prices. A match has
+# kicked off once it is live/FT, or its Adelaide-local date+time is at/before now.
+# Skipping kicked-off matches also FREEZES the pre-kickoff odds: a later run can't
+# overwrite them with live prices.
+def has_kicked_off(m):
+    status = str(m.get("status") or "").lower()
+    if status in ("live", "ft"):
+        return True
+    d = m.get("date"); t = str(m.get("time") or "")
+    if not d or not re.match(r"^\d{1,2}:\d{2}$", t):
+        return False
+    try:
+        ko = datetime.strptime(d + " " + t, "%Y-%m-%d %H:%M").replace(tzinfo=ADL)
+    except Exception:
+        return False
+    return datetime.now(ADL) >= ko
 
 def fetch(path):
     try:
@@ -248,22 +272,18 @@ def attach_pred_odds(m, market):
             v = streak_price(m, "scoring", None, b["pick"]) or streak_price(m, "clean sheet", None, b["pick"])
         if v is not None: b["odds"] = v
 
-    # Cards
+    # Cards — EXACT line only. Sportsbet often lists a different cards line than
+    # the model's (e.g. book has 2.5, model picks Under 4.5); never borrow another
+    # line's price (any_line) or synthesise one (inverse estimate) — that mislabels
+    # the bet. Show no odds unless the exact line is offered (book or same-line streak).
     oc = p.get("ou_cards") or {}
     if oc.get("pick") and not is_price(oc.get("odds")):
         line = str(oc.get("line", 4.5))
-        v = (market.get(f"Cards in match {line}") or {}).get(oc["pick"]) \
-            or any_line(market, "Cards in match", oc["pick"])
+        v = (market.get(f"Cards in match {line}") or {}).get(oc["pick"])
         if v is None:
             v = streak_price(m, "cards", line, oc["pick"])
         if v is not None:
             oc["odds"] = v
-        else:
-            opposite = streak_price(m, "cards", line, opposite_pick(oc["pick"]))
-            estimated = inverse_two_way_odds(opposite)
-            if estimated is not None:
-                oc["odds"] = estimated
-                oc["odds_estimated"] = True
 
     return attach_corner_odds(m, market) + attach_draw_no_bet_odds(m, market)
 
@@ -278,6 +298,7 @@ def main():
         for L in store["leagues"]
         for m in L["matches"]
         if m.get("status") != "FT"
+        and not has_kicked_off(m)
         and match_in_target_dates(m, target_dates)
     ]
     matches.sort(key=lambda item: (
