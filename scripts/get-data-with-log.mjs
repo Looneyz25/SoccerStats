@@ -211,6 +211,15 @@ const SPORTSBET_SOURCE_STEPS = [
     },
   },
   {
+    // Must run before the odds-attach steps: prices that arrive after a prediction was
+    // seeded from the 3.0/3.2/3.0 placeholder leave the pick on the flat prior, so
+    // attaching a price first pins a real quote to an unanchored pick.
+    id: 'refresh_predictions_from_odds',
+    label: 'Re-anchor predictions to refreshed odds',
+    command: 'node',
+    args: ['scripts/run-python.js', 'scripts/soccer_routine.py', '--refresh-predictions'],
+  },
+  {
     id: 'refresh_bookmaker_links',
     label: 'Refresh direct bookmaker links',
     command: 'node',
@@ -282,6 +291,7 @@ const DATA_MUTATION_STEP_IDS = new Set([
   'run_model_calibration',
   'verify_market_settlement',
   'refresh_sportsbet_odds',
+  'refresh_predictions_from_odds',
   'refresh_bookmaker_links',
   'refresh_prediction_odds',
   'merge_bet365_context',

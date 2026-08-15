@@ -32,6 +32,9 @@ for (const candidate of candidates) {
   const result = spawnSync(candidate.command, [...candidate.args, script, ...args], {
     cwd: root,
     stdio: 'inherit',
+    // Python block-buffers stdout when it is a pipe, so a long step streams nothing until
+    // it exits — a working run is indistinguishable from a hang and gets killed.
+    env: { ...process.env, PYTHONUNBUFFERED: '1' },
   });
 
   if (!result.error) {
