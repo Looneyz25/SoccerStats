@@ -17,6 +17,26 @@ const CACHE_MAX = 2000; // bound the in-memory caches (#5)
 const leaderboardCache = new Map();
 const matchVoteCache = new Map();
 
+function adelaideTodayIso() {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Australia/Adelaide',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(new Date());
+  const get = (type) => parts.find((part) => part.type === type)?.value || '';
+  return `${get('year')}-${get('month')}-${get('day')}`;
+}
+
+// A pick whose match has kicked off but never resolved a result can never settle —
+// the match id no longer loads (e.g. sportsbet:* fallback fixtures that never reach
+// the settled dataset). Those are not "open", so they must not occupy pick lists.
+function isUnresolvablePick(row, today) {
+  if (row?.result) return false;
+  const date = String(row?.date || '');
+  return /^\d{4}-\d{2}-\d{2}$/.test(date) && date < today;
+}
+
 function jsonResponse(payload, status = 200) {
   return new Response(JSON.stringify(payload), {
     status,
@@ -385,7 +405,9 @@ async function leaderboardPayload(db, user) {
     ...leader,
     followerCount: followerCountByUid.get(leader.uid) || 0,
   }));
+  const today = adelaideTodayIso();
   const popularPicks = [...popularPickRows.values()]
+    .filter((row) => !isUnresolvablePick(row, today))
     .map((row) => ({
       ...row,
       voters: row.voters.slice(0, 6),
@@ -396,6 +418,7 @@ async function leaderboardPayload(db, user) {
     .sort((a, b) => String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')) || String(a.date || '').localeCompare(String(b.date || '')))
     .slice(0, 5);
   const followingPicks = followingPickRows
+    .filter((row) => !isUnresolvablePick(row, today))
     .sort((a, b) => Number(Boolean(a.result)) - Number(Boolean(b.result)) || String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')) || String(a.date || '').localeCompare(String(b.date || '')))
     .slice(0, 10);
 
