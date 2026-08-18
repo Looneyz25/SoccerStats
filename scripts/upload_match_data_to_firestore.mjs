@@ -23,6 +23,7 @@ const SETTLED_MARKET_RESULTS = new Set(['hit', 'miss', 'pass', 'void']);
 const QUICK_BET_MARKETS = ['winner', 'btts', 'goalsOver', 'goalsUnder'];
 const QUICK_BET_GOAL_LINES = [0.5, 1.5, 2.5, 3.5];
 const QUICK_BET_MAX_ODDS_EXCLUSIVE = 1.5;
+const QUICK_BET_MAX_LIVE_MS = 150 * 60 * 1000;
 
 function slugify(value, fallback) {
   const slug = String(value || '')
@@ -256,17 +257,35 @@ function quickBetKickoff(row) {
   return localDate(kickoff) === date && kickoff.getHours() === hour && kickoff.getMinutes() === minute ? kickoff : null;
 }
 
+function hasQuickBetLiveEvidence(row) {
+  return (typeof row.minute === 'string' && row.minute.trim() !== '')
+    || (Number.isFinite(row.homeScore) && Number.isFinite(row.awayScore));
+}
+
+function quickBetResultPending(row, now) {
+  if (!row.recoveryTracked && row.source !== 'event' && row.source !== 'history') return false;
+  const status = String(row.status || '').toLowerCase();
+  if (['ft', 'finished', 'result', 'postponed_or_cancelled', 'cancelled', 'postponed', 'void'].includes(status)) return false;
+  const kickoff = quickBetKickoff(row);
+  return !!(kickoff && kickoff <= now && (now - kickoff) > QUICK_BET_MAX_LIVE_MS && !hasQuickBetLiveEvidence(row));
+}
+
 function quickBetLifecycleName(row, now = new Date()) {
   const status = String(row.status || '').toLowerCase();
-  if (['ft', 'finished', 'result', 'postponed_or_cancelled', 'cancelled', 'postponed', 'void'].includes(status)) return 'result';
+  if (['postponed_or_cancelled', 'cancelled', 'postponed', 'void'].includes(status)) return 'result';
   const date = quickBetDate(row);
+  if (['ft', 'finished', 'result'].includes(status)) {
+    if (!(date && date > localDate(now))) return 'result';
+  }
   if (!date) return null;
+  if (quickBetResultPending(row, now)) return 'result';
   const today = localDate(now);
   if (date < today) return null;
   if (date > today) return 'upcoming';
-  if (status === 'live') return 'live';
   const kickoff = quickBetKickoff(row);
-  return kickoff && kickoff <= now ? 'live' : 'upcoming';
+  const live = status === 'live' || (kickoff && kickoff <= now);
+  if (live) return 'live';
+  return 'upcoming';
 }
 
 function gradeQuickBetMarkets(markets, lifecycle, status, homeScore, awayScore) {
@@ -336,6 +355,8 @@ function mergeQuickBetCandidate(left, right) {
     awayScore: statusOwner.awayScore,
     minute: statusOwner.minute,
     source: history ? 'history' : canonical ? 'canonical' : left.source,
+    recoveryTracked: !!(left.recoveryTracked || right.recoveryTracked
+      || ['event', 'history'].includes(left.source) || ['event', 'history'].includes(right.source)),
   };
 }
 
@@ -390,6 +411,7 @@ export function buildQuickBetsPayload({ leagues = [], sidecar = null, now = new 
   const rows = merged.flatMap((row) => {
     const lifecycle = quickBetLifecycleName(row, now);
     if (!lifecycle) return [];
+    const resultPending = lifecycle === 'result' && quickBetResultPending(row, now);
     const score = Number.isFinite(row.homeScore) && Number.isFinite(row.awayScore) ? `${row.homeScore}-${row.awayScore}` : null;
     return [firestoreSafe({
       league: row.league || '',
@@ -400,7 +422,7 @@ export function buildQuickBetsPayload({ leagues = [], sidecar = null, now = new 
       eventId: row.eventId == null ? null : String(row.eventId),
       eventUrl: row.eventUrl || null,
       lifecycle,
-      status: String(lifecycle === 'upcoming' ? 'upcoming'
+      status: String(resultPending ? 'result_pending' : lifecycle === 'upcoming' ? 'upcoming'
         : lifecycle === 'live' && String(row.status || '').toLowerCase() === 'upcoming' ? 'started'
           : row.status || 'started'),
       score,
