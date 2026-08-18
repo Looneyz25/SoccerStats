@@ -5250,6 +5250,215 @@ def update_live_and_settle(store):
     return {"live": live_set, "settled": settled, "stuck": stuck}
 
 
+def _quick_bet_team_name(row, side):
+    value = row.get(side)
+    return value.get("name", "") if isinstance(value, dict) else str(value or "")
+
+
+def _quick_bet_score_from_canonical(match):
+    status = str(match.get("status") or "").lower()
+    if status in ("postponed_or_cancelled", "cancelled", "postponed"):
+        return {"status": "postponed_or_cancelled", "source": "canonical"}
+    if status not in ("live", "ft"):
+        return None
+    settlement = match.get("settlement_score") or {}
+    if status == "ft" and match.get("after_extra_time_score") and not settlement:
+        return None
+    home = _int_or_none(settlement.get("home")) if status == "ft" else None
+    away = _int_or_none(settlement.get("away")) if status == "ft" else None
+    if home is None:
+        home = _int_or_none((match.get("home") or {}).get("goals"))
+    if away is None:
+        away = _int_or_none((match.get("away") or {}).get("goals"))
+    if home is None or away is None:
+        return None
+    return {"status": "FT" if status == "ft" else "live", "home_score": home,
+            "away_score": away, "live_minute": match.get("live_minute"), "source": "canonical"}
+
+
+def _espn_summary_has_extra_time(summary):
+    competitions = ((summary or {}).get("header") or {}).get("competitions") or []
+    comp = competitions[0] if competitions else {}
+    status_type = (comp.get("status") or {}).get("type") or {}
+    text = " ".join(str(status_type.get(key) or "") for key in (
+        "name", "detail", "shortDetail", "description"
+    )).lower()
+    if "aet" in text or "extra time" in text or "penalt" in text:
+        return True
+    return any(len(competitor.get("linescores") or []) > 2 for competitor in comp.get("competitors") or [])
+
+
+def _espn_quick_bet_adelaide_date(event, slug):
+    """Return the precise ESPN kickoff's Adelaide date, or None when unavailable."""
+    values = [event.get("date")]
+    event_id = event.get("event_id")
+    if event_id:
+        summary = _fetch_espn_summary(slug, event_id)
+        competitions = ((summary or {}).get("header") or {}).get("competitions") or []
+        if competitions:
+            values.insert(0, competitions[0].get("date"))
+    for value in values:
+        text = str(value or "").strip()
+        if "T" not in text:
+            continue
+        try:
+            kickoff = datetime.fromisoformat(text.replace("Z", "+00:00"))
+        except ValueError:
+            continue
+        if kickoff.tzinfo is None:
+            continue
+        return kickoff.astimezone(ADL).strftime("%Y-%m-%d")
+    return None
+
+
+def espn_state_for_quick_bet(row):
+    """Return one non-mutating ESPN state only for an explicitly mapped league."""
+    import soccer_phase1_fixtures as espnsource
+    league_name = str(row.get("league") or "")
+    slug = espnsource.ESPN_LEAGUE_SLUGS.get(league_name)
+    if not slug:
+        return None
+    home = _quick_bet_team_name(row, "home")
+    away = _quick_bet_team_name(row, "away")
+    candidates = [event for event in espn_scoreboard_events(league_name)
+                  if team_names_match(home, event.get("home"))
+                  and team_names_match(away, event.get("away"))
+                  and _espn_quick_bet_adelaide_date(event, slug) == str(row.get("date") or "")]
+    if len(candidates) != 1:
+        return None
+    event = candidates[0]
+    home_score = _int_or_none(event.get("home_score"))
+    away_score = _int_or_none(event.get("away_score"))
+    if home_score is None or away_score is None:
+        return None
+    state = str(event.get("state") or "").lower()
+    if state == "in":
+        return {"status": "live", "home_score": home_score, "away_score": away_score,
+                "live_minute": event.get("detail"), "source": "ESPN"}
+    if state != "post" and not event.get("completed"):
+        return None
+    summary = _fetch_espn_summary(slug, event.get("event_id")) if event.get("event_id") else None
+    regulation = _regulation_score_from_espn_summary(summary)
+    if regulation:
+        home_score, away_score = regulation["home"], regulation["away"]
+    elif _espn_summary_has_extra_time(summary) or re.search(
+            r"\b(?:AET|ET|PEN)\b|extra time|penalt", str(event.get("detail") or ""), re.I):
+        return None
+    return {"status": "FT", "home_score": home_score, "away_score": away_score, "source": "ESPN"}
+
+
+def flashscore_state_for_quick_bet(events, row):
+    """Accept exactly one same-date, ordered home/away Flashscore match."""
+    home = _quick_bet_team_name(row, "home")
+    away = _quick_bet_team_name(row, "away")
+    candidates = []
+    for event in events or []:
+        try:
+            event_date = adl_date(int(event.get("ts")))
+        except (TypeError, ValueError):
+            continue
+        if event_date == str(row.get("date") or "") and team_names_match(
+                home, event.get("home")) and team_names_match(away, event.get("away")):
+            candidates.append(event)
+    if len(candidates) != 1:
+        return None
+    event = candidates[0]
+    status = str(event.get("status_text") or "").lower()
+    if status == "postponed_or_cancelled":
+        return {"status": "postponed_or_cancelled", "source": "Flashscore"}
+    try:
+        import soccer_phase1_fixtures as flashsource
+        state = flashsource.flashscore_status(event.get("status"))
+    except Exception:
+        state = status
+    home_score = _int_or_none(event.get("home_score"))
+    away_score = _int_or_none(event.get("away_score"))
+    if home_score is None or away_score is None or state not in ("live", "FT"):
+        return None
+    if state == "FT":
+        blob = " ".join(str(event.get(key) or "") for key in (
+            "status_text", "detail", "stage", "period", "note"
+        ))
+        reg_home = _int_or_none(event.get("regulation_home_score"))
+        reg_away = _int_or_none(event.get("regulation_away_score"))
+        if re.search(r"\b(?:AET|ET|PEN)\b|extra time|penalt", blob, re.I):
+            if reg_home is None or reg_away is None:
+                return None
+            home_score, away_score = reg_home, reg_away
+        return {"status": "FT", "home_score": home_score, "away_score": away_score, "source": "Flashscore"}
+    return {"status": "live", "home_score": home_score, "away_score": away_score,
+            "live_minute": event.get("detail"), "source": "Flashscore"}
+
+
+def update_quick_bet_history(store=None, now=None, path=None, terminal_check_limit=10):
+    import soccer_fetch_sportsbet as sportsbet
+    now = now or datetime.now(ADL)
+    target_path = path or sportsbet.QUICK_BETS_PATH
+    payload = sportsbet.read_quick_bets(target_path)
+    if not payload:
+        return {"live": 0, "settled": 0, "unresolved": 0}
+    events, history = sportsbet.roll_quick_bet_history(payload, payload.get("events") or [], now)
+    store = store if isinstance(store, dict) else load_store()
+    canonical = {}
+    for league in store.get("leagues") or []:
+        for match in league.get("matches") or []:
+            event_id = sportsbet_event_id_for_match(match)
+            if event_id:
+                canonical.setdefault(str(event_id), []).append(match)
+    try:
+        flash_results, _source = load_flashscore_result_events()
+    except Exception:
+        flash_results = []
+    try:
+        flash_live = get_flashscore_live_events()
+    except Exception:
+        flash_live = []
+    flash_events = [*(flash_live or []), *(flash_results or [])]
+
+    live_count = settled_count = unresolved_count = terminal_checks = 0
+    for row in history:
+        status = str(row.get("status") or "started").lower()
+        if status in ("ft", "postponed_or_cancelled", "cancelled", "postponed", "void"):
+            settled_count += 1
+            continue
+        matches = canonical.get(str(row.get("event_id"))) or []
+        state = _quick_bet_score_from_canonical(matches[0]) if len(matches) == 1 else None
+        if not state:
+            state = espn_state_for_quick_bet(row)
+        if not state:
+            state = flashscore_state_for_quick_bet(flash_events, row)
+        if not state and terminal_checks < max(0, int(terminal_check_limit)):
+            terminal_checks += 1
+            terminal = sportsbet_result_for_match(str(row.get("league") or ""), {
+                "sportsbet_odds": {"event_id": row.get("event_id"), "event_url": row.get("event_url")},
+                "home": {"name": _quick_bet_team_name(row, "home")},
+                "away": {"name": _quick_bet_team_name(row, "away")},
+            })
+            if terminal and terminal.get("status") == "postponed_or_cancelled":
+                state = {"status": "postponed_or_cancelled", "source": "Sportsbet"}
+        if not state:
+            row["status"] = "started"
+            unresolved_count += 1
+            continue
+        row["status"] = state["status"]
+        for key in ("home_score", "away_score", "live_minute"):
+            if state.get(key) is not None:
+                row[key] = state[key]
+            else:
+                row.pop(key, None)
+        row["result_source"] = state["source"]
+        row["lifecycle_updated_at"] = now.isoformat()
+        if state["status"] == "live":
+            live_count += 1
+        else:
+            settled_count += 1
+    payload["schema_version"] = 2
+    payload["events"] = events
+    payload["history"] = history
+    sportsbet.atomic_write_json(target_path, payload)
+    return {"live": live_count, "settled": settled_count, "unresolved": unresolved_count}
+
+
 def write_live_stuck_marker(stuck):
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     LIVE_STUCK_MARKER.write_text(json.dumps({
@@ -5263,7 +5472,9 @@ def run_live_update():
     print(f"=== soccer_routine.py live — {datetime.now(ADL).strftime('%Y-%m-%d %H:%M')} (Adelaide) ===")
     store = load_store()
     res = update_live_and_settle(store)
+    quick_bets = update_quick_bet_history(store)
     print(f"  live={len(res['live'])} settled={len(res['settled'])} stuck={len(res['stuck'])}")
+    print(f"  quick_bets live={quick_bets['live']} settled={quick_bets['settled']} unresolved={quick_bets['unresolved']}")
     for row in res["live"]:
         print(f"  live: {row}")
     for row in res["settled"]:
@@ -5311,6 +5522,8 @@ def run_results_only():
             )
     pa = settle_due_matches_by_sofascore_id(due_targets)
     print(f"  settled={len(pa['settled'])}  skipped={pa['skipped']}  not_due={pa['not_due']}  flashscore_settled={pa.get('flashscore_settled', 0)}  livescore_settled={pa.get('livescore_settled', 0)}  closed={pa.get('closed', 0)}")
+    quick_bets = update_quick_bet_history(store)
+    print(f"  quick_bets live={quick_bets['live']} settled={quick_bets['settled']} unresolved={quick_bets['unresolved']}")
 
     print("\n[Results B] backfill stat actuals for recent FT matches")
     bf = backfill_stat_actuals(store)

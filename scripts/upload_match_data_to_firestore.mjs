@@ -12,11 +12,15 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PROJECT_ID = 'sports-predictions-f91fd';
 const DOC_ID = 'match_data';
 const FAST_DOC_ID = 'match_data_fast';
+const QUICK_BETS_DOC_ID = 'quick_bets';
 const MANUAL_IMPORTS_COLLECTION = 'manualResultImports';
 const DEFAULT_SERVICE_ACCOUNT_PATH = path.join(ROOT, '.secrets', 'firebase-service-account.json');
+const QUICK_BETS_PATH = path.join(ROOT, 'sportsbet_quick_bets.json');
 const FIRESTORE_UPLOAD_BATCH_SIZE = Number(process.env.FIRESTORE_UPLOAD_BATCH_SIZE || 5);
 const DRAW_NO_BET_TRACKING_START_DATE = '2026-05-25';
 const SETTLED_MARKET_RESULTS = new Set(['hit', 'miss', 'pass', 'void']);
+const QUICK_BET_MARKETS = ['winner', 'btts', 'goalsOver', 'goalsUnder'];
+const QUICK_BET_GOAL_LINES = [0.5, 1.5, 2.5, 3.5];
 
 function slugify(value, fallback) {
   const slug = String(value || '')
@@ -33,6 +37,212 @@ function cleanKey(value) {
     .toLowerCase()
     .replace(/&/g, 'and')
     .replace(/[^a-z0-9]+/g, '');
+}
+
+function sportsbetEventDetails(value, expectedId = null) {
+  try {
+    const url = new URL(value);
+    const host = url.hostname.toLowerCase();
+    const id = /-(\d+)\/?$/.exec(url.pathname)?.[1] || null;
+    const safeHost = host === 'sportsbet.com.au' || host.endsWith('.sportsbet.com.au');
+    if (url.protocol !== 'https:' || !safeHost || !id || (expectedId != null && String(expectedId) !== id)) return null;
+    return { url: url.href, eventId: id };
+  } catch {
+    return null;
+  }
+}
+
+function quickBetSelection(market, item, home, away) {
+  if (!item || typeof item !== 'object') return null;
+  const odds = Number(item.odds);
+  if (!Number.isFinite(odds) || odds <= 1 || odds >= 1.5) return null;
+  const key = String(item.key || '').toLowerCase();
+  const result = ['hit', 'miss', 'void'].includes(String(item.result || '').toLowerCase())
+    ? String(item.result).toLowerCase()
+    : null;
+  const liveLock = ['hit', 'miss'].includes(String(item.liveLock || item.live_lock || '').toLowerCase())
+    ? String(item.liveLock || item.live_lock).toLowerCase()
+    : null;
+
+  if (market === 'winner') {
+    if (!['home', 'draw', 'away'].includes(key)) return null;
+    return {
+      key,
+      label: key === 'home' ? home : key === 'away' ? away : 'Draw',
+      odds,
+      result,
+      liveLock,
+    };
+  }
+  if (market === 'btts') {
+    if (!['yes', 'no'].includes(key)) return null;
+    return {
+      key,
+      label: key === 'yes' ? 'Yes' : 'No',
+      odds,
+      result,
+      liveLock,
+    };
+  }
+
+  const side = market === 'goalsOver' ? 'over' : 'under';
+  const line = Number(item.line);
+  if (!Number.isFinite(line) || !QUICK_BET_GOAL_LINES.includes(line)) return null;
+  if (side === 'under' && line === 4.5) return null;
+  if (String(item.side || side).toLowerCase() !== side) return null;
+  const stableKey = `${side}:${Number(line).toString()}`;
+  if (key && key !== stableKey) return null;
+  return {
+    key: stableKey,
+    side,
+    line,
+    label: `${side === 'over' ? 'Over' : 'Under'} ${Number(line).toString()}`,
+    odds,
+    result,
+    liveLock,
+  };
+}
+
+function quickBetLifecycleName(row) {
+  const status = String(row.status || '').toLowerCase();
+  if (['ft', 'finished', 'result', 'postponed_or_cancelled', 'cancelled', 'postponed', 'void'].includes(status)) return 'result';
+  if (status === 'live') return 'live';
+  return row.source === 'history' ? 'live' : 'upcoming';
+}
+
+function gradeQuickBetMarkets(markets, lifecycle, status, homeScore, awayScore) {
+  const terminalVoid = ['postponed_or_cancelled', 'cancelled', 'postponed', 'void'].includes(String(status || '').toLowerCase());
+  const hasScore = Number.isFinite(homeScore) && Number.isFinite(awayScore);
+  const total = hasScore ? homeScore + awayScore : null;
+  const grade = (market, selection) => {
+    if (selection.result || selection.liveLock) return selection;
+    let result = null;
+    let liveLock = null;
+    if (terminalVoid) result = 'void';
+    else if (hasScore && lifecycle === 'result') {
+      if (market === 'winner') {
+        const actual = homeScore > awayScore ? 'home' : homeScore < awayScore ? 'away' : 'draw';
+        result = selection.key === actual ? 'hit' : 'miss';
+      } else if (market === 'btts') {
+        const actual = homeScore > 0 && awayScore > 0 ? 'yes' : 'no';
+        result = selection.key === actual ? 'hit' : 'miss';
+      } else if (market === 'goalsOver') result = total > selection.line ? 'hit' : 'miss';
+      else if (market === 'goalsUnder') result = total < selection.line ? 'hit' : 'miss';
+    } else if (hasScore && lifecycle === 'live') {
+      if (market === 'btts' && homeScore > 0 && awayScore > 0) liveLock = selection.key === 'yes' ? 'hit' : 'miss';
+      if (market === 'goalsOver' && total > selection.line) liveLock = 'hit';
+      if (market === 'goalsUnder' && total > selection.line) liveLock = 'miss';
+    }
+    return { ...selection, result, liveLock };
+  };
+  return Object.fromEntries(QUICK_BET_MARKETS.map((market) => [
+    market,
+    (markets[market] || []).map((selection) => grade(market, selection)),
+  ]));
+}
+
+function sanitizeQuickBetRow(row, source) {
+  if (!row || typeof row !== 'object') return null;
+  const home = String(row.home || row.homeName || '').trim();
+  const away = String(row.away || row.awayName || '').trim();
+  const date = String(row.date || '').trim();
+  if (!home || !away || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return null;
+  const event = sportsbetEventDetails(row.eventUrl || row.event_url, row.eventId || row.event_id);
+  if (!event) return null;
+
+  const rawMarkets = row.markets && typeof row.markets === 'object' ? row.markets : {};
+  const markets = Object.fromEntries(QUICK_BET_MARKETS.map((market) => [
+    market,
+    (Array.isArray(rawMarkets[market]) ? rawMarkets[market] : [])
+      .map((selection) => quickBetSelection(market, selection, home, away))
+      .filter(Boolean),
+  ]));
+  if (!QUICK_BET_MARKETS.some((market) => markets[market].length)) return null;
+
+  const homeScore = row.homeScore ?? row.home_score;
+  const awayScore = row.awayScore ?? row.away_score;
+  const numericHomeScore = Number.isFinite(Number(homeScore)) ? Number(homeScore) : null;
+  const numericAwayScore = Number.isFinite(Number(awayScore)) ? Number(awayScore) : null;
+  const lifecycle = quickBetLifecycleName({ ...row, source });
+  const status = String(
+    lifecycle === 'live' && String(row.status || '').toLowerCase() === 'upcoming'
+      ? 'started'
+      : row.status || (lifecycle === 'upcoming' ? 'upcoming' : 'started'),
+  );
+  const score = numericHomeScore !== null && numericAwayScore !== null ? `${numericHomeScore}-${numericAwayScore}` : null;
+  return firestoreSafe({
+    league: String(row.league || '').trim(),
+    date,
+    time: String(row.time || '').trim(),
+    home,
+    away,
+    eventId: String(event.eventId),
+    eventUrl: event.url,
+    lifecycle,
+    status,
+    score,
+    homeScore: numericHomeScore,
+    awayScore: numericAwayScore,
+    minute: typeof row.live_minute === 'string' ? row.live_minute : typeof row.minute === 'string' ? row.minute : null,
+    source: row.result_source || row.source || source,
+    markets: gradeQuickBetMarkets(markets, lifecycle, status, numericHomeScore, numericAwayScore),
+  });
+}
+
+function quickBetSelectionCount(matches) {
+  return (Array.isArray(matches) ? matches : []).reduce((total, match) => (
+    total + QUICK_BET_MARKETS.reduce((count, market) => count + (match.markets?.[market]?.length || 0), 0)
+  ), 0);
+}
+
+function quickBetCounts(matches) {
+  return {
+    upcoming: matches.filter((row) => row.lifecycle === 'upcoming').length,
+    live: matches.filter((row) => row.lifecycle === 'live').length,
+    results: matches.filter((row) => row.lifecycle === 'result').length,
+  };
+}
+
+async function loadQuickBetsPayload() {
+  if (!existsSync(QUICK_BETS_PATH)) return null;
+  const raw = await readFile(QUICK_BETS_PATH, 'utf8');
+  const source = JSON.parse(raw);
+  const rows = [
+    ...(Array.isArray(source.events) ? source.events.map((row) => ({ row, source: 'event' })) : []),
+    ...(Array.isArray(source.history) ? source.history.map((row) => ({ row, source: 'history' })) : []),
+  ]
+    .map(({ row, source: rowSource }) => sanitizeQuickBetRow(row, rowSource))
+    .filter(Boolean)
+    .sort((a, b) =>
+      String(a.date).localeCompare(String(b.date)) ||
+      String(a.time || '99:99').localeCompare(String(b.time || '99:99')) ||
+      String(a.league || '').localeCompare(String(b.league || '')) ||
+      String(a.home || '').localeCompare(String(b.home || '')) ||
+      String(a.away || '').localeCompare(String(b.away || '')),
+    );
+  const dates = new Map();
+  for (const row of rows) {
+    if (!dates.has(row.date)) dates.set(row.date, []);
+    dates.get(row.date).push(row);
+  }
+  return {
+    meta: firestoreSafe({
+      format: 'quick_bets_v1',
+      source: 'Sportsbet',
+      sourceUrl: source.source_url || source.sourceUrl || 'https://www.sportsbet.com.au/betting/soccer',
+      capturedAt: source.captured_at || source.capturedAt || null,
+      attemptedAt: source.attempted_at || source.attemptedAt || null,
+      refreshStatus: ['complete', 'partial', 'stale'].includes(source.status) ? source.status : 'core-only',
+      maxOddsExclusive: 1.5,
+      counts: quickBetCounts(rows),
+      totalMatches: rows.length,
+      totalSelections: quickBetSelectionCount(rows),
+      availableDates: [...dates.keys()].sort(),
+      dateDocCount: dates.size,
+      updatedAt: FieldValue.serverTimestamp(),
+    }),
+    dates,
+  };
 }
 
 function matchScore(match, item) {
@@ -81,6 +291,14 @@ function settleTotalMarket(market, actual) {
   if (market.pick === 'Over') next.result = actual > line ? 'hit' : 'miss';
   if (market.pick === 'Under') next.result = actual < line ? 'hit' : 'miss';
   return next;
+}
+
+function settleTotalOrPassMarket(market, actual) {
+  if (!market || actual === null || actual === undefined) return market;
+  const settled = settleTotalMarket(market, actual);
+  if (marketResult(settled)) return settled;
+  const value = Number(actual);
+  return Number.isFinite(value) && !market.pick ? { ...market, actual: value, result: 'pass' } : market;
 }
 
 function isTerminalVoidStatus(item) {
@@ -289,6 +507,51 @@ function reportDroppedMatchFields(leagues) {
     }
   }
   return [...unexpected.keys()];
+}
+
+function repairVisibleMarketSettlements(leagues) {
+  let repaired = 0;
+  for (const league of Array.isArray(leagues) ? leagues : []) {
+    for (const match of Array.isArray(league?.matches) ? league.matches : []) {
+      if (!isFinishedStatus(match)) continue;
+      const display = match.display_markets || {};
+      const predictions = match.predictions || {};
+      const actuals = match.actuals || {};
+      const repairs = [
+        ['cards', 'ou_cards', actuals.cards_total],
+        ['corners', 'ou_corners', actuals.corners_total],
+      ];
+
+      for (const [key, predictionKey, actual] of repairs) {
+        const predictionMarket = predictions[predictionKey];
+        if (predictionMarket && !marketResult(predictionMarket)) {
+          const settledPrediction = settleTotalOrPassMarket(predictionMarket, actual);
+          if (marketResult(settledPrediction)) {
+            match.predictions = {
+              ...match.predictions,
+              [predictionKey]: settledPrediction,
+            };
+            repaired += 1;
+          }
+        }
+
+        const market = display[key]?.market;
+        if (!market || marketResult(market)) continue;
+        const settled = settleTotalOrPassMarket(market, actual);
+        if (!marketResult(settled)) continue;
+        match.display_markets = {
+          ...match.display_markets,
+          [key]: {
+            ...display[key],
+            market: settled,
+          },
+        };
+        repaired += 1;
+      }
+    }
+  }
+  if (repaired) console.log(`Visible display market settlements repaired for upload: ${repaired}`);
+  return repaired;
 }
 
 function slimLeagueDocMatch(match) {
@@ -698,16 +961,21 @@ async function main() {
   }
   const parsed = precomputeDisplayData({ ...sourceData, leagues: manualResult.leagues });
   const leagues = Array.isArray(parsed.leagues) ? parsed.leagues : [];
+  repairVisibleMarketSettlements(leagues);
   reportDroppedMatchFields(leagues);
   const allTimeSummary = summarizeAllTime(leagues);
   const metaRef = db.collection('dashboardData').doc(DOC_ID);
   const fastRef = db.collection('dashboardData').doc(FAST_DOC_ID);
+  const quickBetsRef = db.collection('dashboardData').doc(QUICK_BETS_DOC_ID);
   const chunksRef = metaRef.collection('chunks');
   const leaguesRef = metaRef.collection('leagues');
   const datesRef = metaRef.collection('dates');
+  const quickBetsDatesRef = quickBetsRef.collection('dates');
   const existingChunks = await chunksRef.listDocuments();
   const existingLeagues = await leaguesRef.listDocuments();
   const existingDates = await datesRef.listDocuments();
+  const quickBetsPayload = await loadQuickBetsPayload();
+  const existingQuickBetDates = quickBetsPayload ? await quickBetsDatesRef.listDocuments() : [];
   const operations = [];
 
   for (const ref of existingChunks) {
@@ -792,6 +1060,36 @@ async function main() {
   const { payload: fastPayload, cutoff: fastCutoff, byteLength: fastByteLength, days: fastDays, overflow: fastOverflow } = selectFastPayload(leagues, parsed, allTimeSummary, availableDates);
   operations.push({ type: 'set', ref: fastRef, payload: fastPayload });
 
+  if (quickBetsPayload) {
+    const quickBetDates = [...quickBetsPayload.dates.keys()].sort();
+    const targetQuickBetDateIds = new Set(quickBetDates.map((date) => slugify(date, 'unknown')));
+    for (const ref of existingQuickBetDates) {
+      if (!targetQuickBetDateIds.has(ref.id)) operations.push({ type: 'delete', ref });
+    }
+
+    operations.push({ type: 'set', ref: quickBetsRef, payload: quickBetsPayload.meta });
+    for (const date of quickBetDates) {
+      const matches = quickBetsPayload.dates.get(date) || [];
+      operations.push({
+        type: 'set',
+        ref: quickBetsDatesRef.doc(slugify(date, 'unknown')),
+        payload: firestoreSafe({
+          format: 'quick_bets_date_v1',
+          date,
+          capturedAt: quickBetsPayload.meta.capturedAt || null,
+          source: quickBetsPayload.meta.source || 'Sportsbet',
+          sourceUrl: quickBetsPayload.meta.sourceUrl || null,
+          refreshStatus: quickBetsPayload.meta.refreshStatus || 'core-only',
+          maxOddsExclusive: quickBetsPayload.meta.maxOddsExclusive || 1.5,
+          matchCount: matches.length,
+          totalSelections: quickBetSelectionCount(matches),
+          matches,
+          updatedAt: FieldValue.serverTimestamp(),
+        }),
+      });
+    }
+  }
+
   await commitUploadOperations(db, operations);
   await verifyFirestoreDayMarketsSettled(db, adelaideTodayIso(), new Set(dateBuckets.keys()));
   console.log(`Uploaded ${dataPath} to Firestore dashboardData/${DOC_ID} as ${leagues.length} league docs and ${dateBuckets.size} date docs.`);
@@ -799,6 +1097,11 @@ async function main() {
     console.log(`Uploaded fast dashboard doc dashboardData/${FAST_DOC_ID} as metadata-only fallback (${(fastByteLength / 1024).toFixed(1)} KB); app will use date/league docs.`);
   } else {
     console.log(`Uploaded fast dashboard doc dashboardData/${FAST_DOC_ID} (${fastDays}-day window from ${fastCutoff}, ${(fastByteLength / 1024).toFixed(1)} KB).`);
+  }
+  if (quickBetsPayload) {
+    console.log(`Uploaded quick bets to Firestore dashboardData/${QUICK_BETS_DOC_ID} as ${quickBetsPayload.dates.size} date docs (${quickBetsPayload.meta.totalMatches} matches, ${quickBetsPayload.meta.totalSelections} selections).`);
+  } else {
+    console.log(`Skipped quick bets upload because ${QUICK_BETS_PATH} was not found.`);
   }
 }
 

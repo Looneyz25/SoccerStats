@@ -46,5 +46,7 @@ logs/
 docs/agent-system/outputs/
 predictions_*.json
 predictions_*.md
+sportsbet_quick_bets.json
+sportsbet_quick_bets.json.tmp
 .claude/triple-pass/
 .tmp-*

@@ -314,6 +314,37 @@ Verification / evidence:
 - Useful for local pipeline state only.
 - Never treat it as customer-visible truth without Firestore verification.
 
+### Node: Sportsbet quick-bets sidecar
+
+Change aliases: `get:data:sportsbet`, Sportsbet root discovery, short odds, quick bets, deep-market cursor.
+
+Primary files:
+- `scripts/soccer_fetch_sportsbet.py`
+- `sportsbet_quick_bets.json`
+
+Depends on:
+- Sportsbet soccer root `window.__PRELOADED_STATE__` for listed competitions and current 1X2 prices
+- Validated Sportsbet event pages for BTTS and goal-total prices
+- Australia/Adelaide `today..today+6` date boundaries
+
+Called by / affects:
+- Existing `refresh_sportsbet_odds` wrapper stage in `scripts/get-data-with-log.mjs`
+- Full `scripts/soccer_routine.py` Sportsbet helper stage
+- AIOS read-only `/api/upcoming-quick-bets` selector
+- Firestore upload projection in `scripts/upload_match_data_to_firestore.mjs`
+- Dashboard Quick Bets page at `app/dashboard/quick-bets/page.jsx`
+
+Firestore paths:
+- `dashboardData/quick_bets`
+- `dashboardData/quick_bets/dates/{dateId}`
+- Provider-only sidecar rows must never enter `match_data.json` or Firestore prediction documents.
+
+Verification / evidence:
+- Root discovery is independent of `LEAGUE_PAGES`; no second scraper or wrapper stage exists.
+- Sidecar replacement is atomic. Failed root reads retain prior events as stale; bounded deep reads resume inside a durable scan generation until every member is fresh.
+- Winner freshness comes from the current root independently of deep BTTS/goals freshness.
+- Event rows cover future pre-kickoff odds inside Adelaide today through today + 6; history rows may carry live/result snapshots and contain no predictions.
+
 ### Node: Manual result imports
 
 Change aliases: manual result import, blocked FT settlement recovery, cards/corners backfill, terminal void import.

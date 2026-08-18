@@ -3,6 +3,7 @@ import { getFirebaseAuth, getFirebaseDb } from './firebase';
 
 const DASHBOARD_DOC = 'match_data';
 const FAST_DASHBOARD_DOC = 'match_data_fast';
+const QUICK_BETS_DOC = 'quick_bets';
 const MAX_FAVORITE_TEAMS = 100;
 const ADMIN_GROUPS_DOC = 'admin_user_groups';
 
@@ -10,12 +11,18 @@ const ADMIN_GROUPS_DOC = 'admin_user_groups';
 // session so date switches / navigation paint instantly while a fresh fetch
 // runs in the background (the dashboard already does stale-while-revalidate).
 const matchDataCacheStore = new Map();
+const quickBetsCacheStore = new Map();
 
 export function readMatchDataCache(date = '') {
   return matchDataCacheStore.get(date || 'all') || null;
 }
 
+export function readQuickBetsCache() {
+  return quickBetsCacheStore.get('current') || null;
+}
+
 const inflightMatchDataPromises = new Map();
+let inflightQuickBetsPromise = null;
 
 export function loadMatchDataFromFirestore(date = '') {
   const key = date || 'all';
@@ -35,6 +42,32 @@ export function loadMatchDataFromFirestore(date = '') {
     );
   }
   return inflightMatchDataPromises.get(key);
+}
+
+export function loadQuickBetsFromFirestore() {
+  if (!inflightQuickBetsPromise) {
+    inflightQuickBetsPromise = fetchQuickBets()
+      .then((payload) => {
+        if (payload && Array.isArray(payload.matches)) {
+          quickBetsCacheStore.set('current', payload);
+        }
+        return payload;
+      })
+      .finally(() => {
+        inflightQuickBetsPromise = null;
+      });
+  }
+  return inflightQuickBetsPromise;
+}
+
+async function fetchQuickBets() {
+  try {
+    const apiResult = await fetchQuickBetsFromApi();
+    if (apiResult) return apiResult;
+  } catch {
+    // fall through to direct Firestore SDK read
+  }
+  return fetchQuickBetsFromFirestoreSdk();
 }
 
 export async function loadTeamOptionsFromFirestore() {
@@ -104,6 +137,22 @@ async function fetchMatchDataFromApi(date = '') {
   if (!response.ok) return null;
   const payload = await response.json();
   if (!payload || !Array.isArray(payload.leagues)) return null;
+  return payload;
+}
+
+async function fetchQuickBetsFromApi() {
+  if (typeof window === 'undefined' || typeof fetch !== 'function') return null;
+  const auth = getFirebaseAuth();
+  const user = auth.currentUser;
+  if (!user) return null;
+  const token = await user.getIdToken();
+  const response = await fetch('/api/quick-bets', {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: 'no-store',
+  });
+  if (!response.ok) return null;
+  const payload = await response.json();
+  if (!payload || !Array.isArray(payload.matches)) return null;
   return payload;
 }
 
@@ -203,6 +252,34 @@ async function fetchMatchDataFromFirestoreSdk(date = '') {
 
   const parsed = JSON.parse(chunks.join(''));
   return parsed;
+}
+
+async function fetchQuickBetsFromFirestoreSdk() {
+  const db = getFirebaseDb();
+  const metaRef = doc(db, 'dashboardData', QUICK_BETS_DOC);
+  const metaSnap = await getDoc(metaRef);
+
+  if (!metaSnap.exists()) {
+    throw new Error('Firestore quick bets metadata not found');
+  }
+
+  const meta = metaSnap.data() || {};
+  const dates = Array.isArray(meta.availableDates) ? meta.availableDates : [];
+  const dateDocs = await Promise.all(
+    dates.map(async (date) => {
+      const dateRef = doc(db, 'dashboardData', QUICK_BETS_DOC, 'dates', date);
+      const dateSnap = await getDoc(dateRef);
+      return dateSnap.exists() ? dateSnap.data() : null;
+    }),
+  );
+  const matches = dateDocs.flatMap((dateDoc) => (
+    Array.isArray(dateDoc?.matches) ? dateDoc.matches : []
+  ));
+
+  return {
+    ...meta,
+    matches,
+  };
 }
 
 export async function getUserProfile(uid) {

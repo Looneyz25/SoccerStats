@@ -6391,18 +6391,20 @@ function MobileBottomNav({
   onDashboard,
   onMatches,
   onWatchlist,
+  onQuickBets,
   onSettings,
 }) {
   const navItems = [
     { key: 'dashboard', label: 'Dashboard', icon: HomeIcon, onClick: onDashboard },
     { key: 'matches', label: 'Matches', icon: ListFilter, onClick: onMatches },
     { key: 'watchlist', label: 'Watchlist', icon: Star, onClick: onWatchlist },
+    { key: 'quick-bets', label: 'Quick Bets', icon: Activity, onClick: onQuickBets },
     { key: 'settings', label: 'Settings', icon: Settings, onClick: onSettings },
   ];
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-line bg-surface px-2 pb-[calc(env(safe-area-inset-bottom)+0.35rem)] pt-1.5 shadow-[0_-10px_30px_rgba(15,23,42,0.10)] backdrop-blur sm:hidden" aria-label="Mobile app navigation">
-      <div className="mx-auto grid max-w-md grid-cols-4 gap-1">
+      <div className="mx-auto grid max-w-md grid-cols-5 gap-1">
         {navItems.map(({ key, label, icon: Icon, onClick }) => {
           const selected = active === key;
           return (
@@ -6430,12 +6432,14 @@ function DesktopSidePanel({
   onDashboard,
   onMatches,
   onWatchlist,
+  onQuickBets,
   onSettings,
 }) {
   const navItems = [
     { key: 'dashboard', label: 'Dashboard', icon: HomeIcon, onClick: onDashboard },
     { key: 'matches', label: 'Matches', icon: ListFilter, onClick: onMatches },
     { key: 'watchlist', label: 'Fav', icon: Star, onClick: onWatchlist },
+    { key: 'quick-bets', label: 'Quick Bets', icon: Activity, onClick: onQuickBets },
     { key: 'settings', label: 'Settings', icon: Settings, onClick: onSettings },
   ];
 
@@ -7384,6 +7388,9 @@ function HomeInner() {
     setMobileNavActive('settings');
     openSettings();
   }, [openSettings]);
+  const openQuickBets = useCallback(() => {
+    router.push('/dashboard/quick-bets');
+  }, [router]);
 
   const leaveSettingsForSection = useCallback((activeKey) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -7639,6 +7646,7 @@ function HomeInner() {
           onDashboard={settingsNavDashboard}
           onMatches={settingsNavMatches}
           onWatchlist={settingsNavWatchlist}
+          onQuickBets={openQuickBets}
           onSettings={openMobileSettings}
         />
         <SettingsView
@@ -7657,6 +7665,7 @@ function HomeInner() {
           onDashboard={settingsNavDashboard}
           onMatches={settingsNavMatches}
           onWatchlist={settingsNavWatchlist}
+          onQuickBets={openQuickBets}
           onSettings={openMobileSettings}
         />
       </>
@@ -7670,6 +7679,7 @@ function HomeInner() {
         onDashboard={openDashboardSection}
         onMatches={openMatchesSection}
         onWatchlist={openWatchlistSection}
+        onQuickBets={openQuickBets}
         onSettings={openMobileSettings}
       />
       <header className="border-b border-line bg-surface sm:hidden">
@@ -8114,6 +8124,7 @@ function HomeInner() {
         onDashboard={openDashboardSection}
         onMatches={openMatchesSection}
         onWatchlist={openWatchlistSection}
+        onQuickBets={openQuickBets}
         onSettings={openMobileSettings}
       />
     </main>

@@ -1,4 +1,8 @@
+import json
+import tempfile
 import unittest
+from datetime import datetime, timezone
+from pathlib import Path
 
 import soccer_routine as sr
 
@@ -285,6 +289,7 @@ class ResultsOnlyDueScopeTests(unittest.TestCase):
         original_save = sr.save_store
         original_write_schedule = sr.write_result_schedule_log
         original_tally = sr.print_final_tally
+        original_quick_bets = sr.update_quick_bet_history
         try:
             sr.load_store = lambda: store
             sr.due_result_targets = lambda _store: [target]
@@ -304,6 +309,7 @@ class ResultsOnlyDueScopeTests(unittest.TestCase):
             sr.save_store = lambda _store: None
             sr.write_result_schedule_log = lambda _store, summary: schedule_summary.update(summary) or {"markdown": "schedule.md"}
             sr.print_final_tally = lambda _store: None
+            sr.update_quick_bet_history = lambda _store: {"live": 0, "settled": 0, "unresolved": 0}
 
             sr.run_results_only()
 
@@ -323,6 +329,7 @@ class ResultsOnlyDueScopeTests(unittest.TestCase):
             sr.save_store = original_save
             sr.write_result_schedule_log = original_write_schedule
             sr.print_final_tally = original_tally
+            sr.update_quick_bet_history = original_quick_bets
 
 
 class ExtraTimeSettlementTests(unittest.TestCase):
@@ -388,6 +395,139 @@ class ExtraTimeSettlementTests(unittest.TestCase):
         finally:
             sr._fetch_espn_summary = original_fetch_summary
             sr.espn_actuals_for_match = original_actuals
+
+
+class QuickBetLifecycleMatchingTests(unittest.TestCase):
+    @staticmethod
+    def flash_event(home="Home", away="Away", event_id="one"):
+        return {"id": event_id, "ts": int(datetime(2026, 8, 18, 2, 30, tzinfo=timezone.utc).timestamp()),
+                "home": home, "away": away, "home_score": "1", "away_score": "0", "status": "2"}
+
+    def test_flashscore_requires_one_ordered_team_match(self):
+        row = {"date": "2026-08-18", "home": "Home", "away": "Away"}
+        self.assertIsNone(sr.flashscore_state_for_quick_bet([
+            self.flash_event(event_id="one"), self.flash_event(event_id="two")
+        ], row))
+        self.assertIsNone(sr.flashscore_state_for_quick_bet([
+            self.flash_event(home="Away", away="Home")
+        ], row))
+        state = sr.flashscore_state_for_quick_bet([self.flash_event()], row)
+        self.assertEqual((state["status"], state["home_score"], state["away_score"]), ("live", 1, 0))
+
+    def test_espn_is_mapped_unique_non_mutating_and_uses_regulation_score(self):
+        row = {"league": "FIFA World Cup", "date": "2026-08-18", "home": "Home", "away": "Away"}
+        source_before = dict(row)
+        event = {"event_id": "espn-1", "date": "2026-08-17T15:30:00Z", "home": "Home", "away": "Away",
+                 "home_score": "3", "away_score": "2", "state": "post", "completed": True, "detail": "AET"}
+        summary = {"header": {"competitions": [{"status": {"type": {"name": "STATUS_FINAL_AET"}}, "competitors": [
+            {"homeAway": "home", "score": "3", "linescores": [{"value": 1}, {"value": 1}, {"value": 1}]},
+            {"homeAway": "away", "score": "2", "linescores": [{"value": 1}, {"value": 1}, {"value": 0}]},
+        ]}]}}
+        old_events, old_summary = sr.espn_scoreboard_events, sr._fetch_espn_summary
+        try:
+            sr.espn_scoreboard_events = lambda _league: [event]
+            sr._fetch_espn_summary = lambda _slug, _event_id: summary
+            state = sr.espn_state_for_quick_bet(row)
+            self.assertEqual((state["status"], state["home_score"], state["away_score"]), ("FT", 2, 2))
+            self.assertEqual(row, source_before)
+            self.assertIsNone(sr.espn_state_for_quick_bet({**row, "league": "Unmapped League"}))
+            sr.espn_scoreboard_events = lambda _league: [event, {**event, "event_id": "espn-2"}]
+            self.assertIsNone(sr.espn_state_for_quick_bet(row))
+        finally:
+            sr.espn_scoreboard_events, sr._fetch_espn_summary = old_events, old_summary
+
+    def test_espn_rejects_same_teams_on_adjacent_adelaide_date(self):
+        row = {"league": "FIFA World Cup", "date": "2026-08-18", "home": "Home", "away": "Away"}
+        adjacent = {"event_id": "espn-next", "date": "2026-08-18T15:30:00Z",
+                    "home": "Home", "away": "Away", "home_score": "1", "away_score": "0",
+                    "state": "post", "completed": True}
+        old_events, old_summary = sr.espn_scoreboard_events, sr._fetch_espn_summary
+        try:
+            sr.espn_scoreboard_events = lambda _league: [adjacent]
+            sr._fetch_espn_summary = lambda _slug, _event_id: None
+            self.assertIsNone(sr.espn_state_for_quick_bet(row))
+        finally:
+            sr.espn_scoreboard_events, sr._fetch_espn_summary = old_events, old_summary
+
+    def test_history_prefers_unique_canonical_sportsbet_id_without_provider_id_leak(self):
+        import soccer_fetch_sportsbet as sportsbet
+        now = datetime(2026, 8, 18, 12, 0, tzinfo=sr.ADL)
+        payload = {"schema_version": 2, "events": [{
+            "event_id": "701", "league": "Cup", "date": "2026-08-18", "time": "12:00",
+            "home": "Home", "away": "Away", "markets": {"winner": [{"key": "home", "label": "Home", "odds": 1.2}]},
+        }], "history": []}
+        store = {"leagues": [{"name": "Cup", "matches": [{
+            "id": "espn:foreign", "status": "FT", "sportsbet_odds": {"event_id": 701},
+            "home": {"name": "Home", "goals": 2}, "away": {"name": "Away", "goals": 1},
+            "settlement_score": {"home": 2, "away": 1, "basis": "regulation_time"},
+        }]}]}
+        old_path = sportsbet.QUICK_BETS_PATH
+        old_results, old_live, old_espn = sr.load_flashscore_result_events, sr.get_flashscore_live_events, sr.espn_state_for_quick_bet
+        try:
+            with tempfile.TemporaryDirectory() as temp:
+                sportsbet.QUICK_BETS_PATH = Path(temp) / "sportsbet_quick_bets.json"
+                sportsbet.atomic_write_json(sportsbet.QUICK_BETS_PATH, payload)
+                sr.load_flashscore_result_events = lambda: ([], "")
+                sr.get_flashscore_live_events = lambda: []
+                sr.espn_state_for_quick_bet = lambda _row: None
+                summary = sr.update_quick_bet_history(store, now, sportsbet.QUICK_BETS_PATH)
+                written = json.loads(sportsbet.QUICK_BETS_PATH.read_text(encoding="utf-8"))
+                row = written["history"][0]
+                self.assertEqual(summary["settled"], 1)
+                self.assertEqual((row["status"], row["home_score"], row["away_score"]), ("FT", 2, 1))
+                self.assertEqual(row["result_source"], "canonical")
+                self.assertNotIn("espn_event_id", row)
+                self.assertNotIn("source_match_id", row)
+        finally:
+            sportsbet.QUICK_BETS_PATH = old_path
+            sr.load_flashscore_result_events, sr.get_flashscore_live_events, sr.espn_state_for_quick_bet = old_results, old_live, old_espn
+
+    def test_unresolved_ambiguous_history_is_atomically_retained_without_provider_ids(self):
+        import soccer_fetch_sportsbet as sportsbet
+        now = datetime(2026, 8, 18, 12, 0, tzinfo=sr.ADL)
+        payload = {"schema_version": 2, "events": [{
+            "event_id": "702", "league": "Cup", "date": "2026-08-18", "time": "12:00",
+            "home": "Home", "away": "Away", "markets": {"winner": [{"key": "home", "label": "Home", "odds": 1.2}]},
+        }], "history": []}
+        ambiguous = [
+            {**self.flash_event(event_id="flash-one"), "source_match_id": "source-one", "espn_event_id": "espn-one"},
+            {**self.flash_event(event_id="flash-two"), "source_match_id": "source-two", "espn_event_id": "espn-two"},
+        ]
+        original_atomic = sportsbet.atomic_write_json
+        old_results, old_live = sr.load_flashscore_result_events, sr.get_flashscore_live_events
+        old_espn, old_terminal = sr.espn_state_for_quick_bet, sr.sportsbet_result_for_match
+        try:
+            with tempfile.TemporaryDirectory() as temp:
+                target = Path(temp) / "sportsbet_quick_bets.json"
+                original_atomic(target, payload)
+                atomic_calls = []
+
+                def tracked_atomic(path, data):
+                    atomic_calls.append(Path(path))
+                    original_atomic(path, data)
+
+                sportsbet.atomic_write_json = tracked_atomic
+                sr.load_flashscore_result_events = lambda: ([], "")
+                sr.get_flashscore_live_events = lambda: ambiguous
+                sr.espn_state_for_quick_bet = lambda _row: None
+                sr.sportsbet_result_for_match = lambda *_args, **_kwargs: None
+
+                summary = sr.update_quick_bet_history({"leagues": []}, now, target)
+                written = json.loads(target.read_text(encoding="utf-8"))
+                row = written["history"][0]
+
+                self.assertEqual(summary, {"live": 0, "settled": 0, "unresolved": 1})
+                self.assertEqual(atomic_calls, [target])
+                self.assertFalse(target.with_suffix(target.suffix + ".tmp").exists())
+                self.assertEqual(written["events"], [])
+                self.assertEqual((row["event_id"], row["status"]), ("702", "started"))
+                self.assertNotIn("result_source", row)
+                for key in ("espn_event_id", "flashscore_event_id", "source_match_id"):
+                    self.assertNotIn(key, row)
+        finally:
+            sportsbet.atomic_write_json = original_atomic
+            sr.load_flashscore_result_events, sr.get_flashscore_live_events = old_results, old_live
+            sr.espn_state_for_quick_bet, sr.sportsbet_result_for_match = old_espn, old_terminal
 
 
 if __name__ == "__main__":
