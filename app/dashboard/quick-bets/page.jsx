@@ -39,6 +39,29 @@ function selectionLabel(selection) {
   return selection.label || selection.key || 'Pick';
 }
 
+function matchRowKey(match, index) {
+  return [
+    match?.eventId || match?.id || 'match',
+    match?.date || 'date',
+    match?.time || 'time',
+    match?.league || 'league',
+    match?.home || 'home',
+    match?.away || 'away',
+    match?.lifecycle || 'state',
+    index,
+  ].join('|');
+}
+
+function selectionRowKey(selection, index) {
+  return [
+    selection?.marketKey || 'market',
+    selection?.key || selection?.label || selection?.side || 'pick',
+    selection?.line ?? 'line',
+    selection?.odds ?? 'odds',
+    index,
+  ].join('|');
+}
+
 function formatOdds(value) {
   const odds = Number(value);
   return Number.isFinite(odds) ? odds.toFixed(2) : '-';
@@ -46,6 +69,34 @@ function formatOdds(value) {
 
 function selectionTone(selection, match) {
   return selection.result || selection.liveLock || (match.lifecycle === 'live' ? 'live' : 'pending');
+}
+
+function selectionOutcome(selection, match) {
+  if (selection.result === 'hit' || selection.result === 'miss' || selection.result === 'void') return selection.result;
+  if (match.lifecycle === 'live' && (selection.liveLock === 'hit' || selection.liveLock === 'miss')) return selection.liveLock;
+  return '';
+}
+
+function outcomeStats(rows) {
+  const stats = { hits: 0, misses: 0, voids: 0 };
+  rows.forEach(({ match, selections }) => {
+    selections.forEach((selection) => {
+      const outcome = selectionOutcome(selection, match);
+      if (outcome === 'hit') stats.hits += 1;
+      else if (outcome === 'miss') stats.misses += 1;
+      else if (outcome === 'void') stats.voids += 1;
+    });
+  });
+  const settled = stats.hits + stats.misses;
+  return { ...stats, settled, rate: settled ? Math.round((stats.hits / settled) * 100) : null };
+}
+
+function buttonStatsLabel(stats) {
+  if (!stats?.settled && !stats?.voids) return '';
+  const parts = [`${stats.hits}H/${stats.misses}M`];
+  if (stats.rate != null) parts.push(`${stats.rate}%`);
+  if (stats.voids) parts.push(`void ${stats.voids}`);
+  return parts.join(' ');
 }
 
 function badgeClasses(tone) {
@@ -76,6 +127,11 @@ function dateLabel(date) {
     month: 'short',
     year: 'numeric',
   }).format(parsed);
+}
+
+function dateRank(date) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(date || ''));
+  return match ? Number(`${match[1]}${match[2]}${match[3]}`) : -Infinity;
 }
 
 function groupByDate(matches) {
@@ -147,8 +203,8 @@ function MatchCard({ match, selections }) {
           <MatchName match={match} />
         </div>
         <div className="flex shrink-0 flex-col items-end gap-2">
-          {selections.map((selection) => (
-            <MarketBadge key={`${selection.marketKey}-${selection.key}-${selection.line ?? ''}`} match={match} selection={selection} />
+          {selections.map((selection, index) => (
+            <MarketBadge key={selectionRowKey(selection, index)} match={match} selection={selection} />
           ))}
         </div>
       </div>
@@ -193,8 +249,9 @@ function QuickBetsInner() {
     .sort((a, b) => {
       const aOdds = Math.min(...a.selections.map((selection) => Number(selection.odds)).filter(Number.isFinite));
       const bOdds = Math.min(...b.selections.map((selection) => Number(selection.odds)).filter(Number.isFinite));
-      return (aOdds - bOdds)
-        || String(a.match.date).localeCompare(String(b.match.date))
+      return (dateRank(b.match.date) - dateRank(a.match.date))
+        || String(b.match.date || '').localeCompare(String(a.match.date || ''))
+        || (aOdds - bOdds)
         || String(a.match.time || '99:99').localeCompare(String(b.match.time || '99:99'))
         || String(a.match.league || '').localeCompare(String(b.match.league || ''))
         || String(a.match.home || '').localeCompare(String(b.match.home || ''));
@@ -205,6 +262,12 @@ function QuickBetsInner() {
     filter.key,
     matches.filter((match) => match.lifecycle === activeLifecycle && marketSelections(match, filter).length).length,
   ])), [activeLifecycle, matches]);
+  const statsByMarket = useMemo(() => Object.fromEntries(MARKET_FILTERS.map((filter) => {
+    const rows = matches
+      .map((match) => ({ match, selections: marketSelections(match, filter) }))
+      .filter(({ match, selections }) => match.lifecycle === activeLifecycle && selections.length);
+    return [filter.key, outcomeStats(rows)];
+  })), [activeLifecycle, matches]);
   const lifecycleCounts = data?.counts || {};
 
   return (
@@ -221,7 +284,7 @@ function QuickBetsInner() {
                 <h1 className="text-lg font-black uppercase tracking-wide text-white sm:text-xl">Quick Bets</h1>
               </div>
               <p className="mt-2 text-[13px] font-medium text-slate-500">
-                {filteredMatches.length} matches - {selectionTotal} selections - {selectedFilter.label} - lowest first
+                {filteredMatches.length} matches - {selectionTotal} selections - {selectedFilter.label} - newest dates - lowest odds
               </p>
             </div>
           </div>
@@ -249,6 +312,7 @@ function QuickBetsInner() {
           <div className="mt-2 grid grid-cols-3 gap-2 sm:grid-cols-6">
             {MARKET_FILTERS.map((filter) => {
               const selected = activeMarket === filter.key;
+              const statsLabel = buttonStatsLabel(statsByMarket[filter.key]);
               return (
                 <button
                   key={filter.key}
@@ -260,7 +324,7 @@ function QuickBetsInner() {
                   }`}
                 >
                   <span className="text-[13px] font-black uppercase tracking-wide">{filter.shortLabel}</span>
-                  <span className="font-mono text-[11px]">{countsByMarket[filter.key] ?? 0}</span>
+                  <span className="font-mono text-[11px]">{statsLabel || (countsByMarket[filter.key] ?? 0)}</span>
                 </button>
               );
             })}
@@ -299,8 +363,8 @@ function QuickBetsInner() {
                   </div>
 
                   <div className="space-y-2 lg:hidden">
-                    {rows.map(({ match, selections }) => (
-                      <MatchCard key={`${match.eventId}-${match.lifecycle}`} match={match} selections={selections} />
+                    {rows.map(({ match, selections }, index) => (
+                      <MatchCard key={matchRowKey(match, index)} match={match} selections={selections} />
                     ))}
                   </div>
 
@@ -317,15 +381,15 @@ function QuickBetsInner() {
                         </tr>
                       </thead>
                       <tbody>
-                        {rows.map(({ match, selections }) => (
-                          <tr key={`${match.eventId}-${match.lifecycle}`} className="border-b border-slate-800 last:border-b-0 odd:bg-[#171717] even:bg-[#1b1b1b]">
+                        {rows.map(({ match, selections }, index) => (
+                          <tr key={matchRowKey(match, index)} className="border-b border-slate-800 last:border-b-0 odd:bg-[#171717] even:bg-[#1b1b1b]">
                             <td className="px-4 py-3 align-top">
                               <MatchName match={match} />
                             </td>
                             <td className="border-l border-slate-800 px-4 py-3 align-top">
                               <div className="flex flex-wrap justify-end gap-2">
-                                {selections.map((selection) => (
-                                  <MarketBadge key={`${selection.marketKey}-${selection.key}-${selection.line ?? ''}`} match={match} selection={selection} />
+                                {selections.map((selection, index) => (
+                                  <MarketBadge key={selectionRowKey(selection, index)} match={match} selection={selection} />
                                 ))}
                               </div>
                             </td>
