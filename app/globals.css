@@ -9,6 +9,7 @@
 }
 
 :root {
+  --quick-bet-success: #f3bc63;
   color-scheme: light;
   --surface: #ffffff;
   --surface-2: #f6f9fb;

@@ -5,7 +5,10 @@ import { Component, Fragment, useEffect, useMemo, useRef, useState } from 'react
 import AuthGate from '../../auth-gate';
 import { loadQuickBetsFromFirestore, readQuickBetsCache } from '../../firestore-data';
 import { AlertTriangle, ArrowLeft, Loader2, ListFilter } from 'lucide-react';
-import { quickBetMatchState } from './quick-bets-utils.mjs';
+import {
+  marketSelections, quickBetMatchState, quickBetLeagueKey, quickBetSuccessMarket,
+  quickBetLeagueSuccessStats, quickBetSuccessLabel, quickBetLeagueSuccessLabel,
+} from './quick-bets-utils.mjs';
 
 // Column set mirrors the AIOS Quick Bets table (web-legacy QUICK_BET_FILTERS): a
 // leading "Match" identity column followed by one column per market. 'all' shows
@@ -27,16 +30,6 @@ const LIFECYCLE_FILTERS = [
   { key: 'live', label: 'Live' },
   { key: 'result', label: 'Results' },
 ];
-
-function marketSelections(match, filter) {
-  return filter.marketKeys.flatMap((marketKey) => {
-    const selections = Array.isArray(match?.markets?.[marketKey]) ? match.markets[marketKey] : [];
-    if (filter.line == null) return selections.map((selection) => ({ ...selection, marketKey }));
-    return selections
-      .filter((selection) => Number(selection.line) === filter.line)
-      .map((selection) => ({ ...selection, marketKey }));
-  });
-}
 
 // Every priced selection on a match, across all markets — used for the 'all' row
 // set and the mobile card stack.
@@ -173,13 +166,27 @@ function dayBand(date) {
   return '';
 }
 
-function OddsBadge({ match, selection }) {
+function SuccessStar({ label }) {
+  if (!label) return null;
+  return (
+    <span className="qb-success-star ml-1 inline-flex shrink-0 items-center align-[-0.1em] text-[12px] text-[var(--quick-bet-success)]" role="img" title={label} aria-label={label}>
+      <svg className="h-3 w-3" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+        <path d="m12 3 2.8 5.7 6.3.9-4.5 4.4 1.1 6.2-5.7-3-5.7 3 1.1-6.2-4.5-4.4 6.3-.9Z" />
+      </svg>
+    </span>
+  );
+}
+
+function OddsBadge({ match, selection, leagueStats }) {
   const href = safeSportsbetUrl(match.eventUrl);
   const tone = selectionTone(selection, match);
   const text = `${badgeText(selection)} @${formatOdds(selection.odds)}`;
+  const success = quickBetSuccessLabel(leagueStats?.get(quickBetSuccessMarket(selection)));
+  const historyLabel = success ? `${match.league} historical Quick Bets — ${success}. Not a prediction.` : '';
+  const ariaLabel = historyLabel ? `${text}; ${historyLabel}` : undefined;
   const cls = `inline-flex items-center rounded-none border px-1.5 py-0.5 text-[12px] font-medium tabular-nums ${badgeClasses(tone)}`;
   if (!href) {
-    return <span className={`${cls} cursor-default`}>{text}</span>;
+    return <span className={`${cls} cursor-default`} aria-label={ariaLabel}>{text}<SuccessStar label={historyLabel} /></span>;
   }
   return (
     <a
@@ -188,21 +195,23 @@ function OddsBadge({ match, selection }) {
       rel="noopener noreferrer"
       className={`${cls} no-underline transition hover:brightness-125 active:translate-y-px`}
       title="Open this match on Sportsbet"
+      aria-label={ariaLabel}
     >
       {text}
+      <SuccessStar label={historyLabel} />
     </a>
   );
 }
 
 // A single market column cell: all qualifying selections, or the em-dash placeholder.
-function PriceCell({ match, filter }) {
+function PriceCell({ match, filter, leagueStats }) {
   const selections = marketSelections(match, filter);
   return (
     <td className="border-b border-white/[0.035] px-1.5 py-2 text-center align-middle">
       {selections.length ? (
         <span className="flex flex-wrap justify-center gap-0.5">
           {selections.map((selection, index) => (
-            <OddsBadge key={selectionRowKey(selection, index)} match={match} selection={selection} />
+            <OddsBadge key={selectionRowKey(selection, index)} match={match} selection={selection} leagueStats={leagueStats} />
           ))}
         </span>
       ) : (
@@ -214,12 +223,12 @@ function PriceCell({ match, filter }) {
 
 // Mobile card — retains the existing stacked layout; shows the active market's
 // selections (or every market when the 'all' column is selected).
-function MatchCard({ match, selections }) {
+function MatchCard({ match, selections, leagueStats, leagueSuccessLabel }) {
   return (
     <article className="rounded-md border border-[#38383d] bg-[#171717] p-3">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <div className="text-[10px] font-normal uppercase tracking-wide text-[#8c8c96]">{match.league || 'Soccer'}</div>
+          <div className="text-[10px] font-normal uppercase tracking-wide text-[#8c8c96]">{match.league || 'Soccer'}<SuccessStar label={leagueSuccessLabel} /></div>
           <div className="mt-1 text-sm font-normal text-white">
             <span>{match.home}</span>
             <b className="px-2 font-mono font-normal text-[#8c8c96]">{quickBetMatchState(match)}</b>
@@ -228,7 +237,7 @@ function MatchCard({ match, selections }) {
         </div>
         <div className="flex shrink-0 flex-col items-end gap-1.5">
           {selections.map((selection, index) => (
-            <OddsBadge key={selectionRowKey(selection, index)} match={match} selection={selection} />
+            <OddsBadge key={selectionRowKey(selection, index)} match={match} selection={selection} leagueStats={leagueStats} />
           ))}
         </div>
       </div>
@@ -268,6 +277,7 @@ function QuickBetsInner() {
   const selectedFilter = MARKET_FILTERS.find((filter) => filter.key === activeMarket) || MARKET_FILTERS[0];
   const isAll = selectedFilter.key === 'all';
   const matches = Array.isArray(data?.matches) ? data.matches : [];
+  const successByLeague = useMemo(() => quickBetLeagueSuccessStats(matches, MARKET_COLUMNS), [matches]);
 
   // Rows for the active lifecycle. 'all' keeps every match carrying any priced
   // selection (date asc/desc, then time); a market keeps only matches with that
@@ -442,7 +452,9 @@ function QuickBetsInner() {
                         {band ? `${band} · ` : ''}{fmtDMY(match.date)}
                       </div>
                     ) : null}
-                    <MatchCard match={match} selections={selections} />
+                    <MatchCard match={match} selections={selections}
+                      leagueStats={successByLeague.get(quickBetLeagueKey(match.league))}
+                      leagueSuccessLabel={quickBetLeagueSuccessLabel(match.league, successByLeague.get(quickBetLeagueKey(match.league)), activeMarket)} />
                   </div>
                 );
               })}
@@ -508,6 +520,8 @@ function QuickBetsInner() {
                     const showDate = !prev || prev.date !== match.date;
                     const showLeague = isAll && (showDate || (prev && prev.league !== match.league));
                     const band = dayBand(match.date);
+                    const leagueStats = successByLeague.get(quickBetLeagueKey(match.league));
+                    const leagueSuccessLabel = quickBetLeagueSuccessLabel(match.league, leagueStats, activeMarket);
                     return (
                       <Fragment key={matchRowKey(match, index)}>
                         {showDate ? (
@@ -521,13 +535,14 @@ function QuickBetsInner() {
                           <tr key={`${matchRowKey(match, index)}-league`}>
                             <td colSpan={7} className="border-b border-white/[0.04] px-2.5 pb-1 pl-6 pt-2.5 text-[12px] uppercase tracking-[0.1em] text-[#a8a8b2]">
                               {match.league || 'Other'}
+                              <SuccessStar label={leagueSuccessLabel} />
                             </td>
                           </tr>
                         ) : null}
                         <tr key={matchRowKey(match, index)} className="transition hover:bg-white/[0.022]">
                           <td className={`border-b border-white/[0.035] py-2 pr-2 align-middle text-[14px] ${isAll ? 'pl-10' : 'pl-2.5'}`}>
                             {!isAll ? (
-                              <span className="mb-0.5 block text-[10px] uppercase tracking-[0.06em] text-[#8c8c96]">{match.league || 'Other'}</span>
+                              <span className="mb-0.5 block text-[10px] uppercase tracking-[0.06em] text-[#8c8c96]">{match.league || 'Other'}<SuccessStar label={leagueSuccessLabel} /></span>
                             ) : null}
                             <span className="block break-words">
                               {match.home}
@@ -536,7 +551,7 @@ function QuickBetsInner() {
                             </span>
                           </td>
                           {MARKET_COLUMNS.map((filter) => (
-                            <PriceCell key={filter.key} match={match} filter={filter} />
+                            <PriceCell key={filter.key} match={match} filter={filter} leagueStats={leagueStats} />
                           ))}
                         </tr>
                       </Fragment>
