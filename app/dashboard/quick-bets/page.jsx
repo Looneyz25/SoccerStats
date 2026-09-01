@@ -6,8 +6,9 @@ import AuthGate from '../../auth-gate';
 import { loadQuickBetsFromFirestore, readQuickBetsCache } from '../../firestore-data';
 import { AlertTriangle, ArrowLeft, Loader2, ListFilter } from 'lucide-react';
 import {
-  marketSelections, quickBetMatchState, quickBetLeagueKey, quickBetSuccessMarket,
-  quickBetLeagueSuccessStats, quickBetSuccessLabel, quickBetLeagueSuccessLabel,
+  marketSelections, quickBetMatchState, quickBetLeagueKey,
+  quickBetLeagueSuccessStats, quickBetLeagueSuccessLabel,
+  quickBetSelectionSuccessLabel, quickBetStarredMarketStats, quickBetStarredSelections, quickBetStarStatText,
 } from './quick-bets-utils.mjs';
 
 // Column set mirrors the AIOS Quick Bets table (web-legacy QUICK_BET_FILTERS): a
@@ -31,10 +32,9 @@ const LIFECYCLE_FILTERS = [
   { key: 'result', label: 'Results' },
 ];
 
-// Every priced selection on a match, across all markets — used for the 'all' row
-// set and the mobile card stack.
-function allSelections(match) {
-  return MARKET_COLUMNS.flatMap((filter) => marketSelections(match, filter));
+function displayedSelections(match, filters, starredOnly, successByLeague) {
+  return starredOnly ? quickBetStarredSelections(match, filters, successByLeague)
+    : filters.flatMap((filter) => marketSelections(match, filter));
 }
 
 // Badge text mirrors AIOS: goal columns show the side only (the line is the column),
@@ -114,6 +114,17 @@ function headerStatTone(stats) {
   return stats.hits / stats.settled >= 0.5 ? 'text-[#34d399]' : 'text-[#f2545b]';
 }
 
+function HeaderStat({ stats }) {
+  if (!headerStatText(stats)) return null;
+  return (
+    <span className={`flex flex-wrap items-center justify-center gap-x-1 gap-y-0.5 font-mono text-[11px] font-normal tabular-nums tracking-normal ${headerStatTone(stats)}`} aria-hidden="true">
+      <span className="font-semibold">{stats.hits} / {stats.misses}</span>
+      {stats.rate != null ? <><span className="font-normal text-[#48484f]">{' · '}</span><span className="rounded-[3px] border border-[#48484f] bg-[#111111] px-1 py-px text-[10px] font-semibold">{stats.rate}%</span></> : null}
+      {stats.voids ? <><span className="font-normal text-[#48484f]">{' · '}</span><span className="text-[10px] font-medium text-[#8c8c96]">void {stats.voids}</span></> : null}
+    </span>
+  );
+}
+
 // AIOS qb-odds-badge tones (color-mix ~45% border / ~8% fill of blue/green/red).
 function badgeClasses(tone) {
   if (tone === 'hit') return 'border-[#34d399]/45 bg-[#34d399]/[0.08] text-[#34d399]';
@@ -166,23 +177,41 @@ function dayBand(date) {
   return '';
 }
 
+function StarIcon() {
+  return (
+    <svg className="h-3 w-3 shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+      <path d="m12 3 2.8 5.7 6.3.9-4.5 4.4 1.1 6.2-5.7-3-5.7 3 1.1-6.2-4.5-4.4 6.3-.9Z" />
+    </svg>
+  );
+}
+
 function SuccessStar({ label }) {
   if (!label) return null;
   return (
     <span className="qb-success-star ml-1 inline-flex shrink-0 items-center align-[-0.1em] text-[12px] text-[var(--quick-bet-success)]" role="img" title={label} aria-label={label}>
-      <svg className="h-3 w-3" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
-        <path d="m12 3 2.8 5.7 6.3.9-4.5 4.4 1.1 6.2-5.7-3-5.7 3 1.1-6.2-4.5-4.4 6.3-.9Z" />
-      </svg>
+      <StarIcon />
     </span>
   );
+}
+
+function StarCounter({ stats }) {
+  const text = quickBetStarStatText(stats);
+  if (!text) return null;
+  return <span className="mt-0.5 inline-flex w-full items-center justify-center gap-1 border-t border-[#f3bc63]/20 pt-1 text-[11px] font-medium tabular-nums tracking-normal text-[var(--quick-bet-success)]" aria-hidden="true"><StarIcon />{text}</span>;
+}
+
+function marketFilterAriaLabel(filter, stats, starStats) {
+  const labels = [filter.label];
+  if (stats?.settled || stats?.voids) labels.push(`${stats.hits} hits, ${stats.misses} misses${stats.voids ? `, ${stats.voids} void` : ''}`);
+  if (starStats?.settled) labels.push(`${starStats.hits} hits from ${starStats.settled} settled starred predictions`);
+  return labels.join(', ');
 }
 
 function OddsBadge({ match, selection, leagueStats }) {
   const href = safeSportsbetUrl(match.eventUrl);
   const tone = selectionTone(selection, match);
   const text = `${badgeText(selection)} @${formatOdds(selection.odds)}`;
-  const success = quickBetSuccessLabel(leagueStats?.get(quickBetSuccessMarket(selection)));
-  const historyLabel = success ? `${match.league} historical Quick Bets — ${success}. Not a prediction.` : '';
+  const historyLabel = quickBetSelectionSuccessLabel(match, selection, leagueStats);
   const ariaLabel = historyLabel ? `${text}; ${historyLabel}` : undefined;
   const cls = `inline-flex items-center rounded-none border px-1.5 py-0.5 text-[12px] font-medium tabular-nums ${badgeClasses(tone)}`;
   if (!href) {
@@ -204,8 +233,9 @@ function OddsBadge({ match, selection, leagueStats }) {
 }
 
 // A single market column cell: all qualifying selections, or the em-dash placeholder.
-function PriceCell({ match, filter, leagueStats }) {
-  const selections = marketSelections(match, filter);
+function PriceCell({ match, filter, successByLeague, starredOnly }) {
+  const leagueStats = successByLeague.get(quickBetLeagueKey(match.league));
+  const selections = displayedSelections(match, [filter], starredOnly, successByLeague);
   return (
     <td className="border-b border-white/[0.035] px-1.5 py-2 text-center align-middle">
       {selections.length ? (
@@ -251,6 +281,7 @@ function QuickBetsInner() {
   const [loading, setLoading] = useState(!readQuickBetsCache());
   const [activeMarket, setActiveMarket] = useState('all');
   const [activeLifecycle, setActiveLifecycle] = useState('upcoming');
+  const [starredOnly, setStarredOnly] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -278,6 +309,7 @@ function QuickBetsInner() {
   const isAll = selectedFilter.key === 'all';
   const matches = Array.isArray(data?.matches) ? data.matches : [];
   const successByLeague = useMemo(() => quickBetLeagueSuccessStats(matches, MARKET_COLUMNS), [matches]);
+  const starStatsByMarket = useMemo(() => quickBetStarredMarketStats(matches, MARKET_COLUMNS, successByLeague), [matches, successByLeague]);
 
   // Rows for the active lifecycle. 'all' keeps every match carrying any priced
   // selection (date asc/desc, then time); a market keeps only matches with that
@@ -292,14 +324,16 @@ function QuickBetsInner() {
       || String(a.home || '').localeCompare(String(b.home || ''));
 
     const inState = matches.filter((match) => match.lifecycle === activeLifecycle);
+    const selectionFilters = isAll ? MARKET_COLUMNS : [selectedFilter];
+    const selectionsFor = (match) => displayedSelections(match, selectionFilters, starredOnly, successByLeague);
     if (isAll) {
       return inState
-        .filter((match) => allSelections(match).length)
+        .filter((match) => selectionsFor(match).length)
         .sort((a, b) => byDateThen(a, b, () => 0));
     }
     return inState
       .map((match) => {
-        const selections = marketSelections(match, selectedFilter);
+        const selections = selectionsFor(match);
         if (!selections.length) return null;
         const minOdds = Math.min(...selections.map((selection) => Number(selection.odds)).filter(Number.isFinite));
         return { match, minOdds };
@@ -307,11 +341,11 @@ function QuickBetsInner() {
       .filter(Boolean)
       .sort((a, b) => byDateThen(a.match, b.match, () => a.minOdds - b.minOdds))
       .map(({ match }) => match);
-  }, [matches, activeLifecycle, selectedFilter, isAll]);
+  }, [matches, activeLifecycle, selectedFilter, isAll, starredOnly, successByLeague]);
 
-  const selectionTotal = visibleMatches.reduce((total, match) => total + (isAll
-    ? allSelections(match).length
-    : marketSelections(match, selectedFilter).length), 0);
+  const selectionFilters = isAll ? MARKET_COLUMNS : [selectedFilter];
+  const selectionTotal = visibleMatches.reduce((total, match) => total
+    + displayedSelections(match, selectionFilters, starredOnly, successByLeague).length, 0);
 
   // Per-market hit stats over the active lifecycle, for the column headers.
   const statsByMarket = useMemo(() => Object.fromEntries(MARKET_COLUMNS.map((filter) => {
@@ -329,6 +363,9 @@ function QuickBetsInner() {
   const toggleMarket = (key) => setActiveMarket((current) => (current === key ? 'all' : key));
 
   const sortSummary = isAll ? '' : activeLifecycle === 'result' ? ' · newest dates · lowest odds' : ' · today first · lowest odds';
+  const emptyMessage = starredOnly
+    ? isAll ? 'No starred markets for this state.' : `No starred ${selectedFilter.label} odds for this state.`
+    : isAll ? 'No Quick Bets for this state.' : `No matches with ${selectedFilter.label} odds.`;
 
   // The page header is sticky at top:0; the table column headers stick directly
   // beneath it. Measure the header's live height (it reflows with viewport width)
@@ -359,7 +396,7 @@ function QuickBetsInner() {
                 <h1 className="text-lg font-normal uppercase tracking-wide text-white sm:text-xl">Quick Bets</h1>
               </div>
               <p className="mt-2 text-[13px] font-medium text-[#8c8c96]">
-                {visibleMatches.length} match{visibleMatches.length === 1 ? '' : 'es'} · {selectionTotal} selection{selectionTotal === 1 ? '' : 's'}{isAll ? '' : ` · ${selectedFilter.label}`}{sortSummary}
+                {visibleMatches.length} match{visibleMatches.length === 1 ? '' : 'es'} · {selectionTotal} selection{selectionTotal === 1 ? '' : 's'}{isAll ? '' : ` · ${selectedFilter.label}`}{starredOnly ? ' · Starred' : ''}{sortSummary}
               </p>
             </div>
             {capturedAt ? (
@@ -387,6 +424,18 @@ function QuickBetsInner() {
                 </button>
               );
             })}
+            <button
+              type="button"
+              onClick={() => setStarredOnly((current) => !current)}
+              aria-pressed={starredOnly}
+              aria-label="Show starred markets only"
+              className={`inline-flex min-h-9 shrink-0 items-center gap-2 rounded-none border px-3 text-[13px] font-normal uppercase tracking-wide transition ${starredOnly
+                ? 'border-[#f3bc63]/55 bg-[#f3bc63]/10 text-[#f3bc63]'
+                : 'border-[#38383d] bg-transparent text-[#a8a8b2] hover:border-[#f3bc63]/45 hover:text-[#f3bc63]'}`}
+            >
+              <StarIcon />
+              <span>Starred</span>
+            </button>
           </div>
 
           {/* Mobile market filter chips (desktop filters live in the table headers). */}
@@ -394,19 +443,21 @@ function QuickBetsInner() {
             {MARKET_FILTERS.map((filter) => {
               const selected = activeMarket === filter.key;
               const stat = filter.key === 'all' ? null : statsByMarket[filter.key];
-              const statText = stat ? headerStatText(stat) : '';
+              const starStat = filter.key === 'all' ? null : starStatsByMarket.get(filter.key);
               return (
                 <button
                   key={filter.key}
                   type="button"
                   onClick={() => toggleMarket(filter.key)}
                   aria-pressed={selected}
-                  className={`flex min-h-11 flex-col items-center justify-center rounded-none border px-2 text-center transition ${
-                    selected ? 'border-[#5aa2f0]/45 bg-[#5aa2f0]/[0.08] text-[#5aa2f0]' : 'border-[#38383d] bg-transparent text-[#a8a8b2] hover:border-[#5aa2f0]/45 hover:text-[#5aa2f0]'
+                  aria-label={marketFilterAriaLabel(filter, stat, starStat)}
+                  className={`qb-stat-card flex min-h-16 flex-col items-center justify-center gap-1 rounded-none border px-2 py-2 text-center transition ${
+                    selected ? 'border-[#5aa2f0]/45 bg-[#5aa2f0]/[0.08] text-[#5aa2f0]' : 'border-[#38383d] bg-[#171717] text-[#a8a8b2] hover:border-[#5aa2f0]/45 hover:text-[#5aa2f0]'
                   }`}
                 >
-                  <span className="text-[12px] font-normal uppercase tracking-wide">{filter.shortLabel}</span>
-                  {statText ? <span className={`text-[11px] ${headerStatTone(stat)}`}>{statText}</span> : null}
+                  <span className="text-[12px] font-semibold uppercase tracking-wide">{filter.shortLabel}</span>
+                  <HeaderStat stats={stat} />
+                  <StarCounter stats={starStat} />
                 </button>
               );
             })}
@@ -433,7 +484,7 @@ function QuickBetsInner() {
           {!loading && !error && visibleMatches.length === 0 ? (
             <div className="rounded-md border border-[#38383d] bg-[#171717] p-8 text-center text-sm font-normal text-[#8c8c96] lg:hidden">
               <ListFilter className="mx-auto mb-3 h-5 w-5" aria-hidden="true" />
-              {isAll ? 'No Quick Bets for this state.' : `No matches with ${selectedFilter.label} odds.`}
+              {emptyMessage}
             </div>
           ) : null}
 
@@ -444,7 +495,7 @@ function QuickBetsInner() {
                 const band = dayBand(match.date);
                 const prev = visibleMatches[index - 1];
                 const showDate = !prev || prev.date !== match.date;
-                const selections = isAll ? allSelections(match) : marketSelections(match, selectedFilter);
+                const selections = displayedSelections(match, selectionFilters, starredOnly, successByLeague);
                 return (
                   <div key={matchRowKey(match, index)} className="space-y-2">
                     {showDate ? (
@@ -483,7 +534,7 @@ function QuickBetsInner() {
                       const isIdentity = filter.key === 'all';
                       const active = activeMarket === filter.key;
                       const stat = isIdentity ? null : statsByMarket[filter.key];
-                      const statText = stat ? headerStatText(stat) : '';
+                      const starStat = isIdentity ? null : starStatsByMarket.get(filter.key);
                       return (
                         <th
                           key={filter.key}
@@ -495,12 +546,14 @@ function QuickBetsInner() {
                             type="button"
                             onClick={() => toggleMarket(filter.key)}
                             aria-pressed={active}
-                            className={`flex w-full flex-col ${isIdentity ? 'items-start' : 'items-center'} gap-0.5 border border-transparent px-1.5 py-2 text-[12px] font-medium uppercase tracking-[0.08em] transition hover:border-[#5aa2f0]/45 hover:bg-[#5aa2f0]/[0.08] hover:text-[#5aa2f0] ${
-                              active && !isIdentity ? 'text-[#5aa2f0]' : 'text-[#8c8c96]'
+                            aria-label={marketFilterAriaLabel(filter, stat, starStat)}
+                            className={`qb-stat-card flex min-h-[72px] w-full flex-col ${isIdentity ? 'items-start' : 'items-center'} gap-1 rounded-none border px-1.5 py-2 text-[12px] font-medium uppercase tracking-[0.08em] transition hover:border-[#5aa2f0]/45 hover:bg-[#5aa2f0]/[0.08] hover:text-[#5aa2f0] ${
+                              active ? 'border-[#5aa2f0]/45 bg-[#5aa2f0]/[0.08] text-[#5aa2f0]' : 'border-[#38383d] bg-[#171717] text-[#8c8c96]'
                             }`}
                           >
-                            <span>{filter.label}</span>
-                            {statText ? <span className={`text-[12px] font-normal tabular-nums tracking-normal ${headerStatTone(stat)}`}>{statText}</span> : null}
+                            <span className="font-semibold">{filter.label}</span>
+                            <HeaderStat stats={stat} />
+                            <StarCounter stats={starStat} />
                           </button>
                         </th>
                       );
@@ -511,7 +564,7 @@ function QuickBetsInner() {
                   {visibleMatches.length === 0 ? (
                     <tr>
                       <td colSpan={7} className="px-2.5 py-10 text-center text-[13px] text-[#8c8c96]">
-                        {isAll ? 'No Quick Bets for this state.' : `No matches with ${selectedFilter.label} odds — pick another column or Match.`}
+                        {emptyMessage}
                       </td>
                     </tr>
                   ) : null}
@@ -551,7 +604,7 @@ function QuickBetsInner() {
                             </span>
                           </td>
                           {MARKET_COLUMNS.map((filter) => (
-                            <PriceCell key={filter.key} match={match} filter={filter} leagueStats={leagueStats} />
+                            <PriceCell key={filter.key} match={match} filter={filter} successByLeague={successByLeague} starredOnly={starredOnly} />
                           ))}
                         </tr>
                       </Fragment>

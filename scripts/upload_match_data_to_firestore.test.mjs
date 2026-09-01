@@ -90,6 +90,96 @@ test('quick bets Firestore payload mirrors AIOS by merging canonical match data 
   assert.deepEqual(sidecarOnly.markets.goalsOver.map((selection) => [selection.line, selection.odds]), [[1.5, 1.16]]);
 });
 
+test('quick bets mirror uses canonical identities and excludes future or unprovable same-day results', () => {
+  const now = new Date(2026, 7, 18, 12, 0, 0);
+  const result = (date, time, short, goals, opponent) => ({
+    date, time, status: 'FT', home: { name: 'Form United', short, goals }, away: { name: opponent, goals: 0 },
+  });
+  const historical = [
+    result('2026-08-12', '15:00', 'FU One', 1, 'Past 1'),
+    result('2026-08-13', '15:00', 'FU Two', 2, 'Past 2'),
+    result('2026-08-14', '15:00', 'FU Three', 3, 'Past 3'),
+    result('2026-08-15', '15:00', 'FU Four', 0, 'Past 4'),
+    result('2026-08-16', '15:00', 'FU Five', 1, 'Past 5'),
+    result('2026-08-17', '15:00', 'FU Six', 2, 'Past 6'),
+    result('2026-08-18', 'FT', 'Unprovable Today', 8, 'Same Day'),
+    result('2026-08-18', '13:00', 'Future Today', 7, 'Later Today'),
+    result('2026-08-20', '15:00', 'Bogus Future', 9, 'Future Opponent'),
+    result('2026-08-22', '15:00', 'After Target', 10, 'Later Opponent'),
+  ];
+  const upcoming = {
+    date: '2026-08-21', time: '15:00', status: 'upcoming',
+    home: { name: 'Form United', short: 'Current Short' }, away: { name: 'Upcoming Opponent' },
+    sportsbet_odds: { event_id: 555, event_url: 'https://www.sportsbet.com.au/betting/soccer/a/b/form-target-555', home: 1.2 },
+  };
+  const sidecar = { history: [{
+    event_id: '555', league: 'Provider League', date: '2026-08-21', time: '15:00',
+    home: 'Provider Form', away: 'Provider Opponent', status: 'started',
+    event_url: 'https://www.sportsbet.com.au/betting/soccer/a/b/form-target-555',
+    markets: { winner: [{ key: 'home', label: 'Provider Form', odds: 1.19 }], btts: [], goalsOver: [], goalsUnder: [] },
+  }], events: [{
+    event_id: '999', league: 'Sidecar Only', date: '2026-08-22', time: '15:00',
+    home: 'Form United', away: 'Unmatched', root_stale: false, deep_stale: false,
+    event_url: 'https://www.sportsbet.com.au/betting/soccer/a/b/sidecar-only-999',
+    markets: { winner: [{ key: 'home', label: 'Form United', odds: 1.2 }], btts: [], goalsOver: [], goalsUnder: [] },
+  }] };
+
+  const payload = buildQuickBetsPayload({ leagues: [{ name: 'League', matches: [...historical, upcoming] }], sidecar, now });
+  const rows = [...payload.dates.values()].flat();
+  const row = rows.find((item) => item.eventId === '555');
+  const sidecarOnly = rows.find((item) => item.eventId === '999');
+
+  assert.equal(row.home, 'Provider Form');
+  assert.deepEqual(row.teamForm.home, ['2-0', '1-0', '0-0', '3-0', '2-0']);
+  assert.deepEqual(row.teamForm.away, []);
+  assert.equal(JSON.stringify(row.teamForm).includes('9-0'), false);
+  assert.equal(JSON.stringify(row.teamForm).includes('8-0'), false);
+  assert.equal(JSON.stringify(row.teamForm).includes('7-0'), false);
+  assert.equal(JSON.stringify(row.teamForm).includes('10-0'), false);
+  assert.deepEqual(sidecarOnly.teamForm, { home: [], away: [] });
+  assert.equal(Object.keys(row).some((key) => key.startsWith('_')), false);
+
+  const backtestTarget = {
+    date: '2026-08-16', time: '10:00', status: 'FT',
+    home: { name: 'Form United', goals: 1 }, away: { name: 'Backtest Target', goals: 0 }, sportsbet_odds: { home: 1.2 },
+  };
+  const backtest = [...buildQuickBetsPayload({
+    leagues: [{ name: 'League', matches: [...historical, backtestTarget] }], now,
+  }).dates.values()].flat().find((item) => item.away === 'Backtest Target');
+  assert.deepEqual(backtest.teamForm.home, ['0-0', '3-0', '2-0', '1-0']);
+});
+
+test('quick bets mirror is duplicate-safe and input-order invariant at an ambiguous last-five boundary', () => {
+  const now = new Date(2026, 7, 18, 12, 0, 0);
+  const settled = (date, opponent, goals, time = 'FT') => ({
+    date, time, status: 'FT', home: { name: 'Boundary Team', goals }, away: { name: opponent, goals: 0 },
+  });
+  const target = {
+    date: '2026-08-19', time: '15:00', status: 'upcoming',
+    home: { name: 'Boundary Team' }, away: { name: 'Target' }, sportsbet_odds: { home: 1.2 },
+  };
+  const form = (rows) => buildQuickBetsPayload({ leagues: [{ name: 'League', matches: [...rows, target] }], now })
+    .dates.get('2026-08-19').find((row) => row.home === 'Boundary Team').teamForm.home;
+  const clean = [
+    settled('2026-08-17', 'A', 5, '15:00'), settled('2026-08-16', 'B', 4, '15:00'),
+    settled('2026-08-15', 'C', 3, '15:00'), settled('2026-08-14', 'D', 2, '15:00'),
+    settled('2026-08-13', 'E', 1, '15:00'), settled('2026-08-12', 'F', 0, '15:00'),
+  ];
+  assert.deepEqual(form([clean[0], clean[0], ...clean.slice(1)]), ['5-0', '4-0', '3-0', '2-0', '1-0']);
+
+  const conflict = { ...clean[0], home: { ...clean[0].home, goals: 9 } };
+  assert.deepEqual(form([clean[0], conflict, ...clean.slice(1)]), []);
+  assert.deepEqual(form([...clean.slice(1).reverse(), conflict, clean[0]]), []);
+
+  const ambiguous = [
+    ...clean.slice(0, 4),
+    settled('2026-08-13', 'Cup A', 1), settled('2026-08-13', 'Cup B', 2),
+    settled('2026-08-12', 'Older', 3),
+  ];
+  assert.deepEqual(form(ambiguous), []);
+  assert.deepEqual(form([...ambiguous].reverse()), []);
+});
+
 test('quick bets mirror does not publish future-dated FT rows as results', () => {
   const now = new Date(2026, 7, 19, 12, 0, 0);
   const sidecar = {
@@ -164,4 +254,52 @@ test('quick bets mirror preserves sidecar recovery through a canonical event mer
   const row = buildQuickBetsPayload({ leagues, sidecar, now }).dates.get('2026-08-19')[0];
   assert.equal(row.lifecycle, 'result');
   assert.equal(row.status, 'result_pending');
+});
+
+test('quick bets mirror preserves allow-listed Sportsbet scoreless result-market settlement', () => {
+  const now = new Date(2026, 7, 19, 12, 0, 0);
+  const sidecar = { history: [{
+    event_id: '901', league: 'Results', date: '2026-08-19', time: '02:00',
+    home: 'Home', away: 'Away', status: 'result',
+    event_url: 'https://www.sportsbet.com.au/betting/soccer/a/b/home-away-901',
+    markets: { winner: [], btts: [{ key: 'yes', label: 'Yes', odds: 1.2, result: 'won' }], goalsOver: [
+      { key: 'over:1.5', side: 'over', line: 1.5, label: 'Over 1.5', odds: 1.2, result: 'hit' },
+      { key: 'over:2.5', side: 'over', line: 2.5, label: 'Over 2.5', odds: 1.3, result: 'miss' },
+    ], goalsUnder: [] },
+  }] };
+
+  const row = buildQuickBetsPayload({ leagues: [], sidecar, now }).dates.get('2026-08-19')[0];
+
+  assert.equal(row.status, 'result');
+  assert.equal(row.score, null);
+  assert.deepEqual(row.markets.goalsOver.map((item) => item.result), ['hit', 'miss']);
+  assert.equal(row.markets.btts[0].result, null);
+});
+
+test('quick bets mirror keeps scoreless terminal history over matching stale canonical live state', () => {
+  const now = new Date(2026, 7, 19, 12, 0, 0);
+  const eventUrl = 'https://www.sportsbet.com.au/betting/soccer/a/b/home-away-902';
+  const sidecar = { history: [{
+    event_id: '902', event_url: eventUrl, league: 'Results', date: '2026-08-19', time: '02:00',
+    home: 'Home', away: 'Away', status: 'result',
+    markets: { winner: [{ key: 'home', label: 'Home', odds: 1.2, result: 'hit' }], btts: [], goalsOver: [], goalsUnder: [] },
+  }] };
+  const leagues = [{ name: 'Results', matches: [{
+    date: '2026-08-19', time: '02:00', status: 'live', live_minute: "87'",
+    home: { name: 'Home' }, away: { name: 'Away' },
+    sportsbet_odds: { event_id: '902', event_url: eventUrl, home: 1.2 },
+  }] }];
+
+  const row = buildQuickBetsPayload({ leagues, sidecar, now }).dates.get('2026-08-19')[0];
+
+  assert.equal(row.lifecycle, 'result');
+  assert.equal(row.status, 'result');
+  assert.equal(row.score, null);
+  assert.equal(row.minute, null);
+  assert.equal(row.markets.winner[0].result, 'hit');
+
+  const cancelledLeagues = [{ ...leagues[0], matches: [{ ...leagues[0].matches[0], status: 'cancelled', live_minute: null }] }];
+  const cancelled = buildQuickBetsPayload({ leagues: cancelledLeagues, sidecar, now }).dates.get('2026-08-19')[0];
+  assert.equal(cancelled.status, 'cancelled');
+  assert.equal(cancelled.markets.winner[0].result, 'void');
 });

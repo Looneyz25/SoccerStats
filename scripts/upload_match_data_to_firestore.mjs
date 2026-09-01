@@ -74,6 +74,9 @@ function quickBetSelection(market, item, home, away) {
   const odds = Number(item.odds);
   if (!Number.isFinite(odds) || odds <= 1 || odds >= QUICK_BET_MAX_ODDS_EXCLUSIVE) return null;
   const key = String(item.key || '').toLowerCase();
+  const explicitResult = ['hit', 'miss', 'void'].includes(String(item.result || '').toLowerCase())
+    ? String(item.result).toLowerCase() : null;
+  const settlement = explicitResult ? { result: explicitResult } : {};
 
   if (market === 'winner') {
     if (!['home', 'draw', 'away'].includes(key)) return null;
@@ -81,6 +84,7 @@ function quickBetSelection(market, item, home, away) {
       key,
       label: key === 'home' ? home : key === 'away' ? away : 'Draw',
       odds,
+      ...settlement,
     };
   }
   if (market === 'btts') {
@@ -89,6 +93,7 @@ function quickBetSelection(market, item, home, away) {
       key,
       label: key === 'yes' ? 'Yes' : 'No',
       odds,
+      ...settlement,
     };
   }
 
@@ -105,6 +110,7 @@ function quickBetSelection(market, item, home, away) {
     line,
     label: `${side === 'over' ? 'Over' : 'Under'} ${goalLineText(line)}`,
     odds,
+    ...settlement,
   };
 }
 
@@ -123,6 +129,8 @@ function mergeQuickBetMarkets(left = {}, right = {}) {
 function coreQuickBetCandidate(match, league) {
   const home = match?.home?.short || match?.home?.name || '?';
   const away = match?.away?.short || match?.away?.name || '?';
+  const homeTeamKey = quickBetCanonicalTeamKey(match?.home);
+  const awayTeamKey = quickBetCanonicalTeamKey(match?.away);
   const book = match?.sportsbet_odds || {};
   const captured = match?.sportsbet_markets || {};
   const fullTime = captured['Full time'] || {};
@@ -160,6 +168,9 @@ function coreQuickBetCandidate(match, league) {
     time: match?.time || '',
     home,
     away,
+    _homeTeamKey: homeTeamKey,
+    _awayTeamKey: awayTeamKey,
+    _fixtureIdentity: quickBetCanonicalFixtureIdentity(match?.date, homeTeamKey, awayTeamKey),
     status: match?.status || '',
     eventId: event?.eventId || null,
     eventUrl: event?.url || null,
@@ -293,10 +304,12 @@ function gradeQuickBetMarkets(markets, lifecycle, status, homeScore, awayScore) 
   const hasScore = Number.isFinite(homeScore) && Number.isFinite(awayScore);
   const total = hasScore ? homeScore + awayScore : null;
   const grade = (market, selection) => {
-    if (selection.result || selection.liveLock) return selection;
     let result = null;
     let liveLock = null;
+    const explicitResult = ['hit', 'miss', 'void'].includes(String(selection.result || '').toLowerCase())
+      ? String(selection.result).toLowerCase() : null;
     if (terminalVoid) result = 'void';
+    else if (lifecycle === 'result' && explicitResult) result = explicitResult;
     else if (hasScore && lifecycle === 'result') {
       if (market === 'winner') {
         const actual = homeScore > awayScore ? 'home' : homeScore < awayScore ? 'away' : 'draw';
@@ -337,14 +350,20 @@ function mergeQuickBetCandidate(left, right) {
   const history = left.source === 'history' ? left : right.source === 'history' ? right : null;
   const canonical = left.source === 'canonical' ? left : right.source === 'canonical' ? right : null;
   const identity = history || left;
+  const historyStatus = String(history?.status || '').toLowerCase();
+  const historyTerminal = ['ft', 'finished', 'result', 'postponed_or_cancelled', 'cancelled', 'postponed', 'void'].includes(historyStatus);
   const canonicalStatus = String(canonical?.status || '').toLowerCase();
   const canonicalScore = Number.isFinite(canonical?.homeScore) && Number.isFinite(canonical?.awayScore);
-  const canonicalAuthoritative = canonical && (canonicalStatus === 'live'
+  const canonicalAuthoritative = canonical && ((canonicalStatus === 'live' && !historyTerminal)
     || ['postponed_or_cancelled', 'cancelled', 'postponed', 'void'].includes(canonicalStatus)
     || (['ft', 'finished', 'result'].includes(canonicalStatus) && canonicalScore));
   const statusOwner = canonicalAuthoritative ? canonical : history || right;
+  const canonicalIdentity = [left, right].find((candidate) => candidate._homeTeamKey && candidate._awayTeamKey);
   return {
     ...identity,
+    _homeTeamKey: canonicalIdentity?._homeTeamKey || null,
+    _awayTeamKey: canonicalIdentity?._awayTeamKey || null,
+    _fixtureIdentity: canonicalIdentity?._fixtureIdentity || null,
     eventId: history?.eventId || left.eventId || right.eventId || null,
     eventUrl: history?.eventUrl || left.eventUrl || right.eventUrl || null,
     markets: history
@@ -360,7 +379,104 @@ function mergeQuickBetCandidate(left, right) {
   };
 }
 
+function quickBetCanonicalTeamKey(team) {
+  const value = typeof team === 'string' ? team : (team?.name || team?.short) || '';
+  return String(value).toLowerCase().normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+function quickBetHistoryClock(value) {
+  const match = /^(\d{1,2}):([0-5]\d)$/.exec(String(value || '').trim());
+  if (!match || Number(match[1]) > 23) return null;
+  return `${match[1].padStart(2, '0')}:${match[2]}`;
+}
+
+function quickBetCanonicalFixtureIdentity(date, homeTeamKey, awayTeamKey) {
+  return date && homeTeamKey && awayTeamKey ? `${date}|${homeTeamKey}|${awayTeamKey}` : null;
+}
+
+function quickBetCanonicalScore(match) {
+  const settlement = match?.settlement_score || {};
+  const home = settlement.home != null ? Number(settlement.home) : Number(match?.home?.goals);
+  const away = settlement.away != null ? Number(settlement.away) : Number(match?.away?.goals);
+  return Number.isFinite(home) && Number.isFinite(away) ? { home, away } : null;
+}
+
+function buildQuickBetTeamHistory(leagues, now) {
+  const fixtures = new Map();
+  const today = localDate(now);
+  for (const league of leagues || []) {
+    for (const match of league.matches || []) {
+      if (!['ft', 'finished', 'result'].includes(String(match.status || '').toLowerCase())) continue;
+      const date = quickBetDate(match);
+      const score = quickBetCanonicalScore(match);
+      const homeTeamKey = quickBetCanonicalTeamKey(match.home);
+      const awayTeamKey = quickBetCanonicalTeamKey(match.away);
+      const fixture = quickBetCanonicalFixtureIdentity(date, homeTeamKey, awayTeamKey);
+      const time = quickBetHistoryClock(match.time);
+      if (!fixture || !score || date > today) continue;
+      if (date === today && (!time || !quickBetKickoff({ date, time }) || quickBetKickoff({ date, time }) > now)) continue;
+      const existing = fixtures.get(fixture);
+      if (!existing) {
+        fixtures.set(fixture, { fixture, date, times: new Set(time ? [time] : []), homeTeamKey, awayTeamKey, score, conflict: false });
+        continue;
+      }
+      if (time) existing.times.add(time);
+      if (existing.score.home !== score.home || existing.score.away !== score.away) existing.conflict = true;
+    }
+  }
+
+  const teams = new Map();
+  const add = (teamKey, row) => {
+    if (!teamKey) return;
+    if (!teams.has(teamKey)) teams.set(teamKey, []);
+    teams.get(teamKey).push(row);
+  };
+  for (const item of fixtures.values()) {
+    const times = [...item.times].sort();
+    const common = { fixture: item.fixture, date: item.date, time: times.length === 1 ? times[0] : null, conflict: item.conflict };
+    add(item.homeTeamKey, { ...common, score: item.conflict ? null : `${item.score.home}-${item.score.away}` });
+    add(item.awayTeamKey, { ...common, score: item.conflict ? null : `${item.score.away}-${item.score.home}` });
+  }
+  for (const rows of teams.values()) rows.sort((a, b) => b.date.localeCompare(a.date)
+    || String(b.time || '').localeCompare(String(a.time || '')) || a.fixture.localeCompare(b.fixture));
+  return teams;
+}
+
+function quickBetRecentTeamScores(rows, fixture, targetDate, targetTime) {
+  const eligible = (rows || []).filter((item) => item.fixture !== fixture
+    && (item.date < targetDate || (item.date === targetDate && item.time && targetTime && item.time < targetTime)));
+  const selected = [];
+  for (let index = 0; index < eligible.length && selected.length < 5;) {
+    const first = eligible[index];
+    const groupKey = first.time ? `${first.date}T${first.time}` : first.date;
+    const group = [];
+    while (index < eligible.length) {
+      const item = eligible[index];
+      const itemGroup = item.time ? `${item.date}T${item.time}` : item.date;
+      if (itemGroup !== groupKey) break;
+      group.push(item);
+      index += 1;
+    }
+    if (group.some((item) => item.conflict)) return [];
+    if (!first.time && selected.length < 5 && selected.length + group.length > 5) return [];
+    selected.push(...group.slice(0, 5 - selected.length));
+  }
+  return selected.map((item) => item.score);
+}
+
+function quickBetTeamForm(row, teamHistory) {
+  const targetDate = quickBetDate(row);
+  const targetTime = quickBetHistoryClock(row.time);
+  if (!targetDate) return { home: [], away: [] };
+  return {
+    home: row._homeTeamKey ? quickBetRecentTeamScores(teamHistory.get(row._homeTeamKey), row._fixtureIdentity, targetDate, targetTime) : [],
+    away: row._awayTeamKey ? quickBetRecentTeamScores(teamHistory.get(row._awayTeamKey), row._fixtureIdentity, targetDate, targetTime) : [],
+  };
+}
+
 export function buildQuickBetsPayload({ leagues = [], sidecar = null, now = new Date(), sourceCapturedAt = null } = {}) {
+  const teamHistory = buildQuickBetTeamHistory(leagues, now);
   const candidates = [];
   for (const league of Array.isArray(leagues) ? leagues : []) {
     for (const match of Array.isArray(league?.matches) ? league.matches : []) {
@@ -390,20 +506,25 @@ export function buildQuickBetsPayload({ leagues = [], sidecar = null, now = new 
     if (!QUICK_BET_MARKETS.some((market) => normalized[market].length)) continue;
     const row = { ...candidateRow, markets: normalized };
     const fixtureKey = quickBetFixtureKey(row);
+    const canonicalFixtureKey = row._fixtureIdentity ? `canonical|${row._fixtureIdentity}` : null;
     const eventId = row.eventId == null ? null : String(row.eventId);
-    const existingIndex = (eventId && byEventId.get(eventId)) ?? byFixture.get(fixtureKey);
+    const existingIndex = (eventId && byEventId.get(eventId))
+      ?? (canonicalFixtureKey && byFixture.get(canonicalFixtureKey)) ?? byFixture.get(fixtureKey);
     if (existingIndex != null) {
       merged[existingIndex] = mergeQuickBetCandidate(merged[existingIndex], row);
       const combined = merged[existingIndex];
       if (combined.eventId) byEventId.set(String(combined.eventId), existingIndex);
       if (eventId) byEventId.set(eventId, existingIndex);
       byFixture.set(fixtureKey, existingIndex);
+      if (canonicalFixtureKey) byFixture.set(canonicalFixtureKey, existingIndex);
+      if (combined._fixtureIdentity) byFixture.set(`canonical|${combined._fixtureIdentity}`, existingIndex);
       byFixture.set(quickBetFixtureKey(combined), existingIndex);
       continue;
     }
     const index = merged.push(row) - 1;
     if (eventId) byEventId.set(eventId, index);
     byFixture.set(fixtureKey, index);
+    if (canonicalFixtureKey) byFixture.set(canonicalFixtureKey, index);
   }
 
   const today = localDate(now);
@@ -429,6 +550,7 @@ export function buildQuickBetsPayload({ leagues = [], sidecar = null, now = new 
       homeScore: row.homeScore,
       awayScore: row.awayScore,
       minute: row.minute || null,
+      teamForm: quickBetTeamForm(row, teamHistory),
       markets: gradeQuickBetMarkets(row.markets, lifecycle, row.status, row.homeScore, row.awayScore),
     })];
   })
