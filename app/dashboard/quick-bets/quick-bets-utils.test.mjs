@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import vm from 'node:vm';
 import { readFileSync } from 'node:fs';
 import {
   marketSelections, quickBetMatchState, quickBetLeagueKey, quickBetSuccessMarket,
   quickBetLeagueSuccessStats, quickBetSuccessLabel, quickBetLeagueSuccessLabel,
   quickBetSelectionSuccessLabel, quickBetStarredMarketStats, quickBetStarredSelections,
-  quickBetStarStatText, quickBetTeamSuccessLabels,
+  quickBetStarStatText, quickBetTeamSuccessLabels, quickBetDailyStats,
 } from './quick-bets-utils.mjs';
 
 const pageSource = readFileSync(new URL('./page.jsx', import.meta.url), 'utf8');
@@ -85,6 +86,61 @@ test('starred market counters report hits against settled qualifying predictions
   assert.deepEqual(starred.get('goals05'), { hits: 0, settled: 0 });
   assert.equal(quickBetStarStatText(starred.get('winner')), '4 / 5');
   assert.equal(quickBetStarStatText(starred.get('goals05')), '');
+});
+
+test('daily stats retain full-day star hits and overall settled totals', () => {
+  const form = { home: ['2-0', '1-0', '0-1', '3-2', '2-1'], away: [] };
+  const history = Array.from({ length: 5 }, (_, index) => row({
+    winner: [pick(index < 4 ? 'hit' : 'miss')],
+    btts: [pick(index < 4 ? 'hit' : 'miss', { label: 'Yes' })],
+    goalsOver: [pick(index < 4 ? 'hit' : 'miss', { line: 1.5 }), pick(index === 0 ? 'hit' : 'miss', { line: 2.5 })],
+  }, { date: index < 2 ? '2026-08-18' : '2026-08-17', home: 'Home', away: 'Away', teamForm: index === 0 ? form : undefined }));
+  const teamOnly = row({ winner: [pick()] }, { date: '2026-08-18', league: 'Team League', home: 'Home', away: 'Away', teamForm: form });
+  const zeroDay = row({ winner: [pick('miss')] }, { date: '2026-08-16', league: 'Team League' });
+  const ignored = [
+    ...['result_pending', 'cancelled', 'postponed', 'void', 'postponed_or_cancelled'].map((status) => ({ status })),
+    { lifecycle: 'live' }, { lifecycle: 'upcoming' },
+  ].map((extra) => row({ winner: [pick()] }, { date: '2026-08-18', ...extra }));
+  ignored.push(row({ winner: [pick(null, { liveLock: 'hit' }), pick('void'), pick('hit', { odds: '1.25' })] }, { date: '2026-08-18' }));
+  const matches = [...history, teamOnly, zeroDay, ...ignored];
+  const success = quickBetLeagueSuccessStats(matches, filters);
+  const daily = quickBetDailyStats(matches, filters, success);
+  assert.deepEqual([...daily].map(([date, stats]) => [date, stats.total]), [
+    ['2026-08-18', { hits: 8, settled: 9 }], ['2026-08-17', { hits: 6, settled: 12 }], ['2026-08-16', { hits: 0, settled: 1 }],
+  ]);
+  assert.deepEqual([...daily.get('2026-08-18').markets.values()], [
+    { hits: 3, settled: 3 }, { hits: 2, settled: 2 }, { hits: 0, settled: 0 },
+    { hits: 2, settled: 2 }, { hits: 0, settled: 0 }, { hits: 0, settled: 0 },
+  ]);
+  assert.deepEqual(daily.get('2026-08-17').markets.get('winner'), { hits: 2, settled: 3 });
+  assert.deepEqual(daily.get('2026-08-17').markets.get('goals15'), { hits: 2, settled: 3 });
+  const refreshed = [...matches, row({ winner: [pick('miss')] }, { date: '2026-08-18' })];
+  const refreshedSuccess = quickBetLeagueSuccessStats(refreshed, filters);
+  assert.deepEqual(quickBetDailyStats(refreshed, filters, refreshedSuccess).get('2026-08-18').markets.get('winner'), { hits: 2, settled: 2 });
+  assert.deepEqual(quickBetDailyStats(refreshed, filters, refreshedSuccess).get('2026-08-17').markets.get('winner'), { hits: 0, settled: 0 });
+  assert.equal(quickBetDailyStats([], filters, success).size, 0);
+  assert.match(pageSource, /const dates = activeLifecycle === 'result'\s*\? \[\.\.\.dailyStats\.keys\(\)\] : visibleMatches\.map\(\(match\) => match\.date\)/);
+  assert.match(pageSource, /new Set\(dates\.filter\(Boolean\)\)/);
+  assert.match(pageSource, /const hasMobileResultsDay = activeLifecycle === 'result' && Boolean\(mobileCurrentDate\)/);
+  assert.match(pageSource, /!loading && !error && visibleMatches\.length === 0 && !hasMobileResultsDay/);
+  assert.match(pageSource, /!error && \(visibleMatches\.length > 0 \|\| hasMobileResultsDay\)/);
+  assert.match(pageSource, /!loading && hasMobileResultsDay && mobileMatches\.length === 0/);
+  assert.match(pageSource, /No matches for this day with the selected filters\./);
+  assert.match(pageSource, /const mobileMatches = mobileCurrentDate \? visibleMatches\.filter\(\(match\) => match\.date === mobileCurrentDate\) : \[\]/);
+  assert.match(pageSource, /const mobileTodayDate = todayISO\(\)/);
+  assert.match(pageSource, /const mobileHasToday = mobileDates\.includes\(mobileTodayDate\)/);
+  assert.match(pageSource, /aria-label="Previous day"[\s\S]*?<ChevronLeft/);
+  assert.match(pageSource, /onClick=\{\(\) => setMobileSelectedDate\(mobileTodayDate\)\}/);
+  assert.match(pageSource, /aria-label="Jump to today"/);
+  assert.match(pageSource, />\s*Today\s*<\/button>/);
+  assert.match(pageSource, /disabled=\{!mobileHasToday \|\| mobileCurrentDate === mobileTodayDate\}/);
+  assert.match(pageSource, /aria-label="Next day"[\s\S]*?<ChevronRight/);
+  for (const dateKey of ['match.date', 'mobileCurrentDate']) {
+    assert.ok(pageSource.includes(`<DailyStarStats stats={dailyStats.get(${dateKey}).markets.get(filter.key)} label={filter.label}`));
+    assert.ok(pageSource.includes(`<DailyTotal stats={dailyStats.get(${dateKey})?.total}`));
+  }
+  assert.match(pageSource, /activeLifecycle === 'result'\s*\? quickBetDailyStats\(matches\.filter\(\(match\) => match\.lifecycle === activeLifecycle\), MARKET_COLUMNS, successByLeague\) : new Map\(\)/);
+  assert.match(pageSource, /colSpan=\{dailyStats\.has\(match\.date\) \? 1 : 7\}/);
 });
 
 test('starred-only selections reuse exact qualifying league and market records', () => {
@@ -180,4 +236,18 @@ test('quickBetMatchState separates pending results from explicit voids', () => {
   for (const status of ['postponed_or_cancelled', 'cancelled', 'postponed', 'void']) {
     assert.equal(quickBetMatchState({ lifecycle: 'result', status, score: '1-0' }), 'Void');
   }
+});
+
+test('customer empty market labels map all six filters and preserve Starred filtering', () => {
+  const helper = pageSource.match(/function quickBetEmptyMarketLabel\([\s\S]*?\n}/)?.[0];
+  assert.ok(helper);
+  const label = vm.runInNewContext(`(${helper})`);
+  for (const filter of filters) {
+    const key = filter.line == null ? filter.key : `goals:${filter.line}`;
+    const match = { lifecycle: 'upcoming', marketCoverage: { [key]: 'no_price' } };
+    assert.equal(label(match, filter), 'Market offered, price unavailable', filter.key);
+    assert.equal(label(match, filter, true), 'No starred selection for this market', filter.key);
+  }
+  assert.match(pageSource, /title=\{quickBetEmptyMarketLabel\(match, filter, starredOnly\)}/);
+  assert.match(pageSource, /aria-label=\{quickBetEmptyMarketLabel\(match, filter, starredOnly\)}/);
 });

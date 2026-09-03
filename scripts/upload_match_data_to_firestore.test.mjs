@@ -303,3 +303,67 @@ test('quick bets mirror keeps scoreless terminal history over matching stale can
   assert.equal(cancelled.status, 'cancelled');
   assert.equal(cancelled.markets.winner[0].result, 'void');
 });
+
+test('forecast inspections carry coverage, reorient reversed identities, and replace old eligible prices', () => {
+  const now = new Date('2026-09-03T02:30:00Z');
+  const core = { date: '2026-09-09', time: '20:00', status: 'upcoming', home: { id: 1, name: 'Alpha' }, away: { id: 2, name: 'Beta' },
+    sportsbet_odds: { event_id: 777, event_url: 'https://www.sportsbet.com.au/betting/soccer/a/b/beta-alpha-777', home: 1.2 },
+    sportsbet_markets: { 'Both teams to score': { Yes: 1.3 }, 'Match goals 1.5': { Over: 1.1 } } };
+  const coverage = { fromDate: '2026-09-03', throughDate: '2026-09-09', totalFixtures: 1, checkedFixtures: 1, pendingFixtures: 0 };
+  const event = { event_id: '777', event_url: core.sportsbet_odds.event_url, date: core.date, time: core.time,
+    home: 'Beta', away: 'Alpha', league: 'Book League', root_stale: false, deep_stale: false,
+    canonical: { date: core.date, time: core.time, home: 'Alpha', away: 'Beta', home_id: 1, away_id: 2, league: 'League', reversed: true },
+    market_coverage: { winner: 'no_selection', btts: 'not_offered', 'goals:0.5': 'not_offered', 'goals:1.5': 'no_price', 'goals:2.5': 'not_offered', 'goals:3.5': 'selection' },
+    markets: { winner: [], btts: [], goalsOver: [], goalsUnder: [{ key: 'under:3.5', side: 'under', line: 3.5, label: 'Under 3.5', odds: 1.4 }] } };
+  const sidecar = { status: 'complete', coverage, events: [event], history: [] };
+  const payload = buildQuickBetsPayload({ leagues: [{ name: 'League', matches: [core] }], sidecar, now });
+  const rows = [...payload.dates.values()].flat();
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].home, 'Alpha');
+  assert.equal(rows[0].away, 'Beta');
+  assert.deepEqual(rows[0].markets.winner, []);
+  assert.deepEqual(rows[0].markets.btts, []);
+  assert.deepEqual(rows[0].markets.goalsOver, []);
+  assert.equal(rows[0].marketCoverage.winner, 'no_selection');
+  assert.deepEqual(payload.meta.coverage, coverage);
+  event.markets.winner = [{ key: 'away', label: 'Alpha', odds: 1.25 }];
+  const reversedPayload = buildQuickBetsPayload({ leagues: [{ name: 'League', matches: [core] }], sidecar, now });
+  const reversedRows = [...reversedPayload.dates.values()].flat();
+  assert.equal(reversedRows[0].markets.winner[0].key, 'home');
+  assert.equal(reversedRows[0].markets.winner[0].label, 'Alpha');
+  event.markets = { winner: [], btts: [], goalsOver: [], goalsUnder: [] };
+  const emptyPayload = buildQuickBetsPayload({ leagues: [{ name: 'League', matches: [core] }], sidecar, now });
+  assert.equal(emptyPayload.meta.totalMatches, 0);
+});
+
+
+test('successful inspection withdrawals remain authoritative through stale, missing, and retained history states', () => {
+  const coverage = Object.fromEntries(['winner', 'btts', 'goals:0.5', 'goals:1.5', 'goals:2.5', 'goals:3.5'].map((key) => [key, 'no_selection']));
+  const core = { date: '2026-09-03', time: '20:00', status: 'upcoming',
+    home: { id: 1, name: 'Alpha' }, away: { id: 2, name: 'Beta' },
+    sportsbet_odds: { event_id: 777, event_url: 'https://www.sportsbet.com.au/betting/soccer/a/b/alpha-beta-777', home: 1.2 },
+    sportsbet_markets: { 'Both teams to score': { Yes: 1.3 }, 'Match goals 1.5': { Over: 1.1 } } };
+  const captured = { event_id: '777', event_url: core.sportsbet_odds.event_url, date: core.date, time: core.time,
+    home: 'Alpha', away: 'Beta', league: 'League', root_stale: false, deep_stale: false,
+    canonical: { date: core.date, time: core.time, home: 'Alpha', away: 'Beta', home_id: 1, away_id: 2, league: 'League' },
+    last_inspection_coverage: coverage, market_coverage: coverage,
+    markets: { winner: [], btts: [], goalsOver: [], goalsUnder: [] } };
+  const leagues = [{ name: 'League', matches: [core] }];
+  const read = (sidecar, now) => [...buildQuickBetsPayload({ leagues, sidecar, now }).dates.values()].flat();
+  for (const state of ['fresh', 'fetch_failed', 'stale', 'omitted']) {
+    const event = { ...captured, deep_stale: state !== 'fresh', root_stale: state === 'omitted',
+      market_coverage: state === 'fresh' ? coverage : Object.fromEntries(Object.keys(coverage).map((key) => [key, state === 'fetch_failed' ? 'fetch_failed' : 'stale'])) };
+    assert.deepEqual(read({ events: [event], history: [] }, new Date(2026, 8, 3, 12)), [], state);
+  }
+  core.status = 'FT'; core.home.goals = 2; core.away.goals = 0;
+  const frozen = { ...captured, status: 'started', inspection_only: true, deep_stale: true };
+  for (const now of [new Date(2026, 8, 3, 23), new Date(2026, 9, 6)]) {
+    assert.deepEqual(read({ events: [], history: [frozen] }, now), [], 'marketless retained history must not create a result or star');
+  }
+  const realHistory = { ...captured, status: 'FT', home_score: 2, away_score: 0,
+    markets: { winner: [{ key: 'home', label: 'Alpha', odds: 1.25 }], btts: [], goalsOver: [], goalsUnder: [] } };
+  const rows = read({ events: [captured], history: [realHistory] }, new Date(2026, 8, 3, 23));
+  assert.equal(rows.length, 1);
+  assert.equal(rows[0].markets.winner[0].odds, 1.25, 'frozen history remains immutable');
+  assert.deepEqual(rows[0].markets.btts, [], 'inspected history cannot be supplemented by stale core odds');
+});

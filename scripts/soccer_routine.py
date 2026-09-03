@@ -5390,52 +5390,87 @@ def flashscore_state_for_quick_bet(events, row):
             "live_minute": event.get("detail"), "source": "Flashscore"}
 
 
-def update_quick_bet_history(store=None, now=None, path=None, terminal_check_limit=10):
+def update_quick_bet_history(store=None, now=None, path=None, terminal_check_limit=None, terminal_check_budget=None):
     import soccer_fetch_sportsbet as sportsbet
     now = now or datetime.now(ADL)
     target_path = path or sportsbet.QUICK_BETS_PATH
+    if terminal_check_limit is None:
+        terminal_check_limit = int(os.environ.get("SOCCER_QUICK_BET_TERMINAL_CHECK_LIMIT", "150"))
+    if terminal_check_budget is None:
+        terminal_check_budget = float(os.environ.get("SOCCER_QUICK_BET_TERMINAL_CHECK_BUDGET", "120"))
     payload = sportsbet.read_quick_bets(target_path)
     if not payload:
         return {"live": 0, "settled": 0, "unresolved": 0}
-    events, history = sportsbet.roll_quick_bet_history(payload, payload.get("events") or [], now)
     store = store if isinstance(store, dict) else load_store()
+    events, history = sportsbet.roll_quick_bet_history(payload, payload.get("events") or [], now, leagues=store.get("leagues"))
     canonical = {}
     for league in store.get("leagues") or []:
         for match in league.get("matches") or []:
             event_id = sportsbet_event_id_for_match(match)
             if event_id:
                 canonical.setdefault(str(event_id), []).append(match)
+    needs_recovery = any(any((row.get("markets") or {}).values()) for row in history)
     try:
-        flash_results, _source = load_flashscore_result_events()
+        flash_results, _source = load_flashscore_result_events() if needs_recovery else ([], "")
     except Exception:
         flash_results = []
     try:
-        flash_live = get_flashscore_live_events()
+        flash_live = get_flashscore_live_events() if needs_recovery else []
     except Exception:
         flash_live = []
     flash_events = [*(flash_live or []), *(flash_results or [])]
 
     live_count = settled_count = unresolved_count = terminal_checks = 0
+    terminal_started = time.monotonic()
     for row in history:
+        if not any((row.get("markets") or {}).values()):
+            continue
         status = str(row.get("status") or "started").lower()
-        if status in ("ft", "postponed_or_cancelled", "cancelled", "postponed", "void"):
+        if status in ("ft", "finished", "result", "postponed_or_cancelled", "cancelled", "postponed", "void"):
             settled_count += 1
             continue
         matches = canonical.get(str(row.get("event_id"))) or []
-        state = _quick_bet_score_from_canonical(matches[0]) if len(matches) == 1 else None
+        state = None
+        if not matches and row.get("canonical"):
+            fixture = row["canonical"]
+            matches = [match for league in store.get("leagues") or [] for match in league.get("matches") or []
+                       if sportsbet.quick_bet_canonical_match(fixture, match)]
+        if len(matches) == 1:
+            match = matches[0]
+            same_kickoff = not row.get("canonical") or sportsbet.quick_bet_canonical_match(row["canonical"], match)
+            matcher = sportsbet.quick_bet_names_match if row.get("canonical") else sportsbet.names_match
+            direct = matcher(row.get("home"), _quick_bet_team_name(match, "home")) and matcher(
+                row.get("away"), _quick_bet_team_name(match, "away"))
+            reverse = matcher(row.get("home"), _quick_bet_team_name(match, "away")) and matcher(
+                row.get("away"), _quick_bet_team_name(match, "home"))
+            if same_kickoff and direct != reverse:
+                state = _quick_bet_score_from_canonical(match)
+                if state and reverse and "home_score" in state:
+                    state["home_score"], state["away_score"] = state["away_score"], state["home_score"]
         if not state:
             state = espn_state_for_quick_bet(row)
         if not state:
             state = flashscore_state_for_quick_bet(flash_events, row)
-        if not state and terminal_checks < max(0, int(terminal_check_limit)):
+        terminal_budget_ok = terminal_check_budget <= 0 or (time.monotonic() - terminal_started) < terminal_check_budget
+        if not state and terminal_checks < max(0, int(terminal_check_limit)) and terminal_budget_ok:
             terminal_checks += 1
-            terminal = sportsbet_result_for_match(str(row.get("league") or ""), {
-                "sportsbet_odds": {"event_id": row.get("event_id"), "event_url": row.get("event_url")},
-                "home": {"name": _quick_bet_team_name(row, "home")},
-                "away": {"name": _quick_bet_team_name(row, "away")},
-            })
-            if terminal and terminal.get("status") == "postponed_or_cancelled":
-                state = {"status": "postponed_or_cancelled", "source": "Sportsbet"}
+            result_event = sportsbet.fetch_event_results(row.get("event_id"))
+            if result_event:
+                settled_markets, graded_count, captured_count = sportsbet.settle_quick_bet_markets(
+                    row.get("markets"), result_event,
+                    _quick_bet_team_name(row, "home"), _quick_bet_team_name(row, "away"),
+                )
+                if captured_count > 0 and graded_count == captured_count:
+                    row["markets"] = settled_markets
+                    state = {"status": "result", "source": "Sportsbet Results"}
+            if not state:
+                terminal = sportsbet_result_for_match(str(row.get("league") or ""), {
+                    "sportsbet_odds": {"event_id": row.get("event_id"), "event_url": row.get("event_url")},
+                    "home": {"name": _quick_bet_team_name(row, "home")},
+                    "away": {"name": _quick_bet_team_name(row, "away")},
+                })
+                if terminal and terminal.get("status") == "postponed_or_cancelled":
+                    state = {"status": "postponed_or_cancelled", "source": "Sportsbet"}
         if not state:
             row["status"] = "started"
             unresolved_count += 1

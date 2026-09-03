@@ -1,4 +1,5 @@
 import json
+import os
 import tempfile
 import unittest
 from datetime import datetime, timezone
@@ -398,6 +399,71 @@ class ExtraTimeSettlementTests(unittest.TestCase):
 
 
 class QuickBetLifecycleMatchingTests(unittest.TestCase):
+    def test_marketless_inspection_history_never_creates_recovery_work(self):
+        import soccer_fetch_sportsbet as sportsbet
+        from unittest.mock import patch
+        now = datetime(2026, 9, 3, 14, 0, tzinfo=sr.ADL)
+        event = {"event_id": "701", "league": "Cup", "date": "2026-09-03", "time": "12:00",
+                 "home": "Alpha", "away": "Beta", "markets": {},
+                 "last_inspection_coverage": {key: "no_selection" for key in sportsbet.QUICK_BET_COVERAGE_MARKETS}}
+        with tempfile.TemporaryDirectory() as temp, patch.object(sr, 'load_flashscore_result_events') as results, \
+                patch.object(sr, 'get_flashscore_live_events') as live, \
+                patch.object(sr, 'espn_state_for_quick_bet') as espn, \
+                patch.object(sportsbet, 'fetch_event_results') as provider:
+            target = Path(temp) / 'quick.json'
+            sportsbet.atomic_write_json(target, {"events": [event], "history": []})
+            summary = sr.update_quick_bet_history({"leagues": []}, now, target)
+            self.assertEqual(summary, {"live": 0, "settled": 0, "unresolved": 0})
+            for mock in (results, live, espn, provider): mock.assert_not_called()
+            self.assertTrue(json.loads(target.read_text(encoding='utf-8'))['history'][0]['inspection_only'])
+
+    def test_forecast_settlement_rejects_qualifiers_conflicting_ids_and_kickoff(self):
+        import soccer_fetch_sportsbet as sportsbet
+        from unittest.mock import patch
+        now = datetime(2026, 9, 3, 14, 0, tzinfo=sr.ADL)
+        fixture = {"date": "2026-09-03", "time": "12:00", "home": "England", "away": "France", "home_id": 1, "away_id": 2}
+        event = {"event_id": "701", "league": "Cup", "date": fixture["date"], "time": fixture["time"],
+                 "home": "England", "away": "France", "canonical": fixture,
+                 "markets": {"winner": [{"key": "home", "label": "England", "odds": 1.2}]}}
+        for fault in (' U21', ' Reserves', ' Women', 'id', 'kickoff', 'duplicate'):
+            match = {"date": fixture["date"], "time": fixture["time"], "status": "FT",
+                     "home": {"name": "England", "goals": 2}, "away": {"name": "France", "goals": 0}}
+            if fault.startswith(' '):
+                match['home']['name'] += fault; match['away']['name'] += fault
+            if fault == 'id': match['home']['id'] = 3; match['away']['id'] = 4
+            if fault == 'kickoff': match['time'] = '11:00'
+            matches = [match, dict(match)] if fault == 'duplicate' else [match]
+            with self.subTest(fault=fault), tempfile.TemporaryDirectory() as temp, \
+                    patch.object(sr, 'load_flashscore_result_events', return_value=([], '')), \
+                    patch.object(sr, 'get_flashscore_live_events', return_value=[]), \
+                    patch.object(sr, 'espn_state_for_quick_bet', return_value=None):
+                target = Path(temp) / 'quick.json'
+                sportsbet.atomic_write_json(target, {"events": [event], "history": []})
+                summary = sr.update_quick_bet_history({"leagues": [{"name": "Cup", "matches": matches}]}, now, target, terminal_check_limit=0)
+                self.assertEqual(summary['settled'], 0)
+                self.assertEqual(summary['unresolved'], 1)
+
+    def test_forecast_history_keeps_provider_score_orientation_without_core_bookmaker_id(self):
+        import soccer_fetch_sportsbet as sportsbet
+        from unittest.mock import patch
+        now = datetime(2026, 9, 3, 14, 0, tzinfo=sr.ADL)
+        fixture = {"date": "2026-09-03", "time": "12:00", "home": "Alpha", "away": "Beta", "reversed": True}
+        event = {"event_id": "701", "league": "Cup", "date": fixture["date"], "time": fixture["time"],
+                 "home": "Beta", "away": "Alpha", "canonical": fixture,
+                 "markets": {"winner": [{"key": "away", "label": "Alpha", "odds": 1.2}]}}
+        match = {"date": fixture["date"], "time": fixture["time"], "status": "FT",
+                 "home": {"name": "Alpha", "goals": 2}, "away": {"name": "Beta", "goals": 0}}
+        with tempfile.TemporaryDirectory() as temp, patch.object(sr, 'load_flashscore_result_events', return_value=([], '')), \
+                patch.object(sr, 'get_flashscore_live_events', return_value=[]), \
+                patch.object(sr, 'espn_state_for_quick_bet', side_effect=AssertionError('unexpected provider fetch')):
+            target = Path(temp) / 'quick.json'
+            sportsbet.atomic_write_json(target, {"events": [event], "history": []})
+            summary = sr.update_quick_bet_history({"leagues": [{"name": "Cup", "matches": [match]}]}, now, target)
+            self.assertEqual(summary['settled'], 1)
+            written = json.loads(target.read_text(encoding='utf-8'))['history'][0]
+            self.assertEqual((written['home_score'], written['away_score']), (0, 2))
+            self.assertEqual(written['markets'], event['markets'])
+
     @staticmethod
     def flash_event(home="Home", away="Away", event_id="one"):
         return {"id": event_id, "ts": int(datetime(2026, 8, 18, 2, 30, tzinfo=timezone.utc).timestamp()),
@@ -482,6 +548,231 @@ class QuickBetLifecycleMatchingTests(unittest.TestCase):
             sportsbet.QUICK_BETS_PATH = old_path
             sr.load_flashscore_result_events, sr.get_flashscore_live_events, sr.espn_state_for_quick_bet = old_results, old_live, old_espn
 
+    def test_history_settles_from_complete_sportsbet_result_markets_without_score(self):
+        import soccer_fetch_sportsbet as sportsbet
+        now = datetime(2026, 8, 18, 12, 0, tzinfo=sr.ADL)
+        payload = {"schema_version": 2, "events": [{
+            "event_id": "703", "league": "Cup", "date": "2026-08-18", "time": "08:00",
+            "home": "Home", "away": "Away", "markets": {"winner": [], "btts": [],
+                "goalsOver": [{"key": "over:1.5", "side": "over", "line": 1.5, "label": "Over 1.5", "odds": 1.2}],
+                "goalsUnder": []},
+        }], "history": []}
+        result_event = {"id": 703, "markets": [{"name": "Over/Under 1.5 Goals", "selections": [
+            {"name": "Over 1.5 Goals", "statusCode": "W"},
+        ]}]}
+        old_results, old_live = sr.load_flashscore_result_events, sr.get_flashscore_live_events
+        old_espn, old_fetch = sr.espn_state_for_quick_bet, sportsbet.fetch_event_results
+        old_terminal = sr.sportsbet_result_for_match
+        try:
+            with tempfile.TemporaryDirectory() as temp:
+                target = Path(temp) / "sportsbet_quick_bets.json"
+                sportsbet.atomic_write_json(target, payload)
+                sr.load_flashscore_result_events = lambda: ([], "")
+                sr.get_flashscore_live_events = lambda: []
+                sr.espn_state_for_quick_bet = lambda _row: None
+                sportsbet.fetch_event_results = lambda event_id: result_event if str(event_id) == "703" else None
+                sr.sportsbet_result_for_match = lambda *_args, **_kwargs: self.fail(
+                    "complete result markets must not call the cancellation fallback"
+                )
+
+                summary = sr.update_quick_bet_history({"leagues": []}, now, target)
+                row = json.loads(target.read_text(encoding="utf-8"))["history"][0]
+
+                self.assertEqual(summary, {"live": 0, "settled": 1, "unresolved": 0})
+                self.assertEqual((row["status"], row["result_source"]), ("result", "Sportsbet Results"))
+                self.assertEqual(row["markets"]["goalsOver"][0]["result"], "hit")
+                self.assertNotIn("home_score", row)
+                self.assertNotIn("away_score", row)
+        finally:
+            sr.load_flashscore_result_events, sr.get_flashscore_live_events = old_results, old_live
+            sr.espn_state_for_quick_bet, sportsbet.fetch_event_results = old_espn, old_fetch
+            sr.sportsbet_result_for_match = old_terminal
+
+    def test_partial_sportsbet_market_result_stays_unresolved_and_reaches_cancellation_fallback(self):
+        import soccer_fetch_sportsbet as sportsbet
+        now = datetime(2026, 8, 18, 12, 0, tzinfo=sr.ADL)
+        payload = {"schema_version": 2, "events": [{
+            "event_id": "704", "league": "Cup", "date": "2026-08-18", "time": "08:00",
+            "home": "Home", "away": "Away", "markets": {"winner": [], "btts": [], "goalsOver": [
+                {"key": "over:1.5", "side": "over", "line": 1.5, "label": "Over 1.5", "odds": 1.2},
+                {"key": "over:2.5", "side": "over", "line": 2.5, "label": "Over 2.5", "odds": 1.3},
+            ], "goalsUnder": []},
+        }], "history": []}
+        partial = {"id": 704, "markets": [{"name": "Over/Under 1.5 Goals", "selections": [
+            {"name": "Over 1.5 Goals", "statusCode": "W"},
+        ]}]}
+        old_results, old_live = sr.load_flashscore_result_events, sr.get_flashscore_live_events
+        old_espn, old_fetch = sr.espn_state_for_quick_bet, sportsbet.fetch_event_results
+        old_terminal = sr.sportsbet_result_for_match
+        cancellation_calls = []
+        try:
+            with tempfile.TemporaryDirectory() as temp:
+                target = Path(temp) / "sportsbet_quick_bets.json"
+                sportsbet.atomic_write_json(target, payload)
+                sr.load_flashscore_result_events = lambda: ([], "")
+                sr.get_flashscore_live_events = lambda: []
+                sr.espn_state_for_quick_bet = lambda _row: None
+                sportsbet.fetch_event_results = lambda _event_id: partial
+                sr.sportsbet_result_for_match = lambda *_args, **_kwargs: cancellation_calls.append("704")
+
+                summary = sr.update_quick_bet_history({"leagues": []}, now, target)
+                row = json.loads(target.read_text(encoding="utf-8"))["history"][0]
+
+                self.assertEqual(summary, {"live": 0, "settled": 0, "unresolved": 1})
+                self.assertEqual((row["status"], cancellation_calls), ("started", ["704"]))
+                self.assertNotIn("result_source", row)
+                self.assertTrue(all("result" not in item for item in row["markets"]["goalsOver"]))
+        finally:
+            sr.load_flashscore_result_events, sr.get_flashscore_live_events = old_results, old_live
+            sr.espn_state_for_quick_bet, sportsbet.fetch_event_results = old_espn, old_fetch
+            sr.sportsbet_result_for_match = old_terminal
+
+    def test_sportsbet_results_and_cancellation_share_one_terminal_lookup_budget(self):
+        import soccer_fetch_sportsbet as sportsbet
+        now = datetime(2026, 8, 18, 12, 0, tzinfo=sr.ADL)
+        events = [{
+            "event_id": str(801 + index), "league": "Cup", "date": "2026-08-18", "time": "08:00",
+            "home": f"Home {index}", "away": f"Away {index}",
+            "markets": {"winner": [{"key": "home", "label": f"Home {index}", "odds": 1.2}]},
+        } for index in range(3)]
+        old_results, old_live = sr.load_flashscore_result_events, sr.get_flashscore_live_events
+        old_espn, old_fetch = sr.espn_state_for_quick_bet, sportsbet.fetch_event_results
+        old_terminal = sr.sportsbet_result_for_match
+        try:
+            sr.load_flashscore_result_events = lambda: ([], "")
+            sr.get_flashscore_live_events = lambda: []
+            sr.espn_state_for_quick_bet = lambda _row: None
+            with tempfile.TemporaryDirectory() as temp:
+                for limit, expected in ((1, ["801"]), (0, [])):
+                    with self.subTest(limit=limit):
+                        target = Path(temp) / f"sportsbet_quick_bets_{limit}.json"
+                        sportsbet.atomic_write_json(target, {"schema_version": 2, "events": events, "history": []})
+                        result_calls = []
+                        cancellation_calls = []
+                        sportsbet.fetch_event_results = lambda event_id: result_calls.append(str(event_id))
+                        sr.sportsbet_result_for_match = lambda _league, match: cancellation_calls.append(
+                            str((match.get("sportsbet_odds") or {}).get("event_id"))
+                        )
+
+                        summary = sr.update_quick_bet_history(
+                            {"leagues": []}, now, target, terminal_check_limit=limit,
+                        )
+
+                        self.assertEqual(summary, {"live": 0, "settled": 0, "unresolved": 3})
+                        self.assertEqual(result_calls, expected)
+                        self.assertEqual(cancellation_calls, expected)
+        finally:
+            sr.load_flashscore_result_events, sr.get_flashscore_live_events = old_results, old_live
+            sr.espn_state_for_quick_bet, sportsbet.fetch_event_results = old_espn, old_fetch
+            sr.sportsbet_result_for_match = old_terminal
+
+    def test_default_terminal_lookup_drains_backlog_beyond_legacy_cap(self):
+        import soccer_fetch_sportsbet as sportsbet
+        now = datetime(2026, 8, 18, 12, 0, tzinfo=sr.ADL)
+        events = [{
+            "event_id": str(900 + index), "league": "Cup", "date": "2026-08-18", "time": "08:00",
+            "home": f"Home {index}", "away": f"Away {index}",
+            "markets": {"winner": [{"key": "home", "label": f"Home {index}", "odds": 1.2}]},
+        } for index in range(15)]
+        old_results, old_live = sr.load_flashscore_result_events, sr.get_flashscore_live_events
+        old_espn, old_fetch = sr.espn_state_for_quick_bet, sportsbet.fetch_event_results
+        old_terminal = sr.sportsbet_result_for_match
+        old_env = os.environ.get("SOCCER_QUICK_BET_TERMINAL_CHECK_LIMIT")
+        try:
+            sr.load_flashscore_result_events = lambda: ([], "")
+            sr.get_flashscore_live_events = lambda: []
+            sr.espn_state_for_quick_bet = lambda _row: None
+            sr.sportsbet_result_for_match = lambda _league, _match: None
+            with tempfile.TemporaryDirectory() as temp:
+                for env_value, expected in ((None, 15), ("5", 5)):
+                    with self.subTest(env=env_value):
+                        if env_value is None:
+                            os.environ.pop("SOCCER_QUICK_BET_TERMINAL_CHECK_LIMIT", None)
+                        else:
+                            os.environ["SOCCER_QUICK_BET_TERMINAL_CHECK_LIMIT"] = env_value
+                        target = Path(temp) / f"qb_{env_value}.json"
+                        sportsbet.atomic_write_json(target, {"schema_version": 2, "events": events, "history": []})
+                        calls = []
+                        sportsbet.fetch_event_results = lambda event_id: calls.append(str(event_id))
+                        summary = sr.update_quick_bet_history({"leagues": []}, now, target)
+                        self.assertEqual(len(calls), expected)
+                        self.assertEqual(summary["unresolved"], 15)
+        finally:
+            sr.load_flashscore_result_events, sr.get_flashscore_live_events = old_results, old_live
+            sr.espn_state_for_quick_bet, sportsbet.fetch_event_results = old_espn, old_fetch
+            sr.sportsbet_result_for_match = old_terminal
+            if old_env is None:
+                os.environ.pop("SOCCER_QUICK_BET_TERMINAL_CHECK_LIMIT", None)
+            else:
+                os.environ["SOCCER_QUICK_BET_TERMINAL_CHECK_LIMIT"] = old_env
+
+    def test_terminal_check_budget_halts_provider_lookups(self):
+        import soccer_fetch_sportsbet as sportsbet
+        now = datetime(2026, 8, 18, 12, 0, tzinfo=sr.ADL)
+        events = [{
+            "event_id": str(920 + index), "league": "Cup", "date": "2026-08-18", "time": "08:00",
+            "home": f"Home {index}", "away": f"Away {index}",
+            "markets": {"winner": [{"key": "home", "label": f"Home {index}", "odds": 1.2}]},
+        } for index in range(4)]
+        old_results, old_live = sr.load_flashscore_result_events, sr.get_flashscore_live_events
+        old_espn, old_fetch = sr.espn_state_for_quick_bet, sportsbet.fetch_event_results
+        old_terminal, old_monotonic = sr.sportsbet_result_for_match, sr.time.monotonic
+        try:
+            sr.load_flashscore_result_events = lambda: ([], "")
+            sr.get_flashscore_live_events = lambda: []
+            sr.espn_state_for_quick_bet = lambda _row: None
+            sr.sportsbet_result_for_match = lambda _league, _match: None
+            clock = {"t": 0.0}
+            sr.time.monotonic = lambda: clock["t"]
+            calls = []
+
+            def fake_fetch(event_id):
+                calls.append(str(event_id))
+                clock["t"] += 10.0  # each terminal lookup advances the clock 10s
+                return None
+
+            sportsbet.fetch_event_results = fake_fetch
+            with tempfile.TemporaryDirectory() as temp:
+                target = Path(temp) / "qb_budget.json"
+                sportsbet.atomic_write_json(target, {"schema_version": 2, "events": events, "history": []})
+                # budget 15s: row0 (elapsed 0<15) -> t=10; row1 (10<15) -> t=20; row2 (20<15 false) stops.
+                summary = sr.update_quick_bet_history({"leagues": []}, now, target, terminal_check_budget=15)
+                self.assertEqual(len(calls), 2)
+                self.assertEqual(summary["unresolved"], 4)
+        finally:
+            sr.load_flashscore_result_events, sr.get_flashscore_live_events = old_results, old_live
+            sr.espn_state_for_quick_bet, sportsbet.fetch_event_results = old_espn, old_fetch
+            sr.sportsbet_result_for_match, sr.time.monotonic = old_terminal, old_monotonic
+
+    def test_scoreless_result_and_finished_history_are_terminal_without_provider_lookups(self):
+        import soccer_fetch_sportsbet as sportsbet
+        now = datetime(2026, 8, 18, 12, 0, tzinfo=sr.ADL)
+        history = [{
+            "event_id": str(811 + index), "league": "Cup", "date": "2026-08-18", "time": "08:00",
+            "home": f"Home {index}", "away": f"Away {index}", "status": status,
+            "markets": {"winner": [{"key": "home", "label": f"Home {index}", "odds": 1.2, "result": "hit"}]},
+        } for index, status in enumerate(("result", "finished"))]
+        old_results, old_live = sr.load_flashscore_result_events, sr.get_flashscore_live_events
+        old_espn, old_fetch = sr.espn_state_for_quick_bet, sportsbet.fetch_event_results
+        old_terminal = sr.sportsbet_result_for_match
+        try:
+            with tempfile.TemporaryDirectory() as temp:
+                target = Path(temp) / "sportsbet_quick_bets.json"
+                sportsbet.atomic_write_json(target, {"schema_version": 2, "events": [], "history": history})
+                sr.load_flashscore_result_events = lambda: ([], "")
+                sr.get_flashscore_live_events = lambda: []
+                sr.espn_state_for_quick_bet = lambda _row: self.fail("terminal history must skip ESPN")
+                sportsbet.fetch_event_results = lambda _event_id: self.fail("terminal history must skip Results")
+                sr.sportsbet_result_for_match = lambda *_args, **_kwargs: self.fail("terminal history must skip cancellation")
+
+                summary = sr.update_quick_bet_history({"leagues": []}, now, target)
+
+                self.assertEqual(summary, {"live": 0, "settled": 2, "unresolved": 0})
+        finally:
+            sr.load_flashscore_result_events, sr.get_flashscore_live_events = old_results, old_live
+            sr.espn_state_for_quick_bet, sportsbet.fetch_event_results = old_espn, old_fetch
+            sr.sportsbet_result_for_match = old_terminal
+
     def test_unresolved_ambiguous_history_is_atomically_retained_without_provider_ids(self):
         import soccer_fetch_sportsbet as sportsbet
         now = datetime(2026, 8, 18, 12, 0, tzinfo=sr.ADL)
@@ -496,6 +787,7 @@ class QuickBetLifecycleMatchingTests(unittest.TestCase):
         original_atomic = sportsbet.atomic_write_json
         old_results, old_live = sr.load_flashscore_result_events, sr.get_flashscore_live_events
         old_espn, old_terminal = sr.espn_state_for_quick_bet, sr.sportsbet_result_for_match
+        old_fetch = sportsbet.fetch_event_results
         try:
             with tempfile.TemporaryDirectory() as temp:
                 target = Path(temp) / "sportsbet_quick_bets.json"
@@ -510,6 +802,7 @@ class QuickBetLifecycleMatchingTests(unittest.TestCase):
                 sr.load_flashscore_result_events = lambda: ([], "")
                 sr.get_flashscore_live_events = lambda: ambiguous
                 sr.espn_state_for_quick_bet = lambda _row: None
+                sportsbet.fetch_event_results = lambda _event_id: None
                 sr.sportsbet_result_for_match = lambda *_args, **_kwargs: None
 
                 summary = sr.update_quick_bet_history({"leagues": []}, now, target)
@@ -528,6 +821,7 @@ class QuickBetLifecycleMatchingTests(unittest.TestCase):
             sportsbet.atomic_write_json = original_atomic
             sr.load_flashscore_result_events, sr.get_flashscore_live_events = old_results, old_live
             sr.espn_state_for_quick_bet, sr.sportsbet_result_for_match = old_espn, old_terminal
+            sportsbet.fetch_event_results = old_fetch
 
 
 if __name__ == "__main__":

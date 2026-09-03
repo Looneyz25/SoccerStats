@@ -12,8 +12,8 @@ NOTE: Markets matched are "Win-Draw-Win" / "Match Result" / "1X2" — these are 
 regular time only. Extra-time markets ("Match Result Including Overtime", etc.) are
 explicitly excluded.
 """
-import copy, json, os, re, time, pathlib, unicodedata
-import random
+import copy, json, math, os, re, time, pathlib, unicodedata
+import random, sys
 from datetime import datetime, timezone, timedelta
 from urllib.parse import urlparse
 from curl_cffi import requests
@@ -33,7 +33,17 @@ FOLDER = pathlib.Path(__file__).resolve().parent.parent
 STORE_PATH = FOLDER / "match_data.json"
 QUICK_BETS_PATH = FOLDER / "sportsbet_quick_bets.json"
 SPORTSBET_SOCCER_URL = "https://www.sportsbet.com.au/betting/soccer"
+SPORTSBET_EVENT_RESULTS_URL = (
+    "https://www.sportsbet.com.au/apigw/sportsbook-sports/"
+    "Sportsbook/Sports/Events/{event_id}/Results"
+)
 QUICK_BET_HISTORY_DAYS = 30
+QUICK_BET_REFRESH_MINUTES = 60
+QUICK_BET_COVERAGE_MARKETS = {
+    "winner": ("Full time", ("1", "X", "2")),
+    "btts": ("Both teams to score", ("Yes", "No")),
+    **{f"goals:{line}": (f"Match goals {line}", ("Over", "Under")) for line in (0.5, 1.5, 2.5, 3.5)},
+}
 
 
 def fixture_target_dates():
@@ -160,6 +170,32 @@ def names_match(a, b):
     if ta and ta == tb: return True
     return False
 
+def quick_bet_names_match(a, b):
+    """Only exact team identities and explicitly registered aliases can associate forecasts."""
+    ta, tb = name_tokens(a), name_tokens(b)
+    if not ta or not tb:
+        return False
+    if ta == tb:
+        return True
+    na, nb = norm(a), norm(b)
+    aliases = {norm(key): norm(value) for key, value in ABBREV.items()}
+    return bool(na and nb and aliases.get(na, na) == aliases.get(nb, nb))
+
+
+def quick_bet_canonical_match(fixture, match):
+    if quick_bet_kickoff(fixture) is None or quick_bet_kickoff(fixture) != quick_bet_kickoff(match):
+        return False
+    for side in ("home", "away"):
+        team = match.get(side) or {}
+        team = team if isinstance(team, dict) else {"name": team}
+        fixture_id, team_id = fixture.get(side + "_id"), team.get("id")
+        if fixture_id is not None and team_id is not None:
+            if str(fixture_id) != str(team_id):
+                return False
+        elif not quick_bet_names_match(fixture.get(side), team.get("name") or team.get("short")):
+            return False
+    return True
+
 def fetch_page_data(slug=""):
     url = SPORTSBET_SOCCER_URL + (("/" + slug) if slug else "")
     try:
@@ -226,7 +262,7 @@ def _outcome_price(oc):
         return None
 
 
-def extract_event_markets(ev, markets, outcomes):
+def extract_event_markets(ev, markets, outcomes, include_empty=False):
     """Normalize Sportsbet markets into SofaScore-shaped keys.
 
     Returns {market_key: {choice: decimal_price}} with keys:
@@ -283,10 +319,10 @@ def extract_event_markets(ev, markets, outcomes):
                 elif rt == "A":
                     choices["2"] = price
                 continue
-        if not choices:
+        if not choices and not include_empty:
             continue
         if name in ("Win-Draw-Win", "Match Result", "1X2"):
-            if all(k in choices for k in ("1", "X", "2")):
+            if include_empty or all(k in choices for k in ("1", "X", "2")):
                 out["Full time"] = choices
             continue
         if name == "Both Teams To Score":
@@ -317,27 +353,58 @@ def valid_sportsbet_event_response(requested_url, final_url):
     try:
         parsed = urlparse(str(final_url or ""))
         host = (parsed.hostname or "").lower()
+        port = parsed.port
     except Exception:
         return False
     safe_host = host == "sportsbet.com.au" or host.endswith(".sportsbet.com.au")
-    return parsed.scheme == "https" and safe_host and bool(requested_id) and final_id == requested_id
+    return (parsed.scheme == "https" and safe_host and not parsed.username and not parsed.password
+            and port in (None, 443) and parsed.path.startswith("/betting/soccer/")
+            and bool(requested_id) and final_id == requested_id)
 
 
-def fetch_event_markets_snapshot(event_url):
+def fetch_event_markets_snapshot(event_url, expected_fixture=None):
     """Return normalized markets only for a validated Sportsbet event response."""
+    if not valid_sportsbet_event_response(event_url, event_url):
+        return {}, [], False
     data, final_url = fetch_event_page_snapshot(event_url)
     if not data or not valid_sportsbet_event_response(event_url, final_url):
+        return {}, [], False
+    if expected_fixture and str(final_url).split("?")[0].rstrip("/") != str(event_url).split("?")[0].rstrip("/"):
         return {}, [], False
     sb = (data.get("entities") or {}).get("sportsbook") or {}
     events = sb.get("events", {})
     markets = sb.get("markets", {})
     outcomes = sb.get("outcomes", {})
     event_id = sportsbet_event_id_from_url(event_url)
+    if not all(isinstance(entities, dict) for entities in (events, markets, outcomes)):
+        return {}, [], False
     if event_id:
         ev = find_event(data, event_id=event_id)
-        if not ev:
+        if (not isinstance(ev, dict) or str(ev.get("id")) != event_id
+                or not isinstance(ev.get("marketIds"), list)):
             return {}, [], False
-        normalized, unmapped = extract_event_markets(ev, markets, outcomes)
+        if expected_fixture:
+            try:
+                start = datetime.fromtimestamp(int(ev["startTime"]["milliseconds"]) / 1000, timezone.utc).astimezone(ADL)
+            except (KeyError, TypeError, ValueError, OverflowError):
+                return {}, [], False
+            candidate = {"event_id": str(ev.get("id")), "date": start.strftime("%Y-%m-%d"),
+                         "time": start.strftime("%H:%M"), "home": str(ev.get("participant1") or ""),
+                         "away": str(ev.get("participant2") or "")}
+            matched, reversed_order = quick_bet_forecast_match(expected_fixture, [candidate])
+            if not matched:
+                return {}, [], False
+        for mid in ev["marketIds"]:
+            if not isinstance(mid, (str, int)) or isinstance(mid, bool):
+                return {}, [], False
+            market = _entity(markets, mid)
+            if (not isinstance(market, dict) or not isinstance(market.get("outcomeIds"), list)
+                    or any(not isinstance(oid, (str, int)) or isinstance(oid, bool)
+                           or not isinstance(_entity(outcomes, oid), dict) for oid in market["outcomeIds"])):
+                return {}, [], False
+        normalized, unmapped = extract_event_markets(ev, markets, outcomes, include_empty=True)
+        if expected_fixture:
+            return normalized, unmapped, True, candidate
         return normalized, unmapped, True
     best, best_unmapped = {}, []
     for ev in events.values():
@@ -428,6 +495,134 @@ def fetch_event_status(event_url=None, event_id=None, league_slug=None, home=Non
             status["event_id"] = event_id or (event or {}).get("id")
             return status
     return None
+
+
+def fetch_event_results(event_id):
+    event_id = str(event_id or "").strip()
+    if not re.fullmatch(r"\d+", event_id):
+        return None
+    try:
+        response = requests.get(
+            SPORTSBET_EVENT_RESULTS_URL.format(event_id=event_id),
+            impersonate=_profile(),
+            timeout=20,
+            headers={"Accept": "application/json, text/plain, */*"},
+        )
+        if response.status_code != 200:
+            return None
+        payload = response.json()
+    except Exception:
+        return None
+    if not isinstance(payload, dict) or str(payload.get("id") or "") != event_id:
+        return None
+    if not isinstance(payload.get("markets"), list):
+        return None
+    return payload
+
+
+def _record_result_winner(winners, ambiguous, family, key):
+    if not family or not key or family in ambiguous:
+        return
+    previous = winners.get(family)
+    if previous is None:
+        winners[family] = key
+    elif previous != key:
+        winners.pop(family, None)
+        ambiguous.add(family)
+
+
+def _sportsbet_result_winners(result_event, home, away):
+    winners = {}
+    ambiguous = set()
+    for market in (result_event or {}).get("markets") or []:
+        if not isinstance(market, dict):
+            continue
+        name = str(market.get("name") or "").strip()
+        raw_selections = market.get("selections")
+        if not isinstance(raw_selections, list):
+            continue
+        selections = [
+            selection for selection in raw_selections
+            if isinstance(selection, dict) and str(selection.get("statusCode") or "").upper() == "W"
+        ]
+        if len(selections) != 1:
+            continue
+        selection = selections[0]
+        selection_name = str(selection.get("name") or "").strip()
+        if name == "Win-Draw-Win":
+            result_type = str(selection.get("resultType") or "").upper()
+            key = {"H": "home", "D": "draw", "A": "away"}.get(result_type)
+            if not key and names_match(selection_name, home):
+                key = "home"
+            elif not key and names_match(selection_name, away):
+                key = "away"
+            elif not key and selection_name.lower() == "draw":
+                key = "draw"
+            _record_result_winner(winners, ambiguous, "winner", key)
+            continue
+        if name == "Both Teams To Score":
+            key = selection_name.lower()
+            _record_result_winner(winners, ambiguous, "btts", key if key in ("yes", "no") else None)
+            continue
+        line_match = re.fullmatch(r"Over/Under (\d+(?:\.\d+)?) Goals", name)
+        side_match = re.fullmatch(r"(Over|Under) (\d+(?:\.\d+)?) Goals", selection_name)
+        if line_match and side_match and float(line_match.group(1)) == float(side_match.group(2)):
+            line = str(float(line_match.group(1))).rstrip("0").rstrip(".")
+            _record_result_winner(
+                winners, ambiguous, f"goals:{line}", f"{side_match.group(1).lower()}:{line}",
+            )
+    return winners
+
+
+def _captured_quick_bet_key(family, selection):
+    if not isinstance(selection, dict):
+        return None
+    try:
+        odds = float(selection.get("odds"))
+    except (TypeError, ValueError):
+        return None
+    if not math.isfinite(odds) or not 1 < odds < 1.5:
+        return None
+    key = str(selection.get("key") or "").lower()
+    if family == "winner":
+        return ("winner", key) if key in ("home", "draw", "away") else None
+    if family == "btts":
+        return ("btts", key) if key in ("yes", "no") else None
+    side = "over" if family == "goalsOver" else "under"
+    try:
+        numeric_line = float(selection.get("line"))
+    except (TypeError, ValueError):
+        return None
+    if numeric_line < 0 or str(selection.get("side") or "").lower() != side:
+        return None
+    line = str(numeric_line).rstrip("0").rstrip(".")
+    stable_key = f"{side}:{line}"
+    return (f"goals:{line}", stable_key) if key == stable_key else None
+
+
+def settle_quick_bet_markets(markets, result_event, home, away):
+    settled = copy.deepcopy(markets if isinstance(markets, dict) else {})
+    winners = _sportsbet_result_winners(result_event, home, away)
+    captured_count = graded_count = 0
+    for family in ("winner", "btts", "goalsOver", "goalsUnder"):
+        if family not in settled:
+            continue
+        selections = settled.get(family)
+        if not isinstance(selections, list):
+            captured_count += 1
+            continue
+        for selection in selections:
+            captured_count += 1
+            captured = _captured_quick_bet_key(family, selection)
+            if not captured:
+                continue
+            winner = winners.get(captured[0])
+            if not winner:
+                continue
+            selection.pop("result", None)
+            selection["result"] = "hit" if captured[1] == winner else "miss"
+            graded_count += 1
+    return settled, graded_count, captured_count
 
 def extract_odds(data, league_slug=None):
     """Extract Win-Draw-Win (90-min regular time) prices for every event on the league page."""
@@ -599,7 +794,7 @@ def merge_quick_markets(current, deep):
     }
 
 
-def discover_quick_bet_events(data, now=None):
+def discover_quick_bet_events(data, now=None, league_slug=None):
     now = now or datetime.now(ADL)
     if now.tzinfo is None:
         now = now.replace(tzinfo=ADL)
@@ -624,9 +819,10 @@ def discover_quick_bet_events(data, now=None):
         competition = _entity(competitions, event.get("competitionId")) or {}
         region = str(competition.get("regionId") or "").strip()
         competition_name = str(competition.get("name") or "Soccer").strip()
-        if not region or not event.get("id"):
+        slug = league_slug or (f"{region}/{url_slug(competition_name)}" if region else None)
+        if not slug or not event.get("id"):
             continue
-        event_url = f"{SPORTSBET_SOCCER_URL}/{region}/{url_slug(competition_name)}/{url_slug(event.get('name') or f'{home} v {away}')}-{event.get('id')}"
+        event_url = f"{SPORTSBET_SOCCER_URL}/{slug}/{url_slug(event.get('name') or f'{home} v {away}')}-{event.get('id')}"
         normalized, _unmapped = extract_event_markets(event, markets, outcomes)
         discovered.append({
             "event_id": str(event.get("id")), "league": competition_name,
@@ -656,7 +852,7 @@ def quick_bet_kickoff(row):
         return None
 
 
-def roll_quick_bet_history(previous, current_events, now=None):
+def roll_quick_bet_history(previous, current_events, now=None, leagues=None):
     """Freeze kicked-off captures into history without mutating the caller."""
     now = now or datetime.now(ADL)
     if now.tzinfo is None:
@@ -693,8 +889,12 @@ def roll_quick_bet_history(previous, current_events, now=None):
 
     history = dict(existing_history)
     for event_id, frozen in started.items():
+        if not any((frozen.get("markets") or {}).values()) and not quick_bet_inspection_authoritative(frozen):
+            continue
         if event_id not in history:
             frozen["status"] = "started"
+            if not any((frozen.get("markets") or {}).values()):
+                frozen["inspection_only"] = True
             frozen["lifecycle_updated_at"] = now.isoformat()
             history[event_id] = frozen
 
@@ -702,7 +902,10 @@ def roll_quick_bet_history(previous, current_events, now=None):
     kept = []
     for row in history.values():
         kickoff = quick_bet_kickoff(row)
-        if kickoff and kickoff.date() >= cutoff:
+        canonical_retained = quick_bet_inspection_authoritative(row) and any(
+            quick_bet_canonical_match(row.get("canonical") or row, match)
+            for league in leagues or [] for match in league.get("matches") or [])
+        if kickoff and (kickoff.date() >= cutoff or canonical_retained):
             kept.append(row)
     future.sort(key=lambda row: (row.get("date") or "", row.get("time") or "", str(row.get("event_id") or "")))
     kept.sort(key=lambda row: (row.get("date") or "", row.get("time") or "", str(row.get("event_id") or "")))
@@ -719,117 +922,262 @@ def atomic_write_json(path, payload):
             temp_path.unlink()
 
 
+def quick_bet_forecast(leagues, now):
+    rows = []
+    seen = set()
+    through = (now.date() + timedelta(days=6)).isoformat()
+    for league in leagues or []:
+        for match in league.get("matches") or []:
+            date = str(match.get("date") or "")
+            status = str(match.get("status") or "").lower()
+            if date < now.date().isoformat() or date > through or status in (
+                    "ft", "finished", "result", "live", "postponed_or_cancelled", "cancelled", "canceled", "postponed", "void"):
+                continue
+            home, away = match.get("home") or {}, match.get("away") or {}
+            home = home if isinstance(home, dict) else {"name": home}
+            away = away if isinstance(away, dict) else {"name": away}
+            row = {"league": league.get("name") or "", "date": date, "time": str(match.get("time") or ""),
+                   "home": str(home.get("name") or home.get("short") or ""),
+                   "away": str(away.get("name") or away.get("short") or ""),
+                   "home_id": home.get("id"), "away_id": away.get("id")}
+            reference = match.get("sportsbet_odds") or {}
+            event_url = reference.get("event_url")
+            event_id = sportsbet_event_id_from_url(event_url)
+            if (event_id and valid_sportsbet_event_response(event_url, event_url)
+                    and str(reference.get("event_id") or event_id) == event_id):
+                row["known_event_id"], row["known_event_url"] = event_id, event_url
+            kickoff = quick_bet_kickoff(row)
+            if kickoff and kickoff <= now:
+                continue
+            key = (date, row["time"], norm(row["home"]), norm(row["away"]))
+            if not row["home"] or not row["away"] or key in seen:
+                continue
+            seen.add(key)
+            rows.append(row)
+    return sorted(rows, key=lambda row: (row["date"], row["time"], row["league"], row["home"]))
+
+
+def quick_bet_forecast_match(fixture, events):
+    kickoff = quick_bet_kickoff(fixture)
+    if not kickoff:
+        return None, False
+    hits = {}
+    for event in events:
+        if quick_bet_kickoff(event) != kickoff:
+            continue
+        direct = quick_bet_names_match(fixture["home"], event["home"]) and quick_bet_names_match(fixture["away"], event["away"])
+        reverse = quick_bet_names_match(fixture["home"], event["away"]) and quick_bet_names_match(fixture["away"], event["home"])
+        if direct != reverse:
+            hits[event["event_id"]] = (event, reverse)
+    return next(iter(hits.values())) if len(hits) == 1 else (None, len(hits) > 1)
+
+
+def quick_bet_market_coverage(normalized):
+    coverage = {}
+    for key, (name, choices) in QUICK_BET_COVERAGE_MARKETS.items():
+        prices = (normalized or {}).get(name)
+        if prices is None:
+            status = "not_offered"
+        elif any(_short_price(value) is not None for value in prices.values()):
+            status = "selection"
+        elif all(isinstance(prices.get(choice), (int, float)) and not isinstance(prices.get(choice), bool)
+                 and math.isfinite(prices[choice]) and prices[choice] > 1 for choice in choices):
+            status = "no_selection"
+        else:
+            status = "no_price"
+        coverage[key] = status
+    return coverage
+
+
+def quick_bet_inspection_authoritative(row):
+    coverage = row.get("last_inspection_coverage") or row.get("market_coverage")
+    return isinstance(coverage, dict) and all(coverage.get(key) in (
+        "selection", "no_selection", "no_price", "not_offered") for key in QUICK_BET_COVERAGE_MARKETS)
+
+
+def quick_bet_inspection_fresh(row, now):
+    try:
+        captured = datetime.fromisoformat(str(row.get("deep_captured_at")))
+        age = (now - captured).total_seconds()
+        return (row.get("deep_stale") is False and quick_bet_inspection_authoritative({
+            "market_coverage": row.get("market_coverage")}) and 0 <= age < QUICK_BET_REFRESH_MINUTES * 60)
+    except (TypeError, ValueError):
+        return False
+
+
 def refresh_quick_bets(root_data, now=None, budget_seconds=None, event_limit=None,
                        fetcher=fetch_event_markets_snapshot, sleep_seconds=0.8,
-                       path=QUICK_BETS_PATH):
+                       path=QUICK_BETS_PATH, leagues=None, page_fetcher=fetch_page_data,
+                       page_cache=None):
     now = now or datetime.now(ADL)
-    if now.tzinfo is None:
-        now = now.replace(tzinfo=ADL)
+    now = now.replace(tzinfo=ADL) if now.tzinfo is None else now.astimezone(ADL)
     now_iso = now.isoformat()
     previous = read_quick_bets(path)
-    if not root_data:
-        payload = copy.deepcopy(previous) if previous else {
-            "schema_version": 2, "source": "Sportsbet", "source_url": SPORTSBET_SOCCER_URL,
-            "captured_at": None, "events": [],
-        }
-        events, history = roll_quick_bet_history(previous, payload.get("events") or [], now)
-        payload["schema_version"] = 2
-        payload["events"] = events
-        payload["history"] = history
-        payload["attempted_at"] = now_iso
-        payload["status"] = "stale"
-        for event in events:
-            event["root_stale"] = True
-            event["deep_stale"] = True
-        deep = payload.setdefault("deep", {})
-        ids = [str(event.get("event_id")) for event in events if event.get("event_id") is not None]
-        deep.update({
-            "attempted_events": 0, "fresh_events": 0, "failed_events": 0,
-            "stale_events": len(events), "next_event_id": ids[0] if ids else None,
-            "member_ids": ids, "complete": False,
-        })
-        atomic_write_json(path, payload)
-        return payload, {}
-
-    discovered = discover_quick_bet_events(root_data, now)
-    ids = [event["event_id"] for event in discovered]
     previous_events = {str(row.get("event_id")): row for row in (previous or {}).get("events") or []}
     previous_deep = (previous or {}).get("deep") or {}
-    previous_members = [str(value) for value in previous_deep.get("member_ids") or previous_events.keys()]
-    same_membership = len(ids) == len(previous_members) and set(ids) == set(previous_members)
-    previous_generation = int(previous_deep.get("generation") or 0)
-    start_new_generation = not previous or not same_membership or bool(previous_deep.get("complete"))
-    generation = previous_generation + 1 if start_new_generation else max(1, previous_generation)
+    discovered = {event["event_id"]: event for event in discover_quick_bet_events(root_data, now)}
+    page_cache = page_cache if page_cache is not None else {}
+    forecast = quick_bet_forecast(leagues, now)
+    for fixture in forecast:
+        fixture["event_id"] = None
+        if not quick_bet_kickoff(fixture):
+            fixture["status"] = "kickoff_unknown"
+            continue
+        slug = LEAGUE_PAGES.get(fixture["league"])
+        candidates = list(discovered.values())
+        if slug:
+            if slug not in page_cache:
+                try:
+                    page_cache[slug] = page_fetcher(slug)
+                except Exception:
+                    page_cache[slug] = None
+                if sleep_seconds:
+                    time.sleep(sleep_seconds)
+            candidates += discover_quick_bet_events(page_cache[slug], now, slug)
+        event, reversed_or_ambiguous = quick_bet_forecast_match(fixture, candidates)
+        if event:
+            fixture["event_id"] = event["event_id"]
+            fixture["status"] = "matched"
+            event["canonical"] = {**fixture, "reversed": reversed_or_ambiguous}
+            discovered[event["event_id"]] = event
+        else:
+            fixture["status"] = "ambiguous" if reversed_or_ambiguous else (
+                "page_failed" if slug and page_cache[slug] is None else "unmapped_league" if not slug else "unmatched")
+            prior, _ = quick_bet_forecast_match(fixture, list(previous_events.values()))
+            known_url = fixture.get("known_event_url") or (prior or {}).get("event_url")
+            known_id = sportsbet_event_id_from_url(known_url)
+            if (not reversed_or_ambiguous and known_id and known_id not in discovered
+                    and valid_sportsbet_event_response(known_url, known_url)):
+                fixture["pending_event_id"] = known_id
+                fallback = {"event_id": known_id, "event_url": known_url, "league": fixture["league"],
+                            "date": fixture["date"], "time": fixture["time"], "home": fixture["home"], "away": fixture["away"],
+                            "markets": {}, "root_stale": False, "deep_stale": True,
+                            "pending_canonical": {**fixture, "reversed": False}, "verify_fixture": dict(fixture)}
+                if prior and prior["event_id"] == known_id:
+                    fallback = {**copy.deepcopy(prior), "root_stale": False, "deep_stale": True,
+                                "verify_fixture": dict(prior)}
+                discovered[known_id] = fallback
+    for event_id, prior in previous_events.items():
+        kickoff = quick_bet_kickoff(prior)
+        if (event_id not in discovered and kickoff and now < kickoff and kickoff.date() <= now.date() + timedelta(days=6)
+                and (not root_data or quick_bet_inspection_authoritative(prior))):
+            stale = copy.deepcopy(prior)
+            stale["root_stale"] = True
+            stale["deep_stale"] = True
+            discovered[event_id] = stale
 
-    events = []
-    for event in discovered:
+    events = sorted(discovered.values(), key=lambda row: (row["date"], row["time"], row["event_id"]))
+    ids = [event["event_id"] for event in events]
+    previous_members = [str(value) for value in previous_deep.get("member_ids") or previous_events.keys()]
+    generation = max(1, int(previous_deep.get("generation") or 1))
+    for event in events:
         prior = previous_events.get(event["event_id"]) or {}
-        retained = _retained_deep_markets(prior, event["home"], event["away"])
-        event["markets"] = merge_quick_markets(event["markets"], retained)
-        prior_fresh = (not start_new_generation
-                       and prior.get("deep_generation") == generation
-                       and prior.get("deep_stale") is False)
-        event["deep_captured_at"] = prior.get("deep_captured_at")
+        same_fixture = (prior.get("date"), prior.get("time"), prior.get("home"), prior.get("away")) == (
+            event["date"], event["time"], event["home"], event["away"])
+        if same_fixture:
+            event["markets"] = merge_quick_markets(event["markets"], _retained_deep_markets(prior, event["home"], event["away"]))
+            event["deep_captured_at"] = prior.get("deep_captured_at")
+            event["market_coverage"] = prior.get("market_coverage")
+            if quick_bet_inspection_authoritative(prior):
+                event["last_inspection_coverage"] = copy.deepcopy(prior.get("last_inspection_coverage") or prior["market_coverage"])
+                event["markets"] = copy.deepcopy(prior.get("markets") or {})
+        event["deep_stale"] = bool(event.get("root_stale")) or not (same_fixture and quick_bet_inspection_fresh(prior, now))
         event["deep_generation"] = generation
-        event["deep_stale"] = not prior_fresh
-        events.append(event)
+    if previous_deep.get("complete") and any(event["deep_stale"] for event in events):
+        generation += 1
 
     budget_seconds = max(0.0, float(budget_seconds if budget_seconds is not None else os.environ.get("SOCCER_SPORTSBET_QUICK_BETS_DEEP_BUDGET", "90")))
     event_limit = max(0, int(event_limit if event_limit is not None else os.environ.get("SOCCER_SPORTSBET_QUICK_BETS_DEEP_LIMIT", "30")))
-    previous_cursor = "" if start_new_generation else str(previous_deep.get("next_event_id") or "")
+    previous_cursor = str(previous_deep.get("next_event_id") or "")
     cursor_reset = bool(previous_cursor and previous_cursor not in ids)
+    if cursor_reset and previous_cursor in previous_members:
+        old_position = previous_members.index(previous_cursor)
+        previous_cursor = next((previous_members[(old_position + offset) % len(previous_members)]
+                                for offset in range(1, len(previous_members))
+                                if previous_members[(old_position + offset) % len(previous_members)] in ids), "")
     position = ids.index(previous_cursor) if previous_cursor in ids else 0
     started = time.monotonic()
     attempted = fresh = failed = visited = 0
     event_market_cache = {}
     while events and visited < len(events) and attempted < event_limit:
         event = events[position]
-        if event.get("deep_stale"):
+        if event["deep_stale"] and not event.get("root_stale"):
             if budget_seconds <= 0 or time.monotonic() - started >= budget_seconds:
                 break
-            normalized, unmapped, ok = fetcher(event["event_url"])
+            try:
+                snapshot = (fetcher(event["event_url"], expected_fixture=event["verify_fixture"])
+                    if event.get("verify_fixture") else fetcher(event["event_url"]))
+                normalized, unmapped, ok = snapshot[:3]
+                if ok and event.get("verify_fixture"):
+                    identity = snapshot[3] if len(snapshot) > 3 else None
+                    canonical = event.get("pending_canonical") or event.get("canonical")
+                    verified, reverse = quick_bet_forecast_match(canonical or event, [identity] if identity else [])
+                    ok = bool(verified and verified["event_id"] == event["event_id"])
+                    if ok:
+                        event["home"], event["away"] = verified["home"], verified["away"]
+                        if canonical:
+                            event["canonical"] = {**canonical, "reversed": reverse}
+            except Exception:
+                normalized, unmapped, ok = {}, [], False
             attempted += 1
             if ok:
-                event["markets"] = merge_quick_markets(
-                    event["markets"], quick_markets_from_normalized(normalized, event["home"], event["away"])
-                )
+                detail = quick_markets_from_normalized(normalized, event["home"], event["away"])
+                event["markets"] = detail
+                event["market_coverage"] = quick_bet_market_coverage(normalized)
+                event["last_inspection_coverage"] = dict(event["market_coverage"])
+                event.pop("pending_canonical", None)
+                event.pop("verify_fixture", None)
                 event["deep_captured_at"] = now_iso
                 event["deep_generation"] = generation
                 event["deep_stale"] = False
                 event_market_cache[event["event_id"]] = (normalized, unmapped)
                 fresh += 1
             else:
+                event["market_coverage"] = {key: "fetch_failed" for key in QUICK_BET_COVERAGE_MARKETS}
                 failed += 1
             if sleep_seconds:
                 time.sleep(sleep_seconds)
         position = (position + 1) % len(events)
         visited += 1
 
-    stale_events = sum(1 for event in events if event.get("deep_stale"))
-    complete = stale_events == 0
-    next_event_id = None
-    if not complete and events:
-        for offset in range(len(events)):
-            candidate = events[(position + offset) % len(events)]
-            if candidate.get("deep_stale"):
-                next_event_id = candidate["event_id"]
-                break
-    events, history = roll_quick_bet_history(previous, events, now)
+    for event in events:
+        if event["deep_stale"]:
+            old_coverage = event.get("market_coverage") or {}
+            event["market_coverage"] = {key: "fetch_failed" if old_coverage.get(key) == "fetch_failed"
+                                        else "stale" if event.get("deep_captured_at") else "not_checked"
+                                        for key in QUICK_BET_COVERAGE_MARKETS}
+    by_id = {event["event_id"]: event for event in events}
+    checked = 0
+    for fixture in forecast:
+        event = by_id.get(fixture["event_id"] or fixture.get("pending_event_id"))
+        fixture["markets"] = event["market_coverage"] if event else {key: "not_checked" for key in QUICK_BET_COVERAGE_MARKETS}
+        fixture["checked_at"] = event.get("deep_captured_at") if event else None
+        fixture["checked"] = bool(event and quick_bet_inspection_fresh(event, now) and not event.get("root_stale"))
+        if fixture["checked"]:
+            fixture["status"] = "matched"
+            fixture["event_id"] = event["event_id"]
+        fixture.pop("pending_event_id", None)
+        checked += int(fixture["checked"])
+    stale_events = sum(1 for event in events if event["deep_stale"])
+    complete = bool(root_data) and stale_events == 0 and checked == len(forecast)
+    next_event_id = next((events[(position + offset) % len(events)]["event_id"]
+                          for offset in range(len(events)) if events[(position + offset) % len(events)]["deep_stale"]), None)
+    events, history = roll_quick_bet_history(previous, events, now, leagues=leagues)
     payload = {
         "schema_version": 2, "source": "Sportsbet", "source_url": SPORTSBET_SOCCER_URL,
-        "captured_at": now_iso, "attempted_at": now_iso,
-        "status": "complete" if complete else "partial",
-        "window": {
-            "timezone": "Australia/Adelaide", "from_date": now.strftime("%Y-%m-%d"),
-            "through_date": (now.date() + timedelta(days=6)).isoformat(),
-        },
+        "captured_at": now_iso if root_data else (previous or {}).get("captured_at"), "attempted_at": now_iso,
+        "status": "complete" if complete else "partial" if root_data or checked else "stale",
+        "window": {"timezone": "Australia/Adelaide", "from_date": now.date().isoformat(),
+                   "through_date": (now.date() + timedelta(days=6)).isoformat()},
+        "coverage": {"fromDate": now.date().isoformat(), "throughDate": (now.date() + timedelta(days=6)).isoformat(),
+                     "capturedAt": now_iso, "refreshMinutes": QUICK_BET_REFRESH_MINUTES,
+                     "totalFixtures": len(forecast), "checkedFixtures": checked, "pendingFixtures": len(forecast) - checked,
+                     "fixtures": forecast},
         "deep": {
-            "generation": generation, "member_ids": ids,
-            "budget_seconds": budget_seconds, "event_limit": event_limit,
+            "generation": generation, "member_ids": ids, "budget_seconds": budget_seconds, "event_limit": event_limit,
             "attempted_events": attempted, "fresh_events": fresh, "failed_events": failed,
-            "stale_events": stale_events, "next_event_id": next_event_id,
-            "cursor_reset": cursor_reset, "membership_changed": bool(previous and not same_membership),
-            "complete": complete,
+            "stale_events": stale_events, "next_event_id": next_event_id, "cursor_reset": cursor_reset,
+            "membership_changed": bool(previous and set(ids) != set(previous_members)), "complete": complete,
         },
         "events": events, "history": history,
     }
@@ -843,11 +1191,14 @@ def main():
         print("target_dates=" + ",".join(sorted(target_dates)))
     print("Fetching Sportsbet soccer root for seven-day quick bets")
     root_data = fetch_page_data()
-    sidecar, event_market_cache = refresh_quick_bets(root_data)
+    page_cache = {}
+    sidecar, event_market_cache = refresh_quick_bets(root_data, leagues=store.get("leagues"), page_cache=page_cache)
     print(f"  quick_bets status={sidecar.get('status')} events={len(sidecar.get('events') or [])} "
           f"fresh={((sidecar.get('deep') or {}).get('fresh_events') or 0)} "
           f"stale={((sidecar.get('deep') or {}).get('stale_events') or 0)} "
           f"next={((sidecar.get('deep') or {}).get('next_event_id') or '-')}")
+    if "--quick-bets-only" in sys.argv:
+        return
     matched = 0
     no_match = []
     cache = {}
@@ -860,7 +1211,9 @@ def main():
             print("(no page) " + L["name"]); continue
         if slug not in cache:
             print("Fetching " + L["name"] + " (" + slug + ")")
-            data = fetch_page_data(slug)
+            if slug not in page_cache:
+                page_cache[slug] = fetch_page_data(slug)
+            data = page_cache[slug]
             cache[slug] = extract_odds(data, slug) if data else None
             print("  events with odds: " + str(len(cache[slug] or {})))
             time.sleep(1.0)

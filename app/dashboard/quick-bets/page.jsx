@@ -4,11 +4,11 @@ import Link from 'next/link';
 import { Component, Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import AuthGate from '../../auth-gate';
 import { loadQuickBetsFromFirestore, readQuickBetsCache } from '../../firestore-data';
-import { AlertTriangle, ArrowLeft, Loader2, ListFilter } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Loader2, ListFilter } from 'lucide-react';
 import {
   marketSelections, quickBetMatchState, quickBetLeagueKey,
   quickBetLeagueSuccessStats, quickBetLeagueSuccessLabel,
-  quickBetSelectionSuccessLabel, quickBetStarredMarketStats, quickBetStarredSelections, quickBetStarStatText,
+  quickBetSelectionSuccessLabel, quickBetStarredMarketStats, quickBetStarredSelections, quickBetStarStatText, quickBetDailyStats,
 } from './quick-bets-utils.mjs';
 
 // Column set mirrors the AIOS Quick Bets table (web-legacy QUICK_BET_FILTERS): a
@@ -200,6 +200,20 @@ function StarCounter({ stats }) {
   return <span className="mt-0.5 inline-flex w-full items-center justify-center gap-1 border-t border-[#f3bc63]/20 pt-1 text-[11px] font-medium tabular-nums tracking-normal text-[var(--quick-bet-success)]" aria-hidden="true"><StarIcon />{text}</span>;
 }
 
+function DailyStarStats({ stats, label }) {
+  if (!stats) return null;
+  return (
+    <span className="qb-day-stat inline-flex items-center gap-1 whitespace-nowrap text-[12px] font-normal tabular-nums tracking-normal text-[var(--quick-bet-success)]" role="img" aria-label={`${label}: ${stats.hits} starred hits from ${stats.settled} settled predictions`}>
+      <StarIcon /><span className="qb-day-stat-value" aria-hidden="true">{stats.hits} / {stats.settled}</span>
+    </span>
+  );
+}
+
+function DailyTotal({ stats }) {
+  if (!stats) return null;
+  return <span className="qb-day-total whitespace-nowrap text-[12px] font-normal tabular-nums tracking-normal text-[#a8a8b2]" role="img" aria-label={`${stats.hits} hits from ${stats.settled} settled bets`}><span aria-hidden="true">Total {stats.hits} / {stats.settled}</span></span>;
+}
+
 function marketFilterAriaLabel(filter, stats, starStats) {
   const labels = [filter.label];
   if (stats?.settled || stats?.voids) labels.push(`${stats.hits} hits, ${stats.misses} misses${stats.voids ? `, ${stats.voids} void` : ''}`);
@@ -233,6 +247,24 @@ function OddsBadge({ match, selection, leagueStats }) {
 }
 
 // A single market column cell: all qualifying selections, or the em-dash placeholder.
+function quickBetEmptyMarketLabel(match, filter, starredOnly = false) {
+  if (starredOnly) return 'No starred selection for this market';
+  const status = match.marketCoverage?.[filter.line == null ? filter.key : `goals:${filter.line}`];
+  return ({
+    no_selection: 'Checked: no price below 1.50',
+    no_price: 'Market offered, price unavailable',
+    not_offered: 'Market not offered at last check',
+    fetch_failed: 'Market check failed; awaiting retry',
+    stale: 'Market check expired; awaiting refresh',
+    not_checked: 'Market not checked yet',
+  })[status] || (match.lifecycle === 'upcoming' ? 'Market coverage not confirmed' : 'No captured selection');
+}
+
+function quickBetCoverageText(coverage) {
+  if (!coverage || !Number.isInteger(coverage.totalFixtures)) return '';
+  return `7-day forecast: ${coverage.checkedFixtures}/${coverage.totalFixtures} fixtures checked across 6 markets${coverage.pendingFixtures ? ` · ${coverage.pendingFixtures} pending` : ''}`;
+}
+
 function PriceCell({ match, filter, successByLeague, starredOnly }) {
   const leagueStats = successByLeague.get(quickBetLeagueKey(match.league));
   const selections = displayedSelections(match, [filter], starredOnly, successByLeague);
@@ -245,7 +277,7 @@ function PriceCell({ match, filter, successByLeague, starredOnly }) {
           ))}
         </span>
       ) : (
-        <span className="text-[#8c8c96]">—</span>
+        <span className="text-[#8c8c96]" title={quickBetEmptyMarketLabel(match, filter, starredOnly)} aria-label={quickBetEmptyMarketLabel(match, filter, starredOnly)}>—</span>
       )}
     </td>
   );
@@ -282,6 +314,9 @@ function QuickBetsInner() {
   const [activeMarket, setActiveMarket] = useState('all');
   const [activeLifecycle, setActiveLifecycle] = useState('upcoming');
   const [starredOnly, setStarredOnly] = useState(false);
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
+  const [mobileFiltersHidden, setMobileFiltersHidden] = useState(true);
+  const [mobileSelectedDate, setMobileSelectedDate] = useState('');
 
   useEffect(() => {
     let cancelled = false;
@@ -344,6 +379,27 @@ function QuickBetsInner() {
   }, [matches, activeLifecycle, selectedFilter, isAll, starredOnly, successByLeague]);
 
   const selectionFilters = isAll ? MARKET_COLUMNS : [selectedFilter];
+  const dailyStats = useMemo(() => activeLifecycle === 'result'
+    ? quickBetDailyStats(matches.filter((match) => match.lifecycle === activeLifecycle), MARKET_COLUMNS, successByLeague) : new Map(),
+  [matches, successByLeague, activeLifecycle]);
+  const mobileDates = useMemo(() => {
+    const dates = activeLifecycle === 'result'
+      ? [...dailyStats.keys()] : visibleMatches.map((match) => match.date);
+    return [...new Set(dates.filter(Boolean))]
+      .sort((a, b) => dateRank(a) - dateRank(b) || String(a).localeCompare(String(b)));
+  }, [activeLifecycle, dailyStats, visibleMatches]);
+  const preferredMobileDate = useMemo(() => {
+    if (!mobileDates.length) return '';
+    const today = todayISO();
+    if (mobileDates.includes(today)) return today;
+    return activeLifecycle === 'result' ? mobileDates[mobileDates.length - 1] : mobileDates[0];
+  }, [mobileDates, activeLifecycle]);
+  const mobileCurrentDate = mobileDates.includes(mobileSelectedDate) ? mobileSelectedDate : preferredMobileDate;
+  const hasMobileResultsDay = activeLifecycle === 'result' && Boolean(mobileCurrentDate);
+  const mobileCurrentDateIndex = mobileDates.indexOf(mobileCurrentDate);
+  const mobileMatches = mobileCurrentDate ? visibleMatches.filter((match) => match.date === mobileCurrentDate) : [];
+  const mobileTodayDate = todayISO();
+  const mobileHasToday = mobileDates.includes(mobileTodayDate);
   const selectionTotal = visibleMatches.reduce((total, match) => total
     + displayedSelections(match, selectionFilters, starredOnly, successByLeague).length, 0);
 
@@ -359,6 +415,7 @@ function QuickBetsInner() {
   const lifecycleCounts = data?.counts || {};
   const capturedAt = data?.captured_at || data?.capturedAt || '';
   const refreshStatus = data?.refresh_status || data?.refreshStatus || '';
+  const coverageSummary = activeLifecycle === 'upcoming' ? quickBetCoverageText(data?.coverage) : '';
 
   const toggleMarket = (key) => setActiveMarket((current) => (current === key ? 'all' : key));
 
@@ -382,85 +439,188 @@ function QuickBetsInner() {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 1023px)');
+    const sync = () => {
+      setIsMobileViewport(media.matches);
+      if (!media.matches) setMobileFiltersHidden(false);
+    };
+
+    sync();
+    media.addEventListener('change', sync);
+    return () => media.removeEventListener('change', sync);
+  }, []);
+
+  useEffect(() => {
+    if (!isMobileViewport) return;
+    if (mobileSelectedDate !== mobileCurrentDate) setMobileSelectedDate(mobileCurrentDate);
+  }, [isMobileViewport, mobileSelectedDate, mobileCurrentDate]);
+
+  const mobileFilterNavStyle = isMobileViewport ? {
+    maxHeight: mobileFiltersHidden ? 0 : '21rem',
+    opacity: mobileFiltersHidden ? 0 : 1,
+    transform: `translateY(${mobileFiltersHidden ? '-0.5rem' : '0'})`,
+  } : undefined;
+
   return (
     <main className="min-h-dvh bg-[#111111] font-mono text-[#fafafa]">
       <div className="mx-auto flex min-h-dvh w-full max-w-[112rem] flex-col px-3 py-4 sm:px-5 lg:px-8">
-        <header ref={headerRef} className="sticky top-0 z-20 border-b border-[#38383d] bg-[#111111]/95 pb-3 pt-1 backdrop-blur">
+        <header ref={headerRef} className="sticky top-0 z-20 border-b border-[#38383d] bg-[#111111]/95 pb-2 pt-1 backdrop-blur lg:pb-3">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
             <div className="min-w-0">
-              <Link href="/dashboard" className="inline-flex items-center gap-2 text-[13px] font-normal text-[#a8a8b2] transition hover:text-white">
-                <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-                Dashboard
-              </Link>
-              <div className="mt-3 flex flex-wrap items-center gap-3">
+              <div className="flex items-center justify-between gap-2">
+                <Link
+                  href="/dashboard"
+                  aria-label="Back to dashboard"
+                  className="inline-flex h-9 items-center justify-center gap-2 rounded-none border border-[#38383d] px-3 text-[13px] text-[#a8a8b2] transition hover:border-[#5aa2f0]/45 hover:text-white active:translate-y-px lg:h-auto lg:w-auto lg:justify-start lg:border-0 lg:px-0"
+                >
+                  <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+                  <span className="lg:hidden">Back</span>
+                  <span className="hidden lg:inline">Dashboard</span>
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setMobileFiltersHidden((current) => !current)}
+                  aria-label={mobileFiltersHidden ? 'Show filters' : 'Hide filters'}
+                  aria-expanded={!mobileFiltersHidden}
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-none border border-[#38383d] text-[#a8a8b2] transition hover:border-[#5aa2f0]/45 hover:text-white active:translate-y-px lg:hidden"
+                >
+                  {mobileFiltersHidden ? (
+                    <ChevronDown className="h-4 w-4" aria-hidden="true" />
+                  ) : (
+                    <ChevronUp className="h-4 w-4" aria-hidden="true" />
+                  )}
+                </button>
+              </div>
+              <div className="mt-3 hidden flex-wrap items-center gap-3 lg:flex">
                 <h1 className="text-lg font-normal uppercase tracking-wide text-white sm:text-xl">Quick Bets</h1>
               </div>
-              <p className="mt-2 text-[13px] font-medium text-[#8c8c96]">
+              <p className="mt-2 hidden text-[13px] font-medium text-[#8c8c96] lg:block">
                 {visibleMatches.length} match{visibleMatches.length === 1 ? '' : 'es'} · {selectionTotal} selection{selectionTotal === 1 ? '' : 's'}{isAll ? '' : ` · ${selectedFilter.label}`}{starredOnly ? ' · Starred' : ''}{sortSummary}
               </p>
             </div>
             {capturedAt ? (
-              <p className="text-[12px] font-medium text-[#8c8c96]">
+              <p className="hidden text-[12px] font-medium text-[#8c8c96] lg:block">
                 captured {capturedAt}{refreshStatus && refreshStatus !== 'complete' ? ` · ${refreshStatus}` : ''}
               </p>
             ) : null}
           </div>
 
-          <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
-            {LIFECYCLE_FILTERS.map((filter) => {
-              const selected = activeLifecycle === filter.key;
-              const count = filter.key === 'result' ? lifecycleCounts.results : lifecycleCounts[filter.key];
-              return (
-                <button
-                  key={filter.key}
-                  type="button"
-                  onClick={() => { setActiveLifecycle(filter.key); setActiveMarket('all'); }}
-                  className={`inline-flex min-h-9 shrink-0 items-center gap-2 rounded-none border px-3 text-[13px] font-normal uppercase tracking-wide transition ${
-                    selected ? 'border-[#5aa2f0]/45 bg-[#5aa2f0]/[0.08] text-[#5aa2f0]' : 'border-[#38383d] bg-transparent text-[#a8a8b2] hover:border-[#5aa2f0]/45 hover:text-[#5aa2f0]'
-                  }`}
-                >
-                  <span>{filter.label}</span>
-                  <span className="text-[12px]">{count ?? 0}</span>
-                </button>
-              );
-            })}
-            <button
-              type="button"
-              onClick={() => setStarredOnly((current) => !current)}
-              aria-pressed={starredOnly}
-              aria-label="Show starred markets only"
-              className={`inline-flex min-h-9 shrink-0 items-center gap-2 rounded-none border px-3 text-[13px] font-normal uppercase tracking-wide transition ${starredOnly
-                ? 'border-[#f3bc63]/55 bg-[#f3bc63]/10 text-[#f3bc63]'
-                : 'border-[#38383d] bg-transparent text-[#a8a8b2] hover:border-[#f3bc63]/45 hover:text-[#f3bc63]'}`}
-            >
-              <StarIcon />
-              <span>Starred</span>
-            </button>
-          </div>
+          {coverageSummary ? <p className="mt-2 text-[12px] text-[#8c8c96]" role="status">{coverageSummary}</p> : null}
 
-          {/* Mobile market filter chips (desktop filters live in the table headers). */}
-          <div className="mt-2 grid grid-cols-4 gap-2 lg:hidden">
-            {MARKET_FILTERS.map((filter) => {
-              const selected = activeMarket === filter.key;
-              const stat = filter.key === 'all' ? null : statsByMarket[filter.key];
-              const starStat = filter.key === 'all' ? null : starStatsByMarket.get(filter.key);
-              return (
+          {!error && (visibleMatches.length > 0 || hasMobileResultsDay) && mobileCurrentDate ? (
+            <div className="mt-3 space-y-2 lg:hidden">
+              <div className="grid grid-cols-[2.25rem_minmax(0,1fr)_auto_2.25rem] items-center gap-2 text-[13px] font-normal text-white">
                 <button
-                  key={filter.key}
                   type="button"
-                  onClick={() => toggleMarket(filter.key)}
-                  aria-pressed={selected}
-                  aria-label={marketFilterAriaLabel(filter, stat, starStat)}
-                  className={`qb-stat-card flex min-h-16 flex-col items-center justify-center gap-1 rounded-none border px-2 py-2 text-center transition ${
-                    selected ? 'border-[#5aa2f0]/45 bg-[#5aa2f0]/[0.08] text-[#5aa2f0]' : 'border-[#38383d] bg-[#171717] text-[#a8a8b2] hover:border-[#5aa2f0]/45 hover:text-[#5aa2f0]'
-                  }`}
+                  onClick={() => setMobileSelectedDate(mobileDates[mobileCurrentDateIndex - 1])}
+                  disabled={mobileCurrentDateIndex <= 0}
+                  aria-label="Previous day"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-none border border-[#38383d] text-[#a8a8b2] transition hover:border-[#5aa2f0]/45 hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
                 >
-                  <span className="text-[12px] font-semibold uppercase tracking-wide">{filter.shortLabel}</span>
-                  <HeaderStat stats={stat} />
-                  <StarCounter stats={starStat} />
+                  <ChevronLeft className="h-4 w-4" aria-hidden="true" />
                 </button>
-              );
-            })}
+                <div className="flex min-w-0 flex-wrap items-center justify-center gap-x-3 gap-y-1 text-center">
+                  <span>{dayBand(mobileCurrentDate) ? `${dayBand(mobileCurrentDate)} · ` : ''}{fmtDMY(mobileCurrentDate)}</span>
+                  <DailyTotal stats={dailyStats.get(mobileCurrentDate)?.total} />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setMobileSelectedDate(mobileTodayDate)}
+                  disabled={!mobileHasToday || mobileCurrentDate === mobileTodayDate}
+                  aria-label="Jump to today"
+                  className="inline-flex h-9 items-center justify-center rounded-none border border-[#38383d] px-2.5 text-[12px] font-normal uppercase tracking-wide text-[#a8a8b2] transition hover:border-[#5aa2f0]/45 hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
+                >
+                  Today
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMobileSelectedDate(mobileDates[mobileCurrentDateIndex + 1])}
+                  disabled={mobileCurrentDateIndex < 0 || mobileCurrentDateIndex >= mobileDates.length - 1}
+                  aria-label="Next day"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-none border border-[#38383d] text-[#a8a8b2] transition hover:border-[#5aa2f0]/45 hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
+                >
+                  <ChevronRight className="h-4 w-4" aria-hidden="true" />
+                </button>
+              </div>
+              {dailyStats.has(mobileCurrentDate) ? (
+                <div className="grid grid-cols-3 gap-1 border-y border-[#5aa2f0]/25 bg-[#5aa2f0]/[0.09] py-2">
+                  {MARKET_COLUMNS.map((filter) => (
+                    <div key={filter.key} className="text-center">
+                      <span className="mb-1 block text-[12px] text-[#a8a8b2]" aria-hidden="true">{filter.label}</span>
+                      <DailyStarStats stats={dailyStats.get(mobileCurrentDate).markets.get(filter.key)} label={filter.label} />
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+
+          <div
+            data-mobile-filter-state={mobileFiltersHidden && isMobileViewport ? 'hidden' : 'visible'}
+            aria-hidden={mobileFiltersHidden && isMobileViewport}
+            inert={mobileFiltersHidden && isMobileViewport ? true : undefined}
+            className={`origin-top overflow-hidden transition-[max-height,opacity,transform] duration-200 ease-out lg:max-h-none lg:translate-y-0 lg:overflow-visible lg:opacity-100 ${
+              mobileFiltersHidden && isMobileViewport ? 'pointer-events-none' : ''
+            }`}
+            style={mobileFilterNavStyle}
+          >
+            <div className="mt-2 flex gap-2 overflow-x-auto pb-1 lg:mt-4">
+              {LIFECYCLE_FILTERS.map((filter) => {
+                const selected = activeLifecycle === filter.key;
+                const count = filter.key === 'result' ? lifecycleCounts.results : lifecycleCounts[filter.key];
+                return (
+                  <button
+                    key={filter.key}
+                    type="button"
+                    onClick={() => { setActiveLifecycle(filter.key); setActiveMarket('all'); }}
+                    className={`inline-flex min-h-9 shrink-0 items-center gap-2 rounded-none border px-3 text-[13px] font-normal uppercase tracking-wide transition ${
+                      selected ? 'border-[#5aa2f0]/45 bg-[#5aa2f0]/[0.08] text-[#5aa2f0]' : 'border-[#38383d] bg-transparent text-[#a8a8b2] hover:border-[#5aa2f0]/45 hover:text-[#5aa2f0]'
+                    }`}
+                  >
+                    <span>{filter.label}</span>
+                    <span className="text-[12px]">{count ?? 0}</span>
+                  </button>
+                );
+              })}
+              <button
+                type="button"
+                onClick={() => setStarredOnly((current) => !current)}
+                aria-pressed={starredOnly}
+                aria-label="Show starred markets only"
+                className={`inline-flex min-h-9 shrink-0 items-center gap-2 rounded-none border px-3 text-[13px] font-normal uppercase tracking-wide transition ${starredOnly
+                  ? 'border-[#f3bc63]/55 bg-[#f3bc63]/10 text-[#f3bc63]'
+                  : 'border-[#38383d] bg-transparent text-[#a8a8b2] hover:border-[#f3bc63]/45 hover:text-[#f3bc63]'}`}
+              >
+                <StarIcon />
+                <span>Starred</span>
+              </button>
+            </div>
+
+            {/* Mobile market filter chips (desktop filters live in the table headers). */}
+            <div className="mt-2 grid grid-cols-4 gap-2 lg:hidden">
+              {MARKET_FILTERS.map((filter) => {
+                const selected = activeMarket === filter.key;
+                const stat = filter.key === 'all' ? null : statsByMarket[filter.key];
+                const starStat = filter.key === 'all' ? null : starStatsByMarket.get(filter.key);
+                return (
+                  <button
+                    key={filter.key}
+                    type="button"
+                    onClick={() => toggleMarket(filter.key)}
+                    aria-pressed={selected}
+                    aria-label={marketFilterAriaLabel(filter, stat, starStat)}
+                    className={`qb-stat-card flex min-h-16 flex-col items-center justify-center gap-1 rounded-none border px-2 py-2 text-center transition ${
+                      selected ? 'border-[#5aa2f0]/45 bg-[#5aa2f0]/[0.08] text-[#5aa2f0]' : 'border-[#38383d] bg-[#171717] text-[#a8a8b2] hover:border-[#5aa2f0]/45 hover:text-[#5aa2f0]'
+                    }`}
+                  >
+                    <span className="text-[12px] font-semibold uppercase tracking-wide">{filter.shortLabel}</span>
+                    <HeaderStat stats={stat} />
+                    <StarCounter stats={starStat} />
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </header>
 
@@ -481,28 +641,26 @@ function QuickBetsInner() {
 
           {/* Mobile empty state. On desktop the message lives inside the table so the
               column-header filters stay visible (an empty market must not trap the user). */}
-          {!loading && !error && visibleMatches.length === 0 ? (
+          {!loading && !error && visibleMatches.length === 0 && !hasMobileResultsDay ? (
             <div className="rounded-md border border-[#38383d] bg-[#171717] p-8 text-center text-sm font-normal text-[#8c8c96] lg:hidden">
               <ListFilter className="mx-auto mb-3 h-5 w-5" aria-hidden="true" />
               {emptyMessage}
             </div>
           ) : null}
 
-          {/* Mobile: stacked cards grouped by date band. */}
-          {!error && visibleMatches.length ? (
+          {/* Mobile: one selected day at a time; desktop keeps the full date-banded table. */}
+          {!error && (visibleMatches.length > 0 || hasMobileResultsDay) ? (
             <div className="space-y-2 lg:hidden">
-              {visibleMatches.map((match, index) => {
-                const band = dayBand(match.date);
-                const prev = visibleMatches[index - 1];
-                const showDate = !prev || prev.date !== match.date;
+              {!loading && hasMobileResultsDay && mobileMatches.length === 0 ? (
+                <div className="rounded-md border border-[#38383d] bg-[#171717] p-8 text-center text-sm font-normal text-[#8c8c96]">
+                  <ListFilter className="mx-auto mb-3 h-5 w-5" aria-hidden="true" />
+                  No matches for this day with the selected filters.
+                </div>
+              ) : null}
+              {mobileMatches.map((match, index) => {
                 const selections = displayedSelections(match, selectionFilters, starredOnly, successByLeague);
                 return (
                   <div key={matchRowKey(match, index)} className="space-y-2">
-                    {showDate ? (
-                      <div className="pt-2 text-[13px] font-normal text-white">
-                        {band ? `${band} · ` : ''}{fmtDMY(match.date)}
-                      </div>
-                    ) : null}
                     <MatchCard match={match} selections={selections}
                       leagueStats={successByLeague.get(quickBetLeagueKey(match.league))}
                       leagueSuccessLabel={quickBetLeagueSuccessLabel(match.league, successByLeague.get(quickBetLeagueKey(match.league)), activeMarket)} />
@@ -579,9 +737,17 @@ function QuickBetsInner() {
                       <Fragment key={matchRowKey(match, index)}>
                         {showDate ? (
                           <tr key={`${matchRowKey(match, index)}-date`} className="bg-[#5aa2f0]/[0.09]">
-                            <td colSpan={7} className="border-y border-[#5aa2f0]/25 px-2.5 py-2.5 text-[13px] font-normal tracking-[0.05em] text-white shadow-[inset_2px_0_0_#5aa2f0]">
-                              {band ? `${band} · ` : ''}{fmtDMY(match.date)}
+                            <td colSpan={dailyStats.has(match.date) ? 1 : 7} className="border-y border-[#5aa2f0]/25 px-2.5 py-2.5 text-[13px] font-normal tracking-[0.05em] text-white shadow-[inset_2px_0_0_#5aa2f0]">
+                              <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                                <span>{band ? `${band} · ` : ''}{fmtDMY(match.date)}</span>
+                                <DailyTotal stats={dailyStats.get(match.date)?.total} />
+                              </div>
                             </td>
+                            {dailyStats.has(match.date) ? MARKET_COLUMNS.map((filter) => (
+                              <td key={filter.key} className="border-y border-[#5aa2f0]/25 px-1.5 py-2.5 text-center">
+                                <DailyStarStats stats={dailyStats.get(match.date).markets.get(filter.key)} label={filter.label} />
+                              </td>
+                            )) : null}
                           </tr>
                         ) : null}
                         {showLeague ? (

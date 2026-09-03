@@ -195,25 +195,40 @@ function coreQuickBetCandidate(match, league) {
 }
 
 function sidecarQuickBetCandidate(row, source = 'event') {
-  if (!row || typeof row !== 'object' || typeof row.home !== 'string' || typeof row.away !== 'string') return null;
-  const home = row.home;
-  const away = row.away;
+  if (!row || typeof row !== 'object' || typeof row.home !== 'string' || typeof row.away !== 'string'
+    || row.pending_canonical) return null;
+  const canonical = row.canonical && row.canonical.date === row.date && row.canonical.time === row.time
+    && typeof row.canonical.home === 'string' && typeof row.canonical.away === 'string' ? row.canonical : null;
+  const home = canonical?.home || row.home;
+  const away = canonical?.away || row.away;
+  const reversed = canonical?.reversed === true;
   const rawEventId = row.eventId == null && row.event_id == null ? null : String(row.eventId ?? row.event_id);
   const event = sportsbetEventDetails(row.eventUrl, rawEventId) || sportsbetEventDetails(row.event_url, rawEventId);
   const frozen = source === 'history';
   const rootFresh = frozen || row.root_stale === false;
   const deepFresh = frozen || (rootFresh && row.deep_stale === false);
+  const inspectionCoverage = row.last_inspection_coverage || row.market_coverage;
+  const inspectionAuthoritative = ['winner', 'btts', 'goals:0.5', 'goals:1.5', 'goals:2.5', 'goals:3.5']
+    .every((key) => ['selection', 'no_selection', 'no_price', 'not_offered'].includes(inspectionCoverage?.[key]));
   const rawMarkets = row.markets && typeof row.markets === 'object' ? row.markets : {};
   const markets = {};
   for (const market of QUICK_BET_MARKETS) {
-    const fresh = market === 'winner' ? rootFresh : deepFresh;
+    const fresh = inspectionAuthoritative ? deepFresh : market === 'winner' ? rootFresh : deepFresh;
     markets[market] = fresh && Array.isArray(rawMarkets[market])
-      ? rawMarkets[market].map((item) => quickBetSelection(market, item, home, away)).filter(Boolean)
+      ? rawMarkets[market].map((item) => quickBetSelection(market, reversed && market === 'winner'
+        ? { ...item, key: item.key === 'home' ? 'away' : item.key === 'away' ? 'home' : item.key } : item, home, away)).filter(Boolean)
       : [];
   }
 
   return {
-    league: typeof row.league === 'string' ? row.league : '',
+    league: canonical?.league || (typeof row.league === 'string' ? row.league : ''),
+    _homeTeamKey: canonical ? quickBetCanonicalTeamKey({ id: canonical.home_id, name: canonical.home }) : null,
+    _awayTeamKey: canonical ? quickBetCanonicalTeamKey({ id: canonical.away_id, name: canonical.away }) : null,
+    _fixtureIdentity: canonical ? quickBetCanonicalFixtureIdentity(row.date,
+      quickBetCanonicalTeamKey({ id: canonical.home_id, name: canonical.home }),
+      quickBetCanonicalTeamKey({ id: canonical.away_id, name: canonical.away })) : null,
+    marketCoverage: row.market_coverage && typeof row.market_coverage === 'object' ? row.market_coverage : null,
+    inspectionAuthoritative,
     date: typeof row.date === 'string' ? row.date : '',
     time: typeof row.time === 'string' ? row.time : '',
     home,
@@ -221,8 +236,10 @@ function sidecarQuickBetCandidate(row, source = 'event') {
     status: frozen ? String(row.status || 'started') : 'upcoming',
     eventId: event?.eventId || null,
     eventUrl: event?.url || null,
-    homeScore: row.home_score != null && Number.isFinite(Number(row.home_score)) ? Number(row.home_score) : null,
-    awayScore: row.away_score != null && Number.isFinite(Number(row.away_score)) ? Number(row.away_score) : null,
+    homeScore: (reversed ? row.away_score : row.home_score) != null && Number.isFinite(Number(reversed ? row.away_score : row.home_score))
+      ? Number(reversed ? row.away_score : row.home_score) : null,
+    awayScore: (reversed ? row.home_score : row.away_score) != null && Number.isFinite(Number(reversed ? row.home_score : row.away_score))
+      ? Number(reversed ? row.home_score : row.away_score) : null,
     minute: typeof row.live_minute === 'string' ? row.live_minute : null,
     source,
     markets,
@@ -350,6 +367,7 @@ function mergeQuickBetCandidate(left, right) {
   const history = left.source === 'history' ? left : right.source === 'history' ? right : null;
   const canonical = left.source === 'canonical' ? left : right.source === 'canonical' ? right : null;
   const identity = history || left;
+  const inspection = [left, right].find((candidate) => candidate.inspectionAuthoritative);
   const historyStatus = String(history?.status || '').toLowerCase();
   const historyTerminal = ['ft', 'finished', 'result', 'postponed_or_cancelled', 'cancelled', 'postponed', 'void'].includes(historyStatus);
   const canonicalStatus = String(canonical?.status || '').toLowerCase();
@@ -366,9 +384,12 @@ function mergeQuickBetCandidate(left, right) {
     _fixtureIdentity: canonicalIdentity?._fixtureIdentity || null,
     eventId: history?.eventId || left.eventId || right.eventId || null,
     eventUrl: history?.eventUrl || left.eventUrl || right.eventUrl || null,
+    marketCoverage: right.marketCoverage || left.marketCoverage || null,
+    inspectionAuthoritative: !!inspection,
     markets: history
-      ? mergeQuickBetMarkets(history.markets, canonical ? canonical.markets : (history === left ? right.markets : left.markets))
-      : mergeQuickBetMarkets(left.markets, right.markets),
+      ? history.inspectionAuthoritative ? history.markets
+        : mergeQuickBetMarkets(history.markets, canonical ? canonical.markets : (history === left ? right.markets : left.markets))
+      : inspection ? inspection.markets : mergeQuickBetMarkets(left.markets, right.markets),
     status: statusOwner.status,
     homeScore: statusOwner.homeScore,
     awayScore: statusOwner.awayScore,
@@ -503,7 +524,7 @@ export function buildQuickBetsPayload({ leagues = [], sidecar = null, now = new 
         .map((item) => quickBetSelection(market, item, candidateRow.home, candidateRow.away))
         .filter(Boolean);
     }
-    if (!QUICK_BET_MARKETS.some((market) => normalized[market].length)) continue;
+    if (!QUICK_BET_MARKETS.some((market) => normalized[market].length) && !candidateRow.marketCoverage && !candidateRow.inspectionAuthoritative) continue;
     const row = { ...candidateRow, markets: normalized };
     const fixtureKey = quickBetFixtureKey(row);
     const canonicalFixtureKey = row._fixtureIdentity ? `canonical|${row._fixtureIdentity}` : null;
@@ -530,6 +551,7 @@ export function buildQuickBetsPayload({ leagues = [], sidecar = null, now = new 
   const today = localDate(now);
   const throughDate = addDays(today, 6);
   const rows = merged.flatMap((row) => {
+    if (!QUICK_BET_MARKETS.some((market) => row.markets[market]?.length)) return [];
     const lifecycle = quickBetLifecycleName(row, now);
     if (!lifecycle) return [];
     const resultPending = lifecycle === 'result' && quickBetResultPending(row, now);
@@ -551,6 +573,7 @@ export function buildQuickBetsPayload({ leagues = [], sidecar = null, now = new 
       awayScore: row.awayScore,
       minute: row.minute || null,
       teamForm: quickBetTeamForm(row, teamHistory),
+      ...(row.marketCoverage ? { marketCoverage: row.marketCoverage } : {}),
       markets: gradeQuickBetMarkets(row.markets, lifecycle, row.status, row.homeScore, row.awayScore),
     })];
   })
@@ -582,6 +605,7 @@ export function buildQuickBetsPayload({ leagues = [], sidecar = null, now = new 
       capturedAt: sidecar?.captured_at || sidecar?.capturedAt || sourceCapturedAt || null,
       attemptedAt: sidecar?.attempted_at || sidecar?.attemptedAt || null,
       refreshStatus: ['complete', 'partial', 'stale'].includes(sidecar?.status) ? sidecar.status : 'core-only',
+      coverage: sidecar?.coverage || null,
       maxOddsExclusive: QUICK_BET_MAX_ODDS_EXCLUSIVE,
       counts: quickBetCounts(rows),
       totalMatches: rows.length,

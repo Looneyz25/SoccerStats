@@ -162,6 +162,28 @@ export function quickBetStarredMarketStats(matches, filters, successByLeague) {
   return stats;
 }
 
+export function quickBetDailyStats(matches, filters, successByLeague) {
+  const byDate = new Map();
+  for (const match of matches) {
+    if (!byDate.has(match.date)) byDate.set(match.date, []);
+    byDate.get(match.date).push(match);
+  }
+  return new Map([...byDate].map(([date, dayMatches]) => {
+    const markets = quickBetStarredMarketStats(dayMatches, filters, successByLeague);
+    const total = { hits: 0, settled: 0 };
+    for (const match of dayMatches) {
+      if (!isQuickBetSettledResult(match)) continue;
+      const selections = filters.flatMap((filter) => marketSelections(match, filter));
+      for (const selection of selections) {
+        if (!isSettledQuickBetSelection(selection)) continue;
+        total.settled += 1;
+        if (selection.result === 'hit') total.hits += 1;
+      }
+    }
+    return [date, { markets, total }];
+  }));
+}
+
 export function quickBetStarStatText(stats) {
   return stats?.settled ? `${stats.hits} / ${stats.settled}` : '';
 }
