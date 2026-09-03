@@ -382,6 +382,7 @@ function QuickBetsInner() {
   const dailyStats = useMemo(() => activeLifecycle === 'result'
     ? quickBetDailyStats(matches.filter((match) => match.lifecycle === activeLifecycle), MARKET_COLUMNS, successByLeague) : new Map(),
   [matches, successByLeague, activeLifecycle]);
+  const mobileTodayDate = todayISO();
   const mobileDates = useMemo(() => {
     const dates = activeLifecycle === 'result'
       ? [...dailyStats.keys()] : visibleMatches.map((match) => match.date);
@@ -389,17 +390,19 @@ function QuickBetsInner() {
       .sort((a, b) => dateRank(a) - dateRank(b) || String(a).localeCompare(String(b)));
   }, [activeLifecycle, dailyStats, visibleMatches]);
   const preferredMobileDate = useMemo(() => {
-    if (!mobileDates.length) return '';
-    const today = todayISO();
-    if (mobileDates.includes(today)) return today;
+    if (!mobileDates.length) return mobileTodayDate;
+    if (mobileDates.includes(mobileTodayDate)) return mobileTodayDate;
     return activeLifecycle === 'result' ? mobileDates[mobileDates.length - 1] : mobileDates[0];
-  }, [mobileDates, activeLifecycle]);
-  const mobileCurrentDate = mobileDates.includes(mobileSelectedDate) ? mobileSelectedDate : preferredMobileDate;
+  }, [mobileDates, activeLifecycle, mobileTodayDate]);
+  const mobileCurrentDate = mobileDates.includes(mobileSelectedDate) || mobileSelectedDate === mobileTodayDate
+    ? mobileSelectedDate : preferredMobileDate;
   const hasMobileResultsDay = activeLifecycle === 'result' && Boolean(mobileCurrentDate);
-  const mobileCurrentDateIndex = mobileDates.indexOf(mobileCurrentDate);
+  const hasMobileSelectedDay = Boolean(mobileCurrentDate);
+  const mobileTimelineDates = useMemo(() => [...new Set([...mobileDates, mobileCurrentDate].filter(Boolean))]
+    .sort((a, b) => dateRank(a) - dateRank(b) || String(a).localeCompare(String(b))),
+  [mobileDates, mobileCurrentDate]);
+  const mobileCurrentDateIndex = mobileTimelineDates.indexOf(mobileCurrentDate);
   const mobileMatches = mobileCurrentDate ? visibleMatches.filter((match) => match.date === mobileCurrentDate) : [];
-  const mobileTodayDate = todayISO();
-  const mobileHasToday = mobileDates.includes(mobileTodayDate);
   const selectionTotal = visibleMatches.reduce((total, match) => total
     + displayedSelections(match, selectionFilters, starredOnly, successByLeague).length, 0);
 
@@ -453,7 +456,7 @@ function QuickBetsInner() {
 
   useEffect(() => {
     if (!isMobileViewport) return;
-    if (mobileSelectedDate !== mobileCurrentDate) setMobileSelectedDate(mobileCurrentDate);
+    if (mobileSelectedDate && mobileSelectedDate !== mobileCurrentDate) setMobileSelectedDate(mobileCurrentDate);
   }, [isMobileViewport, mobileSelectedDate, mobileCurrentDate]);
 
   const mobileFilterNavStyle = isMobileViewport ? {
@@ -508,12 +511,12 @@ function QuickBetsInner() {
 
           {coverageSummary ? <p className="mt-2 text-[12px] text-[#8c8c96]" role="status">{coverageSummary}</p> : null}
 
-          {!error && (visibleMatches.length > 0 || hasMobileResultsDay) && mobileCurrentDate ? (
+          {!error && hasMobileSelectedDay ? (
             <div className="mt-3 space-y-2 lg:hidden">
               <div className="grid grid-cols-[2.25rem_minmax(0,1fr)_auto_2.25rem] items-center gap-2 text-[13px] font-normal text-white">
                 <button
                   type="button"
-                  onClick={() => setMobileSelectedDate(mobileDates[mobileCurrentDateIndex - 1])}
+                  onClick={() => setMobileSelectedDate(mobileTimelineDates[mobileCurrentDateIndex - 1])}
                   disabled={mobileCurrentDateIndex <= 0}
                   aria-label="Previous day"
                   className="inline-flex h-9 w-9 items-center justify-center rounded-none border border-[#38383d] text-[#a8a8b2] transition hover:border-[#5aa2f0]/45 hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
@@ -527,7 +530,7 @@ function QuickBetsInner() {
                 <button
                   type="button"
                   onClick={() => setMobileSelectedDate(mobileTodayDate)}
-                  disabled={!mobileHasToday || mobileCurrentDate === mobileTodayDate}
+                  disabled={mobileCurrentDate === mobileTodayDate}
                   aria-label="Jump to today"
                   className="inline-flex h-9 items-center justify-center rounded-none border border-[#38383d] px-2.5 text-[12px] font-normal uppercase tracking-wide text-[#a8a8b2] transition hover:border-[#5aa2f0]/45 hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
                 >
@@ -535,8 +538,8 @@ function QuickBetsInner() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setMobileSelectedDate(mobileDates[mobileCurrentDateIndex + 1])}
-                  disabled={mobileCurrentDateIndex < 0 || mobileCurrentDateIndex >= mobileDates.length - 1}
+                  onClick={() => setMobileSelectedDate(mobileTimelineDates[mobileCurrentDateIndex + 1])}
+                  disabled={mobileCurrentDateIndex < 0 || mobileCurrentDateIndex >= mobileTimelineDates.length - 1}
                   aria-label="Next day"
                   className="inline-flex h-9 w-9 items-center justify-center rounded-none border border-[#38383d] text-[#a8a8b2] transition hover:border-[#5aa2f0]/45 hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
                 >
@@ -641,7 +644,7 @@ function QuickBetsInner() {
 
           {/* Mobile empty state. On desktop the message lives inside the table so the
               column-header filters stay visible (an empty market must not trap the user). */}
-          {!loading && !error && visibleMatches.length === 0 && !hasMobileResultsDay ? (
+          {!loading && !error && visibleMatches.length === 0 && !hasMobileSelectedDay ? (
             <div className="rounded-md border border-[#38383d] bg-[#171717] p-8 text-center text-sm font-normal text-[#8c8c96] lg:hidden">
               <ListFilter className="mx-auto mb-3 h-5 w-5" aria-hidden="true" />
               {emptyMessage}
@@ -649,9 +652,9 @@ function QuickBetsInner() {
           ) : null}
 
           {/* Mobile: one selected day at a time; desktop keeps the full date-banded table. */}
-          {!error && (visibleMatches.length > 0 || hasMobileResultsDay) ? (
+          {!error && hasMobileSelectedDay ? (
             <div className="space-y-2 lg:hidden">
-              {!loading && hasMobileResultsDay && mobileMatches.length === 0 ? (
+              {!loading && mobileMatches.length === 0 ? (
                 <div className="rounded-md border border-[#38383d] bg-[#171717] p-8 text-center text-sm font-normal text-[#8c8c96]">
                   <ListFilter className="mx-auto mb-3 h-5 w-5" aria-hidden="true" />
                   No matches for this day with the selected filters.

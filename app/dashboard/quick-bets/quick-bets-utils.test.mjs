@@ -121,19 +121,21 @@ test('daily stats retain full-day star hits and overall settled totals', () => {
   assert.equal(quickBetDailyStats([], filters, success).size, 0);
   assert.match(pageSource, /const dates = activeLifecycle === 'result'\s*\? \[\.\.\.dailyStats\.keys\(\)\] : visibleMatches\.map\(\(match\) => match\.date\)/);
   assert.match(pageSource, /new Set\(dates\.filter\(Boolean\)\)/);
+  assert.match(pageSource, /const mobileTodayDate = todayISO\(\)/);
+  assert.match(pageSource, /const mobileCurrentDate = mobileDates\.includes\(mobileSelectedDate\) \|\| mobileSelectedDate === mobileTodayDate\s*\? mobileSelectedDate : preferredMobileDate/);
+  assert.match(pageSource, /const hasMobileSelectedDay = Boolean\(mobileCurrentDate\)/);
+  assert.match(pageSource, /const mobileTimelineDates = useMemo\(\(\) => \[\.\.\.new Set\(\[\.\.\.mobileDates, mobileCurrentDate\]\.filter\(Boolean\)\)\]/);
   assert.match(pageSource, /const hasMobileResultsDay = activeLifecycle === 'result' && Boolean\(mobileCurrentDate\)/);
-  assert.match(pageSource, /!loading && !error && visibleMatches\.length === 0 && !hasMobileResultsDay/);
-  assert.match(pageSource, /!error && \(visibleMatches\.length > 0 \|\| hasMobileResultsDay\)/);
-  assert.match(pageSource, /!loading && hasMobileResultsDay && mobileMatches\.length === 0/);
+  assert.match(pageSource, /!loading && !error && visibleMatches\.length === 0 && !hasMobileSelectedDay/);
+  assert.match(pageSource, /!error && hasMobileSelectedDay/);
+  assert.match(pageSource, /!loading && mobileMatches\.length === 0/);
   assert.match(pageSource, /No matches for this day with the selected filters\./);
   assert.match(pageSource, /const mobileMatches = mobileCurrentDate \? visibleMatches\.filter\(\(match\) => match\.date === mobileCurrentDate\) : \[\]/);
-  assert.match(pageSource, /const mobileTodayDate = todayISO\(\)/);
-  assert.match(pageSource, /const mobileHasToday = mobileDates\.includes\(mobileTodayDate\)/);
   assert.match(pageSource, /aria-label="Previous day"[\s\S]*?<ChevronLeft/);
   assert.match(pageSource, /onClick=\{\(\) => setMobileSelectedDate\(mobileTodayDate\)\}/);
   assert.match(pageSource, /aria-label="Jump to today"/);
   assert.match(pageSource, />\s*Today\s*<\/button>/);
-  assert.match(pageSource, /disabled=\{!mobileHasToday \|\| mobileCurrentDate === mobileTodayDate\}/);
+  assert.match(pageSource, /disabled=\{mobileCurrentDate === mobileTodayDate\}/);
   assert.match(pageSource, /aria-label="Next day"[\s\S]*?<ChevronRight/);
   for (const dateKey of ['match.date', 'mobileCurrentDate']) {
     assert.ok(pageSource.includes(`<DailyStarStats stats={dailyStats.get(${dateKey}).markets.get(filter.key)} label={filter.label}`));
