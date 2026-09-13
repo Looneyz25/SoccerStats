@@ -403,7 +403,15 @@ function QuickBetsInner() {
   [mobileDates, mobileCurrentDate]);
   const mobileCurrentDateIndex = mobileTimelineDates.indexOf(mobileCurrentDate);
   const mobileMatches = mobileCurrentDate ? visibleMatches.filter((match) => match.date === mobileCurrentDate) : [];
-  const selectionTotal = visibleMatches.reduce((total, match) => total
+  const dayMatches = matches.filter((match) => match.lifecycle === activeLifecycle && match.date === mobileCurrentDate);
+  const dayOffers = new Map(MARKET_COLUMNS.map((filter) => [filter.key, {
+    total: dayMatches.reduce((total, match) => total + marketSelections(match, filter).length, 0),
+    starred: dayMatches.reduce((total, match) => total + quickBetStarredSelections(match, [filter], successByLeague).length, 0),
+    regular: outcomeStats(dayMatches.map((match) => ({ match, selections: marketSelections(match, filter) }))),
+  }]));
+  const offeredMarkets = [...dayOffers.values()].reduce((total, offers) => total + offers.total, 0);
+  const starredMarkets = [...dayOffers.values()].reduce((total, offers) => total + offers.starred, 0);
+  const selectionTotal = mobileMatches.reduce((total, match) => total
     + displayedSelections(match, selectionFilters, starredOnly, successByLeague).length, 0);
 
   // Per-market hit stats over the active lifecycle, for the column headers.
@@ -427,7 +435,7 @@ function QuickBetsInner() {
 
   const toggleMarket = (key) => setActiveMarket((current) => (current === key ? 'all' : key));
 
-  const sortSummary = isAll ? '' : activeLifecycle === 'result' ? ' · newest dates · lowest odds' : ' · today first · lowest odds';
+  const sortSummary = isAll ? '' : ' · lowest odds';
   const emptyMessage = starredOnly
     ? isAll ? 'No starred markets for this state.' : `No starred ${selectedFilter.label} odds for this state.`
     : isAll ? 'No Quick Bets for this state.' : `No matches with ${selectedFilter.label} odds.`;
@@ -459,9 +467,8 @@ function QuickBetsInner() {
   }, []);
 
   useEffect(() => {
-    if (!isMobileViewport) return;
     if (mobileSelectedDate && mobileSelectedDate !== mobileCurrentDate) setMobileSelectedDate(mobileCurrentDate);
-  }, [isMobileViewport, mobileSelectedDate, mobileCurrentDate]);
+  }, [mobileSelectedDate, mobileCurrentDate]);
 
   const mobileFilterNavStyle = isMobileViewport ? {
     maxHeight: mobileFiltersHidden ? 0 : '21rem',
@@ -503,7 +510,7 @@ function QuickBetsInner() {
                 <h1 className="text-lg font-semibold text-ink sm:text-xl">Quick Bets</h1>
               </div>
               <p className="mt-2 hidden text-[13px] font-medium text-muted lg:block">
-                {visibleMatches.length} match{visibleMatches.length === 1 ? '' : 'es'} · {selectionTotal} selection{selectionTotal === 1 ? '' : 's'}{isAll ? '' : ` · ${selectedFilter.label}`}{starredOnly ? ' · Starred' : ''}{sortSummary}{starHistorySummary}
+                {mobileMatches.length} match{mobileMatches.length === 1 ? '' : 'es'} · {selectionTotal} selection{selectionTotal === 1 ? '' : 's'}{isAll ? '' : ` · ${selectedFilter.label}`}{starredOnly ? ' · Starred' : ''}{sortSummary}{starHistorySummary}
               </p>
             </div>
             {capturedAt ? (
@@ -656,7 +663,7 @@ function QuickBetsInner() {
             </div>
           ) : null}
 
-          {/* Mobile: one selected day at a time; desktop keeps the full date-banded table. */}
+          {/* Both layouts show the selected day. */}
           {!error && hasMobileSelectedDay ? (
             <div className="space-y-2 lg:hidden">
               {!loading && mobileMatches.length === 0 ? (
@@ -727,39 +734,68 @@ function QuickBetsInner() {
                   </tr>
                 </thead>
                 <tbody>
-                  {visibleMatches.length === 0 ? (
+                  {hasMobileSelectedDay ? (
+                    <tr className="qb-day-row bg-field">
+                      <td className="border-y border-line px-2.5 py-2.5 shadow-[inset_2px_0_0_var(--accent)]">
+                        <div className="flex items-center gap-2">
+                          <button type="button" aria-label="Previous day" disabled={mobileCurrentDateIndex <= 0}
+                            onClick={() => setMobileSelectedDate(mobileTimelineDates[mobileCurrentDateIndex - 1])}
+                            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-line text-muted hover:border-accent/40 hover:text-ink disabled:cursor-not-allowed disabled:opacity-35">
+                            <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+                          </button>
+                          <div className="flex min-w-0 flex-1 flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center">
+                            <span className="text-[13px] font-semibold">{new Date(`${mobileCurrentDate}T00:00:00Z`).toLocaleDateString('en-AU', { weekday: 'long', timeZone: 'UTC' })} · {fmtDMY(mobileCurrentDate)}</span>
+                            <button type="button" aria-label="Jump to today" disabled={mobileCurrentDate === mobileTodayDate}
+                              onClick={() => setMobileSelectedDate(mobileTodayDate)}
+                              className="rounded-md border border-line px-2 py-1 text-[12px] text-muted hover:border-accent/40 hover:text-ink disabled:cursor-not-allowed disabled:opacity-35">Today</button>
+                            <span className="flex w-full flex-wrap items-center justify-center gap-1 text-[12px] font-normal text-muted">
+                              {offeredMarkets} markets · <span className="inline-flex items-center gap-1 text-amber-800 dark:text-[var(--quick-bet-success)]"><StarIcon />{starredMarkets} starred</span>
+                            </span>
+                            <DailyTotal stats={dailyStats.get(mobileCurrentDate)?.total} />
+                          </div>
+                          <button type="button" aria-label="Next day" disabled={mobileCurrentDateIndex < 0 || mobileCurrentDateIndex >= mobileTimelineDates.length - 1}
+                            onClick={() => setMobileSelectedDate(mobileTimelineDates[mobileCurrentDateIndex + 1])}
+                            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-line text-muted hover:border-accent/40 hover:text-ink disabled:cursor-not-allowed disabled:opacity-35">
+                            <ChevronRight className="h-4 w-4" aria-hidden="true" />
+                          </button>
+                        </div>
+                      </td>
+                      {MARKET_COLUMNS.map((filter) => {
+                        const offers = dayOffers.get(filter.key);
+                        return (
+                          <td key={filter.key} className="border-y border-line px-1.5 py-2.5 text-center">
+                            <span className="mb-1 block text-[12px] font-normal text-muted" aria-label={activeLifecycle === 'result'
+                              ? `${filter.label}: ${offers.regular.hits} hits from ${offers.regular.settled} settled predictions, all selections`
+                              : `${filter.label}: ${offers.total} markets on offer, all selections`}>
+                              All {activeLifecycle === 'result' ? `${offers.regular.hits} / ${offers.regular.settled}` : offers.total}
+                            </span>
+                            {activeLifecycle === 'result' ? (
+                              <DailyStarStats stats={dailyStats.get(mobileCurrentDate)?.markets.get(filter.key) || { hits: 0, settled: 0 }} label={filter.label} />
+                            ) : (
+                              <span className="inline-flex items-center gap-1 text-[12px] font-normal text-amber-800 dark:text-[var(--quick-bet-success)]" aria-label={`${filter.label}: ${offers.starred} starred markets on offer`}><StarIcon />{offers.starred}</span>
+                            )}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ) : null}
+                  {mobileMatches.length === 0 ? (
                     <tr>
                       <td colSpan={7} className="px-2.5 py-10 text-center text-[13px] text-muted">
-                        {emptyMessage}
+                        No matches for this day with the selected filters.
                       </td>
                     </tr>
                   ) : null}
-                  {visibleMatches.map((match, index) => {
-                    const prev = visibleMatches[index - 1];
+                  {mobileMatches.map((match, index) => {
+                    const prev = mobileMatches[index - 1];
                     const showDate = !prev || prev.date !== match.date;
                     const showLeague = isAll && (showDate || (prev && prev.league !== match.league));
-                    const band = dayBand(match.date);
                     const leagueStats = successByLeague.get(quickBetLeagueKey(match.league));
                     const leagueSuccessLabel = quickBetRecordedLeagueSuccessLabel(showLeague
-                      ? visibleMatches.filter((row) => row.date === match.date && row.league === match.league)
+                      ? mobileMatches.filter((row) => row.date === match.date && row.league === match.league)
                       : match, selectionFilters);
                     return (
                       <Fragment key={matchRowKey(match, index)}>
-                        {showDate ? (
-                          <tr key={`${matchRowKey(match, index)}-date`} className="bg-field">
-                            <td colSpan={dailyStats.has(match.date) ? 1 : 7} className="border-y border-line px-2.5 py-2.5 text-[13px] font-semibold text-ink shadow-[inset_2px_0_0_var(--accent)]">
-                              <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                                <span>{band ? `${band} · ` : ''}{fmtDMY(match.date)}</span>
-                                <DailyTotal stats={dailyStats.get(match.date)?.total} />
-                              </div>
-                            </td>
-                            {dailyStats.has(match.date) ? MARKET_COLUMNS.map((filter) => (
-                              <td key={filter.key} className="border-y border-line px-1.5 py-2.5 text-center">
-                                <DailyStarStats stats={dailyStats.get(match.date).markets.get(filter.key)} label={filter.label} />
-                              </td>
-                            )) : null}
-                          </tr>
-                        ) : null}
                         {showLeague ? (
                           <tr key={`${matchRowKey(match, index)}-league`}>
                             <td colSpan={7} className="border-b border-line px-2.5 pb-1 pl-6 pt-2.5 text-[12px] font-semibold text-muted">

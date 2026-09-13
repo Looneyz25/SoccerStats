@@ -148,12 +148,13 @@ test('daily stats retain full-day star hits and overall settled totals', () => {
   assert.match(pageSource, />\s*Today\s*<\/button>/);
   assert.match(pageSource, /disabled=\{mobileCurrentDate === mobileTodayDate\}/);
   assert.match(pageSource, /aria-label="Next day"[\s\S]*?<ChevronRight/);
-  for (const dateKey of ['match.date', 'mobileCurrentDate']) {
+  for (const dateKey of ['mobileCurrentDate']) {
     assert.ok(pageSource.includes(`<DailyStarStats stats={dailyStats.get(${dateKey}).markets.get(filter.key)} label={filter.label}`));
     assert.ok(pageSource.includes(`<DailyTotal stats={dailyStats.get(${dateKey})?.total}`));
   }
   assert.match(pageSource, /activeLifecycle === 'result'\s*\? quickBetDailyStats\(matches\.filter\(\(match\) => match\.lifecycle === activeLifecycle\), MARKET_COLUMNS, successByLeague\) : new Map\(\)/);
-  assert.match(pageSource, /colSpan=\{dailyStats\.has\(match\.date\) \? 1 : 7\}/);
+  assert.match(pageSource, /className="qb-day-row bg-field"/);
+  assert.match(pageSource, /dailyStats.get\(mobileCurrentDate\)\?\.markets.get\(filter.key\)/);
 });
 
 test('starred-only selections reuse exact qualifying league and market records', () => {
@@ -277,7 +278,7 @@ test('incomplete star history stays in the mobile header outside collapsible fil
   assert.ok(!notice[1].split(/\s+/).includes('hidden'));
   assert.ok(notice.index < pageSource.indexOf('!error && hasMobileSelectedDay'));
   assert.ok(notice.index < pageSource.indexOf('data-mobile-filter-state='));
-  assert.match(pageSource, /<p className="[^"]*hidden[^"]*lg:block">\s*\{visibleMatches.length\}[\s\S]*?\{starHistorySummary\}\s*<\/p>/);
+  assert.match(pageSource, /<p className="[^"]*hidden[^"]*lg:block">\s*\{mobileMatches.length\}[\s\S]*?\{starHistorySummary\}\s*<\/p>/);
   const countExpression = pageSource.match(/const unrecordedStars = ([\s\S]*?);/)[1];
   for (const starredOnly of [true, false]) {
     const count = vm.runInNewContext(countExpression, {
@@ -296,11 +297,43 @@ test('a desktop league band includes later captured league evidence only from it
   const otherDate = row({ winner: [pick('hit', { starSnapshot: { ...snapshot, leagueLabel: 'Different date' } })] }, { date: '2026-09-02' });
   const otherLeague = { ...later, league: 'Other' };
   const expression = pageSource.match(/const leagueSuccessLabel = (quickBetRecordedLeagueSuccessLabel\(showLeague[\s\S]*?);/)[1];
-  const label = (visibleMatches, showLeague = true) => vm.runInNewContext(expression, { showLeague, visibleMatches, match: first, selectionFilters: filters, quickBetRecordedLeagueSuccessLabel });
+  const label = (mobileMatches, showLeague = true) => vm.runInNewContext(expression, { showLeague, mobileMatches, match: first, selectionFilters: filters, quickBetRecordedLeagueSuccessLabel });
   assert.match(label([first, later, otherDate, otherLeague]), /League Winner/);
   assert.doesNotMatch(label([first, later, otherDate, otherLeague]), /Different date/);
   assert.equal(label([first, otherDate, otherLeague]), '');
   assert.equal(label([first, later], false), '');
   assert.equal(quickBetRecordedLeagueSuccessLabel(first, filters), '');
   assert.match(quickBetRecordedLeagueSuccessLabel(later, filters), /League Winner/);
+});
+
+test('desktop daily offers and outcomes use the full selected lifecycle day before presentation filters', () => {
+  const starSnapshot = { version: 1, state: 'captured', starred: true, capturedAt: '2026-09-01T00:00:00Z', label: 'Captured winner', leagueLabel: '' };
+  const matches = [
+    row({ winner: [pick('hit', { starSnapshot })] }, { date: '2026-09-03' }),
+    row({ winner: [pick('miss')] }, { date: '2026-09-03' }),
+    row({ winner: [pick('hit', { starSnapshot })] }, { date: '2026-09-02' }),
+    row({ winner: [pick('', { starSnapshot })] }, { date: '2026-09-03', lifecycle: 'upcoming' }),
+  ];
+  const outcome = pageSource.match(/function selectionOutcome\([\s\S]*?\n\}/)[0];
+  const stats = pageSource.match(/function outcomeStats\([\s\S]*?\n\}/)[0];
+  const daily = pageSource.slice(pageSource.indexOf('  const dayMatches ='), pageSource.indexOf('  const selectionTotal ='));
+  const result = vm.runInNewContext(`${outcome}\n${stats}\n${daily}\n({dayOffers,offeredMarkets,starredMarkets});`, {
+    matches, activeLifecycle: 'result', mobileCurrentDate: '2026-09-03', MARKET_COLUMNS: filters,
+    marketSelections, quickBetStarredSelections, successByLeague: new Map(), starredOnly: true, visibleMatches: [],
+  });
+  assert.equal(result.offeredMarkets, 2);
+  assert.equal(result.starredMarkets, 1);
+  assert.equal(result.dayOffers.get('winner').regular.hits, 1);
+  assert.equal(result.dayOffers.get('winner').regular.settled, 2);
+  const upcoming = vm.runInNewContext(`${outcome}\n${stats}\n${daily}\n({offeredMarkets,starredMarkets});`, {
+    matches, activeLifecycle: 'upcoming', mobileCurrentDate: '2026-09-03', MARKET_COLUMNS: filters,
+    marketSelections, quickBetStarredSelections, successByLeague: new Map(),
+  });
+  assert.equal(upcoming.offeredMarkets, 1);
+  assert.equal(upcoming.starredMarkets, 1);
+  const tbody = pageSource.slice(pageSource.indexOf('<tbody>'), pageSource.indexOf('</tbody>'));
+  assert.ok(tbody.indexOf('qb-day-row') < tbody.indexOf('mobileMatches.length === 0'));
+  assert.match(tbody, /aria-label="Previous day"/);
+  assert.match(tbody, /aria-label="Next day"/);
+  assert.match(tbody, /mobileMatches\.map/);
 });
