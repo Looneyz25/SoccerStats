@@ -72,3 +72,29 @@ test('actual compact league and fast projections retain verifiable result contra
     assert.equal(payload.prediction_locked, undefined);
   }
 });
+
+test('suppressed No pick totals do not block publication but retain exact prediction parity', () => {
+  const expected = fixture();
+  for (const key of ['ou_cards', 'ou_corners']) {
+    expected.predictions[key] = { pick: null, insufficient_evidence: true, line: 4.5, probability: null, suppressed_pick: 'Under' };
+  }
+  const original = structuredClone(expected);
+  assert.doesNotThrow(() => verifyPublishedResults([expected], [structuredClone(expected)], 'No pick'));
+  assert.deepEqual(expected, original);
+  const missing = structuredClone(expected); delete missing.predictions.ou_cards;
+  assert.throws(() => verifyPublishedResults([expected], [missing], 'No pick'), /expected market/);
+  const changed = structuredClone(expected); changed.predictions.ou_cards.insufficient_evidence = false;
+  assert.throws(() => verifyPublishedResults([expected], [changed], 'No pick'), /expected market/);
+});
+
+test('meaningful unsettled markets still block even when flagged insufficient evidence', () => {
+  for (const market of [
+    { pick: 'Under', insufficient_evidence: true, line: 4.5 },
+    { pick: null, type: 'home', insufficient_evidence: true },
+    { pick: null, insufficient_evidence: false },
+    { pick: 'Over', line: 4.5 },
+  ]) {
+    const expected = fixture(); expected.predictions.ou_cards = market;
+    assert.throws(() => verifyPublishedResults([expected], [structuredClone(expected)], 'unsettled'), /verification failed.*cards/);
+  }
+});

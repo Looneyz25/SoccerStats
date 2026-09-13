@@ -1235,7 +1235,8 @@ function requiredMarketChecks(match) {
 
 function unsettledMarketsForMatch(match) {
   return requiredMarketChecks(match)
-    .filter(([, market]) => market && !marketResult(market))
+    .filter(([, market]) => market && !marketResult(market)
+      && !(market.insufficient_evidence === true && market.pick == null && !market.type))
     .map(([key]) => marketLabelForIssue(match, key));
 }
 
@@ -1265,7 +1266,7 @@ export function verifyPublishedResults(expected, published, label) {
   }
 }
 
-async function verifyFirestoreDayMarketsSettled(db, date, uploadedDates, expectedLeagues = null) {
+export async function verifyFirestoreDayMarketsSettled(db, date, uploadedDates, expectedLeagues = null) {
   const dateRef = db.collection('dashboardData').doc(DOC_ID).collection('dates').doc(slugify(date, 'unknown'));
   const dateSnap = await dateRef.get();
   if (!dateSnap.exists) {

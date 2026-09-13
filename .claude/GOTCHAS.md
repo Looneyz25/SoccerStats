@@ -55,3 +55,4 @@
 2026-09-11 — A synthetic settlement test used score.home/away and falsely returned ungraded → match winnerActualType inputs with home.goals and away.goals — dashboard market checks
 2026-09-13 — Badge publication repeated remote checks and registry writes for every cached team occurrence until timeout → memoize successful Storage checks per bucket/path and skip unchanged registry records within each run — scripts/cache_badges_to_firebase.mjs
 2026-09-13 — Plain production build selected static export and failed on dynamic API routes → set FIREBASE_APP_HOSTING=true when verifying the primary App Hosting build — scripts/next-build-prod.js
+2026-09-13 — Remote settlement verification treated suppressed No pick placeholders as unresolved bets → exclude only explicit suppression without a pick or outcome type, preserving expected snapshot parity — scripts/upload_match_data_to_firestore.mjs
