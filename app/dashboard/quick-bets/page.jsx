@@ -56,8 +56,6 @@ function matchRowKey(match, index) {
     match?.league || 'league',
     match?.home || 'home',
     match?.away || 'away',
-    match?.lifecycle || 'state',
-    index,
   ].join('|');
 }
 
@@ -655,7 +653,7 @@ function QuickBetsInner() {
             </div>
           ) : null}
 
-          {loading && data ? <p className="py-3 text-center text-sm text-muted" role="status">Loading this day…</p> : null}
+          {loading && data ? <p className="py-3 text-center text-sm text-muted lg:sr-only" role="status">Loading this day…</p> : null}
           {dayError ? <p className="py-3 text-center text-sm text-red-700 dark:text-red-300" role="alert">{dayError}</p> : null}
 
           {/* Mobile empty state. On desktop the message lives inside the table so the
@@ -724,7 +722,7 @@ function QuickBetsInner() {
                             onClick={() => toggleMarket(filter.key)}
                             aria-pressed={active}
                             aria-label={marketFilterAriaLabel(filter, stat, starStat)}
-                            className={`qb-stat-card flex h-full min-h-[72px] w-full flex-col justify-center ${isIdentity ? 'items-start' : 'items-center'} gap-1 rounded-md border px-2 py-2 text-[12px] font-semibold transition hover:border-accent/40 hover:bg-accent-soft hover:text-accent ${
+                            className={`qb-stat-card flex h-full min-h-[104px] xl:min-h-[88px] w-full flex-col justify-center ${isIdentity ? 'items-start' : 'items-center'} gap-1 rounded-md border px-2 py-2 text-[12px] font-semibold transition hover:border-accent/40 hover:bg-accent-soft hover:text-accent ${
                               active ? 'border-accent/30 bg-accent-soft text-accent' : 'border-line bg-surface text-muted'
                             }`}
                           >

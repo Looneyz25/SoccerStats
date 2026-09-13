@@ -10,6 +10,22 @@ import {
 } from './quick-bets-utils.mjs';
 
 const pageSource = readFileSync(new URL('./page.jsx', import.meta.url), 'utf8');
+test('fixture keys survive filtering, reordering and lifecycle changes without merging distinct fixtures', () => {
+  const source = pageSource.match(/function matchRowKey\(match, index\) \{[\s\S]*?\n\}/)?.[0];
+  assert.ok(source, 'fixture identity function is available');
+  const matchRowKey = vm.runInNewContext(`(${source})`);
+  const fixture = { eventId: 'sportsbet:101', date: '2026-09-13', time: '20:00', league: 'Premier League', home: 'Home', away: 'Away', lifecycle: 'upcoming' };
+  const originalKey = matchRowKey(fixture, 5);
+  assert.equal(matchRowKey(fixture, 0), originalKey);
+  assert.equal(matchRowKey({ ...fixture, lifecycle: 'live' }, 2), originalKey);
+  assert.equal(matchRowKey({ ...fixture, lifecycle: 'result' }, 9), originalKey);
+  assert.notEqual(matchRowKey({ ...fixture, eventId: 'sportsbet:102' }, 5), originalKey);
+  const withoutProviderId = { ...fixture, eventId: undefined };
+  for (const [field, value] of Object.entries({ date: '2026-09-14', time: '22:00', league: 'Other League', home: 'Other Home', away: 'Other Away' })) {
+    assert.notEqual(matchRowKey({ ...withoutProviderId, [field]: value }, 0), matchRowKey(withoutProviderId, 0));
+  }
+});
+
 const filters = [
   { key: 'winner', marketKeys: ['winner'] }, { key: 'btts', marketKeys: ['btts'] },
   ...[0.5, 1.5, 2.5, 3.5].map((line) => ({ key: `goals${String(line * 10).padStart(2, '0')}`, marketKeys: ['goalsOver', 'goalsUnder'], line })),
