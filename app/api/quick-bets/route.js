@@ -1,3 +1,4 @@
+import { resolveQuickBetDate } from '../../dashboard/quick-bets/quick-bets-utils.mjs';
 import { getFirestore } from 'firebase-admin/firestore';
 import { capMap, getAdminApp, verifyAccess } from '../_lib/firebase-admin.mjs';
 
@@ -19,24 +20,21 @@ function jsonResponse(payload, status = 200) {
   });
 }
 
-async function loadQuickBets() {
+async function loadQuickBets(date, lifecycle) {
   const db = getFirestore(getAdminApp());
   const metaSnap = await db.collection('dashboardData').doc(QUICK_BETS_DOC).get();
   if (!metaSnap.exists) throw new Error('quick_bets metadata missing');
 
   const meta = metaSnap.data() || {};
-  const dates = Array.isArray(meta.availableDates) ? meta.availableDates : [];
-  const dateSnaps = await Promise.all(
-    dates.map((date) => db.collection('dashboardData').doc(QUICK_BETS_DOC).collection('dates').doc(date).get()),
-  );
-  const matches = dateSnaps.flatMap((snap) => {
-    if (!snap.exists) return [];
-    const data = snap.data() || {};
-    return Array.isArray(data.matches) ? data.matches : [];
-  });
+  const selectedDate = resolveQuickBetDate(meta, date, lifecycle);
+  const dateSnap = (meta.availableDates || []).includes(selectedDate)
+    ? await db.collection('dashboardData').doc(QUICK_BETS_DOC).collection('dates').doc(selectedDate).get() : null;
+  if (dateSnap && !dateSnap.exists) throw new Error('Quick Bets date document missing');
+  const matches = Array.isArray(dateSnap?.data()?.matches) ? dateSnap.data().matches : [];
 
   return {
     ...meta,
+    selectedDate,
     matches,
   };
 }
@@ -48,14 +46,23 @@ export async function GET(request) {
     return jsonResponse({ error: err.message || 'unauthorized' }, err.status || 401);
   }
 
+  const params = new URL(request.url).searchParams;
+  const date = params.get('date') || '';
+  const lifecycle = params.get('lifecycle') || 'upcoming';
   try {
-    const cached = dataCache.get('current');
+    resolveQuickBetDate({}, date, lifecycle);
+  } catch (error) {
+    return jsonResponse({ error: error.message }, 400);
+  }
+  const cacheKey = `${lifecycle}:${date || 'default'}`;
+  try {
+    const cached = dataCache.get(cacheKey);
     if (cached && Date.now() - cached.at < DATA_CACHE_TTL_MS) {
       return jsonResponse(cached.payload);
     }
 
-    const payload = await loadQuickBets();
-    dataCache.set('current', { payload, at: Date.now() });
+    const payload = await loadQuickBets(date, lifecycle);
+    dataCache.set(cacheKey, { payload, at: Date.now() });
     capMap(dataCache, DATA_CACHE_MAX);
     return jsonResponse(payload);
   } catch (err) {

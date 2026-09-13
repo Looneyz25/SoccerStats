@@ -5,7 +5,7 @@ import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 import { cert, getApps, initializeApp, applicationDefault } from 'firebase-admin/app';
 import { initializeFirestore, getFirestore, FieldValue } from 'firebase-admin/firestore';
-import { normalizeQuickBetStarSnapshot } from '../app/dashboard/quick-bets/quick-bets-utils.mjs';
+import { normalizeQuickBetStarSnapshot, buildQuickBetSummary } from '../app/dashboard/quick-bets/quick-bets-utils.mjs';
 import { precomputeDisplayData } from './precompute_display_markets.mjs';
 import { marketReturnTotals, pricedMarketOdds } from './market_odds_returns.mjs';
 
@@ -621,6 +621,7 @@ export function buildQuickBetsPayload({ leagues = [], sidecar = null, now = new 
   return {
     meta: firestoreSafe({
       format: 'quick_bets_v1',
+      summary: buildQuickBetSummary(rows),
       source: 'Sportsbet',
       sourceUrl: sidecar?.source_url || sidecar?.sourceUrl || SPORTSBET_SOURCE_URL,
       capturedAt: sidecar?.captured_at || sidecar?.capturedAt || sourceCapturedAt || null,

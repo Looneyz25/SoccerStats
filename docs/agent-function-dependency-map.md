@@ -334,10 +334,13 @@ Called by / affects:
 - AIOS read-only `/api/upcoming-quick-bets` selector
 - Firestore upload projection in `scripts/upload_match_data_to_firestore.mjs`
 - Dashboard Quick Bets page at `app/dashboard/quick-bets/page.jsx`
+- Date-scoped API and SDK loading in `app/api/quick-bets/route.js` and `app/firestore-data.js`
+- `buildQuickBetSummary` in `app/dashboard/quick-bets/quick-bets-utils.mjs`, published by the existing uploader
 
 Firestore paths:
 - `dashboardData/quick_bets`
 - `dashboardData/quick_bets/dates/{dateId}`
+- Quick Bets reads metadata plus one selected date; metadata `summary` supplies lifecycle date indexes, overall market outcomes, recorded-star totals and the unrecorded-history count. Visited dates are cached in the browser; filtering never fetches the full history.
 - Provider-only sidecar rows must never enter `match_data.json` or Firestore prediction documents.
 
 Verification / evidence:

@@ -1,3 +1,4 @@
+import { resolveQuickBetDate } from './dashboard/quick-bets/quick-bets-utils.mjs';
 import { collection, doc, getDoc, getDocs, orderBy, query, setDoc, updateDoc } from 'firebase/firestore';
 import { getFirebaseAuth, getFirebaseDb } from './firebase';
 
@@ -12,17 +13,19 @@ const ADMIN_GROUPS_DOC = 'admin_user_groups';
 // runs in the background (the dashboard already does stale-while-revalidate).
 const matchDataCacheStore = new Map();
 const quickBetsCacheStore = new Map();
+let quickBetsMetadata = null;
 
 export function readMatchDataCache(date = '') {
   return matchDataCacheStore.get(date || 'all') || null;
 }
 
-export function readQuickBetsCache() {
-  return quickBetsCacheStore.get('current') || null;
+export function readQuickBetsCache(date = '', lifecycle = 'upcoming') {
+  const cached = quickBetsCacheStore.get(date || `default:${lifecycle}`);
+  return cached ? { ...cached, ...quickBetsMetadata, selectedDate: cached.selectedDate, matches: cached.matches } : null;
 }
 
 const inflightMatchDataPromises = new Map();
-let inflightQuickBetsPromise = null;
+const inflightQuickBetsPromises = new Map();
 
 export function loadMatchDataFromFirestore(date = '') {
   const key = date || 'all';
@@ -44,30 +47,40 @@ export function loadMatchDataFromFirestore(date = '') {
   return inflightMatchDataPromises.get(key);
 }
 
-export function loadQuickBetsFromFirestore() {
-  if (!inflightQuickBetsPromise) {
-    inflightQuickBetsPromise = fetchQuickBets()
+export function loadQuickBetsFromFirestore(date = '', lifecycle = 'upcoming') {
+  resolveQuickBetDate({}, date, lifecycle);
+  const key = date || `default:${lifecycle}`;
+  if (!inflightQuickBetsPromises.has(key)) {
+    inflightQuickBetsPromises.set(key, fetchQuickBets(date, lifecycle)
       .then((payload) => {
         if (payload && Array.isArray(payload.matches)) {
-          quickBetsCacheStore.set('current', payload);
+          const revision = (value) => Number(value?.updatedAt?.seconds ?? value?.updatedAt?._seconds ?? 0);
+          if (!quickBetsMetadata || revision(payload) >= revision(quickBetsMetadata)) {
+            const { matches, selectedDate, ...metadata } = payload;
+            quickBetsMetadata = metadata;
+          }
+          payload = { ...payload, ...quickBetsMetadata, selectedDate: payload.selectedDate, matches: payload.matches };
+          quickBetsCacheStore.set(key, payload);
+          if (payload.selectedDate) quickBetsCacheStore.set(payload.selectedDate, payload);
+          while (quickBetsCacheStore.size > 12) quickBetsCacheStore.delete(quickBetsCacheStore.keys().next().value);
         }
         return payload;
       })
       .finally(() => {
-        inflightQuickBetsPromise = null;
-      });
+        inflightQuickBetsPromises.delete(key);
+      }));
   }
-  return inflightQuickBetsPromise;
+  return inflightQuickBetsPromises.get(key);
 }
 
-async function fetchQuickBets() {
+async function fetchQuickBets(date, lifecycle) {
   try {
-    const apiResult = await fetchQuickBetsFromApi();
+    const apiResult = await fetchQuickBetsFromApi(date, lifecycle);
     if (apiResult) return apiResult;
   } catch {
     // fall through to direct Firestore SDK read
   }
-  return fetchQuickBetsFromFirestoreSdk();
+  return fetchQuickBetsFromFirestoreSdk(date, lifecycle);
 }
 
 export async function loadTeamOptionsFromFirestore() {
@@ -140,13 +153,15 @@ async function fetchMatchDataFromApi(date = '') {
   return payload;
 }
 
-async function fetchQuickBetsFromApi() {
+async function fetchQuickBetsFromApi(date, lifecycle) {
   if (typeof window === 'undefined' || typeof fetch !== 'function') return null;
   const auth = getFirebaseAuth();
   const user = auth.currentUser;
   if (!user) return null;
   const token = await user.getIdToken();
-  const response = await fetch('/api/quick-bets', {
+  const params = new URLSearchParams({ lifecycle });
+  if (date) params.set('date', date);
+  const response = await fetch(`/api/quick-bets?${params}`, {
     headers: { Authorization: `Bearer ${token}` },
     cache: 'no-store',
   });
@@ -254,7 +269,7 @@ async function fetchMatchDataFromFirestoreSdk(date = '') {
   return parsed;
 }
 
-async function fetchQuickBetsFromFirestoreSdk() {
+async function fetchQuickBetsFromFirestoreSdk(date, lifecycle) {
   const db = getFirebaseDb();
   const metaRef = doc(db, 'dashboardData', QUICK_BETS_DOC);
   const metaSnap = await getDoc(metaRef);
@@ -264,20 +279,15 @@ async function fetchQuickBetsFromFirestoreSdk() {
   }
 
   const meta = metaSnap.data() || {};
-  const dates = Array.isArray(meta.availableDates) ? meta.availableDates : [];
-  const dateDocs = await Promise.all(
-    dates.map(async (date) => {
-      const dateRef = doc(db, 'dashboardData', QUICK_BETS_DOC, 'dates', date);
-      const dateSnap = await getDoc(dateRef);
-      return dateSnap.exists() ? dateSnap.data() : null;
-    }),
-  );
-  const matches = dateDocs.flatMap((dateDoc) => (
-    Array.isArray(dateDoc?.matches) ? dateDoc.matches : []
-  ));
+  const selectedDate = resolveQuickBetDate(meta, date, lifecycle);
+  const dateSnap = (meta.availableDates || []).includes(selectedDate)
+    ? await getDoc(doc(db, 'dashboardData', QUICK_BETS_DOC, 'dates', selectedDate)) : null;
+  if (dateSnap && !dateSnap.exists()) throw new Error('Firestore Quick Bets date document missing');
+  const matches = Array.isArray(dateSnap?.data()?.matches) ? dateSnap.data().matches : [];
 
   return {
     ...meta,
+    selectedDate,
     matches,
   };
 }

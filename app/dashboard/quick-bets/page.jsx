@@ -6,9 +6,9 @@ import AuthGate from '../../auth-gate';
 import { loadQuickBetsFromFirestore, readQuickBetsCache } from '../../firestore-data';
 import { AlertTriangle, ArrowLeft, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Loader2, ListFilter } from 'lucide-react';
 import {
-  marketSelections, quickBetMatchState, quickBetLeagueKey,
-  quickBetLeagueSuccessStats, quickBetRecordedLeagueSuccessLabel, quickBetStarDecisionLabel, normalizeQuickBetStarSnapshot,
-  quickBetSelectionSuccessLabel, quickBetStarredMarketStats, quickBetStarredSelections, quickBetStarStatText, quickBetDailyStats,
+  marketSelections, quickBetMatchState, quickBetLeagueKey, resolveQuickBetDate,
+  quickBetRecordedLeagueSuccessLabel, quickBetStarDecisionLabel,
+  quickBetSelectionSuccessLabel, quickBetStarredSelections, quickBetStarStatText, quickBetDailyStats,
 } from './quick-bets-utils.mjs';
 
 // Column set mirrors the AIOS Quick Bets table (web-legacy QUICK_BET_FILTERS): a
@@ -310,6 +310,7 @@ function MatchCard({ match, selections, leagueStats, leagueSuccessLabel }) {
 function QuickBetsInner() {
   const [data, setData] = useState(() => readQuickBetsCache());
   const [error, setError] = useState('');
+  const [dayError, setDayError] = useState('');
   const [loading, setLoading] = useState(!readQuickBetsCache());
   const [activeMarket, setActiveMarket] = useState('all');
   const [activeLifecycle, setActiveLifecycle] = useState('upcoming');
@@ -317,34 +318,42 @@ function QuickBetsInner() {
   const [isMobileViewport, setIsMobileViewport] = useState(false);
   const [mobileFiltersHidden, setMobileFiltersHidden] = useState(true);
   const [mobileSelectedDate, setMobileSelectedDate] = useState('');
+  const quickBetRequest = useRef(0);
+  const selectQuickBetDate = (date) => {
+    quickBetRequest.current += 1;
+    setMobileSelectedDate(date);
+  };
 
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
-    loadQuickBetsFromFirestore()
+    const requestId = ++quickBetRequest.current;
+    setLoading(!readQuickBetsCache());
+    loadQuickBetsFromFirestore('', activeLifecycle)
       .then((payload) => {
-        if (cancelled) return;
+        if (cancelled || requestId !== quickBetRequest.current) return;
         setData(payload);
+        setMobileSelectedDate(payload.selectedDate || '');
         setError('');
       })
       .catch(() => {
-        if (cancelled) return;
+        if (cancelled || requestId !== quickBetRequest.current) return;
         setError('Could not load Firestore quick bets. Try refreshing in a moment.');
       })
       .finally(() => {
-        if (!cancelled) setLoading(false);
+        if (!cancelled && requestId === quickBetRequest.current) setLoading(false);
       });
 
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [activeLifecycle]);
 
   const selectedFilter = MARKET_FILTERS.find((filter) => filter.key === activeMarket) || MARKET_FILTERS[0];
   const isAll = selectedFilter.key === 'all';
   const matches = Array.isArray(data?.matches) ? data.matches : [];
-  const successByLeague = useMemo(() => quickBetLeagueSuccessStats(matches, MARKET_COLUMNS), [matches]);
-  const starStatsByMarket = useMemo(() => quickBetStarredMarketStats(matches, MARKET_COLUMNS, successByLeague), [matches, successByLeague]);
+  const summary = data?.summary?.version === 1 ? data.summary : null;
+  const successByLeague = useMemo(() => new Map(), []);
+  const starStatsByMarket = useMemo(() => new Map(Object.entries(summary?.starredMarkets || {})), [summary]);
 
   // Rows for the active lifecycle. 'all' keeps every match carrying any priced
   // selection (date asc/desc, then time); a market keeps only matches with that
@@ -384,20 +393,16 @@ function QuickBetsInner() {
   [matches, successByLeague, activeLifecycle]);
   const mobileTodayDate = todayISO();
   const mobileDates = useMemo(() => {
-    const dates = activeLifecycle === 'result'
-      ? [...dailyStats.keys()] : visibleMatches.map((match) => match.date);
+    const dates = summary?.datesByLifecycle?.[activeLifecycle] || data?.availableDates || [];
     return [...new Set(dates.filter(Boolean))]
       .sort((a, b) => dateRank(a) - dateRank(b) || String(a).localeCompare(String(b)));
-  }, [activeLifecycle, dailyStats, visibleMatches]);
-  const preferredMobileDate = useMemo(() => {
-    if (!mobileDates.length) return mobileTodayDate;
-    if (mobileDates.includes(mobileTodayDate)) return mobileTodayDate;
-    return activeLifecycle === 'result' ? mobileDates[mobileDates.length - 1] : mobileDates[0];
-  }, [mobileDates, activeLifecycle, mobileTodayDate]);
+  }, [summary, data?.availableDates, activeLifecycle]);
+  const preferredMobileDate = resolveQuickBetDate(data, '', activeLifecycle, mobileTodayDate);
   const mobileCurrentDate = mobileDates.includes(mobileSelectedDate) || mobileSelectedDate === mobileTodayDate
     ? mobileSelectedDate : preferredMobileDate;
   const hasMobileResultsDay = activeLifecycle === 'result' && Boolean(mobileCurrentDate);
   const hasMobileSelectedDay = Boolean(mobileCurrentDate);
+  const selectedDayLoaded = data?.selectedDate === mobileCurrentDate;
   const mobileTimelineDates = useMemo(() => [...new Set([...mobileDates, mobileCurrentDate].filter(Boolean))]
     .sort((a, b) => dateRank(a) - dateRank(b) || String(a).localeCompare(String(b))),
   [mobileDates, mobileCurrentDate]);
@@ -414,19 +419,8 @@ function QuickBetsInner() {
   const selectionTotal = mobileMatches.reduce((total, match) => total
     + displayedSelections(match, selectionFilters, starredOnly, successByLeague).length, 0);
 
-  // Per-market hit stats over the active lifecycle, for the column headers.
-  const statsByMarket = useMemo(() => Object.fromEntries(MARKET_COLUMNS.map((filter) => {
-    const rows = matches
-      .filter((match) => match.lifecycle === activeLifecycle)
-      .map((match) => ({ match, selections: marketSelections(match, filter) }))
-      .filter(({ selections }) => selections.length);
-    return [filter.key, outcomeStats(rows)];
-  })), [matches, activeLifecycle]);
-
-  const unrecordedStars = activeLifecycle === 'result' ? matches.filter((match) => match.lifecycle === 'result')
-    .reduce((total, match) => total + MARKET_COLUMNS.flatMap((filter) => marketSelections(match, filter))
-      .filter((selection) => ['hit', 'miss'].includes(selection.result)
-        && normalizeQuickBetStarSnapshot(selection.starSnapshot)?.state !== 'captured').length, 0) : 0;
+  const statsByMarket = summary?.statsByLifecycle?.[activeLifecycle] || {};
+  const unrecordedStars = activeLifecycle === 'result' ? summary?.unrecordedStars || 0 : 0;
   const starHistorySummary = unrecordedStars ? ` · star history incomplete (${unrecordedStars} unrecorded)` : '';
   const lifecycleCounts = data?.counts || {};
   const capturedAt = data?.captured_at || data?.capturedAt || '';
@@ -470,6 +464,22 @@ function QuickBetsInner() {
     if (mobileSelectedDate && mobileSelectedDate !== mobileCurrentDate) setMobileSelectedDate(mobileCurrentDate);
   }, [mobileSelectedDate, mobileCurrentDate]);
 
+  useEffect(() => {
+    if (!data || !mobileCurrentDate) return undefined;
+    if (data.selectedDate === mobileCurrentDate) { setLoading(false); setDayError(''); return undefined; }
+    let cancelled = false;
+    const requestId = ++quickBetRequest.current;
+    const cached = readQuickBetsCache(mobileCurrentDate);
+    if (cached) setData(cached);
+    setLoading(!cached);
+    setDayError('');
+    loadQuickBetsFromFirestore(mobileCurrentDate, activeLifecycle)
+      .then((payload) => { if (!cancelled && requestId === quickBetRequest.current) setData(payload); })
+      .catch(() => { if (!cancelled && requestId === quickBetRequest.current) setDayError('Could not load this day. Select another day or refresh to retry.'); })
+      .finally(() => { if (!cancelled && requestId === quickBetRequest.current) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [mobileCurrentDate, Boolean(data), activeLifecycle]);
+
   const mobileFilterNavStyle = isMobileViewport ? {
     maxHeight: mobileFiltersHidden ? 0 : '21rem',
     opacity: mobileFiltersHidden ? 0 : 1,
@@ -510,7 +520,7 @@ function QuickBetsInner() {
                 <h1 className="text-lg font-semibold text-ink sm:text-xl">Quick Bets</h1>
               </div>
               <p className="mt-2 hidden text-[13px] font-medium text-muted lg:block">
-                {mobileMatches.length} match{mobileMatches.length === 1 ? '' : 'es'} · {selectionTotal} selection{selectionTotal === 1 ? '' : 's'}{isAll ? '' : ` · ${selectedFilter.label}`}{starredOnly ? ' · Starred' : ''}{sortSummary}{starHistorySummary}
+                {selectedDayLoaded ? mobileMatches.length : '—'} match{mobileMatches.length === 1 ? '' : 'es'} · {selectedDayLoaded ? selectionTotal : '—'} selection{selectionTotal === 1 ? '' : 's'}{isAll ? '' : ` · ${selectedFilter.label}`}{starredOnly ? ' · Starred' : ''}{sortSummary}{starHistorySummary}
               </p>
             </div>
             {capturedAt ? (
@@ -520,6 +530,7 @@ function QuickBetsInner() {
             ) : null}
           </div>
 
+          {data && !summary ? <p className="mt-2 text-[12px] text-muted" role="status">Global statistics are unavailable until the Quick Bets summary is refreshed.</p> : null}
           {coverageSummary ? <p className="mt-2 text-[12px] text-muted" role="status">{coverageSummary}</p> : null}
           {unrecordedStars > 0 ? <p className="mt-2 text-[12px] text-muted lg:hidden" role="status">Star history incomplete ({unrecordedStars} unrecorded)</p> : null}
 
@@ -528,7 +539,7 @@ function QuickBetsInner() {
               <div className="grid grid-cols-[2.25rem_minmax(0,1fr)_auto_2.25rem] items-center gap-2 text-[13px] font-normal text-ink">
                 <button
                   type="button"
-                  onClick={() => setMobileSelectedDate(mobileTimelineDates[mobileCurrentDateIndex - 1])}
+                  onClick={() => selectQuickBetDate(mobileTimelineDates[mobileCurrentDateIndex - 1])}
                   disabled={mobileCurrentDateIndex <= 0}
                   aria-label="Previous day"
                   className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-line text-muted transition hover:border-accent/40 hover:text-ink disabled:cursor-not-allowed disabled:opacity-35"
@@ -541,7 +552,7 @@ function QuickBetsInner() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => setMobileSelectedDate(mobileTodayDate)}
+                  onClick={() => selectQuickBetDate(mobileTodayDate)}
                   disabled={mobileCurrentDate === mobileTodayDate}
                   aria-label="Jump to today"
                   className="inline-flex h-9 items-center justify-center rounded-md border border-line px-2.5 text-[12px] font-semibold text-muted transition hover:border-accent/40 hover:text-ink disabled:cursor-not-allowed disabled:opacity-35"
@@ -550,7 +561,7 @@ function QuickBetsInner() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setMobileSelectedDate(mobileTimelineDates[mobileCurrentDateIndex + 1])}
+                  onClick={() => selectQuickBetDate(mobileTimelineDates[mobileCurrentDateIndex + 1])}
                   disabled={mobileCurrentDateIndex < 0 || mobileCurrentDateIndex >= mobileTimelineDates.length - 1}
                   aria-label="Next day"
                   className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-line text-muted transition hover:border-accent/40 hover:text-ink disabled:cursor-not-allowed disabled:opacity-35"
@@ -588,7 +599,7 @@ function QuickBetsInner() {
                   <button
                     key={filter.key}
                     type="button"
-                    onClick={() => { setActiveLifecycle(filter.key); setActiveMarket('all'); }}
+                    onClick={() => { if (filter.key !== activeLifecycle) { quickBetRequest.current += 1; setMobileSelectedDate(''); } setActiveLifecycle(filter.key); setActiveMarket('all'); }}
                     className={`inline-flex min-h-9 shrink-0 items-center gap-2 rounded-md border px-3 text-[13px] font-semibold transition ${
                       selected ? 'border-accent/30 bg-accent-soft text-accent' : 'border-line bg-transparent text-muted hover:border-accent/40 hover:text-accent'
                     }`}
@@ -654,6 +665,9 @@ function QuickBetsInner() {
             </div>
           ) : null}
 
+          {loading && data ? <p className="py-3 text-center text-sm text-muted" role="status">Loading this day…</p> : null}
+          {dayError ? <p className="py-3 text-center text-sm text-red-700 dark:text-red-300" role="alert">{dayError}</p> : null}
+
           {/* Mobile empty state. On desktop the message lives inside the table so the
               column-header filters stay visible (an empty market must not trap the user). */}
           {!loading && !error && visibleMatches.length === 0 && !hasMobileSelectedDay ? (
@@ -666,7 +680,7 @@ function QuickBetsInner() {
           {/* Both layouts show the selected day. */}
           {!error && hasMobileSelectedDay ? (
             <div className="space-y-2 lg:hidden">
-              {!loading && mobileMatches.length === 0 ? (
+              {selectedDayLoaded && !loading && !dayError && mobileMatches.length === 0 ? (
                 <div className="rounded-md border border-line bg-surface p-8 text-center text-sm font-normal text-muted">
                   <ListFilter className="mx-auto mb-3 h-5 w-5" aria-hidden="true" />
                   No matches for this day with the selected filters.
@@ -688,7 +702,7 @@ function QuickBetsInner() {
           {/* Desktop: market grid with column-header filters. The table (and its column-header
               filters) renders whenever any data is loaded, even if the active market is
               empty — otherwise there is no control to filter back out of an empty market. */}
-          {!error && !loading && matches.length ? (
+          {!error && data ? (
             <div className="hidden rounded-xl border border-line bg-surface lg:block">
               <table className="w-full table-fixed border-collapse text-[13px]">
                 <caption className="sr-only">Captured Sportsbet prices below 1.50 for Quick Bet {activeLifecycle} matches</caption>
@@ -739,28 +753,29 @@ function QuickBetsInner() {
                       <td className="border-y border-line px-2.5 py-2.5 shadow-[inset_2px_0_0_var(--accent)]">
                         <div className="flex items-center gap-2">
                           <button type="button" aria-label="Previous day" disabled={mobileCurrentDateIndex <= 0}
-                            onClick={() => setMobileSelectedDate(mobileTimelineDates[mobileCurrentDateIndex - 1])}
+                            onClick={() => selectQuickBetDate(mobileTimelineDates[mobileCurrentDateIndex - 1])}
                             className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-line text-muted hover:border-accent/40 hover:text-ink disabled:cursor-not-allowed disabled:opacity-35">
                             <ChevronLeft className="h-4 w-4" aria-hidden="true" />
                           </button>
                           <div className="flex min-w-0 flex-1 flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center">
                             <span className="text-[13px] font-semibold">{new Date(`${mobileCurrentDate}T00:00:00Z`).toLocaleDateString('en-AU', { weekday: 'long', timeZone: 'UTC' })} · {fmtDMY(mobileCurrentDate)}</span>
                             <button type="button" aria-label="Jump to today" disabled={mobileCurrentDate === mobileTodayDate}
-                              onClick={() => setMobileSelectedDate(mobileTodayDate)}
+                              onClick={() => selectQuickBetDate(mobileTodayDate)}
                               className="rounded-md border border-line px-2 py-1 text-[12px] text-muted hover:border-accent/40 hover:text-ink disabled:cursor-not-allowed disabled:opacity-35">Today</button>
                             <span className="flex w-full flex-wrap items-center justify-center gap-1 text-[12px] font-normal text-muted">
-                              {offeredMarkets} markets · <span className="inline-flex items-center gap-1 text-amber-800 dark:text-[var(--quick-bet-success)]"><StarIcon />{starredMarkets} starred</span>
+                              {selectedDayLoaded ? <>{offeredMarkets} markets · <span className="inline-flex items-center gap-1 text-amber-800 dark:text-[var(--quick-bet-success)]"><StarIcon />{starredMarkets} starred</span></> : dayError ? 'Unavailable' : 'Loading…'}
                             </span>
                             <DailyTotal stats={dailyStats.get(mobileCurrentDate)?.total} />
                           </div>
                           <button type="button" aria-label="Next day" disabled={mobileCurrentDateIndex < 0 || mobileCurrentDateIndex >= mobileTimelineDates.length - 1}
-                            onClick={() => setMobileSelectedDate(mobileTimelineDates[mobileCurrentDateIndex + 1])}
+                            onClick={() => selectQuickBetDate(mobileTimelineDates[mobileCurrentDateIndex + 1])}
                             className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-line text-muted hover:border-accent/40 hover:text-ink disabled:cursor-not-allowed disabled:opacity-35">
                             <ChevronRight className="h-4 w-4" aria-hidden="true" />
                           </button>
                         </div>
                       </td>
                       {MARKET_COLUMNS.map((filter) => {
+                        if (!selectedDayLoaded) return <td key={filter.key} className="border-y border-line px-1.5 py-2.5 text-center text-muted" aria-label={dayError ? 'Day unavailable' : 'Loading day'}>—</td>;
                         const offers = dayOffers.get(filter.key);
                         return (
                           <td key={filter.key} className="border-y border-line px-1.5 py-2.5 text-center">
@@ -779,7 +794,7 @@ function QuickBetsInner() {
                       })}
                     </tr>
                   ) : null}
-                  {mobileMatches.length === 0 ? (
+                  {selectedDayLoaded && !loading && !dayError && mobileMatches.length === 0 ? (
                     <tr>
                       <td colSpan={7} className="px-2.5 py-10 text-center text-[13px] text-muted">
                         No matches for this day with the selected filters.

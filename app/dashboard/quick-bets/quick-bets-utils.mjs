@@ -230,3 +230,48 @@ export function quickBetMatchState(match) {
   if (match.score) return `${match.score} · FT`;
   return ['result', 'finished'].includes(status) ? 'Settled' : 'Result pending';
 }
+
+export function buildQuickBetSummary(matches) {
+  const filters = [
+    { key: 'winner', marketKeys: ['winner'] }, { key: 'btts', marketKeys: ['btts'] },
+    ...[0.5, 1.5, 2.5, 3.5].map(line => ({ key: `goals${String(line * 10).padStart(2, '0')}`, marketKeys: ['goalsOver', 'goalsUnder'], line })),
+  ];
+  const datesByLifecycle = {};
+  const statsByLifecycle = {};
+  for (const lifecycle of ['upcoming', 'live', 'result']) {
+    const rows = matches.filter(match => match.lifecycle === lifecycle);
+    datesByLifecycle[lifecycle] = [...new Set(rows.map(match => match.date).filter(Boolean))].sort();
+    statsByLifecycle[lifecycle] = Object.fromEntries(filters.map(filter => {
+      const stats = { hits: 0, misses: 0, voids: 0 };
+      for (const match of rows) for (const selection of marketSelections(match, filter)) {
+        const outcome = ['hit', 'miss', 'void'].includes(selection.result) ? selection.result
+          : lifecycle === 'live' && ['hit', 'miss'].includes(selection.liveLock) ? selection.liveLock : '';
+        if (outcome === 'hit') stats.hits++;
+        else if (outcome === 'miss') stats.misses++;
+        else if (outcome === 'void') stats.voids++;
+      }
+      const settled = stats.hits + stats.misses;
+      return [filter.key, { ...stats, settled, rate: settled ? Math.round(stats.hits / settled * 100) : null }];
+    }));
+  }
+  const starredMarkets = Object.fromEntries(quickBetStarredMarketStats(matches, filters, new Map()));
+  const unrecordedStars = matches.filter(match => match.lifecycle === 'result').reduce((total, match) => total
+    + filters.flatMap(filter => marketSelections(match, filter)).filter(selection => ['hit', 'miss'].includes(selection.result)
+      && normalizeQuickBetStarSnapshot(selection.starSnapshot)?.state !== 'captured').length, 0);
+  return { version: 1, datesByLifecycle, statsByLifecycle, starredMarkets, unrecordedStars };
+}
+
+export function resolveQuickBetDate(meta, date = '', lifecycle = 'upcoming', today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Australia/Adelaide' }).format(new Date())) {
+  if (!['upcoming', 'live', 'result'].includes(lifecycle)) throw new Error('Invalid Quick Bets lifecycle');
+  if (date) {
+    const parsed = /^\d{4}-\d{2}-\d{2}$/.test(date) ? new Date(`${date}T00:00:00Z`) : null;
+    if (!parsed || !Number.isFinite(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== date) throw new Error('Invalid Quick Bets date');
+    return date;
+  }
+  const indexed = meta?.summary?.version === 1 ? meta.summary.datesByLifecycle?.[lifecycle] : null;
+  const dates = [...new Set((Array.isArray(indexed) ? indexed : meta?.availableDates || []).filter(Boolean))].sort();
+  if (dates.includes(today)) return today;
+  if (!dates.length) return today;
+  return lifecycle === 'upcoming' ? dates.find(value => value >= today) || dates[0]
+    : dates.filter(value => value <= today).at(-1) || dates.at(-1);
+}

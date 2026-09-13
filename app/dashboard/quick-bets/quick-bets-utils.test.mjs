@@ -130,7 +130,7 @@ test('daily stats retain full-day star hits and overall settled totals', () => {
   assert.deepEqual(quickBetDailyStats(refreshed, filters, refreshedSuccess).get('2026-08-18').markets.get('winner'), { hits: 3, settled: 3 });
   assert.deepEqual(quickBetDailyStats(refreshed, filters, refreshedSuccess).get('2026-08-17').markets.get('winner'), { hits: 2, settled: 3 });
   assert.equal(quickBetDailyStats([], filters, success).size, 0);
-  assert.match(pageSource, /const dates = activeLifecycle === 'result'\s*\? \[\.\.\.dailyStats\.keys\(\)\] : visibleMatches\.map\(\(match\) => match\.date\)/);
+  assert.match(pageSource, /const dates = summary\?\.datesByLifecycle\?\.\[activeLifecycle\] \|\| data\?\.availableDates/);
   assert.match(pageSource, /new Set\(dates\.filter\(Boolean\)\)/);
   assert.match(pageSource, /const mobileTodayDate = todayISO\(\)/);
   assert.match(pageSource, /const mobileCurrentDate = mobileDates\.includes\(mobileSelectedDate\) \|\| mobileSelectedDate === mobileTodayDate\s*\? mobileSelectedDate : preferredMobileDate/);
@@ -139,11 +139,11 @@ test('daily stats retain full-day star hits and overall settled totals', () => {
   assert.match(pageSource, /const hasMobileResultsDay = activeLifecycle === 'result' && Boolean\(mobileCurrentDate\)/);
   assert.match(pageSource, /!loading && !error && visibleMatches\.length === 0 && !hasMobileSelectedDay/);
   assert.match(pageSource, /!error && hasMobileSelectedDay/);
-  assert.match(pageSource, /!loading && mobileMatches\.length === 0/);
+  assert.match(pageSource, /!loading && !dayError && mobileMatches\.length === 0/);
   assert.match(pageSource, /No matches for this day with the selected filters\./);
   assert.match(pageSource, /const mobileMatches = mobileCurrentDate \? visibleMatches\.filter\(\(match\) => match\.date === mobileCurrentDate\) : \[\]/);
   assert.match(pageSource, /aria-label="Previous day"[\s\S]*?<ChevronLeft/);
-  assert.match(pageSource, /onClick=\{\(\) => setMobileSelectedDate\(mobileTodayDate\)\}/);
+  assert.match(pageSource, /onClick=\{\(\) => selectQuickBetDate\(mobileTodayDate\)\}/);
   assert.match(pageSource, /aria-label="Jump to today"/);
   assert.match(pageSource, />\s*Today\s*<\/button>/);
   assert.match(pageSource, /disabled=\{mobileCurrentDate === mobileTodayDate\}/);
@@ -221,7 +221,7 @@ test('team form stars apply exact five-game and market-side ownership rules', ()
 });
 
 test('desktop, filtered leagues, mobile cards and linked/static odds share the star treatment', () => {
-  assert.match(pageSource, /useMemo\(\(\) => quickBetLeagueSuccessStats\(matches, MARKET_COLUMNS\), \[matches\]\)/);
+  assert.match(pageSource, /const successByLeague = useMemo\(\(\) => new Map\(\), \[\]\)/);
   assert.equal((pageSource.match(/<OddsBadge[^>]*leagueStats=\{leagueStats\}/g) || []).length, 2);
   assert.match(pageSource, /quickBetSelectionSuccessLabel\(match, selection, leagueStats\)/);
   assert.match(pageSource, /<MatchCard[\s\S]*?leagueStats=\{successByLeague\.get/);
@@ -231,7 +231,7 @@ test('desktop, filtered leagues, mobile cards and linked/static odds share the s
   assert.match(pageSource, /<StarIcon \/>[\s\S]*?<span>Starred<\/span>/);
   assert.doesNotMatch(pageSource, /\bStar\s*}\s*from 'lucide-react'/);
   assert.ok((pageSource.match(/displayedSelections\(/g) || []).length >= 4);
-  assert.match(pageSource, /quickBetStarredMarketStats\(matches, MARKET_COLUMNS, successByLeague\)/);
+  assert.match(pageSource, /Object.entries\(summary\?\.starredMarkets \|\| \{\}\)/);
   assert.equal((pageSource.match(/<HeaderStat stats=\{stat\} \/>/g) || []).length, 2);
   assert.equal((pageSource.match(/className=\{`qb-stat-card/g) || []).length, 2);
   assert.equal((pageSource.match(/\{' · '\}/g) || []).length, 2);
@@ -278,11 +278,11 @@ test('incomplete star history stays in the mobile header outside collapsible fil
   assert.ok(!notice[1].split(/\s+/).includes('hidden'));
   assert.ok(notice.index < pageSource.indexOf('!error && hasMobileSelectedDay'));
   assert.ok(notice.index < pageSource.indexOf('data-mobile-filter-state='));
-  assert.match(pageSource, /<p className="[^"]*hidden[^"]*lg:block">\s*\{mobileMatches.length\}[\s\S]*?\{starHistorySummary\}\s*<\/p>/);
+  assert.match(pageSource, /<p className="[^"]*hidden[^"]*lg:block">\s*\{selectedDayLoaded \? mobileMatches.length : [^}]+\}[\s\S]*?\{starHistorySummary\}\s*<\/p>/);
   const countExpression = pageSource.match(/const unrecordedStars = ([\s\S]*?);/)[1];
   for (const starredOnly of [true, false]) {
     const count = vm.runInNewContext(countExpression, {
-      activeLifecycle: 'result', starredOnly, visibleMatches: [],
+      activeLifecycle: 'result', summary: { unrecordedStars: 1 }, starredOnly, visibleMatches: [],
       matches: [row({ winner: [pick()] })], MARKET_COLUMNS: filters, marketSelections,
       normalizeQuickBetStarSnapshot: () => null,
     });
@@ -336,4 +336,17 @@ test('desktop daily offers and outcomes use the full selected lifecycle day befo
   assert.match(tbody, /aria-label="Previous day"/);
   assert.match(tbody, /aria-label="Next day"/);
   assert.match(tbody, /mobileMatches\.map/);
+});
+
+
+test('empty-day messages require a successfully loaded selected day in both layouts', () => {
+  const guard = 'selectedDayLoaded && !loading && !dayError && mobileMatches.length === 0';
+  assert.equal(pageSource.split(guard).length - 1, 2);
+  for (const [selectedDayLoaded, loading, dayError, length, expected] of [
+    [false, false, '', 0, false], [true, true, '', 0, false],
+    [true, false, 'Failed', 0, false], [true, false, '', 1, false],
+    [true, false, '', 0, true],
+  ]) {
+    assert.equal(vm.runInNewContext(guard, { selectedDayLoaded, loading, dayError, mobileMatches: Array(length) }), expected);
+  }
 });
