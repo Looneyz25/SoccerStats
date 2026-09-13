@@ -415,8 +415,6 @@ function QuickBetsInner() {
     + displayedSelections(match, selectionFilters, starredOnly, successByLeague).length, 0);
 
   const statsByMarket = summary?.statsByLifecycle?.[activeLifecycle] || {};
-  const unrecordedStars = activeLifecycle === 'result' ? summary?.unrecordedStars || 0 : 0;
-  const starHistorySummary = unrecordedStars ? ` · star history incomplete (${unrecordedStars} unrecorded)` : '';
   const lifecycleCounts = data?.counts || {};
   const capturedAt = data?.captured_at || data?.capturedAt || '';
   const refreshStatus = data?.refresh_status || data?.refreshStatus || '';
@@ -514,7 +512,7 @@ function QuickBetsInner() {
                 <h1 className="text-lg font-semibold text-ink sm:text-xl">Quick Bets</h1>
               </div>
               <p className="mt-2 hidden text-[13px] font-medium text-muted lg:block">
-                {selectedDayLoaded ? mobileMatches.length : '—'} match{mobileMatches.length === 1 ? '' : 'es'} · {selectedDayLoaded ? selectionTotal : '—'} selection{selectionTotal === 1 ? '' : 's'}{isAll ? '' : ` · ${selectedFilter.label}`}{starredOnly ? ' · Starred' : ''}{sortSummary}{starHistorySummary}
+                {selectedDayLoaded ? mobileMatches.length : '—'} match{mobileMatches.length === 1 ? '' : 'es'} · {selectedDayLoaded ? selectionTotal : '—'} selection{selectionTotal === 1 ? '' : 's'}{isAll ? '' : ` · ${selectedFilter.label}`}{starredOnly ? ' · Starred' : ''}{sortSummary}
               </p>
             </div>
             {capturedAt ? (
@@ -525,7 +523,6 @@ function QuickBetsInner() {
           </div>
 
           {data && !summary ? <p className="mt-2 text-[12px] text-muted" role="status">Global statistics are unavailable until the Quick Bets summary is refreshed.</p> : null}
-          {unrecordedStars > 0 ? <p className="mt-2 text-[12px] text-muted lg:hidden" role="status">Star history incomplete ({unrecordedStars} unrecorded)</p> : null}
 
           {!error && hasMobileSelectedDay ? (
             <div className="mt-3 space-y-2 lg:hidden">

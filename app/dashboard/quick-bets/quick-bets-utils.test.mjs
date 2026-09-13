@@ -271,25 +271,6 @@ test('customer empty market labels map all six filters and preserve Starred filt
 });
 
 
-test('incomplete star history stays in the mobile header outside collapsible filters and empty-day content', () => {
-  const notice = pageSource.match(/\{unrecordedStars > 0 \? <p className="([^"]+)" role="status">Star history incomplete \(\{unrecordedStars\} unrecorded\)<\/p> : null\}/);
-  assert.ok(notice);
-  assert.ok(notice[1].split(/\s+/).includes('lg:hidden'));
-  assert.ok(!notice[1].split(/\s+/).includes('hidden'));
-  assert.ok(notice.index < pageSource.indexOf('!error && hasMobileSelectedDay'));
-  assert.ok(notice.index < pageSource.indexOf('data-mobile-filter-state='));
-  assert.match(pageSource, /<p className="[^"]*hidden[^"]*lg:block">\s*\{selectedDayLoaded \? mobileMatches.length : [^}]+\}[\s\S]*?\{starHistorySummary\}\s*<\/p>/);
-  const countExpression = pageSource.match(/const unrecordedStars = ([\s\S]*?);/)[1];
-  for (const starredOnly of [true, false]) {
-    const count = vm.runInNewContext(countExpression, {
-      activeLifecycle: 'result', summary: { unrecordedStars: 1 }, starredOnly, visibleMatches: [],
-      matches: [row({ winner: [pick()] })], MARKET_COLUMNS: filters, marketSelections,
-      normalizeQuickBetStarSnapshot: () => null,
-    });
-    assert.equal(count, 1);
-  }
-});
-
 test('a desktop league band includes later captured league evidence only from its date and league', () => {
   const snapshot = { version: 1, state: 'captured', starred: true, capturedAt: '2026-09-03T00:00:00Z', label: 'League Winner', leagueLabel: 'League Winner: 100%' };
   const first = row({ winner: [pick('miss', { starSnapshot: { ...snapshot, starred: false, label: '', leagueLabel: '' } })] }, { date: '2026-09-03' });
