@@ -260,11 +260,6 @@ function quickBetEmptyMarketLabel(match, filter, starredOnly = false) {
   })[status] || (match.lifecycle === 'upcoming' ? 'Market coverage not confirmed' : 'No captured selection');
 }
 
-function quickBetCoverageText(coverage) {
-  if (!coverage || !Number.isInteger(coverage.totalFixtures)) return '';
-  return `7-day forecast: ${coverage.checkedFixtures}/${coverage.totalFixtures} fixtures checked across 6 markets${coverage.pendingFixtures ? ` · ${coverage.pendingFixtures} pending` : ''}`;
-}
-
 function PriceCell({ match, filter, successByLeague, starredOnly }) {
   const leagueStats = successByLeague.get(quickBetLeagueKey(match.league));
   const selections = displayedSelections(match, [filter], starredOnly, successByLeague);
@@ -425,7 +420,6 @@ function QuickBetsInner() {
   const lifecycleCounts = data?.counts || {};
   const capturedAt = data?.captured_at || data?.capturedAt || '';
   const refreshStatus = data?.refresh_status || data?.refreshStatus || '';
-  const coverageSummary = activeLifecycle === 'upcoming' ? quickBetCoverageText(data?.coverage) : '';
 
   const toggleMarket = (key) => setActiveMarket((current) => (current === key ? 'all' : key));
 
@@ -531,7 +525,6 @@ function QuickBetsInner() {
           </div>
 
           {data && !summary ? <p className="mt-2 text-[12px] text-muted" role="status">Global statistics are unavailable until the Quick Bets summary is refreshed.</p> : null}
-          {coverageSummary ? <p className="mt-2 text-[12px] text-muted" role="status">{coverageSummary}</p> : null}
           {unrecordedStars > 0 ? <p className="mt-2 text-[12px] text-muted lg:hidden" role="status">Star history incomplete ({unrecordedStars} unrecorded)</p> : null}
 
           {!error && hasMobileSelectedDay ? (
