@@ -713,14 +713,14 @@ function QuickBetsInner() {
                           key={filter.key}
                           scope="col"
                           style={{ top: `calc(${headerHeight}px + 2rem + 1px)` }}
-                          className={`sticky z-10 border-b border-line bg-surface ${isIdentity ? 'text-left' : 'text-center'} align-bottom`}
+                          className={`sticky z-10 h-px border-b border-line bg-surface px-1 py-2 first:pl-2 last:pr-2 ${isIdentity ? 'text-left' : 'text-center'} align-top`}
                         >
                           <button
                             type="button"
                             onClick={() => toggleMarket(filter.key)}
                             aria-pressed={active}
                             aria-label={marketFilterAriaLabel(filter, stat, starStat)}
-                            className={`qb-stat-card flex min-h-[72px] w-full flex-col ${isIdentity ? 'items-start' : 'items-center'} gap-1 rounded-md border px-1.5 py-2 text-[12px] font-semibold transition hover:border-accent/40 hover:bg-accent-soft hover:text-accent ${
+                            className={`qb-stat-card flex h-full min-h-[72px] w-full flex-col justify-center ${isIdentity ? 'items-start' : 'items-center'} gap-1 rounded-md border px-2 py-2 text-[12px] font-semibold transition hover:border-accent/40 hover:bg-accent-soft hover:text-accent ${
                               active ? 'border-accent/30 bg-accent-soft text-accent' : 'border-line bg-surface text-muted'
                             }`}
                           >
