@@ -34,6 +34,7 @@ const GOOGLE_STORAGE_HOST = 'storage.googleapis.com';
 const THESPORTSDB_KEY = process.env.THESPORTSDB_KEY || process.env.THESPORTSDB_API_KEY || '123';
 const THESPORTSDB_BASE = `https://www.thesportsdb.com/api/v1/json/${THESPORTSDB_KEY}`;
 const FETCH_TIMEOUT_MS = Number(process.env.BADGE_FETCH_TIMEOUT_MS || 12000);
+const publicStoragePaths = new WeakMap();
 const PYTHON_BIN = process.env.PYTHON_BIN || path.join(ROOT, '.venv-local', 'Scripts', 'python.exe');
 
 const LEAGUE_BADGE_SOURCES = {
@@ -507,7 +508,7 @@ async function applyRegistryBadge(db, registryCache, kind, entity, identityParts
   return false;
 }
 
-async function writeRegistryBadge(db, registryCache, kind, entity, identityParts) {
+export async function writeRegistryBadge(db, registryCache, kind, entity, identityParts) {
   const docIds = registryDocIds(kind, entity, identityParts);
   if (!docIds.length || !isFirebaseUrl(entity?.logo)) return;
   const data = {
@@ -521,17 +522,27 @@ async function writeRegistryBadge(db, registryCache, kind, entity, identityParts
     updatedAt: FieldValue.serverTimestamp(),
   };
   for (const docId of docIds) {
+    const previous = registryCache.get(docId);
+    if (previous && ['kind', 'name', 'logo', 'storagePath', 'source', 'sourceUrl', 'verified']
+      .every((key) => previous[key] === data[key])) continue;
     await db.collection('badgeRegistry').doc(docId).set(data, { merge: true });
     registryCache.set(docId, data);
   }
 }
 
-async function useCachedImage(bucket, entity) {
+export async function useCachedImage(bucket, entity) {
   const storagePath = entity?.badge_storage_path;
   if (!storagePath) return false;
-  const file = bucket.file(storagePath);
+  let verifiedPaths = publicStoragePaths.get(bucket);
+  if (!verifiedPaths) {
+    verifiedPaths = new Set();
+    publicStoragePaths.set(bucket, verifiedPaths);
+  }
   try {
-    await file.makePublic();
+    if (!verifiedPaths.has(storagePath)) {
+      await bucket.file(storagePath).makePublic();
+      verifiedPaths.add(storagePath);
+    }
     entity.logo = managedStorageUrl(bucket.name, storagePath);
     delete entity.badge_cache_error;
     return true;
@@ -617,6 +628,7 @@ async function main() {
   if (!getApps().length) initializeApp(credentialOptions());
   const bucket = getStorage().bucket(STORAGE_BUCKET);
   const db = getFirestore();
+  db.settings({ preferRest: true });
   const registryCache = new Map();
   const results = [];
   for (const fileName of DATA_FILES) {
@@ -631,7 +643,9 @@ async function main() {
   });
 }
 
-main().catch((error) => {
-  console.error(error.message);
-  process.exit(1);
-});
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main().catch((error) => {
+    console.error(error.message);
+    process.exit(1);
+  });
+}

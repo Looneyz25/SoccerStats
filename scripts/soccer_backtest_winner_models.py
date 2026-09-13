@@ -6,8 +6,7 @@ form deques, opponent-adjusted form, no-vig bookmaker implied probabilities —
 and produce a Winner prediction from each of several candidate models. Score
 each against the actual outcome and emit a leaderboard.
 
-Use this to find a Winner formulation that beats the current Poisson + 40%
-blend (45.9% hit, -15.2% ROI on 351 settled matches).
+Use this to compare Winner formulations against the configured live predictor.
 """
 import argparse
 import json
@@ -34,6 +33,7 @@ ELO_HOME_ADV = sr.ELO_HOME_ADV
 OUT_PATH = ROOT / "docs" / "agent-system" / "outputs" / "backtest_winner_models.json"
 BOOTSTRAP_SAMPLES = 5000
 BOOTSTRAP_SEED = 20260713
+STATUS_QUO_LABEL = f"status_quo (blend={sr.WINNER_BOOKMAKER_BLEND:g})"
 
 
 # --------------------------------------------------------------------------
@@ -75,7 +75,7 @@ def pick_side(probs):
 
 
 def model_status_quo(state, m):
-    """Existing predict_enhanced with default blend=0.40."""
+    """Existing predict_enhanced with its configured bookmaker weight."""
     pred = sr.predict_enhanced(
         state["h_att"], state["h_def"], state["a_att"], state["a_def"],
         m["h_name"], m["a_name"], state["streaks"],
@@ -194,7 +194,7 @@ def paired_bootstrap_differences(rows, samples=BOOTSTRAP_SAMPLES, seed=BOOTSTRAP
         return ordered[low] + (ordered[high] - ordered[low]) * (index - low)
 
     return {
-        "model": "status_quo (blend=0.4)",
+        "model": STATUS_QUO_LABEL,
         "baseline": "bookmaker_only",
         "n": n,
         "method": "paired bootstrap percentile CI",
@@ -269,7 +269,7 @@ def run(start_date=None, matches=None, out_path=None):
     elo = {}
 
     models = {
-        "status_quo (blend=0.4)": model_status_quo,
+        STATUS_QUO_LABEL: model_status_quo,
         "bookmaker_only": model_bookmaker_only,
         "elo_two_way": model_elo_two_way_with_draw,
         "elo_strong (scale=200,cap=0.8)": model_elo_strong,
@@ -359,7 +359,7 @@ def run(start_date=None, matches=None, out_path=None):
                         score["comparison"]["brier"],
                     )
                 paired_rows.append({
-                    "model": staged_scores["status_quo (blend=0.4)"]["comparison"],
+                    "model": staged_scores[STATUS_QUO_LABEL]["comparison"],
                     "bookmaker": staged_scores["bookmaker_only"]["comparison"],
                 })
             else:

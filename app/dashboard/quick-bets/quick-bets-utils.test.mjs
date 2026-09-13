@@ -6,7 +6,7 @@ import {
   marketSelections, quickBetMatchState, quickBetLeagueKey, quickBetSuccessMarket,
   quickBetLeagueSuccessStats, quickBetSuccessLabel, quickBetLeagueSuccessLabel,
   quickBetSelectionSuccessLabel, quickBetStarredMarketStats, quickBetStarredSelections,
-  quickBetStarStatText, quickBetTeamSuccessLabels, quickBetDailyStats,
+  quickBetStarStatText, quickBetTeamSuccessLabels, quickBetDailyStats, quickBetCurrentSelectionSuccessLabel, quickBetRecordedLeagueSuccessLabel,
 } from './quick-bets-utils.mjs';
 
 const pageSource = readFileSync(new URL('./page.jsx', import.meta.url), 'utf8');
@@ -17,6 +17,15 @@ const filters = [
 const pick = (result = 'hit', extra = {}) => ({ label: 'Home', odds: 1.25, result, ...extra });
 const row = (markets, extra = {}) => ({ league: 'Premier League', lifecycle: 'result', status: 'FT', markets, ...extra });
 const statsFor = (matches, league = 'Premier League') => quickBetLeagueSuccessStats(matches, filters).get(quickBetLeagueKey(league));
+
+function recordFixtureStars(matches, success) {
+  for (const match of matches) for (const [marketKey, selections] of Object.entries(match.markets)) {
+    for (const selection of selections) {
+      const label = quickBetCurrentSelectionSuccessLabel(match, { ...selection, marketKey }, success.get(quickBetLeagueKey(match.league)));
+      selection.starSnapshot = { version: 1, state: 'captured', starred: Boolean(label), capturedAt: '2026-08-01T00:00:00Z', label, leagueLabel: '' };
+    }
+  }
+}
 
 test('success stars use exact 80 percent, not rounded rates, with no minimum sample', () => {
   const stats = statsFor(Array.from({ length: 5 }, (_, index) => row({ winner: [pick(index < 4 ? 'hit' : 'miss')] })));
@@ -78,6 +87,7 @@ test('starred market counters report hits against settled qualifying predictions
     goalsUnder: [pick(index === 0 ? 'hit' : 'miss', { line: 1.5 }), pick(index < 4 ? 'hit' : 'miss', { line: 2.5 })],
   }));
   const success = quickBetLeagueSuccessStats(history, filters);
+  recordFixtureStars(history, success);
   const starred = quickBetStarredMarketStats(history, filters, success);
   assert.deepEqual(starred.get('winner'), { hits: 4, settled: 5 });
   assert.deepEqual(starred.get('btts'), { hits: 4, settled: 5 });
@@ -104,6 +114,7 @@ test('daily stats retain full-day star hits and overall settled totals', () => {
   ignored.push(row({ winner: [pick(null, { liveLock: 'hit' }), pick('void'), pick('hit', { odds: '1.25' })] }, { date: '2026-08-18' }));
   const matches = [...history, teamOnly, zeroDay, ...ignored];
   const success = quickBetLeagueSuccessStats(matches, filters);
+  recordFixtureStars(matches, success);
   const daily = quickBetDailyStats(matches, filters, success);
   assert.deepEqual([...daily].map(([date, stats]) => [date, stats.total]), [
     ['2026-08-18', { hits: 8, settled: 9 }], ['2026-08-17', { hits: 6, settled: 12 }], ['2026-08-16', { hits: 0, settled: 1 }],
@@ -116,8 +127,8 @@ test('daily stats retain full-day star hits and overall settled totals', () => {
   assert.deepEqual(daily.get('2026-08-17').markets.get('goals15'), { hits: 2, settled: 3 });
   const refreshed = [...matches, row({ winner: [pick('miss')] }, { date: '2026-08-18' })];
   const refreshedSuccess = quickBetLeagueSuccessStats(refreshed, filters);
-  assert.deepEqual(quickBetDailyStats(refreshed, filters, refreshedSuccess).get('2026-08-18').markets.get('winner'), { hits: 2, settled: 2 });
-  assert.deepEqual(quickBetDailyStats(refreshed, filters, refreshedSuccess).get('2026-08-17').markets.get('winner'), { hits: 0, settled: 0 });
+  assert.deepEqual(quickBetDailyStats(refreshed, filters, refreshedSuccess).get('2026-08-18').markets.get('winner'), { hits: 3, settled: 3 });
+  assert.deepEqual(quickBetDailyStats(refreshed, filters, refreshedSuccess).get('2026-08-17').markets.get('winner'), { hits: 2, settled: 3 });
   assert.equal(quickBetDailyStats([], filters, success).size, 0);
   assert.match(pageSource, /const dates = activeLifecycle === 'result'\s*\? \[\.\.\.dailyStats\.keys\(\)\] : visibleMatches\.map\(\(match\) => match\.date\)/);
   assert.match(pageSource, /new Set\(dates\.filter\(Boolean\)\)/);
@@ -157,9 +168,12 @@ test('starred-only selections reuse exact qualifying league and market records',
   const upcoming = row({
     winner: [pick(null)], btts: [pick(null, { label: 'Yes' }), pick(null, { label: 'No' })],
   }, { lifecycle: 'upcoming', status: 'upcoming' });
+  recordFixtureStars([upcoming], success);
   assert.deepEqual(quickBetStarredSelections(upcoming, filters.slice(0, 2), success)
     .map((selection) => selection.label), ['Home', 'Yes']);
-  assert.deepEqual(quickBetStarredSelections({ ...upcoming, league: 'Other League' }, filters, success), []);
+  const future = structuredClone({ ...upcoming, league: 'Other League' });
+  recordFixtureStars([future], success);
+  assert.deepEqual(quickBetStarredSelections(future, filters, success), []);
 });
 
 test('team form stars apply exact five-game and market-side ownership rules', () => {
@@ -199,6 +213,7 @@ test('team form stars apply exact five-game and market-side ownership rules', ()
   const starred = row({ winner: [pick('hit', { key: 'home', label: 'Home Team' })] }, {
     league: '', home: 'Home Team', away: 'Away Team', teamForm: { home: winning, away: losing },
   });
+  recordFixtureStars([starred], new Map());
   const starStats = quickBetStarredMarketStats([starred], filters, new Map());
   assert.deepEqual(starStats.get('winner'), { hits: 1, settled: 1 });
   assert.match(quickBetSelectionSuccessLabel(starred, marketSelections(starred, filters[0])[0], undefined), /Home Team last 5/);
@@ -252,4 +267,40 @@ test('customer empty market labels map all six filters and preserve Starred filt
   }
   assert.match(pageSource, /title=\{quickBetEmptyMarketLabel\(match, filter, starredOnly\)}/);
   assert.match(pageSource, /aria-label=\{quickBetEmptyMarketLabel\(match, filter, starredOnly\)}/);
+});
+
+
+test('incomplete star history stays in the mobile header outside collapsible filters and empty-day content', () => {
+  const notice = pageSource.match(/\{unrecordedStars > 0 \? <p className="([^"]+)" role="status">Star history incomplete \(\{unrecordedStars\} unrecorded\)<\/p> : null\}/);
+  assert.ok(notice);
+  assert.ok(notice[1].split(/\s+/).includes('lg:hidden'));
+  assert.ok(!notice[1].split(/\s+/).includes('hidden'));
+  assert.ok(notice.index < pageSource.indexOf('!error && hasMobileSelectedDay'));
+  assert.ok(notice.index < pageSource.indexOf('data-mobile-filter-state='));
+  assert.match(pageSource, /<p className="[^"]*hidden[^"]*lg:block">\s*\{visibleMatches.length\}[\s\S]*?\{starHistorySummary\}\s*<\/p>/);
+  const countExpression = pageSource.match(/const unrecordedStars = ([\s\S]*?);/)[1];
+  for (const starredOnly of [true, false]) {
+    const count = vm.runInNewContext(countExpression, {
+      activeLifecycle: 'result', starredOnly, visibleMatches: [],
+      matches: [row({ winner: [pick()] })], MARKET_COLUMNS: filters, marketSelections,
+      normalizeQuickBetStarSnapshot: () => null,
+    });
+    assert.equal(count, 1);
+  }
+});
+
+test('a desktop league band includes later captured league evidence only from its date and league', () => {
+  const snapshot = { version: 1, state: 'captured', starred: true, capturedAt: '2026-09-03T00:00:00Z', label: 'League Winner', leagueLabel: 'League Winner: 100%' };
+  const first = row({ winner: [pick('miss', { starSnapshot: { ...snapshot, starred: false, label: '', leagueLabel: '' } })] }, { date: '2026-09-03' });
+  const later = row({ winner: [pick('miss', { starSnapshot: snapshot })] }, { date: first.date });
+  const otherDate = row({ winner: [pick('hit', { starSnapshot: { ...snapshot, leagueLabel: 'Different date' } })] }, { date: '2026-09-02' });
+  const otherLeague = { ...later, league: 'Other' };
+  const expression = pageSource.match(/const leagueSuccessLabel = (quickBetRecordedLeagueSuccessLabel\(showLeague[\s\S]*?);/)[1];
+  const label = (visibleMatches, showLeague = true) => vm.runInNewContext(expression, { showLeague, visibleMatches, match: first, selectionFilters: filters, quickBetRecordedLeagueSuccessLabel });
+  assert.match(label([first, later, otherDate, otherLeague]), /League Winner/);
+  assert.doesNotMatch(label([first, later, otherDate, otherLeague]), /Different date/);
+  assert.equal(label([first, otherDate, otherLeague]), '');
+  assert.equal(label([first, later], false), '');
+  assert.equal(quickBetRecordedLeagueSuccessLabel(first, filters), '');
+  assert.match(quickBetRecordedLeagueSuccessLabel(later, filters), /League Winner/);
 });

@@ -38,6 +38,21 @@ The frontend lives in [app/page.jsx](app/page.jsx) (App Router) with Tailwind st
 - **Coverage never outranks evidence.** A market keeps its row, but publishes no number when the number would have no real basis — a prior with zero observations or a cap that binds identically on every fixture is not a read. `suppress_market_without_evidence` (`scripts/soccer_routine.py`) sets `insufficient_evidence`, clears `pick`/`probability`, and keeps the computed values under `suppressed_*` for backtests; display and settlement skip those rows, so they never enter hit rates. This is why `ou_cards` with no cards history and `ou_corners` with no bookmaker corners market publish nothing — do not "restore coverage" by re-emitting the constants. Suppression applies pre-kickoff only; never alter a prediction after kickoff.
 - Treat repeated missing-market warnings as a pipeline regression, not noise — investigate the upstream feed (`scripts/soccer_routine.py`, Phase 3/4) before re-running.
 
+## Quick Bets historical ideal bets
+
+User decision, 2026-09-05: starred market predictions are a historical capture of **ideal bets when first identified before kickoff**. The 80% qualification threshold determines entry into this history; it is not a continuing condition for keeping a recorded star. This supersedes the earlier rule that allowed Upcoming stars to be demoted before kickoff.
+
+- Use the existing qualification rules to identify a new ideal bet. An unstarred Upcoming selection may become starred when it qualifies; a captured true decision must never become false because later statistics, team form or odds change.
+- Capture the exact fixture/event, market, selected side and line, first qualifying timestamp, qualifying evidence and available price at that time. Keep that original capture separate from subsequent price or form updates; never move its star to another selection.
+- Preserve the capture through Upcoming, Live and Results, including misses and voids. Settlement adds the outcome to the existing historical selection; it must not recalculate whether that selection deserved its star. A selection captured at 82%, later falling to 74% and losing, remains a starred ideal bet with a miss.
+- The Starred filter and overall star-market statistics use captured membership, not today's 80% list. Display hits / total settled, counting both hits and misses in total. Upcoming, Live, pending and void selections remain recorded but do not enter the settled denominator. Daily results apply only to their respective Results day; Upcoming shows no daily result statistics.
+- Preserve historical captures independently of a rolling forecast or quote-retention window. A missing quote or a fixture leaving the current forecast is not grounds to erase the ideal-bet record. Retain enough selection and outcome data to keep overall historical totals reproducible.
+- Keep unknown history explicitly unknown. Recover earlier decisions only from trustworthy pre-match snapshots; never use later form or match outcomes to invent an earlier ideal-bet capture.
+
+The producer owns `sportsbet_quick_bets.json.star_snapshots` through `scripts/capture_quick_bet_stars.mjs`. The uploader, `app/dashboard/quick-bets/quick-bets-utils.mjs`, and AIOS's lifecycle/API and legacy Quick Bets view must preserve the same capture. Any implementation change must verify a captured star survives a drop below 80% while still Upcoming, then a miss after settlement, with its original timestamp/evidence and inclusion in Starred totals intact.
+
+Implementation status, 2026-09-05: this documentation records the required contract. The current collector still overwrites fresh Upcoming decisions, and its existing test permits demotion; that code/test gap remains to be corrected. Historical capture retention beyond the existing rolling ledger window also requires verification. A Markdown update alone does not establish runtime enforcement.
+
 ## Prediction display rules
 
 - For two-way total markets such as goals, cards, and corners, guide the customer to the side with the stronger model probability. If the stored/displayed side is below 50%, flip the visible recommendation to the opposite side and treat the original side as a caution or conflict note.

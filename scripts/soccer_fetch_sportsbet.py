@@ -13,7 +13,7 @@ regular time only. Extra-time markets ("Match Result Including Overtime", etc.) 
 explicitly excluded.
 """
 import copy, json, math, os, re, time, pathlib, unicodedata
-import random, sys
+import random, sys, subprocess
 from datetime import datetime, timezone, timedelta
 from urllib.parse import urlparse
 from curl_cffi import requests
@@ -268,7 +268,7 @@ def extract_event_markets(ev, markets, outcomes, include_empty=False):
     Returns {market_key: {choice: decimal_price}} with keys:
         "Full time"          -> {"1","X","2"}
         "Both teams to score"-> {"Yes","No"}
-        "Draw No Bet"        -> {"1","2"}
+        "Double chance"      -> {"1X","X2","12"}
         "Match goals 2.5"    -> {"Over","Under"}
         "Cards in match 4.5" -> {"Over","Under"}
         "Corners 2-Way 9.5"  -> {"Over","Under"}
@@ -284,6 +284,7 @@ def extract_event_markets(ev, markets, outcomes, include_empty=False):
         # missed-odds reviewer can flag scraper coverage gaps (book offered a market we
         # didn't capture). Excludes non-O/U card/corner markets (e.g. "Red Card Markets").
         low = name.lower()
+        is_double_chance = low in ("double chance", "double chance 90 minutes")
         if (re.search(r"card|corner", low) and re.search(r"over|under|total", low)
                 and re.search(r"\d", name)
                 and not re.match(r"(home|away|1st half|2nd half|first half|second half)\b", low)
@@ -296,6 +297,8 @@ def extract_event_markets(ev, markets, outcomes, include_empty=False):
                 continue
             price = _outcome_price(oc)
             if price is None or price <= 1.01:
+                continue
+            if is_double_chance and not math.isfinite(price):
                 continue
             label = (oc.get("name") or "").strip()
             rt = oc.get("resultType") or ""
@@ -313,11 +316,21 @@ def extract_event_markets(ev, markets, outcomes, include_empty=False):
                 continue
             if label in ("Yes", "No"):
                 choices[label] = price
-            if name.lower() in ("draw no bet", "draw no bet 90 minutes"):
-                if rt == "H":
-                    choices["1"] = price
-                elif rt == "A":
-                    choices["2"] = price
+            if is_double_chance:
+                normalized = re.sub(r"\s+", " ", label.casefold()).strip()
+                home = str(ev.get("participant1") or "").strip().casefold()
+                away = str(ev.get("participant2") or "").strip().casefold()
+                aliases = {"1x": "1X", "x2": "X2", "12": "12",
+                           "home or draw": "1X", "draw or away": "X2",
+                           "away or draw": "X2", "home or away": "12"}
+                if home and away:
+                    aliases.update({f"{home} or draw": "1X", f"draw or {home}": "1X",
+                                    f"{away} or draw": "X2", f"draw or {away}": "X2",
+                                    f"{home} or {away}": "12", f"{away} or {home}": "12"})
+                aliases.update({label.replace(" or ", " and "): side for label, side in list(aliases.items())})
+                choice = aliases.get(normalized)
+                if choice:
+                    choices[choice] = price
                 continue
         if not choices and not include_empty:
             continue
@@ -328,9 +341,10 @@ def extract_event_markets(ev, markets, outcomes, include_empty=False):
         if name == "Both Teams To Score":
             out["Both teams to score"] = choices
             continue
-        if name.lower() in ("draw no bet", "draw no bet 90 minutes"):
-            if "1" in choices and "2" in choices:
-                out["Draw No Bet"] = choices
+        if is_double_chance:
+            choices = {side: price for side, price in choices.items() if side in ("1X", "X2", "12")}
+            if include_empty or choices:
+                out["Double chance"] = choices
             continue
         m_goals = _GOALS_MARKET_RE.match(name)
         if m_goals:
@@ -699,6 +713,9 @@ def markets_for_fixture(markets_dict, reversed_fixture=False):
                 flipped["1"] = choices.get("2")
                 flipped["2"] = choices.get("1")
             out[key] = {k: v for k, v in flipped.items() if v is not None}
+        elif key == "Double chance" and isinstance(choices, dict):
+            out[key] = {({"1X": "X2", "X2": "1X"}.get(side, side)): price
+                        for side, price in choices.items()}
         else:
             out[key] = choices
     return out
@@ -912,6 +929,21 @@ def roll_quick_bet_history(previous, current_events, now=None, leagues=None):
     return future, kept
 
 
+def capture_quick_bet_stars(payload, previous, leagues, now=None):
+    capture_input = {"sidecar": payload, "previous": previous, "leagues": leagues or []}
+    if now is not None:
+        capture_input["now"] = now.isoformat()
+    result = subprocess.run(
+        ["node", str(FOLDER / "scripts" / "capture_quick_bet_stars.mjs")],
+        input=json.dumps(capture_input),
+        encoding="utf-8", capture_output=True, check=True, timeout=60,
+    )
+    enriched = json.loads(result.stdout)
+    if not isinstance(enriched, dict) or not isinstance(enriched.get("events"), list) or not isinstance(enriched.get("history"), list):
+        raise ValueError("Invalid Quick Bets star snapshot payload")
+    return enriched
+
+
 def atomic_write_json(path, payload):
     temp_path = path.with_suffix(path.suffix + ".tmp")
     try:
@@ -1009,6 +1041,7 @@ def refresh_quick_bets(root_data, now=None, budget_seconds=None, event_limit=Non
                        fetcher=fetch_event_markets_snapshot, sleep_seconds=0.8,
                        path=QUICK_BETS_PATH, leagues=None, page_fetcher=fetch_page_data,
                        page_cache=None):
+    capture_now = now
     now = now or datetime.now(ADL)
     now = now.replace(tzinfo=ADL) if now.tzinfo is None else now.astimezone(ADL)
     now_iso = now.isoformat()
@@ -1181,6 +1214,7 @@ def refresh_quick_bets(root_data, now=None, budget_seconds=None, event_limit=Non
         },
         "events": events, "history": history,
     }
+    payload = capture_quick_bet_stars(payload, previous, leagues, capture_now)
     atomic_write_json(path, payload)
     return payload, event_market_cache
 

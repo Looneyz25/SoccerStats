@@ -320,6 +320,7 @@ Change aliases: `get:data:sportsbet`, Sportsbet root discovery, short odds, quic
 
 Primary files:
 - `scripts/soccer_fetch_sportsbet.py`
+- `scripts/capture_quick_bet_stars.mjs` (pure stdin/stdout enrichment before the existing atomic sidecar replacement)
 - `sportsbet_quick_bets.json`
 
 Depends on:
@@ -344,6 +345,13 @@ Verification / evidence:
 - Sidecar replacement is atomic. Failed root reads retain prior events as stale; bounded deep reads resume inside a durable scan generation until every member is fresh.
 - Winner freshness comes from the current root independently of deep BTTS/goals freshness.
 - Event rows cover future pre-kickoff odds inside Adelaide today through today + 6; history rows may carry live/result snapshots and contain no predictions.
+- Required contract (2026-09-05): `star_snapshots` is historical ideal-bet capture per fixture and exact selection. The first qualifying pre-match true decision, timestamp and evidence must remain through Upcoming, Live and Results, even when later qualification falls below 80% or the selection misses. Upcoming refreshes may promote a previously unstarred selection; they must never demote or overwrite a captured star.
+- Keys are `event:<validated event ID>` or `fixture:<date||normalized home|normalized away>`. The entry repeats `fixture`; `selections` maps `<marketKey>|<canonical selection key>` to version 1 captured/unknown records. Exact fixture fallback preserves a core-only capture when an event ID arrives later.
+- Captured records retain `starred`, `capturedAt`, display labels, league/team evidence, and any recovery provenance. Missing historical evidence remains unknown; it does not contribute to starred totals. Ordinary settled totals remain unchanged.
+- Overall starred hits / total counts all captured settled hits and misses, without applying today's qualification threshold. Retain captures and their outcomes independently of the rolling forecast/quote window; pending and void records remain historical records but do not enter the settled denominator. See the [historical ideal-bet contract](../CLAUDE.md#quick-bets-historical-ideal-bets).
+- Implementation gap at this documentation update: the collector/test still permits Upcoming true-to-false refreshes; retention beyond the rolling ledger window also needs verification. Acceptance must cover a first star, a subsequent pre-kickoff drop below 80%, a settled miss, unchanged original evidence and inclusion in Starred/overall history. These requirements are not a claim of completed code changes.
+- Capture reuses the uploader's pure lifecycle/team-form projection and the dashboard's qualification helpers. Production enrichment reads the helper's current clock after collection; explicit test/replay clocks remain injectable. APIs and Firestore project `starSnapshot` after identity/reversal merging; the same event/date with exactly swapped teams remaps winner home/away keys while preserving evidence. Browsers only render recorded decisions. A capture-helper failure aborts replacement and preserves the prior sidecar.
+
 
 ### Node: Manual result imports
 

@@ -122,12 +122,46 @@ export function quickBetTeamSuccessLabels(match, selection) {
   });
 }
 
-export function quickBetSelectionSuccessLabel(match, selection, leagueStats) {
+export function quickBetCurrentSelectionSuccessLabel(match, selection, leagueStats) {
   const labels = [];
   const league = quickBetSuccessLabel(leagueStats?.get(quickBetSuccessMarket(selection)));
   if (league) labels.push(`${match.league} historical Quick Bets — ${league}`);
   labels.push(...quickBetTeamSuccessLabels(match, selection));
   return labels.length ? `${labels.join('; ')}. Not a prediction.` : '';
+}
+
+export function normalizeQuickBetStarSnapshot(value) {
+  if (!value || typeof value !== 'object') return null;
+  if (value.version !== 1 || value.state !== 'captured' || typeof value.starred !== 'boolean'
+      || typeof value.capturedAt !== 'string' || !Number.isFinite(Date.parse(value.capturedAt))
+      || typeof value.label !== 'string' || (value.starred && !value.label.trim())
+      || typeof value.leagueLabel !== 'string') return { version: 1, state: 'unknown' };
+  return { version: 1, state: 'captured', starred: value.starred, capturedAt: value.capturedAt,
+    label: value.starred ? value.label : '', leagueLabel: value.starred ? value.leagueLabel : '',
+    ...(value.evidence && typeof value.evidence === 'object' ? { evidence: value.evidence } : {}),
+    ...(value.recoveredFrom && typeof value.recoveredFrom === 'object' ? { recoveredFrom: value.recoveredFrom } : {}) };
+}
+
+export function quickBetStarDecisionLabel(selection) {
+  const snapshot = normalizeQuickBetStarSnapshot(selection?.starSnapshot);
+  if (snapshot?.state !== 'captured') return 'Star at prediction not recorded';
+  return snapshot.starred ? `${snapshot.label} Star captured ${snapshot.capturedAt}.`
+    : `Not starred at prediction. Captured ${snapshot.capturedAt}.`;
+}
+
+export function quickBetSelectionSuccessLabel(match, selection, leagueStats) {
+  const snapshot = normalizeQuickBetStarSnapshot(selection?.starSnapshot);
+  return snapshot?.state === 'captured' && snapshot.starred ? quickBetStarDecisionLabel(selection) : '';
+}
+
+export function quickBetRecordedLeagueSuccessLabel(match, filters) {
+  const matches = Array.isArray(match) ? match : [match];
+  const labels = matches.flatMap((row) => filters.flatMap((filter) => marketSelections(row, filter))).flatMap((selection) => {
+    const snapshot = normalizeQuickBetStarSnapshot(selection.starSnapshot);
+    return snapshot?.state === 'captured' && snapshot.starred && snapshot.leagueLabel
+      ? [`${snapshot.leagueLabel} Star captured ${snapshot.capturedAt}.`] : [];
+  });
+  return [...new Set(labels)].join('; ');
 }
 
 export function quickBetStarredSelections(match, filters, successByLeague) {

@@ -5,6 +5,7 @@ import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 import { cert, getApps, initializeApp, applicationDefault } from 'firebase-admin/app';
 import { initializeFirestore, getFirestore, FieldValue } from 'firebase-admin/firestore';
+import { normalizeQuickBetStarSnapshot } from '../app/dashboard/quick-bets/quick-bets-utils.mjs';
 import { precomputeDisplayData } from './precompute_display_markets.mjs';
 import { marketReturnTotals, pricedMarketOdds } from './market_odds_returns.mjs';
 
@@ -65,6 +66,24 @@ function quickBetFixtureKey(match) {
   return [match.date, match.time || '', clean(match.home), clean(match.away)].join('|');
 }
 
+function quickBetSnapshotMarkets(row, sidecar) {
+  const fixture = quickBetFixtureKey({ ...row, time: '' });
+  const eventEntry = row.eventId ? sidecar?.star_snapshots?.[`event:${row.eventId}`] : null;
+  const fixtureEntry = sidecar?.star_snapshots?.[`fixture:${fixture}`];
+  const reversedFixture = quickBetFixtureKey({ ...row, time: '', home: row.away, away: row.home });
+  const reversed = eventEntry?.fixture !== fixture && eventEntry?.fixture === reversedFixture;
+  const entry = eventEntry?.fixture === fixture || reversed ? eventEntry : fixtureEntry;
+  const recorded = entry?.fixture === fixture || reversed ? entry.selections : null;
+  return Object.fromEntries(QUICK_BET_MARKETS.map((market) => [market,
+    (row.markets[market] || []).map((item) => {
+      const key = reversed && market === 'winner'
+        ? item.key === 'home' ? 'away' : item.key === 'away' ? 'home' : item.key : item.key;
+      const snapshot = normalizeQuickBetStarSnapshot(recorded?.[market + '|' + key] || item.starSnapshot);
+      return snapshot ? { ...item, starSnapshot: snapshot } : item;
+    }),
+  ]));
+}
+
 function goalLineText(line) {
   return Number(line).toString();
 }
@@ -76,7 +95,9 @@ function quickBetSelection(market, item, home, away) {
   const key = String(item.key || '').toLowerCase();
   const explicitResult = ['hit', 'miss', 'void'].includes(String(item.result || '').toLowerCase())
     ? String(item.result).toLowerCase() : null;
-  const settlement = explicitResult ? { result: explicitResult } : {};
+  const snapshot = normalizeQuickBetStarSnapshot(item.starSnapshot);
+  const settlement = { ...(explicitResult ? { result: explicitResult } : {}),
+    ...(snapshot ? { starSnapshot: snapshot } : {}) };
 
   if (market === 'winner') {
     if (!['home', 'draw', 'away'].includes(key)) return null;
@@ -574,7 +595,7 @@ export function buildQuickBetsPayload({ leagues = [], sidecar = null, now = new 
       minute: row.minute || null,
       teamForm: quickBetTeamForm(row, teamHistory),
       ...(row.marketCoverage ? { marketCoverage: row.marketCoverage } : {}),
-      markets: gradeQuickBetMarkets(row.markets, lifecycle, row.status, row.homeScore, row.awayScore),
+      markets: gradeQuickBetMarkets(quickBetSnapshotMarkets(row, sidecar), lifecycle, row.status, row.homeScore, row.awayScore),
     })];
   })
     .filter((row) => {
@@ -826,6 +847,7 @@ const MATCH_KEEP_FIELDS = [
   'date',
   'time',
   'status',
+  'prediction_locked',
   'home',
   'away',
   'predictions',
@@ -853,18 +875,21 @@ const MATCH_KEEP_FIELDS = [
 const MATCH_DROP_OK = new Set([
   'leagueId', 'leagueLogo', 'league', 'source', 'source_status', 'source_health',
   'phase_status', 'phase_notes', 'stat_backfill', 'flashscore_score', 'livescore_score',
-  'settled_at', 'settled_by_due_time', 'prediction_locked', 'prediction_locked_at',
+  'settled_at', 'settled_by_due_time', 'prediction_locked_at',
   'team_streaks', 'h2h_streaks', 'h2h_duel', 'h2h_history', 'odds_backfill_only',
   'live_minute', 'live_updated_at', 'utc_timestamp', 'sportsbet_markets',
   'bookmaker_odds_source', 'bookmaker_meta', 'merged_source_ids', 'espn_event_id',
 ]);
 
 function slimMatch(match) {
-  return Object.fromEntries(
+  const slim = Object.fromEntries(
     MATCH_KEEP_FIELDS
       .filter((key) => match[key] !== undefined && match[key] !== null)
       .map((key) => [key, match[key]]),
   );
+  const doubleChance = match.sportsbet_markets?.['Double chance'];
+  if (doubleChance) slim.sportsbet_markets = { 'Double chance': doubleChance };
+  return slim;
 }
 
 // Warn when a match carries a field that is neither uploaded nor explicitly OK to drop —
@@ -949,11 +974,14 @@ function slimLeagueDocMatch(match) {
     'void_reason',
     'prediction_locked',
   ];
-  return Object.fromEntries(
+  const slim = Object.fromEntries(
     keep
       .filter((key) => match[key] !== undefined && match[key] !== null)
       .map((key) => [key, match[key]]),
   );
+  const markets = slimMatch(match).sportsbet_markets;
+  if (markets) slim.sportsbet_markets = markets;
+  return slim;
 }
 
 function slimLeague(league, index) {
@@ -1211,7 +1239,33 @@ function unsettledMarketsForMatch(match) {
     .map(([key]) => marketLabelForIssue(match, key));
 }
 
-async function verifyFirestoreDayMarketsSettled(db, date, uploadedDates) {
+export function verifyPublishedResults(expected, published, label) {
+  const byId = new Map(published.map((match) => [String(match.id), match]));
+  for (const match of expected) {
+    const remote = byId.get(String(match.id));
+    const expectedMarkets = requiredMarketChecks(match).filter(([, market]) => market);
+    const requiresLock = match.prediction_locked === true || expectedMarkets.some(([, market]) => !market.insufficient_evidence);
+    if (match.id == null || !remote || remote.date !== match.date || remote.status !== match.status
+      || (requiresLock && remote.prediction_locked !== true)
+      || (String(match.status).toLowerCase() === 'ft' && (
+        remote.home?.goals !== match.home?.goals || remote.away?.goals !== match.away?.goals))) {
+      throw new Error(`Firestore result verification failed: ${label} ${match.id} missing or differs in status, score or prediction lock.`);
+    }
+    const remoteMarkets = new Map(requiredMarketChecks(remote));
+    for (const [key, market] of expectedMarkets) {
+      const remoteMarket = remoteMarkets.get(key);
+      if (!remoteMarket || marketResult(remoteMarket) !== marketResult(market)
+        || ['pick', 'type', 'line', 'probability', 'model_probability', 'insufficient_evidence'].some((field) =>
+          JSON.stringify(remoteMarket[field] ?? null) !== JSON.stringify(market[field] ?? null))) {
+        throw new Error(`Firestore result verification failed: ${label} ${match.id} ${key} missing or differs from the expected market.`);
+      }
+    }
+    const unsettled = unsettledMarketsForMatch(remote);
+    if (unsettled.length) throw new Error(`Firestore result verification failed: ${label} ${unsettled.join('; ')}`);
+  }
+}
+
+async function verifyFirestoreDayMarketsSettled(db, date, uploadedDates, expectedLeagues = null) {
   const dateRef = db.collection('dashboardData').doc(DOC_ID).collection('dates').doc(slugify(date, 'unknown'));
   const dateSnap = await dateRef.get();
   if (!dateSnap.exists) {
@@ -1227,6 +1281,21 @@ async function verifyFirestoreDayMarketsSettled(db, date, uploadedDates) {
 
   const dateData = dateSnap.data() || {};
   const dayMatches = flattenedMatchesFromDateDoc(dateData).filter((match) => String(match.date || '') === date);
+  if (expectedLeagues) {
+    const expected = expectedLeagues.flatMap((league) => (league.matches || []).filter((match) =>
+      match.date === date && (isFinishedStatus(match) || match.status === 'postponed_or_cancelled')));
+    verifyPublishedResults(expected, dayMatches, `date ${date}`);
+    const meta = await db.collection('dashboardData').doc(DOC_ID).get();
+    if (!meta.exists || !meta.data()?.availableDates?.includes(date)) {
+      throw new Error(`Firestore result verification failed: metadata missing date ${date}.`);
+    }
+    for (const [index, league] of expectedLeagues.entries()) {
+      const expectedMatches = (league.matches || []).filter((match) => expected.includes(match));
+      if (!expectedMatches.length) continue;
+      const leagueSnap = await db.collection('dashboardData').doc(DOC_ID).collection('leagues').doc(slugify(league.id || league.name, String(index).padStart(2, '0'))).get();
+      verifyPublishedResults(expectedMatches.map(slimLeagueDocMatch), leagueSnap.data()?.matches || [], `league ${league.name}`);
+    }
+  }
   const finishedMatches = dayMatches.filter(isFinishedStatus);
   const unsettled = finishedMatches.flatMap(unsettledMarketsForMatch);
 
@@ -1469,7 +1538,10 @@ async function main() {
   }
 
   await commitUploadOperations(db, operations);
-  await verifyFirestoreDayMarketsSettled(db, adelaideTodayIso(), new Set(dateBuckets.keys()));
+  const verificationDates = [...new Set([adelaideTodayIso(), ...(process.env.SOCCER_VERIFY_RESULT_DATES || '').split(',').filter((date) => /^\d{4}-\d{2}-\d{2}$/.test(date))])];
+  for (const date of verificationDates) {
+    await verifyFirestoreDayMarketsSettled(db, date, new Set(dateBuckets.keys()), process.env.SOCCER_VERIFY_RESULT_DATES ? leagues : null);
+  }
   console.log(`Uploaded ${dataPath} to Firestore dashboardData/${DOC_ID} as ${leagues.length} league docs and ${dateBuckets.size} date docs.`);
   if (fastOverflow) {
     console.log(`Uploaded fast dashboard doc dashboardData/${FAST_DOC_ID} as metadata-only fallback (${(fastByteLength / 1024).toFixed(1)} KB); app will use date/league docs.`);

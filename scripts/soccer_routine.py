@@ -100,7 +100,7 @@ AWAY_LAMBDA_ADJ = -0.15
 BTTS_YES_THRESHOLD = 0.56
 GOAL_MARKET_BOOKMAKER_BLEND = 0.50
 GOALS_OVER_PICK_THRESHOLD = 0.50
-WINNER_BOOKMAKER_BLEND = 0.40
+WINNER_BOOKMAKER_BLEND = 0.70
 DRAW_MIN_PROBABILITY = 0.28
 DRAW_MAX_HOME_AWAY_GAP = 0.15
 DRAW_MAX_FAVOURITE_GAP = 0.15
@@ -3318,6 +3318,15 @@ def pre_match_prediction_refresh_reason(match, predictions, odds, market_context
         current_winner_odds = to_float(winner.get("odds"))
         if expected_winner_odds is not None and current_winner_odds is None:
             return "winner_odds_missing"
+    current_book = bookmaker_three_way_probabilities(odds)
+    if current_book and match_kickoff_datetime(match) is not None:
+        if winner.get("bookmaker_blend_weight") != WINNER_BOOKMAKER_BLEND:
+            return "winner_calibration_changed"
+        previous_book = winner.get("bookmaker_probabilities") or {}
+        if any(to_float(previous_book.get(side)) is None or not math.isfinite(float(previous_book[side])) for side in ("home", "draw", "away")):
+            return "winner_bookmaker_snapshot_missing"
+        if any(abs(float(previous_book[side]) - current_book[side]) >= 0.01 for side in ("home", "draw", "away")):
+            return "winner_bookmaker_price_changed"
     if has_two_way_goal_markets(match) and factors.get("goal_market_bookmaker_blend") != GOAL_MARKET_BOOKMAKER_BLEND:
         return "goal_market_bookmaker_blend"
     if factors.get("data_quality") == "Data weak" and (odds or market_context):

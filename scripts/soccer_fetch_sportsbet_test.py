@@ -8,6 +8,7 @@ from unittest.mock import patch
 from zoneinfo import ZoneInfo
 
 import soccer_fetch_sportsbet as sportsbet
+import soccer_fetch_pred_odds as pred_odds
 
 
 ADL = ZoneInfo("Australia/Adelaide")
@@ -59,7 +60,126 @@ def deep_snapshot(_url):
     }, [], True
 
 
+class SportsbetDoubleChanceTests(unittest.TestCase):
+    def extract(self, labels, market_name="Double Chance", include_empty=False):
+        event = {"participant1": "Arsenal", "participant2": "Chelsea", "marketIds": [1]}
+        outcomes = dict(price_outcome(index, label, price) for index, (label, price) in enumerate(labels))
+        market = {"1": {"name": market_name, "outcomeIds": list(outcomes)}}
+        return sportsbet.extract_event_markets(event, market, outcomes, include_empty)[0]
+
+    def test_normalizes_all_double_chance_aliases(self):
+        for labels in [("1X", "X2", "12"), ("Home or Draw", "Draw or Away", "Home or Away"),
+                       ("Arsenal or Draw", "Chelsea or Draw", "Arsenal or Chelsea"),
+                       ("Arsenal And Draw", "Chelsea And Draw", "Arsenal And Chelsea"),
+                       ("Draw or Arsenal", "Draw or Chelsea", "Chelsea or Arsenal")]:
+            with self.subTest(labels=labels):
+                self.assertEqual(self.extract(zip(labels, (20, 30, 40))),
+                                 {"Double chance": {"1X": 1.2, "X2": 1.3, "12": 1.4}})
+
+    def test_excludes_dnb_and_non_regular_time_markets(self):
+        for name in ("Draw No Bet", "Draw No Bet 90 Minutes", "First Half Double Chance",
+                     "Double Chance Including Extra Time", "Double Chance Extra Time"):
+            with self.subTest(name=name):
+                self.assertEqual(self.extract([("1X", 20), ("X2", 30), ("12", 40)], name, True), {})
+        self.assertEqual(self.extract([("1X", 20)], "Double Chance 90 Minutes"),
+                         {"Double chance": {"1X": 1.2}})
+
+    def test_partial_missing_and_invalid_prices_or_labels(self):
+        for bad in (None, 0, -100, float("inf"), float("nan"), "suspended"):
+            with self.subTest(bad=bad):
+                self.assertEqual(self.extract([("1X", 20), ("X2", bad)]), {"Double chance": {"1X": 1.2}})
+        malformed = [("Yes", 20), ("No", 30), ("Over 2.5", 40), ("Under 2.5", 50)]
+        self.assertEqual(self.extract(malformed), {})
+        self.assertEqual(self.extract(malformed, include_empty=True), {"Double chance": {}})
+        self.assertEqual(self.extract([], include_empty=True), {"Double chance": {}})
+
+    def test_reversed_fixture_swaps_double_chance_and_preserves_other_markets(self):
+        markets = {"Double chance": {"1X": 1.2, "X2": 1.3, "12": 1.4},
+                   "Both teams to score": {"Yes": 1.6}, "Full time": {"1": 2.0, "X": 3.0, "2": 4.0}}
+        original = copy.deepcopy(markets)
+        self.assertIs(sportsbet.markets_for_fixture(markets), markets)
+        reversed_markets = sportsbet.markets_for_fixture(markets, True)
+        self.assertEqual(reversed_markets["Double chance"], {"1X": 1.3, "X2": 1.2, "12": 1.4})
+        self.assertEqual(reversed_markets["Both teams to score"], markets["Both teams to score"])
+        self.assertEqual(reversed_markets["Full time"], {"1": 4.0, "X": 3.0, "2": 2.0})
+        self.assertEqual(markets, original)
+
+    def test_attachment_ignores_new_dnb_and_preserves_existing_markets(self):
+        match = {"sportsbet_markets": {"Double chance": {"X2": 1.6}, "Draw No Bet": {"1": 1.8, "2": 2.2},
+                                       "Both teams to score": {"Yes": 1.9}}}
+        self.assertEqual(pred_odds.attach_pred_odds(match, {"Double Chance": {"1X": 1.3, "12": 1.4},
+                                                          "Draw No Bet": {"1": 1.1, "2": 9.0}}), 2)
+        self.assertEqual(match["sportsbet_markets"], {"Double chance": {"1X": 1.3, "X2": 1.6, "12": 1.4},
+                                                    "Draw No Bet": {"1": 1.8, "2": 2.2},
+                                                    "Both teams to score": {"Yes": 1.9}})
+        empty = {}
+        self.assertEqual(pred_odds.attach_pred_odds(empty, {"Draw No Bet": {"1": 1.1, "2": 9.0}}), 0)
+        self.assertNotIn("sportsbet_markets", empty)
+
+    def test_attachment_rejects_invalid_prices_and_unknown_choices(self):
+        for bad in (None, 1.0, -1, float("inf"), float("nan"), "suspended"):
+            with self.subTest(bad=bad):
+                match = {}
+                self.assertEqual(pred_odds.attach_double_chance_odds(match,
+                                 {"Double chance": {"1X": 1.2, "X2": bad, "Yes": 1.5}}), 1)
+                self.assertEqual(match["sportsbet_markets"], {"Double chance": {"1X": 1.2}})
+
+
 class SportsbetQuickBetsTests(unittest.TestCase):
+    def test_production_capture_uses_completion_clock_and_preserves_started_decisions(self):
+        start = datetime(2026, 9, 4, 9, 0, tzinfo=ADL)
+        completion = start + timedelta(hours=1, minutes=1)
+        payload = root_payload(start, (101, 102, 103))
+        for event in payload["entities"]["sportsbook"]["events"].values():
+            event["startTime"]["milliseconds"] = int((start + timedelta(hours=1)).timestamp() * 1000)
+        decisions = {str(event_id): {"version": 1, "state": "captured", "starred": starred,
+            "capturedAt": "2026-09-03T23:20:00Z", "label": "Prior star" if starred else "", "leagueLabel": "",
+            "evidence": {"home": f"Home {event_id}"}, "recoveredFrom": {"source": "saved-feed"}}
+            for event_id, starred in [(101, True), (102, False)]}
+        previous = {"events": [], "history": [], "star_snapshots": {
+            f"event:{event_id}": {"fixture": f"2026-09-04||home {event_id}|away {event_id}", "selections": {"winner|home": decision}}
+            for event_id, decision in decisions.items()}}
+        real_run = sportsbet.subprocess.run
+        captures = []
+
+        def computed_after_collection(command, **kwargs):
+            captured = json.loads(kwargs["input"])
+            captures.append(copy.deepcopy(captured))
+            self.assertNotIn("now", captured, "production must leave the helper to read its real computation clock")
+            captured["now"] = completion.isoformat()
+            kwargs["input"] = json.dumps(captured)
+            return real_run(command, **kwargs)
+
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "sportsbet_quick_bets.json"
+            path.write_text(json.dumps(previous), encoding="utf-8")
+            with patch.object(sportsbet, "datetime", wraps=datetime) as clock, patch.object(sportsbet.subprocess, "run", side_effect=computed_after_collection):
+                clock.now.return_value = start
+                result, _ = sportsbet.refresh_quick_bets(payload, path=path, fetcher=deep_snapshot, sleep_seconds=0)
+            self.assertEqual(len(captures), 1)
+            for event_id, decision in decisions.items():
+                self.assertEqual(result["star_snapshots"][f"event:{event_id}"]["selections"]["winner|home"], decision)
+            self.assertEqual(result["star_snapshots"]["event:103"]["selections"]["winner|home"], {"version": 1, "state": "unknown"})
+            explicit = start + timedelta(minutes=30)
+            refreshed, _ = sportsbet.refresh_quick_bets(payload, now=explicit, path=path, fetcher=deep_snapshot, sleep_seconds=0)
+            snapshot = refreshed["star_snapshots"]["event:103"]["selections"]["winner|home"]
+            self.assertEqual(snapshot["state"], "captured")
+            self.assertEqual(datetime.fromisoformat(snapshot["capturedAt"].replace("Z", "+00:00")), explicit)
+
+
+    def test_star_capture_failure_leaves_existing_atomic_sidecar_unchanged(self):
+        now = datetime(2026, 9, 4, 9, 0, tzinfo=ADL)
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "sportsbet_quick_bets.json"
+            previous = {"events": [], "history": [], "star_snapshots": {"fixture:kept": {"fixture": "kept", "selections": {}}}}
+            original = json.dumps(previous).encode("utf-8")
+            path.write_bytes(original)
+            with patch.object(sportsbet, "capture_quick_bet_stars", side_effect=RuntimeError("snapshot helper unavailable")):
+                with self.assertRaisesRegex(RuntimeError, "snapshot helper unavailable"):
+                    sportsbet.refresh_quick_bets(root_payload(now), now=now, path=path, fetcher=deep_snapshot, sleep_seconds=0)
+            self.assertEqual(path.read_bytes(), original)
+            self.assertFalse(path.with_suffix(".json.tmp").exists())
+
     def test_event_results_fetch_requires_numeric_exact_id_and_markets_array(self):
         calls = []
         original_get = sportsbet.requests.get

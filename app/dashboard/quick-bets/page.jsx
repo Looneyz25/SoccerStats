@@ -7,7 +7,7 @@ import { loadQuickBetsFromFirestore, readQuickBetsCache } from '../../firestore-
 import { AlertTriangle, ArrowLeft, ChevronDown, ChevronLeft, ChevronRight, ChevronUp, Loader2, ListFilter } from 'lucide-react';
 import {
   marketSelections, quickBetMatchState, quickBetLeagueKey,
-  quickBetLeagueSuccessStats, quickBetLeagueSuccessLabel,
+  quickBetLeagueSuccessStats, quickBetRecordedLeagueSuccessLabel, quickBetStarDecisionLabel, normalizeQuickBetStarSnapshot,
   quickBetSelectionSuccessLabel, quickBetStarredMarketStats, quickBetStarredSelections, quickBetStarStatText, quickBetDailyStats,
 } from './quick-bets-utils.mjs';
 
@@ -111,27 +111,26 @@ function headerStatText(stats) {
 
 function headerStatTone(stats) {
   if (!stats?.settled) return '';
-  return stats.hits / stats.settled >= 0.5 ? 'text-[#34d399]' : 'text-[#f2545b]';
+  return stats.hits / stats.settled >= 0.5 ? 'text-emerald-700 dark:text-emerald-300' : 'text-red-700 dark:text-red-300';
 }
 
 function HeaderStat({ stats }) {
   if (!headerStatText(stats)) return null;
   return (
-    <span className={`flex flex-wrap items-center justify-center gap-x-1 gap-y-0.5 font-mono text-[11px] font-normal tabular-nums tracking-normal ${headerStatTone(stats)}`} aria-hidden="true">
+    <span className={`flex flex-wrap items-center justify-center gap-x-1 gap-y-0.5 text-[11px] font-normal tabular-nums tracking-normal ${headerStatTone(stats)}`} aria-hidden="true">
       <span className="font-semibold">{stats.hits} / {stats.misses}</span>
-      {stats.rate != null ? <><span className="font-normal text-[#48484f]">{' · '}</span><span className="rounded-[3px] border border-[#48484f] bg-[#111111] px-1 py-px text-[10px] font-semibold">{stats.rate}%</span></> : null}
-      {stats.voids ? <><span className="font-normal text-[#48484f]">{' · '}</span><span className="text-[10px] font-medium text-[#8c8c96]">void {stats.voids}</span></> : null}
+      {stats.rate != null ? <><span className="font-normal text-faint">{' · '}</span><span className="rounded border border-line bg-field px-1 py-px text-[10px] font-semibold">{stats.rate}%</span></> : null}
+      {stats.voids ? <><span className="font-normal text-faint">{' · '}</span><span className="text-[10px] font-medium text-muted">void {stats.voids}</span></> : null}
     </span>
   );
 }
 
-// AIOS qb-odds-badge tones (color-mix ~45% border / ~8% fill of blue/green/red).
+// Outcome colours follow the dashboard; pending prices use the shared accent.
 function badgeClasses(tone) {
-  if (tone === 'hit') return 'border-[#34d399]/45 bg-[#34d399]/[0.08] text-[#34d399]';
-  if (tone === 'miss') return 'border-[#f2545b]/45 bg-[#f2545b]/[0.08] text-[#f2545b]';
-  if (tone === 'void') return 'border-[#48484f] bg-transparent text-[#8c8c96]';
-  // pending + live both read blue in AIOS.
-  return 'border-[#5aa2f0]/45 bg-[#5aa2f0]/[0.08] text-[#5aa2f0]';
+  if (tone === 'hit') return 'result-hit-row text-emerald-800 dark:text-emerald-300';
+  if (tone === 'miss') return 'border-red-400 bg-red-100 text-red-700 dark:border-red-500/40 dark:bg-red-500/15 dark:text-red-300';
+  if (tone === 'void') return 'border-line bg-transparent text-muted';
+  return 'border-accent/30 bg-accent-soft text-accent';
 }
 
 function safeSportsbetUrl(value) {
@@ -188,7 +187,7 @@ function StarIcon() {
 function SuccessStar({ label }) {
   if (!label) return null;
   return (
-    <span className="qb-success-star ml-1 inline-flex shrink-0 items-center align-[-0.1em] text-[12px] text-[var(--quick-bet-success)]" role="img" title={label} aria-label={label}>
+    <span className="qb-success-star ml-1 inline-flex shrink-0 items-center align-[-0.1em] text-[12px] text-amber-800 dark:text-[var(--quick-bet-success)]" role="img" title={label} aria-label={label}>
       <StarIcon />
     </span>
   );
@@ -197,13 +196,13 @@ function SuccessStar({ label }) {
 function StarCounter({ stats }) {
   const text = quickBetStarStatText(stats);
   if (!text) return null;
-  return <span className="mt-0.5 inline-flex w-full items-center justify-center gap-1 border-t border-[#f3bc63]/20 pt-1 text-[11px] font-medium tabular-nums tracking-normal text-[var(--quick-bet-success)]" aria-hidden="true"><StarIcon />{text}</span>;
+  return <span className="mt-0.5 inline-flex w-full items-center justify-center gap-1 border-t border-line pt-1 text-[11px] font-medium tabular-nums tracking-normal text-amber-800 dark:text-[var(--quick-bet-success)]" aria-hidden="true"><StarIcon />{text}</span>;
 }
 
 function DailyStarStats({ stats, label }) {
   if (!stats) return null;
   return (
-    <span className="qb-day-stat inline-flex items-center gap-1 whitespace-nowrap text-[12px] font-normal tabular-nums tracking-normal text-[var(--quick-bet-success)]" role="img" aria-label={`${label}: ${stats.hits} starred hits from ${stats.settled} settled predictions`}>
+    <span className="qb-day-stat inline-flex items-center gap-1 whitespace-nowrap text-[12px] font-normal tabular-nums tracking-normal text-amber-800 dark:text-[var(--quick-bet-success)]" role="img" aria-label={`${label}: ${stats.hits} starred hits from ${stats.settled} settled predictions`}>
       <StarIcon /><span className="qb-day-stat-value" aria-hidden="true">{stats.hits} / {stats.settled}</span>
     </span>
   );
@@ -211,7 +210,7 @@ function DailyStarStats({ stats, label }) {
 
 function DailyTotal({ stats }) {
   if (!stats) return null;
-  return <span className="qb-day-total whitespace-nowrap text-[12px] font-normal tabular-nums tracking-normal text-[#a8a8b2]" role="img" aria-label={`${stats.hits} hits from ${stats.settled} settled bets`}><span aria-hidden="true">Total {stats.hits} / {stats.settled}</span></span>;
+  return <span className="qb-day-total whitespace-nowrap text-[12px] font-normal tabular-nums tracking-normal text-muted" role="img" aria-label={`${stats.hits} hits from ${stats.settled} settled bets`}><span aria-hidden="true">Total {stats.hits} / {stats.settled}</span></span>;
 }
 
 function marketFilterAriaLabel(filter, stats, starStats) {
@@ -226,18 +225,19 @@ function OddsBadge({ match, selection, leagueStats }) {
   const tone = selectionTone(selection, match);
   const text = `${badgeText(selection)} @${formatOdds(selection.odds)}`;
   const historyLabel = quickBetSelectionSuccessLabel(match, selection, leagueStats);
-  const ariaLabel = historyLabel ? `${text}; ${historyLabel}` : undefined;
-  const cls = `inline-flex items-center rounded-none border px-1.5 py-0.5 text-[12px] font-medium tabular-nums ${badgeClasses(tone)}`;
+  const decisionLabel = quickBetStarDecisionLabel(selection);
+  const ariaLabel = `${text}; ${decisionLabel}`;
+  const cls = `inline-flex items-center rounded-md border px-1.5 py-0.5 font-mono text-xs font-semibold tabular-nums ${badgeClasses(tone)}`;
   if (!href) {
-    return <span className={`${cls} cursor-default`} aria-label={ariaLabel}>{text}<SuccessStar label={historyLabel} /></span>;
+    return <span className={`${cls} cursor-default`} title={decisionLabel} aria-label={ariaLabel}>{text}<SuccessStar label={historyLabel} /></span>;
   }
   return (
     <a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className={`${cls} no-underline transition hover:brightness-125 active:translate-y-px`}
-      title="Open this match on Sportsbet"
+      className={`${cls} no-underline transition hover:brightness-110 active:translate-y-px`}
+      title={`${decisionLabel}. Open this match on Sportsbet`}
       aria-label={ariaLabel}
     >
       {text}
@@ -269,7 +269,7 @@ function PriceCell({ match, filter, successByLeague, starredOnly }) {
   const leagueStats = successByLeague.get(quickBetLeagueKey(match.league));
   const selections = displayedSelections(match, [filter], starredOnly, successByLeague);
   return (
-    <td className="border-b border-white/[0.035] px-1.5 py-2 text-center align-middle">
+    <td className="border-b border-line px-1.5 py-2 text-center align-middle">
       {selections.length ? (
         <span className="flex flex-wrap justify-center gap-0.5">
           {selections.map((selection, index) => (
@@ -277,7 +277,7 @@ function PriceCell({ match, filter, successByLeague, starredOnly }) {
           ))}
         </span>
       ) : (
-        <span className="text-[#8c8c96]" title={quickBetEmptyMarketLabel(match, filter, starredOnly)} aria-label={quickBetEmptyMarketLabel(match, filter, starredOnly)}>—</span>
+        <span className="text-muted" title={quickBetEmptyMarketLabel(match, filter, starredOnly)} aria-label={quickBetEmptyMarketLabel(match, filter, starredOnly)}>—</span>
       )}
     </td>
   );
@@ -287,13 +287,13 @@ function PriceCell({ match, filter, successByLeague, starredOnly }) {
 // selections (or every market when the 'all' column is selected).
 function MatchCard({ match, selections, leagueStats, leagueSuccessLabel }) {
   return (
-    <article className="rounded-md border border-[#38383d] bg-[#171717] p-3">
+    <article className="rounded-xl border border-line bg-surface p-3 shadow-sm">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <div className="text-[10px] font-normal uppercase tracking-wide text-[#8c8c96]">{match.league || 'Soccer'}<SuccessStar label={leagueSuccessLabel} /></div>
-          <div className="mt-1 text-sm font-normal text-white">
+          <div className="text-[10px] font-semibold text-muted">{match.league || 'Soccer'}<SuccessStar label={leagueSuccessLabel} /></div>
+          <div className="mt-1 text-sm font-normal text-ink">
             <span>{match.home}</span>
-            <b className="px-2 font-mono font-normal text-[#8c8c96]">{quickBetMatchState(match)}</b>
+            <b className="px-2 font-mono font-normal text-muted">{quickBetMatchState(match)}</b>
             <span>{match.away}</span>
           </div>
         </div>
@@ -415,6 +415,11 @@ function QuickBetsInner() {
     return [filter.key, outcomeStats(rows)];
   })), [matches, activeLifecycle]);
 
+  const unrecordedStars = activeLifecycle === 'result' ? matches.filter((match) => match.lifecycle === 'result')
+    .reduce((total, match) => total + MARKET_COLUMNS.flatMap((filter) => marketSelections(match, filter))
+      .filter((selection) => ['hit', 'miss'].includes(selection.result)
+        && normalizeQuickBetStarSnapshot(selection.starSnapshot)?.state !== 'captured').length, 0) : 0;
+  const starHistorySummary = unrecordedStars ? ` · star history incomplete (${unrecordedStars} unrecorded)` : '';
   const lifecycleCounts = data?.counts || {};
   const capturedAt = data?.captured_at || data?.capturedAt || '';
   const refreshStatus = data?.refresh_status || data?.refreshStatus || '';
@@ -427,9 +432,8 @@ function QuickBetsInner() {
     ? isAll ? 'No starred markets for this state.' : `No starred ${selectedFilter.label} odds for this state.`
     : isAll ? 'No Quick Bets for this state.' : `No matches with ${selectedFilter.label} odds.`;
 
-  // The page header is sticky at top:0; the table column headers stick directly
-  // beneath it. Measure the header's live height (it reflows with viewport width)
-  // so the sticky offset stays exact instead of a brittle magic number.
+  // Sticky offsets preserve the page's 1rem top inset and 1rem table gap.
+  // The header height is measured because its content reflows with viewport width.
   const headerRef = useRef(null);
   const [headerHeight, setHeaderHeight] = useState(0);
   useEffect(() => {
@@ -466,16 +470,16 @@ function QuickBetsInner() {
   } : undefined;
 
   return (
-    <main className="min-h-dvh bg-[#111111] font-mono text-[#fafafa]">
+    <main className="min-h-dvh bg-field text-ink">
       <div className="mx-auto flex min-h-dvh w-full max-w-[112rem] flex-col px-3 py-4 sm:px-5 lg:px-8">
-        <header ref={headerRef} className="sticky top-0 z-20 border-b border-[#38383d] bg-[#111111]/95 pb-2 pt-1 backdrop-blur lg:pb-3">
+        <header ref={headerRef} className="sticky top-4 z-20 rounded-xl border border-line bg-surface px-3 py-3 shadow-[0_-1rem_0_var(--surface-2),0_1rem_0_var(--surface-2)] sm:px-4">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
             <div className="min-w-0">
               <div className="flex items-center justify-between gap-2">
                 <Link
                   href="/dashboard"
                   aria-label="Back to dashboard"
-                  className="inline-flex h-9 items-center justify-center gap-2 rounded-none border border-[#38383d] px-3 text-[13px] text-[#a8a8b2] transition hover:border-[#5aa2f0]/45 hover:text-white active:translate-y-px lg:h-auto lg:w-auto lg:justify-start lg:border-0 lg:px-0"
+                  className="inline-flex h-9 items-center justify-center gap-2 rounded-md border border-line px-3 text-[13px] text-muted transition hover:border-accent/40 hover:text-ink active:translate-y-px lg:h-auto lg:w-auto lg:justify-start lg:border-0 lg:px-0"
                 >
                   <ArrowLeft className="h-4 w-4" aria-hidden="true" />
                   <span className="lg:hidden">Back</span>
@@ -486,7 +490,7 @@ function QuickBetsInner() {
                   onClick={() => setMobileFiltersHidden((current) => !current)}
                   aria-label={mobileFiltersHidden ? 'Show filters' : 'Hide filters'}
                   aria-expanded={!mobileFiltersHidden}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-none border border-[#38383d] text-[#a8a8b2] transition hover:border-[#5aa2f0]/45 hover:text-white active:translate-y-px lg:hidden"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-line text-muted transition hover:border-accent/40 hover:text-ink active:translate-y-px lg:hidden"
                 >
                   {mobileFiltersHidden ? (
                     <ChevronDown className="h-4 w-4" aria-hidden="true" />
@@ -496,30 +500,31 @@ function QuickBetsInner() {
                 </button>
               </div>
               <div className="mt-3 hidden flex-wrap items-center gap-3 lg:flex">
-                <h1 className="text-lg font-normal uppercase tracking-wide text-white sm:text-xl">Quick Bets</h1>
+                <h1 className="text-lg font-semibold text-ink sm:text-xl">Quick Bets</h1>
               </div>
-              <p className="mt-2 hidden text-[13px] font-medium text-[#8c8c96] lg:block">
-                {visibleMatches.length} match{visibleMatches.length === 1 ? '' : 'es'} · {selectionTotal} selection{selectionTotal === 1 ? '' : 's'}{isAll ? '' : ` · ${selectedFilter.label}`}{starredOnly ? ' · Starred' : ''}{sortSummary}
+              <p className="mt-2 hidden text-[13px] font-medium text-muted lg:block">
+                {visibleMatches.length} match{visibleMatches.length === 1 ? '' : 'es'} · {selectionTotal} selection{selectionTotal === 1 ? '' : 's'}{isAll ? '' : ` · ${selectedFilter.label}`}{starredOnly ? ' · Starred' : ''}{sortSummary}{starHistorySummary}
               </p>
             </div>
             {capturedAt ? (
-              <p className="hidden text-[12px] font-medium text-[#8c8c96] lg:block">
+              <p className="hidden text-[12px] font-medium text-muted lg:block">
                 captured {capturedAt}{refreshStatus && refreshStatus !== 'complete' ? ` · ${refreshStatus}` : ''}
               </p>
             ) : null}
           </div>
 
-          {coverageSummary ? <p className="mt-2 text-[12px] text-[#8c8c96]" role="status">{coverageSummary}</p> : null}
+          {coverageSummary ? <p className="mt-2 text-[12px] text-muted" role="status">{coverageSummary}</p> : null}
+          {unrecordedStars > 0 ? <p className="mt-2 text-[12px] text-muted lg:hidden" role="status">Star history incomplete ({unrecordedStars} unrecorded)</p> : null}
 
           {!error && hasMobileSelectedDay ? (
             <div className="mt-3 space-y-2 lg:hidden">
-              <div className="grid grid-cols-[2.25rem_minmax(0,1fr)_auto_2.25rem] items-center gap-2 text-[13px] font-normal text-white">
+              <div className="grid grid-cols-[2.25rem_minmax(0,1fr)_auto_2.25rem] items-center gap-2 text-[13px] font-normal text-ink">
                 <button
                   type="button"
                   onClick={() => setMobileSelectedDate(mobileTimelineDates[mobileCurrentDateIndex - 1])}
                   disabled={mobileCurrentDateIndex <= 0}
                   aria-label="Previous day"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-none border border-[#38383d] text-[#a8a8b2] transition hover:border-[#5aa2f0]/45 hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-line text-muted transition hover:border-accent/40 hover:text-ink disabled:cursor-not-allowed disabled:opacity-35"
                 >
                   <ChevronLeft className="h-4 w-4" aria-hidden="true" />
                 </button>
@@ -532,7 +537,7 @@ function QuickBetsInner() {
                   onClick={() => setMobileSelectedDate(mobileTodayDate)}
                   disabled={mobileCurrentDate === mobileTodayDate}
                   aria-label="Jump to today"
-                  className="inline-flex h-9 items-center justify-center rounded-none border border-[#38383d] px-2.5 text-[12px] font-normal uppercase tracking-wide text-[#a8a8b2] transition hover:border-[#5aa2f0]/45 hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
+                  className="inline-flex h-9 items-center justify-center rounded-md border border-line px-2.5 text-[12px] font-semibold text-muted transition hover:border-accent/40 hover:text-ink disabled:cursor-not-allowed disabled:opacity-35"
                 >
                   Today
                 </button>
@@ -541,16 +546,16 @@ function QuickBetsInner() {
                   onClick={() => setMobileSelectedDate(mobileTimelineDates[mobileCurrentDateIndex + 1])}
                   disabled={mobileCurrentDateIndex < 0 || mobileCurrentDateIndex >= mobileTimelineDates.length - 1}
                   aria-label="Next day"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-none border border-[#38383d] text-[#a8a8b2] transition hover:border-[#5aa2f0]/45 hover:text-white disabled:cursor-not-allowed disabled:opacity-35"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-line text-muted transition hover:border-accent/40 hover:text-ink disabled:cursor-not-allowed disabled:opacity-35"
                 >
                   <ChevronRight className="h-4 w-4" aria-hidden="true" />
                 </button>
               </div>
               {dailyStats.has(mobileCurrentDate) ? (
-                <div className="grid grid-cols-3 gap-1 border-y border-[#5aa2f0]/25 bg-[#5aa2f0]/[0.09] py-2">
+                <div className="grid grid-cols-3 gap-1 border-y border-line bg-field py-2">
                   {MARKET_COLUMNS.map((filter) => (
                     <div key={filter.key} className="text-center">
-                      <span className="mb-1 block text-[12px] text-[#a8a8b2]" aria-hidden="true">{filter.label}</span>
+                      <span className="mb-1 block text-[12px] text-muted" aria-hidden="true">{filter.label}</span>
                       <DailyStarStats stats={dailyStats.get(mobileCurrentDate).markets.get(filter.key)} label={filter.label} />
                     </div>
                   ))}
@@ -563,8 +568,8 @@ function QuickBetsInner() {
             data-mobile-filter-state={mobileFiltersHidden && isMobileViewport ? 'hidden' : 'visible'}
             aria-hidden={mobileFiltersHidden && isMobileViewport}
             inert={mobileFiltersHidden && isMobileViewport ? true : undefined}
-            className={`origin-top overflow-hidden transition-[max-height,opacity,transform] duration-200 ease-out lg:max-h-none lg:translate-y-0 lg:overflow-visible lg:opacity-100 ${
-              mobileFiltersHidden && isMobileViewport ? 'pointer-events-none' : ''
+            className={`origin-top transition-[max-height,opacity,transform] duration-200 ease-out lg:max-h-none lg:translate-y-0 lg:overflow-visible lg:opacity-100 ${
+              mobileFiltersHidden && isMobileViewport ? 'overflow-hidden pointer-events-none' : 'overflow-x-hidden overflow-y-auto'
             }`}
             style={mobileFilterNavStyle}
           >
@@ -577,8 +582,8 @@ function QuickBetsInner() {
                     key={filter.key}
                     type="button"
                     onClick={() => { setActiveLifecycle(filter.key); setActiveMarket('all'); }}
-                    className={`inline-flex min-h-9 shrink-0 items-center gap-2 rounded-none border px-3 text-[13px] font-normal uppercase tracking-wide transition ${
-                      selected ? 'border-[#5aa2f0]/45 bg-[#5aa2f0]/[0.08] text-[#5aa2f0]' : 'border-[#38383d] bg-transparent text-[#a8a8b2] hover:border-[#5aa2f0]/45 hover:text-[#5aa2f0]'
+                    className={`inline-flex min-h-9 shrink-0 items-center gap-2 rounded-md border px-3 text-[13px] font-semibold transition ${
+                      selected ? 'border-accent/30 bg-accent-soft text-accent' : 'border-line bg-transparent text-muted hover:border-accent/40 hover:text-accent'
                     }`}
                   >
                     <span>{filter.label}</span>
@@ -591,9 +596,9 @@ function QuickBetsInner() {
                 onClick={() => setStarredOnly((current) => !current)}
                 aria-pressed={starredOnly}
                 aria-label="Show starred markets only"
-                className={`inline-flex min-h-9 shrink-0 items-center gap-2 rounded-none border px-3 text-[13px] font-normal uppercase tracking-wide transition ${starredOnly
-                  ? 'border-[#f3bc63]/55 bg-[#f3bc63]/10 text-[#f3bc63]'
-                  : 'border-[#38383d] bg-transparent text-[#a8a8b2] hover:border-[#f3bc63]/45 hover:text-[#f3bc63]'}`}
+                className={`inline-flex min-h-9 shrink-0 items-center gap-2 rounded-md border px-3 text-[13px] font-semibold transition ${starredOnly
+                  ? 'border-amber-400 bg-amber-50 text-amber-800 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-300'
+                  : 'border-line bg-transparent text-muted hover:border-amber-500/40 hover:text-amber-600 dark:hover:text-amber-300'}`}
               >
                 <StarIcon />
                 <span>Starred</span>
@@ -613,8 +618,8 @@ function QuickBetsInner() {
                     onClick={() => toggleMarket(filter.key)}
                     aria-pressed={selected}
                     aria-label={marketFilterAriaLabel(filter, stat, starStat)}
-                    className={`qb-stat-card flex min-h-16 flex-col items-center justify-center gap-1 rounded-none border px-2 py-2 text-center transition ${
-                      selected ? 'border-[#5aa2f0]/45 bg-[#5aa2f0]/[0.08] text-[#5aa2f0]' : 'border-[#38383d] bg-[#171717] text-[#a8a8b2] hover:border-[#5aa2f0]/45 hover:text-[#5aa2f0]'
+                    className={`qb-stat-card flex min-h-16 flex-col items-center justify-center gap-1 rounded-md border px-2 py-2 text-center transition ${
+                      selected ? 'border-accent/30 bg-accent-soft text-accent' : 'border-line bg-surface text-muted hover:border-accent/40 hover:text-accent'
                     }`}
                   >
                     <span className="text-[12px] font-semibold uppercase tracking-wide">{filter.shortLabel}</span>
@@ -629,14 +634,14 @@ function QuickBetsInner() {
 
         <section className="flex-1 pt-4">
           {loading && !data ? (
-            <div className="flex min-h-64 items-center justify-center rounded-md border border-[#38383d] bg-[#171717] text-sm font-normal text-[#a8a8b2]">
+            <div className="flex min-h-64 items-center justify-center rounded-md border border-line bg-surface text-sm font-normal text-muted">
               <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
               Loading quick bets
             </div>
           ) : null}
 
           {error ? (
-            <div className="flex min-h-48 items-center justify-center rounded-md border border-[#f2545b]/50 bg-[#f2545b]/10 p-4 text-center text-sm font-normal text-[#f2545b]">
+            <div className="flex min-h-48 items-center justify-center rounded-md border border-red-400 dark:border-red-500/40 bg-red-100 dark:bg-red-500/15 p-4 text-center text-sm font-normal text-red-700 dark:text-red-300">
               <AlertTriangle className="mr-2 h-4 w-4" aria-hidden="true" />
               {error}
             </div>
@@ -645,7 +650,7 @@ function QuickBetsInner() {
           {/* Mobile empty state. On desktop the message lives inside the table so the
               column-header filters stay visible (an empty market must not trap the user). */}
           {!loading && !error && visibleMatches.length === 0 && !hasMobileSelectedDay ? (
-            <div className="rounded-md border border-[#38383d] bg-[#171717] p-8 text-center text-sm font-normal text-[#8c8c96] lg:hidden">
+            <div className="rounded-md border border-line bg-surface p-8 text-center text-sm font-normal text-muted lg:hidden">
               <ListFilter className="mx-auto mb-3 h-5 w-5" aria-hidden="true" />
               {emptyMessage}
             </div>
@@ -655,7 +660,7 @@ function QuickBetsInner() {
           {!error && hasMobileSelectedDay ? (
             <div className="space-y-2 lg:hidden">
               {!loading && mobileMatches.length === 0 ? (
-                <div className="rounded-md border border-[#38383d] bg-[#171717] p-8 text-center text-sm font-normal text-[#8c8c96]">
+                <div className="rounded-md border border-line bg-surface p-8 text-center text-sm font-normal text-muted">
                   <ListFilter className="mx-auto mb-3 h-5 w-5" aria-hidden="true" />
                   No matches for this day with the selected filters.
                 </div>
@@ -666,18 +671,18 @@ function QuickBetsInner() {
                   <div key={matchRowKey(match, index)} className="space-y-2">
                     <MatchCard match={match} selections={selections}
                       leagueStats={successByLeague.get(quickBetLeagueKey(match.league))}
-                      leagueSuccessLabel={quickBetLeagueSuccessLabel(match.league, successByLeague.get(quickBetLeagueKey(match.league)), activeMarket)} />
+                      leagueSuccessLabel={quickBetRecordedLeagueSuccessLabel(match, selectionFilters)} />
                   </div>
                 );
               })}
             </div>
           ) : null}
 
-          {/* Desktop: single AIOS-style market grid. The table (and its column-header
+          {/* Desktop: market grid with column-header filters. The table (and its column-header
               filters) renders whenever any data is loaded, even if the active market is
               empty — otherwise there is no control to filter back out of an empty market. */}
           {!error && !loading && matches.length ? (
-            <div className="hidden lg:block">
+            <div className="hidden rounded-xl border border-line bg-surface lg:block">
               <table className="w-full table-fixed border-collapse text-[13px]">
                 <caption className="sr-only">Captured Sportsbet prices below 1.50 for Quick Bet {activeLifecycle} matches</caption>
                 <colgroup>
@@ -700,16 +705,16 @@ function QuickBetsInner() {
                         <th
                           key={filter.key}
                           scope="col"
-                          style={{ top: headerHeight }}
-                          className={`sticky z-10 border-b border-[#48484f] bg-[#111111] ${isIdentity ? 'text-left' : 'text-center'} align-bottom`}
+                          style={{ top: `calc(${headerHeight}px + 2rem + 1px)` }}
+                          className={`sticky z-10 border-b border-line bg-surface ${isIdentity ? 'text-left' : 'text-center'} align-bottom`}
                         >
                           <button
                             type="button"
                             onClick={() => toggleMarket(filter.key)}
                             aria-pressed={active}
                             aria-label={marketFilterAriaLabel(filter, stat, starStat)}
-                            className={`qb-stat-card flex min-h-[72px] w-full flex-col ${isIdentity ? 'items-start' : 'items-center'} gap-1 rounded-none border px-1.5 py-2 text-[12px] font-medium uppercase tracking-[0.08em] transition hover:border-[#5aa2f0]/45 hover:bg-[#5aa2f0]/[0.08] hover:text-[#5aa2f0] ${
-                              active ? 'border-[#5aa2f0]/45 bg-[#5aa2f0]/[0.08] text-[#5aa2f0]' : 'border-[#38383d] bg-[#171717] text-[#8c8c96]'
+                            className={`qb-stat-card flex min-h-[72px] w-full flex-col ${isIdentity ? 'items-start' : 'items-center'} gap-1 rounded-md border px-1.5 py-2 text-[12px] font-semibold transition hover:border-accent/40 hover:bg-accent-soft hover:text-accent ${
+                              active ? 'border-accent/30 bg-accent-soft text-accent' : 'border-line bg-surface text-muted'
                             }`}
                           >
                             <span className="font-semibold">{filter.label}</span>
@@ -724,7 +729,7 @@ function QuickBetsInner() {
                 <tbody>
                   {visibleMatches.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="px-2.5 py-10 text-center text-[13px] text-[#8c8c96]">
+                      <td colSpan={7} className="px-2.5 py-10 text-center text-[13px] text-muted">
                         {emptyMessage}
                       </td>
                     </tr>
@@ -735,19 +740,21 @@ function QuickBetsInner() {
                     const showLeague = isAll && (showDate || (prev && prev.league !== match.league));
                     const band = dayBand(match.date);
                     const leagueStats = successByLeague.get(quickBetLeagueKey(match.league));
-                    const leagueSuccessLabel = quickBetLeagueSuccessLabel(match.league, leagueStats, activeMarket);
+                    const leagueSuccessLabel = quickBetRecordedLeagueSuccessLabel(showLeague
+                      ? visibleMatches.filter((row) => row.date === match.date && row.league === match.league)
+                      : match, selectionFilters);
                     return (
                       <Fragment key={matchRowKey(match, index)}>
                         {showDate ? (
-                          <tr key={`${matchRowKey(match, index)}-date`} className="bg-[#5aa2f0]/[0.09]">
-                            <td colSpan={dailyStats.has(match.date) ? 1 : 7} className="border-y border-[#5aa2f0]/25 px-2.5 py-2.5 text-[13px] font-normal tracking-[0.05em] text-white shadow-[inset_2px_0_0_#5aa2f0]">
+                          <tr key={`${matchRowKey(match, index)}-date`} className="bg-field">
+                            <td colSpan={dailyStats.has(match.date) ? 1 : 7} className="border-y border-line px-2.5 py-2.5 text-[13px] font-semibold text-ink shadow-[inset_2px_0_0_var(--accent)]">
                               <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                                 <span>{band ? `${band} · ` : ''}{fmtDMY(match.date)}</span>
                                 <DailyTotal stats={dailyStats.get(match.date)?.total} />
                               </div>
                             </td>
                             {dailyStats.has(match.date) ? MARKET_COLUMNS.map((filter) => (
-                              <td key={filter.key} className="border-y border-[#5aa2f0]/25 px-1.5 py-2.5 text-center">
+                              <td key={filter.key} className="border-y border-line px-1.5 py-2.5 text-center">
                                 <DailyStarStats stats={dailyStats.get(match.date).markets.get(filter.key)} label={filter.label} />
                               </td>
                             )) : null}
@@ -755,20 +762,20 @@ function QuickBetsInner() {
                         ) : null}
                         {showLeague ? (
                           <tr key={`${matchRowKey(match, index)}-league`}>
-                            <td colSpan={7} className="border-b border-white/[0.04] px-2.5 pb-1 pl-6 pt-2.5 text-[12px] uppercase tracking-[0.1em] text-[#a8a8b2]">
+                            <td colSpan={7} className="border-b border-line px-2.5 pb-1 pl-6 pt-2.5 text-[12px] font-semibold text-muted">
                               {match.league || 'Other'}
                               <SuccessStar label={leagueSuccessLabel} />
                             </td>
                           </tr>
                         ) : null}
-                        <tr key={matchRowKey(match, index)} className="transition hover:bg-white/[0.022]">
-                          <td className={`border-b border-white/[0.035] py-2 pr-2 align-middle text-[14px] ${isAll ? 'pl-10' : 'pl-2.5'}`}>
+                        <tr key={matchRowKey(match, index)} className="transition hover:bg-field">
+                          <td className={`border-b border-line py-2 pr-2 align-middle text-[14px] ${isAll ? 'pl-10' : 'pl-2.5'}`}>
                             {!isAll ? (
-                              <span className="mb-0.5 block text-[10px] uppercase tracking-[0.06em] text-[#8c8c96]">{match.league || 'Other'}<SuccessStar label={leagueSuccessLabel} /></span>
+                              <span className="mb-0.5 block text-[10px] uppercase tracking-[0.06em] text-muted">{match.league || 'Other'}<SuccessStar label={leagueSuccessLabel} /></span>
                             ) : null}
                             <span className="block break-words">
                               {match.home}
-                              <b className="px-1.5 font-normal text-[#8c8c96]">{quickBetMatchState(match)}</b>
+                              <b className="px-1.5 font-normal text-muted">{quickBetMatchState(match)}</b>
                               {match.away}
                             </span>
                           </td>
@@ -802,8 +809,8 @@ class QuickBetsErrorBoundary extends Component {
   render() {
     if (this.state.hasError) {
       return (
-        <main className="flex min-h-dvh items-center justify-center bg-[#111111] p-4 text-slate-100">
-          <div className="rounded-md border border-red-500/50 bg-red-500/10 p-5 text-sm font-normal text-red-200">
+        <main className="flex min-h-dvh items-center justify-center bg-field p-4 text-ink">
+          <div className="rounded-md border border-red-500/50 bg-red-500/10 p-5 text-sm font-normal text-red-700 dark:text-red-300">
             Quick Bets could not render. Refresh the page and try again.
           </div>
         </main>

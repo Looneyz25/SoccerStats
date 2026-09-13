@@ -3,10 +3,10 @@
 
 Sportsbet.com.au odds (from `sportsbet_odds`) take priority for the winner pick. Fallback to
 SofaScore "Full time" 1X2. Other prediction types (BTTS / O-U goals / O-U cards) use SofaScore
-90-minute regular-time markets only. Match-level corner and Draw No Bet odds are also cached so
-the UI can price synthetic safety picks derived from the 1X2 model.
+90-minute regular-time markets only. Match-level corner and double-chance odds are also cached
+for downstream market consumers.
 """
-import json, os, time, pathlib
+import json, math, os, time, pathlib
 import random
 import re
 from datetime import datetime, timezone, timedelta
@@ -206,36 +206,17 @@ def attach_corner_odds(m, market):
         m.pop("corner_odds", None)
     return added
 
-def _norm_name(value):
-    return "".join(ch for ch in str(value or "").lower() if ch.isalnum())
-
-def attach_draw_no_bet_odds(m, market):
-    choices = (
-        market.get("Draw No Bet")
-        or market.get("Draw no bet")
-        or market.get("Draw No Bet 90 Minutes")
-        or market.get("Draw no bet 90 Minutes")
-        or {}
-    )
-    if not choices:
-        return 0
-    home_name = _norm_name((m.get("home") or {}).get("name"))
-    away_name = _norm_name((m.get("away") or {}).get("name"))
-    stored = {}
-    for label, price in choices.items():
-        if not is_price(price):
-            continue
-        key = _norm_name(label)
-        if label in ("1", "Home") or key == home_name:
-            stored["1"] = price
-        elif label in ("2", "Away") or key == away_name:
-            stored["2"] = price
-    if "1" not in stored or "2" not in stored:
+def attach_double_chance_odds(m, market):
+    choices = market.get("Double chance") or market.get("Double Chance") or {}
+    stored = {side: price for side, price in choices.items()
+              if side in ("1X", "X2", "12") and is_price(price) and math.isfinite(float(price))}
+    if not stored:
         return 0
     markets = m.setdefault("sportsbet_markets", {})
-    before = len(markets.get("Draw No Bet") or {})
-    markets["Draw No Bet"] = stored
-    return max(0, len(stored) - before)
+    existing = markets.setdefault("Double chance", {})
+    before = len(existing)
+    existing.update(stored)
+    return max(0, len(existing) - before)
 
 def attach_pred_odds(m, market):
     p = m.get("predictions") or {}
@@ -285,7 +266,7 @@ def attach_pred_odds(m, market):
         if v is not None:
             oc["odds"] = v
 
-    return attach_corner_odds(m, market) + attach_draw_no_bet_odds(m, market)
+    return attach_corner_odds(m, market) + attach_double_chance_odds(m, market)
 
 def main():
     store = json.loads(STORE_PATH.read_text(encoding="utf-8"))

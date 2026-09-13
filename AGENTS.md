@@ -51,6 +51,12 @@ Port `3001` is the expected local dashboard port. If startup fails with `EADDRIN
 | PWA assets | [public/](public/) (manifest, icons) |
 | App Hosting env vars (public) | [apphosting.yaml](apphosting.yaml) |
 
+## Quick Bets historical ideal bets
+
+- A star records that an exact fixture, market, side and line qualified as an **ideal bet before kickoff**. Once captured, it must remain starred across Upcoming, Live and Results, even if the qualifying rate later falls below 80% or the prediction misses. This supersedes pre-kickoff star demotion.
+- Preserve the first qualifying capture, timestamp and evidence. Later form, league statistics, odds refreshes and settlement must not overwrite that history or remove it from the Starred filter. Settled starred misses count in the overall hits / total denominator.
+- Follow the [capture contract](CLAUDE.md#quick-bets-historical-ideal-bets) for producer ownership, retention, recovery and implementation status. Keep AIOS and the customer dashboard consistent.
+
 ## Prediction display rules
 
 - Hard truth rule: once a match is resulted, do not amend its prediction pick, probabilities, factors, or model snapshot. Settlement may only add final scores, actuals, and hit/miss fields to predictions that already existed before the result. Retro/post-result predictions must not count toward hit-rate summaries.

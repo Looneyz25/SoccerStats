@@ -1,8 +1,30 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import { readFileSync } from 'node:fs';
 import { buildQuickBetsPayload } from './upload_match_data_to_firestore.mjs';
 
 const EVENT_URL = 'https://www.sportsbet.com.au/betting/soccer/a/b/home-away-101';
+
+test('date and league match projections retain only Double chance bookmaker markets', () => {
+  const source = readFileSync(new URL('./upload_match_data_to_firestore.mjs', import.meta.url), 'utf8');
+  const fields = source.match(/const MATCH_KEEP_FIELDS = \[[\s\S]*?\n\];/)[0];
+  const extract = (name) => source.match(new RegExp(`function ${name}\\(match\\) \\{[\\s\\S]*?\\n\\}`))[0];
+  const { slimMatch, slimLeagueDocMatch } = new Function(`${fields}\n${extract('slimMatch')}\n${extract('slimLeagueDocMatch')}\nreturn { slimMatch, slimLeagueDocMatch };`)();
+  const match = { id: 'fixture', status: 'FT', prediction_locked: true,
+    sportsbet_markets: { 'Double chance': { '1X': 1.72, 'X2': 1.28, '12': 1.25 },
+      'Draw No Bet': { '1': 1.8, '2': 2.1 }, 'Full time': { '1': 2.5, 'X': 3.2, '2': 2.8 } } };
+  const before = structuredClone(match);
+  for (const project of [slimMatch, slimLeagueDocMatch]) {
+    const result = project(match);
+    assert.deepEqual(result.sportsbet_markets, { 'Double chance': match.sportsbet_markets['Double chance'] });
+    assert.equal(result.id, match.id);
+    assert.equal(result.status, match.status);
+    assert.equal(project({ sportsbet_markets: { 'Draw No Bet': { '1': 1.8 } } }).sportsbet_markets, undefined);
+    assert.equal(project({}).sportsbet_markets, undefined);
+  }
+  assert.equal(slimLeagueDocMatch(match).prediction_locked, true);
+  assert.deepEqual(match, before);
+});
 
 test('quick bets Firestore payload mirrors AIOS by merging canonical match data with sidecar rows', () => {
   const now = new Date(2026, 7, 18, 12, 0, 0);
