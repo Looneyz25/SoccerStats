@@ -5441,7 +5441,7 @@ function VoteLeaderboard({ data, loading, error, bookmakerId, onFollowUser, foll
               {topLeaders.map((leader) => (
                 <div
                   key={`${leader.uid || leader.label}-${leader.rank}`}
-                  className={`grid gap-3 border-b border-line px-3 py-2.5 last:border-b-0 sm:grid-cols-[minmax(0,1fr)_5.75rem_5.75rem_5.75rem_5.75rem_6.5rem_6.5rem] sm:items-center ${
+                  className={`grid gap-3 border-b border-line px-3 py-2.5 last:border-b-0 sm:grid-cols-[minmax(0,1fr)_5.75rem_5.75rem_5.75rem_5.75rem_6.5rem] sm:items-center ${
                     leader.settled && leader.hits === leader.settled ? 'result-hit-row' : leader.isMe ? 'bg-emerald-50/80 dark:bg-emerald-500/10' : 'bg-field'
                   }`}
                 >
