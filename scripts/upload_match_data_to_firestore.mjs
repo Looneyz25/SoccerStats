@@ -1367,14 +1367,37 @@ async function commitUploadOperations(db, operations) {
     ? Math.min(Math.floor(FIRESTORE_UPLOAD_BATCH_SIZE), 400)
     : 5;
   let batchIndex = 0;
+  let skipped = 0;
   for (let index = 0; index < operations.length; index += batchSize) {
+    const slice = operations.slice(index, index + batchSize);
     const batch = db.batch();
-    for (const operation of operations.slice(index, index + batchSize)) {
+    for (const operation of slice) {
       if (operation.type === 'delete') batch.delete(operation.ref);
       if (operation.type === 'set') batch.set(operation.ref, operation.payload);
     }
     batchIndex += 1;
-    await commitBatchWithRetry(batch, batchIndex);
+    try {
+      await commitBatchWithRetry(batch, batchIndex);
+    } catch (error) {
+      // A single oversized/invalid doc fails the whole atomic batch. Retry each
+      // doc on its own so one bad doc (e.g. an over-1MiB league doc) cannot block
+      // the date/meta/fast docs the dashboard actually reads.
+      console.warn(`Batch ${batchIndex} failed as a group; committing its ${slice.length} docs individually: ${error?.message || error}`);
+      for (const operation of slice) {
+        const single = db.batch();
+        if (operation.type === 'delete') single.delete(operation.ref);
+        if (operation.type === 'set') single.set(operation.ref, operation.payload);
+        try {
+          await commitBatchWithRetry(single, `${batchIndex}:${operation.ref?.path || 'op'}`);
+        } catch (singleError) {
+          skipped += 1;
+          console.warn(`  Skipped doc ${operation.ref?.path || '(unknown)'}: ${singleError?.message || singleError}`);
+        }
+      }
+    }
+  }
+  if (skipped > 0) {
+    console.warn(`⚠ Upload finished with ${skipped} doc(s) skipped (too large or invalid); dashboard (date/meta/fast) docs were still written.`);
   }
 }
 
