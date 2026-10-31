@@ -985,6 +985,71 @@ function slimLeagueDocMatch(match) {
   return slim;
 }
 
+// Firestore rejects documents over 1 MiB; a skipped date doc leaves an older copy live
+// (e.g. a settled day still showing every match as upcoming). Only an over-budget day is
+// trimmed, and only of fields no app reader uses, so smaller days publish unchanged.
+const DATE_DOC_BYTE_BUDGET = 1_000_000;
+const DATE_DOC_UNREAD_MATCH_FIELDS = [
+  'stat_backfill', 'phase_notes', 'phase_status', 'source_status', 'source_health',
+  'flashscore_score', 'livescore_score', 'merged_source_ids', 'utc_timestamp',
+  'settled_by_due_time', 'odds_backfill_only', 'espn_event_id', 'live_updated_at',
+  'result_check_note', 'market_settlement_repaired_at', 'sofascore_result_id',
+];
+const DATE_DOC_UNREAD_FACTOR_FIELDS = [
+  'bookmaker_context_signals', 'source_note', 'draw_rule', 'bookmaker_context_source',
+  'model_calibration', 'league_goal_profile',
+];
+const DATE_DOC_UNREAD_MARKET_FIELDS = ['calibration', 'evidence_reason'];
+const APP_READ_SPORTSBET_MARKETS = new Set([
+  'Double chance', 'Double Chance', 'Draw No Bet', 'Draw no bet', 'Draw No Bet 90 Minutes',
+]);
+
+export function firestoreValueSize(value) {
+  if (value === null || value === undefined) return 1;
+  if (typeof value === 'string') return Buffer.byteLength(value) + 1;
+  if (typeof value === 'number') return 8;
+  if (typeof value === 'boolean') return 1;
+  if (Array.isArray(value)) return value.reduce((sum, item) => sum + firestoreValueSize(item), 0);
+  return Object.entries(value).reduce((sum, [key, item]) => sum + Buffer.byteLength(key) + 1 + firestoreValueSize(item), 0);
+}
+
+function omitKeys(object, keys) {
+  return Object.fromEntries(Object.entries(object).filter(([key]) => !keys.includes(key)));
+}
+
+export function trimDateDocMatch(match) {
+  const trimmed = omitKeys(match, DATE_DOC_UNREAD_MATCH_FIELDS);
+  for (const side of ['home', 'away']) {
+    if (trimmed[side]?.badge_source_url) trimmed[side] = omitKeys(trimmed[side], ['badge_source_url']);
+  }
+  if (trimmed.sportsbet_markets) {
+    trimmed.sportsbet_markets = Object.fromEntries(
+      Object.entries(trimmed.sportsbet_markets).filter(([name]) => APP_READ_SPORTSBET_MARKETS.has(name)),
+    );
+  }
+  if (trimmed.predictions) {
+    trimmed.predictions = Object.fromEntries(Object.entries(trimmed.predictions).map(([key, market]) => {
+      if (!market || typeof market !== 'object') return [key, market];
+      return [key, omitKeys(market, key === 'factors' ? DATE_DOC_UNREAD_FACTOR_FIELDS : DATE_DOC_UNREAD_MARKET_FIELDS)];
+    }));
+  }
+  if (Array.isArray(trimmed.espn_stats?.key_events)) {
+    // The key events list renders `participant || text`, so text is unread when participant is set.
+    trimmed.espn_stats = {
+      ...trimmed.espn_stats,
+      key_events: trimmed.espn_stats.key_events.map((event) => (event?.participant ? omitKeys(event, ['text']) : event)),
+    };
+  }
+  return trimmed;
+}
+
+export function fitDateDocLeagues(dateLeagues) {
+  const before = firestoreValueSize(dateLeagues);
+  if (before <= DATE_DOC_BYTE_BUDGET) return { leagues: dateLeagues, before, after: before, trimmed: false };
+  const leagues = dateLeagues.map((league) => ({ ...league, matches: league.matches.map(trimDateDocMatch) }));
+  return { leagues, before, after: firestoreValueSize(leagues), trimmed: true };
+}
+
 function slimLeague(league, index) {
   const id = slugify(league.id || league.name, String(index).padStart(2, '0'));
   return {
@@ -1504,7 +1569,11 @@ async function main() {
 
   const availableDates = [...dateBuckets.keys()].filter((date) => date !== 'unknown').sort();
   for (const [date, leaguesByDate] of dateBuckets.entries()) {
-    const dateLeagues = [...leaguesByDate.values()];
+    const fitted = fitDateDocLeagues([...leaguesByDate.values()]);
+    const dateLeagues = fitted.leagues;
+    if (fitted.trimmed) {
+      console.log(`Date doc ${date}: trimmed app-unread fields to fit Firestore's 1 MiB limit (${fitted.before} -> ${fitted.after} bytes)`);
+    }
     operations.push({ type: 'set', ref: datesRef.doc(slugify(date, 'unknown')), payload: firestoreSafe({
       format: 'date_doc_v1',
       date,

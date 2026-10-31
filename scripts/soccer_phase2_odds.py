@@ -74,7 +74,7 @@ LEAGUE_PAGES = {
     "Primeira Liga":          "rest-of-europe/portuguese-primeira-liga",
     "UEFA Champions League":  "uefa-competitions/uefa-champions-league",
     "UEFA Europa League":     "uefa-competitions/uefa-europa-league",
-    "UEFA Conference League": "uefa-competitions/uefa-europa-conference-league",
+    "UEFA Conference League": "uefa-competitions/uefa-conference-league",
     "MLS":                    "north-america/usa-major-league-soccer",
     "A-League Men":           "australia/australian-a-league-men",
     "Scottish Premiership":   "united-kingdom/scottish-premiership",

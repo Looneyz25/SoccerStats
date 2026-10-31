@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
-import { buildQuickBetsPayload } from './upload_match_data_to_firestore.mjs';
+import { buildQuickBetsPayload, fitDateDocLeagues, firestoreValueSize } from './upload_match_data_to_firestore.mjs';
 
 const EVENT_URL = 'https://www.sportsbet.com.au/betting/soccer/a/b/home-away-101';
 
@@ -388,4 +388,44 @@ test('successful inspection withdrawals remain authoritative through stale, miss
   assert.equal(rows.length, 1);
   assert.equal(rows[0].markets.winner[0].odds, 1.25, 'frozen history remains immutable');
   assert.deepEqual(rows[0].markets.btts, [], 'inspected history cannot be supplemented by stale core odds');
+});
+
+test('over-budget date docs drop only app-unread fields and leave under-budget days untouched', () => {
+  const match = (id) => ({
+    id, status: 'FT', home: { name: 'Home', goals: 2, logo: 'h.png', badge_source_url: 'h.png' }, away: { name: 'Away', goals: 1 },
+    phase_notes: 'Sportsbet page failed.', stat_backfill: { attempts: 3 },
+    sportsbet_markets: { 'Double chance': { '1X': 1.3 }, 'Draw No Bet': { '1': 1.8 }, 'Both teams to score': { Yes: 1.9 } },
+    predictions: {
+      winner: { pick: 'Home', probability: 0.6, odds: 2.1, result: 'hit', calibration: { sources: ['x'.repeat(200)] } },
+      ou_cards: { pick: null, suppressed_pick: 'Under', insufficient_evidence: true, evidence_reason: 'y'.repeat(200) },
+      factors: { lambda_home: 1.4, h2h_n: 2, source_note: 'z'.repeat(400), draw_rule: { min_probability: 0.28 } },
+    },
+    display_markets: { winner: { market: { result: 'hit' } } },
+    espn_stats: { home: { corners: 5 }, away: { corners: 3 },
+      key_events: [{ type: 'Goal', clock: "9'", participant: 'Striker', text: 'w'.repeat(300) }, { type: 'Halftime', text: 'Halftime' }] },
+  });
+  const small = [{ id: 'l', name: 'League', matches: [match('a')] }];
+  const unchanged = fitDateDocLeagues(small);
+  assert.equal(unchanged.trimmed, false);
+  assert.equal(unchanged.leagues, small);
+
+  const big = [{ id: 'l', name: 'League', matches: Array.from({ length: 900 }, (_, i) => match(String(i))) }];
+  const before = structuredClone(big);
+  const fitted = fitDateDocLeagues(big);
+  assert.equal(fitted.trimmed, true);
+  assert.ok(fitted.after < fitted.before && fitted.after === firestoreValueSize(fitted.leagues));
+  assert.deepEqual(big, before, 'source matches shared with other docs must not be mutated');
+  const out = fitted.leagues[0].matches[0];
+  assert.equal(out.phase_notes, undefined);
+  assert.equal(out.stat_backfill, undefined);
+  assert.equal(out.home.badge_source_url, undefined);
+  assert.equal(out.home.logo, 'h.png');
+  assert.equal(out.home.goals, 2);
+  assert.deepEqual(out.sportsbet_markets, { 'Double chance': { '1X': 1.3 }, 'Draw No Bet': { '1': 1.8 } });
+  assert.deepEqual(out.predictions.winner, { pick: 'Home', probability: 0.6, odds: 2.1, result: 'hit' });
+  assert.deepEqual(out.predictions.ou_cards, { pick: null, suppressed_pick: 'Under', insufficient_evidence: true });
+  assert.deepEqual(out.predictions.factors, { lambda_home: 1.4, h2h_n: 2 });
+  assert.deepEqual(out.display_markets, before[0].matches[0].display_markets);
+  assert.deepEqual(out.espn_stats.key_events, [{ type: 'Goal', clock: "9'", participant: 'Striker' }, { type: 'Halftime', text: 'Halftime' }]);
+  assert.deepEqual(out.espn_stats.home, { corners: 5 });
 });

@@ -69,6 +69,24 @@ class PreMatchPredictionRefreshTest(unittest.TestCase):
                     "ou_cards": {"pick": "Under", "probability": .775, "line": 4.5},
                     "factors": {"source": "pre_match_prefill", "data_quality": "Data usable"}}}
 
+    def test_suppressed_corners_republish_from_same_run_sportsbet_corner_market(self):
+        match = {
+            "status": "upcoming",
+            "sportsbet_markets": {"Corners 2-Way 10.5": {"Over": 2.5, "Under": 1.46}},
+            "predictions": {"ou_corners": {
+                "pick": None, "line": 10.5, "probability": None, "model_probability": 0.55,
+                "suppressed_pick": "Under", "suppressed_probability": 0.55,
+                "insufficient_evidence": True, "no_sportsbet_corner_odds": True,
+            }},
+        }
+        self.assertEqual(sr.corner_odds_for_prediction(match, 10.5, "Under"), 1.46)
+        self.assertTrue(sr.apply_corner_probability_cap_to_existing_prediction(match))
+        corners = match["predictions"]["ou_corners"]
+        self.assertEqual(corners["pick"], "Under")
+        self.assertIsNotNone(corners["probability"])
+        self.assertNotIn("insufficient_evidence", corners)
+        self.assertIsNone(sr.corner_odds_for_prediction(match, 9.5, "Under"))
+
     def test_winner_weight_uses_normalized_bookmaker_probabilities(self):
         model = {"home": .4388, "draw": .2523, "away": .3089}
         blended, book = sr.blend_three_way_with_bookmaker(model, self.future_match()["sportsbet_odds"])

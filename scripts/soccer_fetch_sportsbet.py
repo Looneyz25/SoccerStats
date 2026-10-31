@@ -87,7 +87,7 @@ LEAGUE_PAGES = {
     "Primeira Liga":          "portugal/portuguese-primeira-liga",
     "UEFA Champions League":  "uefa-competitions/uefa-champions-league",
     "UEFA Europa League":     "uefa-competitions/uefa-europa-league",
-    "UEFA Conference League": "uefa-competitions/uefa-europa-conference-league",
+    "UEFA Conference League": "uefa-competitions/uefa-conference-league",
     "MLS":                    "usa/us-major-league-soccer",
     "A-League Men":           "australia/australian-a-league-men",
     "Scottish Premiership":   "united-kingdom/scottish-premiership",
@@ -852,12 +852,22 @@ def discover_quick_bet_events(data, now=None, league_slug=None):
     return sorted(discovered, key=lambda row: (row["date"], row["time"], row["event_id"]))
 
 
+def quick_bet_identity(row):
+    # verify_fixture must stay flat: copying a whole prior row nested it once per run until deepcopy overflowed.
+    return {key: row.get(key) for key in ("league", "date", "time", "home", "away")}
+
+
 def read_quick_bets(path=QUICK_BETS_PATH):
     try:
         payload = json.loads(path.read_text(encoding="utf-8"))
-        return payload if isinstance(payload, dict) and isinstance(payload.get("events"), list) else None
     except Exception:
         return None
+    if not isinstance(payload, dict) or not isinstance(payload.get("events"), list):
+        return None
+    for row in [*payload["events"], *(payload.get("history") or [])]:
+        if isinstance(row, dict) and isinstance(row.get("verify_fixture"), dict):
+            row["verify_fixture"] = quick_bet_identity(row["verify_fixture"])
+    return payload
 
 
 def quick_bet_kickoff(row):
@@ -1085,10 +1095,10 @@ def refresh_quick_bets(root_data, now=None, budget_seconds=None, event_limit=Non
                 fallback = {"event_id": known_id, "event_url": known_url, "league": fixture["league"],
                             "date": fixture["date"], "time": fixture["time"], "home": fixture["home"], "away": fixture["away"],
                             "markets": {}, "root_stale": False, "deep_stale": True,
-                            "pending_canonical": {**fixture, "reversed": False}, "verify_fixture": dict(fixture)}
+                            "pending_canonical": {**fixture, "reversed": False}, "verify_fixture": quick_bet_identity(fixture)}
                 if prior and prior["event_id"] == known_id:
                     fallback = {**copy.deepcopy(prior), "root_stale": False, "deep_stale": True,
-                                "verify_fixture": dict(prior)}
+                                "verify_fixture": quick_bet_identity(prior)}
                 discovered[known_id] = fallback
     for event_id, prior in previous_events.items():
         kickoff = quick_bet_kickoff(prior)

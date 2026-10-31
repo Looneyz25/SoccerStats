@@ -626,6 +626,41 @@ class SportsbetQuickBetsTests(unittest.TestCase):
                     self.assertNotIn("canonical", result["events"][0])
                     self.assertFalse(any(result["events"][0]["markets"].values()))
 
+    def test_repeated_failed_verification_keeps_verify_fixture_flat(self):
+        now = datetime(2026, 9, 3, 12, 0, tzinfo=ADL)
+        detail = root_payload(now + timedelta(days=6), (701,))
+        event = sportsbet.discover_quick_bet_events(detail, now)[0]
+        fixture = {"date": event["date"], "time": event["time"], "status": "upcoming",
+                   "home": {"name": event["home"]}, "away": {"name": event["away"]},
+                   "sportsbet_odds": {"event_id": "701", "event_url": event["event_url"]}}
+        leagues = [{"name": "Premier League", "matches": [fixture]}]
+        response = copy.deepcopy(detail)
+        response["entities"]["sportsbook"]["events"]["701"]["id"] = 702
+        with tempfile.TemporaryDirectory() as temp, patch.object(
+                sportsbet, "fetch_event_page_snapshot", return_value=(response, event["event_url"])):
+            path = Path(temp) / "quick.json"
+            for _ in range(4):
+                result, _ = sportsbet.refresh_quick_bets(root_payload(now, ()), now, 60, 1,
+                    sportsbet.fetch_event_markets_snapshot, 0, path, leagues, page_fetcher=lambda _: root_payload(now, ()))
+            verify = result["events"][0]["verify_fixture"]
+            self.assertEqual(set(verify), {"league", "date", "time", "home", "away"})
+            self.assertFalse(any(isinstance(value, dict) for value in verify.values()))
+
+    def test_legacy_nested_verify_fixture_is_flattened_on_read(self):
+        now = datetime(2026, 9, 3, 12, 0, tzinfo=ADL)
+        nested = {"date": "2026-09-03", "time": "11:00", "home": "Home", "away": "Away", "league": "Test"}
+        for _ in range(600):
+            nested = {**nested, "verify_fixture": nested}
+        row = {"event_id": "9", "date": "2026-09-03", "time": "11:00", "home": "Home", "away": "Away",
+               "markets": {}, "verify_fixture": nested}
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "quick.json"
+            path.write_text(json.dumps({"events": [row], "history": [copy.copy(row)]}), encoding="utf-8")
+            previous = sportsbet.read_quick_bets(path)
+            self.assertEqual(previous["events"][0]["verify_fixture"],
+                             {"league": "Test", "date": "2026-09-03", "time": "11:00", "home": "Home", "away": "Away"})
+            sportsbet.roll_quick_bet_history(previous, [], now, [])
+
     def test_event_inventory_requires_explicit_typed_entities(self):
         now = datetime(2026, 9, 3, 12, 0, tzinfo=ADL)
         original = root_payload(now, (101,))

@@ -3106,7 +3106,10 @@ def context_corner_average(match, all_matches=None):
 def corner_odds_for_prediction(match, line, pick):
     odds_by_line = match.get("corner_odds") or {}
     prices = odds_by_line.get(str(line)) or odds_by_line.get(f"{float(line):.1f}") or {}
-    value = prices.get(pick)
+    # corner_odds is copied from sportsbet_markets only in the later pred-odds phase; read the
+    # source too so the pre-match evidence gate sees prices that already arrived this run.
+    markets = match.get("sportsbet_markets") or {}
+    value = prices.get(pick) or (markets.get(f"Corners 2-Way {float(line):.1f}") or {}).get(pick)
     try:
         value = float(value)
     except (TypeError, ValueError):
