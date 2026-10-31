@@ -23,7 +23,7 @@ from typing import Iterable
 from urllib.parse import urljoin, urlparse
 from urllib.request import Request, urlopen
 
-from team_aliases import NATIONAL_TEAM_ALIASES
+from team_aliases import CLUB_TEAM_ALIASES, NATIONAL_TEAM_ALIASES
 
 try:
     from curl_cffi import requests as curl_requests
@@ -132,6 +132,7 @@ ABBREV = {
 # National-team synonyms (Cabo Verde/Cape Verde, etc.) live in one shared map so a
 # new country alias is added once across settlement and all odds matchers.
 ABBREV.update(NATIONAL_TEAM_ALIASES)
+ABBREV.update(CLUB_TEAM_ALIASES)
 
 
 @dataclass(frozen=True)

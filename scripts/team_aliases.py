@@ -22,3 +22,36 @@ NATIONAL_TEAM_ALIASES = {
     "korearepublic": "southkorea",    # FIFA "Korea Republic" vs feeds "South Korea"
     "unitedstates": "usa",            # ESPN uses "United States"; Sportsbet "USA"
 }
+
+# Club names where Sportsbet differs from our store (Sportsbet form first). Applied by the
+# odds matchers: Sportsbet markets, phase-2 1X2 and direct bookmaker links. An unmatched
+# name silently drops every market for that fixture. Values are norm() output, which drops
+# non-ASCII letters such as ø and æ (København -> kbenhavn).
+CLUB_TEAM_ALIASES = {
+    "sportinglisbon": "sportingcp",
+    "parisstg": "parissaintgermain",
+    "olympiakos": "olympiacos",
+    "redbullsalzburg": "rbsalzburg",
+    "jagielloniabialystock": "jagielloniabialystok",
+    "koln": "cologne",
+    "hamburgersv": "hamburgsv",
+    "hearts": "heartofmidlothian",
+    "crvenazvezda": "redstarbelgrade",
+    "interclubescaldes": "interdescaldes",
+    "nordsjaelland": "nordsjlland",
+    "universitateacraiova": "csucraiova",
+    "copenhagen": "kbenhavn",
+    "cambuurleeuwarden": "sccambuur",
+    "newyorkredbulls": "redbullnewyork",
+    "jefunitedchiba": "jefunitedichiharachiba",
+    "qpr": "queensparkrangers",
+    "sheffunited": "sheffieldunited",
+    "mkdons": "miltonkeynesdons",
+    "hamkam": "hamarkameratene",
+}
+
+# Aliases too short to use as substrings ("LAFC" normalizes to "la", which occurs inside
+# "atlantaunited"); matchers compare these only on whole normalized names.
+EXACT_TEAM_ALIASES = {
+    "losangeles": "la",
+}

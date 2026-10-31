@@ -1040,6 +1040,18 @@ export function trimDateDocMatch(match) {
       key_events: trimmed.espn_stats.key_events.map((event) => (event?.participant ? omitKeys(event, ['text']) : event)),
     };
   }
+  const stripMarket = (market) => (market && typeof market === 'object' ? omitKeys(market, DATE_DOC_UNREAD_MARKET_FIELDS) : market);
+  if (trimmed.display_markets) {
+    trimmed.display_markets = Object.fromEntries(Object.entries(trimmed.display_markets).map(([key, entry]) => (
+      [key, entry?.market ? { ...entry, market: stripMarket(entry.market) } : entry]
+    )));
+  }
+  if (trimmed.display_summary) {
+    const summary = { ...trimmed.display_summary };
+    if (Array.isArray(summary.headlineMarkets)) summary.headlineMarkets = summary.headlineMarkets.map(stripMarket);
+    if (summary.compactMarket?.market) summary.compactMarket = { ...summary.compactMarket, market: stripMarket(summary.compactMarket.market) };
+    trimmed.display_summary = summary;
+  }
   return trimmed;
 }
 
@@ -1048,6 +1060,13 @@ export function fitDateDocLeagues(dateLeagues) {
   if (before <= DATE_DOC_BYTE_BUDGET) return { leagues: dateLeagues, before, after: before, trimmed: false };
   const leagues = dateLeagues.map((league) => ({ ...league, matches: league.matches.map(trimDateDocMatch) }));
   return { leagues, before, after: firestoreValueSize(leagues), trimmed: true };
+}
+
+export function fitLeagueDocMatches(matches) {
+  const before = firestoreValueSize(matches);
+  if (before <= DATE_DOC_BYTE_BUDGET) return { matches, before, after: before, trimmed: false };
+  const trimmed = matches.map(trimDateDocMatch);
+  return { matches: trimmed, before, after: firestoreValueSize(trimmed), trimmed: true };
 }
 
 function slimLeague(league, index) {
@@ -1524,6 +1543,10 @@ async function main() {
   const targetLeagueIds = new Set(leagues.map((league, index) => slugify(league.id || league.name, String(index).padStart(2, '0'))));
   leagues.forEach((league, index) => {
     const id = slugify(league.id || league.name, String(index).padStart(2, '0'));
+    const fittedLeague = fitLeagueDocMatches(Array.isArray(league.matches) ? league.matches.map(slimLeagueDocMatch) : []);
+    if (fittedLeague.trimmed) {
+      console.log(`League doc ${id}: trimmed app-unread fields to fit Firestore's 1 MiB limit (${fittedLeague.before} -> ${fittedLeague.after} bytes)`);
+    }
     operations.push({ type: 'set', ref: leaguesRef.doc(id), payload: firestoreSafe({
       index,
       id: league.id ?? id,
@@ -1532,7 +1555,7 @@ async function main() {
       round: league.round ?? null,
       logo: league.logo || null,
       matchCount: Array.isArray(league.matches) ? league.matches.length : 0,
-      matches: Array.isArray(league.matches) ? league.matches.map(slimLeagueDocMatch) : [],
+      matches: fittedLeague.matches,
       updatedAt: FieldValue.serverTimestamp(),
     }) });
   });

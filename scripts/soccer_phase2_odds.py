@@ -28,6 +28,8 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from xml.sax.saxutils import escape
 
+from team_aliases import CLUB_TEAM_ALIASES, EXACT_TEAM_ALIASES
+
 try:
     from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
     try:
@@ -154,6 +156,7 @@ ABBREV = {
     "vancouver": "vancouverwhitecaps",
     "lagalaxy": "lagalaxy",
 }
+ABBREV.update(CLUB_TEAM_ALIASES)
 
 WDW_MARKET_NAMES = {"Win-Draw-Win", "Match Result", "1X2"}
 PROFILES = ["chrome120", "chrome124", "chrome131", "chrome116", "edge101", "safari17_0"]
@@ -235,6 +238,8 @@ def names_match(a, b):
         shorter = min(len(na), len(nb))
         longer = max(len(na), len(nb))
         return round(shorter / longer, 3), "substring"
+    if EXACT_TEAM_ALIASES.get(na) == nb or EXACT_TEAM_ALIASES.get(nb) == na:
+        return 0.8, "alias"
     for tok, exp in ABBREV.items():
         if (tok in na and exp in nb) or (tok in nb and exp in na):
             return 0.8, "alias"

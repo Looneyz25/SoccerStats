@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
-import { buildQuickBetsPayload, fitDateDocLeagues, firestoreValueSize } from './upload_match_data_to_firestore.mjs';
+import { buildQuickBetsPayload, fitDateDocLeagues, fitLeagueDocMatches, firestoreValueSize } from './upload_match_data_to_firestore.mjs';
 
 const EVENT_URL = 'https://www.sportsbet.com.au/betting/soccer/a/b/home-away-101';
 
@@ -400,7 +400,9 @@ test('over-budget date docs drop only app-unread fields and leave under-budget d
       ou_cards: { pick: null, suppressed_pick: 'Under', insufficient_evidence: true, evidence_reason: 'y'.repeat(200) },
       factors: { lambda_home: 1.4, h2h_n: 2, source_note: 'z'.repeat(400), draw_rule: { min_probability: 0.28 } },
     },
-    display_markets: { winner: { market: { result: 'hit' } } },
+    display_markets: { winner: { label: 'Winner', market: { result: 'hit', calibration: { sources: ['c'.repeat(100)] } } } },
+    display_summary: { headlineMarkets: [{ pick: 'Home', result: 'hit', calibration: { trust: 0.9 } }],
+      compactMarket: { label: 'Pick', market: { pick: 'Home', calibration: { trust: 0.9 } } }, confidence: { label: 'High' } },
     espn_stats: { home: { corners: 5 }, away: { corners: 3 },
       key_events: [{ type: 'Goal', clock: "9'", participant: 'Striker', text: 'w'.repeat(300) }, { type: 'Halftime', text: 'Halftime' }] },
   });
@@ -425,7 +427,16 @@ test('over-budget date docs drop only app-unread fields and leave under-budget d
   assert.deepEqual(out.predictions.winner, { pick: 'Home', probability: 0.6, odds: 2.1, result: 'hit' });
   assert.deepEqual(out.predictions.ou_cards, { pick: null, suppressed_pick: 'Under', insufficient_evidence: true });
   assert.deepEqual(out.predictions.factors, { lambda_home: 1.4, h2h_n: 2 });
-  assert.deepEqual(out.display_markets, before[0].matches[0].display_markets);
+  assert.deepEqual(out.display_markets, { winner: { label: 'Winner', market: { result: 'hit' } } });
+  assert.deepEqual(out.display_summary, { headlineMarkets: [{ pick: 'Home', result: 'hit' }],
+    compactMarket: { label: 'Pick', market: { pick: 'Home' } }, confidence: { label: 'High' } });
   assert.deepEqual(out.espn_stats.key_events, [{ type: 'Goal', clock: "9'", participant: 'Striker' }, { type: 'Halftime', text: 'Halftime' }]);
   assert.deepEqual(out.espn_stats.home, { corners: 5 });
+
+  const leagueMatches = big[0].matches;
+  assert.equal(fitLeagueDocMatches(small[0].matches).matches, small[0].matches);
+  const fittedLeague = fitLeagueDocMatches(leagueMatches);
+  assert.equal(fittedLeague.trimmed, true);
+  assert.deepEqual(fittedLeague.matches[0], out);
+  assert.deepEqual(leagueMatches, before[0].matches);
 });

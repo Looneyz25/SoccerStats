@@ -17,7 +17,7 @@ import random, sys, subprocess
 from datetime import datetime, timezone, timedelta
 from urllib.parse import urlparse
 from curl_cffi import requests
-from team_aliases import NATIONAL_TEAM_ALIASES
+from team_aliases import CLUB_TEAM_ALIASES, EXACT_TEAM_ALIASES, NATIONAL_TEAM_ALIASES
 
 try:
     from zoneinfo import ZoneInfo
@@ -131,6 +131,7 @@ ABBREV = {
 # National-team synonyms (Cabo Verde/Cape Verde, etc.) live in one shared map so a
 # new country alias is added once across settlement and all odds matchers.
 ABBREV.update(NATIONAL_TEAM_ALIASES)
+ABBREV.update(CLUB_TEAM_ALIASES)
 
 def norm(s):
     # Fold accented characters to ASCII so München -> munchen, Étienne -> etienne, etc.
@@ -161,6 +162,7 @@ def names_match(a, b):
     na, nb = norm(a), norm(b)
     if not na or not nb: return False
     if na == nb or na in nb or nb in na: return True
+    if EXACT_TEAM_ALIASES.get(na) == nb or EXACT_TEAM_ALIASES.get(nb) == na: return True
     for tok, exp in ABBREV.items():
         if tok in na and exp in nb: return True
         if tok in nb and exp in na: return True
@@ -178,7 +180,7 @@ def quick_bet_names_match(a, b):
     if ta == tb:
         return True
     na, nb = norm(a), norm(b)
-    aliases = {norm(key): norm(value) for key, value in ABBREV.items()}
+    aliases = {norm(key): norm(value) for key, value in {**ABBREV, **EXACT_TEAM_ALIASES}.items()}
     return bool(na and nb and aliases.get(na, na) == aliases.get(nb, nb))
 
 
