@@ -10,6 +10,7 @@ import {
 } from './quick-bets-utils.mjs';
 
 const pageSource = readFileSync(new URL('./page.jsx', import.meta.url), 'utf8');
+
 test('fixture keys survive filtering, reordering and lifecycle changes without merging distinct fixtures', () => {
   const source = pageSource.match(/function matchRowKey\(match, index\) \{[\s\S]*?\n\}/)?.[0];
   assert.ok(source, 'fixture identity function is available');
@@ -287,6 +288,7 @@ test('customer empty market labels map all six filters and preserve Starred filt
 });
 
 
+
 test('a desktop league band includes later captured league evidence only from its date and league', () => {
   const snapshot = { version: 1, state: 'captured', starred: true, capturedAt: '2026-09-03T00:00:00Z', label: 'League Winner', leagueLabel: 'League Winner: 100%' };
   const first = row({ winner: [pick('miss', { starSnapshot: { ...snapshot, starred: false, label: '', leagueLabel: '' } })] }, { date: '2026-09-03' });
@@ -313,7 +315,7 @@ test('desktop daily offers and outcomes use the full selected lifecycle day befo
   ];
   const outcome = pageSource.match(/function selectionOutcome\([\s\S]*?\n\}/)[0];
   const stats = pageSource.match(/function outcomeStats\([\s\S]*?\n\}/)[0];
-  const daily = pageSource.slice(pageSource.indexOf('  const dayMatches ='), pageSource.indexOf('  const selectionTotal ='));
+  const daily = pageSource.slice(pageSource.indexOf('  const dayMatches ='), pageSource.indexOf('  const statsByMarket ='));
   const result = vm.runInNewContext(`${outcome}\n${stats}\n${daily}\n({dayOffers,offeredMarkets,starredMarkets});`, {
     matches, activeLifecycle: 'result', mobileCurrentDate: '2026-09-03', MARKET_COLUMNS: filters,
     marketSelections, quickBetStarredSelections, successByLeague: new Map(), starredOnly: true, visibleMatches: [],

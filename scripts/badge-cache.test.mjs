@@ -1,6 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { useCachedImage, writeRegistryBadge } from './cache_badges_to_firebase.mjs';
+import { mkdtempSync, readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
+import { useCachedImage, writeJsonAtomic, writeRegistryBadge } from './cache_badges_to_firebase.mjs';
 
 const entity = () => ({ name: 'Example FC', badge_storage_path: 'badges/teams/example.png', badge_source: 'sofascore', badge_source_url: 'https://img.sofascore.com/api/v1/team/123/image' });
 function registry() {
@@ -62,4 +65,31 @@ test('failed registry writes are retried', async () => {
   await assert.rejects(writeRegistryBadge(db, cache, 'teams', team, [123, team.name]));
   await writeRegistryBadge(db, cache, 'teams', team, [123, team.name]);
   assert.equal(calls, 2);
+});
+
+test('atomic ledger write replaces the file whole and leaves no temp file', async () => {
+  const dir = mkdtempSync(path.join(tmpdir(), 'badge-atomic-'));
+  const file = path.join(dir, 'match_data.json');
+  writeFileSync(file, JSON.stringify({ leagues: ['old'] }));
+  await writeJsonAtomic(file, { leagues: ['new'] });
+  assert.deepEqual(JSON.parse(readFileSync(file, 'utf8')), { leagues: ['new'] });
+  assert.equal(existsSync(`${file}.tmp`), false);
+});
+
+test('a failed ledger write leaves the existing file untouched', async () => {
+  const dir = mkdtempSync(path.join(tmpdir(), 'badge-atomic-'));
+  const file = path.join(dir, 'match_data.json');
+  writeFileSync(file, JSON.stringify({ leagues: ['old'] }));
+  const circular = {}; circular.self = circular;
+  await assert.rejects(writeJsonAtomic(file, circular));
+  assert.deepEqual(JSON.parse(readFileSync(file, 'utf8')), { leagues: ['old'] });
+  assert.equal(existsSync(`${file}.tmp`), false);
+});
+
+test('a temp file that cannot be renamed into place never replaces the ledger', async () => {
+  const dir = mkdtempSync(path.join(tmpdir(), 'badge-atomic-'));
+  const file = path.join(dir, 'match_data.json');
+  mkdirSync(file);
+  await assert.rejects(writeJsonAtomic(file, { leagues: ['new'] }));
+  assert.equal(existsSync(`${file}.tmp`), false);
 });

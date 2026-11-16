@@ -1,5 +1,5 @@
 import { existsSync, readFileSync } from 'node:fs';
-import { readFile, writeFile } from 'node:fs/promises';
+import { open, readFile, rename, rm } from 'node:fs/promises';
 import path from 'node:path';
 import process from 'node:process';
 import { randomUUID } from 'node:crypto';
@@ -508,6 +508,23 @@ async function applyRegistryBadge(db, registryCache, kind, entity, identityParts
   return false;
 }
 
+// The runner can kill this script mid-write; readers must only ever see the old or the complete new file.
+export async function writeJsonAtomic(filePath, data) {
+  const tempPath = `${filePath}.tmp`;
+  try {
+    const handle = await open(tempPath, 'w');
+    try {
+      await handle.writeFile(JSON.stringify(data, null, 2), 'utf8');
+      await handle.sync();
+    } finally {
+      await handle.close();
+    }
+    await rename(tempPath, filePath);
+  } finally {
+    await rm(tempPath, { force: true });
+  }
+}
+
 export async function writeRegistryBadge(db, registryCache, kind, entity, identityParts) {
   const docIds = registryDocIds(kind, entity, identityParts);
   if (!docIds.length || !isFirebaseUrl(entity?.logo)) return;
@@ -617,7 +634,7 @@ async function processFile(bucket, db, registryCache, fileName) {
     }
   }
 
-  await writeFile(filePath, JSON.stringify(data, null, 2), 'utf8');
+  await writeJsonAtomic(filePath, data);
   return { fileName, ...counts };
 }
 

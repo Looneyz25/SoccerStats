@@ -1,5 +1,6 @@
 import copy
 import json
+import os
 import tempfile
 import unittest
 from datetime import datetime, timedelta
@@ -126,6 +127,37 @@ class SportsbetDoubleChanceTests(unittest.TestCase):
 
 
 class SportsbetQuickBetsTests(unittest.TestCase):
+    def test_atomic_write_json_fsyncs_complete_temp_file_before_replace(self):
+        payload = {"events": [{"id": "101", "name": "Équipe"}], "history": []}
+        expected = json.dumps(payload, indent=2, ensure_ascii=False) + "\n"
+        real_fsync, real_replace = sportsbet.os.fsync, sportsbet.os.replace
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / "sportsbet_quick_bets.json"
+            temp_path = path.with_suffix(".json.tmp")
+            events = []
+
+            def recording_fsync(fd):
+                is_temp = temp_path.exists() and os.path.samestat(os.fstat(fd), os.stat(temp_path))
+                events.append(("fsync", is_temp, temp_path.read_text(encoding="utf-8") if is_temp else None))
+                real_fsync(fd)
+
+            def recording_replace(source, target):
+                events.append(("replace", Path(source), Path(target)))
+                real_replace(source, target)
+
+            with patch.object(sportsbet.os, "fsync", side_effect=recording_fsync), \
+                    patch.object(sportsbet.os, "replace", side_effect=recording_replace):
+                sportsbet.atomic_write_json(path, payload)
+
+            replace_index = next(i for i, event in enumerate(events) if event[0] == "replace")
+            temp_syncs = [i for i, event in enumerate(events) if event[0] == "fsync" and event[1]]
+            self.assertTrue(temp_syncs, "temp file was never fsynced")
+            self.assertLess(temp_syncs[0], replace_index)
+            self.assertEqual(events[temp_syncs[0]][2], expected)
+            self.assertEqual(events[replace_index][1:], (temp_path, path))
+            self.assertEqual(json.loads(path.read_text(encoding="utf-8")), payload)
+            self.assertFalse(temp_path.exists())
+
     def test_production_capture_uses_completion_clock_and_preserves_started_decisions(self):
         start = datetime(2026, 9, 4, 9, 0, tzinfo=ADL)
         completion = start + timedelta(hours=1, minutes=1)

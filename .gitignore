@@ -48,6 +48,8 @@ predictions_*.json
 predictions_*.md
 sportsbet_quick_bets.json
 sportsbet_quick_bets.json.tmp
+match_data.json.tmp
+predictions_*.json.tmp
 .claude/triple-pass/
 .claude/analysis/
 .tmp-*

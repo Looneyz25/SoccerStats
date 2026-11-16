@@ -409,8 +409,6 @@ function QuickBetsInner() {
   }]));
   const offeredMarkets = [...dayOffers.values()].reduce((total, offers) => total + offers.total, 0);
   const starredMarkets = [...dayOffers.values()].reduce((total, offers) => total + offers.starred, 0);
-  const selectionTotal = mobileMatches.reduce((total, match) => total
-    + displayedSelections(match, selectionFilters, starredOnly, successByLeague).length, 0);
 
   const statsByMarket = summary?.statsByLifecycle?.[activeLifecycle] || {};
   const lifecycleCounts = data?.counts || {};
@@ -419,7 +417,6 @@ function QuickBetsInner() {
 
   const toggleMarket = (key) => setActiveMarket((current) => (current === key ? 'all' : key));
 
-  const sortSummary = isAll ? '' : ' · lowest odds';
   const emptyMessage = starredOnly
     ? isAll ? 'No starred markets for this state.' : `No starred ${selectedFilter.label} odds for this state.`
     : isAll ? 'No Quick Bets for this state.' : `No matches with ${selectedFilter.label} odds.`;
@@ -506,12 +503,9 @@ function QuickBetsInner() {
                   )}
                 </button>
               </div>
-              <div className="mt-3 hidden flex-wrap items-center gap-3 lg:flex">
-                <h1 className="text-lg font-semibold text-ink sm:text-xl">Quick Bets</h1>
+              <div className="hidden flex-wrap items-center gap-3 lg:mt-3 lg:flex">
+                <h1 className="hidden text-lg font-semibold text-ink sm:text-xl lg:block">Quick Bets</h1>
               </div>
-              <p className="mt-2 hidden text-[13px] font-medium text-muted lg:block">
-                {selectedDayLoaded ? mobileMatches.length : '—'} match{mobileMatches.length === 1 ? '' : 'es'} · {selectedDayLoaded ? selectionTotal : '—'} selection{selectionTotal === 1 ? '' : 's'}{isAll ? '' : ` · ${selectedFilter.label}`}{starredOnly ? ' · Starred' : ''}{sortSummary}
-              </p>
             </div>
             {capturedAt ? (
               <p className="hidden text-[12px] font-medium text-muted lg:block">

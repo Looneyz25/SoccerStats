@@ -49,7 +49,7 @@ except ImportError:
 
 import random
 from curl_cffi import requests
-from team_aliases import NATIONAL_TEAM_ALIASES
+from team_aliases import CLUB_TEAM_ALIASES, EXACT_TEAM_ALIASES, NATIONAL_TEAM_ALIASES
 
 _PROFILES = ["chrome120","chrome124","chrome131","chrome116","edge101","safari17_0"]
 def _profile(): return random.choice(_PROFILES)
@@ -2273,31 +2273,149 @@ def fetch_standings(unique_tournament_id, season_id):
 
 
 # ----------------------------------------------------------------------------
+# Team identity ---------------------------------------------------------------
+# Provider team ids are not identities: one club carries several ids across
+# feeds and seasons (Arsenal 42 -> "359"), and one raw id can carry two clubs
+# (Millwall and Port Vale share an id). Ratings and form therefore key on the
+# normalized team name. Fuzzy word similarity is never used here: it merges
+# distinct clubs (Dundee/Dundee United, Paris FC/PSG, FC Tokyo/Tokyo Verdy).
+_TEAM_IDENTITY = {}
+TEAM_IDENTITY_MIN_SUBSTRING = 5
+TEAM_IDENTITY_NAME_ONLY_LEAGUES = {"FIFA World Cup", "International Friendly Games"}
+_TEAM_IDENTITY_ALIASES = {**TEAM_ALIASES, **CLUB_TEAM_ALIASES, **EXACT_TEAM_ALIASES}
+
+
+def team_identity_norm(name):
+    norm = team_norm(name)
+    return _TEAM_IDENTITY_ALIASES.get(norm, norm)
+
+
+def _identity_names_contain(a, b):
+    return min(len(a), len(b)) >= TEAM_IDENTITY_MIN_SUBSTRING and (a in b or b in a)
+
+
+def build_team_identity(store):
+    """Return {normalized name: canonical normalized name} for every team in the store.
+
+    Two names are one team when they normalize (with aliases) to the same string,
+    when one contains the other inside a club league and their date ranges never
+    overlap (a provider relabel such as "Bournemouth" -> "AFC Bournemouth") unless
+    the longer name contains two clubs active there at the same time, or
+    when one contains the other and both were carried by the same typed team id.
+    """
+    parent = {}
+
+    def find(x):
+        parent.setdefault(x, x)
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    def union(a, b):
+        ra, rb = find(a), find(b)
+        if ra != rb:
+            parent[max(ra, rb)] = min(ra, rb)
+
+    spans = {}
+    id_names = {}
+    for league in store.get("leagues", []):
+        league_name = league.get("name") or ""
+        for m in league.get("matches", []):
+            day = m.get("date") or ""
+            for side in ("home", "away"):
+                team = m.get(side) or {}
+                norm = team_identity_norm(team.get("name"))
+                if not norm:
+                    continue
+                find(norm)
+                if day:
+                    lo, hi = spans.get((league_name, norm), (day, day))
+                    spans[(league_name, norm)] = (min(lo, day), max(hi, day))
+                team_id = team.get("team_id")
+                if team_id is not None:
+                    id_names.setdefault((type(team_id).__name__, str(team_id)), set()).add(norm)
+
+    by_league = {}
+    for league_name, norm in spans:
+        by_league.setdefault(league_name, []).append(norm)
+    for league_name, norms in by_league.items():
+        if league_name in TEAM_IDENTITY_NAME_ONLY_LEAGUES:
+            continue
+        norms.sort()
+        # A longer name that contains two clubs active at the same time ("Deportivo
+        # Alavés" holds both "Deportivo" and "Alavés") is ambiguous and never merges by span.
+        ambiguous = set()
+        for b in norms:
+            inside = [x for x in norms if x != b and x in b and _identity_names_contain(x, b)]
+            for i, x in enumerate(inside):
+                x_lo, x_hi = spans[(league_name, x)]
+                for y in inside[i + 1:]:
+                    y_lo, y_hi = spans[(league_name, y)]
+                    if not (x_hi < y_lo or y_hi < x_lo) and not _identity_names_contain(x, y):
+                        ambiguous.add(b)
+        for i, a in enumerate(norms):
+            for b in norms[i + 1:]:
+                if a in ambiguous or b in ambiguous or not _identity_names_contain(a, b):
+                    continue
+                a_lo, a_hi = spans[(league_name, a)]
+                b_lo, b_hi = spans[(league_name, b)]
+                if a_hi < b_lo or b_hi < a_lo:
+                    union(a, b)
+
+    for norms in id_names.values():
+        ordered = sorted(norms)
+        for i, a in enumerate(ordered):
+            for b in ordered[i + 1:]:
+                if _identity_names_contain(a, b):
+                    union(a, b)
+
+    return {norm: find(norm) for norm in list(parent)}
+
+
+def team_identity_key(name, team_id=None):
+    norm = team_identity_norm(name)
+    if norm:
+        return "team:" + _TEAM_IDENTITY.get(norm, norm)
+    if team_id is not None:
+        return f"id:{type(team_id).__name__}:{team_id}"
+    return None
+
+
+# ----------------------------------------------------------------------------
 # Team Elo --------------------------------------------------------------------
-# Module-level cache populated by compute_team_elo() and consumed by the
-# predictor. Maps SofaScore team_id -> Elo rating (float).
+# Module-level cache populated by rebuild_team_elo() and consumed by the
+# predictor. Keys are team_identity_key() values (every alias of a team maps to
+# its rating); offline backtests may populate it with raw team ids instead.
 _TEAM_ELO = {}
 
 
-def compute_team_elo(store):
-    """Rebuild every team's Elo from scratch by walking all FT matches in
-    chronological order. Deterministic, idempotent, and survives manual
-    edits to match_data.json. Persists to team_elo.json and also updates
-    the module-level _TEAM_ELO cache.
+def team_elo_rating(team_id, name):
+    for key in (team_identity_key(name, team_id), team_id):
+        if key is not None and key in _TEAM_ELO:
+            return _TEAM_ELO[key]
+    return ELO_INIT
 
-    Returns: {team_id: rating}.
+
+def rebuild_team_elo(store):
+    """Rebuild team identity and every team's Elo from all FT matches in
+    chronological order, and refresh the module caches. Writes no files.
+
+    Returns: ({team_identity_key: rating}, finished matches walked).
     """
+    _TEAM_IDENTITY.clear(); _TEAM_IDENTITY.update(build_team_identity(store))
     finished = []
     for L in store.get("leagues", []):
         for m in L.get("matches", []):
             if m.get("status") != "FT": continue
             h = m.get("home") or {}; a = m.get("away") or {}
-            h_id = h.get("team_id"); a_id = a.get("team_id")
+            h_id = team_identity_key(h.get("name"), h.get("team_id"))
+            a_id = team_identity_key(a.get("name"), a.get("team_id"))
             hg = h.get("goals"); ag = a.get("goals")
-            if not h_id or not a_id or hg is None or ag is None: continue
+            if not h_id or not a_id or h_id == a_id or hg is None or ag is None: continue
             finished.append({
                 "date": m.get("date") or "",
-                "time": m.get("time") or "",
+                "time": str(m.get("time") or ""),
                 "h_id": h_id, "a_id": a_id, "hg": int(hg), "ag": int(ag),
             })
     finished.sort(key=lambda x: (x["date"], x["time"]))
@@ -2318,16 +2436,28 @@ def compute_team_elo(store):
         elo[fx["h_id"]] = rh + ELO_K * (s_h - e_h)
         elo[fx["a_id"]] = ra + ELO_K * (s_a - e_a)
 
-    # Persist a sorted, human-readable snapshot. Keys are team_ids (str in JSON).
+    _TEAM_ELO.clear(); _TEAM_ELO.update(elo)
+    for norm, canonical in _TEAM_IDENTITY.items():
+        rating = elo.get("team:" + canonical)
+        if rating is not None:
+            _TEAM_ELO["team:" + norm] = rating
+    return elo, len(finished)
+
+
+def compute_team_elo(store):
+    """Rebuild every team's Elo (see rebuild_team_elo) and persist the snapshot
+    to team_elo.json.
+
+    Returns: {team_identity_key: rating}.
+    """
+    elo, n_matches = rebuild_team_elo(store)
     snapshot = {
         "computed_at": TODAY.isoformat(),
-        "n_matches": len(finished),
-        "params": {"init": ELO_INIT, "K": ELO_K, "home_adv": ELO_HOME_ADV},
+        "n_matches": n_matches,
+        "params": {"init": ELO_INIT, "K": ELO_K, "home_adv": ELO_HOME_ADV, "keys": "team_identity_key"},
         "ratings": {str(tid): round(r, 2) for tid, r in sorted(elo.items(), key=lambda kv: -kv[1])},
     }
     ELO_STORE.write_text(json.dumps(snapshot, ensure_ascii=False, indent=2), encoding="utf-8")
-
-    _TEAM_ELO.clear(); _TEAM_ELO.update(elo)
     return elo
 
 
@@ -2380,8 +2510,8 @@ def predict_enhanced(h_att, h_def, a_att, a_def, h_name, a_name, streaks,
 
     # Elo differential. Missing teams (never appeared FT) default to ELO_INIT
     # so the bump cleanly collapses to zero.
-    home_elo = _TEAM_ELO.get(h_team_id, ELO_INIT) if h_team_id else ELO_INIT
-    away_elo = _TEAM_ELO.get(a_team_id, ELO_INIT) if a_team_id else ELO_INIT
+    home_elo = team_elo_rating(h_team_id, h_name)
+    away_elo = team_elo_rating(a_team_id, a_name)
     elo_diff = home_elo - away_elo
     elo_bump = max(-ELO_LAMBDA_CAP, min(ELO_LAMBDA_CAP, elo_diff / ELO_LAMBDA_SCALE))
     elo_adj_h = elo_bump
@@ -3056,17 +3186,79 @@ def league_goal_baseline(matches):
     return max(0.9, min(1.8, per_team))
 
 
-def pre_prediction_form_inputs(match, league_matches, odds):
+TEAM_FORM_WINDOW = 6
+TEAM_FORM_MIN_MATCHES = 3
+
+
+def build_team_form_index(store):
+    """Return {team_identity_key: [((date, time), event_id, for, against), ...]} oldest first.
+
+    Uses every FT match in the store across competitions; a match's xG replaces its
+    goals when attached, matching fetch_form().
+    """
+    index = {}
+    for league in store.get("leagues", []):
+        for m in league.get("matches", []):
+            if m.get("status") != "FT":
+                continue
+            home = m.get("home") or {}
+            away = m.get("away") or {}
+            hg, ag = home.get("goals"), away.get("goals")
+            if not isinstance(hg, (int, float)) or not isinstance(ag, (int, float)):
+                continue
+            xg = m.get("xg") or {}
+            xh, xa = xg.get("home"), xg.get("away")
+            if isinstance(xh, (int, float)) and isinstance(xa, (int, float)):
+                home_for, away_for = float(xh), float(xa)
+            else:
+                home_for, away_for = float(hg), float(ag)
+            stamp = (m.get("date") or "", str(m.get("time") or ""))
+            for team, scored, conceded in ((home, home_for, away_for), (away, away_for, home_for)):
+                key = team_identity_key(team.get("name"), team.get("team_id"))
+                if key:
+                    index.setdefault(key, []).append((stamp, m.get("id"), scored, conceded))
+    for rows in index.values():
+        rows.sort(key=lambda row: row[0])
+    return index
+
+
+def team_recent_form(form_index, team, before_date, exclude_event_id=None):
+    """(attack, defence) over the team's last TEAM_FORM_WINDOW matches dated before
+    before_date, or None with fewer than TEAM_FORM_MIN_MATCHES."""
+    team = team or {}
+    key = team_identity_key(team.get("name"), team.get("team_id"))
+    if not key or not before_date:
+        return None
+    rows = [
+        row for row in form_index.get(key, [])
+        if row[0][0] < before_date and row[1] != exclude_event_id
+    ][-TEAM_FORM_WINDOW:]
+    if len(rows) < TEAM_FORM_MIN_MATCHES:
+        return None
+    return (
+        sum(row[2] for row in rows) / len(rows),
+        sum(row[3] for row in rows) / len(rows),
+    )
+
+
+def pre_prediction_form_inputs(match, league_matches, odds, form_index=None):
     base = league_goal_baseline(league_matches)
     market = bookmaker_three_way_probabilities(odds) or {}
     bias = max(-0.45, min(0.45, (market.get("home", 1 / 3) - market.get("away", 1 / 3)) * 1.2))
     home_boost = max(0.0, bias)
     away_boost = max(0.0, -bias)
+    home_form = away_form = None
+    if form_index:
+        before_date = match.get("date") or ""
+        home_form = team_recent_form(form_index, match.get("home"), before_date, match.get("id"))
+        away_form = team_recent_form(form_index, match.get("away"), before_date, match.get("id"))
+    h_att, h_def = home_form or (base, base)
+    a_att, a_def = away_form or (base, base)
     return (
-        base + home_boost,
-        base + away_boost * 0.5,
-        base + away_boost,
-        base + home_boost * 0.5,
+        h_att + home_boost,
+        h_def + away_boost * 0.5,
+        a_att + away_boost,
+        a_def + home_boost * 0.5,
     )
 
 
@@ -3315,6 +3507,8 @@ def pre_match_prediction_refresh_reason(match, predictions, odds, market_context
     if factors.get("model_seed_odds") and odds:
         return "bookmaker_odds_arrived"
     winner = predictions.get("winner") or {}
+    if not odds and factors.get("model_seed_odds") and winner.get("bookmaker_probabilities") and match_kickoff_datetime(match) is not None:
+        return "seed_odds_blend_removed"
     winner_type = winner.get("type")
     if winner_type in ("home", "draw", "away"):
         expected_winner_odds = to_float((odds or {}).get(winner_type))
@@ -3344,6 +3538,8 @@ def populate_pre_match_predictions(store, target_dates=None):
     truth rule: never create retro predictions after the score is known.
     """
     all_matches = [m for league in store.get("leagues", []) for m in league.get("matches", [])]
+    rebuild_team_elo(store)
+    form_index = build_team_form_index(store)
     created = 0
     corner_created = 0
     profiled = 0
@@ -3370,7 +3566,7 @@ def populate_pre_match_predictions(store, target_dates=None):
             refresh_reason = pre_match_prediction_refresh_reason(match, predictions, odds, market_context) if has_required else None
 
             if not has_required or refresh_reason:
-                h_att, h_def, a_att, a_def = pre_prediction_form_inputs(match, league_matches, model_seed_odds)
+                h_att, h_def, a_att, a_def = pre_prediction_form_inputs(match, league_matches, model_seed_odds, form_index)
                 fallback = predict_enhanced(
                     h_att,
                     h_def,
@@ -3382,7 +3578,7 @@ def populate_pre_match_predictions(store, target_dates=None):
                     h_team_id=(match.get("home") or {}).get("team_id"),
                     a_team_id=(match.get("away") or {}).get("team_id"),
                     league=league_name,
-                    market_odds=model_seed_odds,
+                    market_odds=odds,
                     market_context=market_context,
                 )
                 fallback_factors = fallback.get("factors") or {}
@@ -3507,10 +3703,11 @@ def populate_today_new_league_calibration_predictions(store):
             predictions = match.setdefault("predictions", {})
             before_payload = json.dumps(predictions, sort_keys=True, ensure_ascii=False)
             before_keys = {key for key, value in predictions.items() if value}
-            odds = market_odds_for_match(match, prefer_original=True) or {"home": 3.0, "draw": 3.2, "away": 3.0}
+            odds = market_odds_for_match(match, prefer_original=True)
+            model_seed_odds = odds or {"home": 3.0, "draw": 3.2, "away": 3.0}
             h_name = (match.get("home") or {}).get("name") or "Home"
             a_name = (match.get("away") or {}).get("name") or "Away"
-            h_att, h_def, a_att, a_def = pre_prediction_form_inputs(match, league_matches, odds)
+            h_att, h_def, a_att, a_def = pre_prediction_form_inputs(match, league_matches, model_seed_odds)
             fallback = predict_enhanced(
                 h_att,
                 h_def,

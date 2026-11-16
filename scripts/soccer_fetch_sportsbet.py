@@ -959,11 +959,25 @@ def capture_quick_bet_stars(payload, previous, leagues, now=None):
 def atomic_write_json(path, payload):
     temp_path = path.with_suffix(path.suffix + ".tmp")
     try:
-        temp_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        with open(temp_path, "w", encoding="utf-8") as handle:
+            handle.write(json.dumps(payload, indent=2, ensure_ascii=False) + "\n")
+            handle.flush()
+            os.fsync(handle.fileno())
         os.replace(temp_path, path)
     finally:
         if temp_path.exists():
             temp_path.unlink()
+    # Best-effort: Windows cannot open a directory with os.open, so directory fsync is skipped there.
+    try:
+        directory_fd = os.open(path.parent, os.O_RDONLY)
+    except OSError:
+        return
+    try:
+        os.fsync(directory_fd)
+    except OSError:
+        pass
+    finally:
+        os.close(directory_fd)
 
 
 def quick_bet_forecast(leagues, now):
